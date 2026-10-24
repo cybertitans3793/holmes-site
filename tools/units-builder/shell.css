@@ -40,3 +40,4 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
 .try .plink:hover{text-decoration:underline}
 .credits{margin-top:22px;font:500 12px/1.5 var(--f-mono);color:var(--muted)}
 @media (max-width:640px){ .simbar h2{font-size:15px} .tab{font-size:14px;padding:9px 12px} }
+[hidden]{display:none!important}

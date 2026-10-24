@@ -80,7 +80,7 @@ PAGE = """<!doctype html>
 <div class="wrap">
   <header class="uhead">
     <div class="uid"><div class="big" aria-hidden="true">{num}</div><div><div class="mono">{course} · {uid}</div><h1>{title}</h1></div></div>
-    <a class="cta" id="cta" href="#" target="_top">Practice this unit →</a>
+    <a class="cta" id="cta" href="#" target="_blank" rel="noopener">Practice this unit →</a>
   </header>
   <nav class="tabs" role="tablist" aria-label="Sims in this unit" id="tabs"></nav>
   <div class="main">
@@ -92,14 +92,14 @@ PAGE = """<!doctype html>
       <h2>Try this</h2>
       <ol id="tasks"></ol>
       <p class="note" id="note" hidden></p>
-      <a class="plink" id="plink" href="#" target="_top">Practice {uid} questions →</a>
+      <a class="plink" id="plink" href="#" target="_blank" rel="noopener">Practice {uid} questions →</a>
     </aside>
   </div>
   <p class="credits">{credits}</p>
 </div>
 <script>
 /* Set this once to your Review web app link; each unit page then links to its own unit. */
-const REVIEW_URL = '';
+const REVIEW_URL = 'https://script.google.com/a/macros/fcps.org/s/AKfycbzW6NpFGf5yjZ843WN0pDy-mzI0r1iCcBIuoJpMCEJeWwbUARiSnAC_lf2bWQeHWoGjHA/exec';
 const UNIT = {unit_json};
 const SIMS = {{
 {sims_js}
@@ -109,8 +109,8 @@ const SIMS = {{
   const tabsEl = $('tabs'), frame = $('frame');
   let cur = -1, ifr = null, ifrSim = null;
   const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-  if (REVIEW_URL) {{ const u = REVIEW_URL + (REVIEW_URL.includes('?') ? '&' : '?') + 'unit=' + encodeURIComponent(UNIT.id); $('cta').href = u; $('plink').href = u; }}
-  else {{ [$('cta'), $('plink')].forEach(a => a.addEventListener('click', e => e.preventDefault())); }}
+  if (REVIEW_URL && /^P1-/.test(UNIT.id)) {{ const u = REVIEW_URL + (REVIEW_URL.includes('?') ? '&' : '?') + 'unit=' + encodeURIComponent(UNIT.id); $('cta').href = u; $('plink').href = u; }}
+  else {{ $('cta').hidden = true; $('plink').hidden = true; }}
   UNIT.tabs.forEach((t, i) => {{
     if (t.gapBefore) {{ const g = document.createElement('span'); g.className = 'gap'; g.setAttribute('aria-hidden','true'); tabsEl.appendChild(g); }}
     const b = document.createElement('button');
