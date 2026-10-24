@@ -44,7 +44,7 @@ html,body{background:#fff!important}
 #panel select{border:2px solid #111!important;border-radius:0!important}
 #panel input[type=range],#panel input[type=checkbox]{accent-color:#111}
 </style>"""
-LISTEN = """<script>window.addEventListener('message',function(e){var d=e.data;if(d&&d.select&&window.APP){try{APP.select(d.select);}catch(er){}}});</script>"""
+LISTEN = """<script>window.addEventListener('message',function(e){var d=e.data,A=window.APP||window.PTAPP;if(d&&d.select&&A){try{A.select(d.select);}catch(er){}}});</script>"""
 
 def prep_sim(key):
     s = SIMS[key]
@@ -155,8 +155,39 @@ const SIMS = {{
 </html>
 """
 
+COMING = """<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{uid} {title}</title>
+{fonts}
+<style>
+{css}
+.soon{{border:3px solid var(--ink);background:var(--card);box-shadow:6px 6px 0 var(--ink);padding:28px 24px;max-width:720px}}
+.soon h2{{margin:0 0 8px;font-size:26px}}
+.soon p{{margin:0;font-size:17px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="uhead">
+    <div class="uid"><div class="big" aria-hidden="true">{num}</div><div><div class="mono">{course} · {uid}</div><h1>{title}</h1></div></div>
+  </header>
+  <section class="soon"><h2>Sims for this unit are on the way.</h2><p>{note}</p></section>
+</div>
+</body>
+</html>
+"""
+
 def build(uid):
     u = UNITS[uid]
+    if not u.get('tabs'):
+        css = open(os.path.join(D, 'shell.css'), encoding='utf-8').read()
+        out = COMING.format(uid=uid, title=html.escape(u['title']), num=u['num'], course=u['course'], fonts=FONTS, css=css,
+                            note=u.get('note', 'Check back soon. The practice questions for this unit are below.'))
+        os.makedirs(os.path.join(D, 'out'), exist_ok=True)
+        open(os.path.join(D, 'out', uid + '.html'), 'w', encoding='utf-8').write(out); print(uid, 'coming soon'); return
     used = []
     for t in u['tabs']:
         if t['sim'] not in used: used.append(t['sim'])

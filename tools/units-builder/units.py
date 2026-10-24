@@ -143,3 +143,97 @@ UNITS = {
      'note': 'IB E.5 Stellar evolution.'},
 ]},
 }
+
+# ------------------------------------------------------------------ extra sims
+SIMS['plates'] = {'file': 'pt/out.html', 'kind': 'xl', 'ar': '1008 / 676',
+                  'credit': 'Crust and Plate Motion are an HTML5 port of PhET “Plate Tectonics”. ' + PHET + ' Other tabs are original; plate boundaries from Bird (2003), earthquake and volcano data from USGS and Smithsonian GVP.'}
+
+AB = 'Algebra-Based Physics'
+UNITS.update({
+'AB-01': {'course': AB, 'num': '01', 'title': 'Kinematics', 'tabs': [
+    {'code': '', 'name': 'Moving Man', 'sim': 'mman', 'tasks': [
+        'Make the man walk to the right at a steady 2 m/s. What does the position–time graph look like?',
+        'Now make him walk to the left at the same speed. What changed on the graph? What stayed the same?',
+        'Start him at rest and speed him up. How is the position–time graph different from a steady walk?',
+        'Read his velocity from the velocity–time graph at two times. Use a = Δv/Δt to find his acceleration.']},
+    {'code': '', 'name': 'Maze Game', 'sim': 'maze', 'tasks': [
+        'Play with <b>position</b> control. Then switch to <b>velocity</b>. What does dragging the arrow control now?',
+        'Try <b>acceleration</b> control. Why is it so hard to stop on the goal?',
+        'With velocity control, how do you make the ball stop? With acceleration control?']},
+]},
+'AB-02': {'course': AB, 'num': '02', 'title': 'Newton’s Laws', 'tabs': [
+    {'code': '', 'name': 'Push the Cart', 'sim': 'cart', 'tasks': [
+        'Set both μ to 0 and push with 12 N. Predict the acceleration of a 2.0 kg cart with a = F/m, then run it.',
+        'Double the mass but keep the force the same. What happens to the acceleration?',
+        'Turn friction back on. Find the smallest push that gets a 4.0 kg cart moving when μ<sub>s</sub> = 0.30. Use F<sub>f</sub> = μF<sub>N</sub> to check.',
+        'While the cart is moving, set the push equal to the friction. What does the cart do? Which of Newton’s laws explains it?']},
+    {'code': '', 'name': 'Lunar Lander', 'sim': 'lander', 'tasks': [
+        'Find the thrust that makes the lander hover. How does it compare with the lander’s weight?',
+        'Turn on the force vectors. When the lander is slowing down on the way down, which force is bigger?',
+        'Land at under 2 m/s. Describe your plan using “net force up” and “net force down.”']},
+]},
+'AB-03': {'course': AB, 'num': '03', 'title': 'Circular Motion & Gravity', 'tabs': [
+    {'code': '', 'name': 'My Solar System', 'sim': 'solar', 'tasks': [
+        'Pick the <b>sun and planet</b> preset and turn on Show Traces. Is the orbit a circle?',
+        'Give the planet a little less speed. Where on its orbit does it move fastest?',
+        'Make the sun heavier. Does the planet need more or less speed to keep the same orbit? Why?',
+        'What would happen to the planet if the sun’s gravity suddenly turned off? Predict, then think about which way it would go.']},
+]},
+'AB-04': {'course': AB, 'num': '04', 'title': 'Work & Energy & Stars', 'tabs': [
+    {'code': '', 'name': 'Star Life Cycle', 'sim': 'star', 'tasks': [
+        'Follow the Sun through its life. At each stage, which is winning: gravity pulling in or pressure pushing out?',
+        'Where does a star’s energy come from? Watch the core during the main sequence.',
+        'Compare a small star with a very big star. Which one lives longer? Is that what you expected?',
+        'Which stars end as white dwarfs, and which explode as supernovas?']},
+]},
+'AB-05': {'course': AB, 'num': '05', 'title': 'Momentum', 'tabs': []},
+'AB-06': {'course': AB, 'num': '06', 'title': 'Electrostatics', 'tabs': [
+    {'code': '', 'name': 'Charging & the Electroscope', 'sim': 'scope', 'tasks': [
+        'Bring a charged rod near the electroscope without touching it. Why do the leaves spread apart?',
+        'Touch the rod to the electroscope. What sign of charge does the electroscope get?',
+        'Charge it without touching: rod near, touch with your hand, remove your hand, then the rod. What sign does it get?',
+        'Why do the leaves push apart instead of pulling together?']},
+    {'code': '', 'name': 'Electric Field Hockey', 'sim': 'hockey', 'tasks': [
+        'Place one positive charge near the puck. Does the puck move toward it or away? Why?',
+        'Use as few charges as you can to score on Practice.',
+        'Make the puck negative. What changes?']},
+]},
+'AB-07': {'course': AB, 'num': '07', 'title': 'Current Electricity & Magnetism', 'tabs': []},
+'AB-08': {'course': AB, 'num': '08', 'title': 'Waves & Earth’s Interior', 'tabs': [
+    {'code': '', 'name': 'Earth’s Interior', 'sim': 'plates', 'select': "Earth's Interior", 'tasks': [
+        'Name the layers from the surface to the center. Which layers are solid and which are liquid?',
+        'How do scientists know what is inside the Earth when nobody has drilled through the crust?',
+        'Where is the Earth hottest? Why doesn’t the inner core melt?']},
+    {'code': '', 'name': 'Seismic Waves', 'sim': 'plates', 'select': 'Seismic Waves', 'tasks': [
+        'Drag the earthquake to a new spot and watch the waves. Which arrive first, P or S? Which kind of wave is each one (push–pull or side to side)?',
+        'Find the shadow zone where S-waves never arrive. What does that tell us about the outer core?',
+        'Use the time between the P-wave and the S-wave to explain how far away an earthquake was.']},
+    {'code': '', 'name': 'Crust', 'sim': 'plates', 'select': 'Crust', 'tasks': [
+        'Compare ocean crust and continental crust. Which is thicker? Which is denser?',
+        'Change the temperature and composition. Which crust floats higher on the mantle?']},
+    {'code': '', 'name': 'Plate Motion', 'sim': 'plates', 'select': 'Plate Motion', 'tasks': [
+        'Push two plates together. What forms when ocean crust meets continental crust?',
+        'Pull two plates apart. What happens in the gap?',
+        'Slide two plates past each other. What do we feel at this kind of boundary?']},
+    {'code': '', 'name': 'Plate Map', 'sim': 'plates', 'select': 'Plate Map', 'tasks': [
+        'Turn on earthquakes and volcanoes. Where do most of them happen?',
+        'Find a place where two plates are moving apart and one where they are moving together.']},
+    {'code': '', 'name': 'Magnetic Stripes', 'sim': 'plates', 'select': 'Magnetic Stripes', 'tasks': [
+        'Watch new sea floor form at the ridge. Why do the stripes match on both sides?',
+        'Use the stripe widths to estimate how fast the plates are moving apart.']},
+    {'code': '', 'name': 'Consequences', 'sim': 'plates', 'select': 'Consequences', 'tasks': [
+        '<b>Hot spot islands:</b> run it. Why does the newest volcano always sit over the hot spot while older ones get carried away?',
+        'Turn on volcano ages. Use the distance and age of two volcanoes to find how fast the plate moves.',
+        '<b>Earthquakes on a fault:</b> what builds up before each earthquake, and what happens when it lets go?',
+        'Why does Japan have so many earthquakes but Maryland very few? Use the Plate Map to explain.']},
+]},
+# AP units that don't have sims yet
+'P1-01': {'course': 'AP Physics 1', 'num': '01', 'title': 'Newton’s First Law', 'tabs': []},
+'P1-03': {'course': 'AP Physics 1', 'num': '03', 'title': 'Newton’s Third Law', 'tabs': []},
+'P1-08': {'course': 'AP Physics 1', 'num': '08', 'title': 'Rotation', 'tabs': []},
+'P1-10': {'course': 'AP Physics 1', 'num': '10', 'title': 'Simple Harmonic Motion', 'tabs': []},
+'P2-03': {'course': 'AP Physics 2 / IB', 'num': '03', 'title': 'Current Electricity and Magnetism', 'tabs': []},
+'P2-04': {'course': 'AP Physics 2 / IB', 'num': '04', 'title': 'Waves & Optics', 'tabs': []},
+})
+for k in ('AB-05', 'AB-07'):
+    UNITS[k]['note'] = 'Check back soon.'
