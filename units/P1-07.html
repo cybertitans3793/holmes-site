@@ -1,0 +1,920 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>P1-07 Impulse and Momentum</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Unit sim hub: graph-paper worksheet, ink-blue accent; energy colors fixed per quantity across every sim in the unit. */
+:root{
+  --paper:#f7f9fb; --sheet:#ffffff; --ink:#17202a; --muted:#566271; --rule:#d9e0e8; --grid:rgba(29,95,168,.07);
+  --accent:#1d5fa8; --accent-soft:#e6eef8; --on-accent:#fff; --good:#1f7a4a; --bad:#b42318; --tip-soft:#fff3d6;
+  --eK:#1d5fa8; --eUg:#1f7a4a; --eUs:#7b4bb7; --eTh:#c2410c; --eW:#6b7280;
+  --f-display:"Bricolage Grotesque",system-ui,sans-serif; --f-body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 var(--f-body);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:20px 20px}
+.wrap{max-width:1080px;margin:0 auto;padding-block:16px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance}
+.uhead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:10px;margin-bottom:12px}
+.uhead h1{font-size:1.35rem;font-weight:800}
+.mono{font:500 .78rem var(--f-mono);color:var(--muted);letter-spacing:.02em}
+.uhead a{color:var(--accent);font-weight:700;text-decoration:none}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;margin-bottom:12px}
+.tab{all:unset;cursor:pointer;white-space:nowrap;padding:8px 14px;border-radius:9px;border:1px solid var(--rule);background:var(--sheet);font-size:.92rem}
+.tab b{font:500 .78rem var(--f-mono);color:var(--muted);margin-right:6px}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.tab[aria-selected="true"] b{color:#b9c3cd}
+.tab:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+[hidden]{display:none!important}
+.panel{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:14px}
+.card{background:var(--sheet);border:1px solid var(--rule);border-radius:14px;padding:14px;min-width:0}
+.scen{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.chip{all:unset;cursor:pointer;padding:6px 12px;border-radius:999px;border:1px solid var(--rule);background:var(--sheet);font-size:.9rem}
+.chip[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.stage{display:grid;grid-template-columns:minmax(0,1fr) 210px;gap:12px;align-items:stretch}
+canvas{display:block;width:100%;height:auto;border-radius:10px;background:#fbfdff;border:1px solid var(--rule)}
+.stage > canvas{align-self:start}
+.bars canvas{width:100%;height:auto;border:none;background:transparent}
+.bars{display:flex;flex-direction:column;border:1px solid var(--rule);border-radius:10px;padding:8px 8px 6px;background:#fff;min-width:0}
+.bars h3{font:700 .85rem var(--f-body);margin:0 0 4px;color:var(--muted)}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px 16px;margin-top:12px}
+.controls label{font-size:.85rem;color:var(--muted);display:grid;gap:2px}
+.controls output{font:500 .9rem var(--f-mono);color:var(--ink)}
+input[type=range]{width:100%;accent-color:var(--accent)}
+select{font:inherit;padding:5px 8px;border-radius:8px;border:1px solid var(--rule);background:#fff;color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-top:10px}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn{all:unset;cursor:pointer;font-weight:700;padding:8px 14px;border-radius:8px;background:var(--accent);color:var(--on-accent);font-size:.92rem}
+.btn.ghost{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
+.readout{display:flex;flex-wrap:wrap;gap:6px 16px;font:500 .88rem var(--f-mono);font-variant-numeric:tabular-nums}
+.readout span{color:var(--muted)}
+.msg{margin-top:10px;padding:8px 12px;border-radius:8px;background:var(--tip-soft);font-size:.92rem}
+.try h3{font:800 1rem var(--f-display);margin:0 0 6px}
+.try ol{margin:0;padding-left:1.2em;display:grid;gap:8px;font-size:.93rem}
+.try .link{display:block;margin-top:14px;padding-top:10px;border-top:1px solid var(--rule);color:var(--accent);font-weight:700;text-decoration:none;font-size:.92rem}
+.sysnote{font-size:.85rem;color:var(--muted);margin-top:8px}
+.placeholder{display:grid;place-items:center;text-align:center;min-height:320px;color:var(--muted);gap:6px;padding:20px}
+.placeholder strong{color:var(--ink);font:800 1.1rem var(--f-display)}
+.phet{width:100%;aspect-ratio:16/10;border:0;border-radius:10px;background:#fff}
+@media (max-width:860px){ .panel{grid-template-columns:1fr} }
+@media (max-width:620px){ .stage{grid-template-columns:1fr} }
+.ktab td,.ktab th{padding:4px 8px;white-space:nowrap}
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@500;700&display=swap">
+<style id="bigtype">
+/* Big Type overrides (Holmes Sims house style) */
+:root{--paper:#fafafa;--sheet:#fff;--ink:#111;--muted:#4a4a4a;--rule:#111;--grid:transparent;--accent:#111;--accent-soft:#ffe2d3;--on-accent:#fff;--tip-soft:#ffe2d3;--hot:#ff6a2b;
+  --f-display:"Space Grotesk",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;--f-body:"Space Grotesk",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+body{background:var(--paper)!important;background-image:none!important;font-family:var(--f-body)}
+.wrap{max-width:1240px;padding-top:18px}
+.uhead{align-items:flex-end;gap:14px;margin-bottom:16px}
+.uhead .uid{display:flex;align-items:flex-end;gap:16px;min-width:0}
+.uhead .big{font-weight:700;font-size:clamp(64px,10vw,104px);line-height:.8;letter-spacing:-.04em;font-family:var(--f-display)}
+.uhead .mono{font:700 .8rem var(--f-mono);color:var(--ink)}
+.uhead h1{font-weight:700;font-size:clamp(28px,4vw,40px);line-height:1;letter-spacing:-.02em}
+.uhead a.cta{display:inline-block;font-weight:700;text-decoration:none;color:var(--ink);padding:11px 16px;border:3px solid var(--ink);background:var(--hot);box-shadow:4px 4px 0 var(--ink)}
+.tabs{gap:8px;margin-bottom:16px;padding:0 6px 8px 0}
+.tab{border:2px solid var(--ink);border-radius:0;font-weight:700;font-size:15px;padding:10px 14px;background:#fff}
+.tab b{font:700 12px var(--f-mono);color:inherit;margin-right:7px}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--paper);box-shadow:4px 4px 0 var(--hot)}
+.tab[aria-selected="true"] b{color:inherit}
+.tab:hover:not([aria-selected="true"]){background:var(--accent-soft)}
+.tab:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--hot)!important;outline-offset:3px}
+.panel{gap:18px;align-items:start}
+.card{border:3px solid var(--ink);border-radius:0;box-shadow:6px 6px 0 var(--ink)}
+.card.try,aside.try{background:var(--accent-soft);box-shadow:none}
+.try h3{font:700 26px var(--f-display);letter-spacing:-.01em;margin:0 0 10px}
+.try ol{font-size:15.5px;gap:10px;line-height:1.42}
+.try .link{border-top:2px solid var(--ink);color:var(--ink);padding-top:12px;margin-top:16px}
+.chip{border:2px solid var(--ink);border-radius:0;font-weight:700;background:#fff}
+.chip[aria-pressed="true"]{background:var(--hot);color:var(--ink);border-color:var(--ink)}
+.btn{border-radius:0;border:2px solid var(--ink);background:var(--ink);color:#fff}
+.btn.ghost{background:#fff;color:var(--ink);border:2px solid var(--ink)}
+.btn:hover{filter:none;background:#333}.btn.ghost:hover{background:var(--accent-soft)}
+canvas{border-radius:0;border:2px solid var(--ink)}
+.bars{border:2px solid var(--ink);border-radius:0}
+.bars canvas{border:none}
+.bars h3{font:700 .85rem var(--f-display);color:var(--ink)}
+select{border:2px solid var(--ink);border-radius:0}
+.msg{border-radius:0;border:2px solid var(--ink);background:var(--accent-soft)}
+.phet{border-radius:0}
+input[type=range],input[type=checkbox]{accent-color:var(--ink)}
+</style>
+
+<div class="wrap">
+  <div class="uhead"><div class="uid"><div class="big" aria-hidden="true">07</div><div><div class="mono">AP Physics 1 · P1-07</div><h1>Impulse and Momentum</h1></div></div><a href="#" onclick="return false" class="cta">Practice this unit →</a></div>
+  <div class="tabs" role="tablist" aria-label="Sims">
+    <button class="tab" role="tab" aria-selected="false" data-t="crash"><b>07-1</b>Crash Test</button>
+    <button class="tab" role="tab" aria-selected="true" data-t="carts"><b>07-2</b>Collision Carts</button>
+    <button class="tab" role="tab" aria-selected="false" data-t="real"><b>07-2</b>Really Elastic?</button>
+    <button class="tab" role="tab" aria-selected="false" data-t="ballistic"><b>07-2</b>Ballistic Pendulum</button>
+    <button class="tab" role="tab" aria-selected="false" data-t="hockey"><b>07-4</b>Air Hockey (2D)</button>
+    <button class="tab" role="tab" aria-selected="false" data-t="sling"><b>Extra</b>Slingshots</button>
+    <button class="tab" role="tab" aria-selected="false" data-t="phet"><b>PhET</b>Collision Lab</button>
+  </div>
+
+  <!-- COLLISION CARTS -->
+  <section id="p-carts" class="panel">
+    <div class="card">
+      <div class="scen" role="group" aria-label="Presets" id="cpre"></div>
+      <canvas id="ccv" width="900" height="230" aria-label="Two carts on a track"></canvas>
+      <div class="controls" id="cctl"></div>
+      <div class="row">
+        <div class="btns"><button class="btn" id="cgo">Run</button><button class="btn ghost" id="creset">Reset</button><button class="btn ghost" id="cslow">Slow motion: off</button></div>
+        <label class="mono" for="bump">Bumpers <select id="bump">
+          <option value="magnet">Magnets (never touch)</option><option value="steel">Steel spring bumpers</option><option value="rubber">Rubber bumpers</option><option value="clay">Clay (they stick)</option><option value="explode">Spring explosion (start together)</option></select></label>
+      </div>
+      <div class="stage" style="margin-top:12px;grid-template-columns:repeat(2,minmax(0,1fr))">
+        <div class="bars"><h3>Momentum (+ to the right)</h3><canvas id="cpbar" width="420" height="220" aria-label="Momentum bars"></canvas></div>
+        <div class="bars"><h3>Kinetic energy</h3><canvas id="cebar" width="420" height="220" aria-label="Energy bars"></canvas></div>
+        <div class="bars"><h3>Velocity vs time</h3><canvas id="cvt" width="420" height="220" aria-label="Velocity time graph"></canvas></div>
+        <div class="bars"><h3>Force on cart B vs time</h3><canvas id="cft" width="420" height="220" aria-label="Force time graph"></canvas></div>
+      </div>
+      <div class="readout" id="cro" style="margin-top:10px"></div>
+      <div class="msg" id="cmsg" hidden></div>
+    </div>
+    <aside class="card try"><h3>Try this</h3><ol id="ctasks"></ol><a class="link" href="#" onclick="return false">Practice P1-07 questions →</a></aside>
+  </section>
+
+  <!-- REALLY ELASTIC? -->
+  <section id="p-real" class="panel" hidden>
+    <div class="card">
+      <div class="scen" role="group" aria-label="Mode"><button class="chip" data-rm="bounce" aria-pressed="true">Bounce test</button><button class="chip" data-rm="cradle" aria-pressed="false">Newton’s cradle</button><button class="chip" data-rm="gas" aria-pressed="false">Gas molecules</button></div>
+      <canvas id="rcv" width="900" height="380" aria-label="Elastic collisions in real life"></canvas>
+      <div class="controls" id="rctl"></div>
+      <div class="row"><div class="btns"><button class="btn" id="rgo">Start</button><button class="btn ghost" id="rreset">Reset</button></div></div>
+      <div class="readout" id="rro" style="margin-top:10px"></div>
+      <div class="msg" id="rnote"></div>
+    </div>
+    <aside class="card try"><h3>Try this</h3><ol id="rtasks"></ol><a class="link" href="#" onclick="return false">Practice P1-07 questions →</a></aside>
+  </section>
+
+  <!-- CRASH TEST -->
+  <section id="p-crash" class="panel" hidden>
+    <div class="card">
+      <div class="scen" role="group" aria-label="Front of the car"><button class="chip" data-kf="rigid" aria-pressed="true">Rigid steel frame</button><button class="chip" data-kf="crumple" aria-pressed="false">Crumple zone</button><button class="chip" data-kf="barrels" aria-pressed="false">Water-filled barrels</button></div>
+      <canvas id="kcv" width="900" height="240" aria-label="Car hitting a barrier"></canvas>
+      <div class="controls" id="kctl"></div>
+      <div class="row"><div class="btns"><button class="btn" id="kgo">Crash</button><button class="btn ghost" id="kreset">Reset</button><button class="btn ghost" id="kclear">Clear saved runs</button></div>
+        <label class="mono" for="kafter">After impact <select id="kafter"><option value="stick">Car stops dead</option><option value="bounce">Car bounces back</option></select></label></div>
+      <div class="stage" style="margin-top:12px;grid-template-columns:repeat(2,minmax(0,1fr))">
+        <div class="bars"><h3>Force on the car vs time (t = 0 at impact)</h3><canvas id="kft" width="420" height="240" aria-label="Force time graph"></canvas></div>
+        <div class="bars"><h3>Velocity of the car vs time</h3><canvas id="kvt" width="420" height="240" aria-label="Velocity time graph"></canvas></div>
+      </div>
+      <div id="ktable" style="margin-top:10px;overflow-x:auto"></div>
+      <div class="msg" id="kmsg" hidden></div>
+    </div>
+    <aside class="card try"><h3>Try this</h3><ol id="ktasks"></ol><a class="link" href="#" onclick="return false">Practice P1-07 questions →</a></aside>
+  </section>
+
+  <!-- BALLISTIC PENDULUM -->
+  <section id="p-ballistic" class="panel" hidden>
+    <div class="card">
+      <div class="scen" role="group" aria-label="Bullet"><button class="chip" data-bm="stick" aria-pressed="true">Bullet sticks</button><button class="chip" data-bm="through" aria-pressed="false">Bullet passes through</button><button class="chip" data-bm="bounce" aria-pressed="false">Rubber bullet bounces off</button></div>
+      <div class="stage">
+        <canvas id="bcv" width="820" height="400" aria-label="Ballistic pendulum"></canvas>
+        <div class="bars"><h3>Two stages</h3><canvas id="bbars" width="220" height="400" aria-label="Momentum and energy bars"></canvas></div>
+      </div>
+      <div class="controls" id="bctl"></div>
+      <div class="row"><div class="btns"><button class="btn" id="bgo">Fire</button><button class="btn ghost" id="breset">Reset</button><button class="btn ghost" id="bmyst">Mystery bullet</button></div>
+        <span id="bansBox" hidden><label class="mono" for="bans">Your bullet speed </label><input id="bans" type="number" min="0" step="1" style="width:90px;font:inherit;padding:5px 8px;border:1px solid var(--rule);border-radius:8px"> <span class="mono">m/s</span> <button class="btn ghost" id="bcheck">Check</button></span></div>
+      <div class="readout" id="bro" style="margin-top:10px"></div>
+      <div class="msg" id="bmsg" hidden></div>
+    </div>
+    <aside class="card try"><h3>Try this</h3><ol id="btasks"></ol><a class="link" href="#" onclick="return false">Practice P1-07 questions →</a></aside>
+  </section>
+
+  <!-- AIR HOCKEY 2D -->
+  <section id="p-hockey" class="panel" hidden>
+    <div class="card">
+      <div class="scen" role="group" aria-label="Presets" id="hpre"></div>
+      <div class="stage">
+        <canvas id="hcv" width="820" height="440" aria-label="Air hockey table"></canvas>
+        <div class="bars"><h3>Momentum vectors, tip to tail</h3><canvas id="hvec" width="220" height="420" aria-label="Momentum vector diagram"></canvas></div>
+      </div>
+      <div class="controls" id="hctl"></div>
+      <div class="row"><div class="btns"><button class="btn" id="hgo">Go</button><button class="btn ghost" id="hreset">Reset</button></div>
+        <label class="mono" for="hbs">Puck B starts <select id="hbs"><option value="rest">at rest</option><option value="up">moving up the table</option></select></label>
+        <label class="mono" for="hstick"><input type="checkbox" id="hstick"> Velcro pucks (stick)</label></div>
+      <div class="readout" id="hro" style="margin-top:10px"></div>
+      <div class="msg" id="hmsg" hidden></div>
+    </div>
+    <aside class="card try"><h3>Try this</h3><ol id="htasks"></ol><a class="link" href="#" onclick="return false">Practice P1-07 questions →</a></aside>
+  </section>
+
+  <!-- EXTRA: SLINGSHOTS -->
+  <section id="p-sling" class="panel" hidden>
+    <div class="card">
+      <div class="scen" role="group" aria-label="Mode"><button class="chip" data-xm="stack" aria-pressed="true">Ball stack</button><button class="chip" data-xm="assist" aria-pressed="false">Gravity assist</button></div>
+      <canvas id="xcv" width="900" height="420" aria-label="Slingshot effects"></canvas>
+      <div class="controls" id="xctl"></div>
+      <div class="row"><div class="btns"><button class="btn" id="xgo">Drop</button><button class="btn ghost" id="xreset">Reset</button></div></div>
+      <div class="readout" id="xro" style="margin-top:10px"></div>
+      <div class="msg" id="xnote"></div>
+    </div>
+    <aside class="card try"><h3>Try this</h3><ol id="xtasks"></ol><a class="link" href="#" onclick="return false">Practice P1-07 questions →</a></aside>
+  </section>
+
+  <section id="p-phet" class="panel" hidden>
+    <div class="card"><div class="row" style="margin:0 0 10px"><span class="mono">PhET Collision Lab</span><a id="phetOpen" class="mono" target="_blank" rel="noopener" href="https://phet.colorado.edu/sims/html/collision-lab/latest/collision-lab_all.html">Open in a new tab ↗</a></div><div id="phetBox"></div></div>
+    <aside class="card try"><h3>Try this</h3><ol>
+      <li><b>Explore 1D:</b> set elasticity to 100 %. Make a heavy ball hit a light one at rest. Which ball moves faster afterwards?</li>
+      <li><b>Explore 1D:</b> set elasticity to 0 %. Turn on kinetic energy. What fraction is lost when equal masses stick?</li>
+      <li><b>Explore 2D:</b> turn on the momentum vectors and the total. Make a glancing collision. Is the total momentum vector the same before and after?</li>
+      <li><b>Explore 2D:</b> equal masses, elasticity 100 %, one ball at rest. What angle do the paths make afterwards?</li></ol>
+      <p class="sysnote">PhET Interactive Simulations, University of Colorado Boulder, CC-BY 4.0.</p></aside>
+  </section>
+</div>
+<script>
+/* ---------- tabs ---------- */
+const $=id=>document.getElementById(id);
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected',String(x===t)));
+  document.querySelectorAll('section.panel').forEach(p=>p.hidden=(p.id!=='p-'+t.dataset.t));
+  if(t.dataset.t==='phet') window.loadPhet&&window.loadPhet();
+});
+
+/* ---------- shared helpers ---------- */
+const COL=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function sliders(box,defs,state,onchange){
+  box.innerHTML='';
+  for(const [k,d] of Object.entries(defs)){
+    const lab=document.createElement('label'); lab.htmlFor=box.id+'-'+k;
+    lab.innerHTML=`${d.label} <output>${d.fmt(state[k])}</output><input id="${box.id}-${k}" type="range" min="${d.min}" max="${d.max}" step="${d.step}" value="${state[k]}">`;
+    const out=lab.querySelector('output');
+    lab.querySelector('input').oninput=e=>{state[k]=+e.target.value; out.textContent=d.fmt(state[k]); onchange(k);};
+    box.appendChild(lab);
+  }
+}
+function chipGroup(attr,cb){ const chips=[...document.querySelectorAll(`[data-${attr}]`)];
+  chips.forEach(c=>c.onclick=()=>{ chips.forEach(x=>x.setAttribute('aria-pressed',String(x===c))); cb(c.dataset[attr]); }); }
+function arrowAt(c,x1,y1,x2,y2,col,label,lw=3){ const L=Math.hypot(x2-x1,y2-y1); if(L<3) return; c.strokeStyle=col; c.fillStyle=col; c.lineWidth=lw;
+  c.beginPath(); c.moveTo(x1,y1); c.lineTo(x2,y2); c.stroke(); const a=Math.atan2(y2-y1,x2-x1);
+  c.beginPath(); c.moveTo(x2+Math.cos(a)*9,y2+Math.sin(a)*9); c.lineTo(x2+Math.cos(a+2.5)*9,y2+Math.sin(a+2.5)*9); c.lineTo(x2+Math.cos(a-2.5)*9,y2+Math.sin(a-2.5)*9); c.fill();
+  if(label){ c.font='600 14px "IBM Plex Mono",monospace'; c.textAlign=x2<x1?'right':'left'; c.fillText(label,x2+(x2<x1?-8:8),y2-8); c.textAlign='left'; } }
+const raf=(fn)=>{ let last=0, on=true; const loop=ts=>{ if(!on) return; const dt=Math.min(0.05,(ts-(last||ts))/1000); last=ts; if(fn(dt)!==false) requestAnimationFrame(loop); else on=false; }; requestAnimationFrame(loop); return ()=>{on=false;}; };
+const f2=v=>(Math.abs(v)<0.005?0:v).toFixed(2);
+/* Bar chart with optional dashed "before" outlines. items: {lab,v,col,ghost,faint} */
+function bars(cv,items,{max=1,signed=false,unit='J'}={}){
+  const c=cv.getContext('2d'),W=cv.width,H=cv.height; c.clearRect(0,0,W,H);
+  const top=16,bottom=H-42, base=signed?(top+bottom)/2:bottom, span=signed?(bottom-top)/2:bottom-top;
+  const m=Math.max(max,...items.map(i=>Math.abs(i.v)),...items.map(i=>Math.abs(i.ghost||0)))*1.08||1;
+  const n=items.length, slot=(W-16)/n, bw=Math.min(52,slot-16);
+  c.strokeStyle='#17202a'; c.lineWidth=1; c.beginPath(); c.moveTo(4,base); c.lineTo(W-4,base); c.stroke();
+  items.forEach((it,i)=>{ const x=8+i*slot+(slot-bw)/2, h=it.v/m*span;
+    c.fillStyle=it.col; c.globalAlpha=it.faint?0.45:1; if(h>=0) c.fillRect(x,base-h,bw,h); else c.fillRect(x,base,bw,-h); c.globalAlpha=1;
+    if(it.ghost!=null){ const gh=it.ghost/m*span; c.setLineDash([5,4]); c.strokeStyle='#17202a'; c.lineWidth=1.6; c.strokeRect(x-4,gh>=0?base-gh:base,bw+8,Math.max(1,Math.abs(gh))); c.setLineDash([]); }
+    c.fillStyle='#17202a'; c.textAlign='center'; c.font='700 13px "Atkinson Hyperlegible",sans-serif'; c.fillText(it.lab,x+bw/2,H-24);
+    c.font='500 12px "IBM Plex Mono",monospace'; c.fillStyle='#566271'; c.fillText(f2(it.v)+' '+unit,x+bw/2,H-8); });
+  if(items.some(i=>i.ghost!=null)){ c.font='500 11px "IBM Plex Mono",monospace'; c.fillStyle='#566271'; c.textAlign='right'; c.fillText('- - - before',W-6,12); }
+  c.textAlign='left';
+}
+function axes(c,W,H,L,B,xl,yl){ c.clearRect(0,0,W,H); c.strokeStyle='#17202a'; c.lineWidth=1; c.beginPath(); c.moveTo(L,8); c.lineTo(L,H-B); c.lineTo(W-6,H-B); c.stroke();
+  c.fillStyle='#566271'; c.font='500 11px "IBM Plex Mono",monospace'; c.textAlign='right'; c.fillText(xl,W-6,H-6); c.textAlign='left'; c.fillText(yl,L+4,16); }
+
+/* ================= 07-2 COLLISION CARTS ================= */
+(()=>{
+  const cv=$('ccv'), c=cv.getContext('2d');
+  const CA='#1d5fa8', CB='#0f766e', HW=0.15, TRACK=3.4, AMAG=0.002, DT=2e-5;
+  const BUMP={
+    magnet:{b:0},
+    steel:{k:20000,e:0.95,b:0.04},
+    rubber:{k:5000,e:0.55,b:0.04},
+    clay:{k:4000,e:0.3,b:0.04,stick:true},
+    explode:{k:3000,e:1,b:0.05}
+  };
+  const S={mA:1,mB:1,vA:1,vB:0,E:2};
+  let type='steel', st=null, stop=null, running=false, slow=false;
+  const PRE=[
+    {name:'Equal masses, B at rest',mA:1,mB:1,vA:1,vB:0,type:'steel'},
+    {name:'Heavy hits light',mA:3,mB:1,vA:1,vB:0,type:'steel'},
+    {name:'Light hits heavy',mA:1,mB:3,vA:1.2,vB:0,type:'steel'},
+    {name:'Head-on',mA:1,mB:1,vA:1,vB:-1,type:'rubber'},
+    {name:'Stick together',mA:1,mB:1,vA:1.2,vB:0,type:'clay'},
+    {name:'Magnets',mA:2,mB:1,vA:1,vB:-0.5,type:'magnet'},
+    {name:'Explosion',mA:1,mB:3,E:3,type:'explode'}];
+  $('cpre').innerHTML=PRE.map((p,i)=>`<button class="chip" data-cp="${i}" aria-pressed="${i===0}">${p.name}</button>`).join('');
+  chipGroup('cp',i=>{ const p=PRE[+i]; Object.assign(S,p); type=p.type; $('bump').value=type; build(); });
+  $('bump').value=type;
+  $('bump').onchange=e=>{ type=e.target.value; document.querySelectorAll('[data-cp]').forEach(x=>x.setAttribute('aria-pressed','false')); build(); };
+  const fm=v=>v.toFixed(1)+' kg', fv=v=>(v>0?'+':'')+v.toFixed(1)+' m/s';
+  function build(){
+    const defs= type==='explode'
+      ? {mA:{label:'Mass of A',min:.5,max:4,step:.5,fmt:fm},mB:{label:'Mass of B',min:.5,max:4,step:.5,fmt:fm},E:{label:'Energy stored in the spring',min:.5,max:8,step:.5,fmt:v=>v.toFixed(1)+' J'}}
+      : {mA:{label:'Mass of A',min:.5,max:4,step:.5,fmt:fm},mB:{label:'Mass of B',min:.5,max:4,step:.5,fmt:fm},vA:{label:'Starting velocity of A',min:-2,max:2,step:.1,fmt:fv},vB:{label:'Starting velocity of B',min:-2,max:2,step:.1,fmt:fv}};
+    sliders($('cctl'),defs,S,()=>init()); init();
+  }
+  const mu=()=>S.mA*S.mB/(S.mA+S.mB);
+  const gap=()=>{ const b=BUMP[type].b; return (st.xB-HW-b)-(st.xA+HW+b); };
+  function init(){
+    stop&&stop(); stop=null; running=false; $('cgo').textContent='Run'; $('cmsg').hidden=true;
+    const B=BUMP[type], b=B.b; let xA=0.8,xB=2.6,vA=S.vA,vB=S.vB,U0=0;
+    if(type==='explode'){ const s=Math.sqrt(2*S.E/B.k), mid=TRACK/2; xA=mid-HW-b+s/2; xB=mid+HW+b-s/2; vA=vB=0; U0=S.E; }
+    st={xA,xB,vA,vB,t:0,J:0,F:0,U:U0,Fpk:0,locked:false,ended:null,fStart:null,hist:{t:[],a:[],b:[],f:[]},n:0,closest:null,prevRel:vA-vB};
+    st.vA0=vA; st.vB0=vB; st.K0=0.5*S.mA*vA*vA+0.5*S.mB*vB*vB; st.E0=st.K0+U0;
+    st.pmax=Math.max(Math.abs(S.mA*vA),Math.abs(S.mB*vB),Math.abs(S.mA*vA+S.mB*vB), type==='explode'?Math.sqrt(2*S.E*mu()):0, 0.5);
+    st.vmax=Math.max(Math.abs(vA),Math.abs(vB),0.5);
+    forceU(); rec(); draw();
+  }
+  function forceU(){
+    const B=BUMP[type]; let F=0,U=0;
+    if(st.locked){ st.F=0; st.U=0; return; }
+    const g=gap();
+    if(type==='magnet'){ const gg=Math.max(g,0.002); F=3*AMAG/gg**4; U=AMAG/gg**3; if(g<0.01){ F+=2e5*(0.01-g); U+=1e5*(0.01-g)**2; } }
+    else if(g<0){ const d=-g, k=B.k, le=Math.log(Math.max(B.e,1e-6)), z=B.e>=1?0:-le/Math.sqrt(Math.PI**2+le*le);
+      F=Math.max(0,k*d+2*z*Math.sqrt(k*mu())*(st.vA-st.vB)); U=0.5*k*d*d; }
+    st.F=F; st.U=U;
+  }
+  function step(){
+    const B=BUMP[type];
+    forceU(); const F=st.F;
+    if(!st.locked){ st.vA-=F/S.mA*DT; st.vB+=F/S.mB*DT; }
+    st.xA+=st.vA*DT; st.xB+=st.vB*DT; st.J+=F*DT; st.t+=DT;
+    if(F>st.Fpk) st.Fpk=F;
+    if(F>0.05 && st.fStart==null) st.fStart=st.t;
+    const rel=st.vA-st.vB;
+    if(st.fStart!=null && st.closest==null && st.prevRel>0 && rel<=0){ st.closest={v:st.vA,K:0.5*S.mA*st.vA**2+0.5*S.mB*st.vB**2,U:st.U}; }
+    st.prevRel=rel;
+    if(B.stick && !st.locked && gap()<0 && rel<=0){ const v=(S.mA*st.vA+S.mB*st.vB)/(S.mA+S.mB); st.vA=st.vB=v; st.locked=true; st.U=0; st.F=0; }
+    if(st.fStart!=null && st.ended==null && (st.locked || (st.F<Math.max(0.01*st.Fpk,0.02) && rel<0))) st.ended=st.t;
+    if(++st.n%5===0) rec();
+  }
+  function rec(){ const h=st.hist; h.t.push(st.t); h.a.push(st.vA); h.b.push(st.vB); h.f.push(st.F); }
+  function done(reason){
+    running=false; stop=null; $('cgo').textContent='Run';
+    const K=0.5*S.mA*st.vA**2+0.5*S.mB*st.vB**2, m=$('cmsg'); m.hidden=false;
+    if(st.fStart==null){ m.innerHTML= reason==='edge'? 'A cart reached the end of the track before they met.' : 'The carts never met. Is one cart chasing the other one that is faster?'; return; }
+    const kept=st.K0>0?K/st.K0*100:0, e=(st.vB-st.vA)/(st.vA0-st.vB0);
+    if(type==='explode') m.innerHTML=`<b>Explosion.</b> Total momentum was 0 and is still ${f2(S.mA*st.vA+S.mB*st.vB)} kg·m/s. The ${f2(K)} J of kinetic energy came from the spring. The lighter cart got more of the KE, but both carts got the same size of momentum.`;
+    else if(st.locked) m.innerHTML=`<b>Perfectly inelastic: they stuck together.</b> Momentum is unchanged, but only ${kept.toFixed(0)} % of the kinetic energy is left. The rest went into squashing the clay (thermal energy and sound). This is the most KE a collision can lose while still conserving momentum.`;
+    else if(kept>98.5) m.innerHTML=`<b>Elastic: ${kept.toFixed(1)} % of the KE is back.</b> ${type==='magnet'?'The carts never touched. The magnetic force is conservative, so the KE stored as magnetic potential energy all came back. Magnets are as close as big objects get to a truly elastic collision.':'Steel springs are close to elastic but not perfect.'} e = ${e.toFixed(2)}.`;
+    else m.innerHTML=`<b>Inelastic: ${kept.toFixed(0)} % of the KE is left.</b> Momentum is still conserved. The bumpers got warm and made a sound. Coefficient of restitution e = (relative speed after)/(relative speed before) = ${e.toFixed(2)}.`;
+  }
+  function frame(fdt){
+    const adv=fdt*(slow?0.08:1), n=Math.ceil(adv/DT);
+    for(let i=0;i<n;i++){ step();
+      if(st.xA-HW<0.02||st.xB+HW>TRACK-0.02||st.xB-HW<0.02||st.xA+HW>TRACK-0.02){ draw(); done('edge'); return false; } }
+    st.vmax=Math.max(st.vmax,Math.abs(st.vA),Math.abs(st.vB));
+    draw();
+    if((st.ended!=null && st.t>st.ended+1.0) || st.t>8){ done('time'); return false; }
+  }
+  $('cgo').onclick=()=>{ if(running){ stop&&stop(); stop=null; running=false; $('cgo').textContent='Run'; return; }
+    if(st.t>0 && !running && ($('cmsg').hidden===false)) init();
+    running=true; $('cgo').textContent='Pause'; stop=raf(frame); };
+  $('creset').onclick=init;
+  $('cslow').onclick=()=>{ slow=!slow; $('cslow').textContent='Slow motion: '+(slow?'on':'off'); };
+
+  const PX=x=>25+x*250, Y0=172;
+  function zig(x1,x2,y,amp,coils,col){ c.strokeStyle=col; c.lineWidth=2.5; c.beginPath(); c.moveTo(x1,y); const n=coils*2;
+    for(let i=1;i<n;i++) c.lineTo(x1+(x2-x1)*i/n, y+(i%2?-amp:amp)); c.lineTo(x2,y); c.stroke(); }
+  function cart(x,m,col,name,dir,b,squash){
+    const h=34+m*7, l=PX(x-HW), r=PX(x+HW), top=Y0-12-h;
+    c.fillStyle=col; c.globalAlpha=.9; c.beginPath(); c.roundRect(l,top,r-l,h,6); c.fill(); c.globalAlpha=1;
+    c.fillStyle='#17202a'; [l+16,r-16].forEach(w=>{ c.beginPath(); c.arc(w,Y0-7,7,0,7); c.fill(); });
+    c.fillStyle='#fff'; c.font='700 15px "Atkinson Hyperlegible",sans-serif'; c.textAlign='center'; c.fillText(name,(l+r)/2,top+20);
+    c.font='500 12px "IBM Plex Mono",monospace'; c.fillText(m.toFixed(1)+' kg',(l+r)/2,top+36); c.textAlign='left';
+    const face= dir>0? r : l, yb=Y0-12-Math.min(h,40)/2-8;
+    const len=Math.max(0.004,b-squash)*250*dir;
+    if(type==='steel'){ zig(face,face+len,yb,6,4,'#6b7280'); c.fillStyle='#374151'; c.fillRect(face+len-(dir>0?0:4),yb-12,4,24); }
+    else if(type==='rubber'){ c.fillStyle='#1f2937'; c.beginPath(); c.roundRect(Math.min(face,face+len),yb-11,Math.abs(len),22,6); c.fill(); }
+    else if(type==='clay'){ c.fillStyle='#9a6a3a'; c.beginPath(); c.ellipse(face+len/2,yb,Math.abs(len)/2+2,13+squash*120,0,0,7); c.fill(); }
+    else if(type==='magnet'){ c.fillStyle='#b42318'; c.fillRect(dir>0?face-12:face,yb-13,12,26); c.fillStyle='#fff'; c.font='700 11px "IBM Plex Mono",monospace'; c.fillText('N',dir>0?face-9:face+3,yb+4); }
+  }
+  function draw(){
+    const W=cv.width,H=cv.height; c.clearRect(0,0,W,H);
+    c.fillStyle='#17202a'; c.fillRect(PX(0),Y0,PX(TRACK)-PX(0),4); c.fillRect(PX(0)-6,Y0-20,6,24); c.fillRect(PX(TRACK),Y0-20,6,24);
+    c.font='500 11px "IBM Plex Mono",monospace'; c.fillStyle='#8a96a3'; for(let m=0;m<=3;m++){ c.fillRect(PX(m),Y0+4,1,6); c.fillText(m+' m',PX(m)+3,Y0+16); }
+    const B=BUMP[type], g=gap(), sq= type!=='magnet' && g<0 ? -g/2 : 0;
+    if(type==='explode' && g<0){ zig(PX(st.xA+HW),PX(st.xB-HW),Y0-40,9,7,COL('--eUs')); }
+    cart(st.xA,S.mA,CA,'A',1,type==='explode'?0:B.b,sq); cart(st.xB,S.mB,CB,'B',-1,type==='explode'?0:B.b,sq);
+    const yA=Y0-12-(34+S.mA*7)-22, yB=Y0-12-(34+S.mB*7)-22;
+    arrowAt(c,PX(st.xA),yA,PX(st.xA)+st.vA*70,yA,CA,(Math.abs(st.vA)>0.02?f2(st.vA)+' m/s':''));
+    arrowAt(c,PX(st.xB),yB,PX(st.xB)+st.vB*70,yB,CB,(Math.abs(st.vB)>0.02?f2(st.vB)+' m/s':''));
+    if(Math.abs(st.vA)<=0.02){ c.fillStyle=CA; c.font='600 13px "IBM Plex Mono",monospace'; c.fillText('at rest',PX(st.xA)-24,yA); }
+    if(Math.abs(st.vB)<=0.02){ c.fillStyle=CB; c.font='600 13px "IBM Plex Mono",monospace'; c.fillText('at rest',PX(st.xB)-24,yB); }
+    const M=S.mA+S.mB, xc=(S.mA*st.xA+S.mB*st.xB)/M, vc=(S.mA*st.vA+S.mB*st.vB)/M;
+    c.fillStyle='#17202a'; c.beginPath(); c.moveTo(PX(xc),Y0+22); c.lineTo(PX(xc)-8,Y0+36); c.lineTo(PX(xc)+8,Y0+36); c.fill();
+    c.font='600 12px "IBM Plex Mono",monospace'; c.textAlign='center'; c.fillText('center of mass  v = '+f2(vc)+' m/s',PX(xc),Y0+52); c.textAlign='left';
+    c.fillStyle='#566271'; c.font='500 13px "IBM Plex Mono",monospace'; c.fillText('t = '+st.t.toFixed(3)+' s'+(slow?'   (slow motion)':''),12,20);
+    if(st.F>0.05 && !st.locked){ c.fillStyle='#b42318'; c.font='700 13px "IBM Plex Mono",monospace'; c.fillText(Math.abs(st.vA-st.vB)<0.06?'same velocity: closest approach':'interacting',12,40); }
+    // bars
+    const pA=S.mA*st.vA, pB=S.mB*st.vB, KA=0.5*S.mA*st.vA**2, KB=0.5*S.mB*st.vB**2, Th=Math.max(0,st.E0-KA-KB-st.U);
+    bars($('cpbar'),[{lab:'p A',v:pA,col:CA,ghost:S.mA*st.vA0},{lab:'p B',v:pB,col:CB,ghost:S.mB*st.vB0},{lab:'Total',v:pA+pB,col:'#17202a',faint:true,ghost:S.mA*st.vA0+S.mB*st.vB0}],{max:st.pmax,signed:true,unit:'kg·m/s'});
+    bars($('cebar'),[{lab:'K A',v:KA,col:CA},{lab:'K B',v:KB,col:CB},{lab:type==='magnet'?'U mag':'U spring',v:st.U,col:COL('--eUs')},{lab:'Thermal',v:Th,col:COL('--eTh')},{lab:'Total',v:KA+KB+st.U+Th,col:'#17202a',faint:true}],{max:st.E0,unit:'J'});
+    vt(); ft();
+    const kept= st.K0>0 && type!=='explode' ? (KA+KB)/st.K0*100 : null;
+    $('cro').innerHTML=`<div><span>Σp before</span> ${f2(S.mA*st.vA0+S.mB*st.vB0)}</div><div><span>Σp now</span> ${f2(pA+pB)} kg·m/s</div>`+
+      `<div><span>KE now</span> ${f2(KA+KB)} J${kept!=null?` (${kept.toFixed(1)} % of start)`:''}</div>`+
+      (st.closest?`<div><span>at closest approach</span> v<sub>A</sub> = v<sub>B</sub> = ${f2(st.closest.v)} m/s, KE ${f2(st.closest.K)} J</div>`:'')+
+      (st.fStart!=null?`<div><span>impulse on B</span> ${f2(st.J)} N·s</div><div><span>Δp of B</span> ${f2(pB-S.mB*st.vB0)} kg·m/s</div>`:'');
+  }
+  function vt(){
+    const cv2=$('cvt'), g=cv2.getContext('2d'), W=cv2.width, H=cv2.height, L=40, Bm=26; axes(g,W,H,L,Bm,'t (s)','v (m/s)');
+    const h=st.hist, T=Math.max(2,st.t), vm=st.vmax*1.15, X=t=>L+(W-L-8)*t/T, Y=v=>8+(H-Bm-8)*(1-(v+vm)/(2*vm));
+    g.strokeStyle='#c9d2dc'; g.beginPath(); g.moveTo(L,Y(0)); g.lineTo(W-6,Y(0)); g.stroke();
+    g.fillStyle='#566271'; g.font='500 11px "IBM Plex Mono",monospace'; g.textAlign='right'; g.fillText(vm.toFixed(1),L-4,Y(vm)+10); g.fillText('0',L-4,Y(0)+4); g.fillText((-vm).toFixed(1),L-4,Y(-vm)); g.textAlign='left';
+    const step=Math.max(1,Math.floor(h.t.length/700)); const M=S.mA+S.mB;
+    [[h.a,CA,[]],[h.b,CB,[]],[null,'#6b7280',[5,4]]].forEach(([arr,col,dash])=>{ g.strokeStyle=col; g.lineWidth=2.2; g.setLineDash(dash); g.beginPath();
+      for(let i=0;i<h.t.length;i+=step){ const v=arr?arr[i]:(S.mA*h.a[i]+S.mB*h.b[i])/M; i?g.lineTo(X(h.t[i]),Y(v)):g.moveTo(X(h.t[i]),Y(v)); }
+      const j=h.t.length-1; if(j>=0){ const v=arr?arr[j]:(S.mA*h.a[j]+S.mB*h.b[j])/M; g.lineTo(X(h.t[j]),Y(v)); } g.stroke(); g.setLineDash([]); });
+    g.font='600 12px "IBM Plex Mono",monospace'; g.fillStyle=CA; g.fillText('A',W-70,H-Bm-8); g.fillStyle=CB; g.fillText('B',W-52,H-Bm-8); g.fillStyle='#6b7280'; g.fillText('CM',W-34,H-Bm-8);
+  }
+  function ft(){
+    const cv2=$('cft'), g=cv2.getContext('2d'), W=cv2.width, H=cv2.height, L=46, Bm=26; const h=st.hist;
+    if(st.Fpk<0.05){ g.clearRect(0,0,W,H); g.fillStyle='#566271'; g.font='15px "Atkinson Hyperlegible",sans-serif'; g.textAlign='center'; g.fillText('The force shows up here during the collision.',W/2,H/2); g.textAlign='left'; return; }
+    let i1=-1,i2=-1; const thr=0.01*st.Fpk; for(let i=0;i<h.f.length;i++){ if(h.f[i]>thr){ if(i1<0) i1=i; i2=i; } }
+    if(i1<0){ i1=0; i2=h.f.length-1; }
+    let t1=h.t[i1], t2=Math.max(h.t[i2],t1+1e-3); const pad=(t2-t1)*0.3; t1-=pad; t2+=pad; const ms=(t2-t1)<0.5;
+    axes(g,W,H,L,Bm,ms?'t (ms)':'t (s)','F on B (N)');
+    const Fm=st.Fpk*1.35, X=t=>L+(W-L-8)*(t-t1)/(t2-t1), Y=f=>H-Bm-(H-Bm-10)*f/Fm;
+    g.beginPath(); g.moveTo(X(Math.max(t1,h.t[0])),Y(0)); let any=false;
+    for(let i=0;i<h.t.length;i++){ if(h.t[i]<t1||h.t[i]>t2) continue; g.lineTo(X(h.t[i]),Y(h.f[i])); any=true; }
+    if(any){ g.lineTo(X(Math.min(t2,h.t[h.t.length-1])),Y(0)); g.closePath(); g.fillStyle='rgba(15,118,110,.22)'; g.fill(); }
+    g.strokeStyle=CB; g.lineWidth=2; g.beginPath(); let first=true; for(let i=0;i<h.t.length;i++){ if(h.t[i]<t1||h.t[i]>t2) continue; first?g.moveTo(X(h.t[i]),Y(h.f[i])):g.lineTo(X(h.t[i]),Y(h.f[i])); first=false; } g.stroke();
+    g.fillStyle='#566271'; g.font='500 11px "IBM Plex Mono",monospace'; g.textAlign='right'; g.fillText(Math.round(st.Fpk),L-4,Y(st.Fpk)+4); g.fillText('0',L-4,Y(0)+4);
+    g.textAlign='left';
+    g.fillStyle='#17202a'; g.font='600 12px "IBM Plex Mono",monospace';
+    g.textAlign='right'; g.fillText('peak '+Math.round(st.Fpk)+' N',W-8,24); g.fillText('area = impulse = '+f2(st.J)+' N·s',W-8,40);
+    if(st.ended!=null){ const dur=h.t[i2]-h.t[i1]; g.fillText('lasted ≈ '+(dur<0.5?(dur*1000).toFixed(0)+' ms':dur.toFixed(2)+' s'),W-8,56); } g.textAlign='left';
+  }
+  $('ctasks').innerHTML=[
+    '<b>Equal masses, B at rest</b> (steel). Predict what each cart does, then run it. Look at the dashed “before” outlines on the momentum bars.',
+    'Switch to <b>clay</b>. Before you run it, use momentum to predict the final speed. What fraction of the KE is left?',
+    'Watch the KE bars <i>during</i> a steel collision. When is the total KE smallest? Read the velocities of A and B at that instant.',
+    'Compare the F–t graph for <b>steel</b>, <b>rubber</b> and <b>magnets</b> with the same carts and speeds. Which has the biggest peak force? Is the area (impulse) different?',
+    '<b>Explosion</b> with 1 kg and 3 kg. Which cart gets more momentum? Which gets more KE?',
+    'Watch the center-of-mass marker in every run. Does its velocity ever change? Why not?'
+  ].map(t=>'<li>'+t+'</li>').join('');
+  build();
+  window.__carts={S,setType:t=>{type=t;$('bump').value=t;build();},run:()=>{ init(); while(true){ if(frame(0.05)===false) break; } return {st,K:0.5*S.mA*st.vA**2+0.5*S.mB*st.vB**2}; }};
+})();
+
+/* ================= 07-2 REALLY ELASTIC? ================= */
+(()=>{
+  const cv=$('rcv'), c=cv.getContext('2d'); let mode='bounce', stop=null, running=false;
+  const g=10;
+  const TASKS=[
+    '<b>Bounce test:</b> drop each ball from 2 m. Which keeps the most KE per bounce? Check that h<sub>2</sub>/h<sub>1</sub> equals h<sub>1</sub>/h<sub>0</sub>.',
+    'A superball keeps 81 % of its KE each bounce. Predict its height after 3 bounces from 2.0 m, then test it.',
+    'The ball’s momentum reverses at each bounce. What object gets the change in momentum? Why doesn’t that object get any noticeable KE?',
+    '<b>Newton’s cradle:</b> pull back 2 balls. Why can’t 1 ball fly out at twice the speed? Compare the KE of both options.',
+    'Switch the cradle to <b>Real steel</b>. Where does the energy go as it slowly stops?',
+    '<b>Gas molecules:</b> start with one fast molecule. Does the total KE change? What happens to the way it is shared?',
+    'Why are collisions between atoms truly elastic, but collisions between carts, balls and cars never are?'];
+  $('rtasks').innerHTML=TASKS.map(t=>'<li>'+t+'</li>').join('');
+
+  /* ---------- bounce test ---------- */
+  const MAT={superball:{name:'Superball',e:0.9,col:'#7b4bb7'},basketball:{name:'Basketball',e:0.8,col:'#c2410c'},tennis:{name:'Tennis ball',e:0.72,col:'#9bb51a'},baseball:{name:'Baseball on wood',e:0.55,col:'#d6d3cc'},clay:{name:'Lump of clay',e:0,col:'#9a6a3a'}};
+  const BS={h0:2,mat:'superball'}; let bs=null;
+  function bInit(){ bs={y:BS.h0,v:0,t:0,peaks:[BS.h0],n:0,done:false}; }
+  function bStep(dt){ const e=MAT[BS.mat].e; const n=20, h=dt/n;
+    for(let i=0;i<n;i++){ const vPrev=bs.v; bs.v-=g*h; bs.y+=bs.v*h; bs.t+=h;
+      if(vPrev>0 && bs.v<=0){ bs.peaks.push(bs.y); }
+      if(bs.y<=0 && bs.v<0){ bs.y=0; bs.v=-e*bs.v; bs.n++; if(e===0||bs.v<0.25||bs.n>=8){ if(e>0&&bs.v>0) bs.peaks.push(bs.v*bs.v/(2*g)); bs.v=0; bs.done=true; return; } } } }
+  function bDraw(){
+    const W=cv.width,H=cv.height, F=350, S=145, X=150, R=14; c.clearRect(0,0,W,H); const M=MAT[BS.mat];
+    c.fillStyle='#17202a'; c.fillRect(30,F,300,4);
+    c.font='500 11px "IBM Plex Mono",monospace'; c.fillStyle='#8a96a3'; for(let m=0.5;m<=2;m+=0.5){ const y=F-m*S; c.fillRect(30,y,8,1); c.fillText(m.toFixed(1)+' m',40,y+4); }
+    bs.peaks.forEach((p,i)=>{ const y=F-p*S; c.strokeStyle=i?'#9aa6b2':'#17202a'; c.setLineDash([5,4]); c.beginPath(); c.moveTo(95,y-R); c.lineTo(250,y-R); c.stroke(); c.setLineDash([]);
+      c.fillStyle='#566271'; c.font='500 12px "IBM Plex Mono",monospace'; c.fillText('h'+i+' = '+p.toFixed(2)+' m',255,y-R+4); });
+    const sq= bs.y<0.02 && Math.abs(bs.v)>0 ? 0.75 : 1;
+    c.fillStyle=M.col; c.beginPath(); c.ellipse(X,F-bs.y*S-R*sq,R/sq,R*sq,0,0,7); c.fill(); c.strokeStyle='#17202a'; c.lineWidth=1.5; c.stroke();
+    // bounce-height bars
+    const bx=380, bw=46, top=60, bot=330; c.fillStyle='#17202a'; c.font='700 15px "Atkinson Hyperlegible",sans-serif'; c.fillText('Height of each bounce (∝ KE at the bottom)',bx,24);
+    c.fillRect(bx,bot,W-bx-20,1.5);
+    bs.peaks.forEach((p,i)=>{ const x=bx+10+i*(bw+12), h=p/BS.h0*(bot-top); c.fillStyle=COL('--eK'); c.globalAlpha=i?0.85:1; c.fillRect(x,bot-h,bw,h); c.globalAlpha=1;
+      c.fillStyle='#17202a'; c.font='700 13px "Atkinson Hyperlegible",sans-serif'; c.textAlign='center'; c.fillText('h'+i,x+bw/2,bot+18);
+      c.font='500 11px "IBM Plex Mono",monospace'; c.fillStyle='#566271'; c.fillText(p.toFixed(2)+' m',x+bw/2,bot-h-6);
+      if(i>0) c.fillText((bs.peaks[i-1]>0?p/bs.peaks[i-1]*100:0).toFixed(0)+' %',x+bw/2,bot+34); c.textAlign='left'; });
+    if(bs.peaks.length>1){ c.fillStyle='#566271'; c.font='500 11px "IBM Plex Mono",monospace'; c.fillText('% = KE kept from the bounce before',bx,H-6); }
+    const e=M.e, m=0.1;
+    $('rro').innerHTML=`<div><span>e</span> ${e.toFixed(2)}</div><div><span>KE kept each bounce</span> e² = ${(e*e*100).toFixed(0)} %</div><div><span>bounces</span> ${bs.n}</div><div><span>KE just before 1st bounce</span> ${(m*g*BS.h0).toFixed(2)} J (m = 0.10 kg)</div>`;
+  }
+
+  /* ---------- Newton's cradle ---------- */
+  const CS={n:1,ang:25,model:'ideal'}; let cr=null;
+  const NB=5, R=0.025, Lp=0.25, mB=0.1, GAP=2e-4, KH=2e7, CDT=5e-6, SC=1000;
+  function cInit(){ cr={th:new Float64Array(NB),w:new Float64Array(NB),t:0,E0:0};
+    for(let i=0;i<CS.n;i++) cr.th[i]=-CS.ang*Math.PI/180; cr.E0=cEnergy().E; }
+  const piv=i=>(i-(NB-1)/2)*(2*R+GAP);
+  function cEnergy(){ let K=0,U=0,p=0; for(let i=0;i<NB;i++){ const v=Lp*cr.w[i]; K+=0.5*mB*v*v; U+=mB*g*Lp*(1-Math.cos(cr.th[i])); p+=mB*v*Math.cos(cr.th[i]); } return {K,U,E:K+U,p}; }
+  function cStep(dt){ const n=Math.ceil(dt/CDT), h=dt/n, alpha=CS.model==='real'?0.04:0, drag=CS.model==='real'?0.03:0, acc=new Float64Array(NB);
+    for(let s=0;s<n;s++){
+      for(let i=0;i<NB;i++) acc[i]=-(g/Lp)*Math.sin(cr.th[i])-drag*cr.w[i];
+      for(let i=0;i<NB-1;i++){ const x1=piv(i)+Lp*Math.sin(cr.th[i]), y1=-Lp*Math.cos(cr.th[i]), x2=piv(i+1)+Lp*Math.sin(cr.th[i+1]), y2=-Lp*Math.cos(cr.th[i+1]);
+        const dx=x2-x1, dy=y2-y1, d=Math.hypot(dx,dy), del=2*R-d; if(del<=0) continue; const nx=dx/d, ny=dy/d;
+        const v1x=Lp*cr.w[i]*Math.cos(cr.th[i]), v1y=Lp*cr.w[i]*Math.sin(cr.th[i]), v2x=Lp*cr.w[i+1]*Math.cos(cr.th[i+1]), v2y=Lp*cr.w[i+1]*Math.sin(cr.th[i+1]);
+        const ddel=-((v2x-v1x)*nx+(v2y-v1y)*ny); const F=Math.max(0,KH*del**1.5*(1+1.5*alpha*ddel));
+        acc[i+1]+=F*(nx*Math.cos(cr.th[i+1])+ny*Math.sin(cr.th[i+1]))/(mB*Lp); acc[i]-=F*(nx*Math.cos(cr.th[i])+ny*Math.sin(cr.th[i]))/(mB*Lp); }
+      for(let i=0;i<NB;i++){ cr.w[i]+=acc[i]*h; cr.th[i]+=cr.w[i]*h; } cr.t+=h; } }
+  function cDraw(){
+    const W=cv.width,H=cv.height, cx=W/2-120, py=50; c.clearRect(0,0,W,H);
+    c.fillStyle='#17202a'; c.fillRect(cx-200,py-8,400,6);
+    let moving=0; for(let i=0;i<NB;i++){ const px=cx+piv(i)*SC, bx=px+Lp*Math.sin(cr.th[i])*SC, by=py+Lp*Math.cos(cr.th[i])*SC;
+      c.strokeStyle='#6b7280'; c.lineWidth=1.5; c.beginPath(); c.moveTo(px,py); c.lineTo(bx,by); c.stroke();
+      const sp=Math.abs(Lp*cr.w[i]); if(sp>0.05) moving++;
+      const gr=c.createRadialGradient(bx-8,by-8,3,bx,by,R*SC); gr.addColorStop(0,'#f3f5f7'); gr.addColorStop(1,sp>0.05?'#1d5fa8':'#7d8794');
+      c.fillStyle=gr; c.beginPath(); c.arc(bx,by,R*SC,0,7); c.fill(); }
+    const E=cEnergy();
+    // energy + momentum bars
+    const bx=W-300, top=40, bot=300, maxE=Math.max(cr.E0,1e-9); c.fillStyle='#17202a'; c.font='700 15px "Atkinson Hyperlegible",sans-serif'; c.fillText('Energy of all 5 balls',bx,24); c.fillRect(bx,bot,270,1.5);
+    [['K',E.K,COL('--eK')],['Ug',E.U,COL('--eUg')],['Thermal',Math.max(0,cr.E0-E.E),COL('--eTh')],['Total',cr.E0,'#17202a']].forEach(([l,v,col],i)=>{ const x=bx+10+i*66, h=v/maxE*(bot-top)/1.08;
+      c.fillStyle=col; c.globalAlpha=l==='Total'?0.45:1; c.fillRect(x,bot-h,48,h); c.globalAlpha=1; c.fillStyle='#17202a'; c.textAlign='center'; c.font='700 13px "Atkinson Hyperlegible",sans-serif'; c.fillText(l,x+24,bot+18);
+      c.font='500 11px "IBM Plex Mono",monospace'; c.fillStyle='#566271'; c.fillText((v*1000).toFixed(1)+' mJ',x+24,bot+34); c.textAlign='left'; });
+    const v0=Math.sqrt(2*g*Lp*(1-Math.cos(CS.ang*Math.PI/180)));
+    $('rro').innerHTML=`<div><span>speed at the bottom</span> ${v0.toFixed(2)} m/s</div><div><span>balls pulled</span> ${CS.n}</div><div><span>balls moving now</span> ${moving}</div><div><span>energy left</span> ${(E.E/cr.E0*100).toFixed(1)} %</div><div><span>t</span> ${cr.t.toFixed(1)} s</div>`;
+  }
+
+  /* ---------- gas molecules ---------- */
+  const GS={N:80,start:'same'}; let gs=null; const GR=0.012, BOX=360, GX=20, GY=10;
+  function gInit(){ const N=GS.N, p=[]; let tries=0;
+    while(p.length<N && tries<20000){ tries++; const x=GR+Math.random()*(1-2*GR), y=GR+Math.random()*(1-2*GR); if(p.every(q=>Math.hypot(q.x-x,q.y-y)>2.2*GR)) p.push({x,y,vx:0,vy:0}); }
+    const v0=0.35;
+    if(GS.start==='same') p.forEach(q=>{ const a=Math.random()*2*Math.PI; q.vx=v0*Math.cos(a); q.vy=v0*Math.sin(a); });
+    else { const vf=v0*Math.sqrt(p.length); p[0].vx=vf*0.8; p[0].vy=vf*0.6; }
+    gs={p,t:0,hits:0,K0:0,hist:[]}; gs.K0=gKE(); }
+  const gKE=()=>gs.p.reduce((s,q)=>s+0.5*(q.vx*q.vx+q.vy*q.vy),0);
+  function gStep(dt){ const n=Math.max(4,Math.ceil(dt*Math.sqrt(2*gs.K0)/GR)); const h=dt/n, P=gs.p;
+    for(let s=0;s<n;s++){
+      for(const q of P){ q.x+=q.vx*h; q.y+=q.vy*h;
+        if(q.x<GR&&q.vx<0){q.vx=-q.vx;} if(q.x>1-GR&&q.vx>0){q.vx=-q.vx;} if(q.y<GR&&q.vy<0){q.vy=-q.vy;} if(q.y>1-GR&&q.vy>0){q.vy=-q.vy;} }
+      for(let i=0;i<P.length;i++) for(let j=i+1;j<P.length;j++){ const a=P[i],b=P[j], dx=b.x-a.x, dy=b.y-a.y, d2=dx*dx+dy*dy; if(d2>=4*GR*GR) continue;
+        const d=Math.sqrt(d2)||1e-9, nx=dx/d, ny=dy/d, rel=(a.vx-b.vx)*nx+(a.vy-b.vy)*ny; if(rel<=0) continue;
+        a.vx-=rel*nx; a.vy-=rel*ny; b.vx+=rel*nx; b.vy+=rel*ny; gs.hits++; } }
+    gs.t+=dt; gs.hist.push(gKE()/gs.K0); if(gs.hist.length>600) gs.hist.shift(); }
+  function gDraw(){
+    const W=cv.width,H=cv.height; c.clearRect(0,0,W,H); c.strokeStyle='#17202a'; c.lineWidth=2; c.strokeRect(GX,GY,BOX,BOX);
+    const vr=Math.sqrt(2*gs.K0/gs.p.length);
+    gs.p.forEach((q,i)=>{ const sp=Math.hypot(q.vx,q.vy); c.fillStyle= i===0&&GS.start==='one' ? COL('--eTh') : `hsl(${215-Math.min(1,sp/(2*vr))*200},65%,${45}%)`;
+      c.beginPath(); c.arc(GX+q.x*BOX,GY+(1-q.y)*BOX,Math.max(3,GR*BOX),0,7); c.fill(); });
+    // speed histogram
+    const hx=430, hw=W-hx-20, ht=30, hb=230, nb=18, vmax=3*vr, cnt=new Array(nb).fill(0);
+    gs.p.forEach(q=>{ const k=Math.min(nb-1,Math.floor(Math.hypot(q.vx,q.vy)/vmax*nb)); cnt[k]++; });
+    const cm=Math.max(...cnt, gs.p.length*0.16);
+    c.fillStyle='#17202a'; c.font='700 15px "Atkinson Hyperlegible",sans-serif'; c.fillText('How many molecules have each speed',hx,20); c.fillRect(hx,hb,hw,1.5);
+    cnt.forEach((k,i)=>{ const h=k/cm*(hb-ht); c.fillStyle=COL('--eK'); c.fillRect(hx+i*hw/nb+1,hb-h,hw/nb-2,h); });
+    const s2=vr*vr/2, bwid=vmax/nb; c.strokeStyle=COL('--eTh'); c.lineWidth=2; c.beginPath();
+    for(let i=0;i<=100;i++){ const v=vmax*i/100, f=gs.p.length*bwid*(v/s2)*Math.exp(-v*v/(2*s2)); const x=hx+hw*i/100, y=hb-f/cm*(hb-ht); i?c.lineTo(x,y):c.moveTo(x,y); } c.stroke();
+    c.fillStyle='#566271'; c.font='500 11px "IBM Plex Mono",monospace'; c.fillText('slow',hx,hb+14); c.textAlign='right'; c.fillText('fast',hx+hw,hb+14); c.textAlign='left';
+    c.fillStyle=COL('--eTh'); c.fillText('— spread after many collisions',hx+hw-220,ht+8);
+    // total KE strip
+    const sy=270, sh=80; c.fillStyle='#17202a'; c.font='700 13px "Atkinson Hyperlegible",sans-serif'; c.fillText('Total KE of the gas (% of start)',hx,sy-6);
+    c.strokeStyle='#d9e0e8'; c.lineWidth=1; c.strokeRect(hx,sy,hw,sh); const Y=v=>sy+sh/2-(v-1)*sh*2.5;
+    c.setLineDash([4,3]); c.beginPath(); c.moveTo(hx,Y(1)); c.lineTo(hx+hw,Y(1)); c.stroke(); c.setLineDash([]);
+    c.strokeStyle=COL('--eK'); c.lineWidth=2.5; c.beginPath(); gs.hist.forEach((v,i)=>{ const x=hx+hw*i/600, y=Y(v); i?c.lineTo(x,y):c.moveTo(x,y); }); c.stroke();
+    c.fillStyle='#566271'; c.font='500 11px "IBM Plex Mono",monospace'; c.fillText('100 %',hx+4,Y(1)-4);
+    const fast=Math.max(...gs.p.map(q=>Math.hypot(q.vx,q.vy)));
+    $('rro').innerHTML=`<div><span>molecules</span> ${gs.p.length}</div><div><span>collisions</span> ${gs.hits}</div><div><span>total KE</span> ${(gKE()/gs.K0*100).toFixed(2)} % of start</div><div><span>fastest</span> ${(fast/vr).toFixed(1)} × typical speed</div>`;
+  }
+
+  const NOTE={
+    bounce:'Every real ball loses some KE when it bounces. It goes into warming the ball and floor and into sound. <b>KE kept per bounce = h<sub>after</sub>/h<sub>before</sub> = e²</b>. The ball’s momentum is not conserved by itself: the Earth takes the change, but its KE gain is far too small to measure.',
+    cradle:'<b>One in, one out</b> is the only result that conserves both momentum and KE. Two balls out at half the speed would have the same momentum but only half the KE. Thanks to tiny gaps, each hit is like two equal masses colliding elastically: they swap velocities down the line. The click you hear is a little KE becoming sound, so a real cradle slowly stops.',
+    gas:'Atoms and molecules have no smaller parts that can squash, heat up or ring, so their collisions are <b>truly elastic</b>. The total KE never changes, but collisions share it out until the speeds follow the curve. That spread of speeds is what temperature measures. Big objects are made of trillions of atoms, so in a collision some KE always leaks into making those atoms jiggle (thermal energy).'};
+  function controls(){
+    const box=$('rctl');
+    if(mode==='bounce'){ sliders(box,{h0:{label:'Drop height',min:.5,max:2,step:.1,fmt:v=>v.toFixed(1)+' m'}},BS,()=>reset());
+      const l=document.createElement('label'); l.innerHTML='Ball <select id="rmat">'+Object.entries(MAT).map(([k,m])=>`<option value="${k}">${m.name}</option>`).join('')+'</select>'; box.appendChild(l);
+      $('rmat').value=BS.mat; $('rmat').onchange=e=>{BS.mat=e.target.value; reset();}; }
+    else if(mode==='cradle'){ sliders(box,{n:{label:'Balls pulled back',min:1,max:3,step:1,fmt:v=>v},ang:{label:'Pull-back angle',min:10,max:35,step:1,fmt:v=>v+'°'}},CS,()=>reset());
+      const l=document.createElement('label'); l.innerHTML='Balls <select id="rmod"><option value="ideal">Ideal (perfectly elastic)</option><option value="real">Real steel (clicks)</option></select>'; box.appendChild(l);
+      $('rmod').value=CS.model; $('rmod').onchange=e=>{CS.model=e.target.value; reset();}; }
+    else { sliders(box,{N:{label:'Number of molecules',min:20,max:150,step:10,fmt:v=>v}},GS,()=>reset());
+      const l=document.createElement('label'); l.innerHTML='Start with <select id="rstart"><option value="same">All the same speed</option><option value="one">One fast molecule, rest still</option></select>'; box.appendChild(l);
+      $('rstart').value=GS.start; $('rstart').onchange=e=>{GS.start=e.target.value; reset();}; }
+    $('rnote').innerHTML=NOTE[mode];
+  }
+  const INIT={bounce:bInit,cradle:cInit,gas:gInit}, STEP={bounce:bStep,cradle:cStep,gas:gStep}, DRAW={bounce:bDraw,cradle:cDraw,gas:gDraw};
+  function reset(){ stop&&stop(); stop=null; running=false; $('rgo').textContent= mode==='cradle'?'Let go':mode==='bounce'?'Drop':'Start'; INIT[mode](); DRAW[mode](); }
+  $('rgo').onclick=()=>{ if(running){ stop&&stop(); stop=null; running=false; $('rgo').textContent='Resume'; return; }
+    if(mode==='bounce'&&bs.done) bInit();
+    running=true; $('rgo').textContent='Pause';
+    stop=raf(dt=>{ STEP[mode](dt); DRAW[mode](); if(mode==='bounce'&&bs.done){ running=false; stop=null; $('rgo').textContent='Drop'; return false; } }); };
+  $('rreset').onclick=reset;
+  chipGroup('rm',m=>{ mode=m; controls(); reset(); });
+  controls(); reset();
+  window.__real={BS,CS,GS,setMode:m=>{mode=m;controls();reset();},bounce:()=>{ bInit(); while(!bs.done) bStep(0.02); return bs.peaks; },
+    cradle:(secs)=>{ cInit(); const out=[]; for(let t=0;t<secs;t+=0.01){ cStep(0.01); } return {th:[...cr.th],w:[...cr.w],E:cEnergy(),E0:cr.E0}; },
+    gas:(secs)=>{ gInit(); for(let t=0;t<secs;t+=1/60) gStep(1/60); return {K:gKE()/gs.K0,hits:gs.hits}; }};
+})();
+
+
+/* ================= 07-1 CRASH TEST ================= */
+(()=>{
+  const cv=$('kcv'), c=cv.getContext('2d'), DT=2e-5, RC=['#1d5fa8','#c2410c','#1f7a4a','#7b4bb7'], EB=0.4, CARL=4.5;
+  const FRONT={rigid:{name:'Rigid frame',k:2e7,face:0},crumple:{name:'Crumple zone',k:4e5,face:0},barrels:{name:'Barrels',k:6e4,face:-5}};
+  const S={m:1500,v0:15}; let front='rigid', after='stick', st=null, stop=null, running=false, runs=[];
+  sliders($('kctl'),{m:{label:'Mass of the car',min:800,max:2400,step:100,fmt:v=>v+' kg'},v0:{label:'Speed at impact',min:5,max:25,step:1,fmt:v=>v+' m/s'}},S,()=>init());
+  chipGroup('kf',f=>{front=f;init();}); $('kafter').onchange=e=>{after=e.target.value;init();};
+  function init(){ stop&&stop(); stop=null; running=false; $('kgo').textContent='Crash'; $('kmsg').hidden=true;
+    st={x:FRONT[front].face-6,v:S.v0,t:0,tc:null,tend:null,F:0,Fpk:0,J:0,locked:false,n:0,rec:{t:[],F:[],v:[]},col:RC[runs.length%4],front,after,m:S.m,v0:S.v0}; draw(); }
+  /* Crash pulse: a half-sine force whose area is exactly the momentum change (m·v0 to stop, m·v0(1+e) to bounce).
+     Its length comes from the stiffness of the front end: stiffer = shorter. */
+  const tau=()=>{ const k=FRONT[front].k; return after==='stick'? Math.PI/2*Math.sqrt(S.m/k) : Math.PI*Math.sqrt(S.m/k); };
+  function force(){ if(st.tc==null||st.tend!=null) return 0; const T=tau(), Jt=S.m*S.v0*(after==='stick'?1:1+EB); const s=st.t-st.tc; return s<=T? Jt*Math.PI/(2*T)*Math.sin(Math.PI*s/T) : 0; }
+  function step(){ if(st.tc==null && st.x>=FRONT[front].face) st.tc=st.t;
+    const f=force(); st.v-=f/S.m*DT; st.x+=st.v*DT; st.t+=DT; st.F=f;
+    if(st.tc!=null){ st.J+=f*DT; if(f>st.Fpk) st.Fpk=f;
+      if(st.tend==null && st.t-st.tc>=tau()){ st.tend=st.t; st.F=0; if(after==='stick'){ st.v=0; st.locked=true; } }
+      if(++st.n%10===0 && (st.tend==null || st.t-st.tend<0.35*(st.tend-st.tc))){ st.rec.t.push(st.t-st.tc); st.rec.F.push(st.F); st.rec.v.push(st.v); } } }
+  function frame(fdt){
+    const F=FRONT[front], inC=st.tc!=null&&st.tend==null, tcEst=tau();
+    const scale= inC? Math.min(1,Math.max(0.004,tcEst/1.6)) : (st.x>F.face-0.4&&st.tc==null? Math.min(1,Math.max(0.05,tcEst/1.6*4)) : 1);
+    const n=Math.ceil(fdt*scale/DT); for(let i=0;i<n;i++) step();
+    draw(); if(st.tend!=null && st.t-st.tend>Math.max(0.6,0.35*(st.tend-st.tc))){ finish(); return false; } }
+  function finish(){ running=false; stop=null; $('kgo').textContent='Crash';
+    const dur=st.tend-st.tc, r={...st, dur, dp:S.m*(st.v-S.v0), Favg:st.J/dur, label:FRONT[front].name+(after==='bounce'?', bounces':', stops')};
+    runs.push(r); if(runs.length>4) runs.shift(); runs.forEach((x,i)=>x.col=RC[i]); st.col=r.col; st.saved=true;
+    const m=$('kmsg'); m.hidden=false;
+    m.innerHTML= after==='bounce'
+      ? `<b>Bounced back at ${Math.abs(st.v).toFixed(1)} m/s.</b> The momentum changed from +${(S.m*S.v0/1000).toFixed(1)} to ${(S.m*st.v/1000).toFixed(1)} thousand kg·m/s, so the impulse is <b>bigger</b> than stopping dead. That is why a bounce is worse for the people inside.`
+      : `<b>Stopped in ${(dur*1000).toFixed(0)} ms.</b> Impulse = Δp = ${(S.m*S.v0/1000).toFixed(1)} thousand N·s. Every car of this mass and speed that stops dead gets the same impulse; a softer front just spreads it over more time, so the force is smaller.`;
+    draw(); table(); }
+  $('kgo').onclick=()=>{ if(running) return; if(st.tc!=null) init(); running=true; $('kgo').textContent='Crashing…'; stop=raf(frame); };
+  $('kreset').onclick=init; $('kclear').onclick=()=>{ runs=[]; table(); init(); };
+  const PX=x=>700+x*50, GY=190;
+  function draw(){
+    const W=cv.width,H=cv.height; c.clearRect(0,0,W,H); const F=FRONT[front], d=Math.max(0,st.x-F.face);
+    c.fillStyle='#17202a'; c.fillRect(0,GY,W,4);
+    c.fillStyle='#9aa3ad'; c.fillRect(PX(0),GY-110,44,110); c.fillStyle='#17202a'; c.font='600 12px "IBM Plex Mono",monospace'; c.fillText('barrier',PX(0),GY-116);
+    if(front==='barrels'){ const w=Math.max(0.3,5-d)*50, n=4; for(let i=0;i<n;i++){ const bx=PX(0)-w+i*w/n; c.fillStyle='#f2b705'; c.beginPath(); c.roundRect(bx+2,GY-62,w/n-4,62,6); c.fill(); c.fillStyle='#17202a'; c.fillRect(bx+2,GY-44,w/n-4,6); } }
+    const front_px= front==='barrels'? PX(st.x) : PX(Math.min(st.x,F.face)), rear_px=PX(st.x-CARL), crush=front==='barrels'?0:d*50;
+    const col='#1d5fa8'; c.fillStyle=col; c.beginPath(); c.roundRect(rear_px,GY-50,front_px-rear_px,36,6); c.fill();
+    c.beginPath(); c.moveTo(rear_px+40,GY-50); c.lineTo(rear_px+70,GY-82); c.lineTo(front_px-crush-75,GY-82); c.lineTo(front_px-crush-45,GY-50); c.fill();
+    c.fillStyle='#dbe7f5'; c.fillRect(rear_px+74,GY-77,(front_px-crush-75)-(rear_px+74)-6,22);
+    if(crush>1){ c.strokeStyle='#17202a'; c.lineWidth=2; c.beginPath(); for(let i=0;i<=8;i++){ const x=front_px-crush+crush*i/8; c.lineTo(x,GY-50+(i%2?8:30)); } c.stroke(); }
+    c.fillStyle='#17202a'; [rear_px+40,front_px-crush-40].forEach(w=>{ c.beginPath(); c.arc(w,GY-10,13,0,7); c.fill(); });
+    arrowAt(c,(rear_px+front_px)/2,GY-100,(rear_px+front_px)/2+st.v*6,GY-100,col,Math.abs(st.v)>0.05?st.v.toFixed(1)+' m/s':'');
+    if(st.F>0){ arrowAt(c,front_px-crush,GY-32,front_px-crush-Math.min(160,20+st.F/S.m*0.6),GY-32,'#b42318','F'); }
+    c.fillStyle='#566271'; c.font='500 13px "IBM Plex Mono",monospace';
+    c.fillText(st.tc==null?'approaching…':'t since impact = '+((st.t-st.tc)*1000).toFixed(1)+' ms',12,20);
+    if(st.tc!=null) c.fillText('force on car = '+(st.F/1000).toFixed(0)+' kN   ('+(st.F/S.m/10).toFixed(0)+' g)',12,40);
+    if(st.tc!=null&&st.tend==null){ c.fillStyle='#b42318'; c.font='700 13px "IBM Plex Mono",monospace'; c.fillText('slow motion',12,60); }
+    graphs();
+  }
+  function graphs(){
+    const all=runs.slice(); if(!st.saved && st.rec.t.length) all.push(st);
+    const fc=$('kft'), f=fc.getContext('2d'), vc=$('kvt'), v=vc.getContext('2d'), W=fc.width, H=fc.height, L=50, B=26;
+    axes(f,W,H,L,B,'t (ms)','F (kN)'); axes(v,W,H,L,B,'t (ms)','v (m/s)');
+    if(!all.length){ f.fillStyle='#566271'; f.font='15px "Atkinson Hyperlegible",sans-serif'; f.textAlign='center'; f.fillText('Crash to see the force.',W/2,H/2); f.textAlign='left'; return; }
+    const T=Math.max(...all.map(r=>r.rec.t[r.rec.t.length-1]||0.01))*1.05, t0=-0.12*T, Fm=Math.max(...all.map(r=>r.Fpk))*1.1, vm=Math.max(...all.map(r=>r.v0))*1.15;
+    const X=t=>L+(W-L-8)*(t-t0)/(T-t0), YF=F=>H-B-(H-B-12)*F/Fm, YV=u=>8+(H-B-8)*(1-(u+vm)/(2*vm));
+    v.strokeStyle='#c9d2dc'; v.beginPath(); v.moveTo(L,YV(0)); v.lineTo(W-6,YV(0)); v.stroke();
+    f.fillStyle='#566271'; f.font='500 11px "IBM Plex Mono",monospace'; f.textAlign='right'; f.fillText((Fm/1000/1.1).toFixed(0),L-4,YF(Fm/1.1)+4); f.fillText('0',L-4,YF(0)+4); f.textAlign='right'; f.fillText((T*1000).toFixed(0)+' ms',X(T),H-B-4); f.textAlign='left';
+    v.fillStyle='#566271'; v.font='500 11px "IBM Plex Mono",monospace'; v.textAlign='right'; v.fillText('+'+(vm/1.15).toFixed(0),L-4,YV(vm/1.15)+4); v.fillText('0',L-4,YV(0)+4); v.fillText('−'+(vm/1.15).toFixed(0),L-4,YV(-vm/1.15)+4); v.textAlign='left';
+    all.forEach(r=>{ const R=r.rec;
+      f.beginPath(); f.moveTo(X(t0),YF(0)); f.lineTo(X(0),YF(0)); R.t.forEach((t,i)=>f.lineTo(X(t),YF(R.F[i]))); f.lineTo(X(R.t[R.t.length-1]),YF(0)); f.closePath(); f.fillStyle=r.col+'26'; f.fill();
+      f.strokeStyle=r.col; f.lineWidth=2; f.beginPath(); f.moveTo(X(t0),YF(0)); f.lineTo(X(0),YF(0)); R.t.forEach((t,i)=>f.lineTo(X(t),YF(R.F[i]))); f.stroke();
+      v.strokeStyle=r.col; v.lineWidth=2; v.beginPath(); v.moveTo(X(t0),YV(r.v0)); v.lineTo(X(0),YV(r.v0)); R.t.forEach((t,i)=>v.lineTo(X(t),YV(R.v[i]))); v.stroke(); });
+  }
+  function table(){
+    if(!runs.length){ $('ktable').innerHTML=''; return; }
+    $('ktable').innerHTML=`<table class="ktab" style="border-collapse:collapse;font:500 .82rem var(--f-mono);width:100%;min-width:560px"><tr style="text-align:left;color:var(--muted)"><th>run</th><th>m</th><th>v before → after</th><th>Δp = impulse</th><th>Δt</th><th>F average</th><th>F peak</th><th>peak decel.</th></tr>`+
+      runs.map(r=>`<tr style="border-top:1px solid var(--rule)"><td><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${r.col};margin-right:6px"></span>${r.label}</td><td>${r.m} kg</td><td>${r.v0} → ${r.v.toFixed(1)} m/s</td><td>${(-r.dp/1000).toFixed(1)} kN·s</td><td>${(r.dur*1000).toFixed(0)} ms</td><td>${(r.Favg/1000).toFixed(0)} kN</td><td>${(r.Fpk/1000).toFixed(0)} kN</td><td>${(r.Fpk/r.m/10).toFixed(0)} g</td></tr>`).join('')+'</table>';
+  }
+  $('ktasks').innerHTML=['Crash with the <b>rigid frame</b>, then the <b>crumple zone</b> (same mass and speed). Compare the areas under the F–t curves. Compare the peak forces.',
+    'Modern cars are designed to be wrecked in a crash. Use the impulse–momentum theorem to explain why that protects the people inside.',
+    'Switch to <b>Car bounces back</b>. Is the impulse bigger or smaller than stopping dead? Why?',
+    'Double the speed with the crumple zone. What happens to the impulse? To the average force?',
+    'Use the table to explain why highways put water-filled barrels in front of bridge pillars.',
+    'Seatbelts and airbags do for your body what the crumple zone does for the car. Explain.'].map(t=>'<li>'+t+'</li>').join('');
+  init(); table();
+  window.__crash={S,set:(f,a)=>{front=f;after=a;init();},run:()=>{ init(); st.x=FRONT[front].face-0.5; while(frame(0.05)!==false); return runs[runs.length-1]; }};
+})();
+
+/* ================= 07-2 BALLISTIC PENDULUM ================= */
+(()=>{
+  const cv=$('bcv'), c=cv.getContext('2d'), bc=$('bbars'), g=10, L=2, SC=150, PX0=440, PY=40, BW=0.56, BH=0.32;
+  const S={m:10,M:2,v:250,ex:40}; let mode='stick', mystery=null, st=null, stop=null;
+  function controls(){
+    const defs={m:{label:'Bullet mass',min:5,max:20,step:1,fmt:v=>v+' g'},M:{label:'Block mass',min:2,max:5,step:.5,fmt:v=>v.toFixed(1)+' kg'},
+      v:{label:'Bullet speed',min:100,max:350,step:10,fmt:v=>mystery!=null?'???':v+' m/s'}};
+    if(mode==='through') defs.ex={label:'Bullet exit speed',min:20,max:80,step:5,fmt:v=>v+' % of entry speed'};
+    sliders($('bctl'),defs,S,()=>init()); if(mystery!=null) $('bctl-v').disabled=true;
+  }
+  function calc(){ const m=S.m/1000, M=S.M, v=mystery??S.v; let vb,V,Ms;
+    if(mode==='stick'){ V=m*v/(m+M); vb=V; Ms=m+M; } else if(mode==='through'){ vb=v*S.ex/100; V=m*(v-vb)/M; Ms=M; } else { const e=0.5; vb=(m-e*M)*v/(m+M); V=m*(1+e)*v/(m+M); Ms=M; }
+    const h=V*V/(2*g); return {m,M,v,vb,V,Ms,h,K0:0.5*m*v*v,K1:mode==='stick'?0.5*(m+M)*V*V:0.5*m*vb*vb+0.5*M*V*V,Ksw:0.5*Ms*V*V}; }
+  function init(){ stop&&stop(); stop=null; $('bgo').textContent='Fire'; $('bmsg').hidden=true; const k=calc(); st={k,phase:'ready',bx:30,th:0,w:0,thmax:0,t:0,peaked:false}; draw(); }
+  function frame(dt){
+    if(st.phase==='bullet'){ st.bx+=900*dt; const face=PX0-BW*SC/2; if(st.bx>=face){ st.bx=face; st.phase='swing'; st.w=st.k.V/L; st.after=st.bx; } }
+    else if(st.phase==='swing'){ const n=20,h=dt/n; for(let i=0;i<n;i++){ const prev=st.w; st.w+=-(g/L)*Math.sin(st.th)*h; st.th+=st.w*h; if(prev>0&&st.w<=0&&!st.peaked){ st.peaked=true; st.thmax=st.th; peak(); } } st.t+=dt;
+      if(mode==='through') st.after+=900*dt*st.k.vb/st.k.v; if(mode==='bounce') st.after+=900*dt*st.k.vb/st.k.v; }
+    draw(); if(st.t>7){ stop=null; return false; } }
+  function peak(){ const k=st.k, m=$('bmsg'); m.hidden=false;
+    if(mystery!=null){ m.innerHTML=`The block rose <b>h = ${(k.h*100).toFixed(1)} cm</b>. Bullet ${S.m} g, block ${S.M.toFixed(1)} kg. Find the bullet’s speed and check your answer.`; $('bansBox').hidden=false; return; }
+    m.innerHTML= mode==='stick' ? `<b>Collision:</b> momentum is conserved, m v = (m + M) V, but ${(100-k.K1/k.K0*100).toFixed(1)} % of the KE becomes thermal energy. <b>Swing:</b> energy is conserved, ½V² = g h (momentum is not: gravity and the strings act). Together: v = (m + M)/m · √(2gh).`
+      : mode==='through' ? `The bullet keeps some momentum, so the block gets less: M V = m(v − v<sub>exit</sub>). The block rises only ${(k.h*100).toFixed(1)} cm.`
+      : `The rubber bullet bounces back, so its momentum <i>reverses</i>. The block gets more momentum than if the bullet had stuck, and swings higher: ${(k.h*100).toFixed(1)} cm.`; }
+  $('bgo').onclick=()=>{ if(st.phase!=='ready') init(); st.phase='bullet'; $('bgo').textContent='Fire again'; stop&&stop(); stop=raf(frame); };
+  $('breset').onclick=()=>{ mystery=null; $('bansBox').hidden=true; controls(); init(); };
+  $('bmyst').onclick=()=>{ mystery=150+Math.round(Math.random()*200); if(mode!=='stick'){ mode='stick'; document.querySelectorAll('[data-bm]').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.bm==='stick'))); } $('bans').value=''; $('bansBox').hidden=true; controls(); init(); };
+  $('bcheck').onclick=()=>{ const a=+$('bans').value, ok=Math.abs(a-mystery)/mystery<0.03, m=$('bmsg');
+    m.innerHTML= ok? `<b>Correct!</b> The bullet was moving at ${mystery} m/s.` : `Not quite. Hint: find V from the height first (½V² = g h), then use momentum in the collision.`; };
+  chipGroup('bm',m=>{ mode=m; if(m!=='stick'){ mystery=null; $('bansBox').hidden=true; } controls(); init(); });
+  function draw(){
+    const W=cv.width,H=cv.height,k=st.k; c.clearRect(0,0,W,H);
+    const bxc=PX0+L*Math.sin(st.th)*SC, byc=PY+L*Math.cos(st.th)*SC, top=byc-BH*SC/2;
+    c.fillStyle='#17202a'; c.fillRect(PX0-120,PY-8,240,8);
+    c.strokeStyle='#6b7280'; c.lineWidth=1.5; c.lineWidth=2.5; [-30,30].forEach(o=>{ c.beginPath(); c.moveTo(PX0+o,PY); c.lineTo(bxc+o,top); c.stroke(); });
+    const rest=PY+L*SC+BH*SC/2; c.setLineDash([5,4]); c.strokeStyle='#9aa6b2'; c.beginPath(); c.moveTo(PX0-140,rest); c.lineTo(PX0+330,rest); c.stroke();
+    if(st.peaked){ const hy=rest-k.h*SC; c.strokeStyle='#1f7a4a'; c.beginPath(); c.moveTo(PX0-60,hy); c.lineTo(PX0+330,hy); c.stroke(); c.setLineDash([]);
+      c.fillStyle='#1f7a4a'; c.font='700 20px "IBM Plex Mono",monospace'; c.fillText('h = '+(k.h*100).toFixed(1)+' cm',PX0+190,hy-8); }
+    c.setLineDash([]);
+    c.fillStyle='#b7793f'; c.beginPath(); c.roundRect(bxc-BW*SC/2,top,BW*SC,BH*SC,4); c.fill(); c.strokeStyle='#7a4f24'; c.lineWidth=2; c.stroke();
+    c.fillStyle='#fff'; c.font='700 18px "IBM Plex Mono",monospace'; c.textAlign='center'; c.fillText(S.M.toFixed(1)+' kg',bxc,byc+6); c.textAlign='left';
+    // gun
+    c.fillStyle='#374151'; c.fillRect(0,PY+L*SC-9,34,18);
+    const by=PY+L*SC; c.fillStyle='#17202a';
+    if(st.phase==='ready'||st.phase==='bullet'){ c.beginPath(); c.roundRect(st.bx,by-4,22,8,4); c.fill(); }
+    else if(mode==='stick'){ c.beginPath(); c.arc(bxc-BW*SC/2+6,byc,3.5,0,7); c.fill(); }
+    else if(st.after>-20 && st.after<W+20){ c.beginPath(); c.roundRect(mode==='through'?st.after+BW*SC:st.after-16,by-3,16,6,3); c.fill(); }
+    c.fillStyle='#566271'; c.font='500 17px "IBM Plex Mono",monospace'; c.fillText('bullet shown in slow motion; swing in real time',12,H-10);
+    c.fillText('strings 2.0 m long',PX0+130,PY+26);
+    bars(); readout(); }
+  function bars(){ const x=bc.getContext('2d'), W=bc.width, H=bc.height, k=st.k, hit=st.phase==='swing'; x.clearRect(0,0,W,H);
+    const sec=(y0,title)=>{ x.fillStyle='#17202a'; x.font='700 13px "Atkinson Hyperlegible",sans-serif'; x.fillText(title,4,y0); };
+    const bar=(i,y0,h0,val,max,col,lab,txt)=>{ const bw=38, bx=10+i*50, h=max>0?val/max*h0:0; x.fillStyle=col; x.fillRect(bx,y0-h,bw,h);
+      x.fillStyle='#17202a'; x.font='700 11px "Atkinson Hyperlegible",sans-serif'; x.textAlign='center'; x.fillText(lab,bx+bw/2,y0+14); x.font='500 10px "IBM Plex Mono",monospace'; x.fillStyle='#566271'; x.fillText(txt,bx+bw/2,y0+27); x.textAlign='left'; };
+    sec(16,'1. Collision (an instant)'); x.fillStyle='#17202a'; x.fillRect(4,150,W-8,1);
+    const p0=k.m*k.v, p1=k.m*k.vb+k.M*k.V;
+    bar(0,150,110,p0,p0,'#17202a','p before',p0.toFixed(2)); bar(1,150,110,hit?Math.max(0,p1):0,p0,'#17202a','p after',hit?p1.toFixed(2):'–');
+    bar(2,150,110,k.K0,k.K0,COL('--eK'),'KE before',k.K0.toFixed(0)+' J'); bar(3,150,110,hit?k.K1:0,k.K0,COL('--eK'),'KE after',hit?k.K1.toFixed(1)+' J':'–');
+    sec(214,'2. Swing (block'+(mode==='stick'?' + bullet':'')+')'); x.fillRect(4,350,W-8,1);
+    const ug= hit? k.Ms*g*L*(1-Math.cos(st.th)) : 0, kk= hit? 0.5*k.Ms*(L*st.w)**2 : 0;
+    bar(0,350,110,kk,k.Ksw,COL('--eK'),'K',hit?kk.toFixed(2):'–'); bar(1,350,110,ug,k.Ksw,COL('--eUg'),'Ug',hit?ug.toFixed(2):'–'); bar(2,350,110,hit?k.Ksw:0,k.Ksw,'#9aa3ad','Total',hit?k.Ksw.toFixed(2)+' J':'–');
+    x.fillStyle='#566271'; x.font='500 10px "IBM Plex Mono",monospace'; x.fillText('p in kg·m/s, energy in J',4,H-6); }
+  function readout(){ const k=st.k, hit=st.phase==='swing';
+    $('bro').innerHTML=`<div><span>bullet</span> ${mystery!=null?'???':k.v+' m/s'}</div>`+(hit?`<div><span>block right after</span> ${k.V.toFixed(2)} m/s</div>`+(mode!=='stick'?`<div><span>bullet after</span> ${k.vb.toFixed(0)} m/s</div>`:'')+`<div><span>KE kept in collision</span> ${(k.K1/k.K0*100).toFixed(1)} %</div>`:'')+(st.peaked?`<div><span>max height</span> ${(k.h*100).toFixed(1)} cm</div><div><span>max angle</span> ${(st.thmax*180/Math.PI).toFixed(1)}°</div>`:''); }
+  $('btasks').innerHTML=['Fire with the bullet sticking. Watch the bar charts: which quantity survives the collision, and which survives the swing?',
+    'About what percent of the bullet’s KE is left right after it sticks? Where did the rest go?',
+    'Click <b>Mystery bullet</b>. Use the height and the masses to find the bullet’s speed. Check your answer.',
+    'Compare <b>passes through</b> with <b>sticks</b> (same bullet). Which block swings higher? Explain with momentum.',
+    'A rubber bullet bounces off and the block swings even higher than when the bullet sticks. Explain why, even though the rubber bullet does not stay in the block.',
+    'A student says, “Energy is conserved, so ½mv² = (m+M)gh.” Find the mistake.'].map(t=>'<li>'+t+'</li>').join('');
+  controls(); init();
+  window.__ball={S,setMode:m=>{mode=m;controls();init();},calc};
+})();
+
+/* ================= 07-4 AIR HOCKEY 2D ================= */
+(()=>{
+  const cv=$('hcv'), c=cv.getContext('2d'), vc=$('hvec'), SC=200, OX=410, OY=220, T=1.6, CA='#1d5fa8', CB='#0f766e';
+  const S={mA:1,mB:1,vA:1.5,vB:1,phi:30,e:1}; let bstart='rest', stick=false, st=null, stop=null;
+  const PRE=[{name:'Glancing, equal, elastic',mA:1,mB:1,vA:1.5,phi:30,e:1,bs:'rest',stick:false},{name:'Head-on, equal',mA:1,mB:1,vA:1.5,phi:0,e:1,bs:'rest',stick:false},
+    {name:'Heavy hits light',mA:3,mB:1,vA:1.2,phi:30,e:1,bs:'rest',stick:false},{name:'Light hits heavy',mA:1,mB:3,vA:1.5,phi:30,e:1,bs:'rest',stick:false},
+    {name:'Inelastic glancing',mA:1,mB:1,vA:1.5,phi:30,e:0.4,bs:'rest',stick:false},{name:'Intersection crash',mA:2,mB:1.5,vA:1.2,vB:1.5,phi:-45,e:0,bs:'up',stick:true}];
+  $('hpre').innerHTML=PRE.map((p,i)=>`<button class="chip" data-hp="${i}" aria-pressed="${i===0}">${p.name}</button>`).join('');
+  chipGroup('hp',i=>{ const p=PRE[+i]; Object.assign(S,p); bstart=p.bs; stick=p.stick; $('hbs').value=bstart; $('hstick').checked=stick; build(); });
+  $('hbs').onchange=e=>{bstart=e.target.value; init();}; $('hstick').onchange=e=>{stick=e.target.checked; init();};
+  const fm=v=>v.toFixed(1)+' kg', fv=v=>v.toFixed(1)+' m/s';
+  function build(){ sliders($('hctl'),{mA:{label:'Mass of A',min:.5,max:3,step:.5,fmt:fm},mB:{label:'Mass of B',min:.5,max:3,step:.5,fmt:fm},vA:{label:'Speed of A (to the right)',min:.5,max:2,step:.1,fmt:fv},
+    vB:{label:'Speed of B (if moving up)',min:.5,max:2,step:.1,fmt:fv},phi:{label:'Hit angle (line of centers)',min:-70,max:70,step:5,fmt:v=>v+'°'},e:{label:'Elasticity e',min:0,max:1,step:.05,fmt:v=>v.toFixed(2)}},S,()=>init()); init(); }
+  const rad=m=>0.06+0.04*Math.sqrt(m);
+  function init(){ stop&&stop(); stop=null; $('hgo').textContent='Go'; $('hmsg').hidden=true;
+    const n=[Math.cos(S.phi*Math.PI/180),Math.sin(S.phi*Math.PI/180)], R=rad(S.mA)+rad(S.mB);
+    const vA=[S.vA,0], vB=bstart==='up'?[0,S.vB]:[0,0];
+    const Ac=[-n[0]*R/2,-n[1]*R/2], Bc=[n[0]*R/2,n[1]*R/2];
+    const u=(vA[0]-vB[0])*n[0]+(vA[1]-vB[1])*n[1];
+    let vA2,vB2;
+    if(stick){ const M=S.mA+S.mB, v=[(S.mA*vA[0]+S.mB*vB[0])/M,(S.mA*vA[1]+S.mB*vB[1])/M]; vA2=v; vB2=v.slice(); }
+    else { const J=(1+S.e)*u/(1/S.mA+1/S.mB); vA2=[vA[0]-J/S.mA*n[0],vA[1]-J/S.mA*n[1]]; vB2=[vB[0]+J/S.mB*n[0],vB[1]+J/S.mB*n[1]]; }
+    st={t:0,n,Ac,Bc,vA,vB,vA2,vB2,ok:u>0.05,A0:[Ac[0]-vA[0]*T,Ac[1]-vA[1]*T],B0:[Bc[0]-vB[0]*T,Bc[1]-vB[1]*T]};
+    if(!st.ok){ const m=$('hmsg'); m.hidden=false; m.innerHTML='With these settings the pucks would hit at a different angle. Change the hit angle (try a negative angle when B is moving up).'; }
+    draw(); }
+  const pos=(p0,pc,v1,v2,t)=> t<T? [p0[0]+v1[0]*t,p0[1]+v1[1]*t] : [pc[0]+v2[0]*(t-T),pc[1]+v2[1]*(t-T)];
+  function frame(dt){ st.t+=dt; draw(); if(st.t>T+1.1){ stop=null; $('hgo').textContent='Go'; done(); return false; } }
+  function done(){ const m=$('hmsg'); m.hidden=false; const K0=0.5*S.mA*(S.vA**2)+0.5*S.mB*(st.vB[0]**2+st.vB[1]**2), K1=0.5*S.mA*(st.vA2[0]**2+st.vA2[1]**2)+0.5*S.mB*(st.vB2[0]**2+st.vB2[1]**2);
+    if(stick) m.innerHTML='<b>Stuck together.</b> The wreck moves along the total momentum vector. Accident investigators use this backwards: from the direction and length of the skid, they work out how fast each car was going.';
+    else if(S.mA===S.mB && S.e===1 && bstart==='rest' && S.phi!==0) m.innerHTML='<b>The pucks leave at 90° to each other.</b> That happens only for equal masses, an elastic collision, and one puck at rest. Pool players use it: after a cut shot, the cue ball leaves at right angles to the object ball.';
+    else m.innerHTML=`Total momentum is the same vector before and after (look at the diagram). KE kept: ${(K1/K0*100).toFixed(0)} %.`; }
+  $('hgo').onclick=()=>{ if(!st.ok) return; if(stop) return; if(st.t>0) init(); $('hgo').textContent='Running…'; stop=raf(frame); };
+  $('hreset').onclick=init;
+  const P=p=>[OX+p[0]*SC,OY-p[1]*SC];
+  function puck(p,m,col,lab){ const [x,y]=P(p), r=rad(m)*SC; c.fillStyle=col; c.beginPath(); c.arc(x,y,r,0,7); c.fill(); c.strokeStyle='#17202a'; c.lineWidth=2; c.stroke();
+    c.fillStyle='#fff'; c.font='700 13px "IBM Plex Mono",monospace'; c.textAlign='center'; c.fillText(lab,x,y-2); c.font='500 11px "IBM Plex Mono",monospace'; c.fillText(m.toFixed(1)+'kg',x,y+12); c.textAlign='left'; }
+  function draw(){ const W=cv.width,H=cv.height; c.clearRect(0,0,W,H);
+    c.fillStyle='#eef4fb'; c.beginPath(); c.roundRect(10,10,W-20,H-20,24); c.fill(); c.strokeStyle='#9fb3c8'; c.lineWidth=3; c.stroke();
+    c.fillStyle='#c9d6e3'; for(let x=40;x<W-20;x+=40) for(let y=40;y<H-20;y+=40){ c.fillRect(x,y,2,2); }
+    const t=st.t, pA=pos(st.A0,st.Ac,st.vA,st.vA2,t), pB=pos(st.B0,st.Bc,st.vB,st.vB2,t);
+    const path=(p0,pc,p,col)=>{ c.strokeStyle=col; c.lineWidth=2; c.setLineDash([4,5]); c.beginPath(); const a=P(p0); c.moveTo(a[0],a[1]); const b=t<T?P(p):P(pc); c.lineTo(b[0],b[1]); c.stroke(); c.setLineDash([]);
+      if(t>T){ c.beginPath(); c.moveTo(b[0],b[1]); const q=P(p); c.lineTo(q[0],q[1]); c.stroke(); } };
+    path(st.A0,st.Ac,pA,CA); path(st.B0,st.Bc,pB,CB);
+    if(t>=T && st.ok && !stick){ const a1=Math.atan2(st.vA2[1],st.vA2[0]), a2=Math.atan2(st.vB2[1],st.vB2[0]), sA=Math.hypot(...st.vA2), sB=Math.hypot(...st.vB2);
+      if(sA>0.02&&sB>0.02){ let d=Math.abs(a1-a2)*180/Math.PI; if(d>180) d=360-d; const [cx,cy]=P([(st.Ac[0]+st.Bc[0])/2,(st.Ac[1]+st.Bc[1])/2]);
+        c.strokeStyle='#17202a'; c.lineWidth=1.5; c.beginPath(); c.arc(cx,cy,46,-Math.max(a1,a2),-Math.min(a1,a2)); c.stroke();
+        c.fillStyle='#17202a'; c.font='700 14px "IBM Plex Mono",monospace'; c.fillText(d.toFixed(0)+'°',cx+50*Math.cos(-(a1+a2)/2),cy+50*Math.sin(-(a1+a2)/2)); } }
+    puck(pA,S.mA,CA,'A'); puck(pB,S.mB,CB,'B');
+    const vA=t<T?st.vA:st.vA2, vB=t<T?st.vB:st.vB2, [ax,ay]=P(pA), [bx,by]=P(pB);
+    arrowAt(c,ax,ay,ax+vA[0]*60,ay-vA[1]*60,'#17202a',''); arrowAt(c,bx,by,bx+vB[0]*60,by-vB[1]*60,'#17202a','');
+    vec(); readout(); }
+  function vec(){ const x=vc.getContext('2d'), W=vc.width, H=vc.height; x.clearRect(0,0,W,H);
+    const pa=[S.mA*st.vA[0],S.mA*st.vA[1]], pb=[S.mB*st.vB[0],S.mB*st.vB[1]], pa2=[S.mA*st.vA2[0],S.mA*st.vA2[1]], pb2=[S.mB*st.vB2[0],S.mB*st.vB2[1]];
+    const span=Math.max(Math.hypot(...pa)+Math.hypot(...pb),Math.hypot(...pa2)+Math.hypot(...pb2),0.3), s=150/span;
+    const draw1=(oy,a,b,title,show)=>{ x.fillStyle='#17202a'; x.font='700 13px "Atkinson Hyperlegible",sans-serif'; x.fillText(title,6,oy-150); if(!show) return;
+      const o=[30,oy-80], ta=[o[0]+a[0]*s,o[1]-a[1]*s], tb=[ta[0]+b[0]*s,ta[1]-b[1]*s];
+      if(Math.hypot(...a)>0.01) arrowAt(x,o[0],o[1],ta[0],ta[1],CA,'pA',3); if(Math.hypot(...b)>0.01) arrowAt(x,ta[0],ta[1],tb[0],tb[1],CB,'pB',3);
+      x.setLineDash([5,4]); arrowAt(x,o[0],o[1],tb[0],tb[1],'#17202a','',2); x.setLineDash([]);
+      x.fillStyle='#17202a'; x.font='500 11px "IBM Plex Mono",monospace'; x.fillText('Σp = '+Math.hypot(a[0]+b[0],a[1]+b[1]).toFixed(2)+' kg·m/s',6,oy-10); };
+    draw1(190,pa,pb,'Before',true); x.fillStyle='#d9e0e8'; x.fillRect(4,205,W-8,1); draw1(400,pa2,pb2,'After',st.t>=T); }
+  function readout(){ const f=a=>`(${f2(a[0])}, ${f2(a[1])})`, p0=[S.mA*st.vA[0]+S.mB*st.vB[0],S.mA*st.vA[1]+S.mB*st.vB[1]], p1=[S.mA*st.vA2[0]+S.mB*st.vB2[0],S.mA*st.vA2[1]+S.mB*st.vB2[1]];
+    const K0=0.5*S.mA*(S.vA**2)+0.5*S.mB*(st.vB[0]**2+st.vB[1]**2), K1=0.5*S.mA*(st.vA2[0]**2+st.vA2[1]**2)+0.5*S.mB*(st.vB2[0]**2+st.vB2[1]**2), after=st.t>=T;
+    $('hro').innerHTML=`<div><span>Σp before (x, y)</span> ${f(p0)}</div>`+(after?`<div><span>Σp after</span> ${f(p1)} kg·m/s</div><div><span>speeds after</span> A ${Math.hypot(...st.vA2).toFixed(2)}, B ${Math.hypot(...st.vB2).toFixed(2)} m/s</div><div><span>KE kept</span> ${(K1/K0*100).toFixed(0)} %</div>`:''); }
+  $('htasks').innerHTML=['Run <b>Glancing, equal, elastic</b>. Measure the angle between the paths afterwards. Change the hit angle. Does it change?',
+    'Use the vector diagram: is the total momentum vector the same before and after? Check the x and y numbers.',
+    'Try <b>Heavy hits light</b> and <b>Light hits heavy</b>. Is the angle still 90°?',
+    'Lower e to 0.4. What happens to the angle? To the KE?',
+    '<b>Intersection crash:</b> two cars stick and skid off together. If you know the masses and the skid direction, how could you work out each car’s speed?',
+    'Before the collision B is at rest. Why must the y-momentum of A and B be equal and opposite afterwards?'].map(t=>'<li>'+t+'</li>').join('');
+  build();
+  window.__hockey={S,get:()=>st,setB:(b,s)=>{bstart=b;stick=s;init();}};
+})();
+
+/* ================= EXTRA: SLINGSHOTS ================= */
+(()=>{
+  const cv=$('xcv'), c=cv.getContext('2d'), g=10; let mode='stack', stop=null, running=false;
+  /* ----- ball stack ----- */
+  const BS={n:2,ratio:10,h:1,mat:'ideal'}; let bs;
+  function chain(v,e,ms){ const out=[]; let u=e*v;
+    for(let i=1;i<ms.length;i++){ const m1=ms[i-1], m2=ms[i], w=-v; const u1=(m1*u+m2*w+m2*e*(w-u))/(m1+m2), w1=(m1*u+m2*w+m1*e*(u-w))/(m1+m2); out.push(u1); u=w1; }
+    out.push(u); return out; }
+  function sInit(){ const ms=[]; for(let i=0;i<BS.n;i++) ms.push(Math.pow(1/BS.ratio,i)); const e=BS.mat==='ideal'?1:0.85, v0=Math.sqrt(2*g*BS.h);
+    bs={ms,e,v0,y:new Array(BS.n).fill(BS.h),v:new Array(BS.n).fill(0),phase:'ready',peak:new Array(BS.n).fill(0)}; bs.pred=chain(v0,e,ms); bs.maxH=Math.max(BS.h,...bs.pred.map(u=>u>0?u*u/(2*g):0)); }
+  function sStep(dt){ const n=10,h=dt/n;
+    for(let s=0;s<n;s++){
+      if(bs.phase==='fall'){ bs.v=bs.v.map(v=>v-g*h); bs.y=bs.y.map((y,i)=>y+bs.v[i]*h); if(bs.y[0]<=0){ bs.y=bs.y.map(()=>0); bs.v=bs.pred.slice(); bs.phase='fly'; } }
+      else if(bs.phase==='fly'){ let all=true; for(let i=0;i<BS.n;i++){ if(bs.v[i]===0&&bs.y[i]===0) continue; all=false; bs.v[i]-=g*h; bs.y[i]+=bs.v[i]*h; bs.peak[i]=Math.max(bs.peak[i],bs.y[i]); if(bs.y[i]<=0&&bs.v[i]<0){ bs.y[i]=0; bs.v[i]=0; } } if(all){ bs.phase='done'; } } } }
+  function sDraw(){ const W=cv.width,H=cv.height, F=395; c.clearRect(0,0,W,H);
+    const radii=bs.ms.map(m=>Math.max(8,34*Math.cbrt(m))), stackPx=radii.reduce((a,r)=>a+2*r,0), ppm=(F-20-stackPx)/(bs.maxH*1.05);
+    c.fillStyle='#17202a'; c.fillRect(0,F,W,4);
+    const steps=[0.1,0.2,0.5,1,2,5,10,20,50]; const stp=steps.find(s=>s*ppm>45)||100; c.font='500 11px "IBM Plex Mono",monospace';
+    for(let m=stp;m<=bs.maxH*1.05;m+=stp){ const y=F-m*ppm; c.fillStyle='#c9d2dc'; c.fillRect(60,y,W-80,1); c.fillStyle='#8a96a3'; c.fillText(m+' m',12,y+4); }
+    const hy=F-BS.h*ppm; c.strokeStyle='#17202a'; c.setLineDash([6,4]); c.beginPath(); c.moveTo(60,hy); c.lineTo(W-20,hy); c.stroke(); c.setLineDash([]); c.fillStyle='#17202a'; c.fillText('drop height',W-110,hy-5);
+    const cols=['#c2410c','#9bb51a','#7b4bb7'], cx=360; let off=0;
+    for(let i=0;i<BS.n;i++){ const r=radii[i], y=F-off-r-bs.y[i]*ppm; off+=2*r; c.fillStyle=cols[i]; c.beginPath(); c.arc(cx,y,r,0,7); c.fill(); c.strokeStyle='#17202a'; c.lineWidth=1.5; c.stroke();
+      if(bs.peak[i]>0 && i===BS.n-1){ const py=F-bs.peak[i]*ppm; c.strokeStyle=cols[i]; c.setLineDash([3,3]); c.beginPath(); c.moveTo(cx+30,py); c.lineTo(cx+190,py); c.stroke(); c.setLineDash([]);
+        c.fillStyle=cols[i]; c.font='700 13px "IBM Plex Mono",monospace'; c.fillText(bs.peak[i].toFixed(2)+' m ('+(bs.peak[i]/BS.h).toFixed(1)+'× drop)',cx+196,py+4); } }
+    c.fillStyle='#566271'; c.font='500 12px "IBM Plex Mono",monospace'; c.fillText('balls not drawn to scale; each ball is 1/'+BS.ratio+' the mass of the one below',12,20);
+    const top=bs.pred[BS.n-1], Ktop=0.5*bs.ms[BS.n-1]*top*top, Ktot=bs.ms.reduce((s,m)=>s+0.5*m*bs.v0*bs.v0,0);
+    $('xro').innerHTML=`<div><span>speed hitting the floor</span> ${bs.v0.toFixed(2)} m/s</div><div><span>top ball leaves at</span> ${top.toFixed(2)} m/s (${(top/bs.v0).toFixed(2)}× )</div><div><span>top ball height</span> ${(top*top/2/g).toFixed(2)} m (${(top*top/2/g/BS.h).toFixed(1)}× drop)</div><div><span>top ball’s share of the KE</span> ${(Ktop/Ktot*100).toFixed(0)} %</div>`; }
+  /* ----- gravity assist ----- */
+  const AS={b:-1.5,v:1,U:1,view:'sun'}; let as; const GM=2, RP=0.3, Y0=6, SCL=38;
+  function aInit(){ const T=Y0/AS.v; as={T,t:0,x:AS.b,y:Y0,vx:0,vy:-AS.v,trail:[],sp:[],crashed:false,phase:'ready',dmin:1e9}; as.d0=Math.hypot(AS.b-planetX(0),Y0); }
+  const planetX=t=>AS.U*(t-as.T);
+  function acc(x,y,t){ const dx=x-planetX(t), dy=y, r=Math.hypot(dx,dy); return [-GM*dx/r**3,-GM*dy/r**3,r]; }
+  function aStep(dt){ const sim=dt*3, n=Math.ceil(sim/0.002), h=sim/n;
+    for(let i=0;i<n;i++){ let [ax,ay]=acc(as.x,as.y,as.t); as.vx+=ax*h/2; as.vy+=ay*h/2; as.x+=as.vx*h; as.y+=as.vy*h; as.t+=h; const a2=acc(as.x,as.y,as.t); as.vx+=a2[0]*h/2; as.vy+=a2[1]*h/2;
+      if(a2[2]<RP){ as.crashed=true; as.phase='done'; break; } if(a2[2]<as.dmin) as.dmin=a2[2]; else if(a2[2]>=as.d0){ as.phase='done'; break; } }
+    as.trail.push([as.x,as.y,as.t]); as.sp.push([as.t,Math.hypot(as.vx,as.vy),Math.hypot(as.vx-AS.U,as.vy)]); if(as.t>3*as.T) as.phase='done'; }
+  function aDraw(){ const W=cv.width,H=cv.height; c.clearRect(0,0,W,H); c.fillStyle='#0f1724'; c.fillRect(0,0,W,H);
+    const sun=AS.view==='sun', ox=t=>sun?0:planetX(t), X=(x,t)=>W/2-90+(x-ox(t))*SCL, Y=y=>H/2-y*SCL;
+    c.fillStyle='#5b6676'; for(let i=0;i<70;i++){ c.fillRect((i*137)%W,(i*71)%H,1.5,1.5); }
+    if(sun){ c.strokeStyle='#3b4a5e'; c.setLineDash([5,6]); c.beginPath(); c.moveTo(0,Y(0)); c.lineTo(W,Y(0)); c.stroke(); c.setLineDash([]); }
+    c.strokeStyle='#f2b705'; c.lineWidth=2; c.beginPath(); as.trail.forEach(([x,y,t],i)=>{ const px=X(x,t), py=Y(y); i?c.lineTo(px,py):c.moveTo(px,py); }); c.stroke();
+    const px=X(planetX(as.t),as.t); const gr=c.createRadialGradient(px-6,Y(0)-6,3,px,Y(0),RP*SCL); gr.addColorStop(0,'#f0c27b'); gr.addColorStop(1,'#a0522d'); c.fillStyle=gr; c.beginPath(); c.arc(px,Y(0),RP*SCL,0,7); c.fill();
+    if(sun) arrowAt(c,px,Y(0)+RP*SCL+10,px+AS.U*30,Y(0)+RP*SCL+10,'#f0c27b','planet');
+    const cx=X(as.x,as.t), cy=Y(as.y); c.fillStyle='#fff'; c.beginPath(); c.arc(cx,cy,4,0,7); c.fill();
+    const vx=sun?as.vx:as.vx-AS.U; arrowAt(c,cx,cy,cx+vx*30,cy-as.vy*30,'#7cc4ff','');
+    c.fillStyle='#c9d2dc'; c.font='600 13px "IBM Plex Mono",monospace'; c.fillText(sun?'Seen from the Sun (planet moving →)':'Seen riding along with the planet',12,22);
+    if(as.crashed){ c.fillStyle='#ff8a80'; c.fillText('Crashed into the planet: aim farther away.',12,42); }
+    // speed graph
+    const gx=W-290, gy=H-140, gw=270, gh=120; c.fillStyle='rgba(15,23,36,.85)'; c.fillRect(gx-6,gy-20,gw+12,gh+30); c.strokeStyle='#5b6676'; c.strokeRect(gx,gy,gw,gh);
+    const vmax=Math.max(2.5,...as.sp.map(s=>Math.max(s[1],s[2])))*1.1, GX=t=>gx+gw*t/(2.2*as.T), GYv=v=>gy+gh-gh*v/vmax;
+    [[1,'#7cc4ff','speed rel. to Sun'],[2,'#f0c27b','speed rel. to planet']].forEach(([k,col,lab],j)=>{ c.strokeStyle=col; c.lineWidth=2; c.beginPath(); as.sp.forEach((s,i)=>{ i?c.lineTo(GX(s[0]),GYv(s[k])):c.moveTo(GX(s[0]),GYv(s[k])); }); c.stroke();
+      c.fillStyle=col; c.font='500 11px "IBM Plex Mono",monospace'; c.fillText(lab,gx+j*140,gy-6); });
+    const s0=AS.v, r0=Math.hypot(AS.U,AS.v), s=Math.hypot(as.vx,as.vy), r=Math.hypot(as.vx-AS.U,as.vy);
+    $('xro').innerHTML=`<div><span>speed rel. to Sun</span> start ${s0.toFixed(2)} → now ${s.toFixed(2)}</div><div><span>speed rel. to planet</span> start ${r0.toFixed(2)} → now ${r.toFixed(2)}</div>`+(as.phase==='done'&&!as.crashed?`<div><span>change rel. to Sun</span> ${(s-s0>=0?'+':'')}${((s-s0)/s0*100).toFixed(0)} %</div>`:''); }
+  const NOTE={stack:'Drop a tennis ball sitting on a basketball and the tennis ball flies far higher than it started. The basketball bounces up and meets the falling tennis ball head-on. For a very heavy bottom ball and elastic bounces, the top ball leaves at <b>3v</b>, so it rises <b>9×</b> the drop height; with three balls, <b>7v</b> and <b>49×</b>. The light ball ends up with almost all the KE. Astronomers use this as a model for a supernova: the collapsing core rebounds and blasts the light outer layers away.',
+    assist:'Riding along with the planet, the probe swings past and leaves at the <b>same speed it arrived</b>: gravity is conservative, like the magnets in Collision Carts, so this is an elastic “collision” with no contact. Seen from the Sun the planet is moving, so it is like a ball bouncing off a moving bat: pass <b>behind</b> the planet and the probe leaves faster. The planet slows down by an unmeasurably tiny amount, so total momentum is conserved. Voyager 2 used Jupiter, Saturn, Uranus and Neptune this way; Parker Solar Probe passes <i>in front of</i> Venus to slow down and fall toward the Sun.'};
+  const TASKS=['<b>Ball stack:</b> 2 balls, mass ratio 20, elastic. How many times the drop height does the top ball reach? Why is it close to 9?',
+    'Try 3 balls. Where does the energy for a 40-something-times-higher bounce come from? (Look at the KE share.)',
+    'Switch to real balls (e = 0.85). How much does a little loss at each bounce cut the height?',
+    'Set the mass ratio to 1 (equal balls). What happens? Compare with Newton’s cradle.',
+    '<b>Gravity assist:</b> pass behind the planet. Compare the probe’s speed relative to the planet before and after. Then compare relative to the Sun.',
+    'Pass in front of the planet instead. Does the probe still speed up relative to the Sun? Change the aim and the speeds until it slows down. Why would a mission to the Sun want that?'];
+  $('xtasks').innerHTML=TASKS.map(t=>'<li>'+t+'</li>').join('');
+  function controls(){ const box=$('xctl');
+    if(mode==='stack'){ sliders(box,{n:{label:'Number of balls',min:2,max:3,step:1,fmt:v=>v},ratio:{label:'Mass ratio (each ball ÷ the one above)',min:1,max:20,step:1,fmt:v=>v+' : 1'},h:{label:'Drop height',min:.5,max:1.5,step:.1,fmt:v=>v.toFixed(1)+' m'}},BS,()=>reset());
+      const l=document.createElement('label'); l.innerHTML='Balls <select id="xmat"><option value="ideal">Perfectly elastic</option><option value="real">Real (e = 0.85)</option></select>'; box.appendChild(l); $('xmat').value=BS.mat; $('xmat').onchange=e=>{BS.mat=e.target.value; reset();}; }
+    else { sliders(box,{b:{label:'Aim',min:-3,max:3,step:.25,fmt:v=>v<0?'behind the planet ('+(-v).toFixed(2)+')':v>0?'in front ('+v.toFixed(2)+')':'straight at it'},v:{label:'Probe speed',min:.6,max:1.6,step:.1,fmt:v=>v.toFixed(1)},U:{label:'Planet speed',min:.5,max:1.5,step:.1,fmt:v=>v.toFixed(1)}},AS,()=>reset());
+      const l=document.createElement('label'); l.innerHTML='View <select id="xview"><option value="sun">From the Sun</option><option value="planet">Riding with the planet</option></select>'; box.appendChild(l); $('xview').value=AS.view; $('xview').onchange=e=>{AS.view=e.target.value; DRAW[mode]();}; }
+    $('xnote').innerHTML=NOTE[mode]; }
+  const INIT={stack:sInit,assist:aInit}, STEP={stack:sStep,assist:aStep}, DRAW={stack:sDraw,assist:aDraw};
+  const isDone=()=> mode==='stack'? bs.phase==='done' : as.phase==='done';
+  function reset(){ stop&&stop(); stop=null; running=false; $('xgo').textContent= mode==='stack'?'Drop':'Launch'; INIT[mode](); DRAW[mode](); }
+  $('xgo').onclick=()=>{ if(running) return; if(isDone()) INIT[mode](); if(mode==='stack') bs.phase='fall'; else as.phase='fly'; running=true;
+    stop=raf(dt=>{ STEP[mode](dt); DRAW[mode](); if(isDone()){ running=false; stop=null; return false; } }); };
+  $('xreset').onclick=reset;
+  chipGroup('xm',m=>{ mode=m; controls(); reset(); });
+  controls(); reset();
+  window.__x={BS,AS,setMode:m=>{mode=m;controls();reset();},stack:()=>{ sInit(); return bs.pred; },assist:()=>{ aInit(); as.phase='fly'; while(as.phase!=='done') aStep(0.05); return {s:Math.hypot(as.vx,as.vy),r:Math.hypot(as.vx-AS.U,as.vy),crashed:as.crashed}; }};
+})();
+
+/* ================= PhET ================= */
+(()=>{ let loaded=false; const url='https://phet.colorado.edu/sims/html/collision-lab/latest/collision-lab_all.html';
+  window.loadPhet=()=>{ if(loaded) return; loaded=true; $('phetBox').innerHTML=`<iframe class="phet" src="${url}" title="PhET Collision Lab" allowfullscreen></iframe>`; }; })();
+</script>
+</html>

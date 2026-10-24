@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Push the Cart</title>
+<!-- Push the Cart: Newton's second law with static and kinetic friction. g = 10 m/s². Original sim (Holmes Sims). -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@500;700&display=swap">
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#fff;font-family:"Space Grotesk",system-ui,sans-serif;color:#111}
+#app{position:absolute;left:0;top:0;width:960px;height:600px;transform-origin:0 0;padding:14px 16px;box-sizing:border-box}
+canvas{display:block;border:2px solid #111;background:#fbfbfb}
+.row{display:flex;gap:14px;margin-top:12px;align-items:stretch}
+.ctl{flex:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 18px}
+label{font-size:14px;display:grid;gap:2px}
+label b{font:700 14px "IBM Plex Mono",monospace}
+input[type=range]{width:100%;accent-color:#111}
+.side{width:300px;display:flex;flex-direction:column;gap:10px}
+.ro{border:2px solid #111;padding:8px 10px;font:500 14px/1.6 "IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
+.ro span{color:#4a4a4a}
+.btns{display:flex;gap:8px}
+button{font:700 15px "Space Grotesk",sans-serif;padding:9px 16px;border:2px solid #111;background:#fff;color:#111;cursor:pointer}
+button.go{background:#111;color:#fff}
+button:hover{background:#ffe2d3} button.go:hover{background:#333}
+button:focus-visible,input:focus-visible{outline:3px solid #ff6a2b;outline-offset:2px}
+</style></head><body>
+<div id="app">
+  <canvas id="cv" width="924" height="250" aria-label="Cart on a track with applied force and friction"></canvas>
+  <div class="row">
+    <div class="ctl">
+      <label for="f"><span>Applied force <b id="fo"></b></span><input id="f" type="range" min="0" max="40" step="1" value="12"></label>
+      <label for="m"><span>Mass of cart <b id="mo"></b></span><input id="m" type="range" min="0.5" max="8" step="0.5" value="2"></label>
+      <label for="us"><span>Static friction μ<sub>s</sub> <b id="uso"></b></span><input id="us" type="range" min="0" max="0.6" step="0.05" value="0.25"></label>
+      <label for="uk"><span>Kinetic friction μ<sub>k</sub> <b id="uko"></b></span><input id="uk" type="range" min="0" max="0.6" step="0.05" value="0.20"></label>
+      <canvas id="vt" width="560" height="120" aria-label="Velocity versus time graph" style="grid-column:1/-1"></canvas>
+    </div>
+    <div class="side">
+      <div class="ro" id="ro"></div>
+      <div class="btns"><button class="go" id="go">Run</button><button id="reset">Reset</button></div>
+    </div>
+  </div>
+</div>
+<script>
+const $=id=>document.getElementById(id), g=10, cv=$('cv'), ctx=cv.getContext('2d'), vc=$('vt'), vx=vc.getContext('2d');
+const S={x:0,v:0,t:0,run:false,hist:[]};
+function fit(){ const s=Math.min(innerWidth/960, innerHeight/600); $('app').style.transform='scale('+s+')'; }
+addEventListener('resize',fit); fit();
+function P(){ const F=+$('f').value, m=+$('m').value, us=+$('us').value, uk=Math.min(+$('uk').value, us||+$('uk').value), N=m*g;
+  let fric, state;
+  if(S.v<1e-9){ if(F<=us*N){ fric=F; state='static'; } else { fric=uk*N; state='kinetic'; } }
+  else { fric=uk*N; state='kinetic'; }
+  let net=F-fric; if(S.v<1e-9 && state==='static') net=0;
+  return {F,m,us,uk,N,fric,state,net,a:net/m}; }
+function readout(){ const p=P();
+  $('fo').textContent=p.F+' N'; $('mo').textContent=p.m.toFixed(1)+' kg'; $('uso').textContent=(+$('us').value).toFixed(2); $('uko').textContent=(+$('uk').value).toFixed(2);
+  $('ro').innerHTML=`<div><span>weight mg  </span>${(p.m*g).toFixed(1)} N</div><div><span>friction   </span>${p.fric.toFixed(1)} N (${p.state})</div>`+
+    `<div><span>max static </span>${(p.us*p.N).toFixed(1)} N</div><div><span>F<sub>net</sub>      </span>${p.net.toFixed(1)} N</div>`+
+    `<div><span>a          </span>${p.a.toFixed(2)} m/s²</div><div><span>v          </span>${S.v.toFixed(2)} m/s</div><div><span>t          </span>${S.t.toFixed(1)} s</div>`; }
+function arrow(x1,y,x2,col,label,below){ if(Math.abs(x2-x1)<2) return; ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=5; ctx.beginPath(); ctx.moveTo(x1,y); ctx.lineTo(x2,y); ctx.stroke();
+  const d=Math.sign(x2-x1); ctx.beginPath(); ctx.moveTo(x2+d*12,y); ctx.lineTo(x2-d*2,y-9); ctx.lineTo(x2-d*2,y+9); ctx.fill();
+  ctx.font='700 16px "IBM Plex Mono",monospace'; ctx.textAlign=d>0?'left':'right'; ctx.fillText(label,x1+d*4,below?y-14:y-14); ctx.textAlign='left'; }
+function draw(){ const p=P(), W=cv.width, H=cv.height; ctx.clearRect(0,0,W,H);
+  const sc=40, gy=190, X0=W*0.33, w=70+p.m*9;
+  ctx.fillStyle='#111'; ctx.fillRect(0,gy,W,5);
+  ctx.font='500 13px "IBM Plex Mono",monospace'; ctx.fillStyle='#4a4a4a'; ctx.textAlign='center';
+  for(let n=Math.floor(S.x-X0/sc)-1;n<=S.x+(W-X0)/sc+1;n++){ const xx=X0+(n-S.x)*sc; ctx.fillRect(xx-1,gy+5,2,n%5===0?16:9); if(n%5===0) ctx.fillText(n+' m',xx,gy+36); }
+  ctx.textAlign='left';
+  const h=44+p.m*4, x=X0-w/2, y=gy-h-16;
+  ctx.fillStyle='#ffe2d3'; ctx.strokeStyle='#111'; ctx.lineWidth=3; ctx.fillRect(x,y,w,h); ctx.strokeRect(x,y,w,h);
+  ctx.fillStyle='#111'; for(const wx of [x+16,x+w-16]){ ctx.beginPath(); ctx.arc(wx,gy-8,8,0,7); ctx.fill(); }
+  ctx.font='700 16px "IBM Plex Mono",monospace'; ctx.fillText(p.m.toFixed(1)+' kg',x+w/2-26,y+h/2+6);
+  const ym=y+h/2, k=7;
+  arrow(x+w,ym-6,x+w+p.F*k,'#1546d6','F = '+p.F+' N');
+  arrow(x-4,gy-30,x-4-p.fric*k,'#c43a00','f = '+p.fric.toFixed(1)+' N',true);
+  ctx.fillStyle='#111'; ctx.font='700 18px "Space Grotesk",sans-serif';
+  ctx.fillText('a = F'+'net / m = '+p.net.toFixed(1)+' N / '+p.m.toFixed(1)+' kg = '+p.a.toFixed(2)+' m/s²',16,28);
+  if(p.state==='static' && p.F>0){ ctx.fillStyle='#c43a00'; ctx.font='700 15px "Space Grotesk",sans-serif'; ctx.fillText('Static friction matches the push, so the cart stays put.',16,52); }
+  graph(); }
+function graph(){ const W=vc.width, H=vc.height; vx.clearRect(0,0,W,H); const L=40, B=20;
+  vx.strokeStyle='#111'; vx.lineWidth=1.5; vx.beginPath(); vx.moveTo(L,6); vx.lineTo(L,H-B); vx.lineTo(W-6,H-B); vx.stroke();
+  vx.font='500 11px "IBM Plex Mono",monospace'; vx.fillStyle='#4a4a4a'; vx.fillText('v (m/s)',L+4,14); vx.textAlign='right'; vx.fillText('t (s)',W-6,H-4);
+  const T=Math.max(5,S.t), vm=Math.max(2,...S.hist.map(h=>h[1]))*1.1; vx.fillText(vm.toFixed(1),L-4,14); vx.fillText('0',L-4,H-B); vx.fillText(T.toFixed(0),W-6,H-B-4); vx.textAlign='left';
+  vx.strokeStyle='#1546d6'; vx.lineWidth=2.5; vx.beginPath(); S.hist.forEach(([t,v],i)=>{ const X=L+(W-L-8)*t/T, Y=H-B-(H-B-8)*v/vm; i?vx.lineTo(X,Y):vx.moveTo(X,Y); }); vx.stroke(); }
+let last=0;
+function step(ts){ if(!S.run) return; const dt=Math.min(.05,(ts-(last||ts))/1000); last=ts; const n=10;
+  for(let i=0;i<n;i++){ const p=P(); let v=S.v+p.a*dt/n; if(v<0) v=0; S.x+=(S.v+v)/2*dt/n; S.v=v; S.t+=dt/n; }
+  S.hist.push([S.t,S.v]); if(S.t>15){ S.run=false; $('go').textContent='Run'; }
+  readout(); draw(); if(S.run) requestAnimationFrame(step); }
+$('go').onclick=()=>{ S.run=!S.run; $('go').textContent=S.run?'Pause':'Run'; last=0; if(S.run) requestAnimationFrame(step); };
+$('reset').onclick=()=>{ Object.assign(S,{x:0,v:0,t:0,run:false,hist:[]}); $('go').textContent='Run'; readout(); draw(); };
+['f','m','us','uk'].forEach(id=>$(id).oninput=()=>{ if(+$('uk').value>+$('us').value){ if(id==='uk') $('us').value=$('uk').value; else $('uk').value=$('us').value; } readout(); draw(); });
+readout(); draw();
+</script>
+</body></html>

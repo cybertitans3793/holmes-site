@@ -1,0 +1,761 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>P1-06 Work, Power, and Energy</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Unit sim hub: graph-paper worksheet, ink-blue accent; energy colors fixed per quantity across every sim in the unit. */
+:root{
+  --paper:#f7f9fb; --sheet:#ffffff; --ink:#17202a; --muted:#566271; --rule:#d9e0e8; --grid:rgba(29,95,168,.07);
+  --accent:#1d5fa8; --accent-soft:#e6eef8; --on-accent:#fff; --good:#1f7a4a; --bad:#b42318; --tip-soft:#fff3d6;
+  --eK:#1d5fa8; --eUg:#1f7a4a; --eUs:#7b4bb7; --eTh:#c2410c; --eW:#6b7280;
+  --f-display:"Bricolage Grotesque",system-ui,sans-serif; --f-body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 var(--f-body);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:20px 20px}
+.wrap{max-width:1080px;margin:0 auto;padding-block:16px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance}
+.uhead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:10px;margin-bottom:12px}
+.uhead h1{font-size:1.35rem;font-weight:800}
+.mono{font:500 .78rem var(--f-mono);color:var(--muted);letter-spacing:.02em}
+.uhead a{color:var(--accent);font-weight:700;text-decoration:none}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;margin-bottom:12px}
+.tab{all:unset;cursor:pointer;white-space:nowrap;padding:8px 14px;border-radius:9px;border:1px solid var(--rule);background:var(--sheet);font-size:.92rem}
+.tab b{font:500 .78rem var(--f-mono);color:var(--muted);margin-right:6px}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.tab[aria-selected="true"] b{color:#b9c3cd}
+.tab:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+[hidden]{display:none!important}
+.panel{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:14px}
+.card{background:var(--sheet);border:1px solid var(--rule);border-radius:14px;padding:14px;min-width:0}
+.scen{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.chip{all:unset;cursor:pointer;padding:6px 12px;border-radius:999px;border:1px solid var(--rule);background:var(--sheet);font-size:.9rem}
+.chip[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.stage{display:grid;grid-template-columns:minmax(0,1fr) 210px;gap:12px;align-items:stretch}
+canvas{display:block;width:100%;height:auto;border-radius:10px;background:#fbfdff;border:1px solid var(--rule)}
+.stage > canvas{align-self:start}
+.bars canvas{width:100%;height:auto;border:none;background:transparent}
+.bars{display:flex;flex-direction:column;border:1px solid var(--rule);border-radius:10px;padding:8px 8px 6px;background:#fff;min-width:0}
+.bars h3{font:700 .85rem var(--f-body);margin:0 0 4px;color:var(--muted)}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px 16px;margin-top:12px}
+.controls label{font-size:.85rem;color:var(--muted);display:grid;gap:2px}
+.controls output{font:500 .9rem var(--f-mono);color:var(--ink)}
+input[type=range]{width:100%;accent-color:var(--accent)}
+select{font:inherit;padding:5px 8px;border-radius:8px;border:1px solid var(--rule);background:#fff;color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-top:10px}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn{all:unset;cursor:pointer;font-weight:700;padding:8px 14px;border-radius:8px;background:var(--accent);color:var(--on-accent);font-size:.92rem}
+.btn.ghost{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
+.readout{display:flex;flex-wrap:wrap;gap:6px 16px;font:500 .88rem var(--f-mono);font-variant-numeric:tabular-nums}
+.readout span{color:var(--muted)}
+.msg{margin-top:10px;padding:8px 12px;border-radius:8px;background:var(--tip-soft);font-size:.92rem}
+.try h3{font:800 1rem var(--f-display);margin:0 0 6px}
+.try ol{margin:0;padding-left:1.2em;display:grid;gap:8px;font-size:.93rem}
+.try .link{display:block;margin-top:14px;padding-top:10px;border-top:1px solid var(--rule);color:var(--accent);font-weight:700;text-decoration:none;font-size:.92rem}
+.sysnote{font-size:.85rem;color:var(--muted);margin-top:8px}
+.placeholder{display:grid;place-items:center;text-align:center;min-height:320px;color:var(--muted);gap:6px;padding:20px}
+.placeholder strong{color:var(--ink);font:800 1.1rem var(--f-display)}
+.phet{width:100%;aspect-ratio:16/10;border:0;border-radius:10px;background:#fff}
+@media (max-width:860px){ .panel{grid-template-columns:1fr} }
+@media (max-width:620px){ .stage{grid-template-columns:1fr} }
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@500;700&display=swap">
+<style id="bigtype">
+/* Big Type overrides (Holmes Sims house style) */
+:root{--paper:#fafafa;--sheet:#fff;--ink:#111;--muted:#4a4a4a;--rule:#111;--grid:transparent;--accent:#111;--accent-soft:#ffe2d3;--on-accent:#fff;--tip-soft:#ffe2d3;--hot:#ff6a2b;
+  --f-display:"Space Grotesk",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;--f-body:"Space Grotesk",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+body{background:var(--paper)!important;background-image:none!important;font-family:var(--f-body)}
+.wrap{max-width:1240px;padding-top:18px}
+.uhead{align-items:flex-end;gap:14px;margin-bottom:16px}
+.uhead .uid{display:flex;align-items:flex-end;gap:16px;min-width:0}
+.uhead .big{font-weight:700;font-size:clamp(64px,10vw,104px);line-height:.8;letter-spacing:-.04em;font-family:var(--f-display)}
+.uhead .mono{font:700 .8rem var(--f-mono);color:var(--ink)}
+.uhead h1{font-weight:700;font-size:clamp(28px,4vw,40px);line-height:1;letter-spacing:-.02em}
+.uhead a.cta{display:inline-block;font-weight:700;text-decoration:none;color:var(--ink);padding:11px 16px;border:3px solid var(--ink);background:var(--hot);box-shadow:4px 4px 0 var(--ink)}
+.tabs{gap:8px;margin-bottom:16px;padding:0 6px 8px 0}
+.tab{border:2px solid var(--ink);border-radius:0;font-weight:700;font-size:15px;padding:10px 14px;background:#fff}
+.tab b{font:700 12px var(--f-mono);color:inherit;margin-right:7px}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--paper);box-shadow:4px 4px 0 var(--hot)}
+.tab[aria-selected="true"] b{color:inherit}
+.tab:hover:not([aria-selected="true"]){background:var(--accent-soft)}
+.tab:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--hot)!important;outline-offset:3px}
+.panel{gap:18px;align-items:start}
+.card{border:3px solid var(--ink);border-radius:0;box-shadow:6px 6px 0 var(--ink)}
+.card.try,aside.try{background:var(--accent-soft);box-shadow:none}
+.try h3{font:700 26px var(--f-display);letter-spacing:-.01em;margin:0 0 10px}
+.try ol{font-size:15.5px;gap:10px;line-height:1.42}
+.try .link{border-top:2px solid var(--ink);color:var(--ink);padding-top:12px;margin-top:16px}
+.chip{border:2px solid var(--ink);border-radius:0;font-weight:700;background:#fff}
+.chip[aria-pressed="true"]{background:var(--hot);color:var(--ink);border-color:var(--ink)}
+.btn{border-radius:0;border:2px solid var(--ink);background:var(--ink);color:#fff}
+.btn.ghost{background:#fff;color:var(--ink);border:2px solid var(--ink)}
+.btn:hover{filter:none;background:#333}.btn.ghost:hover{background:var(--accent-soft)}
+canvas{border-radius:0;border:2px solid var(--ink)}
+.bars{border:2px solid var(--ink);border-radius:0}
+.bars canvas{border:none}
+.bars h3{font:700 .85rem var(--f-display);color:var(--ink)}
+select{border:2px solid var(--ink);border-radius:0}
+.msg{border-radius:0;border:2px solid var(--ink);background:var(--accent-soft)}
+.phet{border-radius:0}
+input[type=range],input[type=checkbox]{accent-color:var(--ink)}
+</style>
+
+<div class="wrap">
+  <div class="uhead"><div class="uid"><div class="big" aria-hidden="true">06</div><div><div class="mono">AP Physics 1 · P1-06</div><h1>Work, Power, and Energy</h1></div></div><a href="#" id="toReview" class="cta">Practice this unit →</a></div>
+  <div class="tabs" role="tablist" aria-label="Sims">
+    <button class="tab" role="tab" aria-selected="false" data-t="work"><b>06-1</b>Work Done</button>
+    <button class="tab" role="tab" aria-selected="true" data-t="track"><b>06-2</b>Energy Track</button>
+    <button class="tab" role="tab" aria-selected="false" data-t="spring"><b>06-2</b>Spring Launcher</button>
+    <button class="tab" role="tab" aria-selected="false" data-t="power"><b>06-3</b>Power: Lift It</button>
+    <button class="tab" role="tab" aria-selected="false" data-t="vert"><b>06-4</b>Spring + Gravity</button>
+    <button class="tab" role="tab" aria-selected="false" data-t="phet"><b>PhET</b>Energy Skate Park</button>
+  </div>
+
+  <!-- ENERGY TRACK -->
+  <section id="p-track" class="panel">
+    <div class="card">
+      <div class="scen" role="group" aria-label="Scenario" id="scen"></div>
+      <div class="stage">
+        <canvas id="cv" width="820" height="400" aria-label="Track with a cart"></canvas>
+        <div class="bars"><h3 id="barsTitle">Energy of cart + Earth + track</h3><canvas id="bars" width="220" height="330" aria-label="Energy bar chart"></canvas></div>
+      </div>
+      <div class="controls" id="ctl"></div>
+      <div class="row">
+        <div class="btns"><button class="btn" id="go">Release</button><button class="btn ghost" id="reset">Reset</button><button class="btn ghost" id="slow">Slow motion: off</button><button class="btn" id="rocket" aria-pressed="false" hidden style="background:#c2410c">Hold to fire rocket (R)</button></div>
+        <div class="btns" style="align-items:center">
+          <label class="mono" for="sys">System <select id="sys"><option value="earth">Cart + Earth + track</option><option value="cart">Cart only</option></select></label>
+          <label class="mono" for="wheels">Wheels <select id="wheels"><option value="skateboard">Skateboard (can leave track)</option><option value="coaster">Coaster (locked to track)</option></select></label>
+          <label class="mono" for="forces"><input type="checkbox" id="forces"> Show forces</label>
+        </div>
+      </div>
+      <div class="readout" id="ro" style="margin-top:10px"></div>
+      <div class="msg" id="msg" hidden></div>
+      <div class="sysnote" id="sysnote"></div>
+    </div>
+    <aside class="card try"><h3>Try this</h3><ol id="tasks"></ol><a class="link" href="#" id="toReview2">Practice P1-06 questions →</a></aside>
+  </section>
+
+  <!-- WORK DONE -->
+  <section id="p-work" class="panel" hidden>
+    <div class="card">
+      <div class="scen" role="group" aria-label="Mode"><button class="chip" data-wm="pull" aria-pressed="true">Pull at an angle</button><button class="chip" data-wm="fx" aria-pressed="false">Area under F–x</button></div>
+      <div class="stage">
+        <canvas id="wcv" width="820" height="360" aria-label="Work done diagram"></canvas>
+        <div class="bars"><h3 id="wbarsT">Work done by each force</h3><canvas id="wbars" width="220" height="330" aria-label="Work bar chart"></canvas></div>
+      </div>
+      <div class="controls" id="wctl"></div>
+      <div class="row"><div class="btns"><button class="btn" id="wgo">Pull</button><button class="btn ghost" id="wreset">Reset</button></div></div>
+      <div class="readout" id="wro" style="margin-top:10px"></div>
+      <div class="msg" id="wmsg" hidden></div>
+    </div>
+    <aside class="card try"><h3>Try this</h3><ol id="wtasks"></ol><a class="link" href="#">Practice P1-06 questions →</a></aside>
+  </section>
+
+  <!-- SPRING LAUNCHER -->
+  <section id="p-spring" class="panel" hidden>
+    <div class="card">
+      <div class="scen" role="group" aria-label="Mode"><button class="chip" data-sm="floor" aria-pressed="true">Onto a rough floor</button><button class="chip" data-sm="ramp" aria-pressed="false">Up a smooth ramp</button></div>
+      <canvas id="scv" width="820" height="300" aria-label="Spring launcher"></canvas>
+      <div class="controls" id="sctl"></div>
+      <div class="row"><div class="btns"><button class="btn" id="sgo">Launch</button><button class="btn ghost" id="sreset">Reset</button><button class="btn ghost" id="srec">Record result</button><button class="btn ghost" id="sclear">Clear data</button></div></div>
+      <div class="readout" id="sro" style="margin-top:10px"></div>
+      <div class="stage" style="margin-top:12px;grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
+        <div class="bars"><h3>Energy vs position of the block</h3><canvas id="sgraph" width="400" height="230" aria-label="Energy versus position graph"></canvas></div>
+        <div class="bars"><h3 style="display:flex;justify-content:space-between;gap:8px;align-items:center">Your data <select id="saxis" aria-label="Graph x-axis"><option value="c">plot vs compression x</option><option value="c2">plot vs x²</option></select></h3><canvas id="splot" width="400" height="230" aria-label="Data plot"></canvas><div id="stable" class="mono" style="max-height:110px;overflow:auto;margin-top:6px"></div></div>
+      </div>
+    </div>
+    <aside class="card try"><h3>Try this</h3><ol id="stasks"></ol><a class="link" href="#">Practice P1-06 questions →</a></aside>
+  </section>
+
+  <!-- POWER -->
+  <section id="p-power" class="panel" hidden>
+    <div class="card">
+      <div class="scen" role="group" aria-label="Mode"><button class="chip" data-pm="lift" aria-pressed="true">Motor lifts a load</button><button class="chip" data-pm="car" aria-pressed="false">Car up a hill</button></div>
+      <div class="stage">
+        <canvas id="pcv" width="820" height="380" aria-label="Power scene"></canvas>
+        <div class="bars"><h3>Power</h3><canvas id="pbars" width="220" height="330" aria-label="Power bar chart"></canvas></div>
+      </div>
+      <div class="controls" id="pctl"></div>
+      <div class="row"><div class="btns"><button class="btn" id="pgo">Start</button><button class="btn ghost" id="preset">Reset</button></div></div>
+      <div class="readout" id="pro" style="margin-top:10px"></div>
+    </div>
+    <aside class="card try"><h3>Try this</h3><ol id="ptasks"></ol><a class="link" href="#">Practice P1-06 questions →</a></aside>
+  </section>
+
+  <!-- SPRING + GRAVITY -->
+  <section id="p-vert" class="panel" hidden>
+    <div class="card">
+      <div class="scen" role="group" aria-label="Mode"><button class="chip" data-vm="spring" aria-pressed="true">Mass on a spring</button><button class="chip" data-vm="bungee" aria-pressed="false">Bungee jump</button></div>
+      <div class="stage">
+        <canvas id="vcv" width="820" height="420" aria-label="Vertical spring"></canvas>
+        <div class="bars"><h3>Energy (U<sub>g</sub> = 0 at the lowest point)</h3><canvas id="vbars" width="220" height="330" aria-label="Energy bar chart"></canvas></div>
+      </div>
+      <div class="controls" id="vctl"></div>
+      <div class="row"><div class="btns"><button class="btn" id="vgo">Release</button><button class="btn ghost" id="vreset">Reset</button><button class="btn ghost" id="vslow">Slow motion: off</button></div></div>
+      <div class="readout" id="vro" style="margin-top:10px"></div>
+    </div>
+    <aside class="card try"><h3>Try this</h3><ol id="vtasks"></ol><a class="link" href="#">Practice P1-06 questions →</a></aside>
+  </section>
+
+  <!-- PHET -->
+  <section id="p-phet" class="panel" hidden>
+    <div class="card">
+      <div class="row" style="margin:0 0 10px"><label class="mono" for="phetPick">PhET sim
+        <select id="phetPick"></select></label><a id="phetOpen" href="#" target="_blank" rel="noopener" class="mono">Open in a new tab ↗</a></div>
+      <div id="phetBox"></div>
+    </div>
+    <aside class="card try"><h3>Try this</h3><ol id="phtasks"></ol>
+      <p class="sysnote">PhET Interactive Simulations, University of Colorado Boulder, CC-BY 4.0.</p></aside>
+  </section>
+</div>
+
+<script>
+/* ---------- tabs ---------- */
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected',String(x===t)));
+  document.querySelectorAll('section.panel').forEach(p=>p.hidden=(p.id!=='p-'+t.dataset.t));
+  if(t.dataset.t==='phet') window.loadPhet&&window.loadPhet();
+});
+['toReview','toReview2'].forEach(id=>document.getElementById(id).onclick=e=>e.preventDefault());
+
+/* ---------- energy track physics ---------- */
+const g=10;
+const $=id=>document.getElementById(id);
+const cv=$('cv'), ctx=cv.getContext('2d'), bc=$('bars'), bx=bc.getContext('2d');
+
+/* Tracks are polylines in metres, resampled by arc length. */
+function resample(pts,ds=0.005){
+  const out=[pts[0]]; let acc=0;
+  for(let i=1;i<pts.length;i++){ let [x0,y0]=pts[i-1],[x1,y1]=pts[i]; let seg=Math.hypot(x1-x0,y1-y0);
+    while(acc+seg>=ds){ const t=(ds-acc)/seg; x0=x0+(x1-x0)*t; y0=y0+(y1-y0)*t; out.push([x0,y0]); seg=Math.hypot(x1-x0,y1-y0); acc=0; }
+    acc+=seg; }
+  return out;
+}
+function curve(fn,a,b,n=400){ const p=[]; for(let i=0;i<=n;i++){const x=a+(b-a)*i/n; p.push([x,fn(x)]);} return p; }
+function ramp(p,h,L){ for(let i=0;i<=1200;i++){const x=L*i/1200; p.push([x,h*(1-x/L)**2]);} }
+
+const SCEN={
+  hill:{ name:'Hill and valley', wheels:'coaster', build:P=>curve(x=> 4.2*Math.exp(-((x-1)**2)/1.2) + P.h2*Math.exp(-((x-8.2)**2)/2.2) + 0.2, 0, 13, 3000),
+    controls:['start','h2','mu','m'], defaults:{start:1.2,h2:2.6,mu:0,m:2},
+    tasks:['With friction at 0, release from the top. Which bar chart quantity stays the same the whole time?',
+           'Raise the second hill until the cart just fails to get over it. How does that height compare with the start height? Why?',
+           'Switch the System to “Cart only”. Gravity is no longer stored energy. What replaces the U<sub>g</sub> bar, and why does the total change now?',
+           'Switch Wheels to “Skateboard” and turn on Show forces. Why does the cart fly off the top of the second hill?'] },
+  hump:{ name:'Hump (airtime)', wheels:'skateboard', build:P=>{ const p=[]; ramp(p,P.hs,4); for(let i=1;i<=20;i++) p.push([4+i*0.05,0]);
+      // smooth hump, height A, radius of curvature r at the very top (y = A·exp(−x²/2σ²), r = σ²/A)
+      const A=1.2, sig=Math.sqrt(P.r*A), xc=5+3.5*sig;
+      const e0=Math.exp(-6.125); for(let i=1;i<=3000;i++){ const x=5+7*sig*i/3000; p.push([x, A*(Math.exp(-((x-xc)**2)/(2*sig*sig))-e0)/(1-e0)]); }
+      const e=5+7*sig; for(let i=1;i<=80;i++) p.push([e+i*0.06,0]); return p; },
+    controls:['hs','r','mu','m'], defaults:{hs:2.0,r:2.0,mu:0,m:2},
+    tasks:['Turn on Show forces. As the cart goes over the hump, what happens to the normal force N?',
+           'Find the start height where the cart just leaves the hump at the very top. At that moment N = 0, so mg = mv²/r. Check that v² = gr.',
+           'The hump is 1.2 m tall. Use energy to predict that start height before you test it: h<sub>start</sub> = 1.2 m + r/2.',
+           'Switch Wheels to “Coaster”. Now the track can pull down on the cart. Which way does N point at the top when the cart is fast?'] },
+  loop:{ name:'Loop-the-loop', wheels:'skateboard', build:P=>{ const R=P.R; const p=[]; ramp(p,P.hs,6);
+      for(let i=1;i<=20;i++) p.push([6+i*0.05,0]);
+      const cx=7, cy=R; for(let i=1;i<=360;i++){const a=-Math.PI/2+2*Math.PI*i/360; p.push([cx+R*Math.cos(a)+0.0005*i, cy+R*Math.sin(a)]);}
+      for(let i=1;i<=100;i++) p.push([7.18+i*0.06,0]); return p; },
+    controls:['hs','R','mu','m'], defaults:{hs:3.5,R:1.0,mu:0,m:2},
+    tasks:['With R = 1.0 m and no friction, find the lowest start height that gets the cart around the loop. Compare it with 2.5R.',
+           'Turn on Show forces. What is N at the top of the loop at that lowest height?',
+           'Start from exactly 2R. The cart has enough energy to reach the top. Why does it still fall off?',
+           'Switch Wheels to “Coaster”. Real coasters have wheels under the track. Why can they go around from a lower start?'] },
+  jumps:{ name:'Jumps + rocket', wheels:'skateboard', rocket:true, build:P=>{ const p=[]; ramp(p,P.hs,4); for(let i=1;i<=40;i++) p.push([4+i*0.05,0]);
+      for(let i=1;i<=120;i++){ const x=6+3*i/120; p.push([x,1.2*((x-6)/3)**2]); }
+      const xg=9+P.gap; for(let i=1;i<=40;i++){ p.push([9+P.gap*i/40,1.2]); }   // the gap (not real track)
+      for(let i=1;i<=120;i++){ const x=xg+3*i/120; p.push([x,1.2*(1-(x-xg)/3)**2]); }
+      for(let i=1;i<=80;i++) p.push([xg+3+i*0.06,0]); return p; },
+    gap:P=>[9,9+P.gap],
+    controls:['hs','gap','Fr','m'], defaults:{hs:2.5,gap:2.5,Fr:20,m:2},
+    tasks:['Without the rocket, find the lowest start height that clears the gap.',
+           'Start lower, then hold the rocket on the run-up. Watch the W<sub>rocket</sub> bar: the rocket is outside the system, so the total energy goes up.',
+           'Compare your speed just before take-off with your speed just before landing. Explain using energy.',
+           'Land on the flat part instead of the ramp. Where does the energy go when you land?'] },
+  rough:{ name:'Rough patch', wheels:'coaster', build:P=>{ const p=[]; for(let i=0;i<=200;i++){const x=3*i/200; p.push([x, 3*(1-x/3)**2]);}
+      for(let i=1;i<=200;i++) p.push([3+P.L*i/200,0]); const e=3+P.L; for(let i=1;i<=200;i++){const x=3*i/200; p.push([e+x,3*(x/3)**2]);} return p; },
+    controls:['start','L','mu','m'], defaults:{start:0.0,L:2.0,mu:0.2,m:2}, rough:true,
+    tasks:['Only the flat middle section is rough. Predict how many times the cart crosses it before stopping, then release.',
+           'Calculate the energy lost on one full crossing (μmgL). Does it match the drop in the total bar?',
+           'Predict exactly where the cart comes to rest. Check with the position readout.',
+           'Double the mass. Does the stopping point change? Explain with an energy equation.'] },
+  bumper:{ name:'Spring bumper', wheels:'coaster', build:P=>{ const p=[]; ramp(p,P.hs,4); for(let i=1;i<=300;i++) p.push([4+6*i/300,0]); return p; },
+    controls:['hs','k','mu','m'], defaults:{hs:1.25,k:400,mu:0,m:2}, spring:true,
+    tasks:['Release from 1.25 m and read the maximum compression. Now release from 5.0 m (4×). Predict the new compression first.',
+           'Make a table of start height h and maximum compression x. Which graph would give a straight line: x vs h, x vs √h, or x² vs h?',
+           'Double the spring constant. By what factor does the maximum compression change?',
+           'At maximum compression, which bar is largest? Where did the kinetic energy go?'] },
+};
+const CTL={
+  start:{label:'Start position',min:0,max:3,step:0.05,fmt:v=>v.toFixed(2)+' m'},
+  h2:{label:'Second hill height',min:1,max:5,step:0.1,fmt:v=>v.toFixed(1)+' m'},
+  hs:{label:'Start height',min:0.5,max:6,step:0.05,fmt:v=>v.toFixed(2)+' m'},
+  R:{label:'Loop radius R',min:0.6,max:1.6,step:0.1,fmt:v=>v.toFixed(1)+' m'},
+  r:{label:'Hump top radius r',min:1.5,max:4,step:0.25,fmt:v=>v.toFixed(2)+' m'},
+  gap:{label:'Gap width',min:1,max:5,step:0.25,fmt:v=>v.toFixed(2)+' m'},
+  Fr:{label:'Rocket thrust',min:0,max:40,step:2,fmt:v=>v+' N'},
+  L:{label:'Rough patch length',min:1,max:4,step:0.5,fmt:v=>v.toFixed(1)+' m'},
+  k:{label:'Spring constant k',min:100,max:1600,step:50,fmt:v=>v+' N/m'},
+  mu:{label:'Friction μ',min:0,max:0.5,step:0.01,fmt:v=>v.toFixed(2)},
+  m:{label:'Mass',min:0.5,max:5,step:0.5,fmt:v=>v.toFixed(1)+' kg'},
+};
+let scen='hill', P={}, T=null, S=null, running=false, slow=false, firing=false;
+const locked=()=>$('wheels').value==='coaster';
+
+function buildControls(){
+  const c=$('ctl'); c.innerHTML='';
+  for(const k of SCEN[scen].controls){ const d=CTL[k];
+    const lab=document.createElement('label'); lab.htmlFor='c-'+k;
+    lab.innerHTML=`${d.label} <output id="o-${k}">${d.fmt(P[k])}</output><input id="c-${k}" type="range" min="${d.min}" max="${d.max}" step="${d.step}" value="${P[k]}">`;
+    c.appendChild(lab);
+    lab.querySelector('input').oninput=e=>{P[k]=+e.target.value; $('o-'+k).textContent=d.fmt(P[k]); if(k==='mu'||k==='m'||k==='Fr'){ if(!running) draw(); } else { setup(); } };
+  }
+}
+function setup(){
+  const sc=SCEN[scen]; const pts=resample(sc.build(P));
+  const n=pts.length, s=new Float64Array(n), tx=new Float64Array(n), ty=new Float64Array(n), kap=new Float64Array(n), gap=new Uint8Array(n);
+  for(let i=1;i<n;i++) s[i]=s[i-1]+Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]);
+  for(let i=0;i<n;i++){ const a=pts[Math.max(0,i-1)], b=pts[Math.min(n-1,i+1)]; const L=Math.hypot(b[0]-a[0],b[1]-a[1])||1; tx[i]=(b[0]-a[0])/L; ty[i]=(b[1]-a[1])/L; }
+  for(let i=0;i<n;i++){ const a=Math.max(0,i-8), b=Math.min(n-1,i+8); const ang=(j)=>Math.atan2(ty[j],tx[j]); let d=ang(b)-ang(a); while(d>Math.PI)d-=2*Math.PI; while(d<-Math.PI)d+=2*Math.PI; kap[i]=d/((s[b]-s[a])||1); }
+  let gapS=null;
+  if(sc.gap){ const [ga,gb]=sc.gap(P); let a=-1,b=-1; for(let i=0;i<n;i++){ if(pts[i][0]>ga+1e-6 && pts[i][0]<gb-1e-6 && Math.abs(pts[i][1]-1.2)<1e-3){ gap[i]=1; if(a<0)a=i; b=i; } } if(a>=0) gapS=[s[a],s[b]]; }
+  T={pts,s,tx,ty,kap,gap,gapS,n,len:s[n-1]};
+  T.roughA= sc.rough? 3 : -1; T.roughB= sc.rough? 3+P.L : -1;
+  T.springX= sc.spring? 8.0 : null;
+  let s0=0; if(scen==='hill'||scen==='rough') s0=nearestS(P.start);
+  sizeView(); reset(s0);
+}
+function nearestS(x){ let best=0,bd=1e9; for(let i=0;i<T.n;i++){const d=Math.abs(T.pts[i][0]-x); if(d<bd){bd=d;best=i;}} return T.s[best]; }
+function at(sv){
+  sv=Math.max(0,Math.min(T.len,sv)); let lo=0,hi=T.n-1; while(hi-lo>1){const mid=(lo+hi)>>1; if(T.s[mid]<=sv)lo=mid; else hi=mid;}
+  const f=(sv-T.s[lo])/((T.s[hi]-T.s[lo])||1); const L=(a,b)=>a+(b-a)*f;
+  return {x:L(T.pts[lo][0],T.pts[hi][0]), y:L(T.pts[lo][1],T.pts[hi][1]), tx:L(T.tx[lo],T.tx[hi]), ty:L(T.ty[lo],T.ty[hi]), k:L(T.kap[lo],T.kap[hi])};
+}
+function reset(s0){ running=false; firing=false; $('go').textContent='Release';
+  const p=at(s0); S={s:s0, v:0, t:0, Eth:0, Wg:0, Wf:0, Wr:0, air:null, crossings:0, lastRough:false, maxComp:0, y0:p.y, stopped:false, landLoss:0, vTake:null, vLand:null};
+  $('msg').hidden=true; draw(); }
+const Etot=()=>P.m*g*S.y0+S.Wr;
+function springForce(x){ if(T.springX==null) return {F:0,c:0}; const c=x-T.springX; return c>0? {F:-P.k*c, c} : {F:0,c:0}; }
+function launch(p,msg){ S.air={x:p.x,y:p.y,vx:S.v*p.tx,vy:S.v*p.ty,armed:false,x0:p.x,y0:p.y}; S.vTake=Math.abs(S.v); if(msg) showMsg(msg); }
+
+function stepAir(dt){
+  const a=S.air, m=P.m; let ax=0, ay=-g; const sp=Math.hypot(a.vx,a.vy);
+  if(firing && SCEN[scen].rocket && sp>1e-6){ ax+=P.Fr*a.vx/sp/m; ay+=P.Fr*a.vy/sp/m; S.Wr+=P.Fr*sp*dt; }
+  const y1=a.y; a.vx+=ax*dt; a.vy+=ay*dt; a.x+=a.vx*dt; a.y+=a.vy*dt; S.t+=dt; S.Wg+=-m*g*(a.y-y1);
+  // exact energy: rescale speed
+  const Kt=Etot()-S.Eth-m*g*a.y; const s2=a.vx*a.vx+a.vy*a.vy; if(Kt>0&&s2>0){ const f=Math.sqrt(2*Kt/m/s2); a.vx*=f; a.vy*=f; }
+  if(Math.hypot(a.x-a.x0,a.y-a.y0)>0.05) a.armed=true;
+  if(a.y<-1.5){ running=false; $('go').textContent='Release'; showMsg('The cart missed the track.'); return; }
+  if(!a.armed) return;
+  // landing: nearest real track point, and which side of it we are on
+  let best=-1,bd=1e9; for(let i=0;i<T.n;i+=2){ if(T.gap[i]) continue; const dx=a.x-T.pts[i][0], dy=a.y-T.pts[i][1], d=dx*dx+dy*dy; if(d<bd){bd=d;best=i;} }
+  if(best<0||bd>0.09) return;
+  const nx=-T.ty[best], ny=T.tx[best]; const dx=a.x-T.pts[best][0], dy=a.y-T.pts[best][1];
+  const side=dx*nx+dy*ny, along=dx*T.tx[best]+dy*T.ty[best];
+  const prevSide=(dx-a.vx*dt)*nx+(dy-a.vy*dt)*ny;   // must cross the track from the riding side
+  if(side<0 && prevSide>=-1e-4 && Math.abs(along)<0.03){ const vt=a.vx*T.tx[best]+a.vy*T.ty[best], vn=a.vx*nx+a.vy*ny; const lost=0.5*m*vn*vn;
+    S.Eth+=lost; S.landLoss+=lost; S.Wf-=lost; S.vLand=Math.hypot(a.vx,a.vy); S.s=T.s[best]; S.v=vt; S.air=null;
+    showMsg(`Landed. ${lost.toFixed(0)} J of kinetic energy went into the bump of landing (sound, heat, bending the board).`); }
+}
+function step(dt){
+  if(S.air) return stepAir(dt);
+  const p=at(S.s), m=P.m;
+  if(T.gapS && S.s>T.gapS[0]-0.003 && S.s<T.gapS[1]+0.003){ launch(at(S.v>0?T.gapS[0]-0.004:T.gapS[1]+0.004)); return; }
+  const ny=p.tx;                                  // y-part of the track's left (support-side) normal
+  const Nm = S.v*S.v*p.k + g*ny;                  // N/m from the radial equation
+  if(!locked() && Nm<0 && S.v*S.v>0.01){ launch(p,'The cart left the track: here gravity was more than the mv²/r needed to follow the curve, so the track would have had to pull.'); return; }
+  const inRough = scen==='rough' ? (p.x>T.roughA && p.x<T.roughB && Math.abs(p.y)<1e-3) : true;
+  const N=(scen==='rough' ? g*ny : Nm)*m;
+  const mu = inRough ? (P.mu||0) : 0;
+  const sp=springForce(p.x); const Fs=sp.F*p.tx;
+  const Fg=-m*g*p.ty;
+  let Fr=0; if(firing && SCEN[scen].rocket){ Fr = P.Fr*(Math.abs(S.v)>1e-3?Math.sign(S.v):1); }
+  if(Math.abs(S.v)<0.02 && Math.abs(Fg+Fs+Fr)<=mu*Math.abs(N)+1e-9 && mu>0){ S.v=0; S.stopped=true; S.t+=dt; return; }
+  const fdir = Math.abs(S.v)>1e-6 ? -Math.sign(S.v) : -Math.sign(Fg+Fs+Fr);
+  const Ff = fdir*mu*Math.abs(N);
+  const a=(Fg+Fs+Ff+Fr)/m;
+  const vOld=S.v; S.v+=a*dt; const ds=(vOld+S.v)/2*dt;
+  let sNew=S.s+ds; if(sNew<0){ sNew=0; S.v=Math.abs(S.v);} if(sNew>T.len){ sNew=T.len; S.v=-Math.abs(S.v); }
+  const p2=at(sNew);
+  S.Wg+= -m*g*(p2.y-p.y); S.Wf+= -Math.abs(Ff*ds); S.Eth+= Math.abs(Ff*ds); S.Wr+= Fr*ds;
+  S.s=sNew; S.t+=dt;
+  const sp2=springForce(p2.x); const Us2=SCEN[scen].spring?0.5*P.k*sp2.c*sp2.c:0;
+  const Kt=Etot() - S.Eth - m*g*p2.y - Us2;
+  if(Kt>0){ S.v=(S.v>=0?1:-1)*Math.sqrt(2*Kt/m); } else if(Kt<=0){ S.v*=0.5; }
+  S.maxComp=Math.max(S.maxComp,sp2.c);
+  if(scen==='rough'){ const r=(p2.x>T.roughA && p2.x<T.roughB); if(!r && S.lastRough) S.crossings++; S.lastRough=r; }
+}
+function energies(){ const p= S.air? {x:S.air.x,y:S.air.y}: at(S.s); const v2= S.air? S.air.vx**2+S.air.vy**2 : S.v*S.v;
+  const K=0.5*P.m*v2, Ug=P.m*g*p.y, sp=springForce(p.x), Us=SCEN[scen].spring?0.5*P.k*sp.c*sp.c:0;
+  return {K,Ug,Us,Eth:S.Eth,p}; }
+
+/* ---------- drawing ---------- */
+let view={sx:1,ox:0,oy:0};
+function sizeView(){ let minx=1e9,maxx=-1e9,miny=1e9,maxy=-1e9; for(const [x,y] of T.pts){minx=Math.min(minx,x);maxx=Math.max(maxx,x);miny=Math.min(miny,y);maxy=Math.max(maxy,y);}
+  maxy=Math.max(maxy,(scen==='hill'?5:maxy), scen==='jumps'?3.2:0); const W=cv.width,H=cv.height,pad=36; const sc=Math.min((W-2*pad)/(maxx-minx||1),(H-2*pad-10)/(maxy-miny+0.6||1));
+  view={sx:sc,ox:pad-minx*sc+((W-2*pad)-(maxx-minx)*sc)/2,oy:H-pad+miny*sc}; }
+const X=x=>view.ox+x*view.sx, Y=y=>view.oy-y*view.sx;
+function arrow(x1,y1,x2,y2,col,lab){ const L=Math.hypot(x2-x1,y2-y1); if(L<3) return; ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); const a=Math.atan2(y2-y1,x2-x1);
+  ctx.beginPath(); ctx.moveTo(x2+Math.cos(a)*8,y2+Math.sin(a)*8); ctx.lineTo(x2+Math.cos(a+2.5)*8,y2+Math.sin(a+2.5)*8); ctx.lineTo(x2+Math.cos(a-2.5)*8,y2+Math.sin(a-2.5)*8); ctx.fill();
+  ctx.font='700 15px "IBM Plex Mono",monospace'; ctx.fillText(lab,x2+6,y2+4); }
+function draw(){
+  const W=cv.width,H=cv.height; ctx.clearRect(0,0,W,H);
+  ctx.font='500 15px "IBM Plex Mono",monospace'; ctx.fillStyle='#8a96a3'; ctx.strokeStyle='#e4e9ef'; ctx.lineWidth=1;
+  for(let h=0;h<=8;h++){ const y=Y(h); if(y<10) break; ctx.beginPath(); ctx.moveTo(28,y); ctx.lineTo(W-6,y); ctx.stroke(); ctx.fillText(h+' m',2,y+4); }
+  ctx.setLineDash([6,5]); ctx.strokeStyle='#1d5fa8'; ctx.beginPath(); ctx.moveTo(28,Y(S.y0)); ctx.lineTo(W-6,Y(S.y0)); ctx.stroke(); ctx.setLineDash([]);
+  // track (gaps not drawn)
+  ctx.lineWidth=5; ctx.strokeStyle='#17202a'; ctx.lineCap='round'; ctx.beginPath(); let pen=false;
+  for(let i=0;i<T.n;i++){ const [x,y]=T.pts[i]; if(T.gap[i]){ pen=false; continue; } if(!pen){ ctx.moveTo(X(x),Y(y)); pen=true; } else ctx.lineTo(X(x),Y(y)); } ctx.stroke();
+  if(scen==='rough'){ ctx.strokeStyle='#c2410c'; ctx.lineWidth=7; ctx.beginPath(); ctx.moveTo(X(T.roughA),Y(0)); ctx.lineTo(X(T.roughB),Y(0)); ctx.stroke();
+    ctx.fillStyle='#c2410c'; ctx.fillText('rough (μ = '+P.mu.toFixed(2)+')',X(T.roughA)+4,Y(0)+18); }
+  if(SCEN[scen].spring){ const e=energies(); const comp=Math.max(0,springForce(e.p.x).c); const x0=T.springX+comp, x1=10; const coils=12;
+    ctx.strokeStyle='#7b4bb7'; ctx.lineWidth=2.5; ctx.beginPath(); for(let i=0;i<=coils*2;i++){const xx=x0+(x1-x0)*i/(coils*2); const yy=0.25+(i%2?0.12:-0.12); i?ctx.lineTo(X(xx),Y(yy)):ctx.moveTo(X(xx),Y(yy));} ctx.stroke();
+    ctx.fillStyle='#17202a'; ctx.fillRect(X(10),Y(0.6),6,Y(0)-Y(0.6)); }
+  const e=energies(); const px=e.p.x, py=e.p.y; const tp= S.air? null : at(S.s);
+  const ang= S.air? Math.atan2(S.air.vy,S.air.vx) : Math.atan2(tp.ty,tp.tx);
+  // circle of curvature + forces
+  if($('forces').checked && !S.air){ const k=tp.k; const nx=-tp.ty, ny=tp.tx;
+    if(Math.abs(k)>0.2){ const r=1/Math.abs(k), cxw=px+nx*(1/k), cyw=py+ny*(1/k); ctx.setLineDash([4,6]); ctx.strokeStyle='#9aa8b6'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(X(cxw),Y(cyw),r*view.sx,0,7); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle='#9aa8b6'; ctx.beginPath(); ctx.arc(X(cxw),Y(cyw),3,0,7); ctx.fill(); }
+    const Nm=S.v*S.v*k+g*ny; const L=48; const ox=X(px), oy=Y(py)-14;
+    arrow(ox,oy,ox,oy+L,'#566271','mg');
+    const Nn=(locked()?Nm:Math.max(0,Nm))/g*L; arrow(ox,oy,ox+nx*Nn,oy-ny*Nn,'#1f7a4a','N'); }
+  ctx.save(); ctx.translate(X(px),Y(py)); ctx.rotate(-ang);
+  const w=34+P.m*3, h=18+P.m*1.5; ctx.fillStyle='#e6eef8'; ctx.strokeStyle='#1d5fa8'; ctx.lineWidth=2; ctx.fillRect(-w/2,-h-8,w,h); ctx.strokeRect(-w/2,-h-8,w,h);
+  ctx.fillStyle='#17202a'; for(const wx of [-w/3,w/3]){ctx.beginPath();ctx.arc(wx,-4,4.5,0,7);ctx.fill();}
+  if(firing && SCEN[scen].rocket){ const dir=(S.air||S.v>=0)?1:-1; ctx.fillStyle='#c2410c'; ctx.beginPath(); ctx.moveTo(-dir*w/2,-h/2-8); ctx.lineTo(-dir*(w/2+26+Math.random()*10),-h/2-4); ctx.lineTo(-dir*w/2,-h/2); ctx.fill(); }
+  ctx.restore();
+  bars(e); readout(e);
+}
+function bars(e){
+  const W=bc.width,H=bc.height; bx.clearRect(0,0,W,H);
+  const sys=$('sys').value, rk=SCEN[scen].rocket; const scale=(H-60)/Math.max(Etot()*1.15, P.m*g*S.y0*1.15, 1);
+  let items;
+  if(sys==='earth') items=[['K',e.K,'--eK'],['Ug',e.Ug,'--eUg'],...(SCEN[scen].spring?[['Us',e.Us,'--eUs']]:[]),['ΔEth',e.Eth,'--eTh'],...(rk?[['W_rkt',S.Wr,'--accent']]:[]),['Total',e.K+e.Ug+e.Us+e.Eth,'--eW']];
+  else items=[['K',e.K,'--eK'],['Wg',S.Wg,'--eUg'],['Wf',S.Wf,'--eTh'],...(SCEN[scen].spring?[['Ws',-e.Us,'--eUs']]:[]),...(rk?[['W_rkt',S.Wr,'--accent']]:[])];
+  const bw=Math.min(36,(W-20)/items.length-8), base=H-34;
+  bx.strokeStyle='#17202a'; bx.lineWidth=1; bx.beginPath(); bx.moveTo(4,base); bx.lineTo(W-4,base); bx.stroke();
+  items.forEach(([lab,val,col],i)=>{ const x=10+i*(bw+8); const hgt=val*scale; const c=getComputedStyle(document.documentElement).getPropertyValue(col).trim();
+    bx.fillStyle=c; bx.globalAlpha=lab==='Total'?0.45:1; if(hgt>=0) bx.fillRect(x,base-hgt,bw,hgt); else bx.fillRect(x,base,bw,Math.min(-hgt,30)); bx.globalAlpha=1;
+    bx.fillStyle='#17202a'; bx.font='700 12px "Atkinson Hyperlegible",sans-serif'; bx.textAlign='center'; bx.fillText(lab,x+bw/2,H-18);
+    bx.font='500 10px "IBM Plex Mono",monospace'; bx.fillStyle='#566271'; bx.fillText(Math.round(val)+' J',x+bw/2,H-5); });
+  bx.textAlign='left';
+}
+function readout(e){
+  const v=S.air? Math.hypot(S.air.vx,S.air.vy) : Math.abs(S.v);
+  let h=`<div><span>height </span>${e.p.y.toFixed(2)} m</div><div><span>speed </span>${v.toFixed(2)} m/s</div><div><span>t </span>${S.t.toFixed(1)} s</div>`;
+  if(S.air) h+=`<div><span>in the air </span>N = 0</div>`;
+  else { const p=at(S.s); const Nm=S.v*S.v*p.k+g*p.tx; const r=Math.abs(p.k)>0.05?1/Math.abs(p.k):null;
+    h+=`<div><span>N </span>${(locked()?Nm:Math.max(0,Nm))*P.m>=0?'':'−'}${Math.abs((locked()?Nm:Math.max(0,Nm))*P.m).toFixed(1)} N</div>`;
+    if(r) h+=`<div><span>curve radius r </span>${r.toFixed(2)} m</div><div><span>v²/r </span>${(S.v*S.v/r).toFixed(1)} m/s²</div>`; }
+  if(scen==='rough') h+=`<div><span>crossings </span>${S.crossings}</div><div><span>x </span>${e.p.x.toFixed(2)} m</div>`;
+  if(SCEN[scen].spring) h+=`<div><span>max compression </span>${S.maxComp.toFixed(3)} m</div>`;
+  if(SCEN[scen].rocket){ if(S.vTake!=null) h+=`<div><span>take-off speed </span>${S.vTake.toFixed(2)} m/s</div>`; if(S.vLand!=null) h+=`<div><span>landing speed </span>${S.vLand.toFixed(2)} m/s</div>`; }
+  $('ro').innerHTML=h;
+}
+function showMsg(t){ $('msg').textContent=t; $('msg').hidden=false; }
+function sysNote(){ const rk=SCEN[scen].rocket;
+  $('barsTitle').textContent=$('sys').value==='earth'?'Energy of cart + Earth + track':'Cart only: K and work done on it';
+  $('sysnote').innerHTML=$('sys').value==='earth'
+    ? 'Earth and the track are inside the system, so gravity and friction are internal. Energy moves between K, U<sub>g</sub>'+(SCEN[scen].spring?', U<sub>s</sub>':'')+' and thermal energy'+(rk?'. The rocket is outside the system: its work (W<sub>rkt</sub>) adds to the total.':'; the total stays constant.')
+    : 'Only the cart is the system. There is no U<sub>g</sub>: gravity'+(SCEN[scen].spring?', the spring':'')+' and friction are outside forces that do work. Work–energy theorem: ΔK = W<sub>g</sub> + W<sub>f</sub>'+(SCEN[scen].spring?' + W<sub>s</sub>':'')+(rk?' + W<sub>rkt</sub>':'')+'.';
+  $('rocket').hidden=!rk; }
+
+let last=0;
+function loop(ts){ if(!running) return; const real=Math.min(0.05,(ts-(last||ts))/1000); last=ts; let dt=real*(slow?0.25:1);
+  const n=Math.ceil(dt/0.0008); for(let i=0;i<n;i++){ step(dt/n); if(!running) break; }
+  draw();
+  if(S.stopped && scen==='rough'){ running=false; $('go').textContent='Release'; showMsg(`Stopped at x = ${energies().p.x.toFixed(2)} m after ${S.crossings} full crossings. Energy turned into thermal: ${S.Eth.toFixed(0)} J.`); return; }
+  if(S.t>60){ running=false; $('go').textContent='Release'; return; }
+  if(running) requestAnimationFrame(loop); }
+$('go').onclick=()=>{ if(running){ running=false; $('go').textContent='Resume'; return; } if(S.t>0&&(S.stopped||(!running&&$('go').textContent==='Release'))) setup(); running=true; $('go').textContent='Pause'; last=0; requestAnimationFrame(loop); };
+$('reset').onclick=()=>setup();
+$('slow').onclick=()=>{ slow=!slow; $('slow').textContent='Slow motion: '+(slow?'on':'off'); };
+$('sys').onchange=()=>{ sysNote(); draw(); };
+$('wheels').onchange=()=>draw();
+$('forces').onchange=()=>draw();
+const rb=$('rocket'); const fire=on=>{ firing=on&&SCEN[scen].rocket; rb.setAttribute('aria-pressed',String(firing)); };
+rb.addEventListener('pointerdown',e=>{e.preventDefault(); fire(true);}); ['pointerup','pointerleave','pointercancel'].forEach(ev=>rb.addEventListener(ev,()=>fire(false)));
+document.addEventListener('keydown',e=>{ if((e.key==='r'||e.key==='R') && !$('p-track').hidden && SCEN[scen].rocket){ fire(true); } });
+document.addEventListener('keyup',e=>{ if(e.key==='r'||e.key==='R') fire(false); });
+
+function pickScenario(k){ scen=k; P={...SCEN[k].defaults}; $('wheels').value=SCEN[k].wheels;
+  document.querySelectorAll('#scen .chip').forEach(c=>c.setAttribute('aria-pressed',String(c.dataset.k===k)));
+  $('tasks').innerHTML=SCEN[k].tasks.map(t=>'<li>'+t+'</li>').join('');
+  buildControls(); setup(); sysNote(); }
+for(const k in SCEN){ const c=document.createElement('button'); c.className='chip'; c.dataset.k=k; c.textContent=SCEN[k].name; c.onclick=()=>pickScenario(k); $('scen').appendChild(c); }
+pickScenario('hill');
+</script>
+<script>
+/* ================= shared helpers for the other tabs ================= */
+const COL=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function sliders(box,defs,state,onchange){
+  box.innerHTML='';
+  for(const [k,d] of Object.entries(defs)){
+    const lab=document.createElement('label'); lab.htmlFor=box.id+'-'+k;
+    lab.innerHTML=`${d.label} <output>${d.fmt(state[k])}</output><input id="${box.id}-${k}" type="range" min="${d.min}" max="${d.max}" step="${d.step}" value="${state[k]}">`;
+    const out=lab.querySelector('output');
+    lab.querySelector('input').oninput=e=>{state[k]=+e.target.value; out.textContent=d.fmt(state[k]); onchange(k);};
+    box.appendChild(lab);
+  }
+}
+function chipGroup(attr,cb){ const chips=[...document.querySelectorAll(`[data-${attr}]`)];
+  chips.forEach(c=>c.onclick=()=>{ chips.forEach(x=>x.setAttribute('aria-pressed',String(x===c))); cb(c.dataset[attr]); }); }
+function barChart(cv,items,{maxAbs,signed=false,unit='J'}={}){
+  const c=cv.getContext('2d'),W=cv.width,H=cv.height; c.clearRect(0,0,W,H);
+  const top=12,bottom=H-36; const base= signed? (top+bottom)/2 : bottom; const span= signed? (bottom-top)/2 : bottom-top;
+  const m=Math.max(maxAbs||1e-9,...items.map(i=>Math.abs(i[1])))*1.08; const bw=Math.min(36,(W-20)/items.length-8);
+  c.strokeStyle='#17202a'; c.lineWidth=1; c.beginPath(); c.moveTo(4,base); c.lineTo(W-4,base); c.stroke();
+  items.forEach(([lab,val,col],i)=>{ const x=10+i*(bw+8), h=val/m*span; c.fillStyle=COL(col)||col; c.globalAlpha=lab==='Total'?0.45:1;
+    if(h>=0) c.fillRect(x,base-h,bw,h); else c.fillRect(x,base,bw,-h); c.globalAlpha=1;
+    c.fillStyle='#17202a'; c.textAlign='center'; c.font='700 13px "Atkinson Hyperlegible",sans-serif'; c.fillText(lab,x+bw/2,H-20);
+    c.font='500 10px "IBM Plex Mono",monospace'; c.fillStyle='#566271'; c.fillText((Math.abs(val)>=100?Math.round(val):val.toFixed(1))+' '+unit,x+bw/2,H-6); });
+  c.textAlign='left';
+}
+function arrowAt(c,x1,y1,x2,y2,col,label,lw=3){ const L=Math.hypot(x2-x1,y2-y1); if(L<3) return; c.strokeStyle=col; c.fillStyle=col; c.lineWidth=lw;
+  c.beginPath(); c.moveTo(x1,y1); c.lineTo(x2,y2); c.stroke(); const a=Math.atan2(y2-y1,x2-x1);
+  c.beginPath(); c.moveTo(x2+Math.cos(a)*9,y2+Math.sin(a)*9); c.lineTo(x2+Math.cos(a+2.5)*9,y2+Math.sin(a+2.5)*9); c.lineTo(x2+Math.cos(a-2.5)*9,y2+Math.sin(a-2.5)*9); c.fill();
+  if(label){ c.font='600 22px "IBM Plex Mono",monospace'; c.fillText(label,x2+6,y2-6); } }
+const raf=(fn)=>{ let last=0, on=true; const loop=ts=>{ if(!on) return; const dt=Math.min(0.05,(ts-(last||ts))/1000); last=ts; if(fn(dt)!==false) requestAnimationFrame(loop); else on=false; }; requestAnimationFrame(loop); return ()=>{on=false;}; };
+
+/* ================= 06-1 WORK DONE ================= */
+(()=>{
+  const cv=$('wcv'), c=cv.getContext('2d'); let mode='pull', stop=null, x=0, running=false;
+  const S={F:60,th:30,m:12,mu:0.25,d:6, k:200,x1:0.10,x2:0.30};
+  const DEF={pull:{F:{label:'Pull force F',min:0,max:150,step:5,fmt:v=>v+' N'},th:{label:'Angle above horizontal',min:0,max:70,step:5,fmt:v=>v+'°'},m:{label:'Mass',min:4,max:30,step:1,fmt:v=>v+' kg'},mu:{label:'Friction μ',min:0,max:0.6,step:0.05,fmt:v=>v.toFixed(2)},d:{label:'Distance pulled',min:1,max:10,step:0.5,fmt:v=>v.toFixed(1)+' m'}},
+             fx:{k:{label:'Spring constant k',min:50,max:500,step:10,fmt:v=>v+' N/m'},x1:{label:'Start stretch x₁',min:0,max:0.40,step:0.01,fmt:v=>v.toFixed(2)+' m'},x2:{label:'End stretch x₂',min:0,max:0.40,step:0.01,fmt:v=>v.toFixed(2)+' m'}}};
+  const TASKS={pull:['Set the angle to 0° and friction to 0. Double the distance. What happens to the work done by F? To the final speed?',
+     'Keep F = 60 N and raise the angle from 0° to 60°. Why does the work done by F go down, even though friction also goes down?',
+     'Find an angle where the crate moves at (almost) constant speed. What is the net work then?',
+     'Which forces always do zero work here? Explain using the angle between force and motion.'],
+     fx:['Stretch from 0 to 0.20 m, then from 0.20 m to 0.40 m. Which takes more work? How many times more?',
+     'Why can’t you use W = Fd with F = k·x₂ here?',
+     'Predict the work to stretch from 0.10 m to 0.30 m with k = 200 N/m, then check the shaded area.']};
+  function calc(){ const g=10, th=S.th*Math.PI/180, Fx=S.F*Math.cos(th), Fy=S.F*Math.sin(th);
+    const N=Math.max(0,S.m*g-Fy), f=S.mu*N, moves=Fx>f+1e-9; const WF=moves?Fx*S.d:0, Wf=moves?-f*S.d:0, Wnet=WF+Wf;
+    return {Fx,Fy,N,f,moves,WF,Wf,Wnet,v:moves?Math.sqrt(2*Wnet/S.m):0,lift:Fy>S.m*g}; }
+  function draw(){
+    const W=cv.width,H=cv.height; c.clearRect(0,0,W,H);
+    if(mode==='pull'){ const r=calc(); const sc=(W-160)/S.d, gy=270, x0=40; const px=x0+x*sc;
+      c.fillStyle='#17202a'; c.fillRect(0,gy,W,4); c.font='500 20px "IBM Plex Mono",monospace'; c.fillStyle='#8a96a3';
+      for(let i=0;i<=S.d;i++){ c.fillRect(x0+i*sc,gy+4,1,8); c.fillText(i+' m',x0+i*sc-8,gy+26); }
+      c.setLineDash([5,5]); c.strokeStyle='#1d5fa8'; c.beginPath(); c.moveTo(x0+S.d*sc,gy-120); c.lineTo(x0+S.d*sc,gy); c.stroke(); c.setLineDash([]);
+      const bw=120, bh=80; c.fillStyle='#e6eef8'; c.strokeStyle='#1d5fa8'; c.lineWidth=2; c.fillRect(px,gy-bh,bw,bh); c.strokeRect(px,gy-bh,bw,bh);
+      c.fillStyle='#1d5fa8'; c.font='700 23px "IBM Plex Mono",monospace'; c.fillText(S.m+' kg',px+34,gy-bh/2+5);
+      const cx=px+bw/2, cy=gy-bh/2, s=1.1, th=S.th*Math.PI/180;
+      arrowAt(c,px+bw,cy,px+bw+S.F*s*Math.cos(th),cy-S.F*s*Math.sin(th),COL('--accent'),'F');
+      if(r.f>0) arrowAt(c,px,gy-12,px-r.f*s,gy-12,COL('--eTh'),'f');
+      arrowAt(c,cx,gy-bh,cx,gy-bh-r.N*s*0.5,COL('--eUg'),'N'); arrowAt(c,cx,gy,cx,gy+S.m*10*s*0.5*0.6,'#566271','mg');
+      barChart($('wbars'),[['W_F',r.WF,'--eK'],['W_f',r.Wf,'--eTh'],['W_N',0,'--eUg'],['W_g',0,'--eW'],['W_net',r.Wnet,'--ink']],{signed:true,maxAbs:150*10});
+      $('wbarsT').textContent='Work done by each force';
+      $('wro').innerHTML=`<div><span>F cos θ </span>${r.Fx.toFixed(1)} N</div><div><span>F sin θ </span>${r.Fy.toFixed(1)} N</div><div><span>N </span>${r.N.toFixed(1)} N</div><div><span>f = μN </span>${r.f.toFixed(1)} N</div><div><span>ΔK = W_net </span>${r.Wnet.toFixed(0)} J</div><div><span>final speed </span>${r.v.toFixed(2)} m/s</div>`;
+      const m=$('wmsg'); if(r.lift){m.hidden=false;m.textContent='F sin θ is bigger than the weight: the crate would lift off the floor. Lower the force or the angle.';}
+      else if(!r.moves){m.hidden=false;m.textContent='F cos θ is not bigger than friction, so the crate does not slide. No displacement means no work.';} else m.hidden=true;
+    } else {
+      const ox=70, oy=300, sx=(W-120)/0.42, Fmax=500*0.42, sy=(oy-30)/Fmax; const X=v=>ox+v*sx, Y=F=>oy-F*sy;
+      c.strokeStyle='#17202a'; c.lineWidth=1.5; c.beginPath(); c.moveTo(ox,20); c.lineTo(ox,oy); c.lineTo(W-20,oy); c.stroke();
+      c.font='500 20px "IBM Plex Mono",monospace'; c.fillStyle='#566271';
+      for(let i=0;i<=4;i++){ const v=i*0.1; c.fillText(v.toFixed(1),X(v)-10,oy+18); } c.fillText('x / m',W-60,oy+34);
+      for(let F=0;F<=Fmax;F+=50){ c.fillText(F,ox-40,Y(F)+4); c.strokeStyle='#e4e9ef'; c.beginPath(); c.moveTo(ox,Y(F)); c.lineTo(W-20,Y(F)); c.stroke(); } c.fillText('F / N',8,16);
+      const a=Math.min(S.x1,S.x2), b=Math.max(S.x1,S.x2);
+      c.fillStyle='rgba(29,95,168,.22)'; c.beginPath(); c.moveTo(X(a),oy); c.lineTo(X(a),Y(S.k*a)); c.lineTo(X(b),Y(S.k*b)); c.lineTo(X(b),oy); c.closePath(); c.fill();
+      c.strokeStyle=COL('--accent'); c.lineWidth=3; c.beginPath(); c.moveTo(X(0),Y(0)); c.lineTo(X(0.42),Y(S.k*0.42)); c.stroke();
+      const Wk=0.5*S.k*(b*b-a*a); c.fillStyle='#17202a'; c.font='700 23px "Atkinson Hyperlegible",sans-serif'; c.fillText('W = area = '+Wk.toFixed(2)+' J',X(a)+8,Y(S.k*b)-10);
+      barChart($('wbars'),[['W',Wk,'--eK'],['ΔU_s',Wk,'--eUs']],{maxAbs:0.5*500*0.16}); $('wbarsT').textContent='Work = change in spring energy';
+      $('wro').innerHTML=`<div><span>F at x₁ </span>${(S.k*a).toFixed(1)} N</div><div><span>F at x₂ </span>${(S.k*b).toFixed(1)} N</div><div><span>W = ½k(x₂² − x₁²) </span>${Wk.toFixed(2)} J</div>`;
+      $('wmsg').hidden=true;
+    }
+  }
+  function setMode(m){ mode=m; stop&&stop(); x=0; running=false; $('wgo').textContent='Pull'; $('wgo').hidden=(m!=='pull');
+    sliders($('wctl'),DEF[m],S,()=>{ if(!running){x=0;} draw(); }); $('wtasks').innerHTML=TASKS[m].map(t=>'<li>'+t+'</li>').join(''); draw(); }
+  $('wgo').onclick=()=>{ const r=calc(); if(!r.moves||r.lift){draw();return;} x=0; running=true; stop&&stop();
+    let v=0; const a=r.Wnet/(S.m*S.d); stop=raf(dt=>{ v+=a*dt*1.0+0.0; x=Math.min(S.d,x+Math.max(v,0.6)*dt); draw(); if(x>=S.d){running=false; return false;} }); };
+  $('wreset').onclick=()=>{ stop&&stop(); x=0; running=false; draw(); };
+  chipGroup('wm',setMode); setMode('pull');
+})();
+
+/* ================= 06-2 SPRING LAUNCHER ================= */
+(()=>{
+  const cv=$('scv'), c=cv.getContext('2d'); const g=10, L0=1.0;
+  let mode='floor', st, stop=null, data=[], trace=[];
+  const S={k:300,cmp:0.20,m:1.0,mu:0.30,ang:30};
+  const DEF={floor:{k:{label:'Spring constant k',min:100,max:600,step:20,fmt:v=>v+' N/m'},cmp:{label:'Compression x',min:0.05,max:0.30,step:0.01,fmt:v=>v.toFixed(2)+' m'},m:{label:'Mass',min:0.5,max:4,step:0.5,fmt:v=>v.toFixed(1)+' kg'},mu:{label:'Floor friction μ',min:0.1,max:0.6,step:0.05,fmt:v=>v.toFixed(2)}},
+             ramp:{k:{label:'Spring constant k',min:100,max:600,step:20,fmt:v=>v+' N/m'},cmp:{label:'Compression x',min:0.05,max:0.30,step:0.01,fmt:v=>v.toFixed(2)+' m'},m:{label:'Mass',min:0.5,max:4,step:0.5,fmt:v=>v.toFixed(1)+' kg'},ang:{label:'Ramp angle',min:10,max:60,step:5,fmt:v=>v+'°'}}};
+  const TASKS={floor:['Predict how far the block slides for x = 0.10 m, then launch. Now double x. Predict before you launch.',
+     'Record at least 5 compressions. Plot distance vs x, then vs x². Which one is a straight line through the origin? What does its slope equal?',
+     'Double the mass. Does the block go half as far? Use ½kx² = μmgd to explain.',
+     'On the energy graph, where is K largest? Why is that not at the moment of release?'],
+     ramp:['Predict the height the block reaches for k = 300 N/m, x = 0.20 m, m = 1.0 kg. Check it.',
+     'Change the ramp angle. Does the height change? Does the distance along the ramp change?',
+     'Record heights for several compressions. Which graph is linear: h vs x or h vs x²?',
+     'At the top of the ramp, which energy bar has all the energy? Where did the spring energy go?']};
+  function reset(){ stop&&stop(); st={x:L0-S.cmp, v:0, s:0, phase:'compressed', Eth:0, done:false, dist:0, h:0}; trace=[]; $('sgo').textContent='Launch'; draw(); }
+  const Us=()=>st.x<L0?0.5*S.k*(L0-st.x)**2:0;
+  function step(dt){ const m=S.m;
+    if(st.phase==='compressed'||st.phase==='spring'){ st.phase='spring'; const a=S.k*(L0-st.x)/m; st.v+=a*dt; st.x+=st.v*dt;
+      if(st.x>=L0){ st.x=L0; st.phase= mode==='floor'?'floor':'flat'; } }
+    else if(st.phase==='floor'){ const a=-S.mu*g; const v0=st.v; st.v=Math.max(0,st.v+a*dt); const dx=(v0+st.v)/2*dt; st.x+=dx; st.Eth+=S.mu*m*g*dx; st.dist=st.x-L0; if(st.v<=0){ st.done=true; } }
+    else if(st.phase==='flat'){ st.x+=st.v*dt; if(st.x>=L0+0.8){ st.phase='ramp'; st.s=0; } }
+    else if(st.phase==='ramp'){ const th=S.ang*Math.PI/180; const v0=st.v; st.v-=g*Math.sin(th)*dt; if(st.v<=0){ st.v=0; st.done=true; } st.s+=(v0+Math.max(st.v,0))/2*dt; st.h=st.s*Math.sin(th); }
+    // exact energy bookkeeping on the smooth parts
+    const E0=0.5*S.k*S.cmp**2; const U=Us()+m*g*st.h; const K=E0-st.Eth-U; if(!st.done && K>=0) st.v=Math.sign(st.v||1)*Math.sqrt(2*K/m);
+  }
+  function E(){ const K=0.5*S.m*st.v**2; return {K,Us:Us(),Ug:S.m*g*st.h,Eth:st.Eth}; }
+  function draw(){
+    const W=cv.width,H=cv.height; c.clearRect(0,0,W,H);
+    const sc= mode==='floor'? 120 : 90; const gy= mode==='floor'? 220 : 260;
+    const pos = st.phase==='ramp'? L0+0.8 : st.x; const camX=Math.max(0,(pos-3.2))*sc; const X=x=>40+x*sc-camX;
+    c.fillStyle='#17202a'; c.fillRect(0,gy,W,4);
+    // wall + spring
+    c.fillRect(X(0)-12,gy-90,12,90);
+    const right=Math.min(st.x,L0); const coils=14; c.strokeStyle=COL('--eUs'); c.lineWidth=2.5; c.beginPath();
+    for(let i=0;i<=coils*2;i++){ const xx=X(0)+(X(right)-X(0))*i/(coils*2); const yy=gy-30+(i%2?12:-12); i?c.lineTo(xx,yy):c.moveTo(xx,yy);} c.stroke();
+    if(mode==='floor'){ c.fillStyle=COL('--eTh'); c.fillRect(X(L0),gy,X(60)-X(L0),5); c.font='500 20px "IBM Plex Mono",monospace';
+      for(let i=0;i<=60;i++){ const xx=X(L0+i); if(xx<0||xx>W) continue; c.fillStyle='#8a96a3'; c.fillRect(xx,gy+5,1,9); c.fillText(i+' m',xx-8,gy+28);} c.fillStyle=COL('--eTh'); c.fillText('rough floor starts here',X(L0)+6,gy+46); }
+    // block / ramp
+    let bx, by, rot=0;
+    if(mode==='ramp'){ const th=S.ang*Math.PI/180; const rx=X(L0+0.8); c.strokeStyle='#17202a'; c.lineWidth=4; c.beginPath(); c.moveTo(rx,gy); c.lineTo(rx+Math.cos(th)*12*sc,gy-Math.sin(th)*12*sc); c.stroke();
+      for(let hh=1;hh<=6;hh++){ c.fillStyle='#8a96a3'; c.font='500 19px "IBM Plex Mono",monospace'; c.fillText(hh+' m',8,gy-hh*sc+4); c.strokeStyle='#e4e9ef'; c.lineWidth=1; c.beginPath(); c.moveTo(30,gy-hh*sc); c.lineTo(W,gy-hh*sc); c.stroke(); }
+      if(st.phase==='ramp'){ bx=rx+Math.cos(th)*st.s*sc; by=gy-Math.sin(th)*st.s*sc; rot=-th; } }
+    if(bx===undefined){ bx=X(st.x); by=gy; }
+    c.save(); c.translate(bx,by); c.rotate(rot); c.fillStyle='#e6eef8'; c.strokeStyle='#1d5fa8'; c.lineWidth=2; c.fillRect(0,-40,46,40); c.strokeRect(0,-40,46,40); c.restore();
+    if(st.done){ c.fillStyle='#17202a'; c.font='700 23px "Atkinson Hyperlegible",sans-serif'; c.fillText(mode==='floor'?`stopped ${st.dist.toFixed(2)} m past the rough line`:`highest point: h = ${st.h.toFixed(2)} m`,Math.max(10,bx-80),by-60); }
+    const e=E(); $('sro').innerHTML=`<div><span>U_s at start </span>${(0.5*S.k*S.cmp**2).toFixed(2)} J</div><div><span>speed </span>${Math.abs(st.v).toFixed(2)} m/s</div>`+(mode==='floor'?`<div><span>distance on rough floor </span>${st.dist.toFixed(2)} m</div>`:`<div><span>height </span>${st.h.toFixed(2)} m</div>`);
+    graph(e);
+  }
+  function graph(e){ const gc=$('sgraph'), q=gc.getContext('2d'), W=gc.width, H=gc.height; q.clearRect(0,0,W,H);
+    const E0=0.5*S.k*S.cmp**2; const pos= st.phase==='ramp'? L0+0.8+st.s : st.x; trace.push([pos,e.Us,e.K,e.Eth+e.Ug]);
+    const xmin=L0-S.cmp, xmax=Math.max(xmin+1, ...trace.map(t=>t[0]))*1.02; const X=x=>34+(x-xmin)/(xmax-xmin)*(W-44), Y=v=>H-26-(v/(E0*1.1||1))*(H-40);
+    q.strokeStyle='#17202a'; q.lineWidth=1; q.beginPath(); q.moveTo(34,8); q.lineTo(34,H-26); q.lineTo(W-6,H-26); q.stroke();
+    q.font='500 13px "IBM Plex Mono",monospace'; q.fillStyle='#566271'; q.fillText('E / J',2,12); q.fillText('position →',W-80,H-8);
+    const series=[[1,'--eUs','U_s'],[2,'--eK','K'],[3, mode==='floor'?'--eTh':'--eUg', mode==='floor'?'ΔE_th':'U_g']];
+    series.forEach(([i,col,lab],k)=>{ q.strokeStyle=COL(col); q.lineWidth=2.5; q.beginPath(); trace.forEach((t,j)=>j?q.lineTo(X(t[0]),Y(t[i])):q.moveTo(X(t[0]),Y(t[i]))); q.stroke();
+      q.fillStyle=COL(col); q.fillText(lab,42+k*60,22); }); }
+  function plot(){ const pc=$('splot'), q=pc.getContext('2d'), W=pc.width, H=pc.height; q.clearRect(0,0,W,H); const sq=$('saxis').value==='c2';
+    const pts=data.map(d=>[sq?d.c*d.c:d.c, d.y]); const xm=Math.max(sq?0.09:0.3,...pts.map(p=>p[0]))*1.05, ym=Math.max(0.5,...pts.map(p=>p[1]))*1.1;
+    const X=x=>40+x/xm*(W-50), Y=y=>H-26-y/ym*(H-40);
+    q.strokeStyle='#17202a'; q.lineWidth=1; q.beginPath(); q.moveTo(40,8); q.lineTo(40,H-26); q.lineTo(W-6,H-26); q.stroke();
+    q.font='500 13px "IBM Plex Mono",monospace'; q.fillStyle='#566271'; q.fillText(mode==='floor'?'d / m':'h / m',2,12); q.fillText(sq?'x² / m²':'x / m',W-60,H-8);
+    q.fillText(xm.toFixed(sq?3:2),X(xm)-30,H-12); q.fillText(ym.toFixed(1),4,Y(ym)+4);
+    q.fillStyle=COL('--accent'); pts.forEach(p=>{q.beginPath(); q.arc(X(p[0]),Y(p[1]),4.5,0,7); q.fill();});
+    $('stable').innerHTML= data.length? '<table style="border-collapse:collapse;width:100%"><tr><th style="text-align:left">x (m)</th><th style="text-align:left">x² (m²)</th><th style="text-align:left">'+(mode==='floor'?'d':'h')+' (m)</th><th style="text-align:left">k, m'+(mode==='floor'?', μ':'')+'</th></tr>'+data.map(d=>`<tr><td>${d.c.toFixed(2)}</td><td>${(d.c*d.c).toFixed(4)}</td><td>${d.y.toFixed(2)}</td><td>${d.k}, ${d.m}${mode==='floor'?', '+d.mu:''}</td></tr>`).join('')+'</table>' : 'Launch, then press “Record result” to add a row.'; }
+  function setMode(m){ mode=m; data=[]; sliders($('sctl'),DEF[m],S,()=>reset()); $('stasks').innerHTML=TASKS[m].map(t=>'<li>'+t+'</li>').join(''); reset(); plot(); }
+  $('sgo').onclick=()=>{ if(st.done) reset(); stop&&stop(); $('sgo').textContent='Launch';
+    stop=raf(dt=>{ const n=20; for(let i=0;i<n&&!st.done;i++) step(dt/n); draw(); if(st.done) return false; }); };
+  $('sreset').onclick=reset;
+  $('srec').onclick=()=>{ if(!st.done) return; data.push({c:S.cmp,y:mode==='floor'?st.dist:st.h,k:S.k,m:S.m,mu:S.mu}); plot(); };
+  $('sclear').onclick=()=>{ data=[]; plot(); };
+  $('saxis').onchange=plot;
+  chipGroup('sm',setMode); setMode('floor');
+})();
+
+/* ================= 06-3 POWER ================= */
+(()=>{
+  const cv=$('pcv'), c=cv.getContext('2d'); const g=10; let mode='lift', stop=null, y=0, t=0, running=false;
+  const S={m:80,h:12,v:0.8,eff:60, cm:1200,cv:12,grade:8,drag:300};
+  const DEF={lift:{m:{label:'Load mass',min:10,max:200,step:5,fmt:v=>v+' kg'},h:{label:'Lift height',min:2,max:20,step:1,fmt:v=>v+' m'},v:{label:'Lift speed (constant)',min:0.2,max:3,step:0.1,fmt:v=>v.toFixed(1)+' m/s'},eff:{label:'Motor efficiency',min:20,max:100,step:5,fmt:v=>v+' %'}},
+             car:{cm:{label:'Car mass',min:800,max:2400,step:100,fmt:v=>v+' kg'},cv:{label:'Speed (constant)',min:4,max:30,step:1,fmt:v=>v+' m/s'},grade:{label:'Grade (rise per 100 m)',min:0,max:15,step:1,fmt:v=>v+' %'},drag:{label:'Air drag + rolling friction',min:0,max:800,step:50,fmt:v=>v+' N'}}};
+  const TASKS={lift:['Double the lift speed. What happens to the time, the work done, and the power?',
+     'Lift 80 kg up 12 m. Does the useful work depend on the speed? Does the power?',
+     'At 60 % efficiency, where does the other 40 % of the input energy go?',
+     'Find the speed that needs exactly 1.0 kW of input power for an 80 kg load at 60 % efficiency.'],
+     car:['At 0 % grade, what is the engine power used for?',
+     'Raise the grade to 10 %. Use P = mgv·sin θ + f·v to predict the power before you check.',
+     'Keep the power fixed in your head: if the hill gets steeper, what must happen to the speed?',
+     'Why does the speed not matter for the gain in GPE, only for how fast it is gained?']};
+  function calc(){ if(mode==='lift'){ const F=S.m*g, Pout=F*S.v, Pin=Pout/(S.eff/100), T=S.h/S.v; return {F,Pout,Pin,T,W:F*S.h,Ein:Pin*T}; }
+    const th=Math.atan(S.grade/100), Fg=S.cm*g*Math.sin(th), F=Fg+S.drag; return {F,Pout:F*S.cv,Pg:Fg*S.cv,Pd:S.drag*S.cv,th}; }
+  function draw(){ const W=cv.width,H=cv.height; c.clearRect(0,0,W,H); const r=calc();
+    if(mode==='lift'){ const gy=H-30, top=40, sc=(gy-top-60)/20; c.fillStyle='#17202a'; c.fillRect(0,gy,W,4);
+      // building
+      c.fillStyle='#eef2f6'; c.fillRect(380,gy-S.h*sc-40,260,S.h*sc+40); c.strokeStyle='#c9d3dd'; c.strokeRect(380,gy-S.h*sc-40,260,S.h*sc+40);
+      c.fillStyle='#17202a'; c.fillRect(380,gy-S.h*sc-44,260,6); // roof
+      // motor
+      c.fillStyle='#1d5fa8'; c.fillRect(470,gy-S.h*sc-80,70,36); c.fillStyle='#fff'; c.font='700 20px "IBM Plex Mono",monospace'; c.fillText('MOTOR',478,gy-S.h*sc-57);
+      const by=gy-y*sc; c.strokeStyle='#17202a'; c.lineWidth=2; c.beginPath(); c.moveTo(505,gy-S.h*sc-44); c.lineTo(505,by-56); c.stroke();
+      c.fillStyle='#e6eef8'; c.strokeStyle='#1d5fa8'; c.fillRect(470,by-56,70,56); c.strokeRect(470,by-56,70,56); c.fillStyle='#1d5fa8'; c.fillText(S.m+' kg',478,by-24);
+      c.fillStyle='#8a96a3'; c.font='500 19px "IBM Plex Mono",monospace'; for(let h=0;h<=S.h;h+=2){ c.fillText(h+' m',660,gy-h*sc+4); c.fillRect(648,gy-h*sc,8,1);}
+      c.fillStyle='#17202a'; c.font='600 23px "IBM Plex Mono",monospace'; c.fillText(`t = ${t.toFixed(1)} s   height = ${y.toFixed(1)} m`,20,30);
+      c.fillText(`work done so far = ${(S.m*g*y).toFixed(0)} J`,20,54);
+      barChart($('pbars'),[['P_in',r.Pin,'--eW'],['P_out',r.Pout,'--eK'],['Wasted',r.Pin-r.Pout,'--eTh']],{unit:'W'});
+      $('pro').innerHTML=`<div><span>F = mg </span>${r.F} N</div><div><span>P_out = Fv </span>${r.Pout.toFixed(0)} W</div><div><span>P_in = P_out/η </span>${r.Pin.toFixed(0)} W</div><div><span>time = h/v </span>${r.T.toFixed(1)} s</div><div><span>useful work mgh </span>${r.W.toFixed(0)} J</div><div><span>energy in </span>${r.Ein.toFixed(0)} J</div>`;
+    } else { const th=r.th; const ox=60, oy=H-60, len=W-140; c.fillStyle='#d9e0e8'; c.beginPath(); c.moveTo(ox,oy); c.lineTo(ox+len,oy); c.lineTo(ox+len,oy-len*Math.tan(th)); c.closePath(); c.fill();
+      c.strokeStyle='#17202a'; c.lineWidth=4; c.beginPath(); c.moveTo(ox,oy); c.lineTo(ox+len,oy-len*Math.tan(th)); c.stroke();
+      const f=((t*S.cv*6)%len)/len; const cx=ox+f*len, cy=oy-f*len*Math.tan(th);
+      c.save(); c.translate(cx,cy); c.rotate(-th); c.fillStyle='#1d5fa8'; c.fillRect(-40,-36,80,26); c.fillRect(-22,-50,44,16); c.fillStyle='#17202a'; c.beginPath(); c.arc(-24,-8,8,0,7); c.arc(24,-8,8,0,7); c.fill(); c.restore();
+      c.fillStyle='#17202a'; c.font='600 23px "IBM Plex Mono",monospace'; c.fillText(`grade ${S.grade} %  (θ = ${(th*180/Math.PI).toFixed(1)}°)`,20,30); c.fillText(`climbing at ${(S.cv*Math.sin(th)).toFixed(2)} m/s vertically`,20,54);
+      barChart($('pbars'),[['Total',r.Pout/1000,'--eW'],['Lifting',r.Pg/1000,'--eUg'],['Drag',r.Pd/1000,'--eTh']],{unit:'kW'});
+      $('pro').innerHTML=`<div><span>mg sin θ </span>${(r.F-S.drag).toFixed(0)} N</div><div><span>engine force </span>${r.F.toFixed(0)} N</div><div><span>P = Fv </span>${(r.Pout/1000).toFixed(1)} kW</div><div><span>of which lifting </span>${(r.Pg/1000).toFixed(1)} kW</div>`; }
+  }
+  function setMode(m){ mode=m; stop&&stop(); y=0;t=0; sliders($('pctl'),DEF[m],S,()=>{ if(!running){y=0;t=0;} draw(); }); $('ptasks').innerHTML=TASKS[m].map(x=>'<li>'+x+'</li>').join(''); draw(); }
+  $('pgo').onclick=()=>{ stop&&stop(); y=0;t=0; running=true; stop=raf(dt=>{ t+=dt; if(mode==='lift'){ y=Math.min(S.h,S.v*t); draw(); if(y>=S.h){running=false; return false;} } else { draw(); if(t>12){running=false;return false;} } }); };
+  $('preset').onclick=()=>{ stop&&stop(); y=0;t=0; running=false; draw(); };
+  chipGroup('pm',setMode); setMode('lift');
+})();
+
+/* ================= 06-4 SPRING + GRAVITY ================= */
+(()=>{
+  const cv=$('vcv'), c=cv.getContext('2d'); const g=10; let mode='spring', stop=null, slow=false, st;
+  const S={k:40,m:2,L0:3};
+  const DEF={spring:{k:{label:'Spring constant k',min:10,max:120,step:5,fmt:v=>v+' N/m'},m:{label:'Mass',min:0.5,max:5,step:0.5,fmt:v=>v.toFixed(1)+' kg'}},
+             bungee:{k:{label:'Cord stiffness k',min:10,max:120,step:5,fmt:v=>v+' N/m'},m:{label:'Jumper mass',min:0.5,max:5,step:0.5,fmt:v=>v.toFixed(1)+' kg'},L0:{label:'Slack cord length',min:0.5,max:4,step:0.5,fmt:v=>v.toFixed(1)+' m'}}};
+  const TASKS={spring:['Released from the unstretched position: predict the lowest point, then check it (hint: mgy = ½ky²).',
+     'Where is the speed greatest? Compare that point with the equilibrium stretch mg/k.',
+     'Watch the bars. At the lowest point, which bar holds all the energy? At the top?',
+     'Double k. What happens to the lowest point and to the equilibrium position?'],
+     bungee:['For the first part of the fall the cord is slack. Which bars change during that part?',
+     'Is the jumper fastest when the cord starts to stretch? Find the real fastest point.',
+     'Predict the lowest point with mg(L + x) = ½kx², then release and check.',
+     'Double the slack length. Does the lowest point move twice as far down? Why not?']};
+  const L=()=> mode==='bungee'? S.L0 : 0;
+  function ymax(){ const m=S.m,k=S.k,l=L(); // mg y = ½k(y−l)²  ⇒ positive root
+    const a=k/2, b=-(k*l+m*g), cc=k*l*l/2; return (-b+Math.sqrt(b*b-4*a*cc))/(2*a); }
+  function reset(){ stop&&stop(); stop=null; st={y:0,v:0,t:0,vmax:0,yAtVmax:0}; $('vgo').textContent='Release'; draw(); }
+  function acc(y){ const s=y-L(); return g - (s>0? S.k*s/S.m : 0); }
+  function step(dt){ const a1=acc(st.y); st.v+=a1*dt; st.y+=st.v*dt; st.t+=dt;
+    // exact energy (taking Ug = 0 at lowest point)
+    const s=Math.max(0,st.y-L()); const K=S.m*g*st.y-0.5*S.k*s*s; if(K>=0) st.v=Math.sign(st.v||1)*Math.sqrt(2*K/S.m);
+    if(Math.abs(st.v)>st.vmax){ st.vmax=Math.abs(st.v); st.yAtVmax=st.y; } }
+  function draw(){ const W=cv.width,H=cv.height; c.clearRect(0,0,W,H); const ym=ymax(), yeq=L()+S.m*g/S.k; const top=40, sc=(H-90)/Math.max(ym,1); const Y=y=>top+y*sc;
+    c.fillStyle='#17202a'; c.fillRect(200,top-14,260,10);
+    c.font='500 19px "IBM Plex Mono",monospace'; c.fillStyle='#8a96a3';
+    for(let yy=0;yy<=ym+0.01;yy+=Math.max(0.5,Math.round(ym/8*2)/2)){ c.fillText(yy.toFixed(1)+' m',140,Y(yy)+4); c.strokeStyle='#e4e9ef'; c.lineWidth=1; c.beginPath(); c.moveTo(190,Y(yy)); c.lineTo(520,Y(yy)); c.stroke(); }
+    const lines=[[0,'release','#566271'],[L()+0,'cord tight',COL('--eUs')],[yeq,'equilibrium (mg = kx)',COL('--good')],[ym,'lowest point',COL('--eTh')]];
+    lines.forEach(([yy,lab,col],i)=>{ if(mode==='spring'&&i===1) return; c.setLineDash([6,5]); c.strokeStyle=col; c.beginPath(); c.moveTo(190,Y(yy)); c.lineTo(640,Y(yy)); c.stroke(); c.setLineDash([]); c.fillStyle=col; c.font='600 20px "Atkinson Hyperlegible",sans-serif'; c.fillText(lab,530,Y(yy)-4); });
+    // cord / spring
+    const ax=330, endY=Y(st.y); const s=st.y-L();
+    if(mode==='spring' || s>0){ const coils=16, y0=top-4, y1=endY-22; c.strokeStyle=COL('--eUs'); c.lineWidth=2.5; c.beginPath(); for(let i=0;i<=coils*2;i++){ const yy=y0+(y1-y0)*i/(coils*2); const xx=ax+(i%2?10:-10); i?c.lineTo(xx,yy):c.moveTo(xx,yy);} c.stroke(); }
+    else { c.strokeStyle=COL('--eUs'); c.lineWidth=2; c.beginPath(); c.moveTo(ax,top-4); c.quadraticCurveTo(ax+40,(top+endY)/2,ax,endY-22); c.stroke(); }
+    c.fillStyle='#e6eef8'; c.strokeStyle='#1d5fa8'; c.lineWidth=2; c.fillRect(ax-36,endY-22,72,60); c.strokeRect(ax-36,endY-22,72,60); c.fillStyle='#1d5fa8'; c.font='700 19px "IBM Plex Mono",monospace'; c.fillText(S.m+' kg',ax-28,endY+14);
+    const sx=Math.max(0,st.y-L()); const K=0.5*S.m*st.v**2, Ug=S.m*g*(ym-st.y), Us=0.5*S.k*sx*sx;
+    barChart($('vbars'),[['K',K,'--eK'],['Ug',Ug,'--eUg'],['Us',Us,'--eUs'],['Total',K+Ug+Us,'--eW']],{maxAbs:S.m*g*ym});
+    $('vro').innerHTML=`<div><span>below release </span>${st.y.toFixed(2)} m</div><div><span>stretch </span>${sx.toFixed(2)} m</div><div><span>speed </span>${Math.abs(st.v).toFixed(2)} m/s</div><div><span>a </span>${acc(st.y).toFixed(1)} m/s² ${acc(st.y)>=0?'down':'up'}</div><div><span>fastest so far at </span>${st.vmax?st.yAtVmax.toFixed(2)+' m':'–'}</div>`; }
+  function setMode(m){ mode=m; sliders($('vctl'),DEF[m],S,()=>reset()); $('vtasks').innerHTML=TASKS[m].map(x=>'<li>'+x+'</li>').join(''); reset(); }
+  $('vgo').onclick=()=>{ if(stop){ stop(); stop=null; $('vgo').textContent='Resume'; return; } $('vgo').textContent='Pause';
+    stop=raf(dt=>{ dt*=slow?0.25:1; const n=40; for(let i=0;i<n;i++) step(dt/n); draw(); }); };
+  $('vreset').onclick=()=>{ stop&&stop(); stop=null; reset(); };
+  $('vslow').onclick=()=>{ slow=!slow; $('vslow').textContent='Slow motion: '+(slow?'on':'off'); };
+  chipGroup('vm',setMode); setMode('spring');
+})();
+
+/* ================= PhET picker ================= */
+(()=>{
+  const SIMS=[
+    {id:'energy-skate-park-basics',name:'Energy Skate Park: Basics',tasks:['On the Intro screen, turn on the bar graph. Release the skater from different heights. Which bar never changes?','Turn friction on. Where does the “missing” energy show up?','On the Playground screen, build a track where the skater just makes it over a hill. Explain using the bar graph.']},
+    {id:'masses-and-springs',name:'Masses and Springs (Energy screen)',tasks:['Open the Energy screen. Hang a mass and let it bounce. Sketch the bar graph at the top, middle and bottom.','Turn up damping. Which energy grows as the bounce dies away?','Change the reference line for gravitational energy. Which bars change and which do not?']},
+    {id:'pendulum-lab',name:'Pendulum Lab (Energy screen)',tasks:['Open the Energy screen. Where is kinetic energy largest? Where is potential energy largest?','Double the starting angle. Is the speed at the bottom doubled? Explain with mgh = ½mv².','Add friction and watch the thermal energy bar.']},
+  ];
+  const url=id=>`https://phet.colorado.edu/sims/html/${id}/latest/${id}_all.html`;
+  const pick=$('phetPick'); pick.innerHTML=SIMS.map((s,i)=>`<option value="${i}">${s.name}</option>`).join('');
+  let loaded=false;
+  function load(){ const s=SIMS[+pick.value]; $('phetOpen').href=url(s.id); $('phtasks').innerHTML=s.tasks.map(t=>'<li>'+t+'</li>').join('');
+    if(!loaded) return; $('phetBox').innerHTML=`<iframe class="phet" src="${url(s.id)}" title="PhET ${s.name}" allowfullscreen></iframe>`; }
+  pick.onchange=load; load();
+  window.loadPhet=()=>{ if(loaded) return; loaded=true; load(); };
+})();
+</script>
+</html>
