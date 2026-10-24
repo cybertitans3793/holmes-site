@@ -95,6 +95,10 @@ PAGE = """<!doctype html>
       <a class="plink" id="plink" href="#" target="_blank" rel="noopener">Practice {uid} questions →</a>
     </aside>
   </div>
+  <section class="review" id="review" hidden>
+    <div class="simbar"><h2>Practice questions</h2><a id="ropen" class="mono" href="#" target="_blank" rel="noopener">Open in a new tab ↗</a></div>
+    <div class="rframe" id="rframe"><div class="loading">Loading questions…</div></div>
+  </section>
   <p class="credits">{credits}</p>
 </div>
 <script>
@@ -109,7 +113,14 @@ const SIMS = {{
   const tabsEl = $('tabs'), frame = $('frame');
   let cur = -1, ifr = null, ifrSim = null;
   const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-  if (REVIEW_URL && /^P1-/.test(UNIT.id)) {{ const u = REVIEW_URL + (REVIEW_URL.includes('?') ? '&' : '?') + 'unit=' + encodeURIComponent(UNIT.id); $('cta').href = u; $('plink').href = u; }}
+  if (REVIEW_URL && /^P1-/.test(UNIT.id)) {{
+    const u = REVIEW_URL + (REVIEW_URL.includes('?') ? '&' : '?') + 'unit=' + encodeURIComponent(UNIT.id);
+    const rev = $('review'); rev.hidden = false; $('ropen').href = u;
+    let loaded = false; const load = () => {{ if (loaded) return; loaded = true; $('rframe').innerHTML = '<iframe title="Practice questions" src="' + u + '"></iframe>'; }};
+    [$('cta'), $('plink')].forEach(a => {{ a.href = '#review'; a.removeAttribute('target'); a.addEventListener('click', e => {{ e.preventDefault(); load(); rev.scrollIntoView({{ behavior: 'smooth' }}); }}); }});
+    if ('IntersectionObserver' in window) new IntersectionObserver((es, o) => {{ if (es.some(x => x.isIntersecting)) {{ load(); o.disconnect(); }} }}, {{ rootMargin: '200px' }}).observe(rev);
+    else load();
+  }}
   else {{ $('cta').hidden = true; $('plink').hidden = true; }}
   UNIT.tabs.forEach((t, i) => {{
     if (t.gapBefore) {{ const g = document.createElement('span'); g.className = 'gap'; g.setAttribute('aria-hidden','true'); tabsEl.appendChild(g); }}
@@ -155,6 +166,7 @@ const SIMS = {{
 </html>
 """
 
+REVIEW = 'https://script.google.com/a/macros/fcps.org/s/AKfycbzW6NpFGf5yjZ843WN0pDy-mzI0r1iCcBIuoJpMCEJeWwbUARiSnAC_lf2bWQeHWoGjHA/exec'
 COMING = """<!doctype html>
 <html lang="en">
 <head>
@@ -175,6 +187,7 @@ COMING = """<!doctype html>
     <div class="uid"><div class="big" aria-hidden="true">{num}</div><div><div class="mono">{course} · {uid}</div><h1>{title}</h1></div></div>
   </header>
   <section class="soon"><h2>Sims for this unit are on the way.</h2><p>{note}</p></section>
+  {review}
 </div>
 </body>
 </html>
@@ -185,7 +198,8 @@ def build(uid):
     if not u.get('tabs'):
         css = open(os.path.join(D, 'shell.css'), encoding='utf-8').read()
         out = COMING.format(uid=uid, title=html.escape(u['title']), num=u['num'], course=u['course'], fonts=FONTS, css=css,
-                            note=u.get('note', 'Check back soon. The practice questions for this unit are below.'))
+                            note=u.get('note', 'Check back soon. The practice questions for this unit are below.' if uid.startswith('P1-') else 'Check back soon.'),
+                            review=('<section class="review"><div class="simbar"><h2>Practice questions</h2><a class="mono" href="%s?unit=%s" target="_blank" rel="noopener">Open in a new tab ↗</a></div><div class="rframe"><iframe title="Practice questions" src="%s?unit=%s"></iframe></div></section>' % (REVIEW, uid, REVIEW, uid)) if uid.startswith('P1-') else '')
         os.makedirs(os.path.join(D, 'out'), exist_ok=True)
         open(os.path.join(D, 'out', uid + '.html'), 'w', encoding='utf-8').write(out); print(uid, 'coming soon'); return
     used = []

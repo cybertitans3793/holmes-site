@@ -49,6 +49,18 @@ select{border:2px solid var(--ink);border-radius:0}
 input[type=range],input[type=checkbox]{accent-color:var(--ink)}
 </style>"""
 
+REVIEW_JS = '''<style>.holmes-review{margin-top:28px;border:3px solid #111;background:#fff;box-shadow:6px 6px 0 #111}.holmes-review .bar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;border-bottom:3px solid #111}.holmes-review h2{margin:0;font:700 18px var(--f-display)}.holmes-review a{font:700 .8rem var(--f-mono);color:#111}.holmes-review .rf{position:relative;height:900px}.holmes-review iframe{position:absolute;inset:0;width:100%;height:100%;border:0}</style>
+<script id="holmes-review">(function(){
+  var u = 'https://script.google.com/a/macros/fcps.org/s/AKfycbzW6NpFGf5yjZ843WN0pDy-mzI0r1iCcBIuoJpMCEJeWwbUARiSnAC_lf2bWQeHWoGjHA/exec?unit=__UNIT__';
+  var sec = document.createElement('section'); sec.className = 'holmes-review'; sec.id = 'review';
+  sec.innerHTML = '<div class="bar"><h2>Practice questions</h2><a href="' + u + '" target="_blank" rel="noopener">Open in a new tab \\u2197</a></div><div class="rf"></div>';
+  document.querySelector('.wrap').appendChild(sec);
+  var loaded = false; function load(){ if (loaded) return; loaded = true; sec.querySelector('.rf').innerHTML = '<iframe title="Practice questions" src="' + u + '"></iframe>'; }
+  document.querySelectorAll('.uhead a, .try .link').forEach(function(a){ a.href = '#review'; a.onclick = function(e){ e.preventDefault(); load(); sec.scrollIntoView({behavior:'smooth'}); }; });
+  if ('IntersectionObserver' in window) new IntersectionObserver(function(es, o){ if (es.some(function(x){ return x.isIntersecting; })) { load(); o.disconnect(); } }, {rootMargin: '200px'}).observe(sec); else load();
+})();</script>
+'''
+
 def patch(h):
     m = re.search(r'<title>[^<]*</title>', h)
     assert m, 'no <title>'
@@ -68,6 +80,8 @@ def patch(h):
         h = h[:hm.start()] + new + h[hm.end():]
     else:
         print('WARNING: header not found, left as is', file=sys.stderr)
+    if hm and uid.startswith('P1-') and 'id="holmes-review"' not in h:
+        h = h.replace('</body>', REVIEW_JS.replace('__UNIT__', uid) + '</body>') if '</body>' in h else h + REVIEW_JS.replace('__UNIT__', uid)
     h = re.sub(r'<title>(P\d-\d\d) [^<]*</title>', lambda t: f'<title>{t.group(1)} {UNITS.get(t.group(1), "")}</title>', h, count=1)
     return h
 
