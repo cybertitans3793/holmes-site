@@ -89,8 +89,11 @@ function cacheGet_(cache, key) {
   return out;
 }
 
-/** Run this once from the editor (select testFetch, press Run) to check GitHub is reachable. */
+/** Run this from the editor (select testFetch, press Run) to check GitHub is reachable. */
 function testFetch() {
-  const html = getUnit_('P1-09', true);
-  console.log(html ? 'OK: P1-09 is ' + Math.round(html.length / 1024) + ' KB' : 'Not found. Check GH_USER, the repo name, and that the repo is public.');
+  ['P1-09', 'P2-05'].forEach(function (u) {
+    const url = 'https://raw.githubusercontent.com/' + GH_USER + '/' + GH_REPO + '/' + GH_BRANCH + '/' + GH_FOLDER + '/' + u + '.html';
+    const res = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
+    console.log(u + ': GitHub answered ' + res.getResponseCode() + (res.getResponseCode() === 200 ? ' (' + Math.round(res.getContent().length / 1024) + ' KB)' : ' (check the repo is public)'));
+  });
 }
