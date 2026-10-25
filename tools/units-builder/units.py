@@ -409,7 +409,8 @@ UNITS.update({
         'Make the masses equal. What are a and T? Then make one mass much bigger. What does a approach?',
         '<b>Table + hanging mass.</b> Find the smallest hanging mass that gets the block moving with μ<sub>k</sub> = 0.2.',
         'Use the Newton’s third-law pairs. Which force pairs with the string pulling up on m<sub>1</sub>? Which pairs with the Earth pulling down on it?',
-        '<b>Block and tackle.</b> With 4 rope segments, how hard must you pull to lift 60 kg? How much rope must you pull to lift it 1 m? Show the work is the same either way.']},
+        '<b>Block and tackle.</b> Draw the free-body diagram of the moving pulley and load with 4 segments. How hard must you pull to hold 60 kg? Check with the FBD in the sim.',
+        'With n segments, how much force does the ceiling hold? Draw the FBD of the top pulleys and explain why it is more than the load’s weight.']},
     {'code': '', 'name': 'Box on a Truck', 'sim': 'truck', 'tasks': [
         '<b>Predict, then check.</b> A truck carrying a box drives at a constant 20 m/s. Which way does friction on the box point? Explain with Newton’s 1st law, then check “Constant speed.”',
         'Speeding up at 2 m/s²: draw the box’s free-body diagram. What force makes the box speed up? Why is it <i>not</i> equal to μ<sub>s</sub>N?',

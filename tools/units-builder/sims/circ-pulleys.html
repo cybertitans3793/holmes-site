@@ -225,20 +225,18 @@ const SIM = {
       { id: 'mu', sym: 'μ<sub>k</sub>', symText: 'μk', label: 'Friction on table', unit: '', min: 0, max: 0.8, step: 0.05, val: 0.2, show: v => v.toFixed(2) }];
     return [
       { id: 'm', sym: 'm', symText: 'm', label: 'Load', unit: 'kg', min: 10, max: 200, step: 5, val: 60 },
-      { id: 'n', sym: 'n', symText: 'n', label: 'Rope segments holding the load', unit: '', min: 1, max: 6, step: 1, val: 2, graph: true, show: v => v.toFixed(0) },
-      { id: 'h', sym: 'h', symText: 'h', label: 'Lift height', unit: 'm', min: 0.1, max: 3, step: 0.1, val: 1 }];
+      { id: 'n', sym: 'n', symText: 'n', label: 'Rope segments holding the load', unit: '', min: 1, max: 6, step: 1, val: 2, graph: true, show: v => v.toFixed(0) }];
   },
   calc(v, mode){
     if (mode === 'atwood'){ const M = v.m1 + v.m2, a = (v.m1 - v.m2) * G10 / M, T = 2 * v.m1 * v.m2 * G10 / M; return { a, T, M, W1: v.m1 * G10, W2: v.m2 * G10 }; }
     if (mode === 'table'){ const M = v.m1 + v.m2, W2 = v.m2 * G10, f = v.mu * v.m1 * G10, moves = W2 > f, a = moves ? (W2 - f) / M : 0, T = moves ? v.m1 * a + f : W2; return { a, T, M, W2, f, moves, N: v.m1 * G10 }; }
-    const W = v.m * G10, F = W / v.n, rope = v.n * v.h; return { W, F, rope, Wk: F * rope, Wout: W * v.h, ma: v.n };
+    const n = v.n, W = v.m * G10, T = W / n; return { n, W, T, F: T, ceil: (n + 1) * T };
   },
   dvs(mode){
     if (mode === 'tackle') return [
-      { id: 'F', name: 'Pull needed', short: 'F', sym: 'F', unit: 'N', f: d => d.F, vs: 'W' },
-      { id: 'rope', name: 'Rope you pull', short: 'rope', sym: 'rope pulled', unit: 'm', f: d => d.rope },
-      { id: 'Wk', name: 'Work you do F × rope', short: 'W', sym: 'W', unit: 'J', f: d => d.Wk },
-      { id: 'W', name: 'Weight of load', short: 'mg', sym: 'mg', unit: 'N', f: d => d.W }];
+      { id: 'F', name: 'Tension T = your pull', short: 'T', sym: 'T', unit: 'N', f: d => d.T, vs: 'W' },
+      { id: 'ceil', name: 'Force on the ceiling', short: 'F_ceiling', sym: 'F<sub>ceiling</sub>', unit: 'N', f: d => d.ceil },
+      { id: 'W', name: 'Weight held up', short: 'W', sym: 'W', unit: 'N', f: d => d.W }];
     return [
       { id: 'a', name: 'Acceleration', short: 'a', sym: 'a', unit: 'm/s²', f: d => d.a },
       { id: 'T', name: 'Tension', short: 'T', sym: 'T', unit: 'N', f: d => d.T }];
@@ -255,11 +253,14 @@ const SIM = {
         '<h4>3 · Block on the table alone</h4><div class="eq">T − μ<sub>k</sub>m<sub>1</sub>g = m<sub>1</sub>a → T = m<sub>1</sub>a + f = (' + H.iv('m1') + ')(' + H.n(d.a) + ') + ' + H.n(d.f) + ' = <b>' + H.n(d.T, 'N') + '</b></div>' +
         '<h4>4 · Hanging mass alone (check)</h4><div class="eq">m<sub>2</sub>g − T = m<sub>2</sub>a → T = ' + H.n(v.m2 * (G10 - d.a), 'N') + ' ✓ (less than its weight, because it accelerates down)</div>'
         : '<div class="bad">The hanging weight is not more than the friction, so (treating μ as static too) nothing moves. T = m<sub>2</sub>g = ' + H.n(d.T, 'N') + '.</div>');
-    return '<h4>1 · The load is held up by n = ' + H.iv('n') + ' rope segments, each with the same tension</h4><div class="eq">nF = mg → F = mg/n = (' + H.iv('m') + ')(' + H.g() + ') / ' + H.iv('n') + ' = <b>' + H.n(d.F, 'N') + '</b></div>' +
-      '<p class="note">Ideal pulleys (no mass, no friction), lifting at constant speed.</p>' +
-      '<h4>2 · But you pull more rope</h4><div class="eq">To raise the load h, each of the n segments shortens by h: rope pulled = nh = ' + H.iv('n') + ' × ' + H.iv('h') + ' = <b>' + H.n(d.rope, 'm') + '</b></div>' +
-      '<h4>3 · The work is the same</h4><div class="eq">W<sub>you</sub> = F × rope = ' + H.n(d.F) + ' × ' + H.n(d.rope) + ' = ' + H.n(d.Wk, 'J') + ' &nbsp; = &nbsp; mgh = ' + H.n(d.Wout, 'J') + '</div>' +
-      '<p class="note">Pulleys trade force for distance: 1/n the force × n the distance. They never reduce the work.</p>';
+    return '<h4>1 · Free-body diagram of the moving part (load' + (d.n > 1 ? ' + lower pulleys' : '') + ')</h4><div class="eq">Cut every rope that touches it. ' + (d.n === 1 ? 'One rope segment pulls up' : H.iv('n') + ' rope segments pull up') + ', each with tension T. Its weight W pulls down.</div>' +
+      '<div class="eq">W = mg = (' + H.iv('m') + ')(' + H.g() + ') = ' + H.n(d.W, 'N') + '</div>' +
+      '<p class="note">Light pulleys: their mass is ignored.</p>' +
+      '<h4>2 · One rope, so one tension</h4><div class="eq">With light, frictionless pulleys the tension is the same all along the rope, and it equals your pull: F = T.</div>' +
+      '<h4>3 · Newton’s 2nd law (held still or lifted at constant speed, so a = 0)</h4><div class="eq">ΣF<sub>y</sub> = 0: &nbsp; nT − W = 0 → T = W/n = ' + H.n(d.W) + ' / ' + H.iv('n') + ' = <b>' + H.n(d.T, 'N') + '</b></div>' +
+      '<p class="note">The weight is shared between the segments. Count only the segments attached to the moving part, not the one in your hand.</p>' +
+      '<h4>4 · Free-body diagram of the top pulleys (what the ceiling holds)</h4><div class="eq">All ' + H.iv('n') + ' segments <i>plus</i> the end you pull down on hang from the top: F<sub>ceiling</sub> = (n + 1)T = (' + H.n(d.n + 1) + ')(' + H.n(d.T) + ') = <b>' + H.n(d.ceil, 'N') + '</b></div>' +
+      '<p class="note">That’s more than the weight: you are pulling down on the rope, and the ceiling holds that too. (Rope pulled straight down.)</p>';
   },
   draw(v, d, mode, opt, t, dt, A){
     if (A.t === undefined || A.reset) A.t = 0; A.t += dt; const cyc = 2.4, tt = A.t % cyc;
@@ -330,17 +331,19 @@ const SIM = {
       // free end, pulled down by the person
       const fxp = xs[n], pull = lift * n, endY = 120 + Math.min(pull, 110);
       ctx.strokeStyle = '#7a5a2a'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(fxp, yT); ctx.lineTo(fxp, endY); ctx.stroke();
-      arrow(fxp, endY, fxp, endY + 15 + 40 * d.F / d.W, COL.T, 'F = ' + fplain(d.F) + ' N', { lx: 6, ly: 0 });
-      text(n + (n === 1 ? ' segment holds' : ' segments hold') + ' the load (shaded)', 12, 300, { font: '700 13px "Space Grotesk",sans-serif' });
-      text('load up ' + fplain(v.h) + ' m → you pull ' + fplain(d.rope) + ' m of rope', 12, 318, { font: '600 11px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+      arrow(fxp, endY, fxp, endY + 15 + 40 * d.F / d.W, COL.T, 'F = T = ' + fplain(d.F) + ' N', { lx: 6, ly: 0 });
+      text(n + (n === 1 ? ' segment pulls' : ' segments pull') + ' up on the load (shaded)', 12, 300, { font: '700 13px "Space Grotesk",sans-serif' });
+      text('each has the same tension T = ' + fplain(d.T) + ' N', 12, 318, { font: '600 11px "IBM Plex Mono",monospace', col: '#4a4a4a' });
     }
     // bar comparison on the right
     if (mode === 'tackle'){
-      panelTitle('FORCE vs DISTANCE', 390, 18);
-      const base = 260, mx = Math.max(d.W, 1);
-      [['your pull F', d.F, '#7a3fb0'], ['load mg', d.W, '#111']].forEach(([l, q, col], i) => { const x = 405 + i * 90, h = 180 * q / mx; ctx.fillStyle = col; ctx.fillRect(x, base - h, 55, h); text(l, x + 27, base + 14, { align: 'center', font: '700 10px "IBM Plex Mono",monospace' }); text(fplain(q) + ' N', x + 27, base - h - 6, { align: 'center', font: '600 10px "IBM Plex Mono",monospace' }); });
-      ctx.strokeStyle = '#111'; ctx.beginPath(); ctx.moveTo(395, base); ctx.lineTo(590, base); ctx.stroke();
-      text('F × ' + fplain(d.rope) + ' m = mg × ' + fplain(v.h) + ' m', 400, 300, { font: '600 11px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+      panelTitle('FREE-BODY DIAGRAM: MOVING PART', 390, 18);
+      const n = Math.round(d.n), bx = 480, by = 150, bw2 = 30 + 10 * n, sc = 100 / d.W;
+      ctx.fillStyle = '#ff6a2b'; ctx.strokeStyle = '#111'; ctx.lineWidth = 1.5; ctx.fillRect(bx - bw2 / 2, by - 15, bw2, 30); ctx.strokeRect(bx - bw2 / 2, by - 15, bw2, 30);
+      for (let i = 0; i < n; i++){ const x = bx - bw2 / 2 + bw2 * (i + 0.5) / n; arrow(x, by - 15, x, by - 15 - d.T * sc, COL.T, i === n - 1 ? 'T' : '', { w: 3, head: 7, lx: 5, ly: 0 }); }
+      arrow(bx, by + 15, bx, by + 15 + d.W * sc, COL.W, 'W = ' + fplain(d.W) + ' N', { w: 3.5, lx: 6, ly: -6 });
+      text((n === 1 ? '' : n) + 'T = W', 395, 300, { font: '700 15px "Space Grotesk",sans-serif' });
+      text('T = ' + fplain(d.W) + ' / ' + n + ' = ' + fplain(d.T) + ' N', 395, 318, { font: '600 11px "IBM Plex Mono",monospace', col: '#4a4a4a' });
     } else {
       panelTitle('NEWTON’S THIRD LAW PAIRS', 390, 18);
       text('String on mass ↑ T', 400, 60, { font: '600 12px "Space Grotesk",sans-serif' }); text('Mass on string ↓ T', 400, 78, { font: '600 12px "Space Grotesk",sans-serif' });
