@@ -26,6 +26,13 @@ SIMS = {
     'power':   {'file': 'units/sims/circ-power.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'hang':    {'file': 'units/sims/circ-hang.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'phetE':   {'file': 'units/sims/phet-energy.html', 'kind': 'plain', 'ar': '16 / 10', 'credit': 'Energy Skate Park: Basics, Masses and Springs and Pendulum Lab: ' + PHET},
+    'crash':   {'file': 'units/sims/circ-crash.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Crash Test, Collision Carts, Bouncing Ball, Ballistic Pendulum, 2D Collisions and Ball Stack are original.'},
+    'carts':   {'file': 'units/sims/circ-carts.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'bounce':  {'file': 'units/sims/circ-bounce.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'ballis':  {'file': 'units/sims/circ-ballistic.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'hockey2': {'file': 'units/sims/circ-hockey.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'stack':   {'file': 'units/sims/circ-stack.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'phetM':   {'file': 'units/sims/phet-momentum.html', 'kind': 'plain', 'ar': '16 / 10', 'credit': 'Collision Lab and Momentum Lab: ' + PHET},
     'solar':   {'file': 'single/my-solar-system.html', 'kind': 'plain', 'ar': '4 / 3', 'credit': 'My Solar System is a single-file copy of the open-source sim (old PhET-style constants). ' + PHET},
 }
 
@@ -124,6 +131,43 @@ UNITS = {
         '<b>Energy Skate Park.</b> Turn on the bar graph and the speed. Where is the skater fastest? Add friction: where does the energy go?',
         '<b>Masses and Springs</b> (Energy screen). Watch the energy bars as the mass bounces. When is the spring energy biggest?',
         '<b>Pendulum Lab</b> (Energy screen). Compare the speed at the bottom for two different release heights.']},
+]},
+'P1-07': {'course': 'AP Physics 1 / IB', 'num': '07', 'title': 'Impulse and Momentum', 'tabs': [
+    {'code': '', 'name': 'Crash Test', 'sim': 'crash', 'tasks': [
+        '<b>Predict, then check.</b> A crumple zone doubles the collision time. What happens to the impulse? To the average force? Use the ×2 line to check both.',
+        '<b>Claim.</b> A student says the crumple zone reduces the car’s change in momentum. Use steps 1–2 to explain what it really changes.',
+        'Switch to “bounces back.” Explain why bouncing off the wall makes the force bigger, even though the car ends up moving slower than it started.',
+        'Use the F–t graph: the steel wall and the water barrels give the same area. Sketch both on paper and label which is which.',
+        'How long must a 15 m/s crash last to keep a 70 kg passenger under 20 g’s? Solve first, then check.']},
+    {'code': '', 'name': 'Collision Carts', 'sim': 'carts', 'tasks': [
+        '<b>Elastic, equal masses, B at rest.</b> Predict both velocities after. Then make A twice as heavy and predict again.',
+        '<b>Sticky.</b> Show that the total momentum is the same before and after but the kinetic energy is not. Where did the energy go?',
+        'Make A and B move toward each other with equal and opposite momentum, then stick. What happens? Use step 2.',
+        '<b>Explosion.</b> A 1 kg and a 3 kg cart push apart. Which gets the bigger speed? The bigger momentum? The bigger kinetic energy? Justify each.',
+        'Compare the impulse on B with the impulse on A in any collision. What law does this show?']},
+    {'code': '', 'name': 'Bouncing Ball', 'sim': 'bounce', 'tasks': [
+        'Which gets the bigger impulse from the floor: a clay ball that sticks or a superball that bounces? Predict, then check with the presets.',
+        '<b>System.</b> Is the ball’s momentum conserved during the bounce? Is the ball + Earth’s? Use step 5 to explain both answers.',
+        'Shorten the contact time. What happens to the impulse and the force? Why do you bend your knees when you land?',
+        'A ball loses 40% of its kinetic energy each bounce. What fraction of the drop height does it reach on the 2nd bounce? Check one bounce with the sim.']},
+    {'code': '', 'name': 'Ballistic Pendulum', 'sim': 'ballis', 'tasks': [
+        '<b>Two stages.</b> Explain why momentum is conserved in stage 1 but not stage 2, and why energy is conserved in stage 2 but not stage 1.',
+        'A 10 g bullet swings a 2 kg block up 0.20 m. Work backward to find the bullet’s speed, then set it in the sim to check.',
+        'Compare “sticks” and “bounces off” with the same bullet. Which swings higher? Use the impulse on the block to explain.',
+        'Graph h vs v. Why is it not a straight line? What would you plot to get a straight line?']},
+    {'code': '', 'name': '2D Collisions', 'sim': 'hockey2', 'tasks': [
+        '<b>Velcro pucks.</b> Find the speed and direction after they stick. Show the x and y components separately before combining.',
+        'A student adds the two speeds to get the speed after. Use the tip-to-tail diagram to explain why that’s wrong.',
+        '<b>Glancing hit, equal masses, elastic.</b> Adjust A’s speed after until the kinetic energy is kept. What angle do the paths make?',
+        'Make A’s speed after too big. Why does the sim say it’s impossible even though momentum still balances?']},
+    {'code': '', 'name': 'Ball Stack', 'sim': 'stack', 'tasks': [
+        'Try it for real: drop a tennis ball sitting on a basketball. How high does the tennis ball go compared with the drop height?',
+        'Show that if M is much bigger than m, the top ball leaves at 3u and rises to 9h.',
+        'With equal masses, what happens to each ball? Explain with step 3.']},
+    {'code': '', 'name': 'PhET Collision Lab', 'sim': 'phetM', 'tasks': [
+        '<b>1D:</b> set elasticity to 100%. Make a heavy ball hit a light one at rest. Which ball moves faster afterward?',
+        '<b>1D:</b> set elasticity to 0%. Turn on kinetic energy. What fraction is lost when equal masses stick?',
+        '<b>2D:</b> turn on the momentum vectors and the total. Make a glancing collision. Is the total momentum vector the same before and after?']},
 ]},
 'P1-09': {'course': 'AP Physics 1 / IB', 'num': '09', 'title': 'Fluids', 'tabs': [
     {'code': '', 'name': 'Under Pressure', 'sim': 'fluids', 'select': 'Under Pressure', 'tasks': [
