@@ -20,7 +20,7 @@ SIMS = {
 
 UNITS = {
 # ------------------------------------------------------------------ AP PHYSICS 1
-'P1-02': {'course': 'AP Physics 1', 'num': '02', 'title': 'Newton’s Second Law', 'tabs': [
+'P1-02': {'course': 'AP Physics 1 / IB', 'num': '02', 'title': 'Newton’s Second Law', 'tabs': [
     {'code': '02-2', 'name': 'Moving Man', 'sim': 'mman', 'tasks': [
         'Start the man at −4 m with a constant velocity of +2 m/s. Sketch the x–t and v–t graphs before you press play, then compare.',
         'From rest, give him an acceleration of +1 m/s². What shape is the x–t graph? What does the area under the v–t graph tell you?',
@@ -37,21 +37,21 @@ UNITS = {
         'Turn on the force vectors. While the lander slows its fall, which way does the net force point?',
         'Land at under 2 m/s with as little fuel as you can. Describe your strategy using F<sub>net</sub> = ma.']},
 ]},
-'P1-04': {'course': 'AP Physics 1', 'num': '04', 'title': 'Motion and Forces in 2D', 'tabs': [
+'P1-04': {'course': 'AP Physics 1 / IB', 'num': '04', 'title': 'Motion and Forces in 2D', 'tabs': [
     {'code': '', 'name': 'Maze Game', 'sim': 'maze', 'tasks': [
         'Steer the ball with <b>position</b> only. Easy? Now switch to <b>velocity</b>. What does the arrow you drag now control?',
         'Switch to <b>acceleration</b>. Why is it so much harder to stop at the goal?',
         'With acceleration control, how do you make the ball turn a corner at constant speed? Which way must the acceleration point?',
         'Watch the velocity and acceleration arrows. Can the ball move one way while it accelerates the other way? When?']},
 ]},
-'P1-05': {'course': 'AP Physics 1', 'num': '05', 'title': 'Circular Motion and Gravity', 'tabs': [
+'P1-05': {'course': 'AP Physics 1 / IB', 'num': '05', 'title': 'Circular Motion and Gravity', 'tabs': [
     {'code': '', 'name': 'My Solar System', 'sim': 'solar', 'tasks': [
         'Choose the <b>sun and planet</b> preset and turn on Show Traces. Is the orbit a circle? Change the planet’s v<sub>y</sub> until it is as round as you can make it.',
         'Give the planet a bit less speed. Where on its orbit is it fastest? Where is it slowest?',
         'Double the sun’s mass. Does the planet need more or less speed for a circular orbit at the same distance? About how many times more?',
         'Try the <b>sun, planet, moon</b> preset. What keeps the moon going around the planet while the planet goes around the sun?']},
 ]},
-'P1-09': {'course': 'AP Physics 1', 'num': '09', 'title': 'Fluids', 'tabs': [
+'P1-09': {'course': 'AP Physics 1 / IB', 'num': '09', 'title': 'Fluids', 'tabs': [
     {'code': '', 'name': 'Under Pressure', 'sim': 'fluids', 'select': 'Under Pressure', 'tasks': [
         'Put pressure gauges at the surface, 1 m down and 2 m down. How much does the pressure go up per meter? Compare with ρg.',
         'Switch to an odd-shaped pool. Is the pressure at the same depth still the same? Why doesn’t the shape matter?',
@@ -235,10 +235,10 @@ UNITS.update({
         'Why does Japan have so many earthquakes but Maryland very few? Use the Plate Map to explain.']},
 ]},
 # AP units that don't have sims yet
-'P1-01': {'course': 'AP Physics 1', 'num': '01', 'title': 'Newton’s First Law', 'tabs': []},
-'P1-03': {'course': 'AP Physics 1', 'num': '03', 'title': 'Newton’s Third Law', 'tabs': []},
-'P1-08': {'course': 'AP Physics 1', 'num': '08', 'title': 'Rotation', 'tabs': []},
-'P1-10': {'course': 'AP Physics 1', 'num': '10', 'title': 'Simple Harmonic Motion', 'tabs': []},
+'P1-01': {'course': 'AP Physics 1 / IB', 'num': '01', 'title': 'Newton’s First Law', 'tabs': []},
+'P1-03': {'course': 'AP Physics 1 / IB', 'num': '03', 'title': 'Newton’s Third Law', 'tabs': []},
+'P1-08': {'course': 'AP Physics 1 / IB', 'num': '08', 'title': 'Rotation', 'tabs': []},
+'P1-10': {'course': 'AP Physics 1 / IB', 'num': '10', 'title': 'Simple Harmonic Motion', 'tabs': []},
 'P2-03': {'course': 'AP Physics 2 / IB', 'num': '03', 'title': 'Current Electricity and Magnetism', 'tabs': []},
 'P2-04': {'course': 'AP Physics 2 / IB', 'num': '04', 'title': 'Waves & Optics', 'tabs': []},
 })

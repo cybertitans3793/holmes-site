@@ -73,7 +73,7 @@ def patch(h):
     hm = re.search(r'<div class="uhead"><div><div class="mono">(P\d-\d\d) · ([^<]+)</div><h1>[^<]*</h1></div><a ([^>]*)>([^<]*)</a></div>', h)
     if hm:
         uid, name, attrs = hm.group(1), hm.group(2), hm.group(3)
-        course = 'AP Physics 1' if uid.startswith('P1') else 'AP Physics 2 / IB'
+        course = 'AP Physics 1 / IB' if uid.startswith('P1') else 'AP Physics 2 / IB'
         if 'class=' not in attrs: attrs += ' class="cta"'
         new = (f'<div class="uhead"><div class="uid"><div class="big" aria-hidden="true">{uid[-2:]}</div><div><div class="mono">{course} · {uid}</div>'
                f'<h1>{UNITS.get(uid, name)}</h1></div></div><a {attrs}>Practice this unit →</a></div>')
