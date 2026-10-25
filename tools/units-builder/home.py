@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Builds units/HOME.html, the "Pick your class" homepage (design option A, Big Type).
 Unit list and "has sims" flags come from units.py, so the homepage stays in step with the unit pages.
-Links go to the Site pages, whose custom paths are the lower-case unit codes (…/holmes/p1-04)."""
+Links go to the Site pages: each unit page's custom path is its lower-case code, inside its menu section's folder
+(…/holmes/ap-physics-1-ib/p1-04). If a menu section is renamed, its folder changes: update FOLDER."""
 import html, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from units import UNITS
@@ -13,6 +14,7 @@ COURSES = [  # (big label, course name, code prefix, line under the unit count)
     ('P2', 'AP Physics 2 / IB', 'P2', 'AP 2 + IB Physics'),
 ]
 E = html.escape
+FOLDER = {'AB': 'algebra-based-physics', 'P1': 'ap-physics-1-ib', 'P2': 'ap-physics-2-ib'}  # menu-section folders on the Site
 # Hand-built unit pages that aren't generated from units.py
 EXTRA = {'P1-06': {'title': 'Work, Power, and Energy', 'tabs': [1]}, 'P1-07': {'title': 'Impulse and Momentum', 'tabs': [1]}}
 
@@ -21,7 +23,7 @@ def card(big, name, prefix, sub, hot):
     rows = []
     for k, u in units:
         ready = bool(u.get('tabs'))
-        rows.append(f'<a class="row{"" if ready else " soon"}" href="{SITE}{k.lower()}" target="_top">'
+        rows.append(f'<a class="row{"" if ready else " soon"}" href="{SITE}{FOLDER[prefix]}/{k.lower()}" target="_top">'
                     f'<span class="code">{k}</span><span class="nm">{E(u["title"])}</span>'
                     f'{"" if ready else "<span class=tag>SOON</span>"}</a>')
     return (f'<section class="card{" hot" if hot else ""}"><div class="top"><div class="line"><div class="big">{big}</div>'
