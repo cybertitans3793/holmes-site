@@ -1,5 +1,6 @@
 /**
  * Holmes Sims web app: serves one unit page per link, e.g.  .../exec?unit=P1-09
+ * The homepage is .../exec?unit=HOME (units/HOME.html).
  *
  * Unit pages now come from GitHub (public repo "holmes-site", folder "units").
  * Google's servers fetch them, not the student Chromebooks, so the school filter never sees GitHub.
@@ -17,7 +18,7 @@ const CACHE_MINUTES = 10;   // how long a page is reused before checking GitHub 
 
 function doGet(e) {
   const unit = String((e && e.parameter && e.parameter.unit) || '').trim().toUpperCase();
-  if (!/^(P1|P2|AB)-\d{2}$/.test(unit)) {
+  if (!/^((P1|P2|AB)-\d{2}|HOME)$/.test(unit)) {
     return HtmlService.createHtmlOutput('<p style="font:16px sans-serif">Pick a unit, e.g. <code>?unit=P1-09</code>.</p>');
   }
   const html = getUnit_(unit, e.parameter.refresh === '1');
@@ -25,7 +26,7 @@ function doGet(e) {
     return HtmlService.createHtmlOutput('<p style="font:16px sans-serif">The ' + unit + ' sims page isn’t ready yet.</p>');
   }
   return HtmlService.createHtmlOutput(html)
-    .setTitle(unit + ' Sims')
+    .setTitle(unit === 'HOME' ? 'Holmes Physics' : unit + ' Sims')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
