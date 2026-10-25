@@ -76,18 +76,49 @@ const SIM = {
       text(d.moves ? 'a = ' + fplain(d.a) + ' m/s²' : 'stuck: m2g ≤ friction', 12, 318, { font: '700 13px "Space Grotesk",sans-serif', col: d.moves ? '#111' : '#c43a00' });
     } else {
       panelTitle('BLOCK AND TACKLE', 10, 18);
-      const n = Math.round(v.n), topY = 40, lift = 40 * (tt / cyc), loadY = 230 - lift, cx = 180, sp = 14;
-      ctx.fillStyle = '#111'; ctx.fillRect(cx - 80, topY - 14, 160, 8);
-      const segs = []; for (let i = 0; i < n; i++) segs.push(cx - (n - 1) * sp / 2 + i * sp);
-      ctx.strokeStyle = '#7a5a2a'; ctx.lineWidth = 2; segs.forEach(x => { ctx.beginPath(); ctx.moveTo(x, topY); ctx.lineTo(x, loadY - 22); ctx.stroke(); });
-      ctx.fillStyle = '#d9d9d9'; ctx.strokeStyle = '#111'; ctx.lineWidth = 1.5; ctx.fillRect(cx - (n * sp) / 2 - 8, topY - 6, n * sp + 16, 14); ctx.strokeRect(cx - (n * sp) / 2 - 8, topY - 6, n * sp + 16, 14);
-      if (n > 1){ ctx.fillRect(cx - (n * sp) / 2 - 8, loadY - 26, n * sp + 16, 12); ctx.strokeRect(cx - (n * sp) / 2 - 8, loadY - 26, n * sp + 16, 12); }
-      ctx.strokeStyle = '#111'; ctx.beginPath(); ctx.moveTo(cx, loadY - 14); ctx.lineTo(cx, loadY); ctx.stroke();
-      const bs = 30 + v.m * 0.15; ctx.fillStyle = '#ff6a2b'; ctx.fillRect(cx - bs / 2, loadY, bs, bs * 0.7); ctx.strokeRect(cx - bs / 2, loadY, bs, bs * 0.7); text(fplain(v.m) + ' kg', cx - bs / 2 - 6, loadY + bs * 0.35 + 4, { align: 'right', font: '700 11px "IBM Plex Mono",monospace' });
+      // Real pulleys: n supporting segments, joined by pulleys that alternate top (fixed) and bottom (moving),
+      // plus one top pulley that turns the free end down to the person.
+      const n = Math.round(v.n), r = 14, topY = 46, yT = topY + 22, lift = 40 * (tt / cyc), loadY = 222 - lift, yB = loadY - 32, cx = 170;
+      const xs = []; for (let i = 0; i <= n; i++) xs.push(cx - n * r + 2 * r * i);
+      const isTop = k => (n - 1 - k) % 2 === 0;           // pulley between segment k and k+1 (k = n−1 is the turning pulley)
+      const tops = [], bots = []; for (let k = 0; k < n; k++) (isTop(k) ? tops : bots).push(xs[k] + r);
+      const anchorTop = n % 2 === 0;
+      // ceiling
+      ctx.fillStyle = '#111'; ctx.fillRect(cx - n * r - 40, topY - 10, 2 * n * r + 80, 8);
+      for (let i = 0; i < 9; i++){ ctx.strokeStyle = '#111'; ctx.lineWidth = 1; ctx.beginPath(); const hx = cx - n * r - 36 + i * (2 * n * r + 72) / 8; ctx.moveTo(hx, topY - 10); ctx.lineTo(hx + 6, topY - 18); ctx.stroke(); }
+      // moving block frame (bar joining the bottom pulleys and the anchor) and hook to the load
+      const botXs = bots.slice(); if (!anchorTop && n > 1) botXs.push(xs[0]);
+      let hookX = xs[0];
+      ctx.strokeStyle = '#555'; ctx.lineWidth = 4;
+      if (botXs.length){ const lo = Math.min(...botXs), hi = Math.max(...botXs); hookX = (lo + hi) / 2;
+        ctx.beginPath(); ctx.moveTo(lo - 6, yB); ctx.lineTo(hi + 6, yB); ctx.stroke(); ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(hookX, yB); ctx.lineTo(hookX, loadY); ctx.stroke(); }
+      // straps from the ceiling to each top pulley
+      ctx.strokeStyle = '#555'; ctx.lineWidth = 3; tops.forEach(x => { ctx.beginPath(); ctx.moveTo(x, topY - 2); ctx.lineTo(x, yT); ctx.stroke(); });
+      // wheels
+      const wheel = (x, y) => { ctx.fillStyle = '#d9d9d9'; ctx.strokeStyle = '#111'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(x, y, r - 1.5, 0, 7); ctx.fill(); ctx.stroke(); ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(x, y, 2.5, 0, 7); ctx.fill(); };
+      tops.forEach(x => wheel(x, yT)); bots.forEach(x => wheel(x, yB));
+      // rope: vertical segments, arcs over/under pulleys, anchor, free end
+      ctx.strokeStyle = '#7a5a2a'; ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+      for (let i = 0; i < n; i++){
+        const topEnd = (i > 0 && isTop(i - 1)) || isTop(i) ? yT : topY - 2;
+        const botEnd = (i > 0 && !isTop(i - 1)) || (!isTop(i)) ? yB : (n === 1 ? loadY : yB);
+        ctx.beginPath(); ctx.moveTo(xs[i], topEnd); ctx.lineTo(xs[i], botEnd); ctx.stroke();
+        // segment lines are highlighted: they each hold F
+        ctx.save(); ctx.strokeStyle = 'rgba(122,63,176,0.35)'; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(xs[i], (topEnd + botEnd) / 2 - 12); ctx.lineTo(xs[i], (topEnd + botEnd) / 2 + 12); ctx.stroke(); ctx.restore();
+      }
+      tops.forEach(x => { ctx.beginPath(); ctx.arc(x, yT, r, PI, 2 * PI); ctx.stroke(); });
+      bots.forEach(x => { ctx.beginPath(); ctx.arc(x, yB, r, 0, PI); ctx.stroke(); });
+      if (anchorTop){ ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(xs[0], topY - 2, 3, 0, 7); ctx.fill(); }
+      else if (n > 1){ ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(xs[0], yB, 3, 0, 7); ctx.fill(); }
+      // load
+      const bw = 34 + v.m * 0.06, bh = bw * 0.75; ctx.fillStyle = '#ff6a2b'; ctx.strokeStyle = '#111'; ctx.lineWidth = 1.5;
+      ctx.fillRect(hookX - bw / 2, loadY, bw, bh); ctx.strokeRect(hookX - bw / 2, loadY, bw, bh);
+      text(fplain(v.m) + ' kg', hookX - bw / 2 - 6, loadY + bh / 2 + 4, { align: 'right', font: '700 11px "IBM Plex Mono",monospace' });
       // free end, pulled down by the person
-      const fxp = cx + (n * sp) / 2 + 30, pull = lift * n; ctx.strokeStyle = '#7a5a2a'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(cx + (n * sp) / 2 + 8, topY); ctx.lineTo(fxp, topY); ctx.lineTo(fxp, 150 + Math.min(pull, 150)); ctx.stroke();
-      arrow(fxp, 150 + Math.min(pull, 150), fxp, 150 + Math.min(pull, 150) + 20 + 50 * d.F / d.W, COL.T, 'F = ' + fplain(d.F) + ' N', { lx: 6, ly: 0 });
-      text(n + ' segments hold the load', 12, 300, { font: '700 13px "Space Grotesk",sans-serif' });
+      const fxp = xs[n], pull = lift * n, endY = 120 + Math.min(pull, 110);
+      ctx.strokeStyle = '#7a5a2a'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(fxp, yT); ctx.lineTo(fxp, endY); ctx.stroke();
+      arrow(fxp, endY, fxp, endY + 15 + 40 * d.F / d.W, COL.T, 'F = ' + fplain(d.F) + ' N', { lx: 6, ly: 0 });
+      text(n + (n === 1 ? ' segment holds' : ' segments hold') + ' the load (shaded)', 12, 300, { font: '700 13px "Space Grotesk",sans-serif' });
       text('load up ' + fplain(v.h) + ' m → you pull ' + fplain(d.rope) + ' m of rope', 12, 318, { font: '600 11px "IBM Plex Mono",monospace', col: '#4a4a4a' });
     }
     // bar comparison on the right
