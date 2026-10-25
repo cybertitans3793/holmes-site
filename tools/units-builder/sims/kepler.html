@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kepler's First Law: Drawing Ellipses</title>
+<style>
+  :root{
+    --ink:#1e2a38; --muted:#5b6775; --line:#d5dbe3; --bg:#f4f6f9; --card:#ffffff;
+    --accent:#1f5fa8; --accent-soft:#e6eef8; --good:#1e7d45; --good-soft:#e5f4ea;
+    --warn:#a85a00; --warn-soft:#fdf1e2; --bad:#b3261e; --bad-soft:#fbe9e7;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+  header{padding:14px 18px 6px;max-width:1240px;margin:0 auto}
+  h1{font-size:20px;margin:0 0 2px}
+  header p{margin:0;color:var(--muted);font-size:14px}
+  .layout{max-width:1240px;margin:0 auto;padding:8px 18px 0;display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px;align-items:start}
+  @media (max-width:900px){.layout{grid-template-columns:1fr}}
+  .stage{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px}
+  canvas{display:block;width:100%;height:auto;border-radius:6px;touch-action:none;cursor:default;outline:none}
+  canvas:focus-visible{box-shadow:0 0 0 3px var(--accent-soft)}
+  .toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
+  .toolbar .label{color:var(--muted);font-size:13px;margin-right:2px}
+  button{font:inherit;font-size:14px;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:7px;padding:6px 11px;cursor:pointer}
+  button:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  button.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  button.primary:hover:not(:disabled){filter:brightness(1.08);color:#fff}
+  .panel{display:flex;flex-direction:column;gap:12px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .card h2{font-size:15px;margin:0 0 8px}
+  .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+  .tabs button{padding:8px 0;font-weight:600}
+  .free{margin-top:8px}
+  .free label{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+  input[type=range]{width:100%}
+  ol.steps{margin:0;padding-left:20px}
+  ol.steps li{margin:0 0 9px;color:var(--muted)}
+  ol.steps li.now{color:var(--ink);font-weight:600}
+  ol.steps li.done{color:var(--good)}
+  ol.steps li.done::marker{content:"✓  "}
+  .progress{height:8px;background:#e9edf2;border-radius:5px;overflow:hidden;margin:6px 0 2px}
+  .progress span{display:block;height:100%;width:0;background:var(--accent);transition:width .15s}
+  .row{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+  .hint{font-size:13px;color:var(--muted);margin:6px 0 0}
+  .flash{color:var(--warn)}
+  footer{max-width:1240px;margin:0 auto 18px;padding:0 18px;color:var(--muted);font-size:12px}
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@500;700&display=swap">
+<style id="holmes-embed">
+:root{--ink:#111;--muted:#4a4a4a;--line:#111;--bg:#fff;--card:#fff;--accent:#111;--accent-soft:#ffe2d3;--warn:#c43a00}
+html,body{height:100%;overflow:hidden;background:#fff}
+body{font-family:"Space Grotesk",system-ui,sans-serif}
+#holmes-app{position:absolute;left:0;top:0;width:1060px;transform-origin:0 0;padding:12px 0}
+header,footer{display:none}
+.layout{max-width:none;padding:0 14px;grid-template-columns:minmax(0,1fr) 300px!important;gap:14px}
+.stage{border:2px solid #111;border-radius:0;padding:8px}
+canvas{border-radius:0}
+.card{border:2px solid #111;border-radius:0;padding:10px 12px}
+.card h2{font-weight:700;font-size:16px}
+button{border:2px solid #111;border-radius:0;font-weight:700;font-family:inherit}
+button:hover:not(:disabled){background:#ffe2d3;color:#111;border-color:#111}
+button.on{background:#111;color:#fff;border-color:#111}
+button.primary{background:#111;color:#fff}
+.progress{border:1px solid #111;border-radius:0;background:#fff}
+.progress span{background:#ff6a2b}
+ol.steps li.done{color:#111}
+input[type=range]{accent-color:#111}
+canvas:focus-visible{box-shadow:0 0 0 3px #ff6a2b}
+.panel{gap:10px}
+.panel .card:nth-child(3){display:none}
+ol.steps li{margin:0 0 6px;font-size:14px;line-height:1.35}
+.hint{font-size:12.5px}
+.toolbar .tip{font-size:12.5px;color:#4a4a4a;margin-left:6px}
+</style>
+</head>
+<body>
+<div id="holmes-app">
+<header>
+  <h1>Kepler's First Law: Drawing Ellipses</h1>
+  <p>The orbit of every planet is an ellipse with the Sun at one of the foci. Draw four ellipses, measure them, and calculate their eccentricity.</p>
+</header>
+
+<main class="layout">
+  <section class="stage">
+    <canvas id="board" width="900" height="690" tabindex="0" aria-label="Styrofoam board with paper, pushpins, string, and pencil"></canvas>
+    <div class="toolbar">
+      <span class="label">Tools:</span>
+      <button id="btnRuler" class="on" aria-pressed="true">Ruler</button>
+      <button id="btnRotate">Turn ruler 90°</button>
+      <button id="btnLoupe" aria-pressed="false">Magnifier</button>
+      <span class="tip">Drag the ruler by its body. Use the Magnifier to read it to 0.1 cm.</span>
+    </div>
+  </section>
+
+  <aside class="panel">
+    <div class="card">
+      <h2>Choose an ellipse</h2>
+      <div class="tabs" role="tablist">
+        <button data-i="0" role="tab">#1</button>
+        <button data-i="1" role="tab">#2</button>
+        <button data-i="2" role="tab">#3</button>
+        <button data-i="3" role="tab">#4</button>
+      </div>
+      <div class="row"><button id="btnFree" data-i="4" style="width:100%">Free play (any pin spacing)</button></div>
+      <div class="free" id="freeBox" hidden>
+        <label><span>Pin spacing</span><span id="freeVal">4.0 cm</span></label>
+        <input type="range" id="freeSlider" min="0" max="9.5" step="0.5" value="4">
+      </div>
+      <p class="hint" id="pinNote"></p>
+    </div>
+
+    <div class="card">
+      <h2>Procedure</h2>
+      <ol class="steps" id="steps">
+        <li>Drag the pencil all the way around the two pushpins. The string stays tight for you.
+          <div class="progress" aria-hidden="true"><span id="prog"></span></div>
+          <span class="hint" id="progText">0% drawn</span>
+        </li>
+        <li>Take out the pushpins and label the holes F₁ and F₂.
+          <div class="row"><button id="btnPins" disabled>Remove pins</button></div>
+        </li>
+        <li>Use the ruler to draw a line from the outside of the ellipse through both foci.
+          <div class="row"><button id="btnAxis" disabled>Draw line through foci</button></div>
+        </li>
+        <li>Measure the distance between the foci and the length of the major axis to the nearest tenth of a cm. Record them on your lab sheet.</li>
+      </ol>
+      <p class="hint flash" id="flash" aria-live="polite"></p>
+      <div class="row"><button id="btnReset">Start this ellipse over</button></div>
+    </div>
+
+    <div class="card">
+      <h2>Measuring tips</h2>
+      <p class="hint" style="margin:0">Drag the ruler by its body. Line its 0 mark up with the first point you are measuring from. Turn on the <b>Magnifier</b> and hover over the ruler to read it to the nearest 0.1 cm (1 mm).</p>
+    </div>
+  </aside>
+</main>
+
+<footer>String loop is 20 cm around. Based on the string-and-pushpin ellipse lab. Works with a mouse, trackpad, or touchscreen.</footer>
+
+</div>
+<script>(function(){var a=document.getElementById('holmes-app');function fit(){var s=Math.min(innerWidth/1060,innerHeight/a.offsetHeight);a.style.transform='scale('+s+')';}addEventListener('resize',fit);addEventListener('load',fit);fit();})();</script>
+<script>
+(() => {
+  // ---------- setup ----------
+  const LOOP_CM = 20;                 // total length of the string loop
+  const BOARD = { w: 30, h: 23 };     // styrofoam board (cm)
+  const PAPER = { w: 27.9, h: 21.6 }; // letter paper, landscape (cm)
+  const PRESETS = [2.0, 5.0, 7.0, 9.0];
+  const RULER_LEN = 25, RULER_W = 2.4;
+  const BINS = 72;
+
+  const canvas = document.getElementById('board');
+  const ctx = canvas.getContext('2d');
+  const $ = (id) => document.getElementById(id);
+
+  const newEllipse = () => ({ trace: [], bins: new Array(BINS).fill(false), phase: 'drawing', theta: 0 });
+  const state = {
+    current: 0, freeD: 4.0,
+    ellipses: [0, 1, 2, 3, 4].map(newEllipse),
+    ruler: { x: 2.5, y: BOARD.h - RULER_W - 0.15, angle: 0, visible: true },
+    loupe: false, pointer: null, drag: null,
+  };
+
+  // speckles for the styrofoam texture (fixed seed so it doesn't flicker)
+  let seed = 7;
+  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const speckles = Array.from({ length: 700 }, () => ({ x: rnd() * BOARD.w, y: rnd() * BOARD.h, r: 0.02 + rnd() * 0.05 }));
+
+  // ---------- geometry ----------
+  const dFor = (i) => (i < 4 ? PRESETS[i] : state.freeD);
+  function geom(i) {
+    const d = dFor(i), a = (LOOP_CM - d) / 2, c = d / 2;
+    return { d, a, c, b: Math.sqrt(a * a - c * c), cx: BOARD.w / 2, cy: BOARD.h / 2 };
+  }
+  function pointAt(g, th) {
+    const r = (g.a * g.b) / Math.sqrt((g.b * Math.cos(th)) ** 2 + (g.a * Math.sin(th)) ** 2);
+    return { x: g.cx + r * Math.cos(th), y: g.cy + r * Math.sin(th) };
+  }
+  const norm = (t) => ((t % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+  const wrapPi = (t) => { t = norm(t); return t > Math.PI ? t - 2 * Math.PI : t; };
+
+  // ---------- view (world cm -> CSS px) ----------
+  let base = { s: 30, ox: 0, oy: 0 };
+  function resize() {
+    const dpr = window.devicePixelRatio || 1;
+    const w = canvas.clientWidth || 900;
+    const h = (w * BOARD.h) / BOARD.w;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    canvas.style.height = h + 'px';
+    base = { s: w / BOARD.w, ox: 0, oy: 0 };
+    draw();
+  }
+  const toWorld = (e) => {
+    const r = canvas.getBoundingClientRect();
+    const k = canvas.clientWidth / r.width; return { x: (e.clientX - r.left) * k / base.s, y: (e.clientY - r.top) * k / base.s, sx: (e.clientX - r.left) * k, sy: (e.clientY - r.top) * k };
+  };
+
+  // ---------- drawing ----------
+  function drawScene(v) {
+    const X = (x) => v.ox + x * v.s, Y = (y) => v.oy + y * v.s, S = (l) => l * v.s;
+    const i = state.current, E = state.ellipses[i], g = geom(i);
+
+    // board
+    ctx.fillStyle = '#e4dfd2';
+    ctx.fillRect(X(0), Y(0), S(BOARD.w), S(BOARD.h));
+    ctx.fillStyle = 'rgba(120,110,90,0.25)';
+    for (const p of speckles) { ctx.beginPath(); ctx.arc(X(p.x), Y(p.y), Math.max(0.6, S(p.r)), 0, 7); ctx.fill(); }
+
+    // paper
+    const px = (BOARD.w - PAPER.w) / 2, py = (BOARD.h - PAPER.h) / 2;
+    ctx.fillStyle = 'rgba(0,0,0,0.12)';
+    ctx.fillRect(X(px + 0.15), Y(py + 0.2), S(PAPER.w), S(PAPER.h));
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(X(px), Y(py), S(PAPER.w), S(PAPER.h));
+    // tape
+    ctx.fillStyle = 'rgba(240,232,190,0.85)';
+    [[px + PAPER.w / 2 - 1.2, py - 0.35], [px + PAPER.w / 2 - 1.2, py + PAPER.h - 0.45]].forEach(([tx, ty]) => ctx.fillRect(X(tx), Y(ty), S(2.4), S(0.8)));
+
+    // label in the top right corner
+    ctx.fillStyle = '#7a8594';
+    ctx.font = `${S(0.75)}px "Comic Sans MS", "Segoe Print", system-ui, sans-serif`;
+    ctx.textAlign = 'right'; ctx.textBaseline = 'top';
+    ctx.fillText(i < 4 ? `#${i + 1}` : 'Free play', X(px + PAPER.w - 0.6), Y(py + 0.5));
+
+    // pencil trace
+    if (E.trace.length > 1) {
+      ctx.strokeStyle = '#2b2f36'; ctx.lineWidth = Math.max(1, S(0.06)); ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(X(E.trace[0].x), Y(E.trace[0].y));
+      for (let k = 1; k < E.trace.length; k++) ctx.lineTo(X(E.trace[k].x), Y(E.trace[k].y));
+      ctx.stroke();
+    }
+
+    // line through the foci (major axis)
+    if (E.phase === 'axis') {
+      ctx.strokeStyle = '#2b2f36'; ctx.lineWidth = Math.max(1, S(0.035));
+      ctx.beginPath(); ctx.moveTo(X(g.cx - g.a - 0.6), Y(g.cy)); ctx.lineTo(X(g.cx + g.a + 0.6), Y(g.cy)); ctx.stroke();
+    }
+
+    const f1 = { x: g.cx - g.c, y: g.cy }, f2 = { x: g.cx + g.c, y: g.cy };
+    if (E.phase === 'drawing') {
+      const P = pointAt(g, E.theta);
+      // string: loop around both pins and out to the pencil
+      ctx.strokeStyle = '#c0392b'; ctx.lineWidth = Math.max(1.2, S(0.07)); ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(X(f1.x), Y(f1.y)); ctx.lineTo(X(P.x), Y(P.y)); ctx.lineTo(X(f2.x), Y(f2.y));
+      ctx.moveTo(X(f1.x), Y(f1.y + 0.05)); ctx.lineTo(X(f2.x), Y(f2.y + 0.05));
+      ctx.stroke();
+      // pins
+      const pin = (p, col) => {
+        ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.beginPath(); ctx.arc(X(p.x + 0.12), Y(p.y + 0.14), S(0.36), 0, 7); ctx.fill();
+        ctx.fillStyle = col; ctx.beginPath(); ctx.arc(X(p.x), Y(p.y), S(0.36), 0, 7); ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.beginPath(); ctx.arc(X(p.x - 0.11), Y(p.y - 0.11), S(0.11), 0, 7); ctx.fill();
+      };
+      if (g.d === 0) pin(f1, '#d63031'); else { pin(f1, '#d63031'); pin(f2, '#2563c9'); }
+      drawPencil(P, X, Y, S);
+    } else {
+      // holes left by the pins, labeled
+      ctx.strokeStyle = '#2b2f36'; ctx.lineWidth = Math.max(1, S(0.035)); ctx.fillStyle = '#fff';
+      const holes = g.d === 0 ? [f1] : [f1, f2];
+      holes.forEach((h) => { ctx.beginPath(); ctx.arc(X(h.x), Y(h.y), S(0.13), 0, 7); ctx.fill(); ctx.stroke(); });
+      ctx.fillStyle = '#2b2f36'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+      ctx.font = `${S(0.6)}px "Comic Sans MS", "Segoe Print", system-ui, sans-serif`;
+      if (g.d === 0) ctx.fillText('F', X(f1.x), Y(f1.y - 0.3));
+      else { ctx.fillText('F₁', X(f1.x - 0.15), Y(f1.y - 0.3)); ctx.fillText('F₂', X(f2.x + 0.15), Y(f2.y - 0.3)); }
+    }
+
+    if (state.ruler.visible) drawRuler(X, Y, S);
+  }
+
+  function drawPencil(P, X, Y, S) {
+    // tip at P, body angled up and to the right
+    ctx.save();
+    ctx.translate(X(P.x), Y(P.y));
+    ctx.rotate(-Math.PI / 3.2);
+    const L = S(4.2), W = S(0.55), cone = S(0.75);
+    ctx.fillStyle = '#e8c9a0'; // wood cone
+    ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(cone, -W / 2); ctx.lineTo(cone, W / 2); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#2b2f36'; // graphite
+    ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(cone * 0.35, -W * 0.18); ctx.lineTo(cone * 0.35, W * 0.18); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#f2c230'; ctx.fillRect(cone, -W / 2, L, W); // body
+    ctx.fillStyle = 'rgba(0,0,0,0.12)'; ctx.fillRect(cone, W / 6, L, W / 3);
+    ctx.fillStyle = '#b9bcc2'; ctx.fillRect(cone + L, -W / 2, S(0.35), W); // ferrule
+    ctx.fillStyle = '#ef8fa0'; ctx.fillRect(cone + L + S(0.35), -W / 2, S(0.45), W); // eraser
+    ctx.restore();
+  }
+
+  function rulerFrame() {
+    const R = state.ruler;
+    return R.angle === 0 ? { x: R.x, y: R.y, w: RULER_LEN, h: RULER_W } : { x: R.x, y: R.y, w: RULER_W, h: RULER_LEN };
+  }
+  function drawRuler(X, Y, S) {
+    const R = state.ruler;
+    ctx.save();
+    ctx.translate(X(R.x), Y(R.y));
+    if (R.angle === 90) { ctx.translate(S(RULER_W), 0); ctx.rotate(Math.PI / 2); }
+    // body (see-through so students can line it up)
+    ctx.fillStyle = 'rgba(255, 236, 140, 0.78)';
+    ctx.strokeStyle = 'rgba(120, 95, 10, 0.9)'; ctx.lineWidth = 1;
+    ctx.fillRect(0, 0, S(RULER_LEN + 0.6), S(RULER_W));
+    ctx.strokeRect(0, 0, S(RULER_LEN + 0.6), S(RULER_W));
+    // ticks start 0.3 cm in from the end, like a real ruler
+    const z = 0.3;
+    ctx.strokeStyle = '#1e2a38';
+    for (let mm = 0; mm <= RULER_LEN * 10; mm++) {
+      const x = S(z + mm / 10);
+      const len = mm % 10 === 0 ? 0.75 : mm % 5 === 0 ? 0.52 : 0.32;
+      ctx.lineWidth = mm % 10 === 0 ? 1.1 : 0.8;
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, S(len)); ctx.stroke();
+    }
+    ctx.fillStyle = '#1e2a38'; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    ctx.font = `${S(0.42)}px system-ui, sans-serif`;
+    for (let cm = 0; cm <= RULER_LEN; cm++) ctx.fillText(String(cm), S(z + cm), S(0.82));
+    ctx.font = `${S(0.36)}px system-ui, sans-serif`; ctx.textAlign = 'left';
+    ctx.fillText('cm', S(z + 0.12), S(1.55));
+    ctx.restore();
+  }
+
+  function draw() {
+    const dpr = window.devicePixelRatio || 1;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawScene(base);
+    if (state.loupe && state.pointer) {
+      const { sx, sy } = state.pointer, Z = 3, RAD = 85;
+      ctx.save();
+      ctx.beginPath(); ctx.arc(sx, sy, RAD, 0, 7); ctx.clip();
+      ctx.fillStyle = '#fff'; ctx.fillRect(sx - RAD, sy - RAD, RAD * 2, RAD * 2);
+      drawScene({ s: base.s * Z, ox: sx - (sx / base.s) * base.s * Z, oy: sy - (sy / base.s) * base.s * Z });
+      ctx.restore();
+      ctx.strokeStyle = '#1e2a38'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(sx, sy, RAD, 0, 7); ctx.stroke();
+      ctx.strokeStyle = 'rgba(30,42,56,0.5)'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(sx - 8, sy); ctx.lineTo(sx + 8, sy); ctx.moveTo(sx, sy - 8); ctx.lineTo(sx, sy + 8); ctx.stroke();
+    }
+  }
+
+  // ---------- pencil motion ----------
+  function movePencilTo(rawTheta) {
+    const i = state.current, E = state.ellipses[i], g = geom(i);
+    const delta = wrapPi(rawTheta - E.theta);
+    const steps = Math.max(1, Math.ceil(Math.abs(delta) / (Math.PI / 180)));
+    if (E.trace.length === 0) E.trace.push(pointAt(g, E.theta));
+    for (let k = 0; k < steps; k++) {
+      E.theta += delta / steps;
+      E.trace.push(pointAt(g, E.theta));
+      E.bins[Math.floor((norm(E.theta) / (2 * Math.PI)) * BINS) % BINS] = true;
+    }
+    updateUI();
+  }
+  const coverage = (E) => E.bins.filter(Boolean).length / BINS;
+
+  // ---------- pointer handling ----------
+  function inRuler(p) {
+    if (!state.ruler.visible) return false;
+    const f = rulerFrame();
+    return p.x >= f.x && p.x <= f.x + f.w + (state.ruler.angle === 0 ? 0.6 : 0) && p.y >= f.y && p.y <= f.y + f.h + (state.ruler.angle === 90 ? 0.6 : 0);
+  }
+  canvas.addEventListener('pointerdown', (e) => {
+    const p = toWorld(e), i = state.current, E = state.ellipses[i];
+    state.pointer = p;
+    if (E.phase === 'drawing') {
+      const P = pointAt(geom(i), E.theta);
+      if (Math.hypot(p.x - P.x, p.y - P.y) < 2.2) {
+        state.drag = { type: 'pencil' }; canvas.setPointerCapture(e.pointerId); canvas.style.cursor = 'grabbing'; flash(''); return;
+      }
+    }
+    if (inRuler(p)) {
+      state.drag = { type: 'ruler', dx: p.x - state.ruler.x, dy: p.y - state.ruler.y };
+      canvas.setPointerCapture(e.pointerId); canvas.style.cursor = 'grabbing'; return;
+    }
+    if (E.phase === 'drawing') flash('Grab the pencil (by its tip) to draw.');
+  });
+  canvas.addEventListener('pointermove', (e) => {
+    const p = toWorld(e), i = state.current, E = state.ellipses[i];
+    state.pointer = p;
+    if (state.drag && state.drag.type === 'pencil') {
+      const g = geom(i);
+      movePencilTo(Math.atan2(p.y - g.cy, p.x - g.cx));
+    } else if (state.drag && state.drag.type === 'ruler') {
+      const f = rulerFrame();
+      state.ruler.x = Math.min(BOARD.w - 1, Math.max(1 - f.w, p.x - state.drag.dx));
+      state.ruler.y = Math.min(BOARD.h - 0.5, Math.max(0.5 - f.h, p.y - state.drag.dy));
+    } else {
+      let cur = 'default';
+      if (E.phase === 'drawing') { const P = pointAt(geom(i), E.theta); if (Math.hypot(p.x - P.x, p.y - P.y) < 2.2) cur = 'grab'; }
+      if (cur === 'default' && inRuler(p)) cur = 'grab';
+      canvas.style.cursor = state.loupe ? 'crosshair' : cur;
+    }
+    draw();
+  });
+  const endDrag = () => { state.drag = null; canvas.style.cursor = 'default'; draw(); };
+  canvas.addEventListener('pointerup', endDrag);
+  canvas.addEventListener('pointercancel', endDrag);
+  canvas.addEventListener('pointerleave', () => { if (!state.drag) { state.pointer = null; draw(); } });
+
+  // keyboard: arrow keys move the pencil while drawing
+  canvas.addEventListener('keydown', (e) => {
+    const E = state.ellipses[state.current];
+    if (E.phase !== 'drawing') return;
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+      e.preventDefault();
+      movePencilTo(E.theta + (e.key === 'ArrowRight' ? 1 : -1) * (Math.PI / 60));
+      draw();
+    }
+  });
+
+  // ---------- UI ----------
+  const tabButtons = [...document.querySelectorAll('.tabs button'), $('btnFree')];
+  let flashTimer;
+  function flash(msg) {
+    $('flash').textContent = msg;
+    clearTimeout(flashTimer);
+    if (msg) flashTimer = setTimeout(() => ($('flash').textContent = ''), 2600);
+  }
+  function updateUI() {
+    const i = state.current, E = state.ellipses[i];
+    tabButtons.forEach((b) => { const on = +b.dataset.i === i; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
+    $('freeBox').hidden = i !== 4;
+    $('pinNote').textContent = i < 4
+      ? `Pushpins for ellipse #${i + 1} are about ${PRESETS[i].toFixed(1)} cm apart.`
+      : (state.freeD === 0 ? 'Both pins are in the same hole — just one pushpin.' : 'Slide to change how far apart the pins are.');
+    const pct = Math.round(coverage(E) * 100);
+    $('prog').style.width = pct + '%';
+    $('progText').textContent = pct >= 100 ? 'Ellipse complete!' : `${pct}% drawn`;
+    const steps = [...$('steps').children];
+    const stepIdx = E.phase === 'drawing' ? (pct >= 100 ? 1 : 0) : E.phase === 'pins' ? 2 : 3;
+    steps.forEach((li, k) => { li.classList.toggle('done', k < stepIdx); li.classList.toggle('now', k === stepIdx); });
+    $('btnPins').disabled = !(E.phase === 'drawing' && pct >= 100);
+    $('btnAxis').disabled = E.phase !== 'pins';
+    $('btnRuler').classList.toggle('on', state.ruler.visible);
+    $('btnRuler').setAttribute('aria-pressed', state.ruler.visible);
+    $('btnLoupe').classList.toggle('on', state.loupe);
+    $('btnLoupe').setAttribute('aria-pressed', state.loupe);
+    $('btnRotate').disabled = !state.ruler.visible;
+  }
+
+  tabButtons.forEach((b) => b.addEventListener('click', () => { state.current = +b.dataset.i; updateUI(); draw(); }));
+  $('freeSlider').addEventListener('input', (e) => {
+    state.freeD = +e.target.value;
+    $('freeVal').textContent = state.freeD.toFixed(1) + ' cm';
+    state.ellipses[4] = newEllipse();
+    updateUI(); draw();
+  });
+  $('btnPins').addEventListener('click', () => { state.ellipses[state.current].phase = 'pins'; updateUI(); draw(); });
+  $('btnAxis').addEventListener('click', () => { state.ellipses[state.current].phase = 'axis'; updateUI(); draw(); });
+  $('btnReset').addEventListener('click', () => { state.ellipses[state.current] = newEllipse(); updateUI(); draw(); });
+  $('btnRuler').addEventListener('click', () => { state.ruler.visible = !state.ruler.visible; updateUI(); draw(); });
+  $('btnRotate').addEventListener('click', () => {
+    const R = state.ruler;
+    R.angle = R.angle === 0 ? 90 : 0;
+    if (R.angle === 90) { R.x = Math.min(R.x, BOARD.w - RULER_W - 0.2); R.y = Math.max(0, Math.min(R.y, BOARD.h - RULER_LEN)); }
+    else { R.x = Math.max(0, Math.min(R.x, BOARD.w - RULER_LEN - 0.6)); }
+    draw();
+  });
+  $('btnLoupe').addEventListener('click', () => { state.loupe = !state.loupe; updateUI(); draw(); });
+
+  window.addEventListener('resize', resize);
+  updateUI();
+  resize();
+})();
+</script>
+</body>
+</html>

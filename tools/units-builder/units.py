@@ -14,6 +14,7 @@ SIMS = {
     'cart':    {'file': 'units/sims/push-cart.html', 'kind': 'plain', 'ar': '960 / 600', 'credit': 'Push the Cart is original.'},
     'lander':  {'file': 'llout/Lunar Lander.html', 'kind': 'plain', 'ar': '800 / 650', 'credit': 'Lunar Lander is an HTML5 port of the PhET sim. ' + PHET},
     'maze':    {'file': 'mz/Maze Game.html', 'kind': 'plain', 'ar': '720 / 600', 'credit': 'Maze Game is an HTML5 port of the PhET sim. ' + PHET},
+    'kepler':  {'file': 'units/sims/kepler.html', 'kind': 'plain', 'ar': '1060 / 673', 'credit': 'Kepler’s First Law: Drawing Ellipses is original, based on the string-and-pushpin ellipse lab.'},
     'solar':   {'file': 'single/my-solar-system.html', 'kind': 'plain', 'ar': '4 / 3', 'credit': 'My Solar System is a single-file copy of the open-source sim (old PhET-style constants). ' + PHET},
 }
 
@@ -173,6 +174,12 @@ UNITS.update({
         'Land at under 2 m/s. Describe your plan using “net force up” and “net force down.”']},
 ]},
 'AB-03': {'course': AB, 'num': '03', 'title': 'Circular Motion & Gravity', 'tabs': [
+    {'code': '', 'name': 'Kepler’s 1st Law', 'sim': 'kepler', 'tasks': [
+        'Draw ellipse #1. Remove the pins, draw the line through the foci, and measure the distance between the foci (<i>d</i>) and the major axis (<i>L</i>).',
+        'Find the eccentricity: <i>e</i> = <i>d</i> ÷ <i>L</i>. Repeat for ellipses #2, #3 and #4.',
+        'Which ellipse is closest to a circle? What happens to <i>e</i> as the pins move farther apart?',
+        'In Free play, put both pins in the same hole. What shape do you get, and what is <i>e</i>?',
+        'Earth’s orbit has <i>e</i> ≈ 0.02. Which of your ellipses does it look most like?']},
     {'code': '', 'name': 'My Solar System', 'sim': 'solar', 'tasks': [
         'Pick the <b>sun and planet</b> preset and turn on Show Traces. Is the orbit a circle?',
         'Give the planet a little less speed. Where on its orbit does it move fastest?',
