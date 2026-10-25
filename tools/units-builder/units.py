@@ -15,6 +15,11 @@ SIMS = {
     'lander':  {'file': 'llout/Lunar Lander.html', 'kind': 'plain', 'ar': '800 / 650', 'credit': 'Lunar Lander is an HTML5 port of the PhET sim. ' + PHET},
     'maze':    {'file': 'mz/Maze Game.html', 'kind': 'plain', 'ar': '720 / 600', 'credit': 'Maze Game is an HTML5 port of the PhET sim. ' + PHET},
     'kepler':  {'file': 'units/sims/kepler.html', 'kind': 'plain', 'ar': '1060 / 673', 'credit': 'Kepler’s First Law: Drawing Ellipses is original, based on the string-and-pushpin ellipse lab.'},
+    'curve':   {'file': 'units/sims/circ-curve.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Car on a Curve, Vertical Circles, Conical Pendulum, Turntable and Orbits &amp; Gravity are original.'},
+    'vcirc':   {'file': 'units/sims/circ-vertical.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'conical': {'file': 'units/sims/circ-conical.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'turn':    {'file': 'units/sims/circ-turntable.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'orbit':   {'file': 'units/sims/circ-orbits.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'solar':   {'file': 'single/my-solar-system.html', 'kind': 'plain', 'ar': '4 / 3', 'credit': 'My Solar System is a single-file copy of the open-source sim (old PhET-style constants). ' + PHET},
 }
 
@@ -45,6 +50,36 @@ UNITS = {
         'Watch the velocity and acceleration arrows. Can the ball move one way while it accelerates the other way? When?']},
 ]},
 'P1-05': {'course': 'AP Physics 1 / IB', 'num': '05', 'title': 'Circular Motion and Gravity', 'tabs': [
+    {'code': '', 'name': 'Car on a Curve', 'sim': 'curve', 'tasks': [
+        '<b>Predict, then check.</b> If the car’s speed doubles, by what factor does the friction force it needs change? Write your prediction, then read the ×2 line under the graph. Justify it with a<sub>c</sub> = v²/r.',
+        '<b>Claim.</b> A student says a heavier car is more likely to skid because it needs more force to turn. Use steps 3–5 to explain why the fastest safe speed does not depend on mass.',
+        'Graph <i>F needed</i> vs <i>v</i>. Where the curve crosses the dashed f<sub>s,max</sub> line, read the speed. Compare it with v<sub>max</sub> in step 5.',
+        '<b>Banked road.</b> Set r = 80 m and θ = 20°. Find the design speed. Then drive 5 m/s faster: which way would the car slide, and which way would friction have to point to stop it?',
+        '<b>Derive</b> v<sub>0</sub> = √(g r tanθ) on paper, starting from a free-body diagram, then check your expression against step 6.']},
+    {'code': '', 'name': 'Vertical Circles', 'sim': 'vcirc', 'tasks': [
+        '<b>Ball on a string, top.</b> Find the slowest speed that keeps the string tight. Show on paper why setting T = 0 gives v<sub>min</sub> = √(gr).',
+        'Keep the same speed and compare the tension at the top and at the bottom. Which is bigger, and by how much? Write the difference in terms of m and g.',
+        '<b>Coaster loop.</b> What speed at the top makes riders feel weightless (N = 0)? What speed at the bottom makes them feel 3 g’s?',
+        '<b>Car over a hill.</b> Graph N vs v. In a sentence, explain why the car “gets light” at the top, then find the speed where it leaves the road.',
+        '<b>Spot the error.</b> A student writes “at the top of the loop, the centripetal force and gravity both act on the car, so N + mg + F<sub>c</sub> = 0.” Use the free-body diagram to explain what’s wrong.']},
+    {'code': '', 'name': 'Conical Pendulum', 'sim': 'conical', 'tasks': [
+        'Draw the free-body diagram on paper before you look. Then check: which part of the tension supplies the centripetal force? Which part holds the bob up?',
+        'Change only the mass. What happens to the speed and the period? Point to the step in the work where m cancels.',
+        'Graph T vs θ. Explain why the tension shoots up as θ approaches 90°. Could the string ever be exactly horizontal?',
+        'Set L = 1.0 m and θ = 10°. Compare the period with a simple pendulum, 2π√(L/g). Why are they so close at small angles?',
+        '<b>Derive</b> v = √(g r tanθ) by writing Newton’s 2nd law in the vertical and horizontal directions and dividing.']},
+    {'code': '', 'name': 'Turntable', 'sim': 'turn', 'tasks': [
+        'At 33 rpm, find the farthest radius a coin can sit without slipping (step 6). Move the coin past it and watch which way it leaves.',
+        '<b>Resolve the contradiction.</b> a<sub>c</sub> = v²/r makes it look like bigger r means smaller a<sub>c</sub>, but the outer coin slips first. Use ω and both forms of a<sub>c</sub> in step 3 to explain.',
+        'Graph <i>F needed</i> vs r, then vs rpm. Compare the ×2 readouts. Which graph is a straight line through the origin, and why?',
+        'Double the coin’s mass. Does r<sub>max</sub> change? Explain using step 6.',
+        'Predict r<sub>max</sub> at 45 rpm and at 78 rpm using r<sub>max</sub> ∝ 1/ω², then check with the buttons.']},
+    {'code': '', 'name': 'Orbits & Gravity', 'sim': 'orbit', 'tasks': [
+        '<b>ISS.</b> What is g at the station’s altitude, as a percentage of surface g? Then explain why astronauts feel weightless anyway.',
+        'Double h, then instead double r (the distance from the <i>center</i>). Which one makes the gravity force exactly ¼? Explain why.',
+        'Find the altitude where the period is 24 h (geostationary). Check with the preset.',
+        'Change the satellite’s mass. What happens to v and T? Use step 4 to explain.',
+        '<b>IB · Kepler’s 3rd law.</b> Graph T²/r³ against h. What stays constant, and what would change it? Use your result to find the mass of a planet from one orbit.']},
     {'code': '', 'name': 'My Solar System', 'sim': 'solar', 'tasks': [
         'Choose the <b>sun and planet</b> preset and turn on Show Traces. Is the orbit a circle? Change the planet’s v<sub>y</sub> until it is as round as you can make it.',
         'Give the planet a bit less speed. Where on its orbit is it fastest? Where is it slowest?',
