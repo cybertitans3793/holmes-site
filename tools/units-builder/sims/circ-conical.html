@@ -11,7 +11,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:#fff;font-family:"Spac
 #bar{grid-column:1/-1;display:flex;gap:16px;align-items:center;flex-wrap:nowrap;overflow:hidden}
 .seg{display:flex;align-items:center}
 .seg .lab{font:700 12px "IBM Plex Mono",monospace;margin-right:8px;text-transform:uppercase}
-.seg button{font:700 14px "Space Grotesk",sans-serif;padding:6px 11px;border:2px solid #111;background:#fff;color:#111;cursor:pointer}
+.seg button{white-space:nowrap;font:700 14px "Space Grotesk",sans-serif;padding:6px 11px;border:2px solid #111;background:#fff;color:#111;cursor:pointer}
 .seg button+button{margin-left:-2px}
 .seg button[aria-pressed="true"]{background:#111;color:#fff}
 .seg button:hover:not([aria-pressed="true"]){background:#ffe2d3}
@@ -66,7 +66,8 @@ const G10 = 10, PI = Math.PI, DEG = PI / 180;
 function fit(){ const s = Math.min(innerWidth / 1000, innerHeight / 640); $('app').style.transform = 'scale(' + s + ')'; }
 addEventListener('resize', fit); fit();
 
-function fnum(x){
+function fnum(x){ const r = fnum0(x); return typeof r === 'string' ? r.replace(/^-/, '−') : r; }
+function fnum0(x){
   if (x === null || x === undefined || !isFinite(x)) return '—';
   const a = Math.abs(x);
   if (a === 0) return '0';
@@ -103,6 +104,8 @@ function bar(){
     group(o.label, o.choices, S.opt[o.id], id => { S.opt[o.id] = id; S.anim = {}; setup(); });
   });
   b.appendChild(tip);
+  if (b.scrollWidth > b.clientWidth + 1) tip.remove();
+  if (b.scrollWidth > b.clientWidth + 1) b.querySelectorAll('.seg button').forEach(x => { x.style.fontSize = '13px'; x.style.padding = '6px 8px'; });
 }
 
 function setup(){

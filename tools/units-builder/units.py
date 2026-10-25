@@ -20,23 +20,29 @@ SIMS = {
     'conical': {'file': 'units/sims/circ-conical.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'turn':    {'file': 'units/sims/circ-turntable.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'orbit':   {'file': 'units/sims/circ-orbits.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'crate':   {'file': 'units/sims/circ-crate.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Pulling a Crate, Energy Track, Spring Launcher, Power and Spring + Gravity are original.'},
+    'track':   {'file': 'units/sims/circ-track.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'launch':  {'file': 'units/sims/circ-launcher.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'power':   {'file': 'units/sims/circ-power.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'hang':    {'file': 'units/sims/circ-hang.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'phetE':   {'file': 'units/sims/phet-energy.html', 'kind': 'plain', 'ar': '16 / 10', 'credit': 'Energy Skate Park: Basics, Masses and Springs and Pendulum Lab: ' + PHET},
     'solar':   {'file': 'single/my-solar-system.html', 'kind': 'plain', 'ar': '4 / 3', 'credit': 'My Solar System is a single-file copy of the open-source sim (old PhET-style constants). ' + PHET},
 }
 
 UNITS = {
 # ------------------------------------------------------------------ AP PHYSICS 1
 'P1-02': {'course': 'AP Physics 1 / IB', 'num': '02', 'title': 'Newton’s Second Law', 'tabs': [
-    {'code': '02-2', 'name': 'Moving Man', 'sim': 'mman', 'tasks': [
+    {'code': '', 'name': 'Moving Man', 'sim': 'mman', 'tasks': [
         'Start the man at −4 m with a constant velocity of +2 m/s. Sketch the x–t and v–t graphs before you press play, then compare.',
         'From rest, give him an acceleration of +1 m/s². What shape is the x–t graph? What does the area under the v–t graph tell you?',
         'Make him slow down while he is still moving to the right. What signs do v and a have?',
         'Make the v–t graph a flat line at −1.5 m/s. Is he speeding up, slowing down, or neither?']},
-    {'code': '02-3', 'name': 'Push the Cart', 'sim': 'cart', 'tasks': [
+    {'code': '', 'name': 'Push the Cart', 'sim': 'cart', 'tasks': [
         'Set both μ to 0. Double the force. Predict what happens to <i>a</i>, then run it.',
         'Keep F = 12 N and double the mass. What happens to <i>a</i>?',
         'Find the smallest force that starts a 4.0 kg cart moving when μ<sub>s</sub> = 0.30. Once it is moving, what is the net force?',
         'While the cart is moving, lower F until it equals kinetic friction. What does the v–t graph do? Why doesn’t the cart stop?']},
-    {'code': '02-5', 'name': 'Lunar Lander', 'sim': 'lander', 'tasks': [
+    {'code': '', 'name': 'Lunar Lander', 'sim': 'lander', 'tasks': [
         'Find the thrust that makes the lander hover. How does that thrust compare with the lander’s weight on the Moon?',
         'Can the lander move down at a steady speed with the engine on? What is the net force then?',
         'Turn on the force vectors. While the lander slows its fall, which way does the net force point?',
@@ -85,6 +91,39 @@ UNITS = {
         'Give the planet a bit less speed. Where on its orbit is it fastest? Where is it slowest?',
         'Double the sun’s mass. Does the planet need more or less speed for a circular orbit at the same distance? About how many times more?',
         'Try the <b>sun, planet, moon</b> preset. What keeps the moon going around the planet while the planet goes around the sun?']},
+]},
+'P1-06': {'course': 'AP Physics 1 / IB', 'num': '06', 'title': 'Work, Power, and Energy', 'tabs': [
+    {'code': '', 'name': 'Pulling a Crate', 'sim': 'crate', 'tasks': [
+        '<b>Predict, then check.</b> Will pulling at 30° or straight along the floor give the crate more speed after 5 m? Decide first, then graph v<sub>f</sub> vs θ and find the best angle.',
+        'Explain the shape of that graph using steps 1–3: pulling up at an angle shrinks the useful part of F, but what does it do to friction?',
+        'Set μ<sub>k</sub> = 0. Now which angle is best? Why does the answer change?',
+        '<b>Area under the graph.</b> Use the F–x graph to explain why W<sub>F</sub> = Fd cosθ and why friction’s work is negative.',
+        '<b>Claim.</b> A student says the normal force does work because it’s a big force. Use step 4 to respond.']},
+    {'code': '', 'name': 'Energy Track', 'sim': 'track', 'tasks': [
+        '<b>Hill &amp; valley.</b> Start from rest at 8 m. Predict the speed at the bottom of the valley, then put B there and check. Does the cart’s mass matter?',
+        '<b>System switch.</b> Flip between “Cart + Earth” and “Cart only.” Gravity shows up as U<sub>g</sub> in one and as W<sub>g</sub> in the other. Explain why both give the same v<sub>B</sub>.',
+        '<b>Loop.</b> With R = 3 m, find the lowest start height that gets the cart around (step 5). Show on paper why it is 2.5R, not 2R.',
+        '<b>Rough patch.</b> Graph v<sub>B</sub> vs h<sub>A</sub> with B past the rough patch. How much higher must the cart start to make up for the friction? Explain with ΔE<sub>th</sub> = μ<sub>k</sub>mgd.',
+        '<b>Spring bumper.</b> Double the start height. By what factor does the maximum compression change? Predict with ½kx² = mgh, then check with ×2.']},
+    {'code': '', 'name': 'Spring Launcher', 'sim': 'launch', 'tasks': [
+        'Double the compression. What happens to the stored energy, the launch speed and the ramp height? Check each with the ×2 line.',
+        'Use the F–x graph to explain why the stored energy is ½kx², not kx².',
+        '<b>Straight up.</b> Change the mass. Why does the height depend on m here, but the speed at B on the Energy Track didn’t?',
+        'Find the compression that launches a 0.2 kg ball 2.0 m above the release point with k = 500 N/m. Solve on paper first.']},
+    {'code': '', 'name': 'Power', 'sim': 'power', 'tasks': [
+        '<b>Motor.</b> A 2000 W motor and a 1000 W motor lift the same load the same height. Compare the work each does and the time each takes.',
+        'Show that P = Fv gives the same lifting speed as h/t (step 3).',
+        '<b>Stairs.</b> Time yourself climbing a real staircase and measure its height. Enter your numbers: what is your power in watts and horsepower?',
+        'Graph P vs t. What shape is it, and what does the ×2 line say about doubling the time?']},
+    {'code': '', 'name': 'Spring + Gravity', 'sim': 'hang', 'tasks': [
+        '<b>Classic FRQ.</b> A mass is attached to an unstretched spring and released. Show that it falls 2mg/k, twice the equilibrium stretch.',
+        'Where is the mass moving fastest? Use the energy bars at different B positions to support your answer.',
+        'At the lowest point, the mass is momentarily at rest. Is it in equilibrium there? Compare kx<sub>max</sub> with mg.',
+        'Switch to “Lowered gently.” Where did the extra energy go when the mass settled at x<sub>eq</sub> instead of bouncing?']},
+    {'code': '', 'name': 'PhET Sims', 'sim': 'phetE', 'tasks': [
+        '<b>Energy Skate Park.</b> Turn on the bar graph and the speed. Where is the skater fastest? Add friction: where does the energy go?',
+        '<b>Masses and Springs</b> (Energy screen). Watch the energy bars as the mass bounces. When is the spring energy biggest?',
+        '<b>Pendulum Lab</b> (Energy screen). Compare the speed at the bottom for two different release heights.']},
 ]},
 'P1-09': {'course': 'AP Physics 1 / IB', 'num': '09', 'title': 'Fluids', 'tabs': [
     {'code': '', 'name': 'Under Pressure', 'sim': 'fluids', 'select': 'Under Pressure', 'tasks': [
