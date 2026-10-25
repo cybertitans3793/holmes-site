@@ -50,6 +50,10 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
 .credits{margin-top:22px;font:500 12px/1.5 var(--f-mono);color:var(--muted)}
 @media (max-width:640px){ .simbar h2{font-size:15px} .tab{font-size:14px;padding:9px 12px} }
 [hidden]{display:none!important}
+.review{margin-top:28px;border:3px solid var(--ink);background:var(--card);box-shadow:6px 6px 0 var(--ink)}
+.review .simbar a{color:var(--ink)}
+.rframe{position:relative;height:900px;background:#fff}
+.rframe iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 
 </style>
 </head>
@@ -72,6 +76,10 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
       <a class="plink" id="plink" href="#" target="_blank" rel="noopener">Practice AB-01 questions →</a>
     </aside>
   </div>
+  <section class="review" id="review" hidden>
+    <div class="simbar"><h2>Practice questions</h2><a id="ropen" class="mono" href="#" target="_blank" rel="noopener">Open in a new tab ↗</a></div>
+    <div class="rframe" id="rframe"><div class="loading">Loading questions…</div></div>
+  </section>
   <p class="credits">The Moving Man is an HTML5 port of the PhET sim. PhET Interactive Simulations, University of Colorado Boulder (phet.colorado.edu), CC BY 4.0 / GPL. Maze Game is an HTML5 port of the PhET sim. PhET Interactive Simulations, University of Colorado Boulder (phet.colorado.edu), CC BY 4.0 / GPL.</p>
 </div>
 <script>
@@ -87,7 +95,14 @@ const SIMS = {
   const tabsEl = $('tabs'), frame = $('frame');
   let cur = -1, ifr = null, ifrSim = null;
   const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-  if (REVIEW_URL && /^P1-/.test(UNIT.id)) { const u = REVIEW_URL + (REVIEW_URL.includes('?') ? '&' : '?') + 'unit=' + encodeURIComponent(UNIT.id); $('cta').href = u; $('plink').href = u; }
+  if (REVIEW_URL && /^P1-/.test(UNIT.id)) {
+    const u = REVIEW_URL + (REVIEW_URL.includes('?') ? '&' : '?') + 'unit=' + encodeURIComponent(UNIT.id);
+    const rev = $('review'); rev.hidden = false; $('ropen').href = u;
+    let loaded = false; const load = () => { if (loaded) return; loaded = true; $('rframe').innerHTML = '<iframe title="Practice questions" src="' + u + '"></iframe>'; };
+    [$('cta'), $('plink')].forEach(a => { a.href = '#review'; a.removeAttribute('target'); a.addEventListener('click', e => { e.preventDefault(); load(); rev.scrollIntoView({ behavior: 'smooth' }); }); });
+    if ('IntersectionObserver' in window) new IntersectionObserver((es, o) => { if (es.some(x => x.isIntersecting)) { load(); o.disconnect(); } }, { rootMargin: '200px' }).observe(rev);
+    else load();
+  }
   else { $('cta').hidden = true; $('plink').hidden = true; }
   UNIT.tabs.forEach((t, i) => {
     if (t.gapBefore) { const g = document.createElement('span'); g.className = 'gap'; g.setAttribute('aria-hidden','true'); tabsEl.appendChild(g); }

@@ -32,6 +32,13 @@ SIMS = {
     'ballis':  {'file': 'units/sims/circ-ballistic.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'hockey2': {'file': 'units/sims/circ-hockey.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'stack':   {'file': 'units/sims/circ-stack.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'springs': {'file': 'units/sims/circ-springs.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Springs is original.'},
+    'pulleys': {'file': 'units/sims/circ-pulleys.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Pulleys is original.'},
+    'vectors': {'file': 'units/sims/circ-vectors.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Adding Forces, Two Ropes and Newton’s Mountain are original.'},
+    'ropes':   {'file': 'units/sims/circ-ropes.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'cannon':  {'file': 'units/sims/circ-cannon.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'gears':   {'file': 'units/sims/circ-gears.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Gears is original.'},
+    'assist':  {'file': 'units/sims/circ-assist.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Gravity Assist is original.'},
     'phetM':   {'file': 'units/sims/phet-momentum.html', 'kind': 'plain', 'ar': '16 / 10', 'credit': 'Collision Lab and Momentum Lab: ' + PHET},
     'solar':   {'file': 'single/my-solar-system.html', 'kind': 'plain', 'ar': '4 / 3', 'credit': 'My Solar System is a single-file copy of the open-source sim (old PhET-style constants). ' + PHET},
 }
@@ -61,6 +68,24 @@ UNITS = {
         'Switch to <b>acceleration</b>. Why is it so much harder to stop at the goal?',
         'With acceleration control, how do you make the ball turn a corner at constant speed? Which way must the acceleration point?',
         'Watch the velocity and acceleration arrows. Can the ball move one way while it accelerates the other way? When?']},
+    {'code': '', 'name': 'Adding Forces', 'sim': 'vectors', 'tasks': [
+        '<b>Components first.</b> F<sub>1</sub> = 60 N at 20° and F<sub>2</sub> = 40 N at 110°. Fill in the component table on paper, then check it against the sim.',
+        'Keep both forces the same size and change only the angle between them. When is F<sub>net</sub> biggest? Smallest? Graph F<sub>net</sub> vs θ<sub>2</sub> to check.',
+        'Put F<sub>2</sub> in quadrant II so ΣF<sub>x</sub> is negative. Your calculator’s tan<sup>−1</sup> gives the wrong direction. Use step 3 to fix it.',
+        '<b>Equal at 120°.</b> Three 50 N forces 120° apart: why is the net force zero? Use the equilibrant in step 5.',
+        'Switch between Components, Tip to tail and Parallelogram. Explain why all three give the same F<sub>net</sub>.']},
+    {'code': '', 'name': 'Two Ropes', 'sim': 'ropes', 'tasks': [
+        '<b>IB classic.</b> A 5 kg mass hangs from the middle of a rope pulled from both ends. Graph T vs θ. What happens to T as you try to pull the rope flat?',
+        'Explain with 2T sinθ = mg why no force, however big, can make the rope perfectly horizontal.',
+        'At what angle is the tension equal to the weight? Solve first, then check.',
+        '<b>Sign on two cables.</b> With θ<sub>1</sub> = 30° and θ<sub>2</sub> = 60°, which cable has more tension? Write ΣF<sub>x</sub> = 0 and ΣF<sub>y</sub> = 0 and solve before you look.',
+        'Make both cable angles equal. Are the tensions equal now? Why?']},
+    {'code': '', 'name': 'Newton’s Mountain', 'sim': 'cannon', 'tasks': [
+        'Fire at 2, 6 and 9 km/s. Describe each path. Why does a fast enough cannonball never land?',
+        '<b>Derive</b> v = √(GM/r) for a circular orbit by setting gravity equal to mv²/r. Check your answer with the Circular orbit preset.',
+        'Newton’s idea: the ball is <i>always</i> falling. Explain how something can fall the whole time and never get closer to the ground.',
+        'Raise the mountain. Does the circular orbit speed go up or down? Explain with your expression from task 2.',
+        'Fire at 11 km/s. What is special about escape speed, and how does it compare with √2 × v<sub>circ</sub>?']},
 ]},
 'P1-05': {'course': 'AP Physics 1 / IB', 'num': '05', 'title': 'Circular Motion and Gravity', 'tabs': [
     {'code': '', 'name': 'Car on a Curve', 'sim': 'curve', 'tasks': [
@@ -93,6 +118,12 @@ UNITS = {
         'Find the altitude where the period is 24 h (geostationary). Check with the preset.',
         'Change the satellite’s mass. What happens to v and T? Use step 4 to explain.',
         '<b>IB · Kepler’s 3rd law.</b> Graph T²/r³ against h. What stays constant, and what would change it? Use your result to find the mass of a planet from one orbit.']},
+    {'code': '', 'name': 'Gears', 'sim': 'gears', 'tasks': [
+        'A 20-tooth gear turns a 40-tooth gear at 60 rpm. Predict the speed of the big gear, then check. Which way does it turn?',
+        '<b>Explain</b> why the rims share the same speed but not the same ω. Use v = ωr in step 2.',
+        'Add an idler gear in the middle. Does its size change the last gear’s speed? What does it change?',
+        '<b>Bike chain.</b> Which combination is best for climbing a hill: big chainring and small cog, or small chainring and big cog? Use the bike speed to explain.',
+        'Graph rpm<sub>2</sub> vs N<sub>2</sub>. What does the ×2 line say, and why is it inversely proportional?']},
     {'code': '', 'name': 'My Solar System', 'sim': 'solar', 'tasks': [
         'Choose the <b>sun and planet</b> preset and turn on Show Traces. Is the orbit a circle? Change the planet’s v<sub>y</sub> until it is as round as you can make it.',
         'Give the planet a bit less speed. Where on its orbit is it fastest? Where is it slowest?',
@@ -127,6 +158,11 @@ UNITS = {
         'Where is the mass moving fastest? Use the energy bars at different B positions to support your answer.',
         'At the lowest point, the mass is momentarily at rest. Is it in equilibrium there? Compare kx<sub>max</sub> with mg.',
         'Switch to “Lowered gently.” Where did the extra energy go when the mass settled at x<sub>eq</sub> instead of bouncing?']},
+    {'code': '', 'name': 'Springs', 'sim': 'springs', 'tasks': [
+        'Use the F–x graph: the shaded area is the stored energy. Double the mass. By what factor does the stored energy change? Predict, then check.',
+        '<b>Series vs parallel.</b> Hang the same mass from two equal springs both ways. Which setup stores more energy? Why?',
+        'Graph U<sub>s</sub> vs m. Why is it not a straight line?',
+        'Two springs in series store more energy than one of them alone with the same mass. Explain using x and ½k<sub>eff</sub>x².']},
     {'code': '', 'name': 'PhET Sims', 'sim': 'phetE', 'tasks': [
         '<b>Energy Skate Park.</b> Turn on the bar graph and the speed. Where is the skater fastest? Add friction: where does the energy go?',
         '<b>Masses and Springs</b> (Energy screen). Watch the energy bars as the mass bounces. When is the spring energy biggest?',
@@ -164,6 +200,11 @@ UNITS = {
         'Try it for real: drop a tennis ball sitting on a basketball. How high does the tennis ball go compared with the drop height?',
         'Show that if M is much bigger than m, the top ball leaves at 3u and rises to 9h.',
         'With equal masses, what happens to each ball? Explain with step 3.']},
+    {'code': '', 'name': 'Gravity Assist', 'sim': 'assist', 'tasks': [
+        'Watch from the planet, then from the Sun. In which view does the spacecraft’s speed stay the same? Why is that like an elastic collision?',
+        'Make a full U-turn. Show that the speed out is v + 2U, like a ball bouncing off the front of a moving train.',
+        'Set the planet’s speed to 0. Does the spacecraft still speed up? Explain.',
+        'The spacecraft gains kinetic energy. Where does it come from? Use step 4 and conservation of momentum.']},
     {'code': '', 'name': 'PhET Collision Lab', 'sim': 'phetM', 'tasks': [
         '<b>1D:</b> set elasticity to 100%. Make a heavy ball hit a light one at rest. Which ball moves faster afterward?',
         '<b>1D:</b> set elasticity to 0%. Turn on kinetic energy. What fraction is lost when equal masses stick?',
@@ -353,8 +394,22 @@ UNITS.update({
         'Why does Japan have so many earthquakes but Maryland very few? Use the Plate Map to explain.']},
 ]},
 # AP units that don't have sims yet
-'P1-01': {'course': 'AP Physics 1 / IB', 'num': '01', 'title': 'Newton’s First Law', 'tabs': []},
-'P1-03': {'course': 'AP Physics 1 / IB', 'num': '03', 'title': 'Newton’s Third Law', 'tabs': []},
+'P1-01': {'course': 'AP Physics 1 / IB', 'num': '01', 'title': 'Newton’s First Law', 'tabs': [
+    {'code': '', 'name': 'Springs', 'sim': 'springs', 'tasks': [
+        '<b>Hooke’s law.</b> Hang 100 g, then 200 g, then 300 g from one spring. Record the stretch each time. What pattern do you see?',
+        'Graph x vs m. Use the slope to find k, then compare with the k slider.',
+        'Which spring stretches more with the same mass: k = 20 N/m or k = 40 N/m? Explain what k means in words.',
+        '<b>Equilibrium.</b> Draw the free-body diagram of the hanging mass. Why is the spring force equal to mg?',
+        '<b>Series and parallel.</b> Hang the same mass from two equal springs side by side, then one below the other. Predict the stretch each time before you check.']},
+]},
+'P1-03': {'course': 'AP Physics 1 / IB', 'num': '03', 'title': 'Newton’s Third Law', 'tabs': [
+    {'code': '', 'name': 'Pulleys', 'sim': 'pulleys', 'tasks': [
+        '<b>Atwood machine.</b> m<sub>1</sub> = 2.0 kg, m<sub>2</sub> = 1.5 kg. Find a and T on paper, then check. Is T bigger or smaller than each weight?',
+        'Make the masses equal. What are a and T? Then make one mass much bigger. What does a approach?',
+        '<b>Table + hanging mass.</b> Find the smallest hanging mass that gets the block moving with μ<sub>k</sub> = 0.2.',
+        'Use the Newton’s third-law pairs. Which force pairs with the string pulling up on m<sub>1</sub>? Which pairs with the Earth pulling down on it?',
+        '<b>Block and tackle.</b> With 4 rope segments, how hard must you pull to lift 60 kg? How much rope must you pull to lift it 1 m? Show the work is the same either way.']},
+]},
 'P1-08': {'course': 'AP Physics 1 / IB', 'num': '08', 'title': 'Rotation', 'tabs': []},
 'P1-10': {'course': 'AP Physics 1 / IB', 'num': '10', 'title': 'Simple Harmonic Motion', 'tabs': []},
 'P2-03': {'course': 'AP Physics 2 / IB', 'num': '03', 'title': 'Current Electricity and Magnetism', 'tabs': []},
