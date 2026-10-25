@@ -32,7 +32,11 @@ SIMS = {
     'ballis':  {'file': 'units/sims/circ-ballistic.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'hockey2': {'file': 'units/sims/circ-hockey.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'stack':   {'file': 'units/sims/circ-stack.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
-    'springs': {'file': 'units/sims/circ-springs.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Springs is original.'},
+    'puck':    {'file': 'units/sims/circ-puck.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Puck in Space, Balanced Forces, Inertia on a Cart, When Do They Meet? and Springs are original.'},
+    'balance': {'file': 'units/sims/circ-balance.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'cartball':{'file': 'units/sims/circ-cartball.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'meet':    {'file': 'units/sims/circ-meet.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'springs': {'file': 'units/sims/circ-springs.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'pulleys': {'file': 'units/sims/circ-pulleys.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Pulleys and Box on a Truck are original.'},
     'truck':   {'file': 'units/sims/circ-truck.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'vectors': {'file': 'units/sims/circ-vectors.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Adding Forces, Two Ropes and Newton’s Mountain are original.'},
@@ -396,6 +400,30 @@ UNITS.update({
 ]},
 # AP units that don't have sims yet
 'P1-01': {'course': 'AP Physics 1 / IB', 'num': '01', 'title': 'Newton’s First Law', 'tabs': [
+    {'code': '', 'name': 'Puck in Space', 'sim': 'puck', 'tasks': [
+        '<b>Predict, then check.</b> A puck slides at 3 m/s with no friction. What is it doing 5 s later? 50 s later? What would it take to change that?',
+        'Look at the dots. How can you tell from the spacing alone that no net force acts between kicks?',
+        'Use <b>Stop it dead</b>. After the kick, does the puck slowly start moving again? Explain with Newton’s 1st law.',
+        '<b>Reverse it.</b> Sketch the v–t and x–t graphs before you run it. Where on each graph does the kick show up?',
+        '<b>Kick sideways.</b> A spaceship coasting → fires its engine ↑ for a moment. A student says it now moves straight ↑. Use the velocity diagram to explain the real path, then find its speed and direction.']},
+    {'code': '', 'name': 'Balanced Forces', 'sim': 'balance', 'tasks': [
+        '<b>Claim.</b> “To keep a crate moving at a constant speed, your push must be bigger than friction.” Find the push that keeps a 20 kg crate (μ<sub>k</sub> = 0.30) at a steady speed. Was the claim right?',
+        'Push harder than friction, then less than friction. Describe the v–t graph each time. Is the crate still moving forward while you push less than friction?',
+        '<b>Let go.</b> What stops the crate? Make μ smaller and smaller. What happens at μ = 0?',
+        '<b>Skydiver.</b> Draw the free-body diagram right after jumping, halfway, and at terminal speed. When is ΣF = 0, and what is the skydiver doing then?',
+        'Open the chute. The skydiver is still falling, but which way does ΣF point? Explain with the D and W arrows.']},
+    {'code': '', 'name': 'Inertia on a Cart', 'sim': 'cartball', 'tasks': [
+        '<b>Predict, then check.</b> A cart rolling at 4 m/s launches a ball straight up. Does the ball land in front of, behind, or back in the launcher?',
+        'Explain using Newton’s 1st law: what horizontal force acts on the ball while it’s in the air?',
+        'Switch to “Watch from: The cart.” Describe the ball’s path from there. Which view is “right”?',
+        'Make the cart speed up while the ball is in the air. Where does the ball land now, and why didn’t the ball “change”?',
+        '<b>Real life:</b> you toss your keys straight up on a bus moving at a steady 20 m/s. Where do they land? What if the bus brakes?']},
+    {'code': '', 'name': 'When Do They Meet?', 'sim': 'meet', 'tasks': [
+        '<b>Head-on.</b> Two cars start 200 m apart and drive toward each other at 15 m/s and 10 m/s. Write x(t) for each, solve for when and where they meet, then check.',
+        'Show that t = d/(v<sub>A</sub> + v<sub>B</sub>) by thinking about how fast the gap closes.',
+        '<b>Catch-up.</b> A police car at 25 m/s chases a car 100 m ahead going 15 m/s. When does it catch up? Read the answer off the x–t graph too.',
+        'Set both speeds equal in Catch-up. What do the lines on the x–t graph look like, and what does that mean?',
+        '<b>Late start.</b> Car A leaves at 10 m/s; car B leaves the same spot 5 s later at 15 m/s. Where does B pass A? Explain why B’s line starts flat.']},
     {'code': '', 'name': 'Springs', 'sim': 'springs', 'tasks': [
         '<b>Hooke’s law.</b> Hang 100 g, then 200 g, then 300 g from one spring. Record the stretch each time. What pattern do you see?',
         'Graph x vs m. Use the slope to find k, then compare with the k slider.',
