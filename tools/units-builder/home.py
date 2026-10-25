@@ -23,7 +23,7 @@ def card(big, name, prefix, sub, hot):
     rows = []
     for k, u in units:
         ready = bool(u.get('tabs'))
-        rows.append(f'<a class="row{"" if ready else " soon"}" href="{SITE}{FOLDER[prefix]}/{k.lower()}" target="_top">'
+        rows.append(f'<a class="row{"" if ready else " soon"}" href="{SITE}{FOLDER[prefix]}/{k.lower()}" target="_blank" rel="noopener">'
                     f'<span class="code">{k}</span><span class="nm">{E(u["title"])}</span>'
                     f'{"" if ready else "<span class=tag>SOON</span>"}</a>')
     return (f'<section class="card{" hot" if hot else ""}"><div class="top"><div class="line"><div class="big">{big}</div>'
