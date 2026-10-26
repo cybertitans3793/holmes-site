@@ -49,9 +49,9 @@ SIMS = {
     'springs': {'file': 'units/sims/circ-springs.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'pulleys': {'file': 'units/sims/circ-pulleys.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Pulleys and Box on a Truck are original.'},
     'truck':   {'file': 'units/sims/circ-truck.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
-    'vectors': {'file': 'units/sims/circ-vectors.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Adding Forces, Two Ropes and Newton’s Mountain are original.'},
+    'vectors': {'file': 'units/sims/circ-vectors.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Adding Forces and Two Ropes are original.'},
     'ropes':   {'file': 'units/sims/circ-ropes.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
-    'cannon':  {'file': 'units/sims/circ-cannon.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'cannon':  {'file': 'units/sims/circ-cannon.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Newton’s Mountain is original.'},
     'gears':   {'file': 'units/sims/circ-gears.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Gears is original.'},
     'assist':  {'file': 'units/sims/circ-assist.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Gravity Assist is original.'},
     'phetM':   {'file': 'units/sims/phet-momentum.html', 'kind': 'plain', 'ar': '16 / 10', 'credit': 'Collision Lab and Momentum Lab: ' + PHET},
@@ -150,12 +150,6 @@ UNITS = {
         'At the top of the path, what are v<sub>x</sub>, v<sub>y</sub> and the acceleration?',
         '<b>From a height.</b> Launch at 15 m/s, 30° from a 20 m cliff. Find the time, range and impact speed. Is 45° still the best angle here?',
         '<b>Hit the target.</b> A target is 30 m away and 5 m up. Find the launch speed needed at 45°, then find an angle that needs less.']},
-    {'code': '', 'name': 'Newton’s Mountain', 'sim': 'cannon', 'tasks': [
-        'Fire at 2, 6 and 9 km/s. Describe each path. Why does a fast enough cannonball never land?',
-        '<b>Derive</b> v = √(GM/r) for a circular orbit by setting gravity equal to mv²/r. Check your answer with the Circular orbit preset.',
-        'Newton’s idea: the ball is <i>always</i> falling. Explain how something can fall the whole time and never get closer to the ground.',
-        'Raise the mountain. Does the circular orbit speed go up or down? Explain with your expression from task 2.',
-        'Fire at 11 km/s. What is special about escape speed, and how does it compare with √2 × v<sub>circ</sub>?']},
 ]},
 'P1-05': {'course': 'AP Physics 1 / IB', 'num': '05', 'title': 'Circular Motion and Gravity', 'tabs': [
     {'code': '', 'name': 'Car on a Curve', 'sim': 'curve', 'tasks': [
@@ -182,6 +176,12 @@ UNITS = {
         'Graph <i>F needed</i> vs r, then vs rpm. Compare the ×2 readouts. Which graph is a straight line through the origin, and why?',
         'Double the coin’s mass. Does r<sub>max</sub> change? Explain using step 6.',
         'Predict r<sub>max</sub> at 45 rpm and at 78 rpm using r<sub>max</sub> ∝ 1/ω², then check with the buttons.']},
+    {'code': '', 'name': 'Newton’s Mountain', 'sim': 'cannon', 'tasks': [
+        'Fire at 2, 6 and 9 km/s. Describe each path. Why does a fast enough cannonball never land?',
+        '<b>Derive</b> v = √(GM/r) for a circular orbit by setting gravity equal to mv²/r. Check your answer with the Circular orbit preset.',
+        'Newton’s idea: the ball is <i>always</i> falling. Explain how something can fall the whole time and never get closer to the ground.',
+        'Raise the mountain. Does the circular orbit speed go up or down? Explain with your expression from task 2.',
+        'Fire at 11 km/s. What is special about escape speed, and how does it compare with √2 × v<sub>circ</sub>?']},
     {'code': '', 'name': 'Orbits & Gravity', 'sim': 'orbit', 'tasks': [
         '<b>ISS.</b> What is g at the station’s altitude, as a percentage of surface g? Then explain why astronauts feel weightless anyway.',
         'Double h, then instead double r (the distance from the <i>center</i>). Which one makes the gravity force exactly ¼? Explain why.',
