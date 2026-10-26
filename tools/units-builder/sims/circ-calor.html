@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mixing & Calorimetry</title>
+<!-- Mixing & Calorimetry: original Holmes Sims, built from frame.html + calor.js. g = 10 m/s². -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@500;700&display=swap">
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#fff;font-family:"Space Grotesk",system-ui,sans-serif;color:#111}
+#app{position:absolute;left:0;top:0;width:1000px;height:640px;transform-origin:0 0;padding:10px 14px 12px;box-sizing:border-box;
+  display:grid;grid-template-columns:600px 1fr;grid-template-rows:34px 330px 1fr;gap:10px 14px}
+#bar{grid-column:1/-1;display:flex;gap:16px;align-items:center;flex-wrap:nowrap;overflow:hidden}
+.seg{display:flex;align-items:center}
+.seg .lab{font:700 12px "IBM Plex Mono",monospace;margin-right:8px;text-transform:uppercase}
+.seg button{white-space:nowrap;font:700 14px "Space Grotesk",sans-serif;padding:6px 11px;border:2px solid #111;background:#fff;color:#111;cursor:pointer}
+.seg button+button{margin-left:-2px}
+.seg button[aria-pressed="true"]{background:#111;color:#fff}
+.seg button:hover:not([aria-pressed="true"]){background:#ffe2d3}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #ff6a2b;outline-offset:2px;position:relative;z-index:1}
+#cv{border:2px solid #111;background:#fbfbfb;width:600px;height:330px;box-sizing:border-box;display:block}
+#work{border:2px solid #111;padding:8px 12px 10px;overflow:auto;font-size:14px;line-height:1.55;box-sizing:border-box}
+#work .wt{font:700 12px "IBM Plex Mono",monospace;text-transform:uppercase;margin:0 0 4px;display:flex;justify-content:space-between}
+#work h4{margin:9px 0 1px;font-size:13px;font-weight:700;color:#4a4a4a}
+#work h4:first-of-type{margin-top:2px}
+#work .eq{font-variant-numeric:tabular-nums}
+#work .n{font-family:"IBM Plex Mono",monospace;font-size:13px}
+#work b .n,#work .ans{font-weight:700}
+#work .note{font-size:12.5px;color:#4a4a4a;margin:2px 0 0}
+#work .ok{background:#e5f4ea;border-left:4px solid #1e7d45;padding:3px 8px;margin-top:4px}
+#work .bad{background:#fde7df;border-left:4px solid #c43a00;padding:3px 8px;margin-top:4px}
+.ivv{border-radius:2px;padding:0 2px;transition:background .25s}
+.ivv.gx{background:#ffe2d3}
+.ivv.hot{background:#ff6a2b;color:#fff}
+#ctl{display:grid;grid-template-columns:1fr 1fr;gap:4px 18px;align-content:start}
+.iv{display:grid;grid-template-columns:auto 1fr auto;align-items:center;column-gap:6px}
+.iv .nm{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iv .val{font:700 13px "IBM Plex Mono",monospace;white-space:nowrap}
+.iv input[type=range]{grid-column:1/-1;width:100%;margin:0;accent-color:#111;height:22px}
+.iv input[type=radio]{accent-color:#ff6a2b;margin:0}
+#presets{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:2px}
+#presets .lab{font:700 12px "IBM Plex Mono",monospace}
+#presets button{font:600 12.5px "Space Grotesk",sans-serif;padding:3px 8px;border:2px solid #111;background:#fff;cursor:pointer}
+#presets button:hover{background:#ffe2d3}
+#gcard{border:2px solid #111;padding:5px 8px 6px;display:flex;flex-direction:column;box-sizing:border-box;min-height:0}
+.ghead{display:flex;align-items:center;gap:6px;font-size:13px;white-space:nowrap}
+.ghead select{font:600 13px "Space Grotesk",sans-serif;border:2px solid #111;padding:1px 4px;max-width:200px}
+#gv{width:340px;height:150px;flex:none;display:block;margin-top:3px}
+#dbl{font-size:12.5px;line-height:1.35;margin-top:2px}
+#dbl b{font-weight:700}
+.hint{font:500 11px "IBM Plex Mono",monospace;color:#4a4a4a}
+</style></head><body>
+<div id="app">
+  <div id="bar"></div>
+  <canvas id="cv" width="1200" height="660" aria-label="Animation of the situation with force arrows"></canvas>
+  <div id="work" aria-live="polite"></div>
+  <div id="ctl"></div>
+  <div id="gcard">
+    <div class="ghead"><span>Graph</span><select id="dvsel" aria-label="Quantity to graph"></select><span>vs <b id="ivname"></b></span></div>
+    <canvas id="gv" width="680" height="300" aria-label="Graph of the chosen quantity against the chosen variable"></canvas>
+    <div id="dbl"></div>
+  </div>
+</div>
+<script>
+// ---------------- shared frame ----------------
+const $ = id => document.getElementById(id);
+const G10 = 10, PI = Math.PI, DEG = PI / 180;
+function fit(){ const s = Math.min(innerWidth / 1000, innerHeight / 640); $('app').style.transform = 'scale(' + s + ')'; }
+addEventListener('resize', fit); fit();
+
+function fnum(x){ const r = fnum0(x); return typeof r === 'string' ? r.replace(/^-/, '−') : r; }
+function fnum0(x){
+  if (x === null || x === undefined || !isFinite(x)) return '—';
+  const a = Math.abs(x);
+  if (a === 0) return '0';
+  if (a >= 1e5 || a < 1e-3){
+    const e = Math.floor(Math.log10(a)); let m = x / Math.pow(10, e);
+    let ms = m.toFixed(2); if (Math.abs(+ms) >= 10){ m /= 10; ms = m.toFixed(2); return ms + '×10<sup>' + (e + 1) + '</sup>'; }
+    return ms + '×10<sup>' + e + '</sup>';
+  }
+  if (a >= 1000) return String(Math.round(x));
+  return x.toPrecision(3);
+}
+function fplain(x){ return fnum(x).replace(/<sup>(.*?)<\/sup>/g, (m, e) => '^' + e).replace('×10^', 'e'); }
+const H = {
+  n: (x, u) => '<span class="n">' + fnum(x) + (u ? '&nbsp;' + u : '') + '</span>',
+  iv: id => { const d = S.def[id]; const val = S.v[id]; const txt = (d.show ? d.show(val) : fnum(val) + (d.unit ? '&nbsp;' + d.unit : ''));
+              return '<span class="ivv n' + (S.gx === id ? ' gx' : '') + (S.hot === id ? ' hot' : '') + '" data-iv="' + id + '">' + txt + '</span>'; },
+  g: () => '<span class="n">10&nbsp;m/s²</span>',
+  p: (x, u) => x < 0 ? '(' + H.n(x, u) + ')' : H.n(x, u)
+};
+
+const S = { mode: null, opt: {}, v: {}, store: {}, def: {}, ivs: [], gx: null, dv: null, hot: null, t: 0, anim: {} };
+
+function bar(){
+  const b = $('bar'); b.innerHTML = '';
+  const group = (label, items, cur, onpick) => {
+    const g = document.createElement('div'); g.className = 'seg'; g.setAttribute('role', 'group');
+    if (label){ const l = document.createElement('span'); l.className = 'lab'; l.textContent = label; g.appendChild(l); }
+    items.forEach(([id, txt]) => { const bt = document.createElement('button'); bt.textContent = txt; bt.setAttribute('aria-pressed', String(id === cur)); bt.onclick = () => onpick(id); g.appendChild(bt); });
+    b.appendChild(g);
+  };
+  const tip = document.createElement('span'); tip.className = 'hint'; tip.style.marginLeft = 'auto'; tip.style.whiteSpace = 'nowrap'; tip.innerHTML = '● = the variable on the graph’s x-axis · drag any slider';
+  if (SIM.modes) group(null, SIM.modes.map(m => [m.id, m.label]), S.mode, id => { S.mode = id; S.anim = {}; setup(); });
+  (SIM.opts || []).filter(o => !o.modes || o.modes.includes(S.mode)).forEach(o => {
+    if (!(o.id in S.opt)) S.opt[o.id] = o.choices[0][0];
+    group(o.label, o.choices, S.opt[o.id], id => { S.opt[o.id] = id; S.anim = {}; setup(); });
+  });
+  b.appendChild(tip);
+  if (b.scrollWidth > b.clientWidth + 1) tip.remove();
+  if (b.scrollWidth > b.clientWidth + 1) b.querySelectorAll('.seg button').forEach(x => { x.style.fontSize = '13px'; x.style.padding = '6px 8px'; });
+}
+
+function setup(){
+  bar();
+  S.ivs = SIM.ivs(S.mode, S.opt); S.def = {}; S.v = {};
+  S.ivs.forEach(d => { S.def[d.id] = d; const k = S.mode + ':' + d.id; S.v[d.id] = (k in S.store) ? S.store[k] : d.val; });
+  if (!S.gx || !S.def[S.gx]) S.gx = S.ivs.find(d => d.graph) ? S.ivs.find(d => d.graph).id : S.ivs[1] ? S.ivs[1].id : S.ivs[0].id;
+  const c = $('ctl'); c.innerHTML = '';
+  S.ivs.forEach(d => {
+    const w = document.createElement('div'); w.className = 'iv';
+    w.innerHTML = '<input type="radio" name="gx" value="' + d.id + '" aria-label="Graph against ' + d.label + '" title="Put this on the graph’s x-axis"' + (S.gx === d.id ? ' checked' : '') + '>' +
+      '<span class="nm">' + d.label + ' <i>' + d.sym + '</i></span><span class="val" id="val-' + d.id + '"></span>' +
+      '<input type="range" id="r-' + d.id + '" min="' + d.min + '" max="' + d.max + '" step="' + d.step + '" value="' + S.v[d.id] + '" aria-label="' + d.label + '">';
+    c.appendChild(w);
+    const r = w.querySelector('input[type=range]');
+    r.oninput = () => { S.v[d.id] = +r.value; S.store[S.mode + ':' + d.id] = +r.value; S.hot = d.id; clearTimeout(S.hotT); S.hotT = setTimeout(() => { S.hot = null; update(); }, 700); S.anim.reset = true; update(); };
+    w.querySelector('input[type=radio]').onchange = () => { S.gx = d.id; update(); };
+  });
+  if (SIM.presets){
+    const p = document.createElement('div'); p.id = 'presets'; p.innerHTML = '<span class="lab">Try:</span>';
+    SIM.presets.forEach(ps => { const bt = document.createElement('button'); bt.textContent = ps.label; bt.onclick = () => { if (ps.mode && ps.mode !== S.mode){ S.mode = ps.mode; } Object.entries(ps.v).forEach(([k, val]) => S.store[(ps.mode || S.mode) + ':' + k] = val); S.anim = {}; setup(); }; p.appendChild(bt); });
+    c.appendChild(p);
+  }
+  const dvs = SIM.dvs(S.mode, S.opt), sel = $('dvsel');
+  if (!S.dv || !dvs.find(d => d.id === S.dv)) S.dv = dvs[0].id;
+  sel.innerHTML = dvs.map(d => '<option value="' + d.id + '"' + (d.id === S.dv ? ' selected' : '') + '>' + d.name + '</option>').join('');
+  sel.onchange = () => { S.dv = sel.value; update(); };
+  update();
+}
+
+function calcWith(over){ const v = Object.assign({}, S.v, over || {}); return SIM.calc(v, S.mode, S.opt); }
+
+function update(){
+  S.ivs.forEach(d => { $('val-' + d.id).innerHTML = d.show ? d.show(S.v[d.id]) : fnum(S.v[d.id]) + (d.unit ? '&nbsp;' + d.unit : ''); });
+  S.d = calcWith();
+  $('work').innerHTML = '<div class="wt"><span>Show the work</span><span class="hint">' + (SIM.hint || 'g = 10 m/s²') + '</span></div>' + SIM.work(S.v, S.d, S.mode, S.opt);
+  document.querySelectorAll('input[name=gx]').forEach(r => r.checked = (r.value === S.gx));
+  graph();
+}
+
+function graph(){
+  const cv = $('gv'), g = cv.getContext('2d'), W = 340, Hh = 150; g.setTransform(2, 0, 0, 2, 0, 0); g.clearRect(0, 0, W, Hh);
+  const dvs = SIM.dvs(S.mode, S.opt), dv = dvs.find(d => d.id === S.dv), ref = dv.vs ? dvs.find(d => d.id === dv.vs) : null;
+  const x = S.def[S.gx]; $('ivname').innerHTML = '<i>' + x.sym + '</i>' + (x.unit && !x.show ? ' (' + x.unit + ')' : '');
+  const N = 160, xs = [], ys = [], rs = [];
+  for (let i = 0; i <= N; i++){ const xv = x.min + (x.max - x.min) * i / N; const d = calcWith({ [S.gx]: xv }); xs.push(xv); ys.push(dv.f(d)); rs.push(ref ? ref.f(d) : null); }
+  const all = ys.concat(ref ? rs : []).filter(isFinite);
+  let ymin = Math.min(0, ...all), ymax = Math.max(...all, 0); if (ymax === ymin) ymax = ymin + 1; const pad = (ymax - ymin) * 0.08; ymax += pad; if (ymin < 0) ymin -= pad;
+  const L = 46, R = 8, T = 8, B = 22, X = v => L + (v - x.min) / (x.max - x.min) * (W - L - R), Y = v => T + (ymax - v) / (ymax - ymin) * (Hh - T - B);
+  g.strokeStyle = '#111'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(L, T); g.lineTo(L, Hh - B); g.lineTo(W - R, Hh - B); g.stroke();
+  if (ymin < 0){ g.strokeStyle = '#999'; g.setLineDash([3, 3]); g.beginPath(); g.moveTo(L, Y(0)); g.lineTo(W - R, Y(0)); g.stroke(); g.setLineDash([]);
+    if (dv.negNote){ g.fillStyle = 'rgba(196,58,0,0.08)'; g.fillRect(L, Y(0), W - R - L, Hh - B - Y(0)); g.fillStyle = '#c43a00'; g.font = '600 10px "Space Grotesk",sans-serif'; g.textAlign = 'left'; g.fillText(dv.negNote, L + 4, Hh - B - 4); } }
+  g.font = '500 10px "IBM Plex Mono",monospace'; g.fillStyle = '#4a4a4a'; g.textAlign = 'right';
+  g.fillText(fplain(ymax), L - 4, T + 8); g.fillText(fplain(ymin < 0 ? ymin : 0), L - 4, Hh - B); if (ymin < 0) g.fillText('0', L - 4, Y(0) + 3);
+  g.textAlign = 'center'; g.fillText(fplain(x.min), L, Hh - 8); g.fillText(fplain(x.max), W - R - 10, Hh - 8);
+  g.fillText((x.symText || x.id) + (x.unit ? ' (' + x.unit + ')' : ''), (L + W) / 2, Hh - 8);
+  g.save(); g.translate(10, (T + Hh - B) / 2); g.rotate(-PI / 2); g.textAlign = 'center'; g.fillText(dv.short + (dv.unit ? ' (' + dv.unit + ')' : ''), 0, 0); g.restore();
+  const line = (arr, col, dash) => { g.strokeStyle = col; g.lineWidth = 2.2; g.setLineDash(dash || []); g.beginPath(); let on = false; arr.forEach((y, i) => { if (!isFinite(y)){ on = false; return; } const px = X(xs[i]), py = Math.max(T - 4, Math.min(Hh - B + 4, Y(y))); on ? g.lineTo(px, py) : g.moveTo(px, py); on = true; }); g.stroke(); g.setLineDash([]); };
+  if (ref){ line(rs, '#4a4a4a', [5, 4]); g.fillStyle = '#4a4a4a'; g.textAlign = 'right'; g.font = '600 10px "Space Grotesk",sans-serif'; const lastY = rs.filter(isFinite).pop(); if (isFinite(lastY)) g.fillText(ref.short, W - R - 2, Math.max(T + 9, Y(lastY) - 4)); }
+  line(ys, '#1546d6');
+  const cx = S.v[S.gx], cy = dv.f(S.d);
+  if (isFinite(cy)){ g.strokeStyle = '#ff6a2b'; g.setLineDash([2, 3]); g.lineWidth = 1; g.beginPath(); g.moveTo(X(cx), Hh - B); g.lineTo(X(cx), Y(cy)); g.lineTo(L, Y(cy)); g.stroke(); g.setLineDash([]);
+    g.fillStyle = '#ff6a2b'; g.strokeStyle = '#111'; g.lineWidth = 1.5; g.beginPath(); g.arc(X(cx), Math.max(T, Math.min(Hh - B, Y(cy))), 4.5, 0, 7); g.fill(); g.stroke(); }
+  // doubling readout
+  const d2 = calcWith({ [S.gx]: cx * 2 }), y1 = dv.f(S.d), y2 = dv.f(d2);
+  let msg = '';
+  if (cx === 0 || Math.abs(y1) < 1e-12) msg = '<span class="hint">Move off zero to see the ×2 test.</span>';
+  else if (!isFinite(y1) || !isFinite(y2)) msg = '<span class="hint">The ×2 test doesn’t apply here (doubling takes it outside what this quantity covers).</span>';
+  else {
+    const k = y2 / y1;
+    if (k < 0){ $('dbl').innerHTML = 'If <b>' + x.sym + '</b> doubles (' + fnum(cx) + ' → ' + fnum(2 * cx) + (x.unit ? ' ' + x.unit : '') + '), <b>' + dv.sym + '</b> goes from ' + fnum(y1) + ' to ' + fnum(y2) + (dv.unit ? ' ' + dv.unit : '') + ': it changes sign, so that can’t really happen.'; return; }
+    const tags = [[1, 'doesn’t depend on it'], [2, 'proportional'], [4, 'goes as the square'], [0.5, 'inversely proportional'], [0.25, 'inverse square'], [Math.SQRT2, 'goes as the square root'], [Math.SQRT1_2, 'goes as 1/√'], [8, 'goes as the cube'], [2 * Math.SQRT2, 'goes as the 3/2 power']];
+    const tag = tags.find(([v]) => Math.abs(k - v) < 0.004 * v);
+    msg = 'If <b>' + x.sym + '</b> doubles (' + fnum(cx) + ' → ' + fnum(2 * cx) + (x.unit ? ' ' + x.unit : '') + '), <b>' + dv.sym + '</b> becomes <b>×' + (Math.abs(k) >= 100 ? fnum(k) : k.toFixed(2)) + '</b>' + (tag ? ' — ' + tag[1] : '') + '.' + (dv.dblNote ? ' <span class="hint">' + dv.dblNote + '</span>' : '');
+  }
+  $('dbl').innerHTML = msg;
+}
+
+// drawing helpers (canvas is drawn in 600×330 units)
+const cv = $('cv'), ctx = cv.getContext('2d');
+function arrow(x1, y1, x2, y2, col, label, opts){
+  opts = opts || {}; const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy); if (len < 2) return;
+  const ux = dx / len, uy = dy / len, hw = opts.head || 9;
+  ctx.save(); ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = opts.w || 3.5; ctx.lineCap = 'round';
+  if (opts.dash) ctx.setLineDash(opts.dash);
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2 - ux * hw * 0.8, y2 - uy * hw * 0.8); ctx.stroke(); ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x2, y2); ctx.lineTo(x2 - ux * hw - uy * hw * 0.55, y2 - uy * hw + ux * hw * 0.55); ctx.lineTo(x2 - ux * hw + uy * hw * 0.55, y2 - uy * hw - ux * hw * 0.55); ctx.closePath(); ctx.fill();
+  if (label){ ctx.font = '700 13px "Space Grotesk",sans-serif'; ctx.textAlign = opts.align || 'left'; ctx.textBaseline = 'middle';
+    const lx = x2 + (opts.lx !== undefined ? opts.lx : (ux >= 0 ? 6 : -6)), ly = y2 + (opts.ly !== undefined ? opts.ly : (uy >= 0 ? 10 : -10));
+    if (opts.align === undefined) ctx.textAlign = ux >= -0.2 ? 'left' : 'right';
+    ctx.fillText(label, lx, ly); }
+  ctx.restore();
+}
+function text(s, x, y, o){ o = o || {}; ctx.save(); ctx.font = (o.font || '600 13px "Space Grotesk",sans-serif'); ctx.fillStyle = o.col || '#111'; ctx.textAlign = o.align || 'left'; ctx.textBaseline = o.base || 'alphabetic'; ctx.fillText(s, x, y); ctx.restore(); }
+function panelTitle(s, x, y){ text(s, x, y, { font: '700 11px "IBM Plex Mono",monospace', col: '#4a4a4a' }); }
+const COL = { F: '#c43a00', W: '#111', N: '#1e7d45', V: '#1546d6', T: '#7a3fb0', comp: '#8a8a8a' };
+
+let last = 0;
+function loop(ts){ const dt = Math.min(0.05, (ts - (last || ts)) / 1000); last = ts; S.t += dt;
+  ctx.setTransform(2, 0, 0, 2, 0, 0); ctx.clearRect(0, 0, 600, 330);
+  SIM.draw(S.v, S.d, S.mode, S.opt, S.t, dt, S.anim); S.anim.reset = false;
+  requestAnimationFrame(loop); }
+
+// ---------------- this sim ----------------
+// Mixing & Calorimetry (AP 9.3/9.5 Q = mcΔT, thermal equilibrium; IB B.1 incl. latent heat): hot metal into water, mixing water, ice in a drink (does it all melt?).
+const CW = 4200, CI = 2100, LF = 3.34e5;
+const METALS = { al: ['aluminum', 900], cu: ['copper', 385], fe: ['iron', 450], pb: ['lead', 130] };
+const SIM = {
+  title: 'Mixing & Calorimetry',
+  hint: 'c<sub>water</sub> = 4200 · c<sub>ice</sub> = 2100 J/(kg·K) · L<sub>f</sub> = 3.34×10⁵ J/kg',
+  modes: [{ id: 'metal', label: 'Hot metal into water' }, { id: 'mix', label: 'Mix hot and cold water' }, { id: 'ice', label: 'Ice in a drink (IB)' }],
+  opts: [{ id: 'met', label: 'Metal', modes: ['metal'], choices: [['al', 'Aluminum'], ['cu', 'Copper'], ['fe', 'Iron'], ['pb', 'Lead']] }],
+  ivs(mode){
+    if (mode === 'mix') return [
+      { id: 'm1', sym: 'm<sub>hot</sub>', symText: 'mhot', label: 'Hot water mass', unit: 'kg', min: 0.05, max: 1, step: 0.01, val: 0.2, graph: true },
+      { id: 'T1', sym: 'T<sub>hot</sub>', symText: 'Thot', label: 'Hot water temperature', unit: '°C', min: 40, max: 100, step: 1, val: 80 },
+      { id: 'm2', sym: 'm<sub>cold</sub>', symText: 'mcold', label: 'Cold water mass', unit: 'kg', min: 0.05, max: 1, step: 0.01, val: 0.3 },
+      { id: 'T2', sym: 'T<sub>cold</sub>', symText: 'Tcold', label: 'Cold water temperature', unit: '°C', min: 0, max: 30, step: 1, val: 15 }];
+    if (mode === 'ice') return [
+      { id: 'mi', sym: 'm<sub>ice</sub>', symText: 'mice', label: 'Ice mass', unit: 'kg', min: 0.01, max: 0.2, step: 0.005, val: 0.05, graph: true },
+      { id: 'Ti', sym: 'T<sub>ice</sub>', symText: 'Tice', label: 'Ice starting temperature', unit: '°C', min: -10, max: 0, step: 1, val: -5 },
+      { id: 'md', sym: 'm<sub>drink</sub>', symText: 'mdrink', label: 'Drink mass (treat as water)', unit: 'kg', min: 0.1, max: 0.5, step: 0.01, val: 0.25 },
+      { id: 'Td', sym: 'T<sub>drink</sub>', symText: 'Tdrink', label: 'Drink starting temperature', unit: '°C', min: 15, max: 40, step: 1, val: 25 }];
+    return [
+      { id: 'mm', sym: 'm<sub>metal</sub>', symText: 'mmetal', label: 'Metal mass', unit: 'kg', min: 0.05, max: 1, step: 0.01, val: 0.2 },
+      { id: 'Tm', sym: 'T<sub>metal</sub>', symText: 'Tmetal', label: 'Metal temperature (from boiling water)', unit: '°C', min: 50, max: 200, step: 1, val: 100 },
+      { id: 'mw', sym: 'm<sub>water</sub>', symText: 'mwater', label: 'Water mass', unit: 'kg', min: 0.05, max: 1, step: 0.01, val: 0.3, graph: true },
+      { id: 'Tw', sym: 'T<sub>water</sub>', symText: 'Twater', label: 'Water temperature', unit: '°C', min: 5, max: 30, step: 1, val: 20 },
+      { id: 'Cc', sym: 'C<sub>cup</sub>', symText: 'Ccup', label: 'Heat capacity of the cup (0 = ideal)', unit: 'J/K', min: 0, max: 400, step: 10, val: 0 }];
+  },
+  presets: [{ label: 'Equal masses', mode: 'mix', v: { m1: 0.3, m2: 0.3 } }, { label: 'Lots of ice', mode: 'ice', v: { mi: 0.15 } }, { label: 'Real cup (absorbs heat)', mode: 'metal', v: { Cc: 300 } }],
+  calc(v, mode, opt){
+    if (mode === 'mix'){ const Tf = (v.m1 * v.T1 + v.m2 * v.T2) / (v.m1 + v.m2), Q = v.m1 * CW * (v.T1 - Tf); return { Tf, Q, Ths: v.T1, Tcs: v.T2 }; }
+    if (mode === 'ice'){
+      const warm = v.mi * CI * (0 - v.Ti), melt = v.mi * LF, avail = v.md * CW * v.Td;
+      if (avail >= warm + melt){ const Tf = (avail - warm - melt) / ((v.md + v.mi) * CW); return { all: true, Tf, warm, melt, avail, melted: v.mi, Q: v.md * CW * (v.Td - Tf), Ths: v.Td, Tcs: v.Ti }; }
+      const melted = Math.max(0, (avail - warm) / LF); return { all: false, Tf: 0, warm, melt, avail, melted, Q: avail, Ths: v.Td, Tcs: v.Ti };
+    }
+    const [nm, cm] = METALS[opt.met || 'al'], hot = v.mm * cm, cold = v.mw * CW + v.Cc, Tf = (hot * v.Tm + cold * v.Tw) / (hot + cold), ideal = (hot * v.Tm + v.mw * CW * v.Tw) / (hot + v.mw * CW);
+    const cBack = v.mw * CW * (Tf - v.Tw) / (v.mm * (v.Tm - Tf));
+    return { nm, cm, Tf, ideal, Q: hot * (v.Tm - Tf), cBack, Ths: v.Tm, Tcs: v.Tw };
+  },
+  dvs(mode){ const l = [{ id: 'Tf', name: 'Final temperature', short: 'T_f', sym: 'T<sub>f</sub>', unit: '°C', f: d => d.Tf }, { id: 'Q', name: 'Energy transferred hot → cold', short: 'Q', sym: 'Q', unit: 'J', f: d => d.Q }];
+    if (mode === 'ice') l.push({ id: 'melted', name: 'Mass of ice melted', short: 'melted', sym: 'm<sub>melted</sub>', unit: 'kg', f: d => d.melted });
+    if (mode === 'metal') l.push({ id: 'cBack', name: 'c found if you ignore the cup', short: 'c_found', sym: 'c<sub>found</sub>', unit: 'J/(kg·K)', f: d => d.cBack });
+    return l; },
+  work(v, d, mode, opt){
+    if (mode === 'mix') return '<h4>1 · Isolated system: energy lost by hot = energy gained by cold</h4><div class="eq">m<sub>h</sub>c(T<sub>h</sub> − T<sub>f</sub>) = m<sub>c</sub>c(T<sub>f</sub> − T<sub>c</sub>)</div>' +
+      '<h4>2 · Same substance, so c cancels</h4><div class="eq">T<sub>f</sub> = (m<sub>h</sub>T<sub>h</sub> + m<sub>c</sub>T<sub>c</sub>)/(m<sub>h</sub> + m<sub>c</sub>) = (' + H.iv('m1') + '·' + v.T1 + ' + ' + H.iv('m2') + '·' + v.T2 + ')/' + fnum(v.m1 + v.m2) + ' = <b>' + H.n(d.Tf, '°C') + '</b></div>' +
+      '<div class="eq">Q = m<sub>h</sub>c(T<sub>h</sub> − T<sub>f</sub>) = <b>' + H.n(d.Q, 'J') + '</b></div><p class="note">A mass-weighted average: the final temperature is closer to whichever has more mass.</p>';
+    if (mode === 'ice'){
+      let h = '<h4>1 · What the ice needs to melt completely</h4><div class="eq">Warm to 0 °C: m<sub>i</sub>c<sub>ice</sub>(0 − T<sub>i</sub>) = ' + H.n(d.warm, 'J') + ' &nbsp; Melt: m<sub>i</sub>L<sub>f</sub> = ' + H.n(d.melt, 'J') + ' &nbsp; Total ' + H.n(d.warm + d.melt, 'J') + '</div>' +
+        '<h4>2 · What the drink can give before it hits 0 °C</h4><div class="eq">m<sub>d</sub>c<sub>w</sub>(T<sub>d</sub> − 0) = ' + H.n(d.avail, 'J') + '</div>';
+      if (d.all) h += '<h4>3 · Enough: all the ice melts, then everything warms together</h4><div class="eq">m<sub>d</sub>c<sub>w</sub>(T<sub>d</sub> − T<sub>f</sub>) = warm + melt + m<sub>i</sub>c<sub>w</sub>(T<sub>f</sub> − 0)</div><div class="eq">T<sub>f</sub> = <b>' + H.n(d.Tf, '°C') + '</b></div>';
+      else h += '<h4>3 · Not enough: it stops at 0 °C with ice left over</h4><div class="eq">Melted = (available − warm)/L<sub>f</sub> = (' + fnum(d.avail) + ' − ' + fnum(d.warm) + ')/3.34×10⁵ = <b>' + H.n(d.melted, 'kg') + '</b> of ' + H.iv('mi') + '. T<sub>f</sub> = <b>0 °C</b></div>';
+      return h + '<p class="note">Always check first whether all the ice melts. If you just solve for T<sub>f</sub> and get a negative answer, the assumption was wrong. Melting needs a lot of energy: 1 kg of ice takes as much to melt as heating 1 kg of water by 80 °C.</p>';
+    }
+    return '<h4>1 · Energy lost by the metal = energy gained by the water' + (v.Cc ? ' and cup' : '') + '</h4><div class="eq">m<sub>m</sub>c<sub>m</sub>(T<sub>m</sub> − T<sub>f</sub>) = (m<sub>w</sub>c<sub>w</sub>' + (v.Cc ? ' + C<sub>cup</sub>' : '') + ')(T<sub>f</sub> − T<sub>w</sub>)</div>' +
+      '<h4>2 · Solve for T<sub>f</sub> (' + d.nm + ', c = ' + d.cm + ' J/(kg·K))</h4><div class="eq">T<sub>f</sub> = <b>' + H.n(d.Tf, '°C') + '</b>. The water warms only a little: c<sub>water</sub> is huge.</div>' +
+      '<div class="eq">Q = ' + H.n(d.Q, 'J') + ' left the metal</div>' +
+      '<h4>3 · Lab version: measure T<sub>f</sub>, find c</h4><div class="eq">c<sub>m</sub> = m<sub>w</sub>c<sub>w</sub>(T<sub>f</sub> − T<sub>w</sub>)/(m<sub>m</sub>(T<sub>m</sub> − T<sub>f</sub>)) = <b>' + H.n(d.cBack, 'J/(kg·K)') + '</b>' + (v.Cc ? ' <span class="bad">too low: the cup took some energy you didn’t count</span>' : ' ✓') + '</div>' +
+      '<p class="note">Sources of error FRQs ask about: heat lost to the cup and air, metal cooling while being moved, water evaporating. Each one makes c<sub>found</sub> too small.</p>';
+  },
+  draw(v, d, mode, opt, t, dt, A){
+    if (A.s === undefined || A.reset) A.s = 0; A.s = Math.min(6, A.s + dt); if (A.s >= 6 && A.hold === undefined) A.hold = 0;
+    const k = 1 - Math.exp(-A.s / 1.2), Th = d.Ths + (d.Tf - d.Ths) * k, Tc = d.Tcs + (d.Tf - d.Tcs) * k;
+    panelTitle(mode === 'ice' ? 'ICE IN A DRINK' : mode === 'mix' ? 'MIX TWO WATERS' : 'HOT METAL DROPPED IN WATER', 10, 18);
+    // insulated cup
+    ctx.fillStyle = '#ddd'; ctx.fillRect(40, 90, 200, 200); ctx.fillStyle = mode === 'ice' ? '#e7f3ff' : '#cfe6ff'; ctx.fillRect(52, 130, 176, 150); ctx.strokeStyle = '#111'; ctx.lineWidth = 2; ctx.strokeRect(40, 90, 200, 200);
+    text('insulated cup', 140, 306, { align: 'center', font: '600 10px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+    if (mode === 'metal'){ ctx.fillStyle = 'rgb(' + Math.round(150 + 100 * (Th - 20) / 180) + ',120,90)'; ctx.fillRect(110, 200, 60, 50); ctx.strokeStyle = '#111'; ctx.strokeRect(110, 200, 60, 50); text(d.nm, 140, 230, { align: 'center', font: '700 11px "Space Grotesk",sans-serif', col: '#fff' }); }
+    if (mode === 'ice'){ const left = d.all ? Math.max(0, 1 - A.s / 3) : 1 - (d.melted / v.mi) * Math.min(1, A.s / 3); for (let i = 0; i < 4; i++){ const sz = 34 * Math.sqrt(Math.max(0, left)) * Math.cbrt(v.mi / 0.05) / 1.4; if (sz < 2) continue; ctx.fillStyle = 'rgba(255,255,255,0.95)'; ctx.strokeStyle = '#7fc3ff'; ctx.fillRect(70 + i * 40, 136, sz, sz); ctx.strokeRect(70 + i * 40, 136, sz, sz); } }
+    // thermometers
+    const therm = (x, T, lab, col) => { ctx.fillStyle = '#fff'; ctx.strokeStyle = '#111'; ctx.lineWidth = 1.5; ctx.fillRect(x, 40, 16, 200); ctx.strokeRect(x, 40, 16, 200); const hh = 190 * Math.max(0, Math.min(1, (T + 20) / 220)); ctx.fillStyle = col; ctx.fillRect(x + 4, 236 - hh, 8, hh); ctx.beginPath(); ctx.arc(x + 8, 246, 11, 0, 7); ctx.fill(); ctx.stroke(); text(lab, x + 8, 272, { align: 'center', font: '700 10px "IBM Plex Mono",monospace' }); text(fplain(T) + '°C', x + 8, 288, { align: 'center', font: '600 10px "IBM Plex Mono",monospace', col }); };
+    therm(280, Th, mode === 'metal' ? 'metal' : mode === 'ice' ? 'drink' : 'hot', '#c43a00'); therm(340, Tc, mode === 'metal' ? 'water' : mode === 'ice' ? 'ice' : 'cold', '#1546d6');
+    // T vs t graph
+    panelTitle('TEMPERATURE vs TIME', 395, 18);
+    const gx = 405, gy = 230, gw = 180, gh = 180, Tmin = Math.min(d.Tcs, 0) - 5, Tmax = d.Ths + 5, Y = T => gy - gh * (T - Tmin) / (Tmax - Tmin);
+    ctx.strokeStyle = '#111'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(gx, gy - gh); ctx.lineTo(gx, gy); ctx.lineTo(gx + gw, gy); ctx.stroke();
+    [[d.Ths, '#c43a00'], [d.Tcs, '#1546d6']].forEach(([T0, col]) => { ctx.strokeStyle = col; ctx.lineWidth = 2.2; ctx.beginPath(); for (let i = 0; i <= 60; i++){ const ts = 6 * i / 60; if (ts > A.s) break; const TT = T0 + (d.Tf - T0) * (1 - Math.exp(-ts / 1.2)); i ? ctx.lineTo(gx + gw * i / 60, Y(TT)) : ctx.moveTo(gx, Y(TT)); } ctx.stroke(); });
+    ctx.setLineDash([4, 3]); ctx.strokeStyle = '#1e7d45'; ctx.beginPath(); ctx.moveTo(gx, Y(d.Tf)); ctx.lineTo(gx + gw, Y(d.Tf)); ctx.stroke(); ctx.setLineDash([]);
+    text('T_f = ' + fplain(d.Tf) + ' °C', gx + gw, Y(d.Tf) - 5, { align: 'right', font: '700 11px "IBM Plex Mono",monospace', col: '#1e7d45' });
+    text('time', gx + gw, gy + 13, { align: 'right', font: '600 9px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+    text('energy moved: ' + fplain(d.Q) + ' J', 400, 266, { font: '700 13px "Space Grotesk",sans-serif' });
+    if (mode === 'ice') text(d.all ? 'all the ice melts' : 'ice left over: ' + fplain(v.mi - d.melted) + ' kg', 400, 288, { font: '700 13px "Space Grotesk",sans-serif', col: d.all ? '#1e7d45' : '#c43a00' });
+  }
+};
+
+
+S.mode = SIM.modes ? SIM.modes[0].id : 'one';
+setup(); requestAnimationFrame(loop);
+</script>
+</body></html>

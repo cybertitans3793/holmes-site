@@ -65,6 +65,18 @@ SIMS = {
     'clay':    {'file': 'units/sims/circ-clay.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'reson':   {'file': 'units/sims/circ-reson.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'meas':    {'file': 'units/sims/circ-meas.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Reading Instruments, Precision &amp; Accuracy, Propagating Uncertainties, Graphs &amp; Error Bars, Linearizing Data and Graph Maker are original.'},
+    'kinetic': {'file': 'units/sims/circ-kinetic.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Particles &amp; Pressure, Finding Absolute Zero, Gas Law Problems, Gas in a Piston, P–V Cycles, Mixing &amp; Calorimetry, Conduction, Entropy &amp; Spreading, Heating Curve and Real vs Ideal Gas are original.'},
+    'abszero': {'file': 'units/sims/circ-abszero.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'gasprob': {'file': 'units/sims/circ-gasprob.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'piston':  {'file': 'units/sims/circ-piston.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'cycle':   {'file': 'units/sims/circ-cycle.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'calor':   {'file': 'units/sims/circ-calor.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'conduct': {'file': 'units/sims/circ-conduct.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'entropy': {'file': 'units/sims/circ-entropy.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'heatcurve': {'file': 'units/sims/circ-heatcurve.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'realgas': {'file': 'units/sims/circ-realgas.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'phetT':   {'file': 'units/sims/phet-thermo.html', 'kind': 'plain', 'ar': '16 / 10', 'credit': 'Gas Properties, States of Matter and Energy Forms and Changes: ' + PHET},
+    'lum':     {'file': 'units/sims/circ-lum.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Luminosity &amp; Brightness is original.'},
     'graph':   {'file': 'units/sims/graphmaker.html', 'kind': 'plain', 'ar': '1000 / 880', 'credit': ''},
     'scatter': {'file': 'units/sims/circ-scatter.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'prop':    {'file': 'units/sims/circ-prop.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
@@ -435,7 +447,65 @@ UNITS = {
         'N₂ and O₂ make up 99 % of the air. Why don’t they trap infrared?',
         'Name a natural and a human source for each greenhouse gas.']},
 ]},
-'P2-01': {'course': 'AP Physics 2 / IB', 'num': '01', 'title': 'Thermodynamics', 'tabs': []},
+'P2-01': {'course': 'AP Physics 2 / IB', 'num': '01', 'title': 'Thermodynamics', 'tabs': [
+    {'code': '', 'name': 'Particles & Pressure', 'sim': 'kinetic', 'tasks': [
+        'Quadruple the absolute temperature. By what factor does the average KE change? The rms speed? Check with the ×2 test.',
+        '<b>Two gases, same T.</b> Helium and argon are mixed. Which has the greater average KE? The greater rms speed? By what factor?',
+        '<b>One molecule.</b> Derive the average force on the wall, F = mv²/L. Why does doubling v quadruple the force?',
+        'Explain, in terms of molecules, why pressure increases when you halve the volume at constant temperature.']},
+    {'code': '', 'name': 'Finding Absolute Zero', 'sim': 'abszero', 'tasks': [
+        'Use the constant-volume data to find absolute zero. How close do you get to −273 °C?',
+        'Add a gauge zero error. What happens to the gradient? The intercept? The value of absolute zero? Is this random or systematic?',
+        '<b>Experimental design:</b> describe how you would collect P vs T data with a sealed flask and water baths. What must stay constant?',
+        '<b>Boyle.</b> Plot P against V, then against 1/V. Which is linear? What does the gradient tell you? What does gas hidden in the tubing do?']},
+    {'code': '', 'name': 'Gas Law Problems', 'sim': 'gasprob', 'tasks': [
+        '<b>Tire.</b> Find the hot gauge pressure. Then show why using gauge pressure and °C gives the wrong answer.',
+        '<b>Bubble.</b> A bubble rises from 20 m. By what factor does its volume grow? How much is due to pressure and how much to temperature?',
+        '<b>Cylinder.</b> What fraction of the oxygen has been used when the pressure drops from 15 000 kPa to 5000 kPa?',
+        '<b>Balloon.</b> Why does a hot-air balloon lift less on a hot day? Use ρ = PM/RT.']},
+    {'code': '', 'name': 'Gas in a Piston', 'sim': 'piston', 'tasks': [
+        '<b>Constant P.</b> Heat the gas. Find Q, W and ΔU. Why is Q bigger than ΔU?',
+        '<b>Constant V.</b> Why is W = 0? Where does all of Q go?',
+        '<b>Constant T.</b> Push the piston in slowly. Why is ΔU = 0? Is heat added or removed?',
+        '<b>No heat.</b> Push it in fast. Why does the gas get hotter if no heat is added? Then switch the sign convention and explain what changes.']},
+    {'code': '', 'name': 'P–V Cycles', 'sim': 'cycle', 'tasks': [
+        'Fill in a table of W, ΔU and Q for each leg before looking. Then check with the sim.',
+        'Which legs take in heat? Explain using how T changes on a P–V diagram.',
+        'Show that the net work equals the area inside the loop. Why is ΣΔU = 0 for a whole cycle?',
+        'Run the cycle counter-clockwise. What changes? What kind of device is that?',
+        '<span style="color:#7a3fb0">IB HL</span>: find the efficiency and compare it with the Carnot limit.']},
+    {'code': '', 'name': 'Mixing & Calorimetry', 'sim': 'calor', 'tasks': [
+        'Drop hot aluminum into water. Why does the water warm only a little? Predict T<sub>f</sub> for copper, then check.',
+        'Use the measured T<sub>f</sub> to find c of the metal. Then add a real cup. Is the c you find too high or too low? Why?',
+        'Mix equal masses of hot and cold water. Where is T<sub>f</sub>? What if there is twice as much cold water?',
+        '<b>Ice in a drink.</b> How do you know whether all the ice melts? Find the most ice that can melt completely.']},
+    {'code': '', 'name': 'Conduction', 'sim': 'conduct', 'tasks': [
+        'Double the thickness of the window. What happens to the rate? Double the area? Use ΔQ/Δt = kAΔT/Δx.',
+        'Compare glass, wood and foam walls. Rank them by energy lost per day.',
+        '<b>Rod.</b> Which rod melts ice fastest? Design an experiment to find k using rods of different lengths.',
+        '<b>Tile vs mat.</b> Both are at 20 °C. Explain why the tile feels colder without saying the tile is colder.']},
+    {'code': '', 'name': 'Entropy', 'sim': 'entropy', 'tasks': [
+        'Remove the wall. Does the gas ever go back to one side? Try 2 molecules, then 60.',
+        'Use the bar chart to explain why the even split is most likely. How many ways are there for all to be on one side?',
+        'Heat flows from hot to cold. Explain why the reverse never happens on its own. Is energy conserved either way?',
+        '<span style="color:#7a3fb0">IB HL</span>: calculate ΔS for each object and the total. Why is the total positive?']},
+    {'code': '', 'name': 'PhET Sims', 'sim': 'phetT', 'tasks': [
+        '<b>Gas Properties:</b> hold the volume constant and heat the gas. How do pressure and temperature change together?',
+        '<b>States of Matter:</b> add heat to a solid. What happens to the motion of the particles at each phase?',
+        '<b>Energy Forms and Changes:</b> put a hot brick in cool water. Watch the energy chunks. When does the transfer stop?']},
+    {'code': 'IB', 'name': 'Heating Curve', 'sim': 'heatcurve', 'gapBefore': True, 'tasks': [
+        'Read c of ice and c of water from the slopes. Which is larger? How can you tell from the graph?',
+        'Find L<sub>f</sub> and L<sub>v</sub> from the plateau lengths. Why is the boiling plateau so much longer?',
+        'On a plateau the temperature stays constant. Where does the energy go? Use internal energy = KE + PE.',
+        '<b>Kettle.</b> Show that heat loss makes the measured L<sub>v</sub> too large. How does using two powers fix it?'],
+     'note': 'IB B.1: specific latent heat. AP Physics 2 does not include latent heat.'},
+    {'code': 'IB', 'name': 'Real vs Ideal Gas', 'sim': 'realgas', 'tasks': [
+        'Use the presets. Under what conditions is nitrogen close to ideal (Z ≈ 1)?',
+        'Make the gas cold and squeezed. Is Z above or below 1? Explain with forces between molecules.',
+        'At very high pressure Z &gt; 1. Explain using the volume of the molecules.',
+        'Compare He, N₂ and CO₂. Which is most ideal? Why?'],
+     'note': 'IB B.3: when an ideal gas is a good approximation of a real gas.'},
+]},
 'P2-02': {'course': 'AP Physics 2 / IB', 'num': '02', 'title': 'Electrostatics', 'tabs': [
     {'code': '', 'name': 'Charging & the Electroscope', 'sim': 'scope', 'tasks': [
         'Bring a charged rod near the electroscope without touching. Why do the leaves spread if no charge moved onto it?',
@@ -460,6 +530,18 @@ UNITS = {
         'Watch the H-R diagram. Where does a star go when it becomes a red giant? Use L = 4πR²σT⁴ to explain why it moves there.',
         'Which stars end as white dwarfs, neutron stars and black holes? Why can’t fusion go past iron?'],
      'note': 'IB E.5 Stellar evolution.'},
+    {'code': 'IB', 'name': 'Black Bodies', 'sim': 'green', 'select': 'Black Bodies', 'tasks': [
+        'Raise the temperature. Which way does the peak move? Check that λ<sub>max</sub>·T stays about 2.9 × 10⁻³ m·K.',
+        'Double the temperature. By what factor does the power per square meter go up? Explain with σT⁴.',
+        'Compare the Sun (about 5800 K) with Sirius. Which looks bluer? Which part of the spectrum does each give off most?',
+        'Why do the hottest stars look blue-white and the coolest look red?'],
+     'note': 'IB B.1 radiation, used for stars in E.5.'},
+    {'code': 'IB', 'name': 'Luminosity & Brightness', 'sim': 'lum', 'tasks': [
+        'Double the surface temperature. By what factor does L change? Double the radius?',
+        'Double the distance. What happens to the apparent brightness? Why doesn’t L change?',
+        '<b>Paper 2 chain:</b> a star has λ<sub>max</sub> = 400 nm, b = 10⁻⁹ W/m² and d = 50 ly. Find T, then L, then R. Check with the sim.',
+        'A red giant and the Sun look equally bright. Which one is farther away? Explain.'],
+     'note': 'IB B.1: L = σAT⁴ and b = L/4πd².'},
 ]},
 }
 

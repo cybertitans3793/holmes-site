@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gas Law Problems</title>
+<!-- Gas Law Problems: original Holmes Sims, built from frame.html + gasprob.js. g = 10 m/s². -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@500;700&display=swap">
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#fff;font-family:"Space Grotesk",system-ui,sans-serif;color:#111}
+#app{position:absolute;left:0;top:0;width:1000px;height:640px;transform-origin:0 0;padding:10px 14px 12px;box-sizing:border-box;
+  display:grid;grid-template-columns:600px 1fr;grid-template-rows:34px 330px 1fr;gap:10px 14px}
+#bar{grid-column:1/-1;display:flex;gap:16px;align-items:center;flex-wrap:nowrap;overflow:hidden}
+.seg{display:flex;align-items:center}
+.seg .lab{font:700 12px "IBM Plex Mono",monospace;margin-right:8px;text-transform:uppercase}
+.seg button{white-space:nowrap;font:700 14px "Space Grotesk",sans-serif;padding:6px 11px;border:2px solid #111;background:#fff;color:#111;cursor:pointer}
+.seg button+button{margin-left:-2px}
+.seg button[aria-pressed="true"]{background:#111;color:#fff}
+.seg button:hover:not([aria-pressed="true"]){background:#ffe2d3}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #ff6a2b;outline-offset:2px;position:relative;z-index:1}
+#cv{border:2px solid #111;background:#fbfbfb;width:600px;height:330px;box-sizing:border-box;display:block}
+#work{border:2px solid #111;padding:8px 12px 10px;overflow:auto;font-size:14px;line-height:1.55;box-sizing:border-box}
+#work .wt{font:700 12px "IBM Plex Mono",monospace;text-transform:uppercase;margin:0 0 4px;display:flex;justify-content:space-between}
+#work h4{margin:9px 0 1px;font-size:13px;font-weight:700;color:#4a4a4a}
+#work h4:first-of-type{margin-top:2px}
+#work .eq{font-variant-numeric:tabular-nums}
+#work .n{font-family:"IBM Plex Mono",monospace;font-size:13px}
+#work b .n,#work .ans{font-weight:700}
+#work .note{font-size:12.5px;color:#4a4a4a;margin:2px 0 0}
+#work .ok{background:#e5f4ea;border-left:4px solid #1e7d45;padding:3px 8px;margin-top:4px}
+#work .bad{background:#fde7df;border-left:4px solid #c43a00;padding:3px 8px;margin-top:4px}
+.ivv{border-radius:2px;padding:0 2px;transition:background .25s}
+.ivv.gx{background:#ffe2d3}
+.ivv.hot{background:#ff6a2b;color:#fff}
+#ctl{display:grid;grid-template-columns:1fr 1fr;gap:4px 18px;align-content:start}
+.iv{display:grid;grid-template-columns:auto 1fr auto;align-items:center;column-gap:6px}
+.iv .nm{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iv .val{font:700 13px "IBM Plex Mono",monospace;white-space:nowrap}
+.iv input[type=range]{grid-column:1/-1;width:100%;margin:0;accent-color:#111;height:22px}
+.iv input[type=radio]{accent-color:#ff6a2b;margin:0}
+#presets{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:2px}
+#presets .lab{font:700 12px "IBM Plex Mono",monospace}
+#presets button{font:600 12.5px "Space Grotesk",sans-serif;padding:3px 8px;border:2px solid #111;background:#fff;cursor:pointer}
+#presets button:hover{background:#ffe2d3}
+#gcard{border:2px solid #111;padding:5px 8px 6px;display:flex;flex-direction:column;box-sizing:border-box;min-height:0}
+.ghead{display:flex;align-items:center;gap:6px;font-size:13px;white-space:nowrap}
+.ghead select{font:600 13px "Space Grotesk",sans-serif;border:2px solid #111;padding:1px 4px;max-width:200px}
+#gv{width:340px;height:150px;flex:none;display:block;margin-top:3px}
+#dbl{font-size:12.5px;line-height:1.35;margin-top:2px}
+#dbl b{font-weight:700}
+.hint{font:500 11px "IBM Plex Mono",monospace;color:#4a4a4a}
+</style></head><body>
+<div id="app">
+  <div id="bar"></div>
+  <canvas id="cv" width="1200" height="660" aria-label="Animation of the situation with force arrows"></canvas>
+  <div id="work" aria-live="polite"></div>
+  <div id="ctl"></div>
+  <div id="gcard">
+    <div class="ghead"><span>Graph</span><select id="dvsel" aria-label="Quantity to graph"></select><span>vs <b id="ivname"></b></span></div>
+    <canvas id="gv" width="680" height="300" aria-label="Graph of the chosen quantity against the chosen variable"></canvas>
+    <div id="dbl"></div>
+  </div>
+</div>
+<script>
+// ---------------- shared frame ----------------
+const $ = id => document.getElementById(id);
+const G10 = 10, PI = Math.PI, DEG = PI / 180;
+function fit(){ const s = Math.min(innerWidth / 1000, innerHeight / 640); $('app').style.transform = 'scale(' + s + ')'; }
+addEventListener('resize', fit); fit();
+
+function fnum(x){ const r = fnum0(x); return typeof r === 'string' ? r.replace(/^-/, '−') : r; }
+function fnum0(x){
+  if (x === null || x === undefined || !isFinite(x)) return '—';
+  const a = Math.abs(x);
+  if (a === 0) return '0';
+  if (a >= 1e5 || a < 1e-3){
+    const e = Math.floor(Math.log10(a)); let m = x / Math.pow(10, e);
+    let ms = m.toFixed(2); if (Math.abs(+ms) >= 10){ m /= 10; ms = m.toFixed(2); return ms + '×10<sup>' + (e + 1) + '</sup>'; }
+    return ms + '×10<sup>' + e + '</sup>';
+  }
+  if (a >= 1000) return String(Math.round(x));
+  return x.toPrecision(3);
+}
+function fplain(x){ return fnum(x).replace(/<sup>(.*?)<\/sup>/g, (m, e) => '^' + e).replace('×10^', 'e'); }
+const H = {
+  n: (x, u) => '<span class="n">' + fnum(x) + (u ? '&nbsp;' + u : '') + '</span>',
+  iv: id => { const d = S.def[id]; const val = S.v[id]; const txt = (d.show ? d.show(val) : fnum(val) + (d.unit ? '&nbsp;' + d.unit : ''));
+              return '<span class="ivv n' + (S.gx === id ? ' gx' : '') + (S.hot === id ? ' hot' : '') + '" data-iv="' + id + '">' + txt + '</span>'; },
+  g: () => '<span class="n">10&nbsp;m/s²</span>',
+  p: (x, u) => x < 0 ? '(' + H.n(x, u) + ')' : H.n(x, u)
+};
+
+const S = { mode: null, opt: {}, v: {}, store: {}, def: {}, ivs: [], gx: null, dv: null, hot: null, t: 0, anim: {} };
+
+function bar(){
+  const b = $('bar'); b.innerHTML = '';
+  const group = (label, items, cur, onpick) => {
+    const g = document.createElement('div'); g.className = 'seg'; g.setAttribute('role', 'group');
+    if (label){ const l = document.createElement('span'); l.className = 'lab'; l.textContent = label; g.appendChild(l); }
+    items.forEach(([id, txt]) => { const bt = document.createElement('button'); bt.textContent = txt; bt.setAttribute('aria-pressed', String(id === cur)); bt.onclick = () => onpick(id); g.appendChild(bt); });
+    b.appendChild(g);
+  };
+  const tip = document.createElement('span'); tip.className = 'hint'; tip.style.marginLeft = 'auto'; tip.style.whiteSpace = 'nowrap'; tip.innerHTML = '● = the variable on the graph’s x-axis · drag any slider';
+  if (SIM.modes) group(null, SIM.modes.map(m => [m.id, m.label]), S.mode, id => { S.mode = id; S.anim = {}; setup(); });
+  (SIM.opts || []).filter(o => !o.modes || o.modes.includes(S.mode)).forEach(o => {
+    if (!(o.id in S.opt)) S.opt[o.id] = o.choices[0][0];
+    group(o.label, o.choices, S.opt[o.id], id => { S.opt[o.id] = id; S.anim = {}; setup(); });
+  });
+  b.appendChild(tip);
+  if (b.scrollWidth > b.clientWidth + 1) tip.remove();
+  if (b.scrollWidth > b.clientWidth + 1) b.querySelectorAll('.seg button').forEach(x => { x.style.fontSize = '13px'; x.style.padding = '6px 8px'; });
+}
+
+function setup(){
+  bar();
+  S.ivs = SIM.ivs(S.mode, S.opt); S.def = {}; S.v = {};
+  S.ivs.forEach(d => { S.def[d.id] = d; const k = S.mode + ':' + d.id; S.v[d.id] = (k in S.store) ? S.store[k] : d.val; });
+  if (!S.gx || !S.def[S.gx]) S.gx = S.ivs.find(d => d.graph) ? S.ivs.find(d => d.graph).id : S.ivs[1] ? S.ivs[1].id : S.ivs[0].id;
+  const c = $('ctl'); c.innerHTML = '';
+  S.ivs.forEach(d => {
+    const w = document.createElement('div'); w.className = 'iv';
+    w.innerHTML = '<input type="radio" name="gx" value="' + d.id + '" aria-label="Graph against ' + d.label + '" title="Put this on the graph’s x-axis"' + (S.gx === d.id ? ' checked' : '') + '>' +
+      '<span class="nm">' + d.label + ' <i>' + d.sym + '</i></span><span class="val" id="val-' + d.id + '"></span>' +
+      '<input type="range" id="r-' + d.id + '" min="' + d.min + '" max="' + d.max + '" step="' + d.step + '" value="' + S.v[d.id] + '" aria-label="' + d.label + '">';
+    c.appendChild(w);
+    const r = w.querySelector('input[type=range]');
+    r.oninput = () => { S.v[d.id] = +r.value; S.store[S.mode + ':' + d.id] = +r.value; S.hot = d.id; clearTimeout(S.hotT); S.hotT = setTimeout(() => { S.hot = null; update(); }, 700); S.anim.reset = true; update(); };
+    w.querySelector('input[type=radio]').onchange = () => { S.gx = d.id; update(); };
+  });
+  if (SIM.presets){
+    const p = document.createElement('div'); p.id = 'presets'; p.innerHTML = '<span class="lab">Try:</span>';
+    SIM.presets.forEach(ps => { const bt = document.createElement('button'); bt.textContent = ps.label; bt.onclick = () => { if (ps.mode && ps.mode !== S.mode){ S.mode = ps.mode; } Object.entries(ps.v).forEach(([k, val]) => S.store[(ps.mode || S.mode) + ':' + k] = val); S.anim = {}; setup(); }; p.appendChild(bt); });
+    c.appendChild(p);
+  }
+  const dvs = SIM.dvs(S.mode, S.opt), sel = $('dvsel');
+  if (!S.dv || !dvs.find(d => d.id === S.dv)) S.dv = dvs[0].id;
+  sel.innerHTML = dvs.map(d => '<option value="' + d.id + '"' + (d.id === S.dv ? ' selected' : '') + '>' + d.name + '</option>').join('');
+  sel.onchange = () => { S.dv = sel.value; update(); };
+  update();
+}
+
+function calcWith(over){ const v = Object.assign({}, S.v, over || {}); return SIM.calc(v, S.mode, S.opt); }
+
+function update(){
+  S.ivs.forEach(d => { $('val-' + d.id).innerHTML = d.show ? d.show(S.v[d.id]) : fnum(S.v[d.id]) + (d.unit ? '&nbsp;' + d.unit : ''); });
+  S.d = calcWith();
+  $('work').innerHTML = '<div class="wt"><span>Show the work</span><span class="hint">' + (SIM.hint || 'g = 10 m/s²') + '</span></div>' + SIM.work(S.v, S.d, S.mode, S.opt);
+  document.querySelectorAll('input[name=gx]').forEach(r => r.checked = (r.value === S.gx));
+  graph();
+}
+
+function graph(){
+  const cv = $('gv'), g = cv.getContext('2d'), W = 340, Hh = 150; g.setTransform(2, 0, 0, 2, 0, 0); g.clearRect(0, 0, W, Hh);
+  const dvs = SIM.dvs(S.mode, S.opt), dv = dvs.find(d => d.id === S.dv), ref = dv.vs ? dvs.find(d => d.id === dv.vs) : null;
+  const x = S.def[S.gx]; $('ivname').innerHTML = '<i>' + x.sym + '</i>' + (x.unit && !x.show ? ' (' + x.unit + ')' : '');
+  const N = 160, xs = [], ys = [], rs = [];
+  for (let i = 0; i <= N; i++){ const xv = x.min + (x.max - x.min) * i / N; const d = calcWith({ [S.gx]: xv }); xs.push(xv); ys.push(dv.f(d)); rs.push(ref ? ref.f(d) : null); }
+  const all = ys.concat(ref ? rs : []).filter(isFinite);
+  let ymin = Math.min(0, ...all), ymax = Math.max(...all, 0); if (ymax === ymin) ymax = ymin + 1; const pad = (ymax - ymin) * 0.08; ymax += pad; if (ymin < 0) ymin -= pad;
+  const L = 46, R = 8, T = 8, B = 22, X = v => L + (v - x.min) / (x.max - x.min) * (W - L - R), Y = v => T + (ymax - v) / (ymax - ymin) * (Hh - T - B);
+  g.strokeStyle = '#111'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(L, T); g.lineTo(L, Hh - B); g.lineTo(W - R, Hh - B); g.stroke();
+  if (ymin < 0){ g.strokeStyle = '#999'; g.setLineDash([3, 3]); g.beginPath(); g.moveTo(L, Y(0)); g.lineTo(W - R, Y(0)); g.stroke(); g.setLineDash([]);
+    if (dv.negNote){ g.fillStyle = 'rgba(196,58,0,0.08)'; g.fillRect(L, Y(0), W - R - L, Hh - B - Y(0)); g.fillStyle = '#c43a00'; g.font = '600 10px "Space Grotesk",sans-serif'; g.textAlign = 'left'; g.fillText(dv.negNote, L + 4, Hh - B - 4); } }
+  g.font = '500 10px "IBM Plex Mono",monospace'; g.fillStyle = '#4a4a4a'; g.textAlign = 'right';
+  g.fillText(fplain(ymax), L - 4, T + 8); g.fillText(fplain(ymin < 0 ? ymin : 0), L - 4, Hh - B); if (ymin < 0) g.fillText('0', L - 4, Y(0) + 3);
+  g.textAlign = 'center'; g.fillText(fplain(x.min), L, Hh - 8); g.fillText(fplain(x.max), W - R - 10, Hh - 8);
+  g.fillText((x.symText || x.id) + (x.unit ? ' (' + x.unit + ')' : ''), (L + W) / 2, Hh - 8);
+  g.save(); g.translate(10, (T + Hh - B) / 2); g.rotate(-PI / 2); g.textAlign = 'center'; g.fillText(dv.short + (dv.unit ? ' (' + dv.unit + ')' : ''), 0, 0); g.restore();
+  const line = (arr, col, dash) => { g.strokeStyle = col; g.lineWidth = 2.2; g.setLineDash(dash || []); g.beginPath(); let on = false; arr.forEach((y, i) => { if (!isFinite(y)){ on = false; return; } const px = X(xs[i]), py = Math.max(T - 4, Math.min(Hh - B + 4, Y(y))); on ? g.lineTo(px, py) : g.moveTo(px, py); on = true; }); g.stroke(); g.setLineDash([]); };
+  if (ref){ line(rs, '#4a4a4a', [5, 4]); g.fillStyle = '#4a4a4a'; g.textAlign = 'right'; g.font = '600 10px "Space Grotesk",sans-serif'; const lastY = rs.filter(isFinite).pop(); if (isFinite(lastY)) g.fillText(ref.short, W - R - 2, Math.max(T + 9, Y(lastY) - 4)); }
+  line(ys, '#1546d6');
+  const cx = S.v[S.gx], cy = dv.f(S.d);
+  if (isFinite(cy)){ g.strokeStyle = '#ff6a2b'; g.setLineDash([2, 3]); g.lineWidth = 1; g.beginPath(); g.moveTo(X(cx), Hh - B); g.lineTo(X(cx), Y(cy)); g.lineTo(L, Y(cy)); g.stroke(); g.setLineDash([]);
+    g.fillStyle = '#ff6a2b'; g.strokeStyle = '#111'; g.lineWidth = 1.5; g.beginPath(); g.arc(X(cx), Math.max(T, Math.min(Hh - B, Y(cy))), 4.5, 0, 7); g.fill(); g.stroke(); }
+  // doubling readout
+  const d2 = calcWith({ [S.gx]: cx * 2 }), y1 = dv.f(S.d), y2 = dv.f(d2);
+  let msg = '';
+  if (cx === 0 || Math.abs(y1) < 1e-12) msg = '<span class="hint">Move off zero to see the ×2 test.</span>';
+  else if (!isFinite(y1) || !isFinite(y2)) msg = '<span class="hint">The ×2 test doesn’t apply here (doubling takes it outside what this quantity covers).</span>';
+  else {
+    const k = y2 / y1;
+    if (k < 0){ $('dbl').innerHTML = 'If <b>' + x.sym + '</b> doubles (' + fnum(cx) + ' → ' + fnum(2 * cx) + (x.unit ? ' ' + x.unit : '') + '), <b>' + dv.sym + '</b> goes from ' + fnum(y1) + ' to ' + fnum(y2) + (dv.unit ? ' ' + dv.unit : '') + ': it changes sign, so that can’t really happen.'; return; }
+    const tags = [[1, 'doesn’t depend on it'], [2, 'proportional'], [4, 'goes as the square'], [0.5, 'inversely proportional'], [0.25, 'inverse square'], [Math.SQRT2, 'goes as the square root'], [Math.SQRT1_2, 'goes as 1/√'], [8, 'goes as the cube'], [2 * Math.SQRT2, 'goes as the 3/2 power']];
+    const tag = tags.find(([v]) => Math.abs(k - v) < 0.004 * v);
+    msg = 'If <b>' + x.sym + '</b> doubles (' + fnum(cx) + ' → ' + fnum(2 * cx) + (x.unit ? ' ' + x.unit : '') + '), <b>' + dv.sym + '</b> becomes <b>×' + (Math.abs(k) >= 100 ? fnum(k) : k.toFixed(2)) + '</b>' + (tag ? ' — ' + tag[1] : '') + '.' + (dv.dblNote ? ' <span class="hint">' + dv.dblNote + '</span>' : '');
+  }
+  $('dbl').innerHTML = msg;
+}
+
+// drawing helpers (canvas is drawn in 600×330 units)
+const cv = $('cv'), ctx = cv.getContext('2d');
+function arrow(x1, y1, x2, y2, col, label, opts){
+  opts = opts || {}; const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy); if (len < 2) return;
+  const ux = dx / len, uy = dy / len, hw = opts.head || 9;
+  ctx.save(); ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = opts.w || 3.5; ctx.lineCap = 'round';
+  if (opts.dash) ctx.setLineDash(opts.dash);
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2 - ux * hw * 0.8, y2 - uy * hw * 0.8); ctx.stroke(); ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x2, y2); ctx.lineTo(x2 - ux * hw - uy * hw * 0.55, y2 - uy * hw + ux * hw * 0.55); ctx.lineTo(x2 - ux * hw + uy * hw * 0.55, y2 - uy * hw - ux * hw * 0.55); ctx.closePath(); ctx.fill();
+  if (label){ ctx.font = '700 13px "Space Grotesk",sans-serif'; ctx.textAlign = opts.align || 'left'; ctx.textBaseline = 'middle';
+    const lx = x2 + (opts.lx !== undefined ? opts.lx : (ux >= 0 ? 6 : -6)), ly = y2 + (opts.ly !== undefined ? opts.ly : (uy >= 0 ? 10 : -10));
+    if (opts.align === undefined) ctx.textAlign = ux >= -0.2 ? 'left' : 'right';
+    ctx.fillText(label, lx, ly); }
+  ctx.restore();
+}
+function text(s, x, y, o){ o = o || {}; ctx.save(); ctx.font = (o.font || '600 13px "Space Grotesk",sans-serif'); ctx.fillStyle = o.col || '#111'; ctx.textAlign = o.align || 'left'; ctx.textBaseline = o.base || 'alphabetic'; ctx.fillText(s, x, y); ctx.restore(); }
+function panelTitle(s, x, y){ text(s, x, y, { font: '700 11px "IBM Plex Mono",monospace', col: '#4a4a4a' }); }
+const COL = { F: '#c43a00', W: '#111', N: '#1e7d45', V: '#1546d6', T: '#7a3fb0', comp: '#8a8a8a' };
+
+let last = 0;
+function loop(ts){ const dt = Math.min(0.05, (ts - (last || ts)) / 1000); last = ts; S.t += dt;
+  ctx.setTransform(2, 0, 0, 2, 0, 0); ctx.clearRect(0, 0, 600, 330);
+  SIM.draw(S.v, S.d, S.mode, S.opt, S.t, dt, S.anim); S.anim.reset = false;
+  requestAnimationFrame(loop); }
+
+// ---------------- this sim ----------------
+// Gas Law Problems (AP 9.2, IB B.3): classic ideal-gas scenarios. Tire on a hot day (gauge vs absolute), rising bubble, emptying a gas cylinder, hot-air balloon.
+const RG = 8.31, PATM = 101;
+const SIM = {
+  title: 'Gas Law Problems',
+  hint: 'R = 8.31 J/(mol·K) · P<sub>atm</sub> = 101 kPa · g = 10 m/s²',
+  modes: [{ id: 'tire', label: 'Tire on a hot day' }, { id: 'bubble', label: 'Rising bubble' }, { id: 'leak', label: 'Emptying a cylinder' }, { id: 'balloon', label: 'Hot-air balloon' }],
+  ivs(mode){
+    if (mode === 'bubble') return [
+      { id: 'h', sym: 'h', symText: 'h', label: 'Depth of the lake bed', unit: 'm', min: 1, max: 40, step: 0.5, val: 20, graph: true },
+      { id: 'V1', sym: 'V<sub>1</sub>', symText: 'V1', label: 'Bubble volume at the bottom', unit: 'cm³', min: 0.5, max: 5, step: 0.1, val: 1 },
+      { id: 'T1', sym: 'T<sub>1</sub>', symText: 'T1', label: 'Water temperature at the bottom', unit: '°C', min: 4, max: 20, step: 1, val: 5 },
+      { id: 'T2', sym: 'T<sub>2</sub>', symText: 'T2', label: 'Water temperature at the surface', unit: '°C', min: 4, max: 30, step: 1, val: 20 }];
+    if (mode === 'leak') return [
+      { id: 'V', sym: 'V', symText: 'V', label: 'Cylinder volume', unit: 'L', min: 5, max: 50, step: 1, val: 20 },
+      { id: 'P1', sym: 'P<sub>1</sub>', symText: 'P1', label: 'Pressure when full', unit: 'kPa', min: 2000, max: 20000, step: 100, val: 15000 },
+      { id: 'P2', sym: 'P<sub>2</sub>', symText: 'P2', label: 'Pressure after use', unit: 'kPa', min: 200, max: 15000, step: 100, val: 5000, graph: true },
+      { id: 'T', sym: 'T', symText: 'T', label: 'Temperature (constant)', unit: '°C', min: -10, max: 40, step: 1, val: 20 }];
+    if (mode === 'balloon') return [
+      { id: 'V', sym: 'V', symText: 'V', label: 'Envelope volume', unit: 'm³', min: 500, max: 4000, step: 50, val: 2500 },
+      { id: 'To', sym: 'T<sub>out</sub>', symText: 'Tout', label: 'Outside air temperature', unit: '°C', min: -10, max: 35, step: 1, val: 15 },
+      { id: 'Ti', sym: 'T<sub>in</sub>', symText: 'Tin', label: 'Air inside the envelope', unit: '°C', min: 40, max: 120, step: 1, val: 100, graph: true }];
+    return [
+      { id: 'Pg', sym: 'P<sub>gauge</sub>', symText: 'Pg', label: 'Gauge pressure, cold morning', unit: 'kPa', min: 150, max: 300, step: 5, val: 220 },
+      { id: 'T1', sym: 'T<sub>1</sub>', symText: 'T1', label: 'Morning temperature', unit: '°C', min: -15, max: 25, step: 1, val: 5 },
+      { id: 'T2', sym: 'T<sub>2</sub>', symText: 'T2', label: 'Tire after driving on hot road', unit: '°C', min: 10, max: 70, step: 1, val: 45, graph: true }];
+  },
+  presets: [{ label: 'Deep lake', mode: 'bubble', v: { h: 40 } }, { label: 'Winter morning', mode: 'tire', v: { T1: -15 } }, { label: 'Hot day', mode: 'balloon', v: { To: 35 } }],
+  calc(v, mode){
+    if (mode === 'bubble'){ const P1 = PATM + 10 * v.h, P2 = PATM, T1 = v.T1 + 273, T2 = v.T2 + 273, V2 = v.V1 * (P1 / P2) * (T2 / T1); return { P1, P2, T1, T2, V2, ratio: V2 / v.V1 }; }
+    if (mode === 'leak'){ const T = v.T + 273, Vm = v.V / 1000, n1 = v.P1 * 1000 * Vm / (RG * T), n2 = Math.min(v.P2, v.P1) * 1000 * Vm / (RG * T), dn = n1 - n2, M = 0.032; return { T, Vm, n1, n2, dn, dm: dn * M, frac: dn / n1 }; }
+    if (mode === 'balloon'){ const M = 0.029, P = PATM * 1000, To = v.To + 273, Ti = v.Ti + 273, ro = P * M / (RG * To), ri = P * M / (RG * Ti), lift = (ro - ri) * v.V * 10; return { To, Ti, ro, ri, lift, mass: lift / 10, airIn: ri * v.V }; }
+    const T1 = v.T1 + 273, T2 = v.T2 + 273, P1 = v.Pg + PATM, P2 = P1 * T2 / T1, wrong = v.Pg * (v.T2 / (v.T1 || 1));
+    return { T1, T2, P1, P2, Pg2: P2 - PATM, rise: P2 - P1, wrong };
+  },
+  dvs(mode){
+    if (mode === 'bubble') return [{ id: 'V2', name: 'Volume at the surface', short: 'V₂', sym: 'V<sub>2</sub>', unit: 'cm³', f: d => d.V2 }, { id: 'ratio', name: 'Growth factor V₂/V₁', short: 'V₂/V₁', sym: 'V<sub>2</sub>/V<sub>1</sub>', unit: '', f: d => d.ratio }];
+    if (mode === 'leak') return [{ id: 'dm', name: 'Mass of oxygen used', short: 'Δm', sym: 'Δm', unit: 'kg', f: d => d.dm }, { id: 'frac', name: 'Fraction of the gas used', short: 'fraction', sym: 'Δn/n', unit: '', f: d => d.frac }];
+    if (mode === 'balloon') return [{ id: 'mass', name: 'Mass it can lift (payload + envelope)', short: 'mass', sym: 'm', unit: 'kg', f: d => d.mass }, { id: 'ri', name: 'Density of the inside air', short: 'ρ_in', sym: 'ρ<sub>in</sub>', unit: 'kg/m³', f: d => d.ri, vs: 'ro' }, { id: 'ro', name: 'Density of the outside air', short: 'ρ_out', sym: 'ρ<sub>out</sub>', unit: 'kg/m³', f: d => d.ro }];
+    return [{ id: 'Pg2', name: 'Gauge pressure, hot', short: 'P_gauge', sym: 'P<sub>gauge,2</sub>', unit: 'kPa', f: d => d.Pg2 }, { id: 'P2', name: 'Absolute pressure, hot', short: 'P₂', sym: 'P<sub>2</sub>', unit: 'kPa', f: d => d.P2 }];
+  },
+  work(v, d, mode){
+    if (mode === 'bubble') return '<h4>1 · Pressure at the bottom: atmosphere + water</h4><div class="eq">P<sub>1</sub> = 101 + ρgh = 101 + (1000)(10)(' + H.iv('h') + ')/1000 = <b>' + H.n(d.P1, 'kPa') + '</b> &nbsp; P<sub>2</sub> = 101 kPa</div>' +
+      '<h4>2 · Same gas (n constant): P₁V₁/T₁ = P₂V₂/T₂, temperatures in kelvin</h4><div class="eq">T<sub>1</sub> = ' + d.T1 + ' K, T<sub>2</sub> = ' + d.T2 + ' K</div>' +
+      '<div class="eq">V<sub>2</sub> = V<sub>1</sub>(P<sub>1</sub>/P<sub>2</sub>)(T<sub>2</sub>/T<sub>1</sub>) = ' + H.iv('V1') + ' × (' + fnum(d.P1) + '/101) × (' + d.T2 + '/' + d.T1 + ') = <b>' + H.n(d.V2, 'cm³') + '</b></div>' +
+      '<p class="note">Every 10 m of water adds about one atmosphere. Most of the growth is the pressure drop; warming adds a few percent. This is why divers must not hold their breath while rising.</p>';
+    if (mode === 'leak') return '<h4>1 · Rigid cylinder: V and T constant, so n ∝ P</h4><div class="eq">n<sub>1</sub> = P<sub>1</sub>V/RT = (' + fnum(v.P1 * 1000) + ')(' + fnum(d.Vm) + ')/(8.31 × ' + d.T + ') = ' + H.n(d.n1, 'mol') + '</div>' +
+      '<div class="eq">n<sub>2</sub> = ' + H.n(d.n2, 'mol') + ' → Δn = <b>' + H.n(d.dn, 'mol') + '</b> (' + H.n(100 * d.frac, '%') + ' of the gas)</div>' +
+      '<h4>2 · Mass of oxygen used (M = 32 g/mol)</h4><div class="eq">Δm = Δn × 0.032 = <b>' + H.n(d.dm, 'kg') + '</b></div>' +
+      '<p class="note">Shortcut: fraction used = (P₁ − P₂)/P₁. The gauge reading tells you how much is left.</p>';
+    if (mode === 'balloon') return '<h4>1 · Same pressure inside and out (the bottom is open): ρ = PM/RT</h4><div class="eq">ρ<sub>out</sub> = (101 000)(0.029)/(8.31 × ' + d.To + ') = <b>' + H.n(d.ro, 'kg/m³') + '</b></div>' +
+      '<div class="eq">ρ<sub>in</sub> = (101 000)(0.029)/(8.31 × ' + d.Ti + ') = <b>' + H.n(d.ri, 'kg/m³') + '</b>: hotter air is less dense</div>' +
+      '<h4>2 · Net upward force = buoyancy − weight of hot air inside</h4><div class="eq">F = (ρ<sub>out</sub> − ρ<sub>in</sub>)Vg = (' + fnum(d.ro) + ' − ' + fnum(d.ri) + ')(' + H.iv('V') + ')(10) = <b>' + H.n(d.lift, 'N') + '</b></div>' +
+      '<div class="eq">It can lift up to <b>' + H.n(d.mass, 'kg') + '</b> of envelope, basket and people.</div>' +
+      '<p class="note">On a hot day the outside air is less dense, so the balloon lifts less. Links to buoyancy from Fluids.</p>';
+    return '<h4>1 · Gas laws need absolute pressure and kelvin</h4><div class="eq">P<sub>1</sub> = gauge + atmosphere = ' + H.iv('Pg') + ' + 101 = <b>' + H.n(d.P1, 'kPa') + '</b> &nbsp; T<sub>1</sub> = ' + d.T1 + ' K, T<sub>2</sub> = ' + d.T2 + ' K</div>' +
+      '<h4>2 · Rigid tire (V constant): P/T = constant</h4><div class="eq">P<sub>2</sub> = P<sub>1</sub>T<sub>2</sub>/T<sub>1</sub> = ' + fnum(d.P1) + ' × ' + d.T2 + '/' + d.T1 + ' = <b>' + H.n(d.P2, 'kPa') + '</b> absolute</div>' +
+      '<div class="eq">Gauge reading = ' + fnum(d.P2) + ' − 101 = <b>' + H.n(d.Pg2, 'kPa') + '</b></div>' +
+      '<div class="bad">Common mistake: using gauge pressure and °C. ' + H.iv('Pg') + ' × ' + v.T2 + '/' + v.T1 + ' = ' + fnum(d.wrong) + ' kPa. Way off' + (v.T1 <= 0 ? ', and it breaks completely at or below 0 °C' : '') + '.</div>';
+  },
+  draw(v, d, mode, opt, t, dt, A){
+    if (A.s === undefined || A.reset) A.s = 0; A.s = (A.s + dt / 4) % 1.25; const s = Math.min(1, A.s);
+    const big = (str, x, y, col) => text(str, x, y, { font: '700 14px "Space Grotesk",sans-serif', col: col || '#111' }), small = (str, x, y) => text(str, x, y, { font: '600 11px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+    if (mode === 'bubble'){
+      panelTitle('A BUBBLE RISES FROM THE LAKE BED', 10, 18);
+      ctx.fillStyle = '#cfe6ff'; ctx.fillRect(20, 50, 340, 250); ctx.fillStyle = '#c9b48a'; ctx.fillRect(20, 290, 340, 12); ctx.strokeStyle = '#1546d6'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(20, 50); ctx.lineTo(360, 50); ctx.stroke();
+      const y = 285 - s * 230, r = 12 * Math.cbrt(v.V1 * (1 + (d.ratio - 1) * s));
+      ctx.fillStyle = 'rgba(255,255,255,0.85)'; ctx.strokeStyle = '#1546d6'; ctx.beginPath(); ctx.arc(190, y, Math.min(48, r), 0, 7); ctx.fill(); ctx.stroke();
+      small('h = ' + v.h + ' m', 30, 270); small('P₁ = ' + fplain(d.P1) + ' kPa', 30, 284); small('surface: 101 kPa', 30, 70);
+      panelTitle('BOTTOM → TOP', 395, 18); big('V₁ = ' + v.V1 + ' cm³', 400, 70); big('V₂ = ' + fplain(d.V2) + ' cm³', 400, 100, '#c43a00'); small('×' + fplain(d.ratio) + ' bigger', 400, 122);
+      return;
+    }
+    if (mode === 'leak'){
+      panelTitle('OXYGEN CYLINDER', 10, 18);
+      const fill = 1 - d.frac * s; ctx.strokeStyle = '#111'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.roundRect(120, 50, 110, 240, 30); ctx.stroke();
+      ctx.save(); ctx.beginPath(); ctx.roundRect(120, 50, 110, 240, 30); ctx.clip(); ctx.fillStyle = '#9fd3a8'; ctx.fillRect(120, 290 - 240 * fill, 110, 240 * fill); ctx.restore();
+      for (let i = 0; i < Math.round(40 * fill); i++){ ctx.fillStyle = '#1e7d45'; ctx.beginPath(); ctx.arc(135 + (i * 37) % 80, 70 + (i * 53) % 200, 3, 0, 7); ctx.fill(); }
+      small('P = ' + fplain(v.P1 - (v.P1 - Math.min(v.P2, v.P1)) * s) + ' kPa', 120, 310);
+      panelTitle('MOLES IN THE CYLINDER', 395, 18); [['full', d.n1], ['after', d.n2]].forEach(([l, q], i) => { const w = 170 * q / d.n1; ctx.fillStyle = i ? '#9fd3a8' : '#1e7d45'; ctx.fillRect(400, 50 + i * 40, w, 24); small(l + ': ' + fplain(q) + ' mol', 400, 88 + i * 40); });
+      big('used: ' + fplain(d.dm) + ' kg', 400, 160, '#c43a00'); return;
+    }
+    if (mode === 'balloon'){
+      panelTitle('HOT-AIR BALLOON', 10, 18);
+      const hc = Math.max(0, Math.min(1, (v.Ti - 40) / 80)); ctx.fillStyle = 'rgb(255,' + Math.round(200 - 110 * hc) + ',' + Math.round(150 - 120 * hc) + ')';
+      const yb = 170 - Math.max(-40, Math.min(90, d.mass / 15)) * s; ctx.beginPath(); ctx.ellipse(190, yb - 40, 80, 90, 0, 0, 7); ctx.fill(); ctx.strokeStyle = '#111'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(150, yb + 35); ctx.lineTo(170, yb + 80); ctx.moveTo(230, yb + 35); ctx.lineTo(210, yb + 80); ctx.stroke(); ctx.fillStyle = '#8a5a2b'; ctx.fillRect(168, yb + 80, 44, 26);
+      arrow(300, yb, 300, yb - 60, '#1e7d45', 'buoyancy', { w: 3 }); arrow(320, yb, 320, yb + 40, '#111', 'W(hot air)', { w: 3 });
+      panelTitle('AIR DENSITY', 395, 18); [['outside', d.ro, '#1546d6'], ['inside', d.ri, '#c43a00']].forEach(([l, q, c], i) => { const w = 140 * q / 1.4; ctx.fillStyle = c; ctx.fillRect(400, 50 + i * 40, w, 24); small(l + ': ' + fplain(q) + ' kg/m³', 400, 88 + i * 40); });
+      big('lifts ' + fplain(d.mass) + ' kg', 400, 160, '#1e7d45'); return;
+    }
+    panelTitle('CAR TIRE: COLD MORNING → AFTER A HIGHWAY DRIVE', 10, 18);
+    const T = d.T1 + (d.T2 - d.T1) * s, P = d.P1 * T / d.T1; ctx.fillStyle = '#222'; ctx.beginPath(); ctx.arc(170, 170, 100, 0, 7); ctx.fill(); ctx.fillStyle = '#bbb'; ctx.beginPath(); ctx.arc(170, 170, 50, 0, 7); ctx.fill();
+    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(170, 170, 28, 0, 7); ctx.fill(); ctx.strokeStyle = '#111'; ctx.stroke(); const a = -PI * 0.75 + PI * 1.5 * Math.min(1, (P - PATM) / 400); ctx.strokeStyle = '#c43a00'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(170, 170); ctx.lineTo(170 + 24 * Math.cos(a - PI / 2), 170 + 24 * Math.sin(a - PI / 2)); ctx.stroke();
+    small('gauge ' + fplain(P - PATM) + ' kPa', 120, 300); small((T - 273).toFixed(0) + ' °C', 140, 316);
+    panelTitle('GAUGE READING', 395, 18); big('cold: ' + v.Pg + ' kPa', 400, 70); big('hot: ' + fplain(d.Pg2) + ' kPa', 400, 100, '#c43a00'); small('absolute = gauge + 101', 400, 124);
+  }
+};
+
+
+S.mode = SIM.modes ? SIM.modes[0].id : 'one';
+setup(); requestAnimationFrame(loop);
+</script>
+</body></html>

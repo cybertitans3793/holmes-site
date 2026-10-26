@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Real vs Ideal Gas</title>
+<!-- Real vs Ideal Gas: original Holmes Sims, built from frame.html + realgas.js. g = 10 m/s². -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@500;700&display=swap">
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#fff;font-family:"Space Grotesk",system-ui,sans-serif;color:#111}
+#app{position:absolute;left:0;top:0;width:1000px;height:640px;transform-origin:0 0;padding:10px 14px 12px;box-sizing:border-box;
+  display:grid;grid-template-columns:600px 1fr;grid-template-rows:34px 330px 1fr;gap:10px 14px}
+#bar{grid-column:1/-1;display:flex;gap:16px;align-items:center;flex-wrap:nowrap;overflow:hidden}
+.seg{display:flex;align-items:center}
+.seg .lab{font:700 12px "IBM Plex Mono",monospace;margin-right:8px;text-transform:uppercase}
+.seg button{white-space:nowrap;font:700 14px "Space Grotesk",sans-serif;padding:6px 11px;border:2px solid #111;background:#fff;color:#111;cursor:pointer}
+.seg button+button{margin-left:-2px}
+.seg button[aria-pressed="true"]{background:#111;color:#fff}
+.seg button:hover:not([aria-pressed="true"]){background:#ffe2d3}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #ff6a2b;outline-offset:2px;position:relative;z-index:1}
+#cv{border:2px solid #111;background:#fbfbfb;width:600px;height:330px;box-sizing:border-box;display:block}
+#work{border:2px solid #111;padding:8px 12px 10px;overflow:auto;font-size:14px;line-height:1.55;box-sizing:border-box}
+#work .wt{font:700 12px "IBM Plex Mono",monospace;text-transform:uppercase;margin:0 0 4px;display:flex;justify-content:space-between}
+#work h4{margin:9px 0 1px;font-size:13px;font-weight:700;color:#4a4a4a}
+#work h4:first-of-type{margin-top:2px}
+#work .eq{font-variant-numeric:tabular-nums}
+#work .n{font-family:"IBM Plex Mono",monospace;font-size:13px}
+#work b .n,#work .ans{font-weight:700}
+#work .note{font-size:12.5px;color:#4a4a4a;margin:2px 0 0}
+#work .ok{background:#e5f4ea;border-left:4px solid #1e7d45;padding:3px 8px;margin-top:4px}
+#work .bad{background:#fde7df;border-left:4px solid #c43a00;padding:3px 8px;margin-top:4px}
+.ivv{border-radius:2px;padding:0 2px;transition:background .25s}
+.ivv.gx{background:#ffe2d3}
+.ivv.hot{background:#ff6a2b;color:#fff}
+#ctl{display:grid;grid-template-columns:1fr 1fr;gap:4px 18px;align-content:start}
+.iv{display:grid;grid-template-columns:auto 1fr auto;align-items:center;column-gap:6px}
+.iv .nm{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iv .val{font:700 13px "IBM Plex Mono",monospace;white-space:nowrap}
+.iv input[type=range]{grid-column:1/-1;width:100%;margin:0;accent-color:#111;height:22px}
+.iv input[type=radio]{accent-color:#ff6a2b;margin:0}
+#presets{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:2px}
+#presets .lab{font:700 12px "IBM Plex Mono",monospace}
+#presets button{font:600 12.5px "Space Grotesk",sans-serif;padding:3px 8px;border:2px solid #111;background:#fff;cursor:pointer}
+#presets button:hover{background:#ffe2d3}
+#gcard{border:2px solid #111;padding:5px 8px 6px;display:flex;flex-direction:column;box-sizing:border-box;min-height:0}
+.ghead{display:flex;align-items:center;gap:6px;font-size:13px;white-space:nowrap}
+.ghead select{font:600 13px "Space Grotesk",sans-serif;border:2px solid #111;padding:1px 4px;max-width:200px}
+#gv{width:340px;height:150px;flex:none;display:block;margin-top:3px}
+#dbl{font-size:12.5px;line-height:1.35;margin-top:2px}
+#dbl b{font-weight:700}
+.hint{font:500 11px "IBM Plex Mono",monospace;color:#4a4a4a}
+</style></head><body>
+<div id="app">
+  <div id="bar"></div>
+  <canvas id="cv" width="1200" height="660" aria-label="Animation of the situation with force arrows"></canvas>
+  <div id="work" aria-live="polite"></div>
+  <div id="ctl"></div>
+  <div id="gcard">
+    <div class="ghead"><span>Graph</span><select id="dvsel" aria-label="Quantity to graph"></select><span>vs <b id="ivname"></b></span></div>
+    <canvas id="gv" width="680" height="300" aria-label="Graph of the chosen quantity against the chosen variable"></canvas>
+    <div id="dbl"></div>
+  </div>
+</div>
+<script>
+// ---------------- shared frame ----------------
+const $ = id => document.getElementById(id);
+const G10 = 10, PI = Math.PI, DEG = PI / 180;
+function fit(){ const s = Math.min(innerWidth / 1000, innerHeight / 640); $('app').style.transform = 'scale(' + s + ')'; }
+addEventListener('resize', fit); fit();
+
+function fnum(x){ const r = fnum0(x); return typeof r === 'string' ? r.replace(/^-/, '−') : r; }
+function fnum0(x){
+  if (x === null || x === undefined || !isFinite(x)) return '—';
+  const a = Math.abs(x);
+  if (a === 0) return '0';
+  if (a >= 1e5 || a < 1e-3){
+    const e = Math.floor(Math.log10(a)); let m = x / Math.pow(10, e);
+    let ms = m.toFixed(2); if (Math.abs(+ms) >= 10){ m /= 10; ms = m.toFixed(2); return ms + '×10<sup>' + (e + 1) + '</sup>'; }
+    return ms + '×10<sup>' + e + '</sup>';
+  }
+  if (a >= 1000) return String(Math.round(x));
+  return x.toPrecision(3);
+}
+function fplain(x){ return fnum(x).replace(/<sup>(.*?)<\/sup>/g, (m, e) => '^' + e).replace('×10^', 'e'); }
+const H = {
+  n: (x, u) => '<span class="n">' + fnum(x) + (u ? '&nbsp;' + u : '') + '</span>',
+  iv: id => { const d = S.def[id]; const val = S.v[id]; const txt = (d.show ? d.show(val) : fnum(val) + (d.unit ? '&nbsp;' + d.unit : ''));
+              return '<span class="ivv n' + (S.gx === id ? ' gx' : '') + (S.hot === id ? ' hot' : '') + '" data-iv="' + id + '">' + txt + '</span>'; },
+  g: () => '<span class="n">10&nbsp;m/s²</span>',
+  p: (x, u) => x < 0 ? '(' + H.n(x, u) + ')' : H.n(x, u)
+};
+
+const S = { mode: null, opt: {}, v: {}, store: {}, def: {}, ivs: [], gx: null, dv: null, hot: null, t: 0, anim: {} };
+
+function bar(){
+  const b = $('bar'); b.innerHTML = '';
+  const group = (label, items, cur, onpick) => {
+    const g = document.createElement('div'); g.className = 'seg'; g.setAttribute('role', 'group');
+    if (label){ const l = document.createElement('span'); l.className = 'lab'; l.textContent = label; g.appendChild(l); }
+    items.forEach(([id, txt]) => { const bt = document.createElement('button'); bt.textContent = txt; bt.setAttribute('aria-pressed', String(id === cur)); bt.onclick = () => onpick(id); g.appendChild(bt); });
+    b.appendChild(g);
+  };
+  const tip = document.createElement('span'); tip.className = 'hint'; tip.style.marginLeft = 'auto'; tip.style.whiteSpace = 'nowrap'; tip.innerHTML = '● = the variable on the graph’s x-axis · drag any slider';
+  if (SIM.modes) group(null, SIM.modes.map(m => [m.id, m.label]), S.mode, id => { S.mode = id; S.anim = {}; setup(); });
+  (SIM.opts || []).filter(o => !o.modes || o.modes.includes(S.mode)).forEach(o => {
+    if (!(o.id in S.opt)) S.opt[o.id] = o.choices[0][0];
+    group(o.label, o.choices, S.opt[o.id], id => { S.opt[o.id] = id; S.anim = {}; setup(); });
+  });
+  b.appendChild(tip);
+  if (b.scrollWidth > b.clientWidth + 1) tip.remove();
+  if (b.scrollWidth > b.clientWidth + 1) b.querySelectorAll('.seg button').forEach(x => { x.style.fontSize = '13px'; x.style.padding = '6px 8px'; });
+}
+
+function setup(){
+  bar();
+  S.ivs = SIM.ivs(S.mode, S.opt); S.def = {}; S.v = {};
+  S.ivs.forEach(d => { S.def[d.id] = d; const k = S.mode + ':' + d.id; S.v[d.id] = (k in S.store) ? S.store[k] : d.val; });
+  if (!S.gx || !S.def[S.gx]) S.gx = S.ivs.find(d => d.graph) ? S.ivs.find(d => d.graph).id : S.ivs[1] ? S.ivs[1].id : S.ivs[0].id;
+  const c = $('ctl'); c.innerHTML = '';
+  S.ivs.forEach(d => {
+    const w = document.createElement('div'); w.className = 'iv';
+    w.innerHTML = '<input type="radio" name="gx" value="' + d.id + '" aria-label="Graph against ' + d.label + '" title="Put this on the graph’s x-axis"' + (S.gx === d.id ? ' checked' : '') + '>' +
+      '<span class="nm">' + d.label + ' <i>' + d.sym + '</i></span><span class="val" id="val-' + d.id + '"></span>' +
+      '<input type="range" id="r-' + d.id + '" min="' + d.min + '" max="' + d.max + '" step="' + d.step + '" value="' + S.v[d.id] + '" aria-label="' + d.label + '">';
+    c.appendChild(w);
+    const r = w.querySelector('input[type=range]');
+    r.oninput = () => { S.v[d.id] = +r.value; S.store[S.mode + ':' + d.id] = +r.value; S.hot = d.id; clearTimeout(S.hotT); S.hotT = setTimeout(() => { S.hot = null; update(); }, 700); S.anim.reset = true; update(); };
+    w.querySelector('input[type=radio]').onchange = () => { S.gx = d.id; update(); };
+  });
+  if (SIM.presets){
+    const p = document.createElement('div'); p.id = 'presets'; p.innerHTML = '<span class="lab">Try:</span>';
+    SIM.presets.forEach(ps => { const bt = document.createElement('button'); bt.textContent = ps.label; bt.onclick = () => { if (ps.mode && ps.mode !== S.mode){ S.mode = ps.mode; } Object.entries(ps.v).forEach(([k, val]) => S.store[(ps.mode || S.mode) + ':' + k] = val); S.anim = {}; setup(); }; p.appendChild(bt); });
+    c.appendChild(p);
+  }
+  const dvs = SIM.dvs(S.mode, S.opt), sel = $('dvsel');
+  if (!S.dv || !dvs.find(d => d.id === S.dv)) S.dv = dvs[0].id;
+  sel.innerHTML = dvs.map(d => '<option value="' + d.id + '"' + (d.id === S.dv ? ' selected' : '') + '>' + d.name + '</option>').join('');
+  sel.onchange = () => { S.dv = sel.value; update(); };
+  update();
+}
+
+function calcWith(over){ const v = Object.assign({}, S.v, over || {}); return SIM.calc(v, S.mode, S.opt); }
+
+function update(){
+  S.ivs.forEach(d => { $('val-' + d.id).innerHTML = d.show ? d.show(S.v[d.id]) : fnum(S.v[d.id]) + (d.unit ? '&nbsp;' + d.unit : ''); });
+  S.d = calcWith();
+  $('work').innerHTML = '<div class="wt"><span>Show the work</span><span class="hint">' + (SIM.hint || 'g = 10 m/s²') + '</span></div>' + SIM.work(S.v, S.d, S.mode, S.opt);
+  document.querySelectorAll('input[name=gx]').forEach(r => r.checked = (r.value === S.gx));
+  graph();
+}
+
+function graph(){
+  const cv = $('gv'), g = cv.getContext('2d'), W = 340, Hh = 150; g.setTransform(2, 0, 0, 2, 0, 0); g.clearRect(0, 0, W, Hh);
+  const dvs = SIM.dvs(S.mode, S.opt), dv = dvs.find(d => d.id === S.dv), ref = dv.vs ? dvs.find(d => d.id === dv.vs) : null;
+  const x = S.def[S.gx]; $('ivname').innerHTML = '<i>' + x.sym + '</i>' + (x.unit && !x.show ? ' (' + x.unit + ')' : '');
+  const N = 160, xs = [], ys = [], rs = [];
+  for (let i = 0; i <= N; i++){ const xv = x.min + (x.max - x.min) * i / N; const d = calcWith({ [S.gx]: xv }); xs.push(xv); ys.push(dv.f(d)); rs.push(ref ? ref.f(d) : null); }
+  const all = ys.concat(ref ? rs : []).filter(isFinite);
+  let ymin = Math.min(0, ...all), ymax = Math.max(...all, 0); if (ymax === ymin) ymax = ymin + 1; const pad = (ymax - ymin) * 0.08; ymax += pad; if (ymin < 0) ymin -= pad;
+  const L = 46, R = 8, T = 8, B = 22, X = v => L + (v - x.min) / (x.max - x.min) * (W - L - R), Y = v => T + (ymax - v) / (ymax - ymin) * (Hh - T - B);
+  g.strokeStyle = '#111'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(L, T); g.lineTo(L, Hh - B); g.lineTo(W - R, Hh - B); g.stroke();
+  if (ymin < 0){ g.strokeStyle = '#999'; g.setLineDash([3, 3]); g.beginPath(); g.moveTo(L, Y(0)); g.lineTo(W - R, Y(0)); g.stroke(); g.setLineDash([]);
+    if (dv.negNote){ g.fillStyle = 'rgba(196,58,0,0.08)'; g.fillRect(L, Y(0), W - R - L, Hh - B - Y(0)); g.fillStyle = '#c43a00'; g.font = '600 10px "Space Grotesk",sans-serif'; g.textAlign = 'left'; g.fillText(dv.negNote, L + 4, Hh - B - 4); } }
+  g.font = '500 10px "IBM Plex Mono",monospace'; g.fillStyle = '#4a4a4a'; g.textAlign = 'right';
+  g.fillText(fplain(ymax), L - 4, T + 8); g.fillText(fplain(ymin < 0 ? ymin : 0), L - 4, Hh - B); if (ymin < 0) g.fillText('0', L - 4, Y(0) + 3);
+  g.textAlign = 'center'; g.fillText(fplain(x.min), L, Hh - 8); g.fillText(fplain(x.max), W - R - 10, Hh - 8);
+  g.fillText((x.symText || x.id) + (x.unit ? ' (' + x.unit + ')' : ''), (L + W) / 2, Hh - 8);
+  g.save(); g.translate(10, (T + Hh - B) / 2); g.rotate(-PI / 2); g.textAlign = 'center'; g.fillText(dv.short + (dv.unit ? ' (' + dv.unit + ')' : ''), 0, 0); g.restore();
+  const line = (arr, col, dash) => { g.strokeStyle = col; g.lineWidth = 2.2; g.setLineDash(dash || []); g.beginPath(); let on = false; arr.forEach((y, i) => { if (!isFinite(y)){ on = false; return; } const px = X(xs[i]), py = Math.max(T - 4, Math.min(Hh - B + 4, Y(y))); on ? g.lineTo(px, py) : g.moveTo(px, py); on = true; }); g.stroke(); g.setLineDash([]); };
+  if (ref){ line(rs, '#4a4a4a', [5, 4]); g.fillStyle = '#4a4a4a'; g.textAlign = 'right'; g.font = '600 10px "Space Grotesk",sans-serif'; const lastY = rs.filter(isFinite).pop(); if (isFinite(lastY)) g.fillText(ref.short, W - R - 2, Math.max(T + 9, Y(lastY) - 4)); }
+  line(ys, '#1546d6');
+  const cx = S.v[S.gx], cy = dv.f(S.d);
+  if (isFinite(cy)){ g.strokeStyle = '#ff6a2b'; g.setLineDash([2, 3]); g.lineWidth = 1; g.beginPath(); g.moveTo(X(cx), Hh - B); g.lineTo(X(cx), Y(cy)); g.lineTo(L, Y(cy)); g.stroke(); g.setLineDash([]);
+    g.fillStyle = '#ff6a2b'; g.strokeStyle = '#111'; g.lineWidth = 1.5; g.beginPath(); g.arc(X(cx), Math.max(T, Math.min(Hh - B, Y(cy))), 4.5, 0, 7); g.fill(); g.stroke(); }
+  // doubling readout
+  const d2 = calcWith({ [S.gx]: cx * 2 }), y1 = dv.f(S.d), y2 = dv.f(d2);
+  let msg = '';
+  if (cx === 0 || Math.abs(y1) < 1e-12) msg = '<span class="hint">Move off zero to see the ×2 test.</span>';
+  else if (!isFinite(y1) || !isFinite(y2)) msg = '<span class="hint">The ×2 test doesn’t apply here (doubling takes it outside what this quantity covers).</span>';
+  else {
+    const k = y2 / y1;
+    if (k < 0){ $('dbl').innerHTML = 'If <b>' + x.sym + '</b> doubles (' + fnum(cx) + ' → ' + fnum(2 * cx) + (x.unit ? ' ' + x.unit : '') + '), <b>' + dv.sym + '</b> goes from ' + fnum(y1) + ' to ' + fnum(y2) + (dv.unit ? ' ' + dv.unit : '') + ': it changes sign, so that can’t really happen.'; return; }
+    const tags = [[1, 'doesn’t depend on it'], [2, 'proportional'], [4, 'goes as the square'], [0.5, 'inversely proportional'], [0.25, 'inverse square'], [Math.SQRT2, 'goes as the square root'], [Math.SQRT1_2, 'goes as 1/√'], [8, 'goes as the cube'], [2 * Math.SQRT2, 'goes as the 3/2 power']];
+    const tag = tags.find(([v]) => Math.abs(k - v) < 0.004 * v);
+    msg = 'If <b>' + x.sym + '</b> doubles (' + fnum(cx) + ' → ' + fnum(2 * cx) + (x.unit ? ' ' + x.unit : '') + '), <b>' + dv.sym + '</b> becomes <b>×' + (Math.abs(k) >= 100 ? fnum(k) : k.toFixed(2)) + '</b>' + (tag ? ' — ' + tag[1] : '') + '.' + (dv.dblNote ? ' <span class="hint">' + dv.dblNote + '</span>' : '');
+  }
+  $('dbl').innerHTML = msg;
+}
+
+// drawing helpers (canvas is drawn in 600×330 units)
+const cv = $('cv'), ctx = cv.getContext('2d');
+function arrow(x1, y1, x2, y2, col, label, opts){
+  opts = opts || {}; const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy); if (len < 2) return;
+  const ux = dx / len, uy = dy / len, hw = opts.head || 9;
+  ctx.save(); ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = opts.w || 3.5; ctx.lineCap = 'round';
+  if (opts.dash) ctx.setLineDash(opts.dash);
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2 - ux * hw * 0.8, y2 - uy * hw * 0.8); ctx.stroke(); ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x2, y2); ctx.lineTo(x2 - ux * hw - uy * hw * 0.55, y2 - uy * hw + ux * hw * 0.55); ctx.lineTo(x2 - ux * hw + uy * hw * 0.55, y2 - uy * hw - ux * hw * 0.55); ctx.closePath(); ctx.fill();
+  if (label){ ctx.font = '700 13px "Space Grotesk",sans-serif'; ctx.textAlign = opts.align || 'left'; ctx.textBaseline = 'middle';
+    const lx = x2 + (opts.lx !== undefined ? opts.lx : (ux >= 0 ? 6 : -6)), ly = y2 + (opts.ly !== undefined ? opts.ly : (uy >= 0 ? 10 : -10));
+    if (opts.align === undefined) ctx.textAlign = ux >= -0.2 ? 'left' : 'right';
+    ctx.fillText(label, lx, ly); }
+  ctx.restore();
+}
+function text(s, x, y, o){ o = o || {}; ctx.save(); ctx.font = (o.font || '600 13px "Space Grotesk",sans-serif'); ctx.fillStyle = o.col || '#111'; ctx.textAlign = o.align || 'left'; ctx.textBaseline = o.base || 'alphabetic'; ctx.fillText(s, x, y); ctx.restore(); }
+function panelTitle(s, x, y){ text(s, x, y, { font: '700 11px "IBM Plex Mono",monospace', col: '#4a4a4a' }); }
+const COL = { F: '#c43a00', W: '#111', N: '#1e7d45', V: '#1546d6', T: '#7a3fb0', comp: '#8a8a8a' };
+
+let last = 0;
+function loop(ts){ const dt = Math.min(0.05, (ts - (last || ts)) / 1000); last = ts; S.t += dt;
+  ctx.setTransform(2, 0, 0, 2, 0, 0); ctx.clearRect(0, 0, 600, 330);
+  SIM.draw(S.v, S.d, S.mode, S.opt, S.t, dt, S.anim); S.anim.reset = false;
+  requestAnimationFrame(loop); }
+
+// ---------------- this sim ----------------
+// [IB] Real vs Ideal Gas (IB B.3): when does PV = nRT work? Compression factor Z = PV/nRT for a van der Waals gas vs pressure and temperature.
+const RG = 8.31, VDW = { N2: ['nitrogen', 0.137, 3.87e-5], CO2: ['carbon dioxide', 0.364, 4.27e-5], He: ['helium', 0.00346, 2.38e-5] };
+function vm(P, T, a, b){ // molar volume (gas-like root) for pressure P (Pa)
+  const f = V => RG * T / (V - b) - a / (V * V) - P; let hi = RG * T / P * 3 + b * 2, lo = b * 1.0001;
+  // scan down from hi for the first sign change (largest root)
+  let prev = hi, fp = f(hi); for (let i = 1; i <= 400; i++){ const V = hi * Math.pow(lo / hi, i / 400), fv = f(V); if (fp < 0 && fv >= 0 || fp >= 0 && fv < 0){ let x1 = V, x2 = prev; for (let k = 0; k < 60; k++){ const m = (x1 + x2) / 2; (f(m) < 0) === (f(x1) < 0) ? x1 = m : x2 = m; } return (x1 + x2) / 2; } prev = V; fp = fv; }
+  return NaN; }
+const SIM = {
+  title: 'Real vs Ideal Gas',
+  hint: 'Z = PV/(nRT) · Z = 1 means ideal',
+  modes: [{ id: 'z', label: 'Z vs pressure' }, { id: 'iso', label: 'Isotherm: real vs ideal' }],
+  opts: [{ id: 'gas', label: 'Gas', choices: [['N2', 'N₂'], ['CO2', 'CO₂'], ['He', 'He']] }],
+  ivs(mode){ return [
+    { id: 'T', sym: 'T', symText: 'T', label: 'Temperature', unit: 'K', min: 150, max: 800, step: 5, val: 300, graph: mode === 'z' ? false : true },
+    { id: 'P', sym: 'P', symText: 'P', label: 'Pressure', unit: 'MPa', min: 0.1, max: 40, step: 0.1, val: 10, graph: mode === 'z' }]; },
+  presets: [{ label: 'Everyday air', mode: 'z', v: { P: 0.1, T: 300 } }, { label: 'Scuba tank', mode: 'z', v: { P: 20, T: 290 } }, { label: 'Cold and squeezed', mode: 'z', v: { P: 8, T: 180 } }],
+  calc(v, mode, opt){
+    const [nm, a, b] = VDW[opt.gas || 'N2'], P = v.P * 1e6, V = vm(P, v.T, a, b), Z = P * V / (RG * v.T), Vid = RG * v.T / P;
+    return { nm, a, b, V, Z, Vid, dev: 100 * (Z - 1), rho: 1 / V };
+  },
+  dvs(){ return [{ id: 'Z', name: 'Compression factor Z = PV/nRT', short: 'Z', sym: 'Z', unit: '', f: d => d.Z }, { id: 'dev', name: 'Error if you assume ideal', short: 'error', sym: 'error', unit: '%', f: d => d.dev }]; },
+  work(v, d){
+    const ok = Math.abs(d.dev) < 5;
+    return '<h4>1 · Ideal gas model assumptions</h4><div class="eq">Molecules have <b>no volume</b> and <b>no forces</b> between them except in collisions. Then PV = nRT exactly and Z = 1.</div>' +
+      '<h4>2 · Real ' + d.nm + ' at ' + H.iv('P') + ' and ' + H.iv('T') + '</h4><div class="eq">Molar volume V<sub>m</sub> = ' + H.n(d.V * 1000, 'L/mol') + ' (ideal would be ' + H.n(d.Vid * 1000, 'L/mol') + ')</div>' +
+      '<div class="eq">Z = PV<sub>m</sub>/RT = <b>' + H.n(d.Z) + '</b> → assuming ideal is off by ' + H.n(d.dev, '%') + (ok ? ': ideal is a good model here.' : ': ideal is a poor model here.') + '</div>' +
+      '<h4>3 · Why it goes wrong</h4><div class="eq"><b>Z &lt; 1:</b> molecules attract, so they hit the walls less hard (more noticeable when slow, at low T).<br><b>Z &gt; 1:</b> molecules take up space, which matters when they’re squeezed close (high P, high density).</div>' +
+      '<p class="note">IB: an ideal gas is a good approximation at <b>low pressure, high temperature and low density</b>. Helium behaves best: tiny atoms, very weak attractions.</p>';
+  },
+  draw(v, d, mode, opt){
+    const [nm, a, b] = VDW[opt.gas || 'N2'];
+    if (mode === 'iso'){
+      panelTitle('P–V ISOTHERM AT ' + v.T + ' K (1 mol)', 10, 18);
+      const gx = 50, gy = 300, gw = 520, gh = 260, Vmin = 0.06e-3, Vmax = 1e-3, Pm = 40e6, X = V => gx + gw * (V - Vmin) / (Vmax - Vmin), Y = P => gy - gh * Math.min(1.05, P / Pm);
+      ctx.strokeStyle = '#111'; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.moveTo(gx, gy - gh); ctx.lineTo(gx, gy); ctx.lineTo(gx + gw, gy); ctx.stroke();
+      const curve = (f, col, dash) => { ctx.strokeStyle = col; ctx.lineWidth = 2.5; ctx.setLineDash(dash); ctx.beginPath(); let on = false; for (let i = 0; i <= 200; i++){ const V = Vmin + (Vmax - Vmin) * i / 200, P = f(V); if (!(P > 0) || P > Pm * 1.05){ on = false; continue; } on ? ctx.lineTo(X(V), Y(P)) : ctx.moveTo(X(V), Y(P)); on = true; } ctx.stroke(); ctx.setLineDash([]); };
+      curve(V => RG * v.T / V, '#4a4a4a', [6, 4]); curve(V => RG * v.T / (V - b) - a / (V * V), '#c43a00', []);
+      text('ideal (dashed)', gx + gw - 4, 60, { align: 'right', font: '700 12px "IBM Plex Mono",monospace', col: '#4a4a4a' }); text('real ' + nm, gx + gw - 4, 80, { align: 'right', font: '700 12px "IBM Plex Mono",monospace', col: '#c43a00' });
+      text('V (L)', gx + gw, gy + 16, { align: 'right', font: '600 10px "IBM Plex Mono",monospace', col: '#4a4a4a' }); text('P (MPa)', gx + 4, gy - gh - 6, { font: '600 10px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+      [0.2, 0.4, 0.6, 0.8, 1.0].forEach(L => text(String(L), X(L / 1000), gy + 13, { align: 'center', font: '500 9px "IBM Plex Mono",monospace', col: '#4a4a4a' })); [10, 20, 30, 40].forEach(p => text(String(p), gx - 4, Y(p * 1e6) + 3, { align: 'right', font: '500 9px "IBM Plex Mono",monospace', col: '#4a4a4a' }));
+      text('the curves match at large V (low density)', gx + gw / 2, gy - 20, { align: 'center', font: '600 11px "IBM Plex Mono",monospace', col: '#1e7d45' });
+      return;
+    }
+    panelTitle('Z = PV/nRT vs PRESSURE', 10, 18);
+    const gx = 50, gy = 300, gw = 520, gh = 260, Pm = 40, Zmin = 0.4, Zmax = 1.6, X = P => gx + gw * P / Pm, Y = Z => gy - gh * (Z - Zmin) / (Zmax - Zmin);
+    ctx.strokeStyle = '#111'; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.moveTo(gx, gy - gh); ctx.lineTo(gx, gy); ctx.lineTo(gx + gw, gy); ctx.stroke();
+    ctx.setLineDash([6, 4]); ctx.strokeStyle = '#4a4a4a'; ctx.beginPath(); ctx.moveTo(gx, Y(1)); ctx.lineTo(gx + gw, Y(1)); ctx.stroke(); ctx.setLineDash([]); text('ideal: Z = 1', gx + gw - 4, Y(1) - 6, { align: 'right', font: '700 11px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+    [[v.T, '#c43a00', 3], [v.T * 2 > 800 ? null : v.T * 2, '#ff9a6b', 1.8], [v.T / 2 < 150 ? null : v.T / 2, '#7a3fb0', 1.8]].forEach(([TT, col, w]) => { if (!TT) return; ctx.strokeStyle = col; ctx.lineWidth = w; ctx.beginPath(); let on = false; for (let i = 1; i <= 160; i++){ const P = Pm * i / 160, V = vm(P * 1e6, TT, a, b), Z = P * 1e6 * V / (RG * TT); if (!isFinite(Z)){ on = false; continue; } const y = Math.max(gy - gh, Math.min(gy, Y(Z))); on ? ctx.lineTo(X(P), y) : ctx.moveTo(X(P), y); on = true; } ctx.stroke(); text(TT + ' K', X(Pm) - 4, Math.max(gy - gh + 10, Math.min(gy - 4, Y(Pm * 1e6 * vm(Pm * 1e6, TT, a, b) / (RG * TT)) - 6)), { align: 'right', font: '700 10px "IBM Plex Mono",monospace', col }); });
+    ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(X(v.P), Math.max(gy - gh, Math.min(gy, Y(d.Z))), 6, 0, 7); ctx.fill();
+    [0, 10, 20, 30, 40].forEach(p => text(String(p), X(p), gy + 13, { align: 'center', font: '500 9px "IBM Plex Mono",monospace', col: '#4a4a4a' })); [0.6, 1, 1.4].forEach(z => text(String(z), gx - 4, Y(z) + 3, { align: 'right', font: '500 9px "IBM Plex Mono",monospace', col: '#4a4a4a' }));
+    text('P (MPa) · 1 atm ≈ 0.1 MPa', gx + gw, gy + 26, { align: 'right', font: '600 10px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+    text(nm + ': Z = ' + fplain(d.Z), gx + 10, gy - gh + 14, { font: '700 14px "Space Grotesk",sans-serif' });
+  }
+};
+
+
+S.mode = SIM.modes ? SIM.modes[0].id : 'one';
+setup(); requestAnimationFrame(loop);
+</script>
+</body></html>
