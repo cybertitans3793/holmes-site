@@ -82,13 +82,13 @@ const SIM = {
       return;
     }
     panelTitle('TOP VIEW: CLAY HITS A DOOR AND STICKS', 10, 18);
-    const hx = 60, hy = 80, sc = 240, cyc = 4, tt = A.t % cyc, tH = 1, a = tt < tH ? 0 : Math.min(d.w * (tt - tH), 1.4);
+    const hx = 60, hy = 230, sc = 240, cyc = 4, tt = A.t % cyc, tH = 1, a = tt < tH ? 0 : Math.min(d.w * (tt - tH), 0.8);
     ctx.fillStyle = '#bbb'; ctx.fillRect(hx - 30, hy - 10, 30, 20);
-    ctx.save(); ctx.translate(hx, hy); ctx.rotate(a); ctx.fillStyle = '#c98a3c'; ctx.strokeStyle = '#111'; ctx.lineWidth = 1.5; ctx.fillRect(0, -6, sc, 12); ctx.strokeRect(0, -6, sc, 12);
+    ctx.save(); ctx.translate(hx, hy); ctx.rotate(-a); ctx.fillStyle = '#c98a3c'; ctx.strokeStyle = '#111'; ctx.lineWidth = 1.5; ctx.fillRect(0, -6, sc, 12); ctx.strokeRect(0, -6, sc, 12);
     if (tt >= tH){ ctx.fillStyle = '#7a3fb0'; ctx.beginPath(); ctx.arc(v.r * sc, 10, 6, 0, 7); ctx.fill(); }
     ctx.restore(); ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(hx, hy, 5, 0, 7); ctx.fill();
-    if (tt < tH){ const cy = hy + 16 + (tH - tt) * 160; ctx.fillStyle = '#7a3fb0'; ctx.beginPath(); ctx.arc(hx + v.r * sc, cy, 6, 0, 7); ctx.fill(); arrow(hx + v.r * sc + 14, cy + 10, hx + v.r * sc + 14, cy - 20, COL.V, 'v', { w: 2.5, head: 7 }); }
-    ctx.setLineDash([3, 3]); ctx.strokeStyle = '#888'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(hx, hy + 30); ctx.lineTo(hx + v.r * sc, hy + 30); ctx.stroke(); ctx.setLineDash([]); text('r = ' + fplain(v.r) + ' m', hx + v.r * sc / 2, hy + 44, { align: 'center', font: '600 10px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+    if (tt < tH){ const cy = hy + 16 + (tH - tt) * 90; ctx.fillStyle = '#7a3fb0'; ctx.beginPath(); ctx.arc(hx + v.r * sc, cy, 6, 0, 7); ctx.fill(); arrow(hx + v.r * sc + 14, cy + 10, hx + v.r * sc + 14, cy - 20, COL.V, 'v', { w: 2.5, head: 7 }); }
+    ctx.setLineDash([3, 3]); ctx.strokeStyle = '#888'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(hx, hy - 24); ctx.lineTo(hx + v.r * sc, hy - 24); ctx.stroke(); ctx.setLineDash([]); text('r = ' + fplain(v.r) + ' m', hx + v.r * sc / 2, hy - 30, { align: 'center', font: '600 10px "IBM Plex Mono",monospace', col: '#4a4a4a' });
     text('ω after = ' + fplain(d.w) + ' rad/s', 12, 300, { font: '700 13px "Space Grotesk",sans-serif' });
     lbar([['L before', d.L, '#111'], ['L after', d.Lf, '#111']], 'ANGULAR MOMENTUM (same)', 18);
     lbar([['K before', d.K1, '#ff6a2b'], ['K after', d.K2, '#ff6a2b']], 'KINETIC ENERGY (mostly lost)', 110);
