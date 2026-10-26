@@ -76,6 +76,7 @@ SIMS = {
     'heatcurve': {'file': 'units/sims/circ-heatcurve.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'realgas': {'file': 'units/sims/circ-realgas.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'phetT':   {'file': 'units/sims/phet-thermo.html', 'kind': 'plain', 'ar': '16 / 10', 'credit': 'Gas Properties, States of Matter and Energy Forms and Changes: ' + PHET},
+    'engine':  {'file': 'units/sims/circ-engine.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Heat Engines is original.'},
     'lum':     {'file': 'units/sims/circ-lum.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Luminosity &amp; Brightness is original.'},
     'graph':   {'file': 'units/sims/graphmaker.html', 'kind': 'plain', 'ar': '1000 / 880', 'credit': ''},
     'scatter': {'file': 'units/sims/circ-scatter.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
@@ -474,6 +475,13 @@ UNITS = {
         'Show that the net work equals the area inside the loop. Why is ΣΔU = 0 for a whole cycle?',
         'Run the cycle counter-clockwise. What changes? What kind of device is that?',
         '<span style="color:#7a3fb0">IB HL</span>: find the efficiency and compare it with the Carnot limit.']},
+    {'code': '', 'name': 'Heat Engines', 'sim': 'engine', 'tasks': [
+        '<b>Steam engine.</b> Watch one revolution. On the indicator diagram, find admission, expansion and exhaust. Which part does the most work?',
+        'Compare the sim with the class steam engine. Where does the heat come in, where does work come out, and where does the rest of the energy go?',
+        'Use <b>Add a condenser</b>. Why does lowering the exhaust pressure raise both the work and the efficiency?',
+        'Use <b>Early cutoff</b> with no condenser. Why does the loop cross itself? What does that part of the loop mean?',
+        '<b>Energy flow.</b> Explain why an engine must give out some heat Q<sub>c</sub>. What would ΔS be if it didn’t?',
+        '<span style="color:#7a3fb0">IB HL</span>: <b>Carnot cycle.</b> Show that changing the expansion ratio changes the work but not the efficiency.']},
     {'code': '', 'name': 'Mixing & Calorimetry', 'sim': 'calor', 'tasks': [
         'Drop hot aluminum into water. Why does the water warm only a little? Predict T<sub>f</sub> for copper, then check.',
         'Use the measured T<sub>f</sub> to find c of the metal. Then add a real cup. Is the c you find too high or too low? Why?',

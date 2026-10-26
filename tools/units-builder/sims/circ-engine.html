@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Heat Engines</title>
+<!-- Heat Engines: original Holmes Sims, built from frame.html + engine.js. g = 10 m/s². -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@500;700&display=swap">
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#fff;font-family:"Space Grotesk",system-ui,sans-serif;color:#111}
+#app{position:absolute;left:0;top:0;width:1000px;height:640px;transform-origin:0 0;padding:10px 14px 12px;box-sizing:border-box;
+  display:grid;grid-template-columns:600px 1fr;grid-template-rows:34px 330px 1fr;gap:10px 14px}
+#bar{grid-column:1/-1;display:flex;gap:16px;align-items:center;flex-wrap:nowrap;overflow:hidden}
+.seg{display:flex;align-items:center}
+.seg .lab{font:700 12px "IBM Plex Mono",monospace;margin-right:8px;text-transform:uppercase}
+.seg button{white-space:nowrap;font:700 14px "Space Grotesk",sans-serif;padding:6px 11px;border:2px solid #111;background:#fff;color:#111;cursor:pointer}
+.seg button+button{margin-left:-2px}
+.seg button[aria-pressed="true"]{background:#111;color:#fff}
+.seg button:hover:not([aria-pressed="true"]){background:#ffe2d3}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #ff6a2b;outline-offset:2px;position:relative;z-index:1}
+#cv{border:2px solid #111;background:#fbfbfb;width:600px;height:330px;box-sizing:border-box;display:block}
+#work{border:2px solid #111;padding:8px 12px 10px;overflow:auto;font-size:14px;line-height:1.55;box-sizing:border-box}
+#work .wt{font:700 12px "IBM Plex Mono",monospace;text-transform:uppercase;margin:0 0 4px;display:flex;justify-content:space-between}
+#work h4{margin:9px 0 1px;font-size:13px;font-weight:700;color:#4a4a4a}
+#work h4:first-of-type{margin-top:2px}
+#work .eq{font-variant-numeric:tabular-nums}
+#work .n{font-family:"IBM Plex Mono",monospace;font-size:13px}
+#work b .n,#work .ans{font-weight:700}
+#work .note{font-size:12.5px;color:#4a4a4a;margin:2px 0 0}
+#work .ok{background:#e5f4ea;border-left:4px solid #1e7d45;padding:3px 8px;margin-top:4px}
+#work .bad{background:#fde7df;border-left:4px solid #c43a00;padding:3px 8px;margin-top:4px}
+.ivv{border-radius:2px;padding:0 2px;transition:background .25s}
+.ivv.gx{background:#ffe2d3}
+.ivv.hot{background:#ff6a2b;color:#fff}
+#ctl{display:grid;grid-template-columns:1fr 1fr;gap:4px 18px;align-content:start}
+.iv{display:grid;grid-template-columns:auto 1fr auto;align-items:center;column-gap:6px}
+.iv .nm{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iv .val{font:700 13px "IBM Plex Mono",monospace;white-space:nowrap}
+.iv input[type=range]{grid-column:1/-1;width:100%;margin:0;accent-color:#111;height:22px}
+.iv input[type=radio]{accent-color:#ff6a2b;margin:0}
+#presets{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:2px}
+#presets .lab{font:700 12px "IBM Plex Mono",monospace}
+#presets button{font:600 12.5px "Space Grotesk",sans-serif;padding:3px 8px;border:2px solid #111;background:#fff;cursor:pointer}
+#presets button:hover{background:#ffe2d3}
+#gcard{border:2px solid #111;padding:5px 8px 6px;display:flex;flex-direction:column;box-sizing:border-box;min-height:0}
+.ghead{display:flex;align-items:center;gap:6px;font-size:13px;white-space:nowrap}
+.ghead select{font:600 13px "Space Grotesk",sans-serif;border:2px solid #111;padding:1px 4px;max-width:200px}
+#gv{width:340px;height:150px;flex:none;display:block;margin-top:3px}
+#dbl{font-size:12.5px;line-height:1.35;margin-top:2px}
+#dbl b{font-weight:700}
+.hint{font:500 11px "IBM Plex Mono",monospace;color:#4a4a4a}
+</style></head><body>
+<div id="app">
+  <div id="bar"></div>
+  <canvas id="cv" width="1200" height="660" aria-label="Animation of the situation with force arrows"></canvas>
+  <div id="work" aria-live="polite"></div>
+  <div id="ctl"></div>
+  <div id="gcard">
+    <div class="ghead"><span>Graph</span><select id="dvsel" aria-label="Quantity to graph"></select><span>vs <b id="ivname"></b></span></div>
+    <canvas id="gv" width="680" height="300" aria-label="Graph of the chosen quantity against the chosen variable"></canvas>
+    <div id="dbl"></div>
+  </div>
+</div>
+<script>
+// ---------------- shared frame ----------------
+const $ = id => document.getElementById(id);
+const G10 = 10, PI = Math.PI, DEG = PI / 180;
+function fit(){ const s = Math.min(innerWidth / 1000, innerHeight / 640); $('app').style.transform = 'scale(' + s + ')'; }
+addEventListener('resize', fit); fit();
+
+function fnum(x){ const r = fnum0(x); return typeof r === 'string' ? r.replace(/^-/, '−') : r; }
+function fnum0(x){
+  if (x === null || x === undefined || !isFinite(x)) return '—';
+  const a = Math.abs(x);
+  if (a === 0) return '0';
+  if (a >= 1e5 || a < 1e-3){
+    const e = Math.floor(Math.log10(a)); let m = x / Math.pow(10, e);
+    let ms = m.toFixed(2); if (Math.abs(+ms) >= 10){ m /= 10; ms = m.toFixed(2); return ms + '×10<sup>' + (e + 1) + '</sup>'; }
+    return ms + '×10<sup>' + e + '</sup>';
+  }
+  if (a >= 1000) return String(Math.round(x));
+  return x.toPrecision(3);
+}
+function fplain(x){ return fnum(x).replace(/<sup>(.*?)<\/sup>/g, (m, e) => '^' + e).replace('×10^', 'e'); }
+const H = {
+  n: (x, u) => '<span class="n">' + fnum(x) + (u ? '&nbsp;' + u : '') + '</span>',
+  iv: id => { const d = S.def[id]; const val = S.v[id]; const txt = (d.show ? d.show(val) : fnum(val) + (d.unit ? '&nbsp;' + d.unit : ''));
+              return '<span class="ivv n' + (S.gx === id ? ' gx' : '') + (S.hot === id ? ' hot' : '') + '" data-iv="' + id + '">' + txt + '</span>'; },
+  g: () => '<span class="n">10&nbsp;m/s²</span>',
+  p: (x, u) => x < 0 ? '(' + H.n(x, u) + ')' : H.n(x, u)
+};
+
+const S = { mode: null, opt: {}, v: {}, store: {}, def: {}, ivs: [], gx: null, dv: null, hot: null, t: 0, anim: {} };
+
+function bar(){
+  const b = $('bar'); b.innerHTML = '';
+  const group = (label, items, cur, onpick) => {
+    const g = document.createElement('div'); g.className = 'seg'; g.setAttribute('role', 'group');
+    if (label){ const l = document.createElement('span'); l.className = 'lab'; l.textContent = label; g.appendChild(l); }
+    items.forEach(([id, txt]) => { const bt = document.createElement('button'); bt.textContent = txt; bt.setAttribute('aria-pressed', String(id === cur)); bt.onclick = () => onpick(id); g.appendChild(bt); });
+    b.appendChild(g);
+  };
+  const tip = document.createElement('span'); tip.className = 'hint'; tip.style.marginLeft = 'auto'; tip.style.whiteSpace = 'nowrap'; tip.innerHTML = '● = the variable on the graph’s x-axis · drag any slider';
+  if (SIM.modes) group(null, SIM.modes.map(m => [m.id, m.label]), S.mode, id => { S.mode = id; S.anim = {}; setup(); });
+  (SIM.opts || []).filter(o => !o.modes || o.modes.includes(S.mode)).forEach(o => {
+    if (!(o.id in S.opt)) S.opt[o.id] = o.choices[0][0];
+    group(o.label, o.choices, S.opt[o.id], id => { S.opt[o.id] = id; S.anim = {}; setup(); });
+  });
+  b.appendChild(tip);
+  if (b.scrollWidth > b.clientWidth + 1) tip.remove();
+  if (b.scrollWidth > b.clientWidth + 1) b.querySelectorAll('.seg button').forEach(x => { x.style.fontSize = '13px'; x.style.padding = '6px 8px'; });
+}
+
+function setup(){
+  bar();
+  S.ivs = SIM.ivs(S.mode, S.opt); S.def = {}; S.v = {};
+  S.ivs.forEach(d => { S.def[d.id] = d; const k = S.mode + ':' + d.id; S.v[d.id] = (k in S.store) ? S.store[k] : d.val; });
+  if (!S.gx || !S.def[S.gx]) S.gx = S.ivs.find(d => d.graph) ? S.ivs.find(d => d.graph).id : S.ivs[1] ? S.ivs[1].id : S.ivs[0].id;
+  const c = $('ctl'); c.innerHTML = '';
+  S.ivs.forEach(d => {
+    const w = document.createElement('div'); w.className = 'iv';
+    w.innerHTML = '<input type="radio" name="gx" value="' + d.id + '" aria-label="Graph against ' + d.label + '" title="Put this on the graph’s x-axis"' + (S.gx === d.id ? ' checked' : '') + '>' +
+      '<span class="nm">' + d.label + ' <i>' + d.sym + '</i></span><span class="val" id="val-' + d.id + '"></span>' +
+      '<input type="range" id="r-' + d.id + '" min="' + d.min + '" max="' + d.max + '" step="' + d.step + '" value="' + S.v[d.id] + '" aria-label="' + d.label + '">';
+    c.appendChild(w);
+    const r = w.querySelector('input[type=range]');
+    r.oninput = () => { S.v[d.id] = +r.value; S.store[S.mode + ':' + d.id] = +r.value; S.hot = d.id; clearTimeout(S.hotT); S.hotT = setTimeout(() => { S.hot = null; update(); }, 700); S.anim.reset = true; update(); };
+    w.querySelector('input[type=radio]').onchange = () => { S.gx = d.id; update(); };
+  });
+  if (SIM.presets){
+    const p = document.createElement('div'); p.id = 'presets'; p.innerHTML = '<span class="lab">Try:</span>';
+    SIM.presets.forEach(ps => { const bt = document.createElement('button'); bt.textContent = ps.label; bt.onclick = () => { if (ps.mode && ps.mode !== S.mode){ S.mode = ps.mode; } Object.entries(ps.v).forEach(([k, val]) => S.store[(ps.mode || S.mode) + ':' + k] = val); S.anim = {}; setup(); }; p.appendChild(bt); });
+    c.appendChild(p);
+  }
+  const dvs = SIM.dvs(S.mode, S.opt), sel = $('dvsel');
+  if (!S.dv || !dvs.find(d => d.id === S.dv)) S.dv = dvs[0].id;
+  sel.innerHTML = dvs.map(d => '<option value="' + d.id + '"' + (d.id === S.dv ? ' selected' : '') + '>' + d.name + '</option>').join('');
+  sel.onchange = () => { S.dv = sel.value; update(); };
+  update();
+}
+
+function calcWith(over){ const v = Object.assign({}, S.v, over || {}); return SIM.calc(v, S.mode, S.opt); }
+
+function update(){
+  S.ivs.forEach(d => { $('val-' + d.id).innerHTML = d.show ? d.show(S.v[d.id]) : fnum(S.v[d.id]) + (d.unit ? '&nbsp;' + d.unit : ''); });
+  S.d = calcWith();
+  $('work').innerHTML = '<div class="wt"><span>Show the work</span><span class="hint">' + (SIM.hint || 'g = 10 m/s²') + '</span></div>' + SIM.work(S.v, S.d, S.mode, S.opt);
+  document.querySelectorAll('input[name=gx]').forEach(r => r.checked = (r.value === S.gx));
+  graph();
+}
+
+function graph(){
+  const cv = $('gv'), g = cv.getContext('2d'), W = 340, Hh = 150; g.setTransform(2, 0, 0, 2, 0, 0); g.clearRect(0, 0, W, Hh);
+  const dvs = SIM.dvs(S.mode, S.opt), dv = dvs.find(d => d.id === S.dv), ref = dv.vs ? dvs.find(d => d.id === dv.vs) : null;
+  const x = S.def[S.gx]; $('ivname').innerHTML = '<i>' + x.sym + '</i>' + (x.unit && !x.show ? ' (' + x.unit + ')' : '');
+  const N = 160, xs = [], ys = [], rs = [];
+  for (let i = 0; i <= N; i++){ const xv = x.min + (x.max - x.min) * i / N; const d = calcWith({ [S.gx]: xv }); xs.push(xv); ys.push(dv.f(d)); rs.push(ref ? ref.f(d) : null); }
+  const all = ys.concat(ref ? rs : []).filter(isFinite);
+  let ymin = Math.min(0, ...all), ymax = Math.max(...all, 0); if (ymax === ymin) ymax = ymin + 1; const pad = (ymax - ymin) * 0.08; ymax += pad; if (ymin < 0) ymin -= pad;
+  const L = 46, R = 8, T = 8, B = 22, X = v => L + (v - x.min) / (x.max - x.min) * (W - L - R), Y = v => T + (ymax - v) / (ymax - ymin) * (Hh - T - B);
+  g.strokeStyle = '#111'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(L, T); g.lineTo(L, Hh - B); g.lineTo(W - R, Hh - B); g.stroke();
+  if (ymin < 0){ g.strokeStyle = '#999'; g.setLineDash([3, 3]); g.beginPath(); g.moveTo(L, Y(0)); g.lineTo(W - R, Y(0)); g.stroke(); g.setLineDash([]);
+    if (dv.negNote){ g.fillStyle = 'rgba(196,58,0,0.08)'; g.fillRect(L, Y(0), W - R - L, Hh - B - Y(0)); g.fillStyle = '#c43a00'; g.font = '600 10px "Space Grotesk",sans-serif'; g.textAlign = 'left'; g.fillText(dv.negNote, L + 4, Hh - B - 4); } }
+  g.font = '500 10px "IBM Plex Mono",monospace'; g.fillStyle = '#4a4a4a'; g.textAlign = 'right';
+  g.fillText(fplain(ymax), L - 4, T + 8); g.fillText(fplain(ymin < 0 ? ymin : 0), L - 4, Hh - B); if (ymin < 0) g.fillText('0', L - 4, Y(0) + 3);
+  g.textAlign = 'center'; g.fillText(fplain(x.min), L, Hh - 8); g.fillText(fplain(x.max), W - R - 10, Hh - 8);
+  g.fillText((x.symText || x.id) + (x.unit ? ' (' + x.unit + ')' : ''), (L + W) / 2, Hh - 8);
+  g.save(); g.translate(10, (T + Hh - B) / 2); g.rotate(-PI / 2); g.textAlign = 'center'; g.fillText(dv.short + (dv.unit ? ' (' + dv.unit + ')' : ''), 0, 0); g.restore();
+  const line = (arr, col, dash) => { g.strokeStyle = col; g.lineWidth = 2.2; g.setLineDash(dash || []); g.beginPath(); let on = false; arr.forEach((y, i) => { if (!isFinite(y)){ on = false; return; } const px = X(xs[i]), py = Math.max(T - 4, Math.min(Hh - B + 4, Y(y))); on ? g.lineTo(px, py) : g.moveTo(px, py); on = true; }); g.stroke(); g.setLineDash([]); };
+  if (ref){ line(rs, '#4a4a4a', [5, 4]); g.fillStyle = '#4a4a4a'; g.textAlign = 'right'; g.font = '600 10px "Space Grotesk",sans-serif'; const lastY = rs.filter(isFinite).pop(); if (isFinite(lastY)) g.fillText(ref.short, W - R - 2, Math.max(T + 9, Y(lastY) - 4)); }
+  line(ys, '#1546d6');
+  const cx = S.v[S.gx], cy = dv.f(S.d);
+  if (isFinite(cy)){ g.strokeStyle = '#ff6a2b'; g.setLineDash([2, 3]); g.lineWidth = 1; g.beginPath(); g.moveTo(X(cx), Hh - B); g.lineTo(X(cx), Y(cy)); g.lineTo(L, Y(cy)); g.stroke(); g.setLineDash([]);
+    g.fillStyle = '#ff6a2b'; g.strokeStyle = '#111'; g.lineWidth = 1.5; g.beginPath(); g.arc(X(cx), Math.max(T, Math.min(Hh - B, Y(cy))), 4.5, 0, 7); g.fill(); g.stroke(); }
+  // doubling readout
+  const d2 = calcWith({ [S.gx]: cx * 2 }), y1 = dv.f(S.d), y2 = dv.f(d2);
+  let msg = '';
+  if (cx === 0 || Math.abs(y1) < 1e-12) msg = '<span class="hint">Move off zero to see the ×2 test.</span>';
+  else if (!isFinite(y1) || !isFinite(y2)) msg = '<span class="hint">The ×2 test doesn’t apply here (doubling takes it outside what this quantity covers).</span>';
+  else {
+    const k = y2 / y1;
+    if (k < 0){ $('dbl').innerHTML = 'If <b>' + x.sym + '</b> doubles (' + fnum(cx) + ' → ' + fnum(2 * cx) + (x.unit ? ' ' + x.unit : '') + '), <b>' + dv.sym + '</b> goes from ' + fnum(y1) + ' to ' + fnum(y2) + (dv.unit ? ' ' + dv.unit : '') + ': it changes sign, so that can’t really happen.'; return; }
+    const tags = [[1, 'doesn’t depend on it'], [2, 'proportional'], [4, 'goes as the square'], [0.5, 'inversely proportional'], [0.25, 'inverse square'], [Math.SQRT2, 'goes as the square root'], [Math.SQRT1_2, 'goes as 1/√'], [8, 'goes as the cube'], [2 * Math.SQRT2, 'goes as the 3/2 power']];
+    const tag = tags.find(([v]) => Math.abs(k - v) < 0.004 * v);
+    msg = 'If <b>' + x.sym + '</b> doubles (' + fnum(cx) + ' → ' + fnum(2 * cx) + (x.unit ? ' ' + x.unit : '') + '), <b>' + dv.sym + '</b> becomes <b>×' + (Math.abs(k) >= 100 ? fnum(k) : k.toFixed(2)) + '</b>' + (tag ? ' — ' + tag[1] : '') + '.' + (dv.dblNote ? ' <span class="hint">' + dv.dblNote + '</span>' : '');
+  }
+  $('dbl').innerHTML = msg;
+}
+
+// drawing helpers (canvas is drawn in 600×330 units)
+const cv = $('cv'), ctx = cv.getContext('2d');
+function arrow(x1, y1, x2, y2, col, label, opts){
+  opts = opts || {}; const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy); if (len < 2) return;
+  const ux = dx / len, uy = dy / len, hw = opts.head || 9;
+  ctx.save(); ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = opts.w || 3.5; ctx.lineCap = 'round';
+  if (opts.dash) ctx.setLineDash(opts.dash);
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2 - ux * hw * 0.8, y2 - uy * hw * 0.8); ctx.stroke(); ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x2, y2); ctx.lineTo(x2 - ux * hw - uy * hw * 0.55, y2 - uy * hw + ux * hw * 0.55); ctx.lineTo(x2 - ux * hw + uy * hw * 0.55, y2 - uy * hw - ux * hw * 0.55); ctx.closePath(); ctx.fill();
+  if (label){ ctx.font = '700 13px "Space Grotesk",sans-serif'; ctx.textAlign = opts.align || 'left'; ctx.textBaseline = 'middle';
+    const lx = x2 + (opts.lx !== undefined ? opts.lx : (ux >= 0 ? 6 : -6)), ly = y2 + (opts.ly !== undefined ? opts.ly : (uy >= 0 ? 10 : -10));
+    if (opts.align === undefined) ctx.textAlign = ux >= -0.2 ? 'left' : 'right';
+    ctx.fillText(label, lx, ly); }
+  ctx.restore();
+}
+function text(s, x, y, o){ o = o || {}; ctx.save(); ctx.font = (o.font || '600 13px "Space Grotesk",sans-serif'); ctx.fillStyle = o.col || '#111'; ctx.textAlign = o.align || 'left'; ctx.textBaseline = o.base || 'alphabetic'; ctx.fillText(s, x, y); ctx.restore(); }
+function panelTitle(s, x, y){ text(s, x, y, { font: '700 11px "IBM Plex Mono",monospace', col: '#4a4a4a' }); }
+const COL = { F: '#c43a00', W: '#111', N: '#1e7d45', V: '#1546d6', T: '#7a3fb0', comp: '#8a8a8a' };
+
+let last = 0;
+function loop(ts){ const dt = Math.min(0.05, (ts - (last || ts)) / 1000); last = ts; S.t += dt;
+  ctx.setTransform(2, 0, 0, 2, 0, 0); ctx.clearRect(0, 0, 600, 330);
+  SIM.draw(S.v, S.d, S.mode, S.opt, S.t, dt, S.anim); S.anim.reset = false;
+  requestAnimationFrame(loop); }
+
+// ---------------- this sim ----------------
+// Heat Engines (AP 9.4/9.6 context; IB HL B.4): a steam engine with its indicator (P–V) diagram, the energy-flow picture for engines and fridges, and the Carnot cycle.
+const RG = 8.31, MW = 0.018, LV = 2.26e6;
+function tsat(PkPa){ return 1 / (1 / 373 - (RG / (MW * LV)) * Math.log(PkPa / 101)); }   // boiling point of water at pressure P (Clausius–Clapeyron)
+const SIM = {
+  title: 'Heat Engines',
+  hint: 'kPa × L = J · steam treated as an ideal gas',
+  modes: [{ id: 'steam', label: 'Steam engine' }, { id: 'flow', label: 'Energy flow' }, { id: 'carnot', label: 'Carnot cycle (IB HL)' }],
+  opts: [{ id: 'dev', label: 'Device', modes: ['flow'], choices: [['eng', 'Engine'], ['fridge', 'Fridge / heat pump']] }],
+  ivs(mode){
+    if (mode === 'flow') return [
+      { id: 'Th', sym: 'T<sub>h</sub>', symText: 'Th', label: 'Hot reservoir', unit: 'K', min: 310, max: 1500, step: 10, val: 800 },
+      { id: 'Tc', sym: 'T<sub>c</sub>', symText: 'Tc', label: 'Cold reservoir', unit: 'K', min: 250, max: 300, step: 5, val: 300 },
+      { id: 'Q', sym: 'Q', symText: 'Q', label: 'Heat in (engine) or heat removed (fridge)', unit: 'J', min: 100, max: 5000, step: 50, val: 1000 },
+      { id: 'f', sym: 'f', symText: 'f', label: 'How close to the Carnot limit', unit: '%', min: 5, max: 100, step: 1, val: 50, graph: true }];
+    if (mode === 'carnot') return [
+      { id: 'Th', sym: 'T<sub>h</sub>', symText: 'Th', label: 'Hot reservoir', unit: 'K', min: 350, max: 900, step: 10, val: 600 },
+      { id: 'Tc', sym: 'T<sub>c</sub>', symText: 'Tc', label: 'Cold reservoir', unit: 'K', min: 200, max: 340, step: 5, val: 300, graph: true },
+      { id: 'r', sym: 'V<sub>B</sub>/V<sub>A</sub>', symText: 'VB/VA', label: 'Isothermal expansion ratio', unit: '', min: 1.3, max: 3, step: 0.05, val: 2 }];
+    return [
+      { id: 'Pb', sym: 'P<sub>boiler</sub>', symText: 'Pboiler', label: 'Boiler pressure (absolute)', unit: 'kPa', min: 150, max: 1500, step: 10, val: 400, graph: true },
+      { id: 'cut', sym: 'cutoff', symText: 'cutoff', label: 'Valve closes at this fraction of the stroke', unit: '%', min: 10, max: 100, step: 1, val: 40 },
+      { id: 'Pe', sym: 'P<sub>exhaust</sub>', symText: 'Pexhaust', label: 'Exhaust pressure (101 = open air, lower = condenser)', unit: 'kPa', min: 10, max: 101, step: 1, val: 101 },
+      { id: 'Vs', sym: 'V<sub>s</sub>', symText: 'Vs', label: 'Swept volume of the cylinder', unit: 'cm³', min: 1, max: 500, step: 1, val: 5 },
+      { id: 'rpm', sym: 'rpm', symText: 'rpm', label: 'Speed', unit: 'rev/min', min: 30, max: 1200, step: 10, val: 300 }];
+  },
+  presets: [{ label: 'Toy engine', mode: 'steam', v: { Pb: 200, cut: 60, Pe: 101, Vs: 5, rpm: 600 } }, { label: 'Add a condenser', mode: 'steam', v: { Pe: 20 } }, { label: 'Early cutoff', mode: 'steam', v: { cut: 15 } }, { label: 'Car engine', mode: 'flow', v: { Th: 1100, Tc: 300, f: 50 } }],
+  calc(v, mode, opt){
+    if (mode === 'flow'){ const eC = 1 - v.Tc / v.Th, fr = (opt.dev || 'eng') === 'fridge';
+      if (fr){ const copC = v.Tc / (v.Th - v.Tc), cop = copC * v.f / 100, W = v.Q / cop; return { fr, eC, copC, cop, Qc: v.Q, W, Qh: v.Q + W, dS: (v.Q + W) / v.Th - v.Q / v.Tc }; }
+      const eta = eC * v.f / 100, W = eta * v.Q; return { fr, eC, eta, Qh: v.Q, W, Qc: v.Q - W, dS: (v.Q - W) / v.Tc - v.Q / v.Th }; }
+    if (mode === 'carnot'){ const n = 0.1, k = Math.pow(v.Th / v.Tc, 1.5), VA = 1, VB = v.r, VC = VB * k, VD = VA * k;
+      const Qh = n * RG * v.Th * Math.log(v.r), Qc = n * RG * v.Tc * Math.log(v.r), W = Qh - Qc;
+      return { n, VA, VB, VC, VD, Qh, Qc, W, eta: W / Qh, eC: 1 - v.Tc / v.Th }; }
+    const V0 = 0.08 * v.Vs, Vc = V0 + v.cut / 100 * v.Vs, Vm = V0 + v.Vs, g = 1.3, P2 = v.Pb * Math.pow(Vc / Vm, g);
+    const Wadm = v.Pb * (Vc - V0), Wexp = (v.Pb * Vc - P2 * Vm) / (g - 1), Wex = v.Pe * (Vm - V0), W = (Wadm + Wexp - Wex) / 1000;   // kPa·cm³ → J
+    const Tb = tsat(v.Pb), Te = tsat(v.Pe), m = v.Pb * 1000 * (Vc - V0) * 1e-6 * MW / (RG * Tb), Qin = m * (LV + 4200 * (Tb - 293));
+    return { V0, Vc, Vm, P2, W, Wadm: Wadm / 1000, Wexp: Wexp / 1000, Wex: Wex / 1000, Tb, Te, m, Qin, eta: W / Qin, eC: 1 - Te / Tb, P: W * v.rpm / 60 };
+  },
+  dvs(mode){
+    if (mode === 'flow') return [{ id: 'W', name: 'Work (out for engine, in for fridge)', short: 'W', sym: 'W', unit: 'J', f: d => d.W }, { id: 'Qc', name: 'Heat to/from the cold reservoir', short: 'Q_c', sym: 'Q<sub>c</sub>', unit: 'J', f: d => d.Qc }, { id: 'dS', name: 'Entropy change of the reservoirs', short: 'ΔS', sym: 'ΔS', unit: 'J/K', f: d => d.dS }];
+    if (mode === 'carnot') return [{ id: 'eta', name: 'Carnot efficiency', short: 'η', sym: 'η', unit: '', f: d => d.eta }, { id: 'W', name: 'Net work per cycle', short: 'W', sym: 'W', unit: 'J', f: d => d.W }];
+    return [{ id: 'W', name: 'Work per stroke (area of the loop)', short: 'W', sym: 'W', unit: 'J', f: d => d.W }, { id: 'eta', name: 'Efficiency', short: 'η', sym: 'η', unit: '', f: d => d.eta, vs: 'eC' }, { id: 'eC', name: 'Carnot limit', short: 'η_C', sym: 'η<sub>C</sub>', unit: '', f: d => d.eC }, { id: 'P', name: 'Power output', short: 'P', sym: 'P', unit: 'W', f: d => d.P }];
+  },
+  work(v, d, mode){
+    if (mode === 'flow'){
+      if (d.fr) return '<h4>1 · A fridge moves heat from cold to hot, which needs work</h4><div class="eq">Q<sub>h</sub> = Q<sub>c</sub> + W (energy conservation)</div>' +
+        '<h4>2 · Best possible (Carnot) performance</h4><div class="eq">COP<sub>max</sub> = T<sub>c</sub>/(T<sub>h</sub> − T<sub>c</sub>) = ' + v.Tc + '/' + (v.Th - v.Tc) + ' = ' + H.n(d.copC) + '. This one: COP = ' + H.n(d.cop) + '</div>' +
+        '<div class="eq">W = Q<sub>c</sub>/COP = ' + H.iv('Q') + '/' + fnum(d.cop) + ' = <b>' + H.n(d.W, 'J') + '</b> → Q<sub>h</sub> = <b>' + H.n(d.Qh, 'J') + '</b> dumped into the warm room</div>' +
+        '<h4>3 · Second law check</h4><div class="eq">ΔS = Q<sub>h</sub>/T<sub>h</sub> − Q<sub>c</sub>/T<sub>c</sub> = <b>' + H.n(d.dS, 'J/K') + '</b> ≥ 0 ✓ (= 0 only at the Carnot limit)</div>' +
+        '<p class="note">Without the work input, heat would have to flow cold → hot on its own: forbidden.</p>';
+      return '<h4>1 · Energy in = energy out</h4><div class="eq">Q<sub>h</sub> = W + Q<sub>c</sub>. Some heat <i>must</i> be dumped to the cold reservoir.</div>' +
+        '<h4>2 · The Carnot limit</h4><div class="eq">η<sub>Carnot</sub> = 1 − T<sub>c</sub>/T<sub>h</sub> = 1 − ' + v.Tc + '/' + v.Th + ' = <b>' + H.n(100 * d.eC, '%') + '</b></div>' +
+        '<h4>3 · This engine</h4><div class="eq">η = ' + H.iv('f') + ' of Carnot = ' + H.n(100 * d.eta, '%') + ' → W = ηQ<sub>h</sub> = <b>' + H.n(d.W, 'J') + '</b>, Q<sub>c</sub> = <b>' + H.n(d.Qc, 'J') + '</b></div>' +
+        '<h4>4 · Second law check</h4><div class="eq">ΔS = Q<sub>c</sub>/T<sub>c</sub> − Q<sub>h</sub>/T<sub>h</sub> = <b>' + H.n(d.dS, 'J/K') + '</b> ≥ 0 ✓. At 100% of Carnot it’s exactly 0; beating Carnot would make it negative.</div>' +
+        '<p class="note">To raise the limit, make T<sub>h</sub> hotter or T<sub>c</sub> colder. That’s why power plants use superheated steam and cooling towers.</p>';
+    }
+    if (mode === 'carnot') return '<h4>1 · Four reversible steps between two reservoirs</h4><div class="eq">A→B isothermal expansion at T<sub>h</sub> (takes in Q<sub>h</sub>) · B→C adiabatic expansion (cools to T<sub>c</sub>) · C→D isothermal compression at T<sub>c</sub> (gives out Q<sub>c</sub>) · D→A adiabatic compression</div>' +
+      '<h4>2 · Heat in and out (n = 0.1 mol)</h4><div class="eq">Q<sub>h</sub> = nRT<sub>h</sub> ln(V<sub>B</sub>/V<sub>A</sub>) = ' + H.n(d.Qh, 'J') + ' &nbsp; Q<sub>c</sub> = nRT<sub>c</sub> ln(V<sub>C</sub>/V<sub>D</sub>) = ' + H.n(d.Qc, 'J') + '</div>' +
+      '<div class="eq">The adiabats make V<sub>C</sub>/V<sub>D</sub> = V<sub>B</sub>/V<sub>A</sub>, so Q<sub>c</sub>/Q<sub>h</sub> = T<sub>c</sub>/T<sub>h</sub></div>' +
+      '<h4>3 · Efficiency</h4><div class="eq">η = 1 − Q<sub>c</sub>/Q<sub>h</sub> = 1 − T<sub>c</sub>/T<sub>h</sub> = 1 − ' + v.Tc + '/' + v.Th + ' = <b>' + H.n(100 * d.eta, '%') + '</b></div>' +
+      '<p class="note">IB HL: no engine working between the same two temperatures can beat this. The expansion ratio changes the work per cycle, not the efficiency.</p>';
+    return '<h4>1 · The indicator diagram (Watt’s invention: the first P–V diagram)</h4><div class="eq"><b>Admission:</b> valve open, steam pushes at boiler pressure ' + H.iv('Pb') + ' until cutoff (' + H.iv('cut') + ' of the stroke): W = ' + H.n(d.Wadm, 'J') + '</div>' +
+      '<div class="eq"><b>Expansion:</b> valve closed, steam keeps pushing as its pressure falls to ' + H.n(d.P2, 'kPa') + ': W = ' + H.n(d.Wexp, 'J') + ' (free work from steam you already paid for)</div>' +
+      '<div class="eq"><b>Exhaust:</b> piston pushes the used steam out against ' + H.iv('Pe') + ': W = −' + H.n(d.Wex, 'J') + '</div>' +
+      '<div class="eq">Net work per stroke = area inside the loop = <b>' + H.n(d.W, 'J') + '</b> → power at ' + H.iv('rpm') + ' = <b>' + H.n(d.P, 'W') + '</b></div>' +
+      (d.P2 < v.Pe ? '<div class="bad">The steam expands below the exhaust pressure (' + fnum(d.P2) + ' &lt; ' + v.Pe + ' kPa): the end of the loop runs backward and costs work. Cutting off this early only pays with a condenser.</div>' : '') +
+      '<h4>2 · Heat in: boil the water that fills the cylinder</h4><div class="eq">Steam admitted per stroke m = PV/(RT)·M = ' + H.n(d.m * 1000, 'g') + ' at ' + H.n(d.Tb - 273, '°C') + ' → Q<sub>h</sub> = m(L<sub>v</sub> + cΔT) = ' + H.n(d.Qin, 'J') + '</div>' +
+      '<h4>3 · Efficiency vs the Carnot limit</h4><div class="eq">η = W/Q<sub>h</sub> = <b>' + H.n(100 * d.eta, '%') + '</b> &nbsp; Carnot between ' + fnum(d.Tb - 273) + ' °C and ' + fnum(d.Te - 273) + ' °C: ' + H.n(100 * d.eC, '%') + '</div>' +
+      '<p class="note">Most of the energy leaves as hot exhaust steam: you can see it puff out. Early cutoff and a condenser (low exhaust pressure) were how real engines got more efficient. Real engines also lose heat through the cylinder walls, so they do even worse than this.</p>';
+  },
+  draw(v, d, mode, opt, t, dt, A){
+    const small = (s, x, y, c) => text(s, x, y, { font: '600 10px "IBM Plex Mono",monospace', col: c || '#4a4a4a' });
+    if (mode === 'flow'){
+      panelTitle(d.fr ? 'FRIDGE / HEAT PUMP' : 'HEAT ENGINE', 10, 18);
+      ctx.fillStyle = '#ffd2c0'; ctx.fillRect(110, 30, 180, 44); ctx.fillStyle = '#d6e9ff'; ctx.fillRect(110, 256, 180, 44); ctx.strokeStyle = '#111'; ctx.lineWidth = 2; ctx.strokeRect(110, 30, 180, 44); ctx.strokeRect(110, 256, 180, 44);
+      text('HOT ' + v.Th + ' K', 200, 58, { align: 'center', font: '700 14px "Space Grotesk",sans-serif', col: '#c43a00' }); text('COLD ' + v.Tc + ' K', 200, 284, { align: 'center', font: '700 14px "Space Grotesk",sans-serif', col: '#1546d6' });
+      ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(200, 165, 40, 0, 7); ctx.fill(); ctx.stroke(); text(d.fr ? 'fridge' : 'engine', 200, 170, { align: 'center', font: '700 13px "Space Grotesk",sans-serif' });
+      const sc = 40 / Math.max(d.Qh, 1), band = (x1, y1, x2, y2, q, col) => { ctx.strokeStyle = col; ctx.lineWidth = Math.max(2, q * sc); ctx.lineCap = 'butt'; ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); };
+      if (!d.fr){ band(200, 74, 200, 125, d.Qh, '#e2492a'); band(200, 205, 200, 256, d.Qc, '#4a8fe0'); band(240, 165, 360, 165, d.W, '#1e7d45'); arrow(355, 165, 385, 165, '#1e7d45', null, { w: 3 });
+        small('Q_h = ' + fplain(d.Qh) + ' J', 210, 100, '#c43a00'); small('Q_c = ' + fplain(d.Qc) + ' J', 210, 236, '#1546d6'); small('W = ' + fplain(d.W) + ' J', 250, 140, '#1e7d45'); }
+      else { band(200, 125, 200, 74, d.Qh, '#e2492a'); band(200, 256, 200, 205, d.Qc, '#4a8fe0'); band(360, 165, 240, 165, d.W, '#1e7d45'); arrow(260, 165, 244, 165, '#1e7d45', null, { w: 3 });
+        small('Q_h = ' + fplain(d.Qh) + ' J', 210, 100, '#c43a00'); small('Q_c = ' + fplain(d.Qc) + ' J', 210, 236, '#1546d6'); small('W in = ' + fplain(d.W) + ' J', 250, 135, '#1e7d45'); }
+      panelTitle(d.fr ? 'COEFFICIENT OF PERFORMANCE' : 'EFFICIENCY', 395, 18);
+      const bars = d.fr ? [['COP', d.cop, d.copC]] : [['η', d.eta, d.eC]];
+      const [l, val, lim] = bars[0], mx = d.fr ? Math.max(lim, 1) * 1.1 : 1; ctx.fillStyle = '#eee'; ctx.fillRect(410, 60, 40, 200); ctx.fillStyle = '#1e7d45'; ctx.fillRect(410, 260 - 200 * val / mx, 40, 200 * val / mx);
+      ctx.strokeStyle = '#c43a00'; ctx.setLineDash([5, 3]); ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(400, 260 - 200 * lim / mx); ctx.lineTo(470, 260 - 200 * lim / mx); ctx.stroke(); ctx.setLineDash([]);
+      text('Carnot limit ' + (d.fr ? fplain(lim) : fplain(100 * lim) + '%'), 475, 264 - 200 * lim / mx, { font: '700 11px "IBM Plex Mono",monospace', col: '#c43a00' });
+      text(l + ' = ' + (d.fr ? fplain(val) : fplain(100 * val) + '%'), 410, 290, { font: '700 15px "Space Grotesk",sans-serif', col: '#1e7d45' });
+      return;
+    }
+    if (mode === 'carnot'){
+      if (A.s === undefined || A.reset) A.s = 0; A.s = (A.s + dt / 2) % 4; const leg = Math.floor(A.s), q = A.s - leg;
+      panelTitle('CARNOT CYCLE ON A P–V DIAGRAM', 10, 18);
+      const nR = d.n * RG, P = (V, T) => nR * T / V, pts = [[d.VA, v.Th], [d.VB, v.Th], [d.VC, v.Tc], [d.VD, v.Tc]];
+      const path = (i, s) => { const [Va, Ta] = pts[i], [Vb, Tb] = pts[(i + 1) % 4], V = Va * Math.pow(Vb / Va, s); if (i % 2 === 0) return [V, P(V, Ta)]; const T = Ta * Math.pow(Va / V, 2 / 3); return [V, P(V, T)]; };
+      const Vmax = d.VC * 1.1, Pmax = P(d.VA, v.Th) * 1.1, gx = 50, gy = 300, gw = 320, gh = 260, X = V => gx + gw * V / Vmax, Y = p => gy - gh * p / Pmax;
+      ctx.strokeStyle = '#111'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(gx, gy - gh); ctx.lineTo(gx, gy); ctx.lineTo(gx + gw, gy); ctx.stroke();
+      ctx.fillStyle = 'rgba(30,125,69,0.15)'; ctx.beginPath(); for (let i = 0; i < 4; i++) for (let k = 0; k <= 30; k++){ const p = path(i, k / 30); (i || k) ? ctx.lineTo(X(p[0]), Y(p[1])) : ctx.moveTo(X(p[0]), Y(p[1])); } ctx.closePath(); ctx.fill();
+      const cols = ['#c43a00', '#7a3fb0', '#1546d6', '#7a3fb0'];
+      for (let i = 0; i < 4; i++){ ctx.strokeStyle = cols[i]; ctx.lineWidth = i === leg ? 4.5 : 2.5; ctx.beginPath(); for (let k = 0; k <= 40; k++){ const p = path(i, k / 40); k ? ctx.lineTo(X(p[0]), Y(p[1])) : ctx.moveTo(X(p[0]), Y(p[1])); } ctx.stroke(); const p = pts[i]; text('ABCD'[i], X(p[0]) + (i < 2 ? -4 : 6), Y(P(p[0], p[1])) - 8, { font: '700 14px "Space Grotesk",sans-serif' }); }
+      const cp = path(leg, q); ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(X(cp[0]), Y(cp[1]), 6, 0, 7); ctx.fill();
+      small('red: isotherm ' + v.Th + ' K · blue: isotherm ' + v.Tc + ' K · purple: adiabats', gx, gy + 22);
+      panelTitle('ENERGY PER CYCLE', 395, 18);
+      [['Q_h', d.Qh, '#c43a00'], ['W', d.W, '#1e7d45'], ['Q_c', d.Qc, '#1546d6']].forEach(([l, q2, c], i) => { const w = 170 * q2 / d.Qh; ctx.fillStyle = c; ctx.fillRect(410, 50 + i * 40, w, 24); small(l + ' = ' + fplain(q2) + ' J', 410, 88 + i * 40); });
+      text('η = 1 − Tc/Th = ' + fplain(100 * d.eta) + '%', 400, 200, { font: '700 15px "Space Grotesk",sans-serif', col: '#1e7d45' });
+      return;
+    }
+    // steam engine
+    const omega = 2 * PI * Math.min(v.rpm, 240) / 60; if (A.th === undefined || A.reset) A.th = 0; A.th = (A.th + omega * dt) % (2 * PI);
+    const th = A.th, power = th < PI, s = (1 - Math.cos(th)) / 2, V = d.V0 + s * v.Vs;
+    let P; if (power){ P = V <= d.Vc ? v.Pb : v.Pb * Math.pow(d.Vc / V, 1.3); } else P = v.Pe;
+    const admitting = power && V <= d.Vc, exhausting = !power;
+    panelTitle('STEAM ENGINE', 10, 18);
+    // boiler
+    ctx.fillStyle = '#b07a3a'; ctx.beginPath(); ctx.roundRect(20, 150, 90, 110, 12); ctx.fill(); ctx.strokeStyle = '#111'; ctx.lineWidth = 2; ctx.stroke(); small('boiler', 40, 278); small(fplain(d.Tb - 273) + ' °C', 36, 292, '#c43a00');
+    for (let i = 0; i < 4; i++){ ctx.fillStyle = '#ff6a2b'; ctx.beginPath(); ctx.moveTo(30 + i * 20, 268); ctx.quadraticCurveTo(38 + i * 20, 250 + 5 * Math.sin(t * 9 + i), 44 + i * 20, 268); ctx.fill(); }
+    // pipe and cylinder
+    ctx.fillStyle = admitting ? '#ffe2d3' : '#ddd'; ctx.fillRect(110, 168, 40, 10); ctx.strokeRect(110, 168, 40, 10);
+    const cx0 = 150, cl = 150, cy = 150, ch = 46; ctx.fillStyle = '#eee'; ctx.fillRect(cx0, cy, cl, ch); ctx.strokeRect(cx0, cy, cl, ch);
+    const px = cx0 + 10 + (cl - 30) * (V - d.V0) / v.Vs; ctx.fillStyle = 'rgba(255,106,43,' + (0.15 + 0.6 * P / Math.max(v.Pb, 200)) + ')'; ctx.fillRect(cx0 + 2, cy + 2, px - cx0 - 2, ch - 4);
+    ctx.fillStyle = '#555'; ctx.fillRect(px, cy + 2, 12, ch - 4);
+    // valve chest indicator
+    small(admitting ? 'valve OPEN: steam in' : power ? 'valve closed: expanding' : 'exhaust open', cx0, cy - 8, admitting ? '#c43a00' : power ? '#7a3fb0' : '#4a4a4a');
+    if (exhausting){ for (let i = 0; i < 3; i++){ const ph = (t * 1.2 + i / 3) % 1; ctx.fillStyle = 'rgba(180,180,180,' + (1 - ph) + ')'; ctx.beginPath(); ctx.arc(cx0 + 20 + 10 * i, cy - 20 - 70 * ph, 6 + 12 * ph, 0, 7); ctx.fill(); } }
+    // crank and flywheel
+    const fx = 345, fy = cy + ch / 2, R = 30, ang = th + PI, cxk = fx + R * Math.cos(ang), cyk = fy + R * Math.sin(ang);
+    ctx.strokeStyle = '#111'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(fx, fy, 42, 0, 7); ctx.stroke(); for (let k = 0; k < 6; k++){ const a = th + k * PI / 3; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(fx, fy); ctx.lineTo(fx + 42 * Math.cos(a), fy + 42 * Math.sin(a)); ctx.stroke(); }
+    ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(px + 12, fy); ctx.lineTo(cxk, cyk); ctx.stroke(); ctx.fillStyle = '#c43a00'; ctx.beginPath(); ctx.arc(cxk, cyk, 4, 0, 7); ctx.fill();
+    text('P = ' + fplain(P) + ' kPa', 160, 230, { font: '700 12px "IBM Plex Mono",monospace' }); text('W per stroke = ' + fplain(d.W) + ' J · power ' + fplain(d.P) + ' W', 12, 316, { font: '700 12px "Space Grotesk",sans-serif' });
+    // indicator diagram
+    panelTitle('INDICATOR DIAGRAM (P–V)', 395, 18);
+    const gx = 410, gy = 290, gw = 175, gh = 240, Vmx = d.Vm * 1.08, Pmx = v.Pb * 1.12, X = q => gx + gw * q / Vmx, Y = q => gy - gh * q / Pmx;
+    ctx.strokeStyle = '#111'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(gx, gy - gh); ctx.lineTo(gx, gy); ctx.lineTo(gx + gw, gy); ctx.stroke();
+    const loop = []; loop.push([d.V0, v.Pb], [d.Vc, v.Pb]); for (let k = 1; k <= 30; k++){ const VV = d.Vc + (d.Vm - d.Vc) * k / 30; loop.push([VV, v.Pb * Math.pow(d.Vc / VV, 1.3)]); } loop.push([d.Vm, v.Pe], [d.V0, v.Pe]);
+    ctx.fillStyle = 'rgba(30,125,69,0.18)'; ctx.beginPath(); loop.forEach((p, i) => i ? ctx.lineTo(X(p[0]), Y(p[1])) : ctx.moveTo(X(p[0]), Y(p[1]))); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = '#c43a00'; ctx.lineWidth = 2.5; ctx.beginPath(); loop.forEach((p, i) => i ? ctx.lineTo(X(p[0]), Y(p[1])) : ctx.moveTo(X(p[0]), Y(p[1]))); ctx.closePath(); ctx.stroke();
+    ctx.setLineDash([3, 3]); ctx.strokeStyle = '#888'; ctx.beginPath(); ctx.moveTo(gx, Y(101)); ctx.lineTo(gx + gw, Y(101)); ctx.stroke(); ctx.setLineDash([]); small('1 atm', gx + gw - 30, Y(101) - 3);
+    ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(X(V), Y(P), 5, 0, 7); ctx.fill();
+    small('cutoff', X(d.Vc) - 14, Y(v.Pb) - 6, '#c43a00'); small('V', gx + gw - 6, gy + 13); small('P', gx + 4, gy - gh + 8);
+    text('η = ' + fplain(100 * d.eta) + '% (Carnot ' + fplain(100 * d.eC) + '%)', 400, 314, { font: '700 12px "Space Grotesk",sans-serif', col: '#1e7d45' });
+  }
+};
+
+
+S.mode = SIM.modes ? SIM.modes[0].id : 'one';
+setup(); requestAnimationFrame(loop);
+</script>
+</body></html>
