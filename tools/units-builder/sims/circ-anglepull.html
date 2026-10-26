@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pull at an Angle</title>
+<!-- Pull at an Angle: original Holmes Sims, built from frame.html + anglepull.js. g = 10 m/s². -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@500;700&display=swap">
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#fff;font-family:"Space Grotesk",system-ui,sans-serif;color:#111}
+#app{position:absolute;left:0;top:0;width:1000px;height:640px;transform-origin:0 0;padding:10px 14px 12px;box-sizing:border-box;
+  display:grid;grid-template-columns:600px 1fr;grid-template-rows:34px 330px 1fr;gap:10px 14px}
+#bar{grid-column:1/-1;display:flex;gap:16px;align-items:center;flex-wrap:nowrap;overflow:hidden}
+.seg{display:flex;align-items:center}
+.seg .lab{font:700 12px "IBM Plex Mono",monospace;margin-right:8px;text-transform:uppercase}
+.seg button{white-space:nowrap;font:700 14px "Space Grotesk",sans-serif;padding:6px 11px;border:2px solid #111;background:#fff;color:#111;cursor:pointer}
+.seg button+button{margin-left:-2px}
+.seg button[aria-pressed="true"]{background:#111;color:#fff}
+.seg button:hover:not([aria-pressed="true"]){background:#ffe2d3}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #ff6a2b;outline-offset:2px;position:relative;z-index:1}
+#cv{border:2px solid #111;background:#fbfbfb;width:600px;height:330px;box-sizing:border-box;display:block}
+#work{border:2px solid #111;padding:8px 12px 10px;overflow:auto;font-size:14px;line-height:1.55;box-sizing:border-box}
+#work .wt{font:700 12px "IBM Plex Mono",monospace;text-transform:uppercase;margin:0 0 4px;display:flex;justify-content:space-between}
+#work h4{margin:9px 0 1px;font-size:13px;font-weight:700;color:#4a4a4a}
+#work h4:first-of-type{margin-top:2px}
+#work .eq{font-variant-numeric:tabular-nums}
+#work .n{font-family:"IBM Plex Mono",monospace;font-size:13px}
+#work b .n,#work .ans{font-weight:700}
+#work .note{font-size:12.5px;color:#4a4a4a;margin:2px 0 0}
+#work .ok{background:#e5f4ea;border-left:4px solid #1e7d45;padding:3px 8px;margin-top:4px}
+#work .bad{background:#fde7df;border-left:4px solid #c43a00;padding:3px 8px;margin-top:4px}
+.ivv{border-radius:2px;padding:0 2px;transition:background .25s}
+.ivv.gx{background:#ffe2d3}
+.ivv.hot{background:#ff6a2b;color:#fff}
+#ctl{display:grid;grid-template-columns:1fr 1fr;gap:4px 18px;align-content:start}
+.iv{display:grid;grid-template-columns:auto 1fr auto;align-items:center;column-gap:6px}
+.iv .nm{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iv .val{font:700 13px "IBM Plex Mono",monospace;white-space:nowrap}
+.iv input[type=range]{grid-column:1/-1;width:100%;margin:0;accent-color:#111;height:22px}
+.iv input[type=radio]{accent-color:#ff6a2b;margin:0}
+#presets{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:2px}
+#presets .lab{font:700 12px "IBM Plex Mono",monospace}
+#presets button{font:600 12.5px "Space Grotesk",sans-serif;padding:3px 8px;border:2px solid #111;background:#fff;cursor:pointer}
+#presets button:hover{background:#ffe2d3}
+#gcard{border:2px solid #111;padding:5px 8px 6px;display:flex;flex-direction:column;box-sizing:border-box;min-height:0}
+.ghead{display:flex;align-items:center;gap:6px;font-size:13px;white-space:nowrap}
+.ghead select{font:600 13px "Space Grotesk",sans-serif;border:2px solid #111;padding:1px 4px;max-width:200px}
+#gv{width:340px;height:150px;flex:none;display:block;margin-top:3px}
+#dbl{font-size:12.5px;line-height:1.35;margin-top:2px}
+#dbl b{font-weight:700}
+.hint{font:500 11px "IBM Plex Mono",monospace;color:#4a4a4a}
+</style></head><body>
+<div id="app">
+  <div id="bar"></div>
+  <canvas id="cv" width="1200" height="660" aria-label="Animation of the situation with force arrows"></canvas>
+  <div id="work" aria-live="polite"></div>
+  <div id="ctl"></div>
+  <div id="gcard">
+    <div class="ghead"><span>Graph</span><select id="dvsel" aria-label="Quantity to graph"></select><span>vs <b id="ivname"></b></span></div>
+    <canvas id="gv" width="680" height="300" aria-label="Graph of the chosen quantity against the chosen variable"></canvas>
+    <div id="dbl"></div>
+  </div>
+</div>
+<script>
+// ---------------- shared frame ----------------
+const $ = id => document.getElementById(id);
+const G10 = 10, PI = Math.PI, DEG = PI / 180;
+function fit(){ const s = Math.min(innerWidth / 1000, innerHeight / 640); $('app').style.transform = 'scale(' + s + ')'; }
+addEventListener('resize', fit); fit();
+
+function fnum(x){ const r = fnum0(x); return typeof r === 'string' ? r.replace(/^-/, '−') : r; }
+function fnum0(x){
+  if (x === null || x === undefined || !isFinite(x)) return '—';
+  const a = Math.abs(x);
+  if (a === 0) return '0';
+  if (a >= 1e5 || a < 1e-3){
+    const e = Math.floor(Math.log10(a)); let m = x / Math.pow(10, e);
+    let ms = m.toFixed(2); if (Math.abs(+ms) >= 10){ m /= 10; ms = m.toFixed(2); return ms + '×10<sup>' + (e + 1) + '</sup>'; }
+    return ms + '×10<sup>' + e + '</sup>';
+  }
+  if (a >= 1000) return String(Math.round(x));
+  return x.toPrecision(3);
+}
+function fplain(x){ return fnum(x).replace(/<sup>(.*?)<\/sup>/g, (m, e) => '^' + e).replace('×10^', 'e'); }
+const H = {
+  n: (x, u) => '<span class="n">' + fnum(x) + (u ? '&nbsp;' + u : '') + '</span>',
+  iv: id => { const d = S.def[id]; const val = S.v[id]; const txt = (d.show ? d.show(val) : fnum(val) + (d.unit ? '&nbsp;' + d.unit : ''));
+              return '<span class="ivv n' + (S.gx === id ? ' gx' : '') + (S.hot === id ? ' hot' : '') + '" data-iv="' + id + '">' + txt + '</span>'; },
+  g: () => '<span class="n">10&nbsp;m/s²</span>',
+  p: (x, u) => x < 0 ? '(' + H.n(x, u) + ')' : H.n(x, u)
+};
+
+const S = { mode: null, opt: {}, v: {}, store: {}, def: {}, ivs: [], gx: null, dv: null, hot: null, t: 0, anim: {} };
+
+function bar(){
+  const b = $('bar'); b.innerHTML = '';
+  const group = (label, items, cur, onpick) => {
+    const g = document.createElement('div'); g.className = 'seg'; g.setAttribute('role', 'group');
+    if (label){ const l = document.createElement('span'); l.className = 'lab'; l.textContent = label; g.appendChild(l); }
+    items.forEach(([id, txt]) => { const bt = document.createElement('button'); bt.textContent = txt; bt.setAttribute('aria-pressed', String(id === cur)); bt.onclick = () => onpick(id); g.appendChild(bt); });
+    b.appendChild(g);
+  };
+  const tip = document.createElement('span'); tip.className = 'hint'; tip.style.marginLeft = 'auto'; tip.style.whiteSpace = 'nowrap'; tip.innerHTML = '● = the variable on the graph’s x-axis · drag any slider';
+  if (SIM.modes) group(null, SIM.modes.map(m => [m.id, m.label]), S.mode, id => { S.mode = id; S.anim = {}; setup(); });
+  (SIM.opts || []).filter(o => !o.modes || o.modes.includes(S.mode)).forEach(o => {
+    if (!(o.id in S.opt)) S.opt[o.id] = o.choices[0][0];
+    group(o.label, o.choices, S.opt[o.id], id => { S.opt[o.id] = id; S.anim = {}; setup(); });
+  });
+  b.appendChild(tip);
+  if (b.scrollWidth > b.clientWidth + 1) tip.remove();
+  if (b.scrollWidth > b.clientWidth + 1) b.querySelectorAll('.seg button').forEach(x => { x.style.fontSize = '13px'; x.style.padding = '6px 8px'; });
+}
+
+function setup(){
+  bar();
+  S.ivs = SIM.ivs(S.mode, S.opt); S.def = {}; S.v = {};
+  S.ivs.forEach(d => { S.def[d.id] = d; const k = S.mode + ':' + d.id; S.v[d.id] = (k in S.store) ? S.store[k] : d.val; });
+  if (!S.gx || !S.def[S.gx]) S.gx = S.ivs.find(d => d.graph) ? S.ivs.find(d => d.graph).id : S.ivs[1] ? S.ivs[1].id : S.ivs[0].id;
+  const c = $('ctl'); c.innerHTML = '';
+  S.ivs.forEach(d => {
+    const w = document.createElement('div'); w.className = 'iv';
+    w.innerHTML = '<input type="radio" name="gx" value="' + d.id + '" aria-label="Graph against ' + d.label + '" title="Put this on the graph’s x-axis"' + (S.gx === d.id ? ' checked' : '') + '>' +
+      '<span class="nm">' + d.label + ' <i>' + d.sym + '</i></span><span class="val" id="val-' + d.id + '"></span>' +
+      '<input type="range" id="r-' + d.id + '" min="' + d.min + '" max="' + d.max + '" step="' + d.step + '" value="' + S.v[d.id] + '" aria-label="' + d.label + '">';
+    c.appendChild(w);
+    const r = w.querySelector('input[type=range]');
+    r.oninput = () => { S.v[d.id] = +r.value; S.store[S.mode + ':' + d.id] = +r.value; S.hot = d.id; clearTimeout(S.hotT); S.hotT = setTimeout(() => { S.hot = null; update(); }, 700); S.anim.reset = true; update(); };
+    w.querySelector('input[type=radio]').onchange = () => { S.gx = d.id; update(); };
+  });
+  if (SIM.presets){
+    const p = document.createElement('div'); p.id = 'presets'; p.innerHTML = '<span class="lab">Try:</span>';
+    SIM.presets.forEach(ps => { const bt = document.createElement('button'); bt.textContent = ps.label; bt.onclick = () => { if (ps.mode && ps.mode !== S.mode){ S.mode = ps.mode; } Object.entries(ps.v).forEach(([k, val]) => S.store[(ps.mode || S.mode) + ':' + k] = val); S.anim = {}; setup(); }; p.appendChild(bt); });
+    c.appendChild(p);
+  }
+  const dvs = SIM.dvs(S.mode, S.opt), sel = $('dvsel');
+  if (!S.dv || !dvs.find(d => d.id === S.dv)) S.dv = dvs[0].id;
+  sel.innerHTML = dvs.map(d => '<option value="' + d.id + '"' + (d.id === S.dv ? ' selected' : '') + '>' + d.name + '</option>').join('');
+  sel.onchange = () => { S.dv = sel.value; update(); };
+  update();
+}
+
+function calcWith(over){ const v = Object.assign({}, S.v, over || {}); return SIM.calc(v, S.mode, S.opt); }
+
+function update(){
+  S.ivs.forEach(d => { $('val-' + d.id).innerHTML = d.show ? d.show(S.v[d.id]) : fnum(S.v[d.id]) + (d.unit ? '&nbsp;' + d.unit : ''); });
+  S.d = calcWith();
+  $('work').innerHTML = '<div class="wt"><span>Show the work</span><span class="hint">' + (SIM.hint || 'g = 10 m/s²') + '</span></div>' + SIM.work(S.v, S.d, S.mode, S.opt);
+  document.querySelectorAll('input[name=gx]').forEach(r => r.checked = (r.value === S.gx));
+  graph();
+}
+
+function graph(){
+  const cv = $('gv'), g = cv.getContext('2d'), W = 340, Hh = 150; g.setTransform(2, 0, 0, 2, 0, 0); g.clearRect(0, 0, W, Hh);
+  const dvs = SIM.dvs(S.mode, S.opt), dv = dvs.find(d => d.id === S.dv), ref = dv.vs ? dvs.find(d => d.id === dv.vs) : null;
+  const x = S.def[S.gx]; $('ivname').innerHTML = '<i>' + x.sym + '</i>' + (x.unit && !x.show ? ' (' + x.unit + ')' : '');
+  const N = 160, xs = [], ys = [], rs = [];
+  for (let i = 0; i <= N; i++){ const xv = x.min + (x.max - x.min) * i / N; const d = calcWith({ [S.gx]: xv }); xs.push(xv); ys.push(dv.f(d)); rs.push(ref ? ref.f(d) : null); }
+  const all = ys.concat(ref ? rs : []).filter(isFinite);
+  let ymin = Math.min(0, ...all), ymax = Math.max(...all, 0); if (ymax === ymin) ymax = ymin + 1; const pad = (ymax - ymin) * 0.08; ymax += pad; if (ymin < 0) ymin -= pad;
+  const L = 46, R = 8, T = 8, B = 22, X = v => L + (v - x.min) / (x.max - x.min) * (W - L - R), Y = v => T + (ymax - v) / (ymax - ymin) * (Hh - T - B);
+  g.strokeStyle = '#111'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(L, T); g.lineTo(L, Hh - B); g.lineTo(W - R, Hh - B); g.stroke();
+  if (ymin < 0){ g.strokeStyle = '#999'; g.setLineDash([3, 3]); g.beginPath(); g.moveTo(L, Y(0)); g.lineTo(W - R, Y(0)); g.stroke(); g.setLineDash([]);
+    if (dv.negNote){ g.fillStyle = 'rgba(196,58,0,0.08)'; g.fillRect(L, Y(0), W - R - L, Hh - B - Y(0)); g.fillStyle = '#c43a00'; g.font = '600 10px "Space Grotesk",sans-serif'; g.textAlign = 'left'; g.fillText(dv.negNote, L + 4, Hh - B - 4); } }
+  g.font = '500 10px "IBM Plex Mono",monospace'; g.fillStyle = '#4a4a4a'; g.textAlign = 'right';
+  g.fillText(fplain(ymax), L - 4, T + 8); g.fillText(fplain(ymin < 0 ? ymin : 0), L - 4, Hh - B); if (ymin < 0) g.fillText('0', L - 4, Y(0) + 3);
+  g.textAlign = 'center'; g.fillText(fplain(x.min), L, Hh - 8); g.fillText(fplain(x.max), W - R - 10, Hh - 8);
+  g.fillText((x.symText || x.id) + (x.unit ? ' (' + x.unit + ')' : ''), (L + W) / 2, Hh - 8);
+  g.save(); g.translate(10, (T + Hh - B) / 2); g.rotate(-PI / 2); g.textAlign = 'center'; g.fillText(dv.short + (dv.unit ? ' (' + dv.unit + ')' : ''), 0, 0); g.restore();
+  const line = (arr, col, dash) => { g.strokeStyle = col; g.lineWidth = 2.2; g.setLineDash(dash || []); g.beginPath(); let on = false; arr.forEach((y, i) => { if (!isFinite(y)){ on = false; return; } const px = X(xs[i]), py = Math.max(T - 4, Math.min(Hh - B + 4, Y(y))); on ? g.lineTo(px, py) : g.moveTo(px, py); on = true; }); g.stroke(); g.setLineDash([]); };
+  if (ref){ line(rs, '#4a4a4a', [5, 4]); g.fillStyle = '#4a4a4a'; g.textAlign = 'right'; g.font = '600 10px "Space Grotesk",sans-serif'; const lastY = rs.filter(isFinite).pop(); if (isFinite(lastY)) g.fillText(ref.short, W - R - 2, Math.max(T + 9, Y(lastY) - 4)); }
+  line(ys, '#1546d6');
+  const cx = S.v[S.gx], cy = dv.f(S.d);
+  if (isFinite(cy)){ g.strokeStyle = '#ff6a2b'; g.setLineDash([2, 3]); g.lineWidth = 1; g.beginPath(); g.moveTo(X(cx), Hh - B); g.lineTo(X(cx), Y(cy)); g.lineTo(L, Y(cy)); g.stroke(); g.setLineDash([]);
+    g.fillStyle = '#ff6a2b'; g.strokeStyle = '#111'; g.lineWidth = 1.5; g.beginPath(); g.arc(X(cx), Math.max(T, Math.min(Hh - B, Y(cy))), 4.5, 0, 7); g.fill(); g.stroke(); }
+  // doubling readout
+  const d2 = calcWith({ [S.gx]: cx * 2 }), y1 = dv.f(S.d), y2 = dv.f(d2);
+  let msg = '';
+  if (cx === 0 || Math.abs(y1) < 1e-12) msg = '<span class="hint">Move off zero to see the ×2 test.</span>';
+  else if (!isFinite(y1) || !isFinite(y2)) msg = '<span class="hint">The ×2 test doesn’t apply here (doubling takes it outside what this quantity covers).</span>';
+  else {
+    const k = y2 / y1;
+    if (k < 0){ $('dbl').innerHTML = 'If <b>' + x.sym + '</b> doubles (' + fnum(cx) + ' → ' + fnum(2 * cx) + (x.unit ? ' ' + x.unit : '') + '), <b>' + dv.sym + '</b> goes from ' + fnum(y1) + ' to ' + fnum(y2) + (dv.unit ? ' ' + dv.unit : '') + ': it changes sign, so that can’t really happen.'; return; }
+    const tags = [[1, 'doesn’t depend on it'], [2, 'proportional'], [4, 'goes as the square'], [0.5, 'inversely proportional'], [0.25, 'inverse square'], [Math.SQRT2, 'goes as the square root'], [Math.SQRT1_2, 'goes as 1/√'], [8, 'goes as the cube'], [2 * Math.SQRT2, 'goes as the 3/2 power']];
+    const tag = tags.find(([v]) => Math.abs(k - v) < 0.004 * v);
+    msg = 'If <b>' + x.sym + '</b> doubles (' + fnum(cx) + ' → ' + fnum(2 * cx) + (x.unit ? ' ' + x.unit : '') + '), <b>' + dv.sym + '</b> becomes <b>×' + (Math.abs(k) >= 100 ? fnum(k) : k.toFixed(2)) + '</b>' + (tag ? ' — ' + tag[1] : '') + '.' + (dv.dblNote ? ' <span class="hint">' + dv.dblNote + '</span>' : '');
+  }
+  $('dbl').innerHTML = msg;
+}
+
+// drawing helpers (canvas is drawn in 600×330 units)
+const cv = $('cv'), ctx = cv.getContext('2d');
+function arrow(x1, y1, x2, y2, col, label, opts){
+  opts = opts || {}; const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy); if (len < 2) return;
+  const ux = dx / len, uy = dy / len, hw = opts.head || 9;
+  ctx.save(); ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = opts.w || 3.5; ctx.lineCap = 'round';
+  if (opts.dash) ctx.setLineDash(opts.dash);
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2 - ux * hw * 0.8, y2 - uy * hw * 0.8); ctx.stroke(); ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x2, y2); ctx.lineTo(x2 - ux * hw - uy * hw * 0.55, y2 - uy * hw + ux * hw * 0.55); ctx.lineTo(x2 - ux * hw + uy * hw * 0.55, y2 - uy * hw - ux * hw * 0.55); ctx.closePath(); ctx.fill();
+  if (label){ ctx.font = '700 13px "Space Grotesk",sans-serif'; ctx.textAlign = opts.align || 'left'; ctx.textBaseline = 'middle';
+    const lx = x2 + (opts.lx !== undefined ? opts.lx : (ux >= 0 ? 6 : -6)), ly = y2 + (opts.ly !== undefined ? opts.ly : (uy >= 0 ? 10 : -10));
+    if (opts.align === undefined) ctx.textAlign = ux >= -0.2 ? 'left' : 'right';
+    ctx.fillText(label, lx, ly); }
+  ctx.restore();
+}
+function text(s, x, y, o){ o = o || {}; ctx.save(); ctx.font = (o.font || '600 13px "Space Grotesk",sans-serif'); ctx.fillStyle = o.col || '#111'; ctx.textAlign = o.align || 'left'; ctx.textBaseline = o.base || 'alphabetic'; ctx.fillText(s, x, y); ctx.restore(); }
+function panelTitle(s, x, y){ text(s, x, y, { font: '700 11px "IBM Plex Mono",monospace', col: '#4a4a4a' }); }
+const COL = { F: '#c43a00', W: '#111', N: '#1e7d45', V: '#1546d6', T: '#7a3fb0', comp: '#8a8a8a' };
+
+let last = 0;
+function loop(ts){ const dt = Math.min(0.05, (ts - (last || ts)) / 1000); last = ts; S.t += dt;
+  ctx.setTransform(2, 0, 0, 2, 0, 0); ctx.clearRect(0, 0, 600, 330);
+  SIM.draw(S.v, S.d, S.mode, S.opt, S.t, dt, S.anim); S.anim.reset = false;
+  requestAnimationFrame(loop); }
+
+// ---------------- this sim ----------------
+// Pull at an Angle: a rope at θ above horizontal lifts some weight off the floor, which lowers friction.
+const SIM = {
+  title: 'Pull at an Angle',
+  modes: [{ id: 'const', label: 'Constant velocity' }, { id: 'given', label: 'Given pull' }],
+  ivs(mode){
+    const l = [{ id: 'th', sym: 'θ', symText: 'θ', label: 'Rope angle above horizontal', unit: '°', min: 0, max: 80, step: 1, val: 30, graph: true, show: x => x.toFixed(0) + '°' },
+      { id: 'm', sym: 'm', symText: 'm', label: 'Sled mass', unit: 'kg', min: 5, max: 60, step: 1, val: 20 },
+      { id: 'mu', sym: 'μ<sub>k</sub>', symText: 'μk', label: 'Kinetic friction', unit: '', min: 0, max: 0.8, step: 0.01, val: 0.3, show: x => x.toFixed(2) }];
+    if (mode === 'given') l.push({ id: 'F', sym: 'F', symText: 'F', label: 'Pull', unit: 'N', min: 0, max: 300, step: 1, val: 100 });
+    return l;
+  },
+  presets: [{ label: 'Pull flat', v: { th: 0 } }, { label: 'Best angle', mode: 'const', v: { th: 17, mu: 0.3 } }, { label: 'Steep pull', v: { th: 70 } }],
+  calc(v, mode){
+    const th = v.th * DEG, W = v.m * G10, c = Math.cos(th), s = Math.sin(th);
+    if (mode === 'const'){ const F = v.mu * W / (c + v.mu * s), Fy = F * s, N = W - Fy, f = v.mu * N; return { W, F, Fx: F * c, Fy, N, f, a: 0, best: Math.atan(v.mu) / DEG, Fbest: v.mu * W / Math.sqrt(1 + v.mu * v.mu), Fflat: v.mu * W, lifts: false }; }
+    const Fx = v.F * c, Fy = v.F * s, lifts = Fy > W, N = Math.max(0, W - Fy), f = v.mu * N, moves = Fx > f, a = moves ? (Fx - f) / v.m : 0;
+    return { W, F: v.F, Fx, Fy, N, f: moves ? f : Fx, fk: f, a, moves, lifts, best: Math.atan(v.mu) / DEG };
+  },
+  dvs(mode){
+    if (mode === 'const') return [
+      { id: 'F', name: 'Pull needed for constant velocity', short: 'F', sym: 'F', unit: 'N', f: d => d.F },
+      { id: 'N', name: 'Normal force', short: 'N', sym: 'N', unit: 'N', f: d => d.N },
+      { id: 'f', name: 'Friction', short: 'f', sym: 'f<sub>k</sub>', unit: 'N', f: d => d.f }];
+    return [
+      { id: 'a', name: 'Acceleration', short: 'a', sym: 'a', unit: 'm/s²', f: d => d.a },
+      { id: 'N', name: 'Normal force', short: 'N', sym: 'N', unit: 'N', f: d => d.N },
+      { id: 'Fx', name: 'Horizontal part of the pull', short: 'F_x', sym: 'F<sub>x</sub>', unit: 'N', f: d => d.Fx }];
+  },
+  work(v, d, mode){
+    let h = '<h4>1 · Free-body diagram: split the pull into components</h4><div class="eq">F<sub>x</sub> = F cosθ (forward) &nbsp; F<sub>y</sub> = F sinθ (up)</div>' +
+      '<h4>2 · Vertical: N + F sinθ = mg → N = mg − F sinθ</h4><div class="eq">Pulling up at an angle takes some of the weight, so the floor pushes up less, and <b>friction gets smaller</b>.</div>';
+    if (mode === 'const'){
+      h += '<h4>3 · Horizontal, constant velocity: F cosθ = μ<sub>k</sub>N</h4><div class="eq">F cosθ = μ<sub>k</sub>(mg − F sinθ) → <b>F = μ<sub>k</sub>mg / (cosθ + μ<sub>k</sub>sinθ)</b></div>' +
+        '<div class="eq">= (' + H.iv('mu') + ')(' + H.iv('m') + ')(' + H.g() + ') / (cos ' + H.iv('th') + ' + ' + H.iv('mu') + ' sin ' + H.iv('th') + ') = <b>' + H.n(d.F, 'N') + '</b></div>' +
+        '<div class="eq">Check: N = ' + H.n(d.W) + ' − ' + H.n(d.Fy) + ' = ' + H.n(d.N, 'N') + ', friction μN = ' + H.n(d.f, 'N') + ' = F cosθ = ' + H.n(d.Fx, 'N') + ' ✓</div>' +
+        '<h4>4 · Is there a best angle?</h4><div class="eq">Too flat: friction is big. Too steep: most of the pull goes upward, wasted. The smallest pull is at <b>tanθ = μ<sub>k</sub></b> → θ = ' + H.n(d.best, '°') + ', needing ' + H.n(d.Fbest, 'N') + ' (vs ' + H.n(d.Fflat, 'N') + ' pulling flat).</div>' +
+        '<p class="note">Graph F vs θ to see the minimum. Common mistake: writing N = mg when the rope pulls at an angle.</p>';
+      return h;
+    }
+    h += '<div class="eq">N = (' + H.iv('m') + ')(' + H.g() + ') − (' + H.iv('F') + ')sin ' + H.iv('th') + ' = <b>' + H.n(d.N, 'N') + '</b></div>';
+    if (d.lifts) return h + '<div class="bad">F sinθ is more than mg: the sled would lift off the ground. N = 0 and this is no longer a sliding problem.</div>';
+    h += '<h4>3 · Horizontal: ΣF<sub>x</sub> = F cosθ − μ<sub>k</sub>N</h4><div class="eq">F cosθ = ' + H.n(d.Fx, 'N') + ', friction μ<sub>k</sub>N = (' + H.iv('mu') + ')(' + H.n(d.N) + ') = ' + H.n(d.fk, 'N') + '</div>';
+    h += d.moves ? '<div class="eq">a = (F cosθ − μ<sub>k</sub>N)/m = (' + H.n(d.Fx) + ' − ' + H.n(d.fk) + ') / ' + H.iv('m') + ' = <b>' + H.n(d.a, 'm/s²') + '</b></div>'
+      : '<div class="bad">F cosθ isn’t more than friction: it won’t speed up (treating μ as static too, it stays put).</div>';
+    return h + '<p class="note">Change θ with F fixed: a goes up, then down. The best angle is again tanθ = μ<sub>k</sub> (' + H.n(d.best, '°') + ').</p>';
+  },
+  draw(v, d, mode, opt, t, dt, A){
+    if (A.t === undefined || A.reset) A.t = 0; A.t += dt;
+    panelTitle(mode === 'const' ? 'PULLING A SLED AT CONSTANT VELOCITY' : 'PULLING A SLED', 10, 18);
+    const gy = 240, tt = A.t % 4, vv = 1.5, xs = (vv * tt + 0.5 * d.a * tt * tt) * 20 % 600;
+    ctx.fillStyle = '#eef6ff'; ctx.fillRect(0, gy, 380, 40);
+    for (let k = -1; k < 8; k++){ const x = ((k * 60 - xs) % 420 + 420) % 420 - 20; ctx.fillStyle = '#c9d9ea'; ctx.fillRect(x, gy + 6, 20, 3); }
+    const cx = 160, w = 70, hgt = 34;
+    ctx.fillStyle = '#c98a3c'; ctx.strokeStyle = '#111'; ctx.lineWidth = 1.5; ctx.fillRect(cx - w / 2, gy - hgt, w, hgt); ctx.strokeRect(cx - w / 2, gy - hgt, w, hgt);
+    const th = v.th * DEG, rx = cx + w / 2, ry = gy - hgt / 2, L = 130;
+    ctx.strokeStyle = '#7a5a2a'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(rx, ry); ctx.lineTo(rx + L * Math.cos(th), ry - L * Math.sin(th)); ctx.stroke();
+    // FBD on the sled
+    const sc = 70 / Math.max(d.W, d.F, 1), ox = cx, oy = gy - hgt / 2;
+    arrow(ox, oy, ox, oy + d.W * sc, COL.W, 'mg', { lx: 6, ly: -4 });
+    if (d.N > 0.5) arrow(ox - 10, oy, ox - 10, oy - d.N * sc, COL.N, 'N', { lx: -6, ly: 0, align: 'right' });
+    if (d.F > 0){ arrow(ox, oy, ox + d.F * sc * Math.cos(th), oy - d.F * sc * Math.sin(th), COL.T, 'F', { lx: 6, ly: -6 });
+      ctx.setLineDash([4, 3]); arrow(ox, oy, ox + d.Fx * sc, oy, COL.comp, 'F cosθ', { w: 2, head: 6, lx: 4, ly: 12 }); arrow(ox + d.Fx * sc, oy, ox + d.Fx * sc, oy - d.Fy * sc, COL.comp, 'F sinθ', { w: 2, head: 6, lx: 6, ly: 0 }); ctx.setLineDash([]); }
+    if (d.f > 0.5) arrow(cx - w / 2, gy - 4, cx - w / 2 - d.f * sc, gy - 4, COL.F, 'f', { lx: -6, ly: -8, align: 'right' });
+    const msg = mode === 'const' ? 'constant velocity: F = ' + fplain(d.F) + ' N' : d.lifts ? 'lifts off the ground' : d.moves ? 'speeds up: a = ' + fplain(d.a) + ' m/s²' : 'doesn’t move';
+    text(msg, 12, 300, { font: '700 13px "Space Grotesk",sans-serif', col: d.lifts || (mode === 'given' && !d.moves) ? '#c43a00' : '#111' });
+    text('N = ' + fplain(d.N) + ' N (mg = ' + fplain(d.W) + ' N)', 12, 318, { font: '600 11px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+    // right: F needed vs angle curve (const) or bars (given)
+    panelTitle(mode === 'const' ? 'PULL NEEDED vs ANGLE' : 'VERTICAL vs HORIZONTAL', 395, 18);
+    if (mode === 'const'){
+      const gx = 420, gy0 = 250, gw = 165, gh = 190, Fmax = v.mu * d.W / Math.min(...[0, 10, 20, 30, 40, 50, 60, 70, 80].map(a => Math.cos(a * DEG) + v.mu * Math.sin(a * DEG))) * 1.05 || 1;
+      const Fof = a => v.mu * d.W / (Math.cos(a * DEG) + v.mu * Math.sin(a * DEG)), X = a => gx + gw * a / 80, Y = F => gy0 - gh * F / Math.max(Fmax, 1);
+      ctx.strokeStyle = '#111'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(gx, gy0 - gh); ctx.lineTo(gx, gy0); ctx.lineTo(gx + gw, gy0); ctx.stroke();
+      ctx.strokeStyle = COL.T; ctx.lineWidth = 2.5; ctx.beginPath(); for (let a = 0; a <= 80; a += 1) a ? ctx.lineTo(X(a), Y(Fof(a))) : ctx.moveTo(X(a), Y(Fof(a))); ctx.stroke();
+      ctx.fillStyle = '#1e7d45'; ctx.beginPath(); ctx.arc(X(d.best), Y(d.Fbest), 4, 0, 7); ctx.fill(); text('best ' + fplain(d.best) + '°', X(d.best) + 6, Y(d.Fbest) + 14, { font: '600 10px "IBM Plex Mono",monospace', col: '#1e7d45' });
+      ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(X(v.th), Y(d.F), 5, 0, 7); ctx.fill();
+      text('0°', gx, gy0 + 13, { align: 'center', font: '500 9px "IBM Plex Mono",monospace', col: '#4a4a4a' }); text('80°', gx + gw, gy0 + 13, { align: 'center', font: '500 9px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+      text(fplain(Fmax), gx - 3, gy0 - gh + 4, { align: 'right', font: '500 9px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+    } else {
+      const bmax = Math.max(d.W, d.F, 1), bw = 90, bar = (y, val, col, lab) => { ctx.fillStyle = col; ctx.fillRect(470, y, bw * val / bmax, 14); text(lab, 465, y + 11, { align: 'right', font: '600 10px "IBM Plex Mono",monospace', col: '#4a4a4a' }); text(fplain(val), 474 + bw * val / bmax, y + 11, { font: '600 10px "IBM Plex Mono",monospace' }); };
+      bar(50, d.W, COL.W, 'mg'); bar(72, d.Fy, COL.comp, 'F sinθ'); bar(94, d.N, COL.N, 'N');
+      bar(140, d.Fx, COL.comp, 'F cosθ'); bar(162, d.fk, COL.F, 'μk N');
+    }
+  }
+};
+
+
+S.mode = SIM.modes ? SIM.modes[0].id : 'one';
+setup(); requestAnimationFrame(loop);
+</script>
+</body></html>
