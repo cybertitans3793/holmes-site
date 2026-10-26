@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Internal Resistance</title>
+<!-- Internal Resistance: original Holmes Sims, built from frame.html + emf.js. g = 10 m/s². -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@500;700&display=swap">
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#fff;font-family:"Space Grotesk",system-ui,sans-serif;color:#111}
+#app{position:absolute;left:0;top:0;width:1000px;height:640px;transform-origin:0 0;padding:10px 14px 12px;box-sizing:border-box;
+  display:grid;grid-template-columns:600px 1fr;grid-template-rows:34px 330px 1fr;gap:10px 14px}
+#bar{grid-column:1/-1;display:flex;gap:16px;align-items:center;flex-wrap:nowrap;overflow:hidden}
+.seg{display:flex;align-items:center}
+.seg .lab{font:700 12px "IBM Plex Mono",monospace;margin-right:8px;text-transform:uppercase}
+.seg button{white-space:nowrap;font:700 14px "Space Grotesk",sans-serif;padding:6px 11px;border:2px solid #111;background:#fff;color:#111;cursor:pointer}
+.seg button+button{margin-left:-2px}
+.seg button[aria-pressed="true"]{background:#111;color:#fff}
+.seg button:hover:not([aria-pressed="true"]){background:#ffe2d3}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #ff6a2b;outline-offset:2px;position:relative;z-index:1}
+#cv{border:2px solid #111;background:#fbfbfb;width:600px;height:330px;box-sizing:border-box;display:block}
+#work{border:2px solid #111;padding:8px 12px 10px;overflow:auto;font-size:14px;line-height:1.55;box-sizing:border-box}
+#work .wt{font:700 12px "IBM Plex Mono",monospace;text-transform:uppercase;margin:0 0 4px;display:flex;justify-content:space-between}
+#work h4{margin:9px 0 1px;font-size:13px;font-weight:700;color:#4a4a4a}
+#work h4:first-of-type{margin-top:2px}
+#work .eq{font-variant-numeric:tabular-nums}
+#work .n{font-family:"IBM Plex Mono",monospace;font-size:13px}
+#work b .n,#work .ans{font-weight:700}
+#work .note{font-size:12.5px;color:#4a4a4a;margin:2px 0 0}
+#work .ok{background:#e5f4ea;border-left:4px solid #1e7d45;padding:3px 8px;margin-top:4px}
+#work .bad{background:#fde7df;border-left:4px solid #c43a00;padding:3px 8px;margin-top:4px}
+.ivv{border-radius:2px;padding:0 2px;transition:background .25s}
+.ivv.gx{background:#ffe2d3}
+.ivv.hot{background:#ff6a2b;color:#fff}
+#ctl{display:grid;grid-template-columns:1fr 1fr;gap:4px 18px;align-content:start}
+.iv{display:grid;grid-template-columns:auto 1fr auto;align-items:center;column-gap:6px}
+.iv .nm{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iv .val{font:700 13px "IBM Plex Mono",monospace;white-space:nowrap}
+.iv input[type=range]{grid-column:1/-1;width:100%;margin:0;accent-color:#111;height:22px}
+.iv input[type=radio]{accent-color:#ff6a2b;margin:0}
+#presets{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:2px}
+#presets .lab{font:700 12px "IBM Plex Mono",monospace}
+#presets button{font:600 12.5px "Space Grotesk",sans-serif;padding:3px 8px;border:2px solid #111;background:#fff;cursor:pointer}
+#presets button:hover{background:#ffe2d3}
+#gcard{border:2px solid #111;padding:5px 8px 6px;display:flex;flex-direction:column;box-sizing:border-box;min-height:0}
+.ghead{display:flex;align-items:center;gap:6px;font-size:13px;white-space:nowrap}
+.ghead select{font:600 13px "Space Grotesk",sans-serif;border:2px solid #111;padding:1px 4px;max-width:200px}
+#gv{width:340px;height:150px;flex:none;display:block;margin-top:3px}
+#dbl{font-size:12.5px;line-height:1.35;margin-top:2px}
+#dbl b{font-weight:700}
+.hint{font:500 11px "IBM Plex Mono",monospace;color:#4a4a4a}
+</style></head><body>
+<div id="app">
+  <div id="bar"></div>
+  <canvas id="cv" width="1200" height="660" aria-label="Animation of the situation with force arrows"></canvas>
+  <div id="work" aria-live="polite"></div>
+  <div id="ctl"></div>
+  <div id="gcard">
+    <div class="ghead"><span>Graph</span><select id="dvsel" aria-label="Quantity to graph"></select><span>vs <b id="ivname"></b></span></div>
+    <canvas id="gv" width="680" height="300" aria-label="Graph of the chosen quantity against the chosen variable"></canvas>
+    <div id="dbl"></div>
+  </div>
+</div>
+<script>
+// ---------------- shared frame ----------------
+const $ = id => document.getElementById(id);
+const G10 = 10, PI = Math.PI, DEG = PI / 180;
+function fit(){ const s = Math.min(innerWidth / 1000, innerHeight / 640); $('app').style.transform = 'scale(' + s + ')'; }
+addEventListener('resize', fit); fit();
+
+function fnum(x){ const r = fnum0(x); return typeof r === 'string' ? r.replace(/^-/, '−') : r; }
+function fnum0(x){
+  if (x === null || x === undefined || !isFinite(x)) return '—';
+  const a = Math.abs(x);
+  if (a === 0) return '0';
+  if (a >= 1e5 || a < 1e-3){
+    const e = Math.floor(Math.log10(a)); let m = x / Math.pow(10, e);
+    let ms = m.toFixed(2); if (Math.abs(+ms) >= 10){ m /= 10; ms = m.toFixed(2); return ms + '×10<sup>' + (e + 1) + '</sup>'; }
+    return ms + '×10<sup>' + e + '</sup>';
+  }
+  if (a >= 1000) return String(Math.round(x));
+  return x.toPrecision(3);
+}
+function fplain(x){ return fnum(x).replace(/<sup>(.*?)<\/sup>/g, (m, e) => '^' + e).replace('×10^', 'e'); }
+const H = {
+  n: (x, u) => '<span class="n">' + fnum(x) + (u ? '&nbsp;' + u : '') + '</span>',
+  iv: id => { const d = S.def[id]; const val = S.v[id]; const txt = (d.show ? d.show(val) : fnum(val) + (d.unit ? '&nbsp;' + d.unit : ''));
+              return '<span class="ivv n' + (S.gx === id ? ' gx' : '') + (S.hot === id ? ' hot' : '') + '" data-iv="' + id + '">' + txt + '</span>'; },
+  g: () => '<span class="n">10&nbsp;m/s²</span>',
+  p: (x, u) => x < 0 ? '(' + H.n(x, u) + ')' : H.n(x, u)
+};
+
+const S = { mode: null, opt: {}, v: {}, store: {}, def: {}, ivs: [], gx: null, dv: null, hot: null, t: 0, anim: {} };
+
+function bar(){
+  const b = $('bar'); b.innerHTML = '';
+  const group = (label, items, cur, onpick) => {
+    const g = document.createElement('div'); g.className = 'seg'; g.setAttribute('role', 'group');
+    if (label){ const l = document.createElement('span'); l.className = 'lab'; l.textContent = label; g.appendChild(l); }
+    items.forEach(([id, txt]) => { const bt = document.createElement('button'); bt.textContent = txt; bt.setAttribute('aria-pressed', String(id === cur)); bt.onclick = () => onpick(id); g.appendChild(bt); });
+    b.appendChild(g);
+  };
+  const tip = document.createElement('span'); tip.className = 'hint'; tip.style.marginLeft = 'auto'; tip.style.whiteSpace = 'nowrap'; tip.innerHTML = '● = the variable on the graph’s x-axis · drag any slider';
+  if (SIM.modes) group(null, SIM.modes.map(m => [m.id, m.label]), S.mode, id => { S.mode = id; S.anim = {}; setup(); });
+  (SIM.opts || []).filter(o => !o.modes || o.modes.includes(S.mode)).forEach(o => {
+    if (!(o.id in S.opt)) S.opt[o.id] = o.choices[0][0];
+    group(o.label, o.choices, S.opt[o.id], id => { S.opt[o.id] = id; S.anim = {}; setup(); });
+  });
+  b.appendChild(tip);
+  if (b.scrollWidth > b.clientWidth + 1) tip.remove();
+  if (b.scrollWidth > b.clientWidth + 1) b.querySelectorAll('.seg button').forEach(x => { x.style.fontSize = '13px'; x.style.padding = '6px 8px'; });
+}
+
+function setup(){
+  bar();
+  S.ivs = SIM.ivs(S.mode, S.opt); S.def = {}; S.v = {};
+  S.ivs.forEach(d => { S.def[d.id] = d; const k = S.mode + ':' + d.id; S.v[d.id] = (k in S.store) ? S.store[k] : d.val; });
+  if (!S.gx || !S.def[S.gx]) S.gx = S.ivs.find(d => d.graph) ? S.ivs.find(d => d.graph).id : S.ivs[1] ? S.ivs[1].id : S.ivs[0].id;
+  const c = $('ctl'); c.innerHTML = '';
+  S.ivs.forEach(d => {
+    const w = document.createElement('div'); w.className = 'iv';
+    w.innerHTML = '<input type="radio" name="gx" value="' + d.id + '" aria-label="Graph against ' + d.label + '" title="Put this on the graph’s x-axis"' + (S.gx === d.id ? ' checked' : '') + '>' +
+      '<span class="nm">' + d.label + ' <i>' + d.sym + '</i></span><span class="val" id="val-' + d.id + '"></span>' +
+      '<input type="range" id="r-' + d.id + '" min="' + d.min + '" max="' + d.max + '" step="' + d.step + '" value="' + S.v[d.id] + '" aria-label="' + d.label + '">';
+    c.appendChild(w);
+    const r = w.querySelector('input[type=range]');
+    r.oninput = () => { S.v[d.id] = +r.value; S.store[S.mode + ':' + d.id] = +r.value; S.hot = d.id; clearTimeout(S.hotT); S.hotT = setTimeout(() => { S.hot = null; update(); }, 700); S.anim.reset = true; update(); };
+    w.querySelector('input[type=radio]').onchange = () => { S.gx = d.id; update(); };
+  });
+  if (SIM.presets){
+    const p = document.createElement('div'); p.id = 'presets'; p.innerHTML = '<span class="lab">Try:</span>';
+    SIM.presets.forEach(ps => { const bt = document.createElement('button'); bt.textContent = ps.label; bt.onclick = () => { if (ps.mode && ps.mode !== S.mode){ S.mode = ps.mode; } Object.entries(ps.v).forEach(([k, val]) => S.store[(ps.mode || S.mode) + ':' + k] = val); S.anim = {}; setup(); }; p.appendChild(bt); });
+    c.appendChild(p);
+  }
+  const dvs = SIM.dvs(S.mode, S.opt), sel = $('dvsel');
+  if (!S.dv || !dvs.find(d => d.id === S.dv)) S.dv = dvs[0].id;
+  sel.innerHTML = dvs.map(d => '<option value="' + d.id + '"' + (d.id === S.dv ? ' selected' : '') + '>' + d.name + '</option>').join('');
+  sel.onchange = () => { S.dv = sel.value; update(); };
+  update();
+}
+
+function calcWith(over){ const v = Object.assign({}, S.v, over || {}); return SIM.calc(v, S.mode, S.opt); }
+
+function update(){
+  S.ivs.forEach(d => { $('val-' + d.id).innerHTML = d.show ? d.show(S.v[d.id]) : fnum(S.v[d.id]) + (d.unit ? '&nbsp;' + d.unit : ''); });
+  S.d = calcWith();
+  $('work').innerHTML = '<div class="wt"><span>Show the work</span><span class="hint">' + (SIM.hint || 'g = 10 m/s²') + '</span></div>' + SIM.work(S.v, S.d, S.mode, S.opt);
+  document.querySelectorAll('input[name=gx]').forEach(r => r.checked = (r.value === S.gx));
+  graph();
+}
+
+function graph(){
+  const cv = $('gv'), g = cv.getContext('2d'), W = 340, Hh = 150; g.setTransform(2, 0, 0, 2, 0, 0); g.clearRect(0, 0, W, Hh);
+  const dvs = SIM.dvs(S.mode, S.opt), dv = dvs.find(d => d.id === S.dv), ref = dv.vs ? dvs.find(d => d.id === dv.vs) : null;
+  const x = S.def[S.gx]; $('ivname').innerHTML = '<i>' + x.sym + '</i>' + (x.unit && !x.show ? ' (' + x.unit + ')' : '');
+  const N = 160, xs = [], ys = [], rs = [];
+  for (let i = 0; i <= N; i++){ const xv = x.min + (x.max - x.min) * i / N; const d = calcWith({ [S.gx]: xv }); xs.push(xv); ys.push(dv.f(d)); rs.push(ref ? ref.f(d) : null); }
+  const all = ys.concat(ref ? rs : []).filter(isFinite);
+  let ymin = Math.min(0, ...all), ymax = Math.max(...all, 0); if (ymax === ymin) ymax = ymin + 1; const pad = (ymax - ymin) * 0.08; ymax += pad; if (ymin < 0) ymin -= pad;
+  const L = 46, R = 8, T = 8, B = 22, X = v => L + (v - x.min) / (x.max - x.min) * (W - L - R), Y = v => T + (ymax - v) / (ymax - ymin) * (Hh - T - B);
+  g.strokeStyle = '#111'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(L, T); g.lineTo(L, Hh - B); g.lineTo(W - R, Hh - B); g.stroke();
+  if (ymin < 0){ g.strokeStyle = '#999'; g.setLineDash([3, 3]); g.beginPath(); g.moveTo(L, Y(0)); g.lineTo(W - R, Y(0)); g.stroke(); g.setLineDash([]);
+    if (dv.negNote){ g.fillStyle = 'rgba(196,58,0,0.08)'; g.fillRect(L, Y(0), W - R - L, Hh - B - Y(0)); g.fillStyle = '#c43a00'; g.font = '600 10px "Space Grotesk",sans-serif'; g.textAlign = 'left'; g.fillText(dv.negNote, L + 4, Hh - B - 4); } }
+  g.font = '500 10px "IBM Plex Mono",monospace'; g.fillStyle = '#4a4a4a'; g.textAlign = 'right';
+  g.fillText(fplain(ymax), L - 4, T + 8); g.fillText(fplain(ymin < 0 ? ymin : 0), L - 4, Hh - B); if (ymin < 0) g.fillText('0', L - 4, Y(0) + 3);
+  g.textAlign = 'center'; g.fillText(fplain(x.min), L, Hh - 8); g.fillText(fplain(x.max), W - R - 10, Hh - 8);
+  g.fillText((x.symText || x.id) + (x.unit ? ' (' + x.unit + ')' : ''), (L + W) / 2, Hh - 8);
+  g.save(); g.translate(10, (T + Hh - B) / 2); g.rotate(-PI / 2); g.textAlign = 'center'; g.fillText(dv.short + (dv.unit ? ' (' + dv.unit + ')' : ''), 0, 0); g.restore();
+  const line = (arr, col, dash) => { g.strokeStyle = col; g.lineWidth = 2.2; g.setLineDash(dash || []); g.beginPath(); let on = false; arr.forEach((y, i) => { if (!isFinite(y)){ on = false; return; } const px = X(xs[i]), py = Math.max(T - 4, Math.min(Hh - B + 4, Y(y))); on ? g.lineTo(px, py) : g.moveTo(px, py); on = true; }); g.stroke(); g.setLineDash([]); };
+  if (ref){ line(rs, '#4a4a4a', [5, 4]); g.fillStyle = '#4a4a4a'; g.textAlign = 'right'; g.font = '600 10px "Space Grotesk",sans-serif'; const lastY = rs.filter(isFinite).pop(); if (isFinite(lastY)) g.fillText(ref.short, W - R - 2, Math.max(T + 9, Y(lastY) - 4)); }
+  line(ys, '#1546d6');
+  const cx = S.v[S.gx], cy = dv.f(S.d);
+  if (isFinite(cy)){ g.strokeStyle = '#ff6a2b'; g.setLineDash([2, 3]); g.lineWidth = 1; g.beginPath(); g.moveTo(X(cx), Hh - B); g.lineTo(X(cx), Y(cy)); g.lineTo(L, Y(cy)); g.stroke(); g.setLineDash([]);
+    g.fillStyle = '#ff6a2b'; g.strokeStyle = '#111'; g.lineWidth = 1.5; g.beginPath(); g.arc(X(cx), Math.max(T, Math.min(Hh - B, Y(cy))), 4.5, 0, 7); g.fill(); g.stroke(); }
+  // doubling readout
+  const d2 = calcWith({ [S.gx]: cx * 2 }), y1 = dv.f(S.d), y2 = dv.f(d2);
+  let msg = '';
+  if (cx === 0 || Math.abs(y1) < 1e-12) msg = '<span class="hint">Move off zero to see the ×2 test.</span>';
+  else if (!isFinite(y1) || !isFinite(y2)) msg = '<span class="hint">The ×2 test doesn’t apply here (doubling takes it outside what this quantity covers).</span>';
+  else {
+    const k = y2 / y1;
+    if (k < 0){ $('dbl').innerHTML = 'If <b>' + x.sym + '</b> doubles (' + fnum(cx) + ' → ' + fnum(2 * cx) + (x.unit ? ' ' + x.unit : '') + '), <b>' + dv.sym + '</b> goes from ' + fnum(y1) + ' to ' + fnum(y2) + (dv.unit ? ' ' + dv.unit : '') + ': it changes sign, so that can’t really happen.'; return; }
+    const tags = [[1, 'doesn’t depend on it'], [2, 'proportional'], [4, 'goes as the square'], [0.5, 'inversely proportional'], [0.25, 'inverse square'], [Math.SQRT2, 'goes as the square root'], [Math.SQRT1_2, 'goes as 1/√'], [8, 'goes as the cube'], [2 * Math.SQRT2, 'goes as the 3/2 power']];
+    const tag = tags.find(([v]) => Math.abs(k - v) < 0.004 * v);
+    msg = 'If <b>' + x.sym + '</b> doubles (' + fnum(cx) + ' → ' + fnum(2 * cx) + (x.unit ? ' ' + x.unit : '') + '), <b>' + dv.sym + '</b> becomes <b>×' + (Math.abs(k) >= 100 ? fnum(k) : k.toFixed(2)) + '</b>' + (tag ? ' — ' + tag[1] : '') + '.' + (dv.dblNote ? ' <span class="hint">' + dv.dblNote + '</span>' : '');
+  }
+  $('dbl').innerHTML = msg;
+}
+
+// drawing helpers (canvas is drawn in 600×330 units)
+const cv = $('cv'), ctx = cv.getContext('2d');
+function arrow(x1, y1, x2, y2, col, label, opts){
+  opts = opts || {}; const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy); if (len < 2) return;
+  const ux = dx / len, uy = dy / len, hw = opts.head || 9;
+  ctx.save(); ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = opts.w || 3.5; ctx.lineCap = 'round';
+  if (opts.dash) ctx.setLineDash(opts.dash);
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2 - ux * hw * 0.8, y2 - uy * hw * 0.8); ctx.stroke(); ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x2, y2); ctx.lineTo(x2 - ux * hw - uy * hw * 0.55, y2 - uy * hw + ux * hw * 0.55); ctx.lineTo(x2 - ux * hw + uy * hw * 0.55, y2 - uy * hw - ux * hw * 0.55); ctx.closePath(); ctx.fill();
+  if (label){ ctx.font = '700 13px "Space Grotesk",sans-serif'; ctx.textAlign = opts.align || 'left'; ctx.textBaseline = 'middle';
+    const lx = x2 + (opts.lx !== undefined ? opts.lx : (ux >= 0 ? 6 : -6)), ly = y2 + (opts.ly !== undefined ? opts.ly : (uy >= 0 ? 10 : -10));
+    if (opts.align === undefined) ctx.textAlign = ux >= -0.2 ? 'left' : 'right';
+    ctx.fillText(label, lx, ly); }
+  ctx.restore();
+}
+function text(s, x, y, o){ o = o || {}; ctx.save(); ctx.font = (o.font || '600 13px "Space Grotesk",sans-serif'); ctx.fillStyle = o.col || '#111'; ctx.textAlign = o.align || 'left'; ctx.textBaseline = o.base || 'alphabetic'; ctx.fillText(s, x, y); ctx.restore(); }
+function panelTitle(s, x, y){ text(s, x, y, { font: '700 11px "IBM Plex Mono",monospace', col: '#4a4a4a' }); }
+const COL = { F: '#c43a00', W: '#111', N: '#1e7d45', V: '#1546d6', T: '#7a3fb0', comp: '#8a8a8a' };
+
+let last = 0;
+function loop(ts){ const dt = Math.min(0.05, (ts - (last || ts)) / 1000); last = ts; S.t += dt;
+  ctx.setTransform(2, 0, 0, 2, 0, 0); ctx.clearRect(0, 0, 600, 330);
+  SIM.draw(S.v, S.d, S.mode, S.opt, S.t, dt, S.anim); S.anim.reset = false;
+  requestAnimationFrame(loop); }
+
+// ---------------- this sim ----------------
+// Internal Resistance (AP 11.5, IB B.5 ε = I(R + r)): terminal voltage, V vs I graph (slope −r, intercept ε), power to the load. IB: potential divider with an LDR or thermistor.
+// shared schematic helpers (pasted into circuit sims by build_circ.py via //@include _schem.js)
+function wire(pts, col){ ctx.strokeStyle = col || '#111'; ctx.lineWidth = 2; ctx.beginPath(); pts.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.stroke(); }
+function resistor(x1, y1, x2, y2, lab, col){ const L = Math.hypot(x2 - x1, y2 - y1), ux = (x2 - x1) / L, uy = (y2 - y1) / L, z = 36, a = (L - z) / 2;
+  ctx.strokeStyle = col || '#111'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x1 + ux * a, y1 + uy * a);
+  for (let i = 1; i <= 6; i++){ const s = a + z * i / 6 - z / 12, o = (i % 2 ? 7 : -7); ctx.lineTo(x1 + ux * s - uy * o, y1 + uy * s + ux * o); }
+  ctx.lineTo(x1 + ux * (a + z), y1 + uy * (a + z)); ctx.lineTo(x2, y2); ctx.stroke();
+  if (lab) text(lab, (x1 + x2) / 2 + (Math.abs(uy) > 0.5 ? 12 : 0), (y1 + y2) / 2 + (Math.abs(uy) > 0.5 ? 4 : -12), { align: Math.abs(uy) > 0.5 ? 'left' : 'center', font: '700 11px "IBM Plex Mono",monospace', col: col || '#111' }); }
+function battery(x1, y1, x2, y2, lab){ // + terminal toward (x2,y2)
+  const L = Math.hypot(x2 - x1, y2 - y1), ux = (x2 - x1) / L, uy = (y2 - y1) / L, mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+  ctx.strokeStyle = '#111'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(mx - ux * 4, my - uy * 4); ctx.moveTo(mx + ux * 4, my + uy * 4); ctx.lineTo(x2, y2); ctx.stroke();
+  ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(mx + ux * 4 - uy * 13, my + uy * 4 + ux * 13); ctx.lineTo(mx + ux * 4 + uy * 13, my + uy * 4 - ux * 13); ctx.stroke();
+  ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(mx - ux * 4 - uy * 6, my - uy * 4 + ux * 6); ctx.lineTo(mx - ux * 4 + uy * 6, my - uy * 4 - ux * 6); ctx.stroke();
+  if (lab) text(lab, mx + (Math.abs(uy) > 0.5 ? -18 : 0), my + (Math.abs(uy) > 0.5 ? 4 : -18), { align: Math.abs(uy) > 0.5 ? 'right' : 'center', font: '700 11px "IBM Plex Mono",monospace' }); }
+function bulb(x, y, glow, lab, off){ if (glow > 0.01 && !off){ const g = ctx.createRadialGradient(x, y, 2, x, y, 10 + 26 * glow); g.addColorStop(0, 'rgba(255,214,60,' + Math.min(1, 0.4 + glow) + ')'); g.addColorStop(1, 'rgba(255,214,60,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 10 + 26 * glow, 0, 7); ctx.fill(); }
+  ctx.fillStyle = off ? '#eee' : '#fff8d6'; ctx.strokeStyle = off ? '#bbb' : '#111'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, 11, 0, 7); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x - 7, y - 7); ctx.lineTo(x + 7, y + 7); ctx.moveTo(x + 7, y - 7); ctx.lineTo(x - 7, y + 7); ctx.stroke();
+  if (lab) text(lab, x + 16, y - 12, { font: '700 11px "IBM Plex Mono",monospace', col: off ? '#bbb' : '#111' }); }
+function curArrow(x, y, dx, dy, lab, col){ const L = Math.hypot(dx, dy) || 1; arrow(x - dx * 9 / L, y - dy * 9 / L, x + dx * 9 / L, y + dy * 9 / L, col || '#1e7d45', null, { w: 2.5, head: 7 }); if (lab) text(lab, x + (Math.abs(dy) > 0.5 ? 8 : 0), y + (Math.abs(dy) > 0.5 ? 4 : -9), { align: Math.abs(dy) > 0.5 ? 'left' : 'center', font: '600 10px "IBM Plex Mono",monospace', col: col || '#1e7d45' }); }
+function dotN(x, y){ ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(x, y, 3.5, 0, 7); ctx.fill(); }
+
+function rSensor(kind, x){ return kind === 'ldr' ? 1e5 * Math.pow(10 / x, 0.7) : 1e4 * Math.exp(3900 * (1 / (x + 273) - 1 / 298)); }
+const SIM = {
+  title: 'Internal Resistance',
+  hint: 'ε = I(R + r) · V<sub>terminal</sub> = ε − Ir',
+  modes: [{ id: 'int', label: 'Battery with internal resistance' }, { id: 'div', label: 'Potential divider (IB)' }],
+  opts: [{ id: 'sen', label: 'Sensor', modes: ['div'], choices: [['ldr', 'LDR (light)'], ['th', 'Thermistor (temperature)']] }],
+  ivs(mode, opt){
+    if (mode === 'div'){ const ldr = (opt && opt.sen || 'ldr') === 'ldr'; return [{ id: 'E', sym: 'ε', symText: 'emf', label: 'Supply', unit: 'V', min: 1, max: 12, step: 0.5, val: 9 }, { id: 'R1', sym: 'R<sub>1</sub>', symText: 'R1', label: 'Fixed resistor', unit: 'kΩ', min: 1, max: 100, step: 1, val: 20 },
+      ldr ? { id: 'x', sym: 'light', symText: 'light', label: 'Light level', unit: 'lux', min: 1, max: 1000, step: 1, val: 50, graph: true } : { id: 'x', sym: 'T', symText: 'T', label: 'Temperature', unit: '°C', min: 0, max: 100, step: 1, val: 25, graph: true }]; }
+    return [{ id: 'E', sym: 'ε', symText: 'emf', label: 'Battery emf', unit: 'V', min: 1.5, max: 12, step: 0.5, val: 9 },
+      { id: 'r', sym: 'r', symText: 'r', label: 'Internal resistance', unit: 'Ω', min: 0, max: 5, step: 0.1, val: 1 },
+      { id: 'R', sym: 'R', symText: 'R', label: 'Load resistance', unit: 'Ω', min: 0.1, max: 30, step: 0.1, val: 5, graph: true }];
+  },
+  presets: [{ label: 'Short circuit', mode: 'int', v: { R: 0.1 } }, { label: 'R = r (max power)', mode: 'int', v: { R: 1, r: 1 } }, { label: 'Dusk', mode: 'div', v: { x: 5 } }],
+  calc(v, mode, opt){
+    if (mode === 'div'){ const kind = opt.sen || 'ldr', Rs = rSensor(kind, v.x), R1 = v.R1 * 1000, Vout = v.E * Rs / (R1 + Rs); return { kind, Rs, Vout, V1: v.E - Vout, I: v.E / (R1 + Rs) }; }
+    const I = v.E / (v.R + v.r), V = I * v.R, lost = I * v.r, P = I * I * v.R, Pmax = v.E * v.E / (4 * Math.max(v.r, 1e-6));
+    return { I, V, lost, P, Pmax, eff: v.R / (v.R + v.r), Isc: v.r > 0 ? v.E / v.r : Infinity };
+  },
+  dvs(mode){
+    if (mode === 'div') return [{ id: 'Vout', name: 'Voltage across the sensor (output)', short: 'V_out', sym: 'V<sub>out</sub>', unit: 'V', f: d => d.Vout }, { id: 'Rs', name: 'Sensor resistance', short: 'R_s', sym: 'R<sub>s</sub>', unit: 'Ω', f: d => d.Rs }];
+    return [{ id: 'V', name: 'Terminal voltage', short: 'V', sym: 'V<sub>T</sub>', unit: 'V', f: d => d.V }, { id: 'I', name: 'Current', short: 'I', sym: 'I', unit: 'A', f: d => d.I }, { id: 'P', name: 'Power delivered to the load', short: 'P', sym: 'P', unit: 'W', f: d => d.P }];
+  },
+  work(v, d, mode){
+    if (mode === 'div') return '<h4>1 · Two resistors in series share the supply voltage</h4><div class="eq">V<sub>out</sub> = ε × R<sub>s</sub>/(R₁ + R<sub>s</sub>)</div>' +
+      '<h4>2 · The sensor’s resistance</h4><div class="eq">' + (d.kind === 'ldr' ? 'LDR: resistance <b>falls</b> as light increases. At ' + v.x + ' lux: ' : 'Thermistor (NTC): resistance <b>falls</b> as temperature rises. At ' + v.x + ' °C: ') + 'R<sub>s</sub> = ' + H.n(d.Rs / 1000, 'kΩ') + '</div>' +
+      '<div class="eq">V<sub>out</sub> = ' + H.iv('E') + ' × ' + fnum(d.Rs / 1000) + '/(' + v.R1 + ' + ' + fnum(d.Rs / 1000) + ') = <b>' + H.n(d.Vout, 'V') + '</b></div>' +
+      '<p class="note">' + (d.kind === 'ldr' ? 'Darker → bigger R<sub>s</sub> → bigger V<sub>out</sub>. That rising voltage can switch on a street light at dusk.' : 'Hotter → smaller R<sub>s</sub> → smaller V<sub>out</sub>. Swap the positions to make V<sub>out</sub> rise with temperature instead (a fire alarm).') + '</p>';
+    return '<h4>1 · Real batteries have internal resistance r</h4><div class="eq">I = ε/(R + r) = ' + H.iv('E') + '/(' + fnum(v.R) + ' + ' + fnum(v.r) + ') = <b>' + H.n(d.I, 'A') + '</b></div>' +
+      '<h4>2 · Terminal voltage (what a voltmeter across the battery reads)</h4><div class="eq">V<sub>T</sub> = ε − Ir = ' + v.E + ' − (' + fnum(d.I) + ')(' + fnum(v.r) + ') = <b>' + H.n(d.V, 'V') + '</b> (“lost volts” Ir = ' + H.n(d.lost, 'V') + ')</div>' +
+      '<h4>3 · Power to the load</h4><div class="eq">P = I²R = <b>' + H.n(d.P, 'W') + '</b>. Maximum (' + H.n(d.Pmax, 'W') + ') when R = r.</div>' +
+      '<p class="note">Lab: vary R, measure V and I, graph V vs I. Straight line: intercept = ε, gradient = −r. (CED 11.5 activity.) Short circuit: I = ε/r = ' + (isFinite(d.Isc) ? H.n(d.Isc, 'A') : '∞') + '.</p>';
+  },
+  draw(v, d, mode){
+    if (mode === 'div'){
+      panelTitle('POTENTIAL DIVIDER', 10, 18);
+      battery(50, 230, 50, 110, v.E + ' V'); wire([[50, 110], [50, 60], [220, 60], [220, 80]]); resistor(220, 80, 220, 150, 'R₁ ' + v.R1 + ' kΩ'); wire([[220, 150], [220, 175]]);
+      ctx.strokeStyle = '#111'; ctx.lineWidth = 2; ctx.strokeRect(205, 175, 30, 60); if (d.kind === 'ldr'){ arrow(260, 170, 240, 190, '#d9a400', null, { w: 2, head: 6 }); arrow(272, 182, 252, 202, '#d9a400', null, { w: 2, head: 6 }); text('LDR', 242, 230, { font: '700 11px "IBM Plex Mono",monospace' }); } else { ctx.beginPath(); ctx.moveTo(195, 245); ctx.lineTo(245, 168); ctx.stroke(); text('thermistor', 242, 230, { font: '700 11px "IBM Plex Mono",monospace' }); }
+      wire([[220, 235], [220, 280], [50, 280], [50, 230]]); dotN(220, 162); dotN(220, 280); wire([[220, 162], [330, 162]]); wire([[220, 280], [330, 280]]);
+      text('V_out', 336, 226, { font: '700 12px "IBM Plex Mono",monospace', col: '#7a3fb0' }); text(fplain(d.Vout) + ' V', 336, 244, { font: '700 14px "Space Grotesk",sans-serif', col: '#7a3fb0' });
+      panelTitle('V_out vs ' + (d.kind === 'ldr' ? 'LIGHT' : 'TEMPERATURE'), 395, 18);
+      const gx = 405, gy = 260, gw = 180, gh = 200, xmax = d.kind === 'ldr' ? 1000 : 100, xmin = d.kind === 'ldr' ? 1 : 0, X = x => d.kind === 'ldr' ? gx + gw * Math.log10(x) / 3 : gx + gw * x / 100;
+      ctx.strokeStyle = '#111'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(gx, gy - gh); ctx.lineTo(gx, gy); ctx.lineTo(gx + gw, gy); ctx.stroke();
+      ctx.strokeStyle = '#7a3fb0'; ctx.lineWidth = 2.2; ctx.beginPath(); for (let i = 0; i <= 100; i++){ const x = d.kind === 'ldr' ? Math.pow(10, 3 * i / 100) : 100 * i / 100, Rs = rSensor(d.kind, x), Vo = v.E * Rs / (v.R1 * 1000 + Rs); i ? ctx.lineTo(X(x), gy - gh * Vo / v.E) : ctx.moveTo(X(x), gy - gh * Vo / v.E); } ctx.stroke();
+      ctx.fillStyle = '#ff6a2b'; ctx.beginPath(); ctx.arc(X(v.x), gy - gh * d.Vout / v.E, 5, 0, 7); ctx.fill();
+      text(d.kind === 'ldr' ? 'light (lux, log)' : 'T (°C)', gx + gw, gy + 13, { align: 'right', font: '600 9px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+      return;
+    }
+    panelTitle('BATTERY (dashed box) + LOAD', 10, 18);
+    ctx.setLineDash([5, 4]); ctx.strokeStyle = '#888'; ctx.lineWidth = 1.5; ctx.strokeRect(25, 80, 70, 190); ctx.setLineDash([]); text('battery', 30, 74, { font: '600 10px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+    battery(60, 250, 60, 190, 'ε ' + v.E + 'V'); wire([[60, 190], [60, 170]]); resistor(60, 170, 60, 100, 'r'); wire([[60, 100], [60, 55], [300, 55], [300, 130]]); resistor(300, 130, 300, 200, 'R ' + v.R + 'Ω'); wire([[300, 200], [300, 295], [60, 295], [60, 250]]);
+    curArrow(180, 55, 1, 0, 'I = ' + fplain(d.I) + ' A');
+    ctx.strokeStyle = '#7a3fb0'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(160, 175, 18, 0, 7); ctx.stroke(); text('V', 160, 180, { align: 'center', font: '700 13px "Space Grotesk",sans-serif', col: '#7a3fb0' }); wire([[142, 175], [110, 175], [110, 55]], '#7a3fb0'); wire([[178, 175], [200, 175], [200, 295]], '#7a3fb0'); dotN(110, 55); dotN(200, 295);
+    text(fplain(d.V) + ' V', 160, 210, { align: 'center', font: '700 12px "IBM Plex Mono",monospace', col: '#7a3fb0' });
+    panelTitle('V vs I (slope −r)', 395, 18);
+    const gx = 405, gy = 260, gw = 180, gh = 200, Imax = Math.min(isFinite(d.Isc) ? d.Isc : 20, 20), X = I => gx + gw * I / Imax, Y = V => gy - gh * V / v.E;
+    ctx.strokeStyle = '#111'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(gx, gy - gh); ctx.lineTo(gx, gy); ctx.lineTo(gx + gw, gy); ctx.stroke();
+    ctx.strokeStyle = '#1546d6'; ctx.lineWidth = 2.2; ctx.beginPath(); ctx.moveTo(X(0), Y(v.E)); ctx.lineTo(X(Imax), Y(v.E - Imax * v.r)); ctx.stroke();
+    ctx.fillStyle = '#ff6a2b'; ctx.beginPath(); ctx.arc(X(d.I), Y(d.V), 5, 0, 7); ctx.fill();
+    text('ε', gx - 10, Y(v.E) + 4, { font: '700 12px "IBM Plex Mono",monospace' }); text('I (A)', gx + gw, gy + 13, { align: 'right', font: '600 9px "IBM Plex Mono",monospace', col: '#4a4a4a' }); text('V_T', gx + 4, gy - gh - 4, { font: '600 9px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+    text('P = ' + fplain(d.P) + ' W  (max ' + fplain(d.Pmax) + ')', 400, 300, { font: '700 12px "Space Grotesk",sans-serif' });
+  }
+};
+
+
+S.mode = SIM.modes ? SIM.modes[0].id : 'one';
+setup(); requestAnimationFrame(loop);
+</script>
+</body></html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PhET circuit sims</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@500;700&display=swap">
+<style>
+html,body{margin:0;height:100%;background:#fff;font-family:"Space Grotesk",system-ui,sans-serif;color:#111}
+#wrap{display:flex;flex-direction:column;height:100%}
+#bar{display:flex;gap:0;align-items:center;padding:8px 10px;border-bottom:2px solid #111;flex-wrap:wrap}
+#bar .lab{font:700 12px "IBM Plex Mono",monospace;margin-right:10px}
+#bar button{font:700 14px "Space Grotesk",sans-serif;padding:6px 11px;border:2px solid #111;background:#fff;cursor:pointer}
+#bar button+button{margin-left:-2px}
+#bar button[aria-pressed="true"]{background:#111;color:#fff}
+#bar button:focus-visible{outline:3px solid #ff6a2b;outline-offset:2px}
+#bar .src{margin-left:auto;font:500 11px "IBM Plex Mono",monospace;color:#4a4a4a}
+iframe{flex:1;border:0;width:100%}
+</style></head><body>
+<div id="wrap">
+  <div id="bar" role="group" aria-label="PhET simulation"><span class="lab">PHET</span></div>
+  <iframe id="f" title="PhET simulation" allowfullscreen></iframe>
+</div>
+<script>
+// PhET Interactive Simulations, University of Colorado Boulder, CC BY 4.0. Loaded from phet.colorado.edu.
+const SIMS = [['circuit-construction-kit-dc', 'Circuit Construction Kit: DC'], ['circuit-construction-kit-dc-virtual-lab', 'CCK: DC Virtual Lab']];
+const bar = document.getElementById('bar'), f = document.getElementById('f');
+function pick(id){ f.src = 'https://phet.colorado.edu/sims/html/' + id + '/latest/' + id + '_all.html'; [...bar.querySelectorAll('button')].forEach(b => b.setAttribute('aria-pressed', String(b.dataset.id === id))); }
+SIMS.forEach(([id, name]) => { const b = document.createElement('button'); b.textContent = name; b.dataset.id = id; b.onclick = () => pick(id); bar.appendChild(b); });
+const s = document.createElement('span'); s.className = 'src'; s.textContent = 'from phet.colorado.edu'; bar.appendChild(s);
+pick(SIMS[0][0]);
+</script>
+</body></html>
