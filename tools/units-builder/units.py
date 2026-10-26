@@ -408,33 +408,34 @@ UNITS = {
      'note': 'IB A.2 only. AP Physics 1 does not include viscosity.'},
 ]},
 # ------------------------------------------------------------------ AP PHYSICS 2 / IB
-'P2-01': {'course': 'AP Physics 2 / IB', 'num': '01', 'title': 'Thermodynamics', 'tabs': [
-    {'code': 'IB', 'name': 'Black Bodies', 'sim': 'green', 'select': 'Black Bodies', 'tasks': [
+'P2-00': {'course': 'AP Physics 2 / IB', 'num': '00', 'title': 'Greenhouse Effect (IB)', 'tabs': [
+    {'code': '', 'name': 'Black Bodies', 'sim': 'green', 'select': 'Black Bodies', 'tasks': [
         'Raise the temperature. Which way does the peak move? Check that λ<sub>max</sub>·T stays about 2.9 × 10⁻³ m·K.',
         'Double the temperature. By what factor does the power per square meter go up? Explain with σT⁴.',
         'Compare the Sun (about 5800 K) with the Earth (about 290 K). Which part of the spectrum does each one mostly give off?',
         'A stove burner glows red, but your body doesn’t glow. Both are black bodies. What’s different?']},
-    {'code': 'IB', 'name': 'Sunlight & Albedo', 'sim': 'green', 'select': 'Sunlight & Albedo', 'tasks': [
+    {'code': '', 'name': 'Sunlight & Albedo', 'sim': 'green', 'select': 'Sunlight & Albedo', 'tasks': [
         'Change the distance from the Sun. Mars is about 1.5 times farther than Earth. Predict its solar constant with the inverse-square law, then check it.',
         'Why is the average sunlight on the whole Earth only S/4, not S?',
         'Turn the clouds and the ice &amp; snow on and off. Which one changes Earth’s albedo more?',
         'Switch between June and December. Why does the albedo of the whole Earth change during the year?']},
-    {'code': 'IB', 'name': 'Energy Balance', 'sim': 'green', 'select': 'Energy Balance', 'tasks': [
+    {'code': '', 'name': 'Energy Balance', 'sim': 'green', 'select': 'Energy Balance', 'tasks': [
         'Pick <b>Earth, no greenhouse</b>. Find the equilibrium temperature and compare it with the real average of about 288 K.',
         'Raise the albedo. Predict the new temperature, then check it.',
         'Try Venus, Mars and the Moon. Which one ends up far hotter than a no-greenhouse planet at its distance? Why?',
         'Use <b>Start cold</b> and <b>Start hot</b>. Why does the planet end up at the same temperature either way?']},
-    {'code': 'IB', 'name': 'Atmosphere', 'sim': 'green', 'select': 'Atmosphere', 'tasks': [
+    {'code': '', 'name': 'Atmosphere', 'sim': 'green', 'select': 'Atmosphere', 'tasks': [
         'Turn on the one-layer atmosphere. How much warmer is the surface than with no atmosphere?',
         'Change the emissivity of the atmosphere. Predict the surface temperature, then check it.',
         'Open <b>IB-style practice</b>. Solve a problem on paper before you press Check.',
         'Add CO₂. Explain the <b>enhanced</b> greenhouse effect in two sentences.']},
-    {'code': 'IB', 'name': 'Molecules & IR', 'sim': 'green', 'select': 'Molecules & IR', 'tasks': [
+    {'code': '', 'name': 'Molecules & IR', 'sim': 'green', 'select': 'Molecules & IR', 'tasks': [
         'Shine infrared on N₂, O₂, CO₂ and H₂O. Which molecules absorb it?',
         'Match the photon energy to the gap between energy levels. What happens when they don’t match?',
         'N₂ and O₂ make up 99 % of the air. Why don’t they trap infrared?',
         'Name a natural and a human source for each greenhouse gas.']},
 ]},
+'P2-01': {'course': 'AP Physics 2 / IB', 'num': '01', 'title': 'Thermodynamics', 'tabs': []},
 'P2-02': {'course': 'AP Physics 2 / IB', 'num': '02', 'title': 'Electrostatics', 'tabs': [
     {'code': '', 'name': 'Charging & the Electroscope', 'sim': 'scope', 'tasks': [
         'Bring a charged rod near the electroscope without touching. Why do the leaves spread if no charge moved onto it?',
