@@ -52,6 +52,12 @@ SIMS = {
     'mpulley': {'file': 'units/sims/circ-mpulley.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'roll':    {'file': 'units/sims/circ-roll.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'angmom':  {'file': 'units/sims/circ-angmom.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'pressure': {'file': 'units/sims/circ-pressure.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Pressure &amp; Depth, Floating &amp; Sinking, Scale &amp; Beaker, Pipe Flow, Leaky Tank and Terminal Velocity are original.'},
+    'float':   {'file': 'units/sims/circ-float.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'scale':   {'file': 'units/sims/circ-scale.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'pipe':    {'file': 'units/sims/circ-pipe.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'tank':    {'file': 'units/sims/circ-tank.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'stokes':  {'file': 'units/sims/circ-stokes.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'springs': {'file': 'units/sims/circ-springs.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'pulleys': {'file': 'units/sims/circ-pulleys.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Pulleys and Box on a Truck are original.'},
     'truck':   {'file': 'units/sims/circ-truck.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
@@ -287,6 +293,12 @@ UNITS = {
         '<b>2D:</b> turn on the momentum vectors and the total. Make a glancing collision. Is the total momentum vector the same before and after?']},
 ]},
 'P1-09': {'course': 'AP Physics 1 / IB', 'num': '09', 'title': 'Fluids', 'tabs': [
+    {'code': '', 'name': 'Pressure & Depth', 'sim': 'pressure', 'tasks': [
+        '<b>Predict, then check.</b> Find the absolute and gauge pressure 5.0 m under water. How deep must you go for the pressure to double?',
+        'Compare the three containers at the same depth. Why doesn’t the shape matter?',
+        'Graph P vs h for water, then for mercury. What does the slope tell you?',
+        '<b>U-tube.</b> 20 cm of oil (800 kg/m³) sits on water. Find the water height above the boundary on the other side. Which side is higher, and why?',
+        '<b>Hydraulic lift.</b> A 100 N push on a 10 cm² piston. Find the force on a 500 cm² piston and how far it rises when you push 20 cm. Show that no energy is gained.']},
     {'code': '', 'name': 'Under Pressure', 'sim': 'fluids', 'select': 'Under Pressure', 'tasks': [
         'Put pressure gauges at the surface, 1 m down and 2 m down. How much does the pressure go up per meter? Compare with ρg.',
         'Switch to an odd-shaped pool. Is the pressure at the same depth still the same? Why doesn’t the shape matter?',
@@ -298,31 +310,57 @@ UNITS = {
         'U-tube: add the second liquid. Measure both heights above the boundary and find the second liquid’s density.',
         'Gas tank manometer: read the height difference and find the gas’s gauge pressure. Is it more or less than air pressure?',
         'Siphon: raise the top of the tube. Why can’t a water siphon work over a top higher than about 10 m?']},
+    {'code': '', 'name': 'Floating & Sinking', 'sim': 'float', 'tasks': [
+        '<b>Floating.</b> Show that the fraction under the surface is ρ<sub>obj</sub>/ρ<sub>fluid</sub>. What fraction of an ice cube is under water?',
+        'Move a floating block from fresh water to salt water. Does the buoyant force change? Does the fraction under the surface?',
+        '<b>Tied under.</b> A 2.0 L block (600 kg/m³) is held under by a string tied to the bottom. Draw the free-body diagram and find the tension.',
+        '<b>Denser than water.</b> Find the apparent weight of a 2.0 L aluminum block hanging in water. Then let it go: find its acceleration (ignoring drag).',
+        '<b>Claim.</b> “The deeper an object sinks, the bigger the buoyant force.” When is this true, and when isn’t it?']},
     {'code': '', 'name': 'Buoyancy', 'sim': 'fluids', 'select': 'Buoyancy', 'tasks': [
         'Predict what fraction of a block with half the density of water floats under the surface. Then test it.',
         'Push a block all the way under, then deeper. Does the buoyant force keep growing?',
         'Compare two blocks: same size but different mass, then same mass but different size. Which pairs feel the same buoyant force?',
         '<b>Boat &amp; cargo:</b> predict how much cargo the boat can carry before it sinks, using its volume. Then load it.']},
+    {'code': '', 'name': 'Scale & Beaker', 'sim': 'scale', 'tasks': [
+        '<b>Classic FRQ.</b> Lower the block halfway in. Predict how each scale reading changes, then check. Use free-body diagrams for the block and for the beaker.',
+        'Where does the weight “lost” by the top scale go? Use Newton’s third law.',
+        'Graph both readings vs how far the block is in. Why do both graphs go flat once the block is fully under?',
+        'Show that the two readings always add up to (M + m)g.']},
     {'code': '', 'name': 'Scales', 'sim': 'fluids', 'select': 'Scales', 'tasks': [
         'Lower a hanging block into the water. By how much does the spring scale reading drop? Compare with the buoyant force.',
         'Watch the scale under the beaker at the same time. Where did the “missing” weight go? Use Newton’s third law.',
         'Tied mode: draw the free-body diagram of the block. Check the string tension against your diagram.',
         'Overflow can: compare the weight of the water that spills out with the buoyant force.']},
+    {'code': '', 'name': 'Pipe Flow', 'sim': 'pipe', 'tasks': [
+        '<b>Continuity.</b> Water at 2.0 m/s enters a pipe that narrows to ¼ of the area. Find the speed in the narrow part and the volume flow rate.',
+        '<b>Level pipe.</b> Is the pressure higher in the wide part or the narrow part? Explain with Bernoulli’s equation and the budget bars.',
+        '<b>Same width, uphill.</b> Does the speed change? Does the pressure? Explain.',
+        'Find a setting where the pressure in part 2 would have to be negative. What does that tell you is physically impossible?']},
     {'code': '', 'name': 'Flow', 'sim': 'fluids', 'select': 'Flow', 'tasks': [
         'Squeeze one part of the pipe. Use the speed readouts to check A₁v₁ = A₂v₂.',
         'Put pressure gauges in the wide and narrow parts. Where is the pressure lower? Use the energy bars to explain.',
         'Raise one end of the pipe. How do the bars change between the low end and the high end?',
         'Venturi tubes: use the difference in water heights to find the speed in the narrow part.']},
+    {'code': '', 'name': 'Leaky Tank', 'sim': 'tank', 'tasks': [
+        'Use Bernoulli to show that water leaves a hole a depth h below the surface at v = √(2gh). Check for h = 1.8 m.',
+        'The hole is 1.25 m above the ground. Where does the stream land? Treat it as a horizontal projectile.',
+        'As the tank drains, what happens to the speed, the landing spot and the flow rate?',
+        '<b>Sealed + pumped.</b> Add pressure on top. Which term in Bernoulli’s equation changed?',
+        '<b>Three holes.</b> Which hole shoots farthest? Show that x = 2√(hy) and explain why the low and high holes land together.']},
     {'code': '', 'name': 'Water Tower', 'sim': 'fluids', 'select': 'Water Tower', 'tasks': [
         'Fill the tank, open the hole and turn on <b>Show h</b>. Predict the exit speed with v = √(2gh), then check it.',
         'Use the speed and the height of the hole to predict where the stream lands. Check with the measuring tape.',
         'Raise the whole tower. Does the exit speed change? Does the landing spot?',
         'Set the faucet to <b>match leakage</b>. What does that tell you about the flow rate in and out?']},
-    {'code': 'IB', 'name': 'Viscosity', 'sim': 'fluids', 'select': 'Viscosity', 'gapBefore': True, 'tasks': [
+    {'code': 'IB', 'name': 'Terminal Velocity', 'sim': 'stokes', 'gapBefore': True, 'tasks': [
+        'Draw the free-body diagram of a sphere falling at terminal velocity in glycerin. Derive v<sub>t</sub> = 2r²(ρ<sub>s</sub> − ρ<sub>f</sub>)g/(9η).',
+        'Double the radius. By what factor does v<sub>t</sub> change? Explain with how weight and drag depend on r.',
+        'Plan a lab to measure η from v<sub>t</sub> for several radii. What should you graph to get a straight line?'],
+     'note': 'IB A.2 only. AP Physics 1 does not include Stokes’ law.'},
+    {'code': 'IB', 'name': 'Viscosity', 'sim': 'fluids', 'select': 'Viscosity', 'tasks': [
         'Drop a ball and watch its speed level off. Why does it stop speeding up?',
         'Record the terminal speed for several radii. Graph v<sub>t</sub> against r². What should the graph look like?',
-        'Use the slope of your graph to find the viscosity η. Check it against the sim.',
-        'Watch the Reynolds number. When does Stokes’ law (F = 6πηrv) stop being a good model?'],
+        'Use the slope of your graph to find the viscosity η. Check it against the sim.'],
      'note': 'IB A.2 only. AP Physics 1 does not include viscosity.'},
 ]},
 # ------------------------------------------------------------------ AP PHYSICS 2 / IB

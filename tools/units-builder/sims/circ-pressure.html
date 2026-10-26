@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pressure & Depth</title>
+<!-- Pressure & Depth: original Holmes Sims, built from frame.html + pressure.js. g = 10 m/s². -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@500;700&display=swap">
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#fff;font-family:"Space Grotesk",system-ui,sans-serif;color:#111}
+#app{position:absolute;left:0;top:0;width:1000px;height:640px;transform-origin:0 0;padding:10px 14px 12px;box-sizing:border-box;
+  display:grid;grid-template-columns:600px 1fr;grid-template-rows:34px 330px 1fr;gap:10px 14px}
+#bar{grid-column:1/-1;display:flex;gap:16px;align-items:center;flex-wrap:nowrap;overflow:hidden}
+.seg{display:flex;align-items:center}
+.seg .lab{font:700 12px "IBM Plex Mono",monospace;margin-right:8px;text-transform:uppercase}
+.seg button{white-space:nowrap;font:700 14px "Space Grotesk",sans-serif;padding:6px 11px;border:2px solid #111;background:#fff;color:#111;cursor:pointer}
+.seg button+button{margin-left:-2px}
+.seg button[aria-pressed="true"]{background:#111;color:#fff}
+.seg button:hover:not([aria-pressed="true"]){background:#ffe2d3}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #ff6a2b;outline-offset:2px;position:relative;z-index:1}
+#cv{border:2px solid #111;background:#fbfbfb;width:600px;height:330px;box-sizing:border-box;display:block}
+#work{border:2px solid #111;padding:8px 12px 10px;overflow:auto;font-size:14px;line-height:1.55;box-sizing:border-box}
+#work .wt{font:700 12px "IBM Plex Mono",monospace;text-transform:uppercase;margin:0 0 4px;display:flex;justify-content:space-between}
+#work h4{margin:9px 0 1px;font-size:13px;font-weight:700;color:#4a4a4a}
+#work h4:first-of-type{margin-top:2px}
+#work .eq{font-variant-numeric:tabular-nums}
+#work .n{font-family:"IBM Plex Mono",monospace;font-size:13px}
+#work b .n,#work .ans{font-weight:700}
+#work .note{font-size:12.5px;color:#4a4a4a;margin:2px 0 0}
+#work .ok{background:#e5f4ea;border-left:4px solid #1e7d45;padding:3px 8px;margin-top:4px}
+#work .bad{background:#fde7df;border-left:4px solid #c43a00;padding:3px 8px;margin-top:4px}
+.ivv{border-radius:2px;padding:0 2px;transition:background .25s}
+.ivv.gx{background:#ffe2d3}
+.ivv.hot{background:#ff6a2b;color:#fff}
+#ctl{display:grid;grid-template-columns:1fr 1fr;gap:4px 18px;align-content:start}
+.iv{display:grid;grid-template-columns:auto 1fr auto;align-items:center;column-gap:6px}
+.iv .nm{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iv .val{font:700 13px "IBM Plex Mono",monospace;white-space:nowrap}
+.iv input[type=range]{grid-column:1/-1;width:100%;margin:0;accent-color:#111;height:22px}
+.iv input[type=radio]{accent-color:#ff6a2b;margin:0}
+#presets{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:2px}
+#presets .lab{font:700 12px "IBM Plex Mono",monospace}
+#presets button{font:600 12.5px "Space Grotesk",sans-serif;padding:3px 8px;border:2px solid #111;background:#fff;cursor:pointer}
+#presets button:hover{background:#ffe2d3}
+#gcard{border:2px solid #111;padding:5px 8px 6px;display:flex;flex-direction:column;box-sizing:border-box;min-height:0}
+.ghead{display:flex;align-items:center;gap:6px;font-size:13px;white-space:nowrap}
+.ghead select{font:600 13px "Space Grotesk",sans-serif;border:2px solid #111;padding:1px 4px;max-width:200px}
+#gv{width:340px;height:150px;flex:none;display:block;margin-top:3px}
+#dbl{font-size:12.5px;line-height:1.35;margin-top:2px}
+#dbl b{font-weight:700}
+.hint{font:500 11px "IBM Plex Mono",monospace;color:#4a4a4a}
+</style></head><body>
+<div id="app">
+  <div id="bar"></div>
+  <canvas id="cv" width="1200" height="660" aria-label="Animation of the situation with force arrows"></canvas>
+  <div id="work" aria-live="polite"></div>
+  <div id="ctl"></div>
+  <div id="gcard">
+    <div class="ghead"><span>Graph</span><select id="dvsel" aria-label="Quantity to graph"></select><span>vs <b id="ivname"></b></span></div>
+    <canvas id="gv" width="680" height="300" aria-label="Graph of the chosen quantity against the chosen variable"></canvas>
+    <div id="dbl"></div>
+  </div>
+</div>
+<script>
+// ---------------- shared frame ----------------
+const $ = id => document.getElementById(id);
+const G10 = 10, PI = Math.PI, DEG = PI / 180;
+function fit(){ const s = Math.min(innerWidth / 1000, innerHeight / 640); $('app').style.transform = 'scale(' + s + ')'; }
+addEventListener('resize', fit); fit();
+
+function fnum(x){ const r = fnum0(x); return typeof r === 'string' ? r.replace(/^-/, '−') : r; }
+function fnum0(x){
+  if (x === null || x === undefined || !isFinite(x)) return '—';
+  const a = Math.abs(x);
+  if (a === 0) return '0';
+  if (a >= 1e5 || a < 1e-3){
+    const e = Math.floor(Math.log10(a)); let m = x / Math.pow(10, e);
+    let ms = m.toFixed(2); if (Math.abs(+ms) >= 10){ m /= 10; ms = m.toFixed(2); return ms + '×10<sup>' + (e + 1) + '</sup>'; }
+    return ms + '×10<sup>' + e + '</sup>';
+  }
+  if (a >= 1000) return String(Math.round(x));
+  return x.toPrecision(3);
+}
+function fplain(x){ return fnum(x).replace(/<sup>(.*?)<\/sup>/g, (m, e) => '^' + e).replace('×10^', 'e'); }
+const H = {
+  n: (x, u) => '<span class="n">' + fnum(x) + (u ? '&nbsp;' + u : '') + '</span>',
+  iv: id => { const d = S.def[id]; const val = S.v[id]; const txt = (d.show ? d.show(val) : fnum(val) + (d.unit ? '&nbsp;' + d.unit : ''));
+              return '<span class="ivv n' + (S.gx === id ? ' gx' : '') + (S.hot === id ? ' hot' : '') + '" data-iv="' + id + '">' + txt + '</span>'; },
+  g: () => '<span class="n">10&nbsp;m/s²</span>',
+  p: (x, u) => x < 0 ? '(' + H.n(x, u) + ')' : H.n(x, u)
+};
+
+const S = { mode: null, opt: {}, v: {}, store: {}, def: {}, ivs: [], gx: null, dv: null, hot: null, t: 0, anim: {} };
+
+function bar(){
+  const b = $('bar'); b.innerHTML = '';
+  const group = (label, items, cur, onpick) => {
+    const g = document.createElement('div'); g.className = 'seg'; g.setAttribute('role', 'group');
+    if (label){ const l = document.createElement('span'); l.className = 'lab'; l.textContent = label; g.appendChild(l); }
+    items.forEach(([id, txt]) => { const bt = document.createElement('button'); bt.textContent = txt; bt.setAttribute('aria-pressed', String(id === cur)); bt.onclick = () => onpick(id); g.appendChild(bt); });
+    b.appendChild(g);
+  };
+  const tip = document.createElement('span'); tip.className = 'hint'; tip.style.marginLeft = 'auto'; tip.style.whiteSpace = 'nowrap'; tip.innerHTML = '● = the variable on the graph’s x-axis · drag any slider';
+  if (SIM.modes) group(null, SIM.modes.map(m => [m.id, m.label]), S.mode, id => { S.mode = id; S.anim = {}; setup(); });
+  (SIM.opts || []).filter(o => !o.modes || o.modes.includes(S.mode)).forEach(o => {
+    if (!(o.id in S.opt)) S.opt[o.id] = o.choices[0][0];
+    group(o.label, o.choices, S.opt[o.id], id => { S.opt[o.id] = id; S.anim = {}; setup(); });
+  });
+  b.appendChild(tip);
+  if (b.scrollWidth > b.clientWidth + 1) tip.remove();
+  if (b.scrollWidth > b.clientWidth + 1) b.querySelectorAll('.seg button').forEach(x => { x.style.fontSize = '13px'; x.style.padding = '6px 8px'; });
+}
+
+function setup(){
+  bar();
+  S.ivs = SIM.ivs(S.mode, S.opt); S.def = {}; S.v = {};
+  S.ivs.forEach(d => { S.def[d.id] = d; const k = S.mode + ':' + d.id; S.v[d.id] = (k in S.store) ? S.store[k] : d.val; });
+  if (!S.gx || !S.def[S.gx]) S.gx = S.ivs.find(d => d.graph) ? S.ivs.find(d => d.graph).id : S.ivs[1] ? S.ivs[1].id : S.ivs[0].id;
+  const c = $('ctl'); c.innerHTML = '';
+  S.ivs.forEach(d => {
+    const w = document.createElement('div'); w.className = 'iv';
+    w.innerHTML = '<input type="radio" name="gx" value="' + d.id + '" aria-label="Graph against ' + d.label + '" title="Put this on the graph’s x-axis"' + (S.gx === d.id ? ' checked' : '') + '>' +
+      '<span class="nm">' + d.label + ' <i>' + d.sym + '</i></span><span class="val" id="val-' + d.id + '"></span>' +
+      '<input type="range" id="r-' + d.id + '" min="' + d.min + '" max="' + d.max + '" step="' + d.step + '" value="' + S.v[d.id] + '" aria-label="' + d.label + '">';
+    c.appendChild(w);
+    const r = w.querySelector('input[type=range]');
+    r.oninput = () => { S.v[d.id] = +r.value; S.store[S.mode + ':' + d.id] = +r.value; S.hot = d.id; clearTimeout(S.hotT); S.hotT = setTimeout(() => { S.hot = null; update(); }, 700); S.anim.reset = true; update(); };
+    w.querySelector('input[type=radio]').onchange = () => { S.gx = d.id; update(); };
+  });
+  if (SIM.presets){
+    const p = document.createElement('div'); p.id = 'presets'; p.innerHTML = '<span class="lab">Try:</span>';
+    SIM.presets.forEach(ps => { const bt = document.createElement('button'); bt.textContent = ps.label; bt.onclick = () => { if (ps.mode && ps.mode !== S.mode){ S.mode = ps.mode; } Object.entries(ps.v).forEach(([k, val]) => S.store[(ps.mode || S.mode) + ':' + k] = val); S.anim = {}; setup(); }; p.appendChild(bt); });
+    c.appendChild(p);
+  }
+  const dvs = SIM.dvs(S.mode, S.opt), sel = $('dvsel');
+  if (!S.dv || !dvs.find(d => d.id === S.dv)) S.dv = dvs[0].id;
+  sel.innerHTML = dvs.map(d => '<option value="' + d.id + '"' + (d.id === S.dv ? ' selected' : '') + '>' + d.name + '</option>').join('');
+  sel.onchange = () => { S.dv = sel.value; update(); };
+  update();
+}
+
+function calcWith(over){ const v = Object.assign({}, S.v, over || {}); return SIM.calc(v, S.mode, S.opt); }
+
+function update(){
+  S.ivs.forEach(d => { $('val-' + d.id).innerHTML = d.show ? d.show(S.v[d.id]) : fnum(S.v[d.id]) + (d.unit ? '&nbsp;' + d.unit : ''); });
+  S.d = calcWith();
+  $('work').innerHTML = '<div class="wt"><span>Show the work</span><span class="hint">' + (SIM.hint || 'g = 10 m/s²') + '</span></div>' + SIM.work(S.v, S.d, S.mode, S.opt);
+  document.querySelectorAll('input[name=gx]').forEach(r => r.checked = (r.value === S.gx));
+  graph();
+}
+
+function graph(){
+  const cv = $('gv'), g = cv.getContext('2d'), W = 340, Hh = 150; g.setTransform(2, 0, 0, 2, 0, 0); g.clearRect(0, 0, W, Hh);
+  const dvs = SIM.dvs(S.mode, S.opt), dv = dvs.find(d => d.id === S.dv), ref = dv.vs ? dvs.find(d => d.id === dv.vs) : null;
+  const x = S.def[S.gx]; $('ivname').innerHTML = '<i>' + x.sym + '</i>' + (x.unit && !x.show ? ' (' + x.unit + ')' : '');
+  const N = 160, xs = [], ys = [], rs = [];
+  for (let i = 0; i <= N; i++){ const xv = x.min + (x.max - x.min) * i / N; const d = calcWith({ [S.gx]: xv }); xs.push(xv); ys.push(dv.f(d)); rs.push(ref ? ref.f(d) : null); }
+  const all = ys.concat(ref ? rs : []).filter(isFinite);
+  let ymin = Math.min(0, ...all), ymax = Math.max(...all, 0); if (ymax === ymin) ymax = ymin + 1; const pad = (ymax - ymin) * 0.08; ymax += pad; if (ymin < 0) ymin -= pad;
+  const L = 46, R = 8, T = 8, B = 22, X = v => L + (v - x.min) / (x.max - x.min) * (W - L - R), Y = v => T + (ymax - v) / (ymax - ymin) * (Hh - T - B);
+  g.strokeStyle = '#111'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(L, T); g.lineTo(L, Hh - B); g.lineTo(W - R, Hh - B); g.stroke();
+  if (ymin < 0){ g.strokeStyle = '#999'; g.setLineDash([3, 3]); g.beginPath(); g.moveTo(L, Y(0)); g.lineTo(W - R, Y(0)); g.stroke(); g.setLineDash([]);
+    if (dv.negNote){ g.fillStyle = 'rgba(196,58,0,0.08)'; g.fillRect(L, Y(0), W - R - L, Hh - B - Y(0)); g.fillStyle = '#c43a00'; g.font = '600 10px "Space Grotesk",sans-serif'; g.textAlign = 'left'; g.fillText(dv.negNote, L + 4, Hh - B - 4); } }
+  g.font = '500 10px "IBM Plex Mono",monospace'; g.fillStyle = '#4a4a4a'; g.textAlign = 'right';
+  g.fillText(fplain(ymax), L - 4, T + 8); g.fillText(fplain(ymin < 0 ? ymin : 0), L - 4, Hh - B); if (ymin < 0) g.fillText('0', L - 4, Y(0) + 3);
+  g.textAlign = 'center'; g.fillText(fplain(x.min), L, Hh - 8); g.fillText(fplain(x.max), W - R - 10, Hh - 8);
+  g.fillText((x.symText || x.id) + (x.unit ? ' (' + x.unit + ')' : ''), (L + W) / 2, Hh - 8);
+  g.save(); g.translate(10, (T + Hh - B) / 2); g.rotate(-PI / 2); g.textAlign = 'center'; g.fillText(dv.short + (dv.unit ? ' (' + dv.unit + ')' : ''), 0, 0); g.restore();
+  const line = (arr, col, dash) => { g.strokeStyle = col; g.lineWidth = 2.2; g.setLineDash(dash || []); g.beginPath(); let on = false; arr.forEach((y, i) => { if (!isFinite(y)){ on = false; return; } const px = X(xs[i]), py = Math.max(T - 4, Math.min(Hh - B + 4, Y(y))); on ? g.lineTo(px, py) : g.moveTo(px, py); on = true; }); g.stroke(); g.setLineDash([]); };
+  if (ref){ line(rs, '#4a4a4a', [5, 4]); g.fillStyle = '#4a4a4a'; g.textAlign = 'right'; g.font = '600 10px "Space Grotesk",sans-serif'; const lastY = rs.filter(isFinite).pop(); if (isFinite(lastY)) g.fillText(ref.short, W - R - 2, Math.max(T + 9, Y(lastY) - 4)); }
+  line(ys, '#1546d6');
+  const cx = S.v[S.gx], cy = dv.f(S.d);
+  if (isFinite(cy)){ g.strokeStyle = '#ff6a2b'; g.setLineDash([2, 3]); g.lineWidth = 1; g.beginPath(); g.moveTo(X(cx), Hh - B); g.lineTo(X(cx), Y(cy)); g.lineTo(L, Y(cy)); g.stroke(); g.setLineDash([]);
+    g.fillStyle = '#ff6a2b'; g.strokeStyle = '#111'; g.lineWidth = 1.5; g.beginPath(); g.arc(X(cx), Math.max(T, Math.min(Hh - B, Y(cy))), 4.5, 0, 7); g.fill(); g.stroke(); }
+  // doubling readout
+  const d2 = calcWith({ [S.gx]: cx * 2 }), y1 = dv.f(S.d), y2 = dv.f(d2);
+  let msg = '';
+  if (cx === 0 || Math.abs(y1) < 1e-12) msg = '<span class="hint">Move off zero to see the ×2 test.</span>';
+  else if (!isFinite(y1) || !isFinite(y2)) msg = '<span class="hint">The ×2 test doesn’t apply here (doubling takes it outside what this quantity covers).</span>';
+  else {
+    const k = y2 / y1;
+    if (k < 0){ $('dbl').innerHTML = 'If <b>' + x.sym + '</b> doubles (' + fnum(cx) + ' → ' + fnum(2 * cx) + (x.unit ? ' ' + x.unit : '') + '), <b>' + dv.sym + '</b> goes from ' + fnum(y1) + ' to ' + fnum(y2) + (dv.unit ? ' ' + dv.unit : '') + ': it changes sign, so that can’t really happen.'; return; }
+    const tags = [[1, 'doesn’t depend on it'], [2, 'proportional'], [4, 'goes as the square'], [0.5, 'inversely proportional'], [0.25, 'inverse square'], [Math.SQRT2, 'goes as the square root'], [Math.SQRT1_2, 'goes as 1/√'], [8, 'goes as the cube'], [2 * Math.SQRT2, 'goes as the 3/2 power']];
+    const tag = tags.find(([v]) => Math.abs(k - v) < 0.004 * v);
+    msg = 'If <b>' + x.sym + '</b> doubles (' + fnum(cx) + ' → ' + fnum(2 * cx) + (x.unit ? ' ' + x.unit : '') + '), <b>' + dv.sym + '</b> becomes <b>×' + (Math.abs(k) >= 100 ? fnum(k) : k.toFixed(2)) + '</b>' + (tag ? ' — ' + tag[1] : '') + '.' + (dv.dblNote ? ' <span class="hint">' + dv.dblNote + '</span>' : '');
+  }
+  $('dbl').innerHTML = msg;
+}
+
+// drawing helpers (canvas is drawn in 600×330 units)
+const cv = $('cv'), ctx = cv.getContext('2d');
+function arrow(x1, y1, x2, y2, col, label, opts){
+  opts = opts || {}; const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy); if (len < 2) return;
+  const ux = dx / len, uy = dy / len, hw = opts.head || 9;
+  ctx.save(); ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = opts.w || 3.5; ctx.lineCap = 'round';
+  if (opts.dash) ctx.setLineDash(opts.dash);
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2 - ux * hw * 0.8, y2 - uy * hw * 0.8); ctx.stroke(); ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x2, y2); ctx.lineTo(x2 - ux * hw - uy * hw * 0.55, y2 - uy * hw + ux * hw * 0.55); ctx.lineTo(x2 - ux * hw + uy * hw * 0.55, y2 - uy * hw - ux * hw * 0.55); ctx.closePath(); ctx.fill();
+  if (label){ ctx.font = '700 13px "Space Grotesk",sans-serif'; ctx.textAlign = opts.align || 'left'; ctx.textBaseline = 'middle';
+    const lx = x2 + (opts.lx !== undefined ? opts.lx : (ux >= 0 ? 6 : -6)), ly = y2 + (opts.ly !== undefined ? opts.ly : (uy >= 0 ? 10 : -10));
+    if (opts.align === undefined) ctx.textAlign = ux >= -0.2 ? 'left' : 'right';
+    ctx.fillText(label, lx, ly); }
+  ctx.restore();
+}
+function text(s, x, y, o){ o = o || {}; ctx.save(); ctx.font = (o.font || '600 13px "Space Grotesk",sans-serif'); ctx.fillStyle = o.col || '#111'; ctx.textAlign = o.align || 'left'; ctx.textBaseline = o.base || 'alphabetic'; ctx.fillText(s, x, y); ctx.restore(); }
+function panelTitle(s, x, y){ text(s, x, y, { font: '700 11px "IBM Plex Mono",monospace', col: '#4a4a4a' }); }
+const COL = { F: '#c43a00', W: '#111', N: '#1e7d45', V: '#1546d6', T: '#7a3fb0', comp: '#8a8a8a' };
+
+let last = 0;
+function loop(ts){ const dt = Math.min(0.05, (ts - (last || ts)) / 1000); last = ts; S.t += dt;
+  ctx.setTransform(2, 0, 0, 2, 0, 0); ctx.clearRect(0, 0, 600, 330);
+  SIM.draw(S.v, S.d, S.mode, S.opt, S.t, dt, S.anim); S.anim.reset = false;
+  requestAnimationFrame(loop); }
+
+// ---------------- this sim ----------------
+// Pressure & Depth: P = P0 + ρgh, a U-tube with two liquids, and a hydraulic lift (Pascal's principle).
+const P0 = 1.01e5;
+const SIM = {
+  title: 'Pressure & Depth',
+  modes: [{ id: 'depth', label: 'Pressure at depth' }, { id: 'utube', label: 'U-tube, two liquids' }, { id: 'lift', label: 'Hydraulic lift' }],
+  opts: [{ id: 'atm', label: 'Report', modes: ['depth'], choices: [['abs', 'Absolute'], ['gauge', 'Gauge']] }],
+  ivs(mode){
+    if (mode === 'depth') return [
+      { id: 'h', sym: 'h', symText: 'h', label: 'Depth', unit: 'm', min: 0, max: 20, step: 0.1, val: 5, graph: true },
+      { id: 'rho', sym: 'ρ', symText: 'ρ', label: 'Liquid density', unit: 'kg/m³', min: 700, max: 13600, step: 50, val: 1000, show: x => x.toFixed(0) + ' kg/m³' }];
+    if (mode === 'utube') return [
+      { id: 'h1', sym: 'h<sub>oil</sub>', symText: 'h_oil', label: 'Oil column height', unit: 'cm', min: 2, max: 30, step: 0.5, val: 20, graph: true },
+      { id: 'r1', sym: 'ρ<sub>oil</sub>', symText: 'ρ_oil', label: 'Oil density', unit: 'kg/m³', min: 500, max: 990, step: 10, val: 800, show: x => x.toFixed(0) + ' kg/m³' },
+      { id: 'r2', sym: 'ρ<sub>w</sub>', symText: 'ρ_w', label: 'Bottom liquid density', unit: 'kg/m³', min: 1000, max: 13600, step: 100, val: 1000, show: x => x.toFixed(0) + ' kg/m³' }];
+    return [
+      { id: 'F1', sym: 'F<sub>1</sub>', symText: 'F1', label: 'Push on the small piston', unit: 'N', min: 10, max: 500, step: 5, val: 100 },
+      { id: 'A1', sym: 'A<sub>1</sub>', symText: 'A1', label: 'Small piston area', unit: 'cm²', min: 1, max: 50, step: 1, val: 10 },
+      { id: 'A2', sym: 'A<sub>2</sub>', symText: 'A2', label: 'Big piston area', unit: 'cm²', min: 50, max: 2000, step: 10, val: 500, graph: true },
+      { id: 'd1', sym: 'd<sub>1</sub>', symText: 'd1', label: 'Small piston pushed down', unit: 'cm', min: 1, max: 50, step: 1, val: 20 }];
+  },
+  presets: [{ label: 'Mercury', mode: 'depth', v: { rho: 13600 } }, { label: '10 m of water', mode: 'depth', v: { h: 10, rho: 1000 } }],
+  calc(v, mode, opt){
+    if (mode === 'depth'){ const dP = v.rho * G10 * v.h, P = P0 + dP; return { dP, P, rep: opt.atm === 'gauge' ? dP : P, ratio: P / P0 }; }
+    if (mode === 'utube'){ const h2 = v.r1 * v.h1 / v.r2; return { h2, diff: v.h1 - h2, Pb: v.r1 * G10 * v.h1 / 100 }; }
+    const P = v.F1 / (v.A1 * 1e-4), F2 = v.F1 * v.A2 / v.A1, d2 = v.d1 * v.A1 / v.A2; return { P, F2, d2, ratio: v.A2 / v.A1, W1: v.F1 * v.d1 / 100, W2: F2 * d2 / 100, mLift: F2 / G10 };
+  },
+  dvs(mode){
+    if (mode === 'depth') return [{ id: 'rep', name: 'Pressure at that depth', short: 'P', sym: 'P', unit: 'Pa', f: d => d.rep }, { id: 'dP', name: 'Extra pressure from the liquid ρgh', short: 'ρgh', sym: 'ρgh', unit: 'Pa', f: d => d.dP }];
+    if (mode === 'utube') return [{ id: 'h2', name: 'Bottom liquid height above the boundary', short: 'h_w', sym: 'h<sub>w</sub>', unit: 'cm', f: d => d.h2 }, { id: 'diff', name: 'Level difference', short: 'Δh', sym: 'Δh', unit: 'cm', f: d => d.diff }];
+    return [{ id: 'F2', name: 'Force on the big piston', short: 'F2', sym: 'F<sub>2</sub>', unit: 'N', f: d => d.F2 }, { id: 'd2', name: 'Big piston rises', short: 'd2', sym: 'd<sub>2</sub>', unit: 'cm', f: d => d.d2 }, { id: 'P', name: 'Pressure in the fluid', short: 'P', sym: 'P', unit: 'Pa', f: d => d.P }];
+  },
+  work(v, d, mode, opt){
+    if (mode === 'depth') return '<h4>1 · The weight of the liquid above pushes down</h4><div class="eq">Extra pressure: ρgh = (' + H.iv('rho') + ')(' + H.g() + ')(' + H.iv('h') + ') = <b>' + H.n(d.dP, 'Pa') + '</b></div>' +
+      '<h4>2 · Add the air pushing on the surface</h4><div class="eq">Absolute: P = P<sub>0</sub> + ρgh = 1.01×10<sup>5</sup> + ' + H.n(d.dP) + ' = <b>' + H.n(d.P, 'Pa') + '</b> (' + H.n(d.ratio) + ' atm)</div>' +
+      '<div class="eq">Gauge (what a tire gauge reads): P − P<sub>0</sub> = ρgh = ' + H.n(d.dP, 'Pa') + '</div>' +
+      '<p class="note">Only depth matters, not the shape or width of the container: a narrow tube and a wide lake at the same depth have the same pressure. ~10 m of water adds about 1 atm.</p>' +
+      '<p class="note">Pressure pushes equally in all directions at a point, and always perpendicular to any surface it touches.</p>';
+    if (mode === 'utube') return '<h4>1 · Points at the same height in the same connected liquid have the same pressure</h4><div class="eq">Pick the boundary between the liquids on the left, and the same height on the right.</div>' +
+      '<h4>2 · Pressure there from each side</h4><div class="eq">Left: P<sub>0</sub> + ρ<sub>oil</sub>gh<sub>oil</sub> &nbsp; Right: P<sub>0</sub> + ρ<sub>w</sub>gh<sub>w</sub></div>' +
+      '<div class="eq">ρ<sub>oil</sub>h<sub>oil</sub> = ρ<sub>w</sub>h<sub>w</sub> → h<sub>w</sub> = (' + H.iv('r1') + ')(' + H.iv('h1') + ') / ' + H.iv('r2') + ' = <b>' + H.n(d.h2, 'cm') + '</b></div>' +
+      '<div class="eq">The oil side stands ' + H.n(d.diff, 'cm') + ' higher: the less dense liquid needs a taller column to make the same pressure.</div>' +
+      '<p class="note">Lab use: measure both heights and you’ve measured the oil’s density, ρ<sub>oil</sub> = ρ<sub>w</sub>h<sub>w</sub>/h<sub>oil</sub>.</p>';
+    return '<h4>1 · Pascal’s principle: the pressure you add spreads through the whole fluid</h4><div class="eq">P = F<sub>1</sub>/A<sub>1</sub> = ' + H.iv('F1') + ' / ' + H.n(v.A1 * 1e-4, 'm²') + ' = ' + H.n(d.P, 'Pa') + '</div>' +
+      '<h4>2 · Same pressure on the big piston</h4><div class="eq">F<sub>2</sub> = PA<sub>2</sub> = F<sub>1</sub>(A<sub>2</sub>/A<sub>1</sub>) = ' + H.iv('F1') + ' × ' + H.n(d.ratio) + ' = <b>' + H.n(d.F2, 'N') + '</b> (lifts ' + H.n(d.mLift, 'kg') + ')</div>' +
+      '<h4>3 · But it moves less: the volume pushed in comes out the other side</h4><div class="eq">A<sub>1</sub>d<sub>1</sub> = A<sub>2</sub>d<sub>2</sub> → d<sub>2</sub> = ' + H.iv('d1') + ' / ' + H.n(d.ratio) + ' = <b>' + H.n(d.d2, 'cm') + '</b></div>' +
+      '<div class="eq">Work in = ' + H.n(d.W1, 'J') + ' = work out = ' + H.n(d.W2, 'J') + '. A force multiplier, not an energy multiplier.</div>';
+  },
+  draw(v, d, mode, opt){
+    if (mode === 'depth'){
+      panelTitle('OPEN TANK (two shapes, same liquid)', 10, 18);
+      const top = 50, sc = 230 / 20, Y = h => top + h * sc, col = v.rho > 5000 ? '#b9c0cc' : v.rho < 950 ? '#f3e2a6' : '#9cc6f0';
+      ctx.fillStyle = col; ctx.fillRect(30, top, 140, 20 * sc); ctx.fillRect(220, top, 30, 20 * sc); ctx.beginPath(); ctx.moveTo(280, top); ctx.lineTo(370, top); ctx.lineTo(340, Y(20)); ctx.lineTo(310, Y(20)); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = '#111'; ctx.lineWidth = 1.5; ctx.strokeRect(30, top, 140, 20 * sc); ctx.strokeRect(220, top, 30, 20 * sc); ctx.beginPath(); ctx.moveTo(280, top); ctx.lineTo(310, Y(20)); ctx.lineTo(340, Y(20)); ctx.lineTo(370, top); ctx.stroke();
+      ctx.setLineDash([5, 4]); ctx.strokeStyle = '#c43a00'; ctx.beginPath(); ctx.moveTo(20, Y(v.h)); ctx.lineTo(380, Y(v.h)); ctx.stroke(); ctx.setLineDash([]);
+      [100, 235, 325].forEach(x => { ctx.fillStyle = '#c43a00'; ctx.beginPath(); ctx.arc(x, Y(v.h), 5, 0, 7); ctx.fill(); });
+      [[100, 0, -1], [100, 0, 1], [100, -1, 0], [100, 1, 0]].forEach(([x, dx, dy]) => arrow(x + dx * 22, Y(v.h) + dy * 22, x + dx * 7, Y(v.h) + dy * 7, '#c43a00', '', { w: 2, head: 6 }));
+      text('h = ' + fplain(v.h) + ' m', 175, Y(v.h) - 6, { font: '700 11px "IBM Plex Mono",monospace', col: '#c43a00' });
+      text('same pressure at the same depth', 12, 312, { font: '700 12px "Space Grotesk",sans-serif' });
+      panelTitle('PRESSURE vs DEPTH', 395, 18);
+      const gx = 425, gy0 = 250, gw = 160, gh = 200, Pm = P0 + v.rho * G10 * 20, lo = opt.atm === 'gauge' ? 0 : 0, X = h => gx + gw * h / 20, Yp = p => gy0 - gh * p / Pm;
+      ctx.strokeStyle = '#111'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(gx, gy0 - gh); ctx.lineTo(gx, gy0); ctx.lineTo(gx + gw, gy0); ctx.stroke();
+      const off = opt.atm === 'gauge' ? 0 : P0; ctx.strokeStyle = COL.V; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(X(0), Yp(off)); ctx.lineTo(X(20), Yp(off + v.rho * G10 * 20)); ctx.stroke();
+      ctx.fillStyle = '#c43a00'; ctx.beginPath(); ctx.arc(X(v.h), Yp(d.rep), 5, 0, 7); ctx.fill();
+      text(fplain(Pm), gx - 3, gy0 - gh + 4, { align: 'right', font: '500 9px "IBM Plex Mono",monospace', col: '#4a4a4a' }); text('h → 20 m', gx + gw, gy0 + 13, { align: 'right', font: '500 9px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+      text((opt.atm === 'gauge' ? 'gauge ' : 'absolute ') + fplain(d.rep) + ' Pa', 395, 290, { font: '700 12px "IBM Plex Mono",monospace' });
+      text('slope = ρg; intercept = ' + (opt.atm === 'gauge' ? '0' : 'P₀'), 395, 308, { font: '600 10px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+      return;
+    }
+    if (mode === 'utube'){
+      panelTitle('U-TUBE: OIL POURED ON TOP OF A DENSER LIQUID', 10, 18);
+      const bot = 280, sc = 7, lx = 120, rx = 260, w = 40, base = 200, Yc = h => base - h * sc;
+      const wLev = base - d.h2 * sc;
+      ctx.fillStyle = '#9cc6f0'; ctx.fillRect(lx - w / 2, base, rx - lx + w, bot - base); ctx.fillRect(rx - w / 2, wLev, w, base - wLev);
+      ctx.fillStyle = '#f3e2a6'; ctx.fillRect(lx - w / 2, Yc(v.h1), w, v.h1 * sc);
+      ctx.strokeStyle = '#111'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(lx - w / 2, 30); ctx.lineTo(lx - w / 2, bot); ctx.lineTo(rx + w / 2, bot); ctx.lineTo(rx + w / 2, 30); ctx.moveTo(lx + w / 2, 30); ctx.lineTo(lx + w / 2, bot - 30); ctx.lineTo(rx - w / 2, bot - 30); ctx.lineTo(rx - w / 2, 30); ctx.stroke();
+      ctx.setLineDash([4, 3]); ctx.strokeStyle = '#c43a00'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(lx - 50, base); ctx.lineTo(rx + 60, base); ctx.stroke(); ctx.setLineDash([]);
+      text('same pressure', rx + 30, base + 14, { font: '600 10px "IBM Plex Mono",monospace', col: '#c43a00' });
+      ctx.strokeStyle = '#555'; ctx.lineWidth = 1; [[lx - 34, Yc(v.h1), base, 'h_oil = ' + fplain(v.h1) + ' cm', 'right'], [rx + 34, wLev, base, 'h_w = ' + fplain(d.h2) + ' cm', 'left']].forEach(([x, y1, y2, l, al]) => { ctx.beginPath(); ctx.moveTo(x, y1); ctx.lineTo(x, y2); ctx.stroke(); text(l, x + (al === 'left' ? 6 : -6), (y1 + y2) / 2, { align: al, font: '700 10px "IBM Plex Mono",monospace' }); });
+      text('oil', lx, Yc(v.h1) + 14, { align: 'center', font: '700 10px "Space Grotesk",sans-serif' });
+      panelTitle('PRESSURE BALANCE', 395, 18);
+      text('ρ_oil·h_oil = ρ_w·h_w', 400, 60, { font: '700 13px "IBM Plex Mono",monospace' });
+      text(fplain(v.r1) + ' × ' + fplain(v.h1) + ' = ' + fplain(v.r2) + ' × ' + fplain(d.h2), 400, 82, { font: '600 11px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+      text('oil side higher by ' + fplain(d.diff) + ' cm', 400, 110, { font: '700 12px "Space Grotesk",sans-serif', col: '#c43a00' });
+      return;
+    }
+    panelTitle('HYDRAULIC LIFT', 10, 18);
+    const base = 270, r1 = 8 + Math.sqrt(v.A1) * 3, r2 = 20 + Math.sqrt(v.A2) * 2.2, x1 = 70, x2 = 250, h1 = 150, s1 = Math.min(v.d1 * 1.5, 80), s2 = s1 * v.A1 / v.A2;
+    ctx.fillStyle = '#9cc6f0'; ctx.fillRect(x1 - r1, h1 + s1, 2 * r1, base - h1 - s1); ctx.fillRect(x2 - r2, h1 - s2, 2 * r2, base - h1 + s2); ctx.fillRect(x1, base - 20, x2 - x1, 20);
+    ctx.fillStyle = '#555'; ctx.fillRect(x1 - r1, h1 + s1 - 8, 2 * r1, 8); ctx.fillRect(x2 - r2, h1 - s2 - 8, 2 * r2, 8);
+    ctx.fillStyle = '#1546d6'; ctx.fillRect(x2 - 34, h1 - s2 - 8 - 34, 68, 34); text(fplain(d.mLift) + ' kg', x2, h1 - s2 - 22, { align: 'center', font: '700 10px "IBM Plex Mono",monospace', col: '#fff' });
+    arrow(x1, h1 + s1 - 60, x1, h1 + s1 - 10, COL.T, 'F1', { lx: 6, ly: -20 });
+    text('down ' + fplain(v.d1) + ' cm', x1 + r1 + 4, h1 + 40, { font: '600 10px "IBM Plex Mono",monospace', col: '#4a4a4a' }); text('up ' + fplain(d.d2) + ' cm', x2 + r2 + 4, h1, { font: '600 10px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+    text('F₂ = ' + fplain(d.F2) + ' N  (' + fplain(d.ratio) + '× F₁)', 12, 312, { font: '700 13px "Space Grotesk",sans-serif' });
+    panelTitle('FORCE × DISTANCE', 395, 18);
+    text('in:  ' + fplain(v.F1) + ' N × ' + fplain(v.d1 / 100) + ' m = ' + fplain(d.W1) + ' J', 395, 60, { font: '600 10px "IBM Plex Mono",monospace' });
+    text('out: ' + fplain(d.F2) + ' N × ' + fplain(d.d2 / 100) + ' m = ' + fplain(d.W2) + ' J', 395, 80, { font: '600 10px "IBM Plex Mono",monospace' });
+  }
+};
+
+
+S.mode = SIM.modes ? SIM.modes[0].id : 'one';
+setup(); requestAnimationFrame(loop);
+</script>
+</body></html>
