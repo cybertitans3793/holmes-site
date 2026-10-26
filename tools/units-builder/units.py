@@ -64,6 +64,11 @@ SIMS = {
     'circle':  {'file': 'units/sims/circ-circle.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'clay':    {'file': 'units/sims/circ-clay.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'reson':   {'file': 'units/sims/circ-reson.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'meas':    {'file': 'units/sims/circ-meas.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Reading Instruments, Precision &amp; Accuracy, Propagating Uncertainties, Graphs &amp; Error Bars and Linearizing Data are original.'},
+    'scatter': {'file': 'units/sims/circ-scatter.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'prop':    {'file': 'units/sims/circ-prop.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'errbars': {'file': 'units/sims/circ-errbars.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'linear':  {'file': 'units/sims/circ-linear.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'springs': {'file': 'units/sims/circ-springs.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'pulleys': {'file': 'units/sims/circ-pulleys.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Pulleys and Box on a Truck are original.'},
     'truck':   {'file': 'units/sims/circ-truck.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
@@ -78,6 +83,33 @@ SIMS = {
 
 UNITS = {
 # ------------------------------------------------------------------ AP PHYSICS 1
+'P1-00': {'course': 'AP Physics 1 / IB', 'num': '00', 'title': 'Measurement (IB)', 'tabs': [
+    {'code': '', 'name': 'Reading Instruments', 'sim': 'meas', 'tasks': [
+        '<b>Ruler.</b> Measure the pencil. Write it with its uncertainty and percentage uncertainty. Why is the uncertainty ±0.1 cm and not ±0.05 cm?',
+        '<b>Analog meter.</b> What is the uncertainty of a reading? Use the preset to add a zero error. Is it random or systematic? How do you correct it?',
+        '<b>Digital scale.</b> Change the number of decimal places. Does a more precise display mean a more accurate mass?',
+        '<b>Stopwatch.</b> Why is your reaction time, not the 0.01 s display, the real uncertainty? Time 1 oscillation, then 10. What happens to the uncertainty in T?']},
+    {'code': '', 'name': 'Precision & Accuracy', 'sim': 'scatter', 'tasks': [
+        'Use the target presets. Describe each one as precise or not, and accurate or not.',
+        '<b>Repeated measurements.</b> Increase the number of trials. Does the mean get closer to 9.81? Does the uncertainty (half the range) shrink?',
+        'Add a systematic offset. Does taking more trials fix it? How could you spot it from your results?',
+        'Report g as mean ± uncertainty, then find the percentage difference from 9.81 m/s².']},
+    {'code': '', 'name': 'Propagating Uncertainties', 'sim': 'prop', 'tasks': [
+        '<b>Add/subtract.</b> Show that ΔR is the same for A + B and A − B. Then use the preset: why is subtracting nearly equal values risky?',
+        '<b>Multiply/divide.</b> Which uncertainty do you add: absolute or percentage? Check with the numbers on screen.',
+        '<b>Powers.</b> A has a 2% uncertainty. What is the percentage uncertainty in A², √A and 1/A?',
+        '<b>Density.</b> Which measurement contributes most to the uncertainty in ρ? Use the bar chart, then the preset, to decide what to measure more carefully.']},
+    {'code': '', 'name': 'Graphs & Error Bars', 'sim': 'errbars', 'tasks': [
+        'Does the best-fit line pass through every error bar? What does it mean if it doesn’t?',
+        'Find the uncertainty in the gradient from the max and min lines. Then find k with its uncertainty.',
+        'Add a zero error. What happens to the gradient? The intercept? Why do IB lab reports focus on gradients?',
+        'Make the error bars smaller. Why do the max and min lines get closer together?']},
+    {'code': '', 'name': 'Linearizing Data', 'sim': 'linear', 'tasks': [
+        '<b>Pendulum.</b> Find what to plot T against to get a straight line through the origin. Use the gradient to find g.',
+        '<b>Falling ball.</b> Which choice works? Find g from the gradient.',
+        '<b>Light intensity</b> and <b>gas pressure</b>: find the right choice for each and explain it from the equation.',
+        'Why is a straight line better than a curve for checking a relationship and finding a constant?']},
+]},
 'P1-02': {'course': 'AP Physics 1 / IB', 'num': '02', 'title': 'Newton’s Second Law', 'tabs': [
     {'code': '', 'name': 'Moving Man', 'sim': 'mman', 'tasks': [
         'Start the man at −4 m with a constant velocity of +2 m/s. Sketch the x–t and v–t graphs before you press play, then compare.',

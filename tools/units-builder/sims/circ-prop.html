@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Propagating Uncertainties</title>
+<!-- Propagating Uncertainties: original Holmes Sims, built from frame.html + prop.js. g = 10 m/s². -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@500;700&display=swap">
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#fff;font-family:"Space Grotesk",system-ui,sans-serif;color:#111}
+#app{position:absolute;left:0;top:0;width:1000px;height:640px;transform-origin:0 0;padding:10px 14px 12px;box-sizing:border-box;
+  display:grid;grid-template-columns:600px 1fr;grid-template-rows:34px 330px 1fr;gap:10px 14px}
+#bar{grid-column:1/-1;display:flex;gap:16px;align-items:center;flex-wrap:nowrap;overflow:hidden}
+.seg{display:flex;align-items:center}
+.seg .lab{font:700 12px "IBM Plex Mono",monospace;margin-right:8px;text-transform:uppercase}
+.seg button{white-space:nowrap;font:700 14px "Space Grotesk",sans-serif;padding:6px 11px;border:2px solid #111;background:#fff;color:#111;cursor:pointer}
+.seg button+button{margin-left:-2px}
+.seg button[aria-pressed="true"]{background:#111;color:#fff}
+.seg button:hover:not([aria-pressed="true"]){background:#ffe2d3}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #ff6a2b;outline-offset:2px;position:relative;z-index:1}
+#cv{border:2px solid #111;background:#fbfbfb;width:600px;height:330px;box-sizing:border-box;display:block}
+#work{border:2px solid #111;padding:8px 12px 10px;overflow:auto;font-size:14px;line-height:1.55;box-sizing:border-box}
+#work .wt{font:700 12px "IBM Plex Mono",monospace;text-transform:uppercase;margin:0 0 4px;display:flex;justify-content:space-between}
+#work h4{margin:9px 0 1px;font-size:13px;font-weight:700;color:#4a4a4a}
+#work h4:first-of-type{margin-top:2px}
+#work .eq{font-variant-numeric:tabular-nums}
+#work .n{font-family:"IBM Plex Mono",monospace;font-size:13px}
+#work b .n,#work .ans{font-weight:700}
+#work .note{font-size:12.5px;color:#4a4a4a;margin:2px 0 0}
+#work .ok{background:#e5f4ea;border-left:4px solid #1e7d45;padding:3px 8px;margin-top:4px}
+#work .bad{background:#fde7df;border-left:4px solid #c43a00;padding:3px 8px;margin-top:4px}
+.ivv{border-radius:2px;padding:0 2px;transition:background .25s}
+.ivv.gx{background:#ffe2d3}
+.ivv.hot{background:#ff6a2b;color:#fff}
+#ctl{display:grid;grid-template-columns:1fr 1fr;gap:4px 18px;align-content:start}
+.iv{display:grid;grid-template-columns:auto 1fr auto;align-items:center;column-gap:6px}
+.iv .nm{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iv .val{font:700 13px "IBM Plex Mono",monospace;white-space:nowrap}
+.iv input[type=range]{grid-column:1/-1;width:100%;margin:0;accent-color:#111;height:22px}
+.iv input[type=radio]{accent-color:#ff6a2b;margin:0}
+#presets{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:2px}
+#presets .lab{font:700 12px "IBM Plex Mono",monospace}
+#presets button{font:600 12.5px "Space Grotesk",sans-serif;padding:3px 8px;border:2px solid #111;background:#fff;cursor:pointer}
+#presets button:hover{background:#ffe2d3}
+#gcard{border:2px solid #111;padding:5px 8px 6px;display:flex;flex-direction:column;box-sizing:border-box;min-height:0}
+.ghead{display:flex;align-items:center;gap:6px;font-size:13px;white-space:nowrap}
+.ghead select{font:600 13px "Space Grotesk",sans-serif;border:2px solid #111;padding:1px 4px;max-width:200px}
+#gv{width:340px;height:150px;flex:none;display:block;margin-top:3px}
+#dbl{font-size:12.5px;line-height:1.35;margin-top:2px}
+#dbl b{font-weight:700}
+.hint{font:500 11px "IBM Plex Mono",monospace;color:#4a4a4a}
+</style></head><body>
+<div id="app">
+  <div id="bar"></div>
+  <canvas id="cv" width="1200" height="660" aria-label="Animation of the situation with force arrows"></canvas>
+  <div id="work" aria-live="polite"></div>
+  <div id="ctl"></div>
+  <div id="gcard">
+    <div class="ghead"><span>Graph</span><select id="dvsel" aria-label="Quantity to graph"></select><span>vs <b id="ivname"></b></span></div>
+    <canvas id="gv" width="680" height="300" aria-label="Graph of the chosen quantity against the chosen variable"></canvas>
+    <div id="dbl"></div>
+  </div>
+</div>
+<script>
+// ---------------- shared frame ----------------
+const $ = id => document.getElementById(id);
+const G10 = 10, PI = Math.PI, DEG = PI / 180;
+function fit(){ const s = Math.min(innerWidth / 1000, innerHeight / 640); $('app').style.transform = 'scale(' + s + ')'; }
+addEventListener('resize', fit); fit();
+
+function fnum(x){ const r = fnum0(x); return typeof r === 'string' ? r.replace(/^-/, '−') : r; }
+function fnum0(x){
+  if (x === null || x === undefined || !isFinite(x)) return '—';
+  const a = Math.abs(x);
+  if (a === 0) return '0';
+  if (a >= 1e5 || a < 1e-3){
+    const e = Math.floor(Math.log10(a)); let m = x / Math.pow(10, e);
+    let ms = m.toFixed(2); if (Math.abs(+ms) >= 10){ m /= 10; ms = m.toFixed(2); return ms + '×10<sup>' + (e + 1) + '</sup>'; }
+    return ms + '×10<sup>' + e + '</sup>';
+  }
+  if (a >= 1000) return String(Math.round(x));
+  return x.toPrecision(3);
+}
+function fplain(x){ return fnum(x).replace(/<sup>(.*?)<\/sup>/g, (m, e) => '^' + e).replace('×10^', 'e'); }
+const H = {
+  n: (x, u) => '<span class="n">' + fnum(x) + (u ? '&nbsp;' + u : '') + '</span>',
+  iv: id => { const d = S.def[id]; const val = S.v[id]; const txt = (d.show ? d.show(val) : fnum(val) + (d.unit ? '&nbsp;' + d.unit : ''));
+              return '<span class="ivv n' + (S.gx === id ? ' gx' : '') + (S.hot === id ? ' hot' : '') + '" data-iv="' + id + '">' + txt + '</span>'; },
+  g: () => '<span class="n">10&nbsp;m/s²</span>',
+  p: (x, u) => x < 0 ? '(' + H.n(x, u) + ')' : H.n(x, u)
+};
+
+const S = { mode: null, opt: {}, v: {}, store: {}, def: {}, ivs: [], gx: null, dv: null, hot: null, t: 0, anim: {} };
+
+function bar(){
+  const b = $('bar'); b.innerHTML = '';
+  const group = (label, items, cur, onpick) => {
+    const g = document.createElement('div'); g.className = 'seg'; g.setAttribute('role', 'group');
+    if (label){ const l = document.createElement('span'); l.className = 'lab'; l.textContent = label; g.appendChild(l); }
+    items.forEach(([id, txt]) => { const bt = document.createElement('button'); bt.textContent = txt; bt.setAttribute('aria-pressed', String(id === cur)); bt.onclick = () => onpick(id); g.appendChild(bt); });
+    b.appendChild(g);
+  };
+  const tip = document.createElement('span'); tip.className = 'hint'; tip.style.marginLeft = 'auto'; tip.style.whiteSpace = 'nowrap'; tip.innerHTML = '● = the variable on the graph’s x-axis · drag any slider';
+  if (SIM.modes) group(null, SIM.modes.map(m => [m.id, m.label]), S.mode, id => { S.mode = id; S.anim = {}; setup(); });
+  (SIM.opts || []).filter(o => !o.modes || o.modes.includes(S.mode)).forEach(o => {
+    if (!(o.id in S.opt)) S.opt[o.id] = o.choices[0][0];
+    group(o.label, o.choices, S.opt[o.id], id => { S.opt[o.id] = id; S.anim = {}; setup(); });
+  });
+  b.appendChild(tip);
+  if (b.scrollWidth > b.clientWidth + 1) tip.remove();
+  if (b.scrollWidth > b.clientWidth + 1) b.querySelectorAll('.seg button').forEach(x => { x.style.fontSize = '13px'; x.style.padding = '6px 8px'; });
+}
+
+function setup(){
+  bar();
+  S.ivs = SIM.ivs(S.mode, S.opt); S.def = {}; S.v = {};
+  S.ivs.forEach(d => { S.def[d.id] = d; const k = S.mode + ':' + d.id; S.v[d.id] = (k in S.store) ? S.store[k] : d.val; });
+  if (!S.gx || !S.def[S.gx]) S.gx = S.ivs.find(d => d.graph) ? S.ivs.find(d => d.graph).id : S.ivs[1] ? S.ivs[1].id : S.ivs[0].id;
+  const c = $('ctl'); c.innerHTML = '';
+  S.ivs.forEach(d => {
+    const w = document.createElement('div'); w.className = 'iv';
+    w.innerHTML = '<input type="radio" name="gx" value="' + d.id + '" aria-label="Graph against ' + d.label + '" title="Put this on the graph’s x-axis"' + (S.gx === d.id ? ' checked' : '') + '>' +
+      '<span class="nm">' + d.label + ' <i>' + d.sym + '</i></span><span class="val" id="val-' + d.id + '"></span>' +
+      '<input type="range" id="r-' + d.id + '" min="' + d.min + '" max="' + d.max + '" step="' + d.step + '" value="' + S.v[d.id] + '" aria-label="' + d.label + '">';
+    c.appendChild(w);
+    const r = w.querySelector('input[type=range]');
+    r.oninput = () => { S.v[d.id] = +r.value; S.store[S.mode + ':' + d.id] = +r.value; S.hot = d.id; clearTimeout(S.hotT); S.hotT = setTimeout(() => { S.hot = null; update(); }, 700); S.anim.reset = true; update(); };
+    w.querySelector('input[type=radio]').onchange = () => { S.gx = d.id; update(); };
+  });
+  if (SIM.presets){
+    const p = document.createElement('div'); p.id = 'presets'; p.innerHTML = '<span class="lab">Try:</span>';
+    SIM.presets.forEach(ps => { const bt = document.createElement('button'); bt.textContent = ps.label; bt.onclick = () => { if (ps.mode && ps.mode !== S.mode){ S.mode = ps.mode; } Object.entries(ps.v).forEach(([k, val]) => S.store[(ps.mode || S.mode) + ':' + k] = val); S.anim = {}; setup(); }; p.appendChild(bt); });
+    c.appendChild(p);
+  }
+  const dvs = SIM.dvs(S.mode, S.opt), sel = $('dvsel');
+  if (!S.dv || !dvs.find(d => d.id === S.dv)) S.dv = dvs[0].id;
+  sel.innerHTML = dvs.map(d => '<option value="' + d.id + '"' + (d.id === S.dv ? ' selected' : '') + '>' + d.name + '</option>').join('');
+  sel.onchange = () => { S.dv = sel.value; update(); };
+  update();
+}
+
+function calcWith(over){ const v = Object.assign({}, S.v, over || {}); return SIM.calc(v, S.mode, S.opt); }
+
+function update(){
+  S.ivs.forEach(d => { $('val-' + d.id).innerHTML = d.show ? d.show(S.v[d.id]) : fnum(S.v[d.id]) + (d.unit ? '&nbsp;' + d.unit : ''); });
+  S.d = calcWith();
+  $('work').innerHTML = '<div class="wt"><span>Show the work</span><span class="hint">' + (SIM.hint || 'g = 10 m/s²') + '</span></div>' + SIM.work(S.v, S.d, S.mode, S.opt);
+  document.querySelectorAll('input[name=gx]').forEach(r => r.checked = (r.value === S.gx));
+  graph();
+}
+
+function graph(){
+  const cv = $('gv'), g = cv.getContext('2d'), W = 340, Hh = 150; g.setTransform(2, 0, 0, 2, 0, 0); g.clearRect(0, 0, W, Hh);
+  const dvs = SIM.dvs(S.mode, S.opt), dv = dvs.find(d => d.id === S.dv), ref = dv.vs ? dvs.find(d => d.id === dv.vs) : null;
+  const x = S.def[S.gx]; $('ivname').innerHTML = '<i>' + x.sym + '</i>' + (x.unit && !x.show ? ' (' + x.unit + ')' : '');
+  const N = 160, xs = [], ys = [], rs = [];
+  for (let i = 0; i <= N; i++){ const xv = x.min + (x.max - x.min) * i / N; const d = calcWith({ [S.gx]: xv }); xs.push(xv); ys.push(dv.f(d)); rs.push(ref ? ref.f(d) : null); }
+  const all = ys.concat(ref ? rs : []).filter(isFinite);
+  let ymin = Math.min(0, ...all), ymax = Math.max(...all, 0); if (ymax === ymin) ymax = ymin + 1; const pad = (ymax - ymin) * 0.08; ymax += pad; if (ymin < 0) ymin -= pad;
+  const L = 46, R = 8, T = 8, B = 22, X = v => L + (v - x.min) / (x.max - x.min) * (W - L - R), Y = v => T + (ymax - v) / (ymax - ymin) * (Hh - T - B);
+  g.strokeStyle = '#111'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(L, T); g.lineTo(L, Hh - B); g.lineTo(W - R, Hh - B); g.stroke();
+  if (ymin < 0){ g.strokeStyle = '#999'; g.setLineDash([3, 3]); g.beginPath(); g.moveTo(L, Y(0)); g.lineTo(W - R, Y(0)); g.stroke(); g.setLineDash([]);
+    if (dv.negNote){ g.fillStyle = 'rgba(196,58,0,0.08)'; g.fillRect(L, Y(0), W - R - L, Hh - B - Y(0)); g.fillStyle = '#c43a00'; g.font = '600 10px "Space Grotesk",sans-serif'; g.textAlign = 'left'; g.fillText(dv.negNote, L + 4, Hh - B - 4); } }
+  g.font = '500 10px "IBM Plex Mono",monospace'; g.fillStyle = '#4a4a4a'; g.textAlign = 'right';
+  g.fillText(fplain(ymax), L - 4, T + 8); g.fillText(fplain(ymin < 0 ? ymin : 0), L - 4, Hh - B); if (ymin < 0) g.fillText('0', L - 4, Y(0) + 3);
+  g.textAlign = 'center'; g.fillText(fplain(x.min), L, Hh - 8); g.fillText(fplain(x.max), W - R - 10, Hh - 8);
+  g.fillText((x.symText || x.id) + (x.unit ? ' (' + x.unit + ')' : ''), (L + W) / 2, Hh - 8);
+  g.save(); g.translate(10, (T + Hh - B) / 2); g.rotate(-PI / 2); g.textAlign = 'center'; g.fillText(dv.short + (dv.unit ? ' (' + dv.unit + ')' : ''), 0, 0); g.restore();
+  const line = (arr, col, dash) => { g.strokeStyle = col; g.lineWidth = 2.2; g.setLineDash(dash || []); g.beginPath(); let on = false; arr.forEach((y, i) => { if (!isFinite(y)){ on = false; return; } const px = X(xs[i]), py = Math.max(T - 4, Math.min(Hh - B + 4, Y(y))); on ? g.lineTo(px, py) : g.moveTo(px, py); on = true; }); g.stroke(); g.setLineDash([]); };
+  if (ref){ line(rs, '#4a4a4a', [5, 4]); g.fillStyle = '#4a4a4a'; g.textAlign = 'right'; g.font = '600 10px "Space Grotesk",sans-serif'; const lastY = rs.filter(isFinite).pop(); if (isFinite(lastY)) g.fillText(ref.short, W - R - 2, Math.max(T + 9, Y(lastY) - 4)); }
+  line(ys, '#1546d6');
+  const cx = S.v[S.gx], cy = dv.f(S.d);
+  if (isFinite(cy)){ g.strokeStyle = '#ff6a2b'; g.setLineDash([2, 3]); g.lineWidth = 1; g.beginPath(); g.moveTo(X(cx), Hh - B); g.lineTo(X(cx), Y(cy)); g.lineTo(L, Y(cy)); g.stroke(); g.setLineDash([]);
+    g.fillStyle = '#ff6a2b'; g.strokeStyle = '#111'; g.lineWidth = 1.5; g.beginPath(); g.arc(X(cx), Math.max(T, Math.min(Hh - B, Y(cy))), 4.5, 0, 7); g.fill(); g.stroke(); }
+  // doubling readout
+  const d2 = calcWith({ [S.gx]: cx * 2 }), y1 = dv.f(S.d), y2 = dv.f(d2);
+  let msg = '';
+  if (cx === 0 || Math.abs(y1) < 1e-12) msg = '<span class="hint">Move off zero to see the ×2 test.</span>';
+  else if (!isFinite(y1) || !isFinite(y2)) msg = '<span class="hint">The ×2 test doesn’t apply here (doubling takes it outside what this quantity covers).</span>';
+  else {
+    const k = y2 / y1;
+    if (k < 0){ $('dbl').innerHTML = 'If <b>' + x.sym + '</b> doubles (' + fnum(cx) + ' → ' + fnum(2 * cx) + (x.unit ? ' ' + x.unit : '') + '), <b>' + dv.sym + '</b> goes from ' + fnum(y1) + ' to ' + fnum(y2) + (dv.unit ? ' ' + dv.unit : '') + ': it changes sign, so that can’t really happen.'; return; }
+    const tags = [[1, 'doesn’t depend on it'], [2, 'proportional'], [4, 'goes as the square'], [0.5, 'inversely proportional'], [0.25, 'inverse square'], [Math.SQRT2, 'goes as the square root'], [Math.SQRT1_2, 'goes as 1/√'], [8, 'goes as the cube'], [2 * Math.SQRT2, 'goes as the 3/2 power']];
+    const tag = tags.find(([v]) => Math.abs(k - v) < 0.004 * v);
+    msg = 'If <b>' + x.sym + '</b> doubles (' + fnum(cx) + ' → ' + fnum(2 * cx) + (x.unit ? ' ' + x.unit : '') + '), <b>' + dv.sym + '</b> becomes <b>×' + (Math.abs(k) >= 100 ? fnum(k) : k.toFixed(2)) + '</b>' + (tag ? ' — ' + tag[1] : '') + '.' + (dv.dblNote ? ' <span class="hint">' + dv.dblNote + '</span>' : '');
+  }
+  $('dbl').innerHTML = msg;
+}
+
+// drawing helpers (canvas is drawn in 600×330 units)
+const cv = $('cv'), ctx = cv.getContext('2d');
+function arrow(x1, y1, x2, y2, col, label, opts){
+  opts = opts || {}; const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy); if (len < 2) return;
+  const ux = dx / len, uy = dy / len, hw = opts.head || 9;
+  ctx.save(); ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = opts.w || 3.5; ctx.lineCap = 'round';
+  if (opts.dash) ctx.setLineDash(opts.dash);
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2 - ux * hw * 0.8, y2 - uy * hw * 0.8); ctx.stroke(); ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x2, y2); ctx.lineTo(x2 - ux * hw - uy * hw * 0.55, y2 - uy * hw + ux * hw * 0.55); ctx.lineTo(x2 - ux * hw + uy * hw * 0.55, y2 - uy * hw - ux * hw * 0.55); ctx.closePath(); ctx.fill();
+  if (label){ ctx.font = '700 13px "Space Grotesk",sans-serif'; ctx.textAlign = opts.align || 'left'; ctx.textBaseline = 'middle';
+    const lx = x2 + (opts.lx !== undefined ? opts.lx : (ux >= 0 ? 6 : -6)), ly = y2 + (opts.ly !== undefined ? opts.ly : (uy >= 0 ? 10 : -10));
+    if (opts.align === undefined) ctx.textAlign = ux >= -0.2 ? 'left' : 'right';
+    ctx.fillText(label, lx, ly); }
+  ctx.restore();
+}
+function text(s, x, y, o){ o = o || {}; ctx.save(); ctx.font = (o.font || '600 13px "Space Grotesk",sans-serif'); ctx.fillStyle = o.col || '#111'; ctx.textAlign = o.align || 'left'; ctx.textBaseline = o.base || 'alphabetic'; ctx.fillText(s, x, y); ctx.restore(); }
+function panelTitle(s, x, y){ text(s, x, y, { font: '700 11px "IBM Plex Mono",monospace', col: '#4a4a4a' }); }
+const COL = { F: '#c43a00', W: '#111', N: '#1e7d45', V: '#1546d6', T: '#7a3fb0', comp: '#8a8a8a' };
+
+let last = 0;
+function loop(ts){ const dt = Math.min(0.05, (ts - (last || ts)) / 1000); last = ts; S.t += dt;
+  ctx.setTransform(2, 0, 0, 2, 0, 0); ctx.clearRect(0, 0, 600, 330);
+  SIM.draw(S.v, S.d, S.mode, S.opt, S.t, dt, S.anim); S.anim.reset = false;
+  requestAnimationFrame(loop); }
+
+// ---------------- this sim ----------------
+// Propagating Uncertainties (IB Tool 3): add/subtract → add absolute; multiply/divide → add fractional; powers → multiply by n. Worked example: density of a cube.
+const SIM = {
+  title: 'Propagating Uncertainties',
+  modes: [{ id: 'add', label: 'Add / subtract' }, { id: 'mult', label: 'Multiply / divide' }, { id: 'power', label: 'Powers' }, { id: 'cube', label: 'Example: density' }],
+  opts: [{ id: 'op', label: 'Operation', modes: ['add'], choices: [['a', 'A + B'], ['b', 'A − B']] }, { id: 'op', label: 'Operation', modes: ['mult'], choices: [['a', 'A × B'], ['b', 'A ÷ B']] }],
+  ivs(mode){
+    if (mode === 'power') return [{ id: 'A', sym: 'A', symText: 'A', label: 'A', unit: '', min: 0.5, max: 10, step: 0.1, val: 4 }, { id: 'dA', sym: 'ΔA', symText: 'ΔA', label: 'ΔA', unit: '', min: 0, max: 1, step: 0.01, val: 0.1 }, { id: 'n', sym: 'n', symText: 'n', label: 'Power n (A to the n)', unit: '', min: -3, max: 3, step: 0.5, val: 2, graph: true, show: x => x.toFixed(1) }];
+    if (mode === 'cube') return [{ id: 'm', sym: 'm', symText: 'm', label: 'Mass', unit: 'g', min: 10, max: 500, step: 1, val: 216 }, { id: 'dm', sym: 'Δm', symText: 'Δm', label: 'Δm', unit: 'g', min: 0, max: 5, step: 0.1, val: 1 }, { id: 'L', sym: 'L', symText: 'L', label: 'Side length', unit: 'cm', min: 1, max: 10, step: 0.05, val: 3 }, { id: 'dL', sym: 'ΔL', symText: 'ΔL', label: 'ΔL', unit: 'cm', min: 0, max: 0.3, step: 0.01, val: 0.05, graph: true }];
+    return [{ id: 'A', sym: 'A', symText: 'A', label: 'A', unit: '', min: 1, max: 20, step: 0.1, val: 12 }, { id: 'dA', sym: 'ΔA', symText: 'ΔA', label: 'ΔA', unit: '', min: 0, max: 2, step: 0.05, val: 0.5, graph: true }, { id: 'B', sym: 'B', symText: 'B', label: 'B', unit: '', min: 1, max: 20, step: 0.1, val: 8 }, { id: 'dB', sym: 'ΔB', symText: 'ΔB', label: 'ΔB', unit: '', min: 0, max: 2, step: 0.05, val: 0.3 }];
+  },
+  presets: [{ label: 'Nearly equal values (subtract)', mode: 'add', v: { A: 10.2, B: 9.8, dA: 0.2, dB: 0.2 } }, { label: 'Measure L more carefully', mode: 'cube', v: { dL: 0.01 } }],
+  calc(v, mode, opt){
+    const o = opt.op || 'a';
+    if (mode === 'add'){ const R = o === 'a' ? v.A + v.B : v.A - v.B, dR = v.dA + v.dB; return { R, dR, pct: 100 * dR / Math.abs(R || 1e-9), fA: v.dA / v.A, fB: v.dB / v.B, sym: o === 'a' ? '+' : '−' }; }
+    if (mode === 'mult'){ const R = o === 'a' ? v.A * v.B : v.A / v.B, f = v.dA / v.A + v.dB / v.B; return { R, dR: f * R, pct: 100 * f, fA: v.dA / v.A, fB: v.dB / v.B, sym: o === 'a' ? '×' : '÷' }; }
+    if (mode === 'power'){ const R = Math.pow(v.A, v.n), f = Math.abs(v.n) * v.dA / v.A; return { R, dR: f * Math.abs(R), pct: 100 * f, fA: v.dA / v.A }; }
+    const V = v.L ** 3, rho = v.m / V, fm = v.dm / v.m, fL = v.dL / v.L, f = fm + 3 * fL; return { V, R: rho, dR: f * rho, pct: 100 * f, fm, fL, partM: 100 * fm, partL: 300 * fL };
+  },
+  dvs(){ return [{ id: 'dR', name: 'Absolute uncertainty of the result', short: 'ΔR', sym: 'ΔR', unit: '', f: d => d.dR }, { id: 'pct', name: 'Percentage uncertainty of the result', short: '%', sym: '%ΔR', unit: '%', f: d => d.pct }]; },
+  work(v, d, mode, opt){
+    const f = x => fnum(x);
+    if (mode === 'add') return '<h4>1 · Adding or subtracting: add the <b>absolute</b> uncertainties</h4><div class="eq">R = A ' + d.sym + ' B = ' + H.iv('A') + ' ' + d.sym + ' ' + H.iv('B') + ' = ' + H.n(d.R) + '</div>' +
+      '<div class="eq">ΔR = ΔA + ΔB = ' + H.iv('dA') + ' + ' + H.iv('dB') + ' = <b>' + H.n(d.dR) + '</b> → R = ' + f(d.R) + ' ± ' + f(d.dR) + ' (' + H.n(d.pct, '%') + ')</div>' +
+      '<p class="note">Always add, even when subtracting: the worst case is one value too high and the other too low.</p>' +
+      (d.sym === '−' ? '<p class="note">Subtracting two nearly equal values gives a small result with the same absolute uncertainty: a huge percentage uncertainty. Try the preset.</p>' : '');
+    if (mode === 'mult') return '<h4>1 · Multiplying or dividing: add the <b>fractional</b> (or percentage) uncertainties</h4><div class="eq">ΔA/A = ' + H.n(d.fA * 100, '%') + ', ΔB/B = ' + H.n(d.fB * 100, '%') + '</div>' +
+      '<div class="eq">R = A ' + d.sym + ' B = ' + H.n(d.R) + ', ΔR/R = ' + H.n(d.fA * 100, '%') + ' + ' + H.n(d.fB * 100, '%') + ' = <b>' + H.n(d.pct, '%') + '</b></div>' +
+      '<div class="eq">ΔR = ' + H.n(d.pct / 100) + ' × ' + H.n(d.R) + ' = <b>' + H.n(d.dR) + '</b> → R = ' + f(d.R) + ' ± ' + f(d.dR) + '</div>' +
+      '<p class="note">Dividing also adds the percentages, never subtracts them.</p>';
+    if (mode === 'power') return '<h4>1 · Powers: multiply the fractional uncertainty by |n|</h4><div class="eq">R = A<sup>n</sup> = ' + H.iv('A') + '<sup>' + f(v.n) + '</sup> = ' + H.n(d.R) + '</div>' +
+      '<div class="eq">ΔR/R = |n|·ΔA/A = ' + f(Math.abs(v.n)) + ' × ' + H.n(d.fA * 100, '%') + ' = <b>' + H.n(d.pct, '%') + '</b> → ΔR = ' + H.n(d.dR) + '</div>' +
+      '<p class="note">Square roots halve the percentage uncertainty (n = ½); squaring doubles it. For example, if T has a 2% uncertainty, T² has 4%.</p>';
+    return '<h4>1 · Density of a cube: ρ = m/L³</h4><div class="eq">V = L³ = (' + H.iv('L') + ')³ = ' + H.n(d.V, 'cm³') + ' → ρ = ' + H.iv('m') + ' / ' + H.n(d.V) + ' = <b>' + H.n(d.R, 'g/cm³') + '</b></div>' +
+      '<h4>2 · Percentages: mass once, length three times (it’s cubed)</h4><div class="eq">Δρ/ρ = Δm/m + 3ΔL/L = ' + H.n(d.partM, '%') + ' + 3(' + H.n(d.fL * 100, '%') + ') = <b>' + H.n(d.pct, '%') + '</b></div>' +
+      '<div class="eq">ρ = (' + f(d.R) + ' ± ' + f(d.dR) + ') g/cm³</div>' +
+      '<p class="note">Which measurement should you improve? The bar chart shows where the uncertainty comes from: here the cubed length dominates (' + H.n(d.partL, '%') + ' vs ' + H.n(d.partM, '%') + ').</p>';
+  },
+  draw(v, d, mode){
+    panelTitle('VALUES WITH THEIR UNCERTAINTY RANGES', 10, 18);
+    const items = mode === 'cube' ? [['m (g)', v.m, v.dm], ['L (cm)', v.L, v.dL], ['ρ (g/cm³)', d.R, d.dR]] : mode === 'power' ? [['A', v.A, v.dA], ['R', d.R, d.dR]] : [['A', v.A, v.dA], ['B', v.B, v.dB], ['R', d.R, d.dR]];
+    items.forEach(([l, x, dx], i) => { const y = 70 + i * 70, lo = x - dx, hi = x + dx, span = Math.max(Math.abs(x) * 1.6, 1e-6), X = q => 60 + 300 * (q - (x - span / 2)) / span;
+      ctx.fillStyle = 'rgba(21,70,214,0.18)'; ctx.fillRect(X(lo), y - 12, X(hi) - X(lo), 24); ctx.strokeStyle = '#1546d6'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(X(lo), y); ctx.lineTo(X(hi), y); ctx.moveTo(X(lo), y - 10); ctx.lineTo(X(lo), y + 10); ctx.moveTo(X(hi), y - 10); ctx.lineTo(X(hi), y + 10); ctx.stroke();
+      ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(X(x), y, 4, 0, 7); ctx.fill();
+      text(l, 50, y + 4, { align: 'right', font: '700 12px "IBM Plex Mono",monospace' }); text(fplain(x) + ' ± ' + fplain(dx) + '  (' + fplain(100 * dx / Math.abs(x || 1)) + '%)', 210, y - 18, { align: 'center', font: '600 10px "IBM Plex Mono",monospace', col: '#4a4a4a' }); });
+    text('each bar is drawn on its own scale, centered on its value', 12, 318, { font: '500 9px "IBM Plex Mono",monospace', col: '#8a8a8a' });
+    panelTitle('SOURCES OF UNCERTAINTY', 395, 18);
+    const parts = mode === 'cube' ? [['Δm/m', d.partM, '#1546d6'], ['3ΔL/L', d.partL, '#ff6a2b']] : mode === 'power' ? [['|n|ΔA/A', d.pct, '#ff6a2b']] : mode === 'mult' ? [['ΔA/A', 100 * d.fA, '#1546d6'], ['ΔB/B', 100 * d.fB, '#ff6a2b']] : [['ΔA', v.dA, '#1546d6'], ['ΔB', v.dB, '#ff6a2b']];
+    const tot = parts.reduce((a, p) => a + p[1], 0) || 1; let x0 = 400;
+    parts.forEach(([l, q, c]) => { const w = 180 * q / tot; ctx.fillStyle = c; ctx.fillRect(x0, 50, w, 24); if (w > 30) text(l, x0 + w / 2, 66, { align: 'center', font: '700 10px "IBM Plex Mono",monospace', col: '#fff' }); x0 += w; });
+    text(mode === 'add' ? 'absolute ΔR = ' + fplain(d.dR) : 'total ' + fplain(d.pct) + '%', 400, 100, { font: '700 12px "IBM Plex Mono",monospace' });
+  }
+};
+
+
+S.mode = SIM.modes ? SIM.modes[0].id : 'one';
+setup(); requestAnimationFrame(loop);
+</script>
+</body></html>
