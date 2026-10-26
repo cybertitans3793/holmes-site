@@ -36,6 +36,12 @@ SIMS = {
     'balance': {'file': 'units/sims/circ-balance.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'cartball':{'file': 'units/sims/circ-cartball.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'meet':    {'file': 'units/sims/circ-meet.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'chase':   {'file': 'units/sims/circ-chase.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Chase &amp; Collide, Up and Down, Brake or Go?, Force &amp; Motion Graphs and Elevator Scale are original.'},
+    'updown':  {'file': 'units/sims/circ-updown.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'brake':   {'file': 'units/sims/circ-brake.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'fgraphs': {'file': 'units/sims/circ-fgraphs.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'elevator':{'file': 'units/sims/circ-elevator.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'blocks':  {'file': 'units/sims/circ-blocks.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Push Two Blocks is original.'},
     'springs': {'file': 'units/sims/circ-springs.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'pulleys': {'file': 'units/sims/circ-pulleys.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Pulleys and Box on a Truck are original.'},
     'truck':   {'file': 'units/sims/circ-truck.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
@@ -56,11 +62,41 @@ UNITS = {
         'From rest, give him an acceleration of +1 m/s². What shape is the x–t graph? What does the area under the v–t graph tell you?',
         'Make him slow down while he is still moving to the right. What signs do v and a have?',
         'Make the v–t graph a flat line at −1.5 m/s. Is he speeding up, slowing down, or neither?']},
+    {'code': '', 'name': 'Chase & Collide', 'sim': 'chase', 'tasks': [
+        '<b>Police chase.</b> A speeder passes a parked police car at 30 m/s. The police car starts right away at 3 m/s². Write x(t) for both, then find when and where it catches up. Check with the sim.',
+        'Show that with no wait the police are always going exactly twice the speeder’s speed when they catch up. Use the v–t graph: what do the two areas have to be?',
+        'When is the gap between them the biggest? Find it on the v–t graph and explain.',
+        '<b>Head-on.</b> Car A drives at a constant 10 m/s toward car B, 200 m away, which starts from rest and accelerates toward A at 2 m/s². Set up the quadratic and solve. Why do you throw out one root?',
+        '<b>Will it rear-end?</b> A car at 30 m/s is 30 m behind a truck going 15 m/s and brakes at 6 m/s². Does it hit? Now try a wet road (3 m/s²). Why only the <i>relative</i> speed matters.']},
+    {'code': '', 'name': 'Up and Down', 'sim': 'updown', 'tasks': [
+        '<b>Predict, then check.</b> At the very top of its path, what are the ball’s velocity and acceleration? Use the v–t graph.',
+        'A ball is thrown up at 15 m/s from a 20 m cliff. Find the max height, the time to hit the bottom and the speed there.',
+        'Throw it up at 10 m/s, then down at 10 m/s. Compare the speeds at the bottom. Explain with v² = v<sub>0</sub>² + 2gh.',
+        '<b>Drop one, throw one.</b> Ball A is dropped from 45 m as ball B is thrown up at 20 m/s. Show that they pass at t = H/v<sub>0</sub>. Why does the ½gt² cancel?',
+        'What is the slowest B can be thrown and still pass A in the air?']},
+    {'code': '', 'name': 'Brake or Go?', 'sim': 'brake', 'tasks': [
+        '<b>Derive</b> a = μg for a braking car from a free-body diagram and F = ma. Why doesn’t the car’s mass matter?',
+        'Double the speed. By what factor does the reaction distance change? The braking distance? Predict, then check with the ×2 line.',
+        'Use the presets: how much longer is the stopping distance on a wet road? On ice? While texting (2 s reaction)?',
+        '<b>Yellow light.</b> Find a speed and distance where you can neither stop nor make it through (the dilemma zone). What could engineers change to fix it?',
+        'On the v–t graph, which area is the reaction distance and which is the braking distance? Calculate both from the graph.']},
     {'code': '', 'name': 'Push the Cart', 'sim': 'cart', 'tasks': [
         'Set both μ to 0. Double the force. Predict what happens to <i>a</i>, then run it.',
         'Keep F = 12 N and double the mass. What happens to <i>a</i>?',
         'Find the smallest force that starts a 4.0 kg cart moving when μ<sub>s</sub> = 0.30. Once it is moving, what is the net force?',
         'While the cart is moving, lower F until it equals kinetic friction. What does the v–t graph do? Why doesn’t the cart stop?']},
+    {'code': '', 'name': 'Force & Motion Graphs', 'sim': 'fgraphs', 'tasks': [
+        '<b>Translate.</b> Use “Speed up, cruise, stop.” Sketch the a–t, v–t and x–t graphs from the F–t graph before you watch them draw.',
+        'Set F<sub>2</sub> = 0. What does the cart do from 3 to 6 s, and what law tells you that?',
+        '<b>Turn around.</b> The force points backward the whole time. When is the cart moving forward? When does it turn around, and what does the x–t graph look like there?',
+        'Double the mass. Which graphs change, and by what factor?',
+        'Make the cart end at x = 0 at 9 s. Describe your forces and explain using areas under the v–t graph.']},
+    {'code': '', 'name': 'Elevator Scale', 'sim': 'elevator', 'tasks': [
+        'Draw the free-body diagram of a person on a scale in an elevator. Which force does the scale read?',
+        '<b>Ride up.</b> Predict whether the scale reads more, less or the same as mg while starting, cruising and stopping. Then check each.',
+        'Find two different parts of a ride (up or down) where the scale reads <i>more</i> than mg. What do they have in common?',
+        'A 60 kg student’s scale reads 48 kg. Find the elevator’s acceleration. Which ways could the elevator be moving?',
+        '<b>Cable snaps.</b> Why does the scale read zero, even if the elevator was still moving up? Is gravity still acting?']},
     {'code': '', 'name': 'Lunar Lander', 'sim': 'lander', 'tasks': [
         'Find the thrust that makes the lander hover. How does that thrust compare with the lander’s weight on the Moon?',
         'Can the lander move down at a steady speed with the engine on? What is the net force then?',
@@ -432,6 +468,12 @@ UNITS.update({
         '<b>Series and parallel.</b> Hang the same mass from two equal springs side by side, then one below the other. Predict the stretch each time before you check.']},
 ]},
 'P1-03': {'course': 'AP Physics 1 / IB', 'num': '03', 'title': 'Newton’s Third Law', 'tabs': [
+    {'code': '', 'name': 'Push Two Blocks', 'sim': 'blocks', 'tasks': [
+        '<b>Classic FRQ.</b> A 30 N push acts on a 4 kg block that pushes a 2 kg block (frictionless). Find a, then the force between the blocks. Check with the sim.',
+        'Now push from the other side with the same force. Does a change? Does the contact force? Explain why.',
+        'Use the free-body diagrams to name the Newton’s third-law pair between the blocks. Are they equal even though the masses differ?',
+        '<b>Add friction.</b> Show that the contact force is still F × m<sub>far</sub>/(m<sub>1</sub> + m<sub>2</sub>): the friction cancels out.',
+        '<b>Train of carts.</b> Which rope has the biggest tension? Find T<sub>12</sub> and T<sub>23</sub> by choosing the right system for each.']},
     {'code': '', 'name': 'Pulleys', 'sim': 'pulleys', 'tasks': [
         '<b>Atwood machine.</b> m<sub>1</sub> = 2.0 kg, m<sub>2</sub> = 1.5 kg. Find a and T on paper, then check. Is T bigger or smaller than each weight?',
         'Make the masses equal. What are a and T? Then make one mass much bigger. What does a approach?',
