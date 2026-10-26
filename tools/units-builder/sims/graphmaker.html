@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Graph Maker</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@500;700&display=swap">
+<style>
+:root{--ink:#111;--mut:#4a4a4a;--acc:#ff6a2b;--blue:#1546d6;--bg:#fff}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Space Grotesk",system-ui,sans-serif}
+.wrap{display:grid;grid-template-columns:minmax(300px,380px) 1fr;gap:14px;padding:12px;align-items:start}
+@media (max-width:820px){.wrap{grid-template-columns:1fr}}
+.panel{border:2px solid var(--ink);padding:10px}
+h2{font:700 12px "IBM Plex Mono",monospace;letter-spacing:.04em;margin:0 0 8px}
+label.f{display:block;font:700 11px "IBM Plex Mono",monospace;color:var(--mut);margin:8px 0 3px}
+input[type=text]{width:100%;font:500 14px "Space Grotesk",sans-serif;padding:5px 6px;border:2px solid var(--ink);background:#fff;color:var(--ink)}
+input:focus-visible,button:focus-visible{outline:3px solid var(--acc);outline-offset:1px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+table{border-collapse:collapse;width:100%;margin-top:6px}
+th{font:700 11px "IBM Plex Mono",monospace;text-align:left;padding:3px 2px;color:var(--mut)}
+td{padding:1px}
+td input{width:100%;font:500 13px "IBM Plex Mono",monospace;padding:4px 5px;border:1px solid #999}
+td input.unc{background:#f5f5f5}
+td.n{font:500 11px "IBM Plex Mono",monospace;color:var(--mut);width:18px}
+.row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+button{font:700 13px "Space Grotesk",sans-serif;padding:6px 10px;border:2px solid var(--ink);background:#fff;color:var(--ink);cursor:pointer}
+button.pri{background:var(--ink);color:#fff}
+button.acc{background:var(--acc);border-color:var(--ink);color:#111}
+.chk{display:flex;gap:6px;align-items:center;font:500 13px "Space Grotesk",sans-serif;margin-top:6px}
+.hint{font:500 11px "IBM Plex Mono",monospace;color:var(--mut);margin-top:6px;line-height:1.4}
+#out canvas{width:100%;height:auto;border:2px solid var(--ink);display:block;background:#fff}
+#res{margin-top:10px;font:500 14px "Space Grotesk",sans-serif;line-height:1.5}
+#res b{font-weight:700}
+#res .warn{color:#c43a00}
+#msg{font:600 12px "IBM Plex Mono",monospace;color:#1e7d45;min-height:16px;margin-top:6px}
+#msg.bad{color:#c43a00}
+</style></head><body>
+<div class="wrap">
+  <div class="panel" id="inp">
+    <h2>1 · YOUR DATA</h2>
+    <label class="f" for="title">Graph title (leave blank to make one from your headers)</label>
+    <input type="text" id="title" placeholder="e.g. Extension of a spring vs force">
+    <div class="two">
+      <div><label class="f" for="xh">x column header</label><input type="text" id="xh" value="Force / N"></div>
+      <div><label class="f" for="yh">y column header</label><input type="text" id="yh" value="Extension / cm"></div>
+    </div>
+    <div class="hint">Write headers as <b>quantity / unit</b> or <b>quantity (unit)</b>. The independent variable goes on x.</div>
+    <table aria-label="Data table">
+      <thead><tr><th></th><th>x</th><th>±Δx</th><th>y</th><th>±Δy</th></tr></thead>
+      <tbody id="tb"></tbody>
+    </table>
+    <div class="hint">Leave a ± box blank to use the row above it, so you can type an uncertainty once for the whole column. You can paste straight from a Google Sheet.</div>
+    <div class="row"><button type="button" id="add">+ Row</button><button type="button" id="ex">Example data</button><button type="button" id="clr">Clear</button></div>
+    <h2 style="margin-top:14px">2 · OPTIONS</h2>
+    <label class="chk"><input type="checkbox" id="zero" checked> Axes start at 0 (shows the intercept)</label>
+    <label class="chk"><input type="checkbox" id="mm" checked> Max and min gradient lines</label>
+    <label class="chk"><input type="checkbox" id="eq" checked> Equations on the graph</label>
+    <label class="chk"><input type="checkbox" id="grid" checked> Gridlines</label>
+  </div>
+  <div id="out">
+    <canvas id="cv" width="1600" height="1000" aria-label="Your graph"></canvas>
+    <div class="row">
+      <button type="button" class="acc" id="dl">Download PNG</button>
+      <button type="button" class="pri" id="cp">Copy image</button>
+    </div>
+    <div id="msg" role="status"></div>
+    <div class="hint">Into Google Docs: <b>Copy image</b> then Ctrl+V in your doc, or <b>Download PNG</b> then Insert → Image → Upload from computer.</div>
+    <div id="res"></div>
+  </div>
+</div>
+<script>
+(function(){
+const $ = id => document.getElementById(id), tb = $('tb'), cv = $('cv'), ctx = cv.getContext('2d');
+const W = cv.width, Hh = cv.height;
+const store = { get(){ try { return JSON.parse(localStorage.getItem('holmes-graphmaker') || 'null'); } catch (e) { return null; } }, set(v){ try { localStorage.setItem('holmes-graphmaker', JSON.stringify(v)); } catch (e) {} } };
+const EX = { title: '', xh: 'Force / N', yh: 'Extension / cm', rows: [['1.0','0.1','3.9','0.3'],['2.0','','8.4',''],['3.0','','11.8',''],['4.0','','16.3',''],['5.0','','19.7',''],['6.0','','24.4','']] };
+
+function addRow(vals){
+  const tr = document.createElement('tr'); const i = tb.children.length + 1;
+  tr.innerHTML = '<td class="n">' + i + '</td>' + [0,1,2,3].map(k => '<td><input type="text" inputmode="decimal" class="' + (k % 2 ? 'unc' : '') + '" aria-label="' + ['x','Δx','y','Δy'][k] + ' row ' + i + '"></td>').join('');
+  tb.appendChild(tr); if (vals) [...tr.querySelectorAll('input')].forEach((el, k) => el.value = vals[k] || '');
+}
+function cells(){ return [...tb.children].map(tr => [...tr.querySelectorAll('input')]); }
+function load(st){
+  tb.innerHTML = ''; $('title').value = st.title || ''; $('xh').value = st.xh || ''; $('yh').value = st.yh || '';
+  const rows = st.rows && st.rows.length ? st.rows : []; rows.forEach(r => addRow(r)); while (tb.children.length < Math.max(8, rows.length + 2)) addRow();
+}
+function state(){ return { title: $('title').value, xh: $('xh').value, yh: $('yh').value, rows: cells().map(r => r.map(e => e.value)) }; }
+
+// paste a block from a spreadsheet
+tb.addEventListener('paste', e => {
+  const t = (e.clipboardData || window.clipboardData).getData('text'); if (!/[\t\n]/.test(t.trim())) return;
+  e.preventDefault(); const el = e.target, all = cells(); let r0 = all.findIndex(r => r.includes(el)), c0 = all[r0].indexOf(el);
+  t.replace(/\r/g,'').split('\n').filter(l => l.trim() !== '').forEach((line, i) => {
+    while (tb.children.length <= r0 + i) addRow();
+    const row = cells()[r0 + i]; line.split('\t').forEach((v, j) => { if (row[c0 + j]) row[c0 + j].value = v.trim(); });
+  });
+  while (tb.children.length < cells().filter(r => r.some(x => x.value)).length + 2) addRow();
+  draw();
+});
+tb.addEventListener('input', () => { const all = cells(); if (all[all.length - 1].some(x => x.value)) addRow(); draw(); });
+['title','xh','yh','zero','mm','eq','grid'].forEach(id => $(id).addEventListener('input', draw));
+$('add').onclick = () => addRow();
+$('ex').onclick = () => { load(EX); draw(); };
+$('clr').onclick = () => { load({ title: '', xh: $('xh').value, yh: $('yh').value, rows: [] }); draw(); };
+
+// ---------- numbers ----------
+const num = s => { s = String(s).trim().replace(/\s/g,'').replace(/,/g,'.').replace(/[×x]10\^?/i,'e'); if (s === '') return NaN; return Number(s); };
+function data(){
+  let dx = 0, dy = 0; const pts = [], bad = [];
+  cells().forEach((r, i) => {
+    const v = r.map(e => e.value.trim()); if (v.every(x => x === '')) return;
+    if (v[1] !== '') dx = Math.abs(num(v[1])); if (v[3] !== '') dy = Math.abs(num(v[3]));
+    const x = num(v[0]), y = num(v[2]);
+    if (!isFinite(x) || !isFinite(y) || !isFinite(dx) || !isFinite(dy)) { bad.push(i + 1); return; }
+    pts.push({ x, y, dx, dy, row: i + 1 });
+  });
+  return { pts, bad };
+}
+function splitHeader(h){
+  h = (h || '').trim(); let m = h.match(/^(.*?)\s*\/\s*(.+)$/); if (m) return { q: m[1].trim(), u: m[2].trim() };
+  m = h.match(/^(.*?)\s*[\(\[]\s*(.+?)\s*[\)\]]\s*$/); if (m) return { q: m[1].trim(), u: m[2].trim() };
+  return { q: h, u: '' };
+}
+function fit(pts){
+  const n = pts.length, mx = pts.reduce((a, p) => a + p.x, 0) / n, my = pts.reduce((a, p) => a + p.y, 0) / n;
+  const sxx = pts.reduce((a, p) => a + (p.x - mx) ** 2, 0), sxy = pts.reduce((a, p) => a + (p.x - mx) * (p.y - my), 0);
+  const m = sxx ? sxy / sxx : 0; return { m, b: my - m * mx };
+}
+// Range of intercepts b for which the line y = m x + b passes through every error box (x ± dx, y ± dy).
+function bRange(m, pts){
+  let lo = -Infinity, hi = Infinity;
+  for (const p of pts){ const a = m * (p.x - p.dx), c = m * (p.x + p.dx); lo = Math.max(lo, p.y - p.dy - Math.max(a, c)); hi = Math.min(hi, p.y + p.dy - Math.min(a, c)); }
+  return [lo, hi];
+}
+const ok = (m, pts) => { const r = bRange(m, pts); return r[0] <= r[1] + 1e-12; };
+function extremes(pts, best){
+  const xs = pts.map(p => p.x), ys = pts.map(p => p.y), spanX = Math.max(...xs) - Math.min(...xs) || 1, spanY = (Math.max(...ys) - Math.min(...ys)) + 2 * Math.max(...pts.map(p => p.dy)) || 1;
+  const K = 50 * spanY / spanX; let seed = null;
+  if (ok(best.m, pts)) seed = best.m; else { for (let i = 0; i <= 4000 && seed === null; i++){ const m = best.m + (i % 2 ? 1 : -1) * Math.ceil(i / 2) * K / 2000; if (ok(m, pts)) seed = m; } }
+  if (seed === null) return null;
+  const edge = dir => { let a = seed, step = spanY / spanX / 100 || 1e-6, b = seed + dir * step, guard = 0;
+    while (ok(b, pts) && guard++ < 200){ a = b; step *= 2; b = seed + dir * step; if (Math.abs(b - seed) > 1e6 * (Math.abs(seed) + 1)) return a; }
+    for (let i = 0; i < 80; i++){ const mid = (a + b) / 2; if (ok(mid, pts)) a = mid; else b = mid; } return a; };
+  const mMax = edge(1), mMin = edge(-1), r1 = bRange(mMax, pts), r2 = bRange(mMin, pts);
+  return { max: { m: mMax, b: (r1[0] + r1[1]) / 2 }, min: { m: mMin, b: (r2[0] + r2[1]) / 2 } };
+}
+// first/last-point fallback when no single line goes through every bar
+function corners(pts){
+  const s = [...pts].sort((a, b) => a.x - b.x), p = s[0], q = s[s.length - 1], dX = q.x - p.x || 1;
+  const mMax = ((q.y + q.dy) - (p.y - p.dy)) / dX, mMin = ((q.y - q.dy) - (p.y + p.dy)) / dX;
+  return { max: { m: mMax, b: (p.y - p.dy) - mMax * p.x }, min: { m: mMin, b: (p.y + p.dy) - mMin * p.x } };
+}
+// uncertainty to 1 s.f., value to the same decimal place
+function pm(v, d){
+  if (!isFinite(v)) return '—'; if (!(d > 0)) return sig(v, 3);
+  const e = Math.floor(Math.log10(d)); let dr = Math.round(d / 10 ** e) * 10 ** e; const e2 = Math.floor(Math.log10(dr));
+  const dp = Math.max(0, -e2), vr = Math.round(v / 10 ** e2) * 10 ** e2;
+  if (Math.abs(vr) >= 1e5 || (Math.abs(vr) < 1e-3 && vr !== 0)) { const ex = Math.floor(Math.log10(Math.abs(vr))); return '(' + (vr / 10 ** ex).toFixed(Math.max(0, ex - e2)) + ' ± ' + (dr / 10 ** ex).toFixed(Math.max(0, ex - e2)) + ') × 10^' + ex; }
+  return vr.toFixed(dp) + ' ± ' + dr.toFixed(dp);
+}
+function sig(v, n){ if (!isFinite(v)) return '—'; if (v === 0) return '0'; const a = Math.abs(v); if (a >= 1e5 || a < 1e-3) return v.toExponential(n - 1); return String(Number(v.toPrecision(n))); }
+function niceStep(range, target){ const raw = range / target, p = 10 ** Math.floor(Math.log10(raw)), f = raw / p; return (f < 1.5 ? 1 : f < 3 ? 2 : f < 7 ? 5 : 10) * p; }
+function axis(lo, hi, zero){
+  if (zero){ lo = Math.min(lo, 0); hi = Math.max(hi, 0); }
+  const pad = 0.04 * (hi - lo); if (hi > 0) hi += pad; if (lo < 0 || !zero) lo -= (lo === 0 ? 0 : pad);
+  if (hi - lo < 1e-12){ hi += 1; lo -= zero && lo === 0 ? 0 : 1; }
+  const st = niceStep(hi - lo, 8); const a = Math.floor(lo / st + 1e-9) * st, b = Math.ceil(hi / st - 1e-9) * st;
+  return { a, b, st, dp: Math.max(0, -Math.floor(Math.log10(st) + 1e-9)) };
+}
+
+// ---------- draw ----------
+let last = null;
+function draw(){ draw0(); try { img.src = cv.toDataURL('image/png'); } catch (e) {} }
+function draw0(){
+  store.set(state());
+  const { pts, bad } = data(), X = splitHeader($('xh').value), Y = splitHeader($('yh').value);
+  const title = $('title').value.trim() || ((Y.q || 'y') + ' vs ' + (X.q || 'x'));
+  const xl = $('xh').value.trim() || 'x', yl = $('yh').value.trim() || 'y';
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, Hh);
+  ctx.fillStyle = '#111'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic'; ctx.font = '700 44px "Space Grotesk", Arial, sans-serif'; ctx.fillText(title, W / 2, 68, W - 80);
+  const L = 180, R = W - 50, T = 110, B = Hh - 130;
+  const res = $('res');
+  if (pts.length < 2){
+    ctx.font = '500 30px "Space Grotesk", Arial, sans-serif'; ctx.fillStyle = '#4a4a4a'; ctx.fillText('Type at least two data points (x, y) to make a graph.', W / 2, Hh / 2);
+    res.innerHTML = bad.length ? '<span class="warn">Check row ' + bad.join(', ') + ': a value isn’t a number.</span>' : ''; last = null; return;
+  }
+  const best = fit(pts); let ex = extremes(pts, best), through = !!ex; if (!ex) ex = corners(pts);
+  const zero = $('zero').checked;
+  let xa = axis(Math.min(...pts.map(p => p.x - p.dx)), Math.max(...pts.map(p => p.x + p.dx)), zero);
+  const lines = [best].concat($('mm').checked ? [ex.max, ex.min] : []);
+  let ylo = Math.min(...pts.map(p => p.y - p.dy)), yhi = Math.max(...pts.map(p => p.y + p.dy));
+  if (zero && xa.a === 0){ const tiny = 0.03 * Math.max(Math.abs(ylo), Math.abs(yhi)); ylo = Math.min(ylo, best.b < 0 && best.b > -tiny ? 0 : best.b); yhi = Math.max(yhi, best.b > 0 && best.b < tiny ? 0 : best.b); }
+  const ya = axis(ylo, yhi, zero);
+  const PX = x => L + (R - L) * (x - xa.a) / (xa.b - xa.a), PY = y => B - (B - T) * (y - ya.a) / (ya.b - ya.a);
+  // grid + ticks
+  ctx.lineWidth = 1;
+  for (let x = xa.a; x <= xa.b + xa.st / 2; x += xa.st){ const px = PX(x); if ($('grid').checked){ ctx.strokeStyle = '#e3e3e3'; ctx.beginPath(); ctx.moveTo(px, T); ctx.lineTo(px, B); ctx.stroke(); }
+    ctx.fillStyle = '#111'; ctx.font = '500 24px "IBM Plex Mono", monospace'; ctx.textAlign = 'center'; ctx.fillText((Math.abs(x) < xa.st / 1e6 ? 0 : x).toFixed(xa.dp), px, B + 34); ctx.fillRect(px - 1, B, 2, 10); }
+  for (let y = ya.a; y <= ya.b + ya.st / 2; y += ya.st){ const py = PY(y); if ($('grid').checked){ ctx.strokeStyle = '#e3e3e3'; ctx.beginPath(); ctx.moveTo(L, py); ctx.lineTo(R, py); ctx.stroke(); }
+    ctx.fillStyle = '#111'; ctx.font = '500 24px "IBM Plex Mono", monospace'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle'; ctx.fillText((Math.abs(y) < ya.st / 1e6 ? 0 : y).toFixed(ya.dp), L - 16, py); ctx.fillRect(L - 10, py - 1, 10, 2); ctx.textBaseline = 'alphabetic'; }
+  // axes (through 0 if 0 is in range)
+  ctx.strokeStyle = '#111'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(L, T); ctx.lineTo(L, B); ctx.lineTo(R, B); ctx.stroke();
+  ctx.lineWidth = 1.5; ctx.strokeStyle = '#888';
+  if (ya.a < 0 && ya.b > 0){ ctx.beginPath(); ctx.moveTo(L, PY(0)); ctx.lineTo(R, PY(0)); ctx.stroke(); }
+  if (xa.a < 0 && xa.b > 0){ ctx.beginPath(); ctx.moveTo(PX(0), T); ctx.lineTo(PX(0), B); ctx.stroke(); }
+  ctx.fillStyle = '#111'; ctx.font = '700 30px "Space Grotesk", Arial, sans-serif'; ctx.textAlign = 'center'; ctx.fillText(xl, (L + R) / 2, Hh - 48);
+  ctx.save(); ctx.translate(46, (T + B) / 2); ctx.rotate(-Math.PI / 2); ctx.fillText(yl, 0, 0); ctx.restore();
+  // lines, clipped to the plot
+  ctx.save(); ctx.beginPath(); ctx.rect(L, T, R - L, B - T); ctx.clip();
+  const x1 = zero ? xa.a : Math.min(...pts.map(p => p.x - p.dx)), x2 = zero ? xa.b : Math.max(...pts.map(p => p.x + p.dx));
+  const ln = (l, col, dash, w) => { ctx.strokeStyle = col; ctx.lineWidth = w; ctx.setLineDash(dash); ctx.beginPath(); ctx.moveTo(PX(x1), PY(l.m * x1 + l.b)); ctx.lineTo(PX(x2), PY(l.m * x2 + l.b)); ctx.stroke(); ctx.setLineDash([]); };
+  if ($('mm').checked){ ln(ex.max, '#7a3fb0', [18, 10], 3); ln(ex.min, '#1e7d45', [6, 8], 3); }
+  ln(best, '#c43a00', [], 4);
+  // error bars + points
+  pts.forEach(p => { ctx.strokeStyle = '#1546d6'; ctx.lineWidth = 2.5; ctx.beginPath();
+    if (p.dy > 0){ ctx.moveTo(PX(p.x), PY(p.y - p.dy)); ctx.lineTo(PX(p.x), PY(p.y + p.dy)); ctx.moveTo(PX(p.x) - 10, PY(p.y - p.dy)); ctx.lineTo(PX(p.x) + 10, PY(p.y - p.dy)); ctx.moveTo(PX(p.x) - 10, PY(p.y + p.dy)); ctx.lineTo(PX(p.x) + 10, PY(p.y + p.dy)); }
+    if (p.dx > 0){ ctx.moveTo(PX(p.x - p.dx), PY(p.y)); ctx.lineTo(PX(p.x + p.dx), PY(p.y)); ctx.moveTo(PX(p.x - p.dx), PY(p.y) - 10); ctx.lineTo(PX(p.x - p.dx), PY(p.y) + 10); ctx.moveTo(PX(p.x + p.dx), PY(p.y) - 10); ctx.lineTo(PX(p.x + p.dx), PY(p.y) + 10); }
+    ctx.stroke(); ctx.fillStyle = '#1546d6'; ctx.beginPath(); ctx.arc(PX(p.x), PY(p.y), 7, 0, 7); ctx.fill(); });
+  ctx.restore();
+  // legend
+  const gU = (Y.u && X.u) ? Y.u + '/' + X.u : (Y.u ? Y.u : (X.u ? '1/' + X.u : '')), iU = Y.u;
+  const eqn = l => 'y = ' + sig(l.m, 3) + 'x ' + (l.b < 0 ? '− ' : '+ ') + sig(Math.abs(l.b), 3);
+  const leg = [['best fit', '#c43a00', [], best]].concat($('mm').checked ? [['max gradient', '#7a3fb0', [18, 10], ex.max], ['min gradient', '#1e7d45', [6, 8], ex.min]] : []);
+  const lw = $('eq').checked ? 470 : 260, lh = 40 * leg.length + 16; let lx = L + 24, ly = T + 16;
+  if (best.m < 0) lx = R - lw - 24;
+  ctx.fillStyle = 'rgba(255,255,255,0.92)'; ctx.fillRect(lx, ly, lw, lh); ctx.strokeStyle = '#111'; ctx.lineWidth = 2; ctx.strokeRect(lx, ly, lw, lh);
+  leg.forEach(([name, col, dash, l], i) => { const yy = ly + 34 + 40 * i; ctx.strokeStyle = col; ctx.lineWidth = 4; ctx.setLineDash(dash); ctx.beginPath(); ctx.moveTo(lx + 14, yy - 8); ctx.lineTo(lx + 64, yy - 8); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = '#111'; ctx.textAlign = 'left'; ctx.font = '600 22px "IBM Plex Mono", monospace'; ctx.fillText($('eq').checked ? (name + ': ' + eqn(l)).replace('max gradient', 'max').replace('min gradient', 'min') : name, lx + 76, yy); });
+  // results
+  const dm = Math.abs(ex.max.m - ex.min.m) / 2, db = Math.abs(ex.max.b - ex.min.b) / 2;
+  const misses = pts.filter(p => !(() => { const a = best.m * (p.x - p.dx) + best.b, c = best.m * (p.x + p.dx) + best.b; return Math.max(a, c) >= p.y - p.dy - 1e-12 && Math.min(a, c) <= p.y + p.dy + 1e-12; })()).map(p => p.row);
+  res.innerHTML =
+    '<div><b>Gradient</b> = ' + pm(best.m, dm) + (gU ? ' ' + gU : '') + '  <span style="color:#4a4a4a">(' + sig(100 * dm / Math.abs(best.m || 1), 2) + '%)</span></div>' +
+    '<div><b>y-intercept</b> = ' + pm(best.b, db) + (iU ? ' ' + iU : '') + (Math.abs(best.b) <= db ? '  <span style="color:#1e7d45">· 0 is inside this range</span>' : '  <span class="warn">· 0 is outside this range</span>') + '</div>' +
+    '<div style="color:#4a4a4a;font-size:13px">max gradient ' + sig(ex.max.m, 3) + ', min gradient ' + sig(ex.min.m, 3) + ' → Δgradient = (max − min)/2 = ' + sig(dm, 2) + '</div>' +
+    (through ? '' : '<div class="warn">No straight line passes through every error bar, so the max/min lines join the corners of the first and last bars. Check for a mistake, or whether your error bars are too small.</div>') +
+    (misses.length && through ? '<div class="warn">The best-fit line misses the error bar' + (misses.length > 1 ? 's' : '') + ' in row ' + misses.join(', ') + '.</div>' : '') +
+    (bad.length ? '<div class="warn">Skipped row ' + bad.join(', ') + ': a value isn’t a number.</div>' : '') +
+    (pts.length < 5 ? '<div style="color:#4a4a4a;font-size:13px">Tip: IB expects at least 5 data points.</div>' : '');
+  last = title;
+}
+
+// ---------- export ----------
+const msg = (t, bad) => { $('msg').textContent = t; $('msg').className = bad ? 'bad' : ''; };
+const fname = () => ((last || 'graph').replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() || 'graph') + '.png';
+$('dl').onclick = () => {
+  cv.toBlob(b => { try { const u = URL.createObjectURL(b), a = document.createElement('a'); a.href = u; a.download = fname(); document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000); msg('Downloaded ' + fname() + '. If nothing happened, right-click the graph → Save image as.'); }
+    catch (e) { msg('Download is blocked here. Right-click the graph → Save image as (or Copy image).', true); } }, 'image/png');
+};
+$('cp').onclick = async () => {
+  try { const b = await new Promise(r => cv.toBlob(r, 'image/png')); await navigator.clipboard.write([new ClipboardItem({ 'image/png': b })]); msg('Copied. Click in your Google Doc and press Ctrl+V.'); }
+  catch (e) { msg('Copy is blocked here. Right-click the graph → Copy image, then paste into your doc.', true); }
+};
+// right-click → copy/save works on an <img>, not reliably on a canvas: keep an <img> on top that mirrors the canvas
+var img = document.createElement('img'); img.alt = 'Your graph'; img.style.cssText = 'width:100%;height:auto;border:2px solid #111;display:block;background:#fff';
+cv.style.display = 'none'; cv.parentNode.insertBefore(img, cv);
+
+load(store.get() || EX);
+(document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(draw); draw();
+})();
+</script>
+</body></html>

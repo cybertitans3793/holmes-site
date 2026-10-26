@@ -64,7 +64,8 @@ SIMS = {
     'circle':  {'file': 'units/sims/circ-circle.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'clay':    {'file': 'units/sims/circ-clay.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'reson':   {'file': 'units/sims/circ-reson.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
-    'meas':    {'file': 'units/sims/circ-meas.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Reading Instruments, Precision &amp; Accuracy, Propagating Uncertainties, Graphs &amp; Error Bars and Linearizing Data are original.'},
+    'meas':    {'file': 'units/sims/circ-meas.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Reading Instruments, Precision &amp; Accuracy, Propagating Uncertainties, Graphs &amp; Error Bars, Linearizing Data and Graph Maker are original.'},
+    'graph':   {'file': 'units/sims/graphmaker.html', 'kind': 'plain', 'ar': '1000 / 880', 'credit': ''},
     'scatter': {'file': 'units/sims/circ-scatter.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'prop':    {'file': 'units/sims/circ-prop.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'errbars': {'file': 'units/sims/circ-errbars.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
@@ -85,10 +86,10 @@ UNITS = {
 # ------------------------------------------------------------------ AP PHYSICS 1
 'P1-00': {'course': 'AP Physics 1 / IB', 'num': '00', 'title': 'Measurement (IB)', 'tabs': [
     {'code': '', 'name': 'Reading Instruments', 'sim': 'meas', 'tasks': [
-        '<b>Ruler.</b> Measure the pencil. Write it with its uncertainty and percentage uncertainty. Why is the uncertainty ±0.1 cm and not ±0.05 cm?',
-        '<b>Analog meter.</b> What is the uncertainty of a reading? Use the preset to add a zero error. Is it random or systematic? How do you correct it?',
-        '<b>Digital scale.</b> Change the number of decimal places. Does a more precise display mean a more accurate mass?',
-        '<b>Stopwatch.</b> Why is your reaction time, not the 0.01 s display, the real uncertainty? Time 1 oscillation, then 10. What happens to the uncertainty in T?']},
+        '<b>Ruler.</b> Measure the pencil. Write it as (value ± uncertainty) with its percentage uncertainty. Why is the uncertainty ±0.1 cm and not ±0.05 cm?',
+        'Use the <b>Short pencil</b> preset. The uncertainty stays the same: what happens to the percentage uncertainty? What does that tell you about measuring small things?',
+        '<b>Analog meter.</b> Find the smallest division and the uncertainty of a reading. Use the preset to add a zero error. Is it random or systematic? How do you correct it?',
+        '<b>Digital scale.</b> Why is a digital reading ± the last digit, not ± half of it? Change the number of decimal places. Does a more precise display mean a more accurate mass?']},
     {'code': '', 'name': 'Precision & Accuracy', 'sim': 'scatter', 'tasks': [
         'Use the target presets. Describe each one as precise or not, and accurate or not.',
         '<b>Repeated measurements.</b> Increase the number of trials. Does the mean get closer to 9.81? Does the uncertainty (half the range) shrink?',
@@ -109,6 +110,11 @@ UNITS = {
         '<b>Falling ball.</b> Which choice works? Find g from the gradient.',
         '<b>Light intensity</b> and <b>gas pressure</b>: find the right choice for each and explain it from the equation.',
         'Why is a straight line better than a curve for checking a relationship and finding a constant?']},
+    {'code': '', 'name': 'Graph Maker', 'sim': 'graph', 'tasks': [
+        'Type your headers as <b>quantity / unit</b>, then your data and uncertainties. Type an uncertainty once and leave the boxes below it blank to use it for the whole column.',
+        'Check that the best-fit line passes through every error bar. If it doesn’t, look for a mistake before you blame the error bars.',
+        'Write the gradient and intercept with their uncertainties and units, then use the gradient to find your constant.',
+        'Put the graph in your lab report: <b>Copy image</b> and paste into your Google Doc, or <b>Download PNG</b> and insert it.']},
 ]},
 'P1-02': {'course': 'AP Physics 1 / IB', 'num': '02', 'title': 'Newton’s Second Law', 'tabs': [
     {'code': '', 'name': 'Moving Man', 'sim': 'mman', 'tasks': [
