@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Angular Momentum</title>
+<!-- Angular Momentum: original Holmes Sims, built from frame.html + angmom.js. g = 10 m/s². -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@500;700&display=swap">
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#fff;font-family:"Space Grotesk",system-ui,sans-serif;color:#111}
+#app{position:absolute;left:0;top:0;width:1000px;height:640px;transform-origin:0 0;padding:10px 14px 12px;box-sizing:border-box;
+  display:grid;grid-template-columns:600px 1fr;grid-template-rows:34px 330px 1fr;gap:10px 14px}
+#bar{grid-column:1/-1;display:flex;gap:16px;align-items:center;flex-wrap:nowrap;overflow:hidden}
+.seg{display:flex;align-items:center}
+.seg .lab{font:700 12px "IBM Plex Mono",monospace;margin-right:8px;text-transform:uppercase}
+.seg button{white-space:nowrap;font:700 14px "Space Grotesk",sans-serif;padding:6px 11px;border:2px solid #111;background:#fff;color:#111;cursor:pointer}
+.seg button+button{margin-left:-2px}
+.seg button[aria-pressed="true"]{background:#111;color:#fff}
+.seg button:hover:not([aria-pressed="true"]){background:#ffe2d3}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #ff6a2b;outline-offset:2px;position:relative;z-index:1}
+#cv{border:2px solid #111;background:#fbfbfb;width:600px;height:330px;box-sizing:border-box;display:block}
+#work{border:2px solid #111;padding:8px 12px 10px;overflow:auto;font-size:14px;line-height:1.55;box-sizing:border-box}
+#work .wt{font:700 12px "IBM Plex Mono",monospace;text-transform:uppercase;margin:0 0 4px;display:flex;justify-content:space-between}
+#work h4{margin:9px 0 1px;font-size:13px;font-weight:700;color:#4a4a4a}
+#work h4:first-of-type{margin-top:2px}
+#work .eq{font-variant-numeric:tabular-nums}
+#work .n{font-family:"IBM Plex Mono",monospace;font-size:13px}
+#work b .n,#work .ans{font-weight:700}
+#work .note{font-size:12.5px;color:#4a4a4a;margin:2px 0 0}
+#work .ok{background:#e5f4ea;border-left:4px solid #1e7d45;padding:3px 8px;margin-top:4px}
+#work .bad{background:#fde7df;border-left:4px solid #c43a00;padding:3px 8px;margin-top:4px}
+.ivv{border-radius:2px;padding:0 2px;transition:background .25s}
+.ivv.gx{background:#ffe2d3}
+.ivv.hot{background:#ff6a2b;color:#fff}
+#ctl{display:grid;grid-template-columns:1fr 1fr;gap:4px 18px;align-content:start}
+.iv{display:grid;grid-template-columns:auto 1fr auto;align-items:center;column-gap:6px}
+.iv .nm{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iv .val{font:700 13px "IBM Plex Mono",monospace;white-space:nowrap}
+.iv input[type=range]{grid-column:1/-1;width:100%;margin:0;accent-color:#111;height:22px}
+.iv input[type=radio]{accent-color:#ff6a2b;margin:0}
+#presets{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:2px}
+#presets .lab{font:700 12px "IBM Plex Mono",monospace}
+#presets button{font:600 12.5px "Space Grotesk",sans-serif;padding:3px 8px;border:2px solid #111;background:#fff;cursor:pointer}
+#presets button:hover{background:#ffe2d3}
+#gcard{border:2px solid #111;padding:5px 8px 6px;display:flex;flex-direction:column;box-sizing:border-box;min-height:0}
+.ghead{display:flex;align-items:center;gap:6px;font-size:13px;white-space:nowrap}
+.ghead select{font:600 13px "Space Grotesk",sans-serif;border:2px solid #111;padding:1px 4px;max-width:200px}
+#gv{width:340px;height:150px;flex:none;display:block;margin-top:3px}
+#dbl{font-size:12.5px;line-height:1.35;margin-top:2px}
+#dbl b{font-weight:700}
+.hint{font:500 11px "IBM Plex Mono",monospace;color:#4a4a4a}
+</style></head><body>
+<div id="app">
+  <div id="bar"></div>
+  <canvas id="cv" width="1200" height="660" aria-label="Animation of the situation with force arrows"></canvas>
+  <div id="work" aria-live="polite"></div>
+  <div id="ctl"></div>
+  <div id="gcard">
+    <div class="ghead"><span>Graph</span><select id="dvsel" aria-label="Quantity to graph"></select><span>vs <b id="ivname"></b></span></div>
+    <canvas id="gv" width="680" height="300" aria-label="Graph of the chosen quantity against the chosen variable"></canvas>
+    <div id="dbl"></div>
+  </div>
+</div>
+<script>
+// ---------------- shared frame ----------------
+const $ = id => document.getElementById(id);
+const G10 = 10, PI = Math.PI, DEG = PI / 180;
+function fit(){ const s = Math.min(innerWidth / 1000, innerHeight / 640); $('app').style.transform = 'scale(' + s + ')'; }
+addEventListener('resize', fit); fit();
+
+function fnum(x){ const r = fnum0(x); return typeof r === 'string' ? r.replace(/^-/, '−') : r; }
+function fnum0(x){
+  if (x === null || x === undefined || !isFinite(x)) return '—';
+  const a = Math.abs(x);
+  if (a === 0) return '0';
+  if (a >= 1e5 || a < 1e-3){
+    const e = Math.floor(Math.log10(a)); let m = x / Math.pow(10, e);
+    let ms = m.toFixed(2); if (Math.abs(+ms) >= 10){ m /= 10; ms = m.toFixed(2); return ms + '×10<sup>' + (e + 1) + '</sup>'; }
+    return ms + '×10<sup>' + e + '</sup>';
+  }
+  if (a >= 1000) return String(Math.round(x));
+  return x.toPrecision(3);
+}
+function fplain(x){ return fnum(x).replace(/<sup>(.*?)<\/sup>/g, (m, e) => '^' + e).replace('×10^', 'e'); }
+const H = {
+  n: (x, u) => '<span class="n">' + fnum(x) + (u ? '&nbsp;' + u : '') + '</span>',
+  iv: id => { const d = S.def[id]; const val = S.v[id]; const txt = (d.show ? d.show(val) : fnum(val) + (d.unit ? '&nbsp;' + d.unit : ''));
+              return '<span class="ivv n' + (S.gx === id ? ' gx' : '') + (S.hot === id ? ' hot' : '') + '" data-iv="' + id + '">' + txt + '</span>'; },
+  g: () => '<span class="n">10&nbsp;m/s²</span>',
+  p: (x, u) => x < 0 ? '(' + H.n(x, u) + ')' : H.n(x, u)
+};
+
+const S = { mode: null, opt: {}, v: {}, store: {}, def: {}, ivs: [], gx: null, dv: null, hot: null, t: 0, anim: {} };
+
+function bar(){
+  const b = $('bar'); b.innerHTML = '';
+  const group = (label, items, cur, onpick) => {
+    const g = document.createElement('div'); g.className = 'seg'; g.setAttribute('role', 'group');
+    if (label){ const l = document.createElement('span'); l.className = 'lab'; l.textContent = label; g.appendChild(l); }
+    items.forEach(([id, txt]) => { const bt = document.createElement('button'); bt.textContent = txt; bt.setAttribute('aria-pressed', String(id === cur)); bt.onclick = () => onpick(id); g.appendChild(bt); });
+    b.appendChild(g);
+  };
+  const tip = document.createElement('span'); tip.className = 'hint'; tip.style.marginLeft = 'auto'; tip.style.whiteSpace = 'nowrap'; tip.innerHTML = '● = the variable on the graph’s x-axis · drag any slider';
+  if (SIM.modes) group(null, SIM.modes.map(m => [m.id, m.label]), S.mode, id => { S.mode = id; S.anim = {}; setup(); });
+  (SIM.opts || []).filter(o => !o.modes || o.modes.includes(S.mode)).forEach(o => {
+    if (!(o.id in S.opt)) S.opt[o.id] = o.choices[0][0];
+    group(o.label, o.choices, S.opt[o.id], id => { S.opt[o.id] = id; S.anim = {}; setup(); });
+  });
+  b.appendChild(tip);
+  if (b.scrollWidth > b.clientWidth + 1) tip.remove();
+  if (b.scrollWidth > b.clientWidth + 1) b.querySelectorAll('.seg button').forEach(x => { x.style.fontSize = '13px'; x.style.padding = '6px 8px'; });
+}
+
+function setup(){
+  bar();
+  S.ivs = SIM.ivs(S.mode, S.opt); S.def = {}; S.v = {};
+  S.ivs.forEach(d => { S.def[d.id] = d; const k = S.mode + ':' + d.id; S.v[d.id] = (k in S.store) ? S.store[k] : d.val; });
+  if (!S.gx || !S.def[S.gx]) S.gx = S.ivs.find(d => d.graph) ? S.ivs.find(d => d.graph).id : S.ivs[1] ? S.ivs[1].id : S.ivs[0].id;
+  const c = $('ctl'); c.innerHTML = '';
+  S.ivs.forEach(d => {
+    const w = document.createElement('div'); w.className = 'iv';
+    w.innerHTML = '<input type="radio" name="gx" value="' + d.id + '" aria-label="Graph against ' + d.label + '" title="Put this on the graph’s x-axis"' + (S.gx === d.id ? ' checked' : '') + '>' +
+      '<span class="nm">' + d.label + ' <i>' + d.sym + '</i></span><span class="val" id="val-' + d.id + '"></span>' +
+      '<input type="range" id="r-' + d.id + '" min="' + d.min + '" max="' + d.max + '" step="' + d.step + '" value="' + S.v[d.id] + '" aria-label="' + d.label + '">';
+    c.appendChild(w);
+    const r = w.querySelector('input[type=range]');
+    r.oninput = () => { S.v[d.id] = +r.value; S.store[S.mode + ':' + d.id] = +r.value; S.hot = d.id; clearTimeout(S.hotT); S.hotT = setTimeout(() => { S.hot = null; update(); }, 700); S.anim.reset = true; update(); };
+    w.querySelector('input[type=radio]').onchange = () => { S.gx = d.id; update(); };
+  });
+  if (SIM.presets){
+    const p = document.createElement('div'); p.id = 'presets'; p.innerHTML = '<span class="lab">Try:</span>';
+    SIM.presets.forEach(ps => { const bt = document.createElement('button'); bt.textContent = ps.label; bt.onclick = () => { if (ps.mode && ps.mode !== S.mode){ S.mode = ps.mode; } Object.entries(ps.v).forEach(([k, val]) => S.store[(ps.mode || S.mode) + ':' + k] = val); S.anim = {}; setup(); }; p.appendChild(bt); });
+    c.appendChild(p);
+  }
+  const dvs = SIM.dvs(S.mode, S.opt), sel = $('dvsel');
+  if (!S.dv || !dvs.find(d => d.id === S.dv)) S.dv = dvs[0].id;
+  sel.innerHTML = dvs.map(d => '<option value="' + d.id + '"' + (d.id === S.dv ? ' selected' : '') + '>' + d.name + '</option>').join('');
+  sel.onchange = () => { S.dv = sel.value; update(); };
+  update();
+}
+
+function calcWith(over){ const v = Object.assign({}, S.v, over || {}); return SIM.calc(v, S.mode, S.opt); }
+
+function update(){
+  S.ivs.forEach(d => { $('val-' + d.id).innerHTML = d.show ? d.show(S.v[d.id]) : fnum(S.v[d.id]) + (d.unit ? '&nbsp;' + d.unit : ''); });
+  S.d = calcWith();
+  $('work').innerHTML = '<div class="wt"><span>Show the work</span><span class="hint">' + (SIM.hint || 'g = 10 m/s²') + '</span></div>' + SIM.work(S.v, S.d, S.mode, S.opt);
+  document.querySelectorAll('input[name=gx]').forEach(r => r.checked = (r.value === S.gx));
+  graph();
+}
+
+function graph(){
+  const cv = $('gv'), g = cv.getContext('2d'), W = 340, Hh = 150; g.setTransform(2, 0, 0, 2, 0, 0); g.clearRect(0, 0, W, Hh);
+  const dvs = SIM.dvs(S.mode, S.opt), dv = dvs.find(d => d.id === S.dv), ref = dv.vs ? dvs.find(d => d.id === dv.vs) : null;
+  const x = S.def[S.gx]; $('ivname').innerHTML = '<i>' + x.sym + '</i>' + (x.unit && !x.show ? ' (' + x.unit + ')' : '');
+  const N = 160, xs = [], ys = [], rs = [];
+  for (let i = 0; i <= N; i++){ const xv = x.min + (x.max - x.min) * i / N; const d = calcWith({ [S.gx]: xv }); xs.push(xv); ys.push(dv.f(d)); rs.push(ref ? ref.f(d) : null); }
+  const all = ys.concat(ref ? rs : []).filter(isFinite);
+  let ymin = Math.min(0, ...all), ymax = Math.max(...all, 0); if (ymax === ymin) ymax = ymin + 1; const pad = (ymax - ymin) * 0.08; ymax += pad; if (ymin < 0) ymin -= pad;
+  const L = 46, R = 8, T = 8, B = 22, X = v => L + (v - x.min) / (x.max - x.min) * (W - L - R), Y = v => T + (ymax - v) / (ymax - ymin) * (Hh - T - B);
+  g.strokeStyle = '#111'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(L, T); g.lineTo(L, Hh - B); g.lineTo(W - R, Hh - B); g.stroke();
+  if (ymin < 0){ g.strokeStyle = '#999'; g.setLineDash([3, 3]); g.beginPath(); g.moveTo(L, Y(0)); g.lineTo(W - R, Y(0)); g.stroke(); g.setLineDash([]);
+    if (dv.negNote){ g.fillStyle = 'rgba(196,58,0,0.08)'; g.fillRect(L, Y(0), W - R - L, Hh - B - Y(0)); g.fillStyle = '#c43a00'; g.font = '600 10px "Space Grotesk",sans-serif'; g.textAlign = 'left'; g.fillText(dv.negNote, L + 4, Hh - B - 4); } }
+  g.font = '500 10px "IBM Plex Mono",monospace'; g.fillStyle = '#4a4a4a'; g.textAlign = 'right';
+  g.fillText(fplain(ymax), L - 4, T + 8); g.fillText(fplain(ymin < 0 ? ymin : 0), L - 4, Hh - B); if (ymin < 0) g.fillText('0', L - 4, Y(0) + 3);
+  g.textAlign = 'center'; g.fillText(fplain(x.min), L, Hh - 8); g.fillText(fplain(x.max), W - R - 10, Hh - 8);
+  g.fillText((x.symText || x.id) + (x.unit ? ' (' + x.unit + ')' : ''), (L + W) / 2, Hh - 8);
+  g.save(); g.translate(10, (T + Hh - B) / 2); g.rotate(-PI / 2); g.textAlign = 'center'; g.fillText(dv.short + (dv.unit ? ' (' + dv.unit + ')' : ''), 0, 0); g.restore();
+  const line = (arr, col, dash) => { g.strokeStyle = col; g.lineWidth = 2.2; g.setLineDash(dash || []); g.beginPath(); let on = false; arr.forEach((y, i) => { if (!isFinite(y)){ on = false; return; } const px = X(xs[i]), py = Math.max(T - 4, Math.min(Hh - B + 4, Y(y))); on ? g.lineTo(px, py) : g.moveTo(px, py); on = true; }); g.stroke(); g.setLineDash([]); };
+  if (ref){ line(rs, '#4a4a4a', [5, 4]); g.fillStyle = '#4a4a4a'; g.textAlign = 'right'; g.font = '600 10px "Space Grotesk",sans-serif'; const lastY = rs.filter(isFinite).pop(); if (isFinite(lastY)) g.fillText(ref.short, W - R - 2, Math.max(T + 9, Y(lastY) - 4)); }
+  line(ys, '#1546d6');
+  const cx = S.v[S.gx], cy = dv.f(S.d);
+  if (isFinite(cy)){ g.strokeStyle = '#ff6a2b'; g.setLineDash([2, 3]); g.lineWidth = 1; g.beginPath(); g.moveTo(X(cx), Hh - B); g.lineTo(X(cx), Y(cy)); g.lineTo(L, Y(cy)); g.stroke(); g.setLineDash([]);
+    g.fillStyle = '#ff6a2b'; g.strokeStyle = '#111'; g.lineWidth = 1.5; g.beginPath(); g.arc(X(cx), Math.max(T, Math.min(Hh - B, Y(cy))), 4.5, 0, 7); g.fill(); g.stroke(); }
+  // doubling readout
+  const d2 = calcWith({ [S.gx]: cx * 2 }), y1 = dv.f(S.d), y2 = dv.f(d2);
+  let msg = '';
+  if (cx === 0 || Math.abs(y1) < 1e-12) msg = '<span class="hint">Move off zero to see the ×2 test.</span>';
+  else if (!isFinite(y1) || !isFinite(y2)) msg = '<span class="hint">The ×2 test doesn’t apply here (doubling takes it outside what this quantity covers).</span>';
+  else {
+    const k = y2 / y1;
+    if (k < 0){ $('dbl').innerHTML = 'If <b>' + x.sym + '</b> doubles (' + fnum(cx) + ' → ' + fnum(2 * cx) + (x.unit ? ' ' + x.unit : '') + '), <b>' + dv.sym + '</b> goes from ' + fnum(y1) + ' to ' + fnum(y2) + (dv.unit ? ' ' + dv.unit : '') + ': it changes sign, so that can’t really happen.'; return; }
+    const tags = [[1, 'doesn’t depend on it'], [2, 'proportional'], [4, 'goes as the square'], [0.5, 'inversely proportional'], [0.25, 'inverse square'], [Math.SQRT2, 'goes as the square root'], [Math.SQRT1_2, 'goes as 1/√'], [8, 'goes as the cube'], [2 * Math.SQRT2, 'goes as the 3/2 power']];
+    const tag = tags.find(([v]) => Math.abs(k - v) < 0.004 * v);
+    msg = 'If <b>' + x.sym + '</b> doubles (' + fnum(cx) + ' → ' + fnum(2 * cx) + (x.unit ? ' ' + x.unit : '') + '), <b>' + dv.sym + '</b> becomes <b>×' + (Math.abs(k) >= 100 ? fnum(k) : k.toFixed(2)) + '</b>' + (tag ? ' — ' + tag[1] : '') + '.' + (dv.dblNote ? ' <span class="hint">' + dv.dblNote + '</span>' : '');
+  }
+  $('dbl').innerHTML = msg;
+}
+
+// drawing helpers (canvas is drawn in 600×330 units)
+const cv = $('cv'), ctx = cv.getContext('2d');
+function arrow(x1, y1, x2, y2, col, label, opts){
+  opts = opts || {}; const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy); if (len < 2) return;
+  const ux = dx / len, uy = dy / len, hw = opts.head || 9;
+  ctx.save(); ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = opts.w || 3.5; ctx.lineCap = 'round';
+  if (opts.dash) ctx.setLineDash(opts.dash);
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2 - ux * hw * 0.8, y2 - uy * hw * 0.8); ctx.stroke(); ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x2, y2); ctx.lineTo(x2 - ux * hw - uy * hw * 0.55, y2 - uy * hw + ux * hw * 0.55); ctx.lineTo(x2 - ux * hw + uy * hw * 0.55, y2 - uy * hw - ux * hw * 0.55); ctx.closePath(); ctx.fill();
+  if (label){ ctx.font = '700 13px "Space Grotesk",sans-serif'; ctx.textAlign = opts.align || 'left'; ctx.textBaseline = 'middle';
+    const lx = x2 + (opts.lx !== undefined ? opts.lx : (ux >= 0 ? 6 : -6)), ly = y2 + (opts.ly !== undefined ? opts.ly : (uy >= 0 ? 10 : -10));
+    if (opts.align === undefined) ctx.textAlign = ux >= -0.2 ? 'left' : 'right';
+    ctx.fillText(label, lx, ly); }
+  ctx.restore();
+}
+function text(s, x, y, o){ o = o || {}; ctx.save(); ctx.font = (o.font || '600 13px "Space Grotesk",sans-serif'); ctx.fillStyle = o.col || '#111'; ctx.textAlign = o.align || 'left'; ctx.textBaseline = o.base || 'alphabetic'; ctx.fillText(s, x, y); ctx.restore(); }
+function panelTitle(s, x, y){ text(s, x, y, { font: '700 11px "IBM Plex Mono",monospace', col: '#4a4a4a' }); }
+const COL = { F: '#c43a00', W: '#111', N: '#1e7d45', V: '#1546d6', T: '#7a3fb0', comp: '#8a8a8a' };
+
+let last = 0;
+function loop(ts){ const dt = Math.min(0.05, (ts - (last || ts)) / 1000); last = ts; S.t += dt;
+  ctx.setTransform(2, 0, 0, 2, 0, 0); ctx.clearRect(0, 0, 600, 330);
+  SIM.draw(S.v, S.d, S.mode, S.opt, S.t, dt, S.anim); S.anim.reset = false;
+  requestAnimationFrame(loop); }
+
+// ---------------- this sim ----------------
+// Angular Momentum: L = Iω is conserved with no outside torque. Spinning stool, jumping onto a merry-go-round, clay hitting a door.
+const SIM = {
+  title: 'Angular Momentum',
+  modes: [{ id: 'stool', label: 'Pull the weights in' }, { id: 'jump', label: 'Jump on a merry-go-round' }, { id: 'door', label: 'Clay hits a door' }],
+  ivs(mode){
+    if (mode === 'stool') return [
+      { id: 'm', sym: 'm', symText: 'm', label: 'Each dumbbell', unit: 'kg', min: 0.5, max: 5, step: 0.1, val: 2 },
+      { id: 'r1', sym: 'r<sub>1</sub>', symText: 'r1', label: 'Arms out', unit: 'm', min: 0.4, max: 1, step: 0.01, val: 0.8 },
+      { id: 'r2', sym: 'r<sub>2</sub>', symText: 'r2', label: 'Arms in', unit: 'm', min: 0.1, max: 0.4, step: 0.01, val: 0.2, graph: true },
+      { id: 'w1', sym: 'ω<sub>1</sub>', symText: 'ω1', label: 'Spin with arms out', unit: 'rad/s', min: 0.5, max: 6, step: 0.1, val: 2 }];
+    if (mode === 'jump') return [
+      { id: 'm', sym: 'm', symText: 'm', label: 'Kid’s mass', unit: 'kg', min: 20, max: 80, step: 1, val: 40 },
+      { id: 'v', sym: 'v', symText: 'v', label: 'Kid’s running speed (along the edge)', unit: 'm/s', min: 1, max: 8, step: 0.1, val: 4, graph: true },
+      { id: 'M', sym: 'M', symText: 'M', label: 'Merry-go-round mass (disk)', unit: 'kg', min: 50, max: 300, step: 5, val: 150 },
+      { id: 'R', sym: 'R', symText: 'R', label: 'Radius', unit: 'm', min: 1, max: 3, step: 0.05, val: 2 }];
+    return [
+      { id: 'm', sym: 'm', symText: 'm', label: 'Clay mass', unit: 'kg', min: 0.05, max: 1, step: 0.01, val: 0.2 },
+      { id: 'v', sym: 'v', symText: 'v', label: 'Clay speed', unit: 'm/s', min: 2, max: 20, step: 0.5, val: 10 },
+      { id: 'r', sym: 'r', symText: 'r', label: 'Where it hits (from the hinge)', unit: 'm', min: 0.05, max: 1, step: 0.01, val: 0.8, graph: true },
+      { id: 'M', sym: 'M', symText: 'M', label: 'Door mass (1 m wide)', unit: 'kg', min: 5, max: 30, step: 0.5, val: 15 }];
+  },
+  presets: [{ label: 'Hit near the hinge', mode: 'door', v: { r: 0.1 } }, { label: 'Hit the edge', mode: 'door', v: { r: 1 } }],
+  calc(v, mode){
+    if (mode === 'stool'){ const Ib = 1.2, I1 = Ib + 2 * v.m * v.r1 * v.r1, I2 = Ib + 2 * v.m * v.r2 * v.r2, L = I1 * v.w1, w2 = L / I2, K1 = 0.5 * I1 * v.w1 * v.w1, K2 = 0.5 * I2 * w2 * w2;
+      return { Ib, I1, I2, L, Lf: I2 * w2, w2, K1, K2, ratio: w2 / v.w1 }; }
+    if (mode === 'jump'){ const Id = 0.5 * v.M * v.R * v.R, L = v.m * v.v * v.R, If = Id + v.m * v.R * v.R, w = L / If, K1 = 0.5 * v.m * v.v * v.v, K2 = 0.5 * If * w * w;
+      return { Id, L, Lf: If * w, If, w, K1, K2, vEdge: w * v.R }; }
+    const Id = v.M / 3, L = v.m * v.v * v.r, If = Id + v.m * v.r * v.r, w = L / If, K1 = 0.5 * v.m * v.v * v.v, K2 = 0.5 * If * w * w;
+    return { Id, L, Lf: If * w, If, w, K1, K2 };
+  },
+  dvs(mode){
+    if (mode === 'stool') return [{ id: 'w2', name: 'Spin with arms in', short: 'ω2', sym: 'ω<sub>2</sub>', unit: 'rad/s', f: d => d.w2 }, { id: 'K2', name: 'KE after (arms in)', short: 'K2', sym: 'K<sub>2</sub>', unit: 'J', f: d => d.K2, vs: 'K1' }, { id: 'K1', name: 'KE before', short: 'K1', sym: 'K<sub>1</sub>', unit: 'J', f: d => d.K1 }, { id: 'L', name: 'Angular momentum (same before and after)', short: 'L', sym: 'L', unit: 'kg·m²/s', f: d => d.L }];
+    return [{ id: 'w', name: 'Angular velocity after', short: 'ω', sym: 'ω', unit: 'rad/s', f: d => d.w }, { id: 'L', name: 'Angular momentum', short: 'L', sym: 'L', unit: 'kg·m²/s', f: d => d.L }, { id: 'K2', name: 'KE after', short: 'K2', sym: 'K<sub>2</sub>', unit: 'J', f: d => d.K2, vs: 'K1' }, { id: 'K1', name: 'KE before', short: 'K1', sym: 'K<sub>1</sub>', unit: 'J', f: d => d.K1 }];
+  },
+  work(v, d, mode){
+    if (mode === 'stool') return '<h4>1 · No outside torque (frictionless stool) → L = Iω stays the same</h4>' +
+      '<div class="eq">Arms out: I<sub>1</sub> = I<sub>body</sub> + 2mr<sub>1</sub>² = 1.2 + 2(' + H.iv('m') + ')(' + H.iv('r1') + ')² = ' + H.n(d.I1, 'kg·m²') + '</div>' +
+      '<div class="eq">Arms in: I<sub>2</sub> = 1.2 + 2(' + H.iv('m') + ')(' + H.iv('r2') + ')² = ' + H.n(d.I2, 'kg·m²') + '</div>' +
+      '<h4>2 · I<sub>1</sub>ω<sub>1</sub> = I<sub>2</sub>ω<sub>2</sub></h4><div class="eq">ω<sub>2</sub> = I<sub>1</sub>ω<sub>1</sub>/I<sub>2</sub> = (' + H.n(d.I1) + ')(' + H.iv('w1') + ') / ' + H.n(d.I2) + ' = <b>' + H.n(d.w2, 'rad/s') + '</b> (' + H.n(d.ratio) + '× faster)</div>' +
+      '<h4>3 · Kinetic energy is <i>not</i> conserved</h4><div class="eq">K = ½Iω² = L²/2I: ' + H.n(d.K1, 'J') + ' → <b>' + H.n(d.K2, 'J') + '</b>. It goes <b>up</b>: you did work pulling the weights in.</div>' +
+      '<p class="note">Same physics as a figure skater pulling her arms in, or a diver tucking.</p>';
+    if (mode === 'jump') return '<h4>1 · Before: the kid’s angular momentum about the center</h4><div class="eq">L = mvR (moving along the edge, so r<sub>⊥</sub> = R) = (' + H.iv('m') + ')(' + H.iv('v') + ')(' + H.iv('R') + ') = <b>' + H.n(d.L, 'kg·m²/s') + '</b> (the merry-go-round starts at rest)</div>' +
+      '<h4>2 · After: they turn together</h4><div class="eq">I = ½MR² + mR² = ' + H.n(d.Id) + ' + ' + H.n(v.m * v.R * v.R) + ' = ' + H.n(d.If, 'kg·m²') + '</div>' +
+      '<div class="eq">ω = L/I = <b>' + H.n(d.w, 'rad/s') + '</b>; the kid now moves at ωR = ' + H.n(d.vEdge, 'm/s') + '</div>' +
+      '<h4>3 · Energy</h4><div class="eq">K before ' + H.n(d.K1, 'J') + ' → after <b>' + H.n(d.K2, 'J') + '</b>: some is lost (it’s a perfectly inelastic collision, rotational version).</div>' +
+      '<p class="note">Linear momentum isn’t conserved here: the axle pushes on the merry-go-round. That force goes through the axis, so it makes no torque, and L is conserved.</p>';
+    return '<h4>1 · Before: the clay’s angular momentum about the hinge</h4><div class="eq">L = mvr = (' + H.iv('m') + ')(' + H.iv('v') + ')(' + H.iv('r') + ') = <b>' + H.n(d.L, 'kg·m²/s') + '</b></div>' +
+      '<h4>2 · After: door + clay turn together</h4><div class="eq">I = ⅓ML² + mr² = ⅓(' + H.iv('M') + ')(1)² + (' + H.iv('m') + ')(' + H.iv('r') + ')² = ' + H.n(d.If, 'kg·m²') + '</div>' +
+      '<div class="eq">ω = L/I = <b>' + H.n(d.w, 'rad/s') + '</b></div>' +
+      '<h4>3 · Energy</h4><div class="eq">K: ' + H.n(d.K1, 'J') + ' → ' + H.n(d.K2, 'J') + ' (most is lost: the clay sticks)</div>' +
+      '<p class="note">Hit near the hinge and the door barely moves: small r, small L. That’s why handles are on the far edge.</p>';
+  },
+  draw(v, d, mode, opt, t, dt, A){
+    if (A.t === undefined || A.reset){ A.t = 0; A.a1 = 0; A.a2 = 0; } A.t += dt;
+    const lbar = (items, title, y0) => { panelTitle(title, 395, y0); const mx = Math.max(...items.map(i => i[1]), 1e-6); items.forEach(([lab, val, col], i) => { const y = y0 + 16 + i * 24, w = 80 * val / mx; ctx.fillStyle = col; ctx.fillRect(470, y, w, 14); text(lab, 465, y + 11, { align: 'right', font: '600 10px "IBM Plex Mono",monospace', col: '#4a4a4a' }); text(fplain(val), 474 + w, y + 11, { font: '600 10px "IBM Plex Mono",monospace' }); }); };
+    if (mode === 'stool'){
+      panelTitle('TOP VIEW: BEFORE (arms out) and AFTER (arms in)', 10, 18);
+      A.a1 += v.w1 * dt * 0.5; A.a2 += d.w2 * dt * 0.5;
+      [[100, A.a1, v.r1, 'ω₁ = ' + fplain(v.w1)], [280, A.a2, v.r2, 'ω₂ = ' + fplain(d.w2)]].forEach(([cx, a, r, lab]) => { const cy = 160, sc = 95;
+        ctx.save(); ctx.translate(cx, cy); ctx.rotate(-a); ctx.fillStyle = '#1546d6'; ctx.beginPath(); ctx.ellipse(0, 0, 22, 14, 0, 0, 7); ctx.fill(); ctx.fillStyle = '#f2c7a0'; ctx.beginPath(); ctx.arc(0, 0, 9, 0, 7); ctx.fill();
+        ctx.strokeStyle = '#1546d6'; ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(-r * sc, 0); ctx.lineTo(r * sc, 0); ctx.stroke();
+        [-1, 1].forEach(sg => { ctx.fillStyle = '#ff6a2b'; ctx.beginPath(); ctx.arc(sg * r * sc, 0, 6 + 2 * Math.sqrt(v.m), 0, 7); ctx.fill(); }); ctx.restore();
+        text(lab + ' rad/s', cx, 285, { align: 'center', font: '700 12px "IBM Plex Mono",monospace' }); });
+      text('animation slowed 2×', 12, 318, { font: '500 10px "IBM Plex Mono",monospace', col: '#8a8a8a' });
+      lbar([['L before', d.L, '#111'], ['L after', d.Lf, '#111']], 'ANGULAR MOMENTUM (same)', 18);
+      lbar([['K before', d.K1, '#ff6a2b'], ['K after', d.K2, '#ff6a2b']], 'KINETIC ENERGY (goes up)', 110);
+      return;
+    }
+    if (mode === 'jump'){
+      panelTitle('TOP VIEW: KID RUNS ALONG THE EDGE AND JUMPS ON', 10, 18);
+      const cx = 190, cy = 165, sc = 55, Rp = v.R * sc, cyc = 5, tt = A.t % cyc, tJ = 1.5;
+      const a = tt < tJ ? 0 : d.w * (tt - tJ) * 0.6;
+      ctx.save(); ctx.translate(cx, cy); ctx.rotate(a); ctx.fillStyle = '#d9e4f5'; ctx.strokeStyle = '#111'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(0, 0, Rp, 0, 7); ctx.fill(); ctx.stroke();
+      for (let k = 0; k < 4; k++){ ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(Rp * Math.cos(k * PI / 2), Rp * Math.sin(k * PI / 2)); ctx.stroke(); } ctx.restore();
+      let kx, ky; if (tt < tJ){ kx = cx - (tJ - tt) * v.v * sc * 0.4; ky = cy - Rp; } else { kx = cx + Rp * Math.cos(-PI / 2 + a); ky = cy + Rp * Math.sin(-PI / 2 + a); }
+      ctx.fillStyle = '#ff6a2b'; ctx.beginPath(); ctx.arc(kx, ky, 9, 0, 7); ctx.fill();
+      if (tt < tJ) arrow(kx, ky - 16, kx + 30, ky - 16, COL.V, 'v', { w: 2.5, head: 7 });
+      text(tt < tJ ? 'running at ' + fplain(v.v) + ' m/s' : 'together: ω = ' + fplain(d.w) + ' rad/s', 12, 300, { font: '700 13px "Space Grotesk",sans-serif' });
+      text('animation slowed', 12, 318, { font: '500 10px "IBM Plex Mono",monospace', col: '#8a8a8a' });
+      lbar([['L before', d.L, '#111'], ['L after', d.Lf, '#111']], 'ANGULAR MOMENTUM (same)', 18);
+      lbar([['K before', d.K1, '#ff6a2b'], ['K after', d.K2, '#ff6a2b']], 'KINETIC ENERGY (some lost)', 110);
+      return;
+    }
+    panelTitle('TOP VIEW: CLAY HITS A DOOR AND STICKS', 10, 18);
+    const hx = 60, hy = 80, sc = 240, cyc = 4, tt = A.t % cyc, tH = 1, a = tt < tH ? 0 : Math.min(d.w * (tt - tH), 1.4);
+    ctx.fillStyle = '#bbb'; ctx.fillRect(hx - 30, hy - 10, 30, 20);
+    ctx.save(); ctx.translate(hx, hy); ctx.rotate(a); ctx.fillStyle = '#c98a3c'; ctx.strokeStyle = '#111'; ctx.lineWidth = 1.5; ctx.fillRect(0, -6, sc, 12); ctx.strokeRect(0, -6, sc, 12);
+    if (tt >= tH){ ctx.fillStyle = '#7a3fb0'; ctx.beginPath(); ctx.arc(v.r * sc, 10, 6, 0, 7); ctx.fill(); }
+    ctx.restore(); ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(hx, hy, 5, 0, 7); ctx.fill();
+    if (tt < tH){ const cy = hy + 16 + (tH - tt) * 160; ctx.fillStyle = '#7a3fb0'; ctx.beginPath(); ctx.arc(hx + v.r * sc, cy, 6, 0, 7); ctx.fill(); arrow(hx + v.r * sc + 14, cy + 10, hx + v.r * sc + 14, cy - 20, COL.V, 'v', { w: 2.5, head: 7 }); }
+    ctx.setLineDash([3, 3]); ctx.strokeStyle = '#888'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(hx, hy + 30); ctx.lineTo(hx + v.r * sc, hy + 30); ctx.stroke(); ctx.setLineDash([]); text('r = ' + fplain(v.r) + ' m', hx + v.r * sc / 2, hy + 44, { align: 'center', font: '600 10px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+    text('ω after = ' + fplain(d.w) + ' rad/s', 12, 300, { font: '700 13px "Space Grotesk",sans-serif' });
+    lbar([['L before', d.L, '#111'], ['L after', d.Lf, '#111']], 'ANGULAR MOMENTUM (same)', 18);
+    lbar([['K before', d.K1, '#ff6a2b'], ['K after', d.K2, '#ff6a2b']], 'KINETIC ENERGY (mostly lost)', 110);
+  }
+};
+
+
+S.mode = SIM.modes ? SIM.modes[0].id : 'one';
+setup(); requestAnimationFrame(loop);
+</script>
+</body></html>
