@@ -25,6 +25,7 @@ SIMS = {
     'launch':  {'file': 'units/sims/circ-launcher.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'power':   {'file': 'units/sims/circ-power.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'hang':    {'file': 'units/sims/circ-hang.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'phetS':   {'file': 'units/sims/phet-shm.html', 'kind': 'plain', 'ar': '16 / 10', 'credit': 'Masses and Springs: Basics, Masses and Springs and Pendulum Lab: ' + PHET},
     'phetE':   {'file': 'units/sims/phet-energy.html', 'kind': 'plain', 'ar': '16 / 10', 'credit': 'Energy Skate Park: Basics, Masses and Springs and Pendulum Lab: ' + PHET},
     'crash':   {'file': 'units/sims/circ-crash.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Crash Test, Collision Carts, Bouncing Ball, Ballistic Pendulum, 2D Collisions and Ball Stack are original.'},
     'carts':   {'file': 'units/sims/circ-carts.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
@@ -631,6 +632,11 @@ UNITS.update({
         'Now drop the clay at the end of the swing. Which of your predictions change, and why?',
         'Show that A<sub>2</sub> = A√(M/(M + m)) when the clay lands at equilibrium. Which conservation law do you use for the collision, and which for after?',
         'Why is no energy lost when the clay lands at the end?']},
+    {'code': '', 'name': 'PhET Sims', 'sim': 'phetS', 'tasks': [
+        '<b>Masses and Springs: Basics.</b> Hang different masses on the same spring. How does the stretch depend on the mass? Find k.',
+        '<b>Masses and Springs</b> (Vibrate screen). Use the stopwatch to time 10 oscillations for two masses. Does T ∝ √m hold?',
+        'Turn on the energy graph. Where in the bounce is the kinetic energy biggest? Add damping: where does the energy go?',
+        '<b>Pendulum Lab.</b> Use the period timer to test whether the period depends on mass, length or amplitude. Then go to Jupiter: what changes?']},
     {'code': 'IB', 'name': 'Damping & Resonance', 'sim': 'reson', 'gapBefore': True, 'tasks': [
         'Compare light, critical and heavy damping. Which returns to equilibrium fastest without overshooting? Why do car shock absorbers use it?',
         'With light damping, how many oscillations until the amplitude halves? What happens to the energy?',
