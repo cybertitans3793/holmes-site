@@ -77,6 +77,12 @@ SIMS = {
     'realgas': {'file': 'units/sims/circ-realgas.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'phetT':   {'file': 'units/sims/phet-thermo.html', 'kind': 'plain', 'ar': '16 / 10', 'credit': 'Gas Properties, States of Matter and Energy Forms and Changes: ' + PHET},
     'engine':  {'file': 'units/sims/circ-engine.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Heat Engines is original.'},
+    'coulomb': {'file': 'units/sims/circ-coulomb.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Coulomb’s Law, Electric Fields, Electric Potential, Charges Between Plates and Capacitors are original.'},
+    'efield':  {'file': 'units/sims/circ-efield.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'potential': {'file': 'units/sims/circ-potential.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'plates':  {'file': 'units/sims/circ-plates.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'cap':     {'file': 'units/sims/circ-cap.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'phetE':   {'file': 'units/sims/phet-estat.html', 'kind': 'plain', 'ar': '16 / 10', 'credit': 'Charges and Fields, Coulomb’s Law and Capacitor Lab: Basics: ' + PHET},
     'lum':     {'file': 'units/sims/circ-lum.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Luminosity &amp; Brightness is original.'},
     'graph':   {'file': 'units/sims/graphmaker.html', 'kind': 'plain', 'ar': '1000 / 880', 'credit': ''},
     'scatter': {'file': 'units/sims/circ-scatter.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
@@ -520,11 +526,45 @@ UNITS = {
         'Charge the electroscope by <b>conduction</b> (touching). What sign does it end up with? Same as the rod or opposite?',
         'Charge it by <b>induction</b>: rod near, ground it, remove the ground, then the rod. What sign does it end up with?',
         'In induction, why does the order matter? What happens if you take the rod away before the ground?']},
+    {'code': '', 'name': 'Coulomb’s Law', 'sim': 'coulomb', 'tasks': [
+        'Double the distance between two charges. Predict the new force, then check. What if you double one charge?',
+        'A 4 μC charge and a −2 μC charge: which feels the bigger force? Explain with Newton’s third law.',
+        '<b>Three in a line.</b> Find the net force on the middle charge by doing each pair separately. Then check that the three net forces add to zero.',
+        '<b>Hanging spheres.</b> Give the spheres different charges but equal masses. Which hangs at the bigger angle? Now try different masses. Explain with free-body diagrams.']},
+    {'code': '', 'name': 'Electric Fields', 'sim': 'efield', 'tasks': [
+        'Move P around one charge. Double the distance from the charge: what happens to E? Which way does E point for a negative charge?',
+        '<b>Dipole.</b> Find E at a point above the middle. Show with components why it points straight sideways.',
+        '<b>Like charges.</b> Where is E = 0? Use “Big and small” to see how the null point moves toward the smaller charge.',
+        'Compare the field lines with the gray vector map. How do you tell where the field is strongest from each one?',
+        'An electron sits at P. Which way is the force on it? How big is it?']},
+    {'code': '', 'name': 'Electric Potential', 'sim': 'potential', 'tasks': [
+        'Find V<sub>A</sub>, V<sub>B</sub> and the work to move +1 nC from A to B. Does the path matter?',
+        'Move B along an equipotential line. How much work is that? How are equipotentials and field lines arranged?',
+        '<b>Energy of a system.</b> Find U for three charges. Is the system bound? Halve the side length: by what factor does U change?',
+        '<b>Release from rest.</b> Find the bead’s speed at r₂ using energy. Why can’t you use constant-acceleration equations here?',
+        '<b>Conducting sphere.</b> Sketch E vs r and V vs r. Why is E zero inside while V is not?'],
+     'note': 'IB: electric potential, potential energy and equipotentials are HL (D.2).'},
+    {'code': '', 'name': 'Charges Between Plates', 'sim': 'plates', 'tasks': [
+        'Find E between the plates, then the electron’s deflection. Compare the path with a ball thrown sideways.',
+        'Double the voltage, then the entry speed. Predict each change in deflection before you try it.',
+        'Switch to protons with the same settings. Why do they barely bend?',
+        '<b>Accelerate from rest.</b> Find the electron’s speed after 1000 V, in J and in eV. Does the plate separation matter?',
+        '<span style="color:#7a3fb0">IB</span> <b>Millikan.</b> Balance drops A, B and C. Find each charge. What do the charges have in common?']},
+    {'code': '', 'name': 'Capacitors', 'sim': 'cap', 'tasks': [
+        'Find C, Q, E and U. Then double the area, then double the separation. Predict each change first.',
+        'Add a dielectric. What happens to C and Q at the same voltage? Why?',
+        '<b>Pull the plates apart</b> with the battery disconnected. Make a table of what happens to C, Q, V, E and U. Then repeat with the battery connected.',
+        'With the battery disconnected, U goes up when you pull the plates apart. Where does the extra energy come from?'],
+     'note': 'AP Physics 2 topic 10.6. Capacitors are not in the IB syllabus.'},
     {'code': '', 'name': 'Electric Field Hockey', 'sim': 'hockey', 'tasks': [
         'Turn on <b>Field</b>. Place one positive charge. Predict the puck’s path, then press Start.',
         'Use as few charges as you can to get the puck into the goal on Practice.',
         'Turn on <b>Trace</b>. Is the puck’s path the same as a field line? Why not?',
         'Make the puck negative. What changes about every force on it?']},
+    {'code': '', 'name': 'PhET Sims', 'sim': 'phetE', 'tasks': [
+        '<b>Charges and Fields:</b> make a dipole. Use the voltmeter to trace equipotentials. How do they meet the field lines?',
+        '<b>Coulomb’s Law:</b> collect F for five distances and graph F vs 1/r². What does the slope tell you?',
+        '<b>Capacitor Lab: Basics:</b> change the plate area and separation. Which way does C change for each?']},
 ]},
 'P2-05': {'course': 'AP Physics 2 / IB', 'num': '05', 'title': 'Modern Physics', 'tabs': [
     {'code': '', 'name': 'Nuclear Fission', 'sim': 'fission', 'tasks': [
