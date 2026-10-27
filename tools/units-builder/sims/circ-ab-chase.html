@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chase & Collide</title>
+<!-- Chase & Collide: original Holmes Sims, built from frame.html + chase.js. g = 10 m/s². -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@500;700&display=swap">
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#fff;font-family:"Space Grotesk",system-ui,sans-serif;color:#111}
+#app{position:absolute;left:0;top:0;width:1000px;height:640px;transform-origin:0 0;padding:10px 14px 12px;box-sizing:border-box;
+  display:grid;grid-template-columns:600px 1fr;grid-template-rows:34px 330px 1fr;gap:10px 14px}
+#bar{grid-column:1/-1;display:flex;gap:16px;align-items:center;flex-wrap:nowrap;overflow:hidden}
+.seg{display:flex;align-items:center}
+.seg .lab{font:700 12px "IBM Plex Mono",monospace;margin-right:8px;text-transform:uppercase}
+.seg button{white-space:nowrap;font:700 14px "Space Grotesk",sans-serif;padding:6px 11px;border:2px solid #111;background:#fff;color:#111;cursor:pointer}
+.seg button+button{margin-left:-2px}
+.seg button[aria-pressed="true"]{background:#111;color:#fff}
+.seg button:hover:not([aria-pressed="true"]){background:#ffe2d3}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #ff6a2b;outline-offset:2px;position:relative;z-index:1}
+#cv{border:2px solid #111;background:#fbfbfb;width:600px;height:330px;box-sizing:border-box;display:block}
+#work{border:2px solid #111;padding:8px 12px 10px;overflow:auto;font-size:14px;line-height:1.55;box-sizing:border-box}
+#work .wt{font:700 12px "IBM Plex Mono",monospace;text-transform:uppercase;margin:0 0 4px;display:flex;justify-content:space-between}
+#work .wt .hint{text-transform:none}
+#work h4{margin:9px 0 1px;font-size:13px;font-weight:700;color:#4a4a4a}
+#work h4:first-of-type{margin-top:2px}
+#work .eq{font-variant-numeric:tabular-nums}
+#work .n{font-family:"IBM Plex Mono",monospace;font-size:13px}
+#work b .n,#work .ans{font-weight:700}
+#work .note{font-size:12.5px;color:#4a4a4a;margin:2px 0 0}
+#work .ok{background:#e5f4ea;border-left:4px solid #1e7d45;padding:3px 8px;margin-top:4px}
+#work .bad{background:#fde7df;border-left:4px solid #c43a00;padding:3px 8px;margin-top:4px}
+.ivv{border-radius:2px;padding:0 2px;transition:background .25s}
+.ivv.gx{background:#ffe2d3}
+.ivv.hot{background:#ff6a2b;color:#fff}
+#ctl{display:grid;grid-template-columns:1fr 1fr;gap:4px 18px;align-content:start}
+.iv{display:grid;grid-template-columns:auto 1fr auto;align-items:center;column-gap:6px}
+.iv .nm{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iv .val{font:700 13px "IBM Plex Mono",monospace;white-space:nowrap}
+.iv input[type=range]{grid-column:1/-1;width:100%;margin:0;accent-color:#111;height:22px}
+.iv input[type=radio]{accent-color:#ff6a2b;margin:0}
+#presets{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:2px}
+#presets .lab{font:700 12px "IBM Plex Mono",monospace}
+#presets button{font:600 12.5px "Space Grotesk",sans-serif;padding:3px 8px;border:2px solid #111;background:#fff;cursor:pointer}
+#presets button:hover{background:#ffe2d3}
+#gcard{border:2px solid #111;padding:5px 8px 6px;display:flex;flex-direction:column;box-sizing:border-box;min-height:0}
+.ghead{display:flex;align-items:center;gap:6px;font-size:13px;white-space:nowrap}
+.ghead select{font:600 13px "Space Grotesk",sans-serif;border:2px solid #111;padding:1px 4px;max-width:200px}
+#gv{width:340px;height:150px;flex:none;display:block;margin-top:3px}
+#dbl{font-size:12.5px;line-height:1.35;margin-top:2px}
+#dbl b{font-weight:700}
+.hint{font:500 11px "IBM Plex Mono",monospace;color:#4a4a4a}
+</style></head><body>
+<div id="app">
+  <div id="bar"></div>
+  <canvas id="cv" width="1200" height="660" aria-label="Animation of the situation with force arrows"></canvas>
+  <div id="work" aria-live="polite"></div>
+  <div id="ctl"></div>
+  <div id="gcard">
+    <div class="ghead"><span>Graph</span><select id="dvsel" aria-label="Quantity to graph"></select><span>vs <b id="ivname"></b></span></div>
+    <canvas id="gv" width="680" height="300" aria-label="Graph of the chosen quantity against the chosen variable"></canvas>
+    <div id="dbl"></div>
+  </div>
+</div>
+<script>
+// ---------------- shared frame ----------------
+const $ = id => document.getElementById(id);
+const G10 = 10, PI = Math.PI, DEG = PI / 180;
+function fit(){ const s = Math.min(innerWidth / 1000, innerHeight / 640); $('app').style.transform = 'scale(' + s + ')'; }
+addEventListener('resize', fit); fit();
+
+function fnum(x){ const r = fnum0(x); return typeof r === 'string' ? r.replace(/^-/, '−') : r; }
+function fnum0(x){
+  if (x === null || x === undefined || !isFinite(x)) return '—';
+  const a = Math.abs(x);
+  if (a === 0) return '0';
+  if (a >= 1e5 || a < 1e-3){
+    const e = Math.floor(Math.log10(a)); let m = x / Math.pow(10, e);
+    let ms = m.toFixed(2); if (Math.abs(+ms) >= 10){ m /= 10; ms = m.toFixed(2); return ms + '×10<sup>' + (e + 1) + '</sup>'; }
+    return ms + '×10<sup>' + e + '</sup>';
+  }
+  if (a >= 1000) return String(Math.round(x));
+  return x.toPrecision(3);
+}
+function fplain(x){ return fnum(x).replace(/<sup>(.*?)<\/sup>/g, (m, e) => '^' + e).replace('×10^', 'e'); }
+const H = {
+  n: (x, u) => '<span class="n">' + fnum(x) + (u ? '&nbsp;' + u : '') + '</span>',
+  iv: id => { const d = S.def[id]; const val = S.v[id]; const txt = (d.show ? d.show(val) : fnum(val) + (d.unit ? '&nbsp;' + d.unit : ''));
+              return '<span class="ivv n' + (S.gx === id ? ' gx' : '') + (S.hot === id ? ' hot' : '') + '" data-iv="' + id + '">' + txt + '</span>'; },
+  g: () => '<span class="n">10&nbsp;m/s²</span>',
+  p: (x, u) => x < 0 ? '(' + H.n(x, u) + ')' : H.n(x, u)
+};
+
+const S = { mode: null, opt: {}, v: {}, store: {}, def: {}, ivs: [], gx: null, dv: null, hot: null, t: 0, anim: {} };
+
+function bar(){
+  const b = $('bar'); b.innerHTML = '';
+  const group = (label, items, cur, onpick) => {
+    const g = document.createElement('div'); g.className = 'seg'; g.setAttribute('role', 'group');
+    if (label){ const l = document.createElement('span'); l.className = 'lab'; l.textContent = label; g.appendChild(l); }
+    items.forEach(([id, txt]) => { const bt = document.createElement('button'); bt.textContent = txt; bt.setAttribute('aria-pressed', String(id === cur)); bt.onclick = () => onpick(id); g.appendChild(bt); });
+    b.appendChild(g);
+  };
+  const tip = document.createElement('span'); tip.className = 'hint'; tip.style.marginLeft = 'auto'; tip.style.whiteSpace = 'nowrap'; tip.innerHTML = '● = the variable on the graph’s x-axis · drag any slider';
+  if (SIM.modes && SIM.modes.length > 1) group(null, SIM.modes.map(m => [m.id, m.label]), S.mode, id => { S.mode = id; S.anim = {}; setup(); });
+  (SIM.opts || []).filter(o => !o.modes || o.modes.includes(S.mode)).forEach(o => {
+    if (!(o.id in S.opt)) S.opt[o.id] = o.choices[0][0];
+    group(o.label, o.choices, S.opt[o.id], id => { S.opt[o.id] = id; S.anim = {}; setup(); });
+  });
+  b.appendChild(tip);
+  if (b.scrollWidth > b.clientWidth + 1) tip.remove();
+  if (b.scrollWidth > b.clientWidth + 1) b.querySelectorAll('.seg button').forEach(x => { x.style.fontSize = '13px'; x.style.padding = '6px 8px'; });
+}
+
+function setup(){
+  bar();
+  S.ivs = SIM.ivs(S.mode, S.opt); S.def = {}; S.v = {};
+  S.ivs.forEach(d => { S.def[d.id] = d; const k = S.mode + ':' + d.id; S.v[d.id] = (k in S.store) ? S.store[k] : d.val; });
+  if (!S.gx || !S.def[S.gx]) S.gx = S.ivs.find(d => d.graph) ? S.ivs.find(d => d.graph).id : S.ivs[1] ? S.ivs[1].id : S.ivs[0].id;
+  const c = $('ctl'); c.innerHTML = '';
+  S.ivs.forEach(d => {
+    const w = document.createElement('div'); w.className = 'iv';
+    w.innerHTML = '<input type="radio" name="gx" value="' + d.id + '" aria-label="Graph against ' + d.label + '" title="Put this on the graph’s x-axis"' + (S.gx === d.id ? ' checked' : '') + '>' +
+      '<span class="nm">' + d.label + ' <i>' + d.sym + '</i></span><span class="val" id="val-' + d.id + '"></span>' +
+      '<input type="range" id="r-' + d.id + '" min="' + d.min + '" max="' + d.max + '" step="' + d.step + '" value="' + S.v[d.id] + '" aria-label="' + d.label + '">';
+    c.appendChild(w);
+    const r = w.querySelector('input[type=range]');
+    r.oninput = () => { S.v[d.id] = +r.value; S.store[S.mode + ':' + d.id] = +r.value; S.hot = d.id; clearTimeout(S.hotT); S.hotT = setTimeout(() => { S.hot = null; update(); }, 700); S.anim.reset = true; update(); };
+    w.querySelector('input[type=radio]').onchange = () => { S.gx = d.id; update(); };
+  });
+  if (SIM.presets){
+    const p = document.createElement('div'); p.id = 'presets'; p.innerHTML = '<span class="lab">Try:</span>';
+    SIM.presets.forEach(ps => { const bt = document.createElement('button'); bt.textContent = ps.label; bt.onclick = () => { if (ps.mode && ps.mode !== S.mode){ S.mode = ps.mode; } Object.entries(ps.v).forEach(([k, val]) => S.store[(ps.mode || S.mode) + ':' + k] = val); S.anim = {}; setup(); }; p.appendChild(bt); });
+    c.appendChild(p);
+  }
+  const dvs = SIM.dvs(S.mode, S.opt), sel = $('dvsel');
+  if (!S.dv || !dvs.find(d => d.id === S.dv)) S.dv = dvs[0].id;
+  sel.innerHTML = dvs.map(d => '<option value="' + d.id + '"' + (d.id === S.dv ? ' selected' : '') + '>' + d.name + '</option>').join('');
+  sel.onchange = () => { S.dv = sel.value; update(); };
+  update();
+}
+
+function calcWith(over){ const v = Object.assign({}, S.v, over || {}); return SIM.calc(v, S.mode, S.opt); }
+
+function update(){
+  S.ivs.forEach(d => { $('val-' + d.id).innerHTML = d.show ? d.show(S.v[d.id]) : fnum(S.v[d.id]) + (d.unit ? '&nbsp;' + d.unit : ''); });
+  S.d = calcWith();
+  $('work').innerHTML = '<div class="wt"><span>Show the work</span><span class="hint">' + (SIM.hint || 'g = 10 m/s²') + '</span></div>' + (SIM.strip ? SIM.strip(SIM.work(S.v, S.d, S.mode, S.opt)) : SIM.work(S.v, S.d, S.mode, S.opt));
+  document.querySelectorAll('input[name=gx]').forEach(r => r.checked = (r.value === S.gx));
+  graph();
+}
+
+function graph(){
+  const cv = $('gv'), g = cv.getContext('2d'), W = 340, Hh = 150; g.setTransform(2, 0, 0, 2, 0, 0); g.clearRect(0, 0, W, Hh);
+  const dvs = SIM.dvs(S.mode, S.opt), dv = dvs.find(d => d.id === S.dv), ref = dv.vs ? dvs.find(d => d.id === dv.vs) : null;
+  const x = S.def[S.gx]; $('ivname').innerHTML = '<i>' + x.sym + '</i>' + (x.unit && !x.show ? ' (' + x.unit + ')' : '');
+  const N = 160, xs = [], ys = [], rs = [];
+  for (let i = 0; i <= N; i++){ const xv = x.min + (x.max - x.min) * i / N; const d = calcWith({ [S.gx]: xv }); xs.push(xv); ys.push(dv.f(d)); rs.push(ref ? ref.f(d) : null); }
+  const all = ys.concat(ref ? rs : []).filter(isFinite);
+  let ymin = Math.min(0, ...all), ymax = Math.max(...all, 0); if (ymax === ymin) ymax = ymin + 1; const pad = (ymax - ymin) * 0.08; ymax += pad; if (ymin < 0) ymin -= pad;
+  const L = 46, R = 8, T = 8, B = 22, X = v => L + (v - x.min) / (x.max - x.min) * (W - L - R), Y = v => T + (ymax - v) / (ymax - ymin) * (Hh - T - B);
+  g.strokeStyle = '#111'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(L, T); g.lineTo(L, Hh - B); g.lineTo(W - R, Hh - B); g.stroke();
+  if (ymin < 0){ g.strokeStyle = '#999'; g.setLineDash([3, 3]); g.beginPath(); g.moveTo(L, Y(0)); g.lineTo(W - R, Y(0)); g.stroke(); g.setLineDash([]);
+    if (dv.negNote){ g.fillStyle = 'rgba(196,58,0,0.08)'; g.fillRect(L, Y(0), W - R - L, Hh - B - Y(0)); g.fillStyle = '#c43a00'; g.font = '600 10px "Space Grotesk",sans-serif'; g.textAlign = 'left'; g.fillText(dv.negNote, L + 4, Hh - B - 4); } }
+  g.font = '500 10px "IBM Plex Mono",monospace'; g.fillStyle = '#4a4a4a'; g.textAlign = 'right';
+  g.fillText(fplain(ymax), L - 4, T + 8); g.fillText(fplain(ymin < 0 ? ymin : 0), L - 4, Hh - B); if (ymin < 0) g.fillText('0', L - 4, Y(0) + 3);
+  g.textAlign = 'center'; g.fillText(fplain(x.min), L, Hh - 8); g.fillText(fplain(x.max), W - R - 10, Hh - 8);
+  g.fillText((x.symText || x.id) + (x.unit ? ' (' + x.unit + ')' : ''), (L + W) / 2, Hh - 8);
+  g.save(); g.translate(10, (T + Hh - B) / 2); g.rotate(-PI / 2); g.textAlign = 'center'; g.fillText(dv.short + (dv.unit ? ' (' + dv.unit + ')' : ''), 0, 0); g.restore();
+  const line = (arr, col, dash) => { g.strokeStyle = col; g.lineWidth = 2.2; g.setLineDash(dash || []); g.beginPath(); let on = false; arr.forEach((y, i) => { if (!isFinite(y)){ on = false; return; } const px = X(xs[i]), py = Math.max(T - 4, Math.min(Hh - B + 4, Y(y))); on ? g.lineTo(px, py) : g.moveTo(px, py); on = true; }); g.stroke(); g.setLineDash([]); };
+  if (ref){ line(rs, '#4a4a4a', [5, 4]); g.fillStyle = '#4a4a4a'; g.textAlign = 'right'; g.font = '600 10px "Space Grotesk",sans-serif'; const lastY = rs.filter(isFinite).pop(); if (isFinite(lastY)) g.fillText(ref.short, W - R - 2, Math.max(T + 9, Y(lastY) - 4)); }
+  line(ys, '#1546d6');
+  const cx = S.v[S.gx], cy = dv.f(S.d);
+  if (isFinite(cy)){ g.strokeStyle = '#ff6a2b'; g.setLineDash([2, 3]); g.lineWidth = 1; g.beginPath(); g.moveTo(X(cx), Hh - B); g.lineTo(X(cx), Y(cy)); g.lineTo(L, Y(cy)); g.stroke(); g.setLineDash([]);
+    g.fillStyle = '#ff6a2b'; g.strokeStyle = '#111'; g.lineWidth = 1.5; g.beginPath(); g.arc(X(cx), Math.max(T, Math.min(Hh - B, Y(cy))), 4.5, 0, 7); g.fill(); g.stroke(); }
+  // doubling readout
+  const d2 = calcWith({ [S.gx]: cx * 2 }), y1 = dv.f(S.d), y2 = dv.f(d2);
+  let msg = '';
+  if (cx === 0 || Math.abs(y1) < 1e-12) msg = '<span class="hint">Move off zero to see the ×2 test.</span>';
+  else if (!isFinite(y1) || !isFinite(y2)) msg = '<span class="hint">The ×2 test doesn’t apply here (doubling takes it outside what this quantity covers).</span>';
+  else {
+    const k = y2 / y1;
+    if (k < 0){ $('dbl').innerHTML = 'If <b>' + x.sym + '</b> doubles (' + fnum(cx) + ' → ' + fnum(2 * cx) + (x.unit ? ' ' + x.unit : '') + '), <b>' + dv.sym + '</b> goes from ' + fnum(y1) + ' to ' + fnum(y2) + (dv.unit ? ' ' + dv.unit : '') + (dv.signOK ? ': it changes sign. ' + dv.signOK : ': it changes sign, so that can’t really happen.'); return; }
+    const tags = [[1, 'doesn’t depend on it'], [2, 'proportional'], [4, 'goes as the square'], [0.5, 'inversely proportional'], [0.25, 'inverse square'], [Math.SQRT2, 'goes as the square root'], [Math.SQRT1_2, 'goes as 1/√'], [8, 'goes as the cube'], [2 * Math.SQRT2, 'goes as the 3/2 power']];
+    const tag = tags.find(([v]) => Math.abs(k - v) < 0.004 * v);
+    msg = 'If <b>' + x.sym + '</b> doubles (' + fnum(cx) + ' → ' + fnum(2 * cx) + (x.unit ? ' ' + x.unit : '') + '), <b>' + dv.sym + '</b> becomes <b>×' + (Math.abs(k) >= 100 ? fnum(k) : k.toFixed(2)) + '</b>' + (tag && !dv.noTag ? ' — ' + tag[1] : '') + '.' + (dv.dblNote ? ' <span class="hint">' + dv.dblNote + '</span>' : '');
+  }
+  $('dbl').innerHTML = msg;
+}
+
+// drawing helpers (canvas is drawn in 600×330 units)
+const cv = $('cv'), ctx = cv.getContext('2d');
+function arrow(x1, y1, x2, y2, col, label, opts){
+  opts = opts || {}; const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy); if (len < 2) return;
+  const ux = dx / len, uy = dy / len, hw = opts.head || 9;
+  ctx.save(); ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = opts.w || 3.5; ctx.lineCap = 'round';
+  if (opts.dash) ctx.setLineDash(opts.dash);
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2 - ux * hw * 0.8, y2 - uy * hw * 0.8); ctx.stroke(); ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x2, y2); ctx.lineTo(x2 - ux * hw - uy * hw * 0.55, y2 - uy * hw + ux * hw * 0.55); ctx.lineTo(x2 - ux * hw + uy * hw * 0.55, y2 - uy * hw - ux * hw * 0.55); ctx.closePath(); ctx.fill();
+  if (label){ ctx.font = '700 13px "Space Grotesk",sans-serif'; ctx.textAlign = opts.align || 'left'; ctx.textBaseline = 'middle';
+    const lx = x2 + (opts.lx !== undefined ? opts.lx : (ux >= 0 ? 6 : -6)), ly = y2 + (opts.ly !== undefined ? opts.ly : (uy >= 0 ? 10 : -10));
+    if (opts.align === undefined) ctx.textAlign = ux >= -0.2 ? 'left' : 'right';
+    ctx.fillText(label, lx, ly); }
+  ctx.restore();
+}
+function text(s, x, y, o){ o = o || {}; ctx.save(); ctx.font = (o.font || '600 13px "Space Grotesk",sans-serif'); ctx.fillStyle = o.col || '#111'; ctx.textAlign = o.align || 'left'; ctx.textBaseline = o.base || 'alphabetic'; ctx.fillText(s, x, y); ctx.restore(); }
+function panelTitle(s, x, y){ text(s, x, y, { font: '700 11px "IBM Plex Mono",monospace', col: '#4a4a4a' }); }
+const COL = { F: '#c43a00', W: '#111', N: '#1e7d45', V: '#1546d6', T: '#7a3fb0', comp: '#8a8a8a' };
+
+let last = 0;
+function loop(ts){ const dt = Math.min(0.05, (ts - (last || ts)) / 1000); last = ts; S.t += dt;
+  ctx.setTransform(2, 0, 0, 2, 0, 0); ctx.clearRect(0, 0, 600, 330);
+  SIM.draw(S.v, S.d, S.mode, S.opt, S.t, dt, S.anim); S.anim.reset = false;
+  requestAnimationFrame(loop); }
+
+// ---------------- this sim ----------------
+// Chase & Collide: one vehicle accelerates. Police chase, head-on with one speeding up, and a braking rear-end check.
+const SIM = {
+  title: 'Chase & Collide',
+  modes: [{ id: 'police', label: 'Police chase' }, { id: 'head', label: 'Head-on' }, { id: 'tail', label: 'Will it rear-end?' }],
+  ivs(mode){
+    if (mode === 'police') return [
+      { id: 'vS', sym: 'v<sub>S</sub>', symText: 'vS', label: 'Speeder’s speed (constant)', unit: 'm/s', min: 5, max: 40, step: 0.5, val: 30 },
+      { id: 'a', sym: 'a', symText: 'a', label: 'Police acceleration (from rest)', unit: 'm/s²', min: 1, max: 8, step: 0.1, val: 3, graph: true },
+      { id: 'td', sym: 't<sub>d</sub>', symText: 'td', label: 'Police wait before starting', unit: 's', min: 0, max: 5, step: 0.1, val: 0 }];
+    if (mode === 'head') return [
+      { id: 'd', sym: 'd', symText: 'd', label: 'Starting gap', unit: 'm', min: 50, max: 500, step: 5, val: 200, graph: true },
+      { id: 'vA', sym: 'v<sub>A</sub>', symText: 'vA', label: 'Car A’s speed → (constant)', unit: 'm/s', min: 0, max: 30, step: 0.5, val: 10 },
+      { id: 'a', sym: 'a', symText: 'a', label: 'Car B’s acceleration ← (from rest)', unit: 'm/s²', min: 0.5, max: 6, step: 0.1, val: 2 }];
+    return [
+      { id: 'd', sym: 'd', symText: 'd', label: 'Gap when A starts braking', unit: 'm', min: 5, max: 100, step: 1, val: 30, graph: true },
+      { id: 'vA', sym: 'v<sub>A</sub>', symText: 'vA', label: 'Car A’s speed (behind)', unit: 'm/s', min: 10, max: 40, step: 0.5, val: 30 },
+      { id: 'vB', sym: 'v<sub>B</sub>', symText: 'vB', label: 'Truck B’s speed (ahead, constant)', unit: 'm/s', min: 0, max: 25, step: 0.5, val: 15 },
+      { id: 'a', sym: 'a', symText: 'a', label: 'A’s braking (slowing) rate', unit: 'm/s²', min: 1, max: 9, step: 0.1, val: 6 }];
+  },
+  presets: [{ label: 'Police, no wait', mode: 'police', v: { vS: 30, a: 3, td: 0 } }, { label: 'Police waits 2 s', mode: 'police', v: { td: 2 } }, { label: 'Truck stopped', mode: 'tail', v: { vB: 0 } }, { label: 'Wet road', mode: 'tail', v: { a: 3 } }],
+  calc(v, mode){
+    if (mode === 'police'){
+      const tau = (v.vS + Math.sqrt(v.vS * v.vS + 2 * v.a * v.vS * v.td)) / v.a, t = v.td + tau, x = v.vS * t;
+      const xA = s => s < v.td ? 0 : 0.5 * v.a * (s - v.td) ** 2, xB = s => v.vS * s, vA = s => s < v.td ? 0 : v.a * (s - v.td);
+      return { t, x, tau, vPol: v.a * tau, ratio: v.a * tau / v.vS, xA, xB, vA, vB: () => v.vS, hit: true };
+    }
+    if (mode === 'head'){
+      const t = (-v.vA + Math.sqrt(v.vA * v.vA + 2 * v.a * v.d)) / v.a, x = v.vA * t;
+      const xA = s => v.vA * s, xB = s => v.d - 0.5 * v.a * s * s;
+      return { t, x, xA, xB, vBm: v.a * t, closeEnd: v.vA + v.a * t, vA: () => v.vA, vB: s => -v.a * s, hit: true };
+    }
+    const dv = v.vA - v.vB, stopRel = dv > 0 ? dv * dv / (2 * v.a) : 0, minGap = v.d - stopRel, hit = minGap < 0;
+    const t = hit ? (dv - Math.sqrt(dv * dv - 2 * v.a * v.d)) / v.a : dv / v.a;
+    const tStopA = v.vA / v.a, xA = s => s < tStopA ? v.vA * s - 0.5 * v.a * s * s : v.vA * v.vA / (2 * v.a), xB = s => v.d + v.vB * s;
+    return { t, x: xA(t), dv, stopRel, minGap, hit, vHit: hit ? dv - v.a * t : 0, xA, xB, vA: s => Math.max(0, v.vA - v.a * s), vB: () => v.vB, aNeed: dv * dv / (2 * v.d) };
+  },
+  dvs(mode){
+    if (mode === 'police') return [
+      { id: 't', name: 'Time when police catch up', short: 't', sym: 't', unit: 's', f: d => d.t },
+      { id: 'x', name: 'Distance to catch up', short: 'x', sym: 'x', unit: 'm', f: d => d.x },
+      { id: 'vPol', name: 'Police speed when they catch up', short: 'v_p', sym: 'v<sub>police</sub>', unit: 'm/s', f: d => d.vPol }];
+    if (mode === 'head') return [
+      { id: 't', name: 'Time when they meet', short: 't', sym: 't', unit: 's', f: d => d.t },
+      { id: 'x', name: 'Where (from A’s start)', short: 'x', sym: 'x', unit: 'm', f: d => d.x },
+      { id: 'vBm', name: 'B’s speed when they meet', short: 'v_B', sym: 'v<sub>B</sub>', unit: 'm/s', f: d => d.vBm }];
+    return [
+      { id: 'minGap', name: 'Closest gap (negative = crash)', short: 'gap', sym: 'gap<sub>min</sub>', unit: 'm', f: d => d.minGap },
+      { id: 'stopRel', name: 'Extra distance A covers while matching B’s speed', short: 'Δx_rel', sym: 'Δx<sub>rel</sub>', unit: 'm', f: d => d.stopRel },
+      { id: 'aNeed', name: 'Braking rate needed to just avoid', short: 'a_need', sym: 'a<sub>need</sub>', unit: 'm/s²', f: d => d.aNeed }];
+  },
+  work(v, d, mode){
+    if (mode === 'police') return '<h4>1 · Position of each (start at the speeder passing the police car)</h4><div class="eq">Speeder (constant v): x<sub>S</sub> = ' + H.iv('vS') + '·t</div>' +
+      '<div class="eq">Police (from rest, a constant' + (v.td > 0 ? ', starting at t<sub>d</sub>' : '') + '): x<sub>P</sub> = ½(' + H.iv('a') + ')' + (v.td > 0 ? '(t − ' + H.iv('td') + ')²' : 't²') + '</div>' +
+      '<h4>2 · Catch up when x<sub>P</sub> = x<sub>S</sub></h4>' +
+      (v.td > 0 ? '<div class="eq">Let τ = t − t<sub>d</sub>: ½aτ² = v<sub>S</sub>(τ + t<sub>d</sub>) → ½aτ² − v<sub>S</sub>τ − v<sub>S</sub>t<sub>d</sub> = 0</div><div class="eq">Quadratic formula: τ = [v<sub>S</sub> + √(v<sub>S</sub>² + 2av<sub>S</sub>t<sub>d</sub>)]/a = ' + H.n(d.tau, 's') + ' → t = <b>' + H.n(d.t, 's') + '</b></div>'
+        : '<div class="eq">½at² = v<sub>S</sub>t → t(½at − v<sub>S</sub>) = 0 → t = 0 (where they start) or t = 2v<sub>S</sub>/a = 2(' + H.iv('vS') + ')/' + H.iv('a') + ' = <b>' + H.n(d.t, 's') + '</b></div>') +
+      '<h4>3 · Where, and how fast</h4><div class="eq">x = v<sub>S</sub>t = <b>' + H.n(d.x, 'm') + '</b> &nbsp; v<sub>police</sub> = aτ = <b>' + H.n(d.vPol, 'm/s') + '</b> (' + H.n(d.ratio) + '× the speeder)</div>' +
+      (v.td === 0 ? '<p class="note">With no wait the police are always going exactly 2× the speeder’s speed when they catch up. Why? Equal distances in equal times → equal average velocities: (0 + v<sub>P</sub>)/2 = v<sub>S</sub>.</p>' : '') +
+      '<p class="note">On the v–t graph the areas under the two lines are equal at the catch-up time. The police are going the same speed as the speeder at t = ' + H.n(v.td + v.vS / v.a, 's') + ': that’s when the gap is biggest, not when they meet.</p>';
+    if (mode === 'head') return '<h4>1 · Position of each (→ positive, A starts at x = 0)</h4><div class="eq">A (constant v): x<sub>A</sub> = ' + H.iv('vA') + '·t</div><div class="eq">B (from rest at d, accelerating ←): x<sub>B</sub> = ' + H.iv('d') + ' − ½(' + H.iv('a') + ')t²</div>' +
+      '<h4>2 · Meet when x<sub>A</sub> = x<sub>B</sub></h4><div class="eq">v<sub>A</sub>t = d − ½at² → ½at² + v<sub>A</sub>t − d = 0</div>' +
+      '<div class="eq">t = [−v<sub>A</sub> + √(v<sub>A</sub>² + 2ad)]/a = <b>' + H.n(d.t, 's') + '</b> (take the + root: time can’t be negative)</div>' +
+      '<h4>3 · Where</h4><div class="eq">x = v<sub>A</sub>t = <b>' + H.n(d.x, 'm') + '</b> from A’s start. B is going ' + H.n(d.vBm, 'm/s') + ' ← by then.</div>' +
+      '<p class="note">B’s x–t curve bends more and more steeply: its velocity keeps growing. A’s is a straight line.</p>';
+    let h = '<h4>1 · Watch it from the truck (relative motion)</h4><div class="eq">A closes in at v<sub>A</sub> − v<sub>B</sub> = ' + H.iv('vA') + ' − ' + H.iv('vB') + ' = ' + H.n(d.dv, 'm/s') + ' and that closing speed shrinks at ' + H.iv('a') + '</div>' +
+      '<h4>2 · The danger ends when A has slowed to the truck’s speed</h4><div class="eq">Extra distance A covers until then: (Δv)²/(2a) = (' + H.n(d.dv) + ')²/(2 × ' + H.iv('a') + ') = <b>' + H.n(d.stopRel, 'm') + '</b></div>' +
+      '<h4>3 · Compare with the gap</h4>';
+    h += d.hit ? '<div class="bad">' + H.n(d.stopRel, 'm') + ' > ' + H.iv('d') + ' → <b>crash</b>.</div><div class="eq">When: d = Δv·t − ½at² → t = [Δv − √(Δv² − 2ad)]/a = <b>' + H.n(d.t, 's') + '</b>, hitting at ' + H.n(d.vHit, 'm/s') + ' relative to the truck</div>'
+      : '<div class="eq">' + H.n(d.stopRel, 'm') + ' ≤ ' + H.iv('d') + ' → <b>no crash</b>. Closest gap: ' + H.n(d.minGap, 'm') + ' at t = ' + H.n(d.t, 's') + '.</div>';
+    h += '<h4>4 · Braking needed to just avoid it</h4><div class="eq">a = (Δv)²/(2d) = <b>' + H.n(d.aNeed, 'm/s²') + '</b>. By F = ma, that’s a braking force of ' + H.n(d.aNeed, 'm/s²') + ' × m.</div>' +
+      '<p class="note">Common mistake: using A’s full stopping distance v<sub>A</sub>²/2a. The truck is moving too, so only the relative speed matters (unless the truck is stopped).</p>';
+    return h;
+  },
+  draw(v, d, mode, opt, t, dt, A){
+    if (A.t === undefined || A.reset) A.t = 0; A.t += dt;
+    const tEnd = Math.max(d.t * 1.3, 2), play = 5, hold = 1.2, tt = Math.min((A.t % (play + hold)) / play, 1) * tEnd;
+    panelTitle(mode === 'police' ? 'THE ROAD (police start at x = 0)' : mode === 'head' ? 'THE ROAD (A starts at x = 0)' : 'THE ROAD (A starts at x = 0, braking)', 10, 18);
+    const xs = []; for (let s = 0; s <= tEnd; s += tEnd / 60) xs.push(d.xA(s), d.xB(s));
+    const xmin = Math.min(0, ...xs), xmax = Math.max(...xs, 10), L = 20, R = 580, X = x => L + (R - L) * (x - xmin) / (xmax - xmin);
+    ctx.fillStyle = '#d6d6d6'; ctx.fillRect(L - 10, 40, R - L + 20, 50); ctx.fillStyle = '#fff'; for (let k = L; k < R; k += 40) ctx.fillRect(k, 64, 20, 3);
+    const stopAt = d.hit ? d.t : tEnd, s = Math.min(tt, stopAt);
+    const car = (x, y, col, lab, dir, w) => { w = w || 34; ctx.fillStyle = col; ctx.strokeStyle = '#111'; ctx.lineWidth = 1.5; ctx.fillRect(x - w / 2, y - 8, w, 16); ctx.strokeRect(x - w / 2, y - 8, w, 16);
+      ctx.fillStyle = '#cfe0ff'; ctx.fillRect(dir > 0 ? x + w / 2 - 14 : x - w / 2 + 6, y - 6, 8, 12); text(lab, x, y - 13, { align: 'center', font: '700 11px "Space Grotesk",sans-serif', col }); };
+    const sameLane = mode === 'tail';
+    const labA = mode === 'police' ? 'POLICE' : 'A', labB = mode === 'police' ? 'SPEEDER' : mode === 'tail' ? 'TRUCK' : 'B';
+    car(X(d.xB(s)), sameLane ? 66 : 78, '#1546d6', labB, mode === 'head' ? -1 : 1, mode === 'tail' ? 50 : 34);
+    car(X(d.xA(s)), sameLane ? 66 : 54, '#ff6a2b', labA, 1);
+    if (d.hit && tt >= d.t){ ctx.strokeStyle = '#c43a00'; ctx.lineWidth = 2; const hx = X(d.x); for (let k = 0; k < 8; k++){ const a = k * PI / 4; ctx.beginPath(); ctx.moveTo(hx + 22 * Math.cos(a), 66 + 22 * Math.sin(a)); ctx.lineTo(hx + 32 * Math.cos(a), 66 + 32 * Math.sin(a)); ctx.stroke(); } }
+    text('t = ' + fplain(s) + ' s', R, 30, { align: 'right', font: '700 12px "IBM Plex Mono",monospace' });
+    // x–t (left) and v–t (right)
+    const graph = (gx, gw, title, fA, fB, lo, hi, mark) => { const gy0 = 300, gh = 150; panelTitle(title, gx - 40, 132);
+      const tx = q => gx + gw * q / tEnd, py = x => gy0 - gh * (x - lo) / (hi - lo);
+      ctx.strokeStyle = '#111'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(gx, gy0 - gh - 5); ctx.lineTo(gx, gy0); ctx.lineTo(gx + gw + 5, gy0); ctx.stroke();
+      if (lo < 0){ ctx.strokeStyle = '#bbb'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(gx, py(0)); ctx.lineTo(gx + gw, py(0)); ctx.stroke(); }
+      const ln = (f, col, upto) => { ctx.strokeStyle = col; ctx.lineWidth = 2.5; ctx.beginPath(); for (let k = 0; k <= 120; k++){ const q = upto * k / 120; k ? ctx.lineTo(tx(q), py(f(q))) : ctx.moveTo(tx(q), py(f(q))); } ctx.stroke(); };
+      ctx.globalAlpha = 0.22; ln(fA, '#ff6a2b', tEnd); ln(fB, '#1546d6', tEnd); ctx.globalAlpha = 1; ln(fA, '#ff6a2b', s); ln(fB, '#1546d6', s);
+      if (mark !== undefined){ ctx.setLineDash([3, 3]); ctx.strokeStyle = '#c43a00'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(tx(d.t), gy0); ctx.lineTo(tx(d.t), gy0 - gh); ctx.stroke(); ctx.setLineDash([]); }
+      text(fplain(hi), gx - 4, gy0 - gh + 4, { align: 'right', font: '500 9px "IBM Plex Mono",monospace', col: '#4a4a4a' }); text(fplain(lo), gx - 4, gy0 + 3, { align: 'right', font: '500 9px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+      text('t (s) → ' + fplain(tEnd), gx + gw, gy0 + 13, { align: 'right', font: '500 9px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+      return { tx, py }; };
+    const g1 = graph(60, 230, 'POSITION x (m) vs t', d.xA, d.xB, xmin, xmax, (d.hit || mode !== 'tail') ? d.t : undefined);
+    if (d.hit || mode !== 'tail'){ ctx.fillStyle = '#c43a00'; ctx.beginPath(); ctx.arc(g1.tx(d.t), g1.py(d.x), 5, 0, 7); ctx.fill(); }
+    const vs = []; for (let q = 0; q <= tEnd; q += tEnd / 60) vs.push(d.vA(q), d.vB(q));
+    graph(370, 210, 'VELOCITY v (m/s) vs t', d.vA, d.vB, Math.min(0, ...vs), Math.max(...vs, 1), (d.hit || mode !== 'tail') ? d.t : undefined);
+    const msg = mode === 'tail' ? (d.hit ? 'CRASH at t = ' + fplain(d.t) + ' s' : 'no crash: closest gap ' + fplain(d.minGap) + ' m') : (mode === 'police' ? 'caught at ' : 'meet at ') + fplain(d.t) + ' s, x = ' + fplain(d.x) + ' m';
+    text(msg, 300, 114, { align: 'center', font: '700 13px "Space Grotesk",sans-serif', col: d.hit && mode === 'tail' ? '#c43a00' : '#111' });
+  }
+};
+
+
+(function (V) {
+  if (V.title) SIM.title = V.title;
+  if (V.hint) SIM.hint = V.hint;
+  if (V.modes && SIM.modes) SIM.modes = V.modes.map(id => SIM.modes.find(m => m.id === id)).filter(Boolean);
+  if (V.opts && SIM.opts) SIM.opts = SIM.opts.map(o => V.opts[o.id] ? Object.assign({}, o, { choices: o.choices.filter(c => V.opts[o.id].includes(c[0])) }) : o).filter(o => o.choices.length);
+  if (SIM.opts && V.oneChoiceHidden !== false) SIM.opts = SIM.opts.filter(o => o.choices.length > 1);
+  if (SIM.presets) SIM.presets = SIM.presets.filter(p => (!p.mode || !SIM.modes || SIM.modes.some(m => m.id === p.mode)) && !(V.dropPresets || []).includes(p.label));
+  SIM.strip = h => h.replace(/<span style="color:#7a3fb0">IB[^<]*<\/span>:?\s*/g, '').replace(/\s*\((?:IB|AP)[^()]*\)/g, '').replace(/<p class="note">(?:AP|IB)[^<]*(?:<[^p][^>]*>[^<]*)*<\/p>/g, '').replace(/AP: qualitative only[^.]*\. ?/g, '');
+})({"modes": ["police", "head"]});
+
+
+S.mode = SIM.modes ? SIM.modes[0].id : 'one';
+setup(); requestAnimationFrame(loop);
+window.APP = { select(name){ const m = (SIM.modes || []).find(m => m.label === name || m.id === name); if (m && m.id !== S.mode){ S.mode = m.id; S.anim = {}; setup(); } } };
+addEventListener('message', e => { const d = e.data; if (d && d.select) try { APP.select(d.select); } catch (er) {} });
+</script>
+</body></html>

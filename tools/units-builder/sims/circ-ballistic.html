@@ -100,7 +100,7 @@ function bar(){
     b.appendChild(g);
   };
   const tip = document.createElement('span'); tip.className = 'hint'; tip.style.marginLeft = 'auto'; tip.style.whiteSpace = 'nowrap'; tip.innerHTML = '● = the variable on the graph’s x-axis · drag any slider';
-  if (SIM.modes) group(null, SIM.modes.map(m => [m.id, m.label]), S.mode, id => { S.mode = id; S.anim = {}; setup(); });
+  if (SIM.modes && SIM.modes.length > 1) group(null, SIM.modes.map(m => [m.id, m.label]), S.mode, id => { S.mode = id; S.anim = {}; setup(); });
   (SIM.opts || []).filter(o => !o.modes || o.modes.includes(S.mode)).forEach(o => {
     if (!(o.id in S.opt)) S.opt[o.id] = o.choices[0][0];
     group(o.label, o.choices, S.opt[o.id], id => { S.opt[o.id] = id; S.anim = {}; setup(); });
@@ -143,7 +143,7 @@ function calcWith(over){ const v = Object.assign({}, S.v, over || {}); return SI
 function update(){
   S.ivs.forEach(d => { $('val-' + d.id).innerHTML = d.show ? d.show(S.v[d.id]) : fnum(S.v[d.id]) + (d.unit ? '&nbsp;' + d.unit : ''); });
   S.d = calcWith();
-  $('work').innerHTML = '<div class="wt"><span>Show the work</span><span class="hint">' + (SIM.hint || 'g = 10 m/s²') + '</span></div>' + SIM.work(S.v, S.d, S.mode, S.opt);
+  $('work').innerHTML = '<div class="wt"><span>Show the work</span><span class="hint">' + (SIM.hint || 'g = 10 m/s²') + '</span></div>' + (SIM.strip ? SIM.strip(SIM.work(S.v, S.d, S.mode, S.opt)) : SIM.work(S.v, S.d, S.mode, S.opt));
   document.querySelectorAll('input[name=gx]').forEach(r => r.checked = (r.value === S.gx));
   graph();
 }
@@ -281,6 +281,7 @@ const SIM = {
     text(fplain(100 * d.lost) + '% lost in the hit', 425, 300, { font: '700 12px "Space Grotesk",sans-serif', col: '#c43a00' });
   }
 };
+
 
 
 S.mode = SIM.modes ? SIM.modes[0].id : 'one';
