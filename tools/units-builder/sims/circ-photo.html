@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Photoelectric Effect</title>
+<!-- Photoelectric Effect: original Holmes Sims, built from frame.html + photo.js. g = 10 m/s². -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@500;700&display=swap">
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#fff;font-family:"Space Grotesk",system-ui,sans-serif;color:#111}
+#app{position:absolute;left:0;top:0;width:1000px;height:640px;transform-origin:0 0;padding:10px 14px 12px;box-sizing:border-box;
+  display:grid;grid-template-columns:600px 1fr;grid-template-rows:34px 330px 1fr;gap:10px 14px}
+#bar{grid-column:1/-1;display:flex;gap:16px;align-items:center;flex-wrap:nowrap;overflow:hidden}
+.seg{display:flex;align-items:center}
+.seg .lab{font:700 12px "IBM Plex Mono",monospace;margin-right:8px;text-transform:uppercase}
+.seg button{white-space:nowrap;font:700 14px "Space Grotesk",sans-serif;padding:6px 11px;border:2px solid #111;background:#fff;color:#111;cursor:pointer}
+.seg button+button{margin-left:-2px}
+.seg button[aria-pressed="true"]{background:#111;color:#fff}
+.seg button:hover:not([aria-pressed="true"]){background:#ffe2d3}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #ff6a2b;outline-offset:2px;position:relative;z-index:1}
+#cv{border:2px solid #111;background:#fbfbfb;width:600px;height:330px;box-sizing:border-box;display:block}
+#work{border:2px solid #111;padding:8px 12px 10px;overflow:auto;font-size:14px;line-height:1.55;box-sizing:border-box}
+#work .wt{font:700 12px "IBM Plex Mono",monospace;text-transform:uppercase;margin:0 0 4px;display:flex;justify-content:space-between}
+#work .wt .hint{text-transform:none}
+#work h4{margin:9px 0 1px;font-size:13px;font-weight:700;color:#4a4a4a}
+#work h4:first-of-type{margin-top:2px}
+#work .eq{font-variant-numeric:tabular-nums}
+#work .n{font-family:"IBM Plex Mono",monospace;font-size:13px}
+#work b .n,#work .ans{font-weight:700}
+#work .note{font-size:12.5px;color:#4a4a4a;margin:2px 0 0}
+#work .ok{background:#e5f4ea;border-left:4px solid #1e7d45;padding:3px 8px;margin-top:4px}
+#work .bad{background:#fde7df;border-left:4px solid #c43a00;padding:3px 8px;margin-top:4px}
+.ivv{border-radius:2px;padding:0 2px;transition:background .25s}
+.ivv.gx{background:#ffe2d3}
+.ivv.hot{background:#ff6a2b;color:#fff}
+#ctl{display:grid;grid-template-columns:1fr 1fr;gap:4px 18px;align-content:start}
+.iv{display:grid;grid-template-columns:auto 1fr auto;align-items:center;column-gap:6px}
+.iv .nm{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iv .val{font:700 13px "IBM Plex Mono",monospace;white-space:nowrap}
+.iv input[type=range]{grid-column:1/-1;width:100%;margin:0;accent-color:#111;height:22px}
+.iv input[type=radio]{accent-color:#ff6a2b;margin:0}
+#presets{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:2px}
+#presets .lab{font:700 12px "IBM Plex Mono",monospace}
+#presets button{font:600 12.5px "Space Grotesk",sans-serif;padding:3px 8px;border:2px solid #111;background:#fff;cursor:pointer}
+#presets button:hover{background:#ffe2d3}
+#gcard{border:2px solid #111;padding:5px 8px 6px;display:flex;flex-direction:column;box-sizing:border-box;min-height:0}
+.ghead{display:flex;align-items:center;gap:6px;font-size:13px;white-space:nowrap}
+.ghead select{font:600 13px "Space Grotesk",sans-serif;border:2px solid #111;padding:1px 4px;max-width:200px}
+#gv{width:340px;height:150px;flex:none;display:block;margin-top:3px}
+#dbl{font-size:12.5px;line-height:1.35;margin-top:2px}
+#dbl b{font-weight:700}
+.hint{font:500 11px "IBM Plex Mono",monospace;color:#4a4a4a}
+</style></head><body>
+<div id="app">
+  <div id="bar"></div>
+  <canvas id="cv" width="1200" height="660" aria-label="Animation of the situation with force arrows"></canvas>
+  <div id="work" aria-live="polite"></div>
+  <div id="ctl"></div>
+  <div id="gcard">
+    <div class="ghead"><span>Graph</span><select id="dvsel" aria-label="Quantity to graph"></select><span>vs <b id="ivname"></b></span></div>
+    <canvas id="gv" width="680" height="300" aria-label="Graph of the chosen quantity against the chosen variable"></canvas>
+    <div id="dbl"></div>
+  </div>
+</div>
+<script>
+// ---------------- shared frame ----------------
+const $ = id => document.getElementById(id);
+const G10 = 10, PI = Math.PI, DEG = PI / 180;
+function fit(){ const s = Math.min(innerWidth / 1000, innerHeight / 640); $('app').style.transform = 'scale(' + s + ')'; }
+addEventListener('resize', fit); fit();
+
+function fnum(x){ const r = fnum0(x); return typeof r === 'string' ? r.replace(/^-/, '−') : r; }
+function fnum0(x){
+  if (x === null || x === undefined || !isFinite(x)) return '—';
+  const a = Math.abs(x);
+  if (a === 0) return '0';
+  if (a >= 1e5 || a < 1e-3){
+    const e = Math.floor(Math.log10(a)); let m = x / Math.pow(10, e);
+    let ms = m.toFixed(2); if (Math.abs(+ms) >= 10){ m /= 10; ms = m.toFixed(2); return ms + '×10<sup>' + (e + 1) + '</sup>'; }
+    return ms + '×10<sup>' + e + '</sup>';
+  }
+  if (a >= 1000) return String(Math.round(x));
+  return x.toPrecision(3);
+}
+function fplain(x){ return fnum(x).replace(/<sup>(.*?)<\/sup>/g, (m, e) => '^' + e).replace('×10^', 'e'); }
+const H = {
+  n: (x, u) => '<span class="n">' + fnum(x) + (u ? '&nbsp;' + u : '') + '</span>',
+  iv: id => { const d = S.def[id]; const val = S.v[id]; const txt = (d.show ? d.show(val) : fnum(val) + (d.unit ? '&nbsp;' + d.unit : ''));
+              return '<span class="ivv n' + (S.gx === id ? ' gx' : '') + (S.hot === id ? ' hot' : '') + '" data-iv="' + id + '">' + txt + '</span>'; },
+  g: () => '<span class="n">10&nbsp;m/s²</span>',
+  p: (x, u) => x < 0 ? '(' + H.n(x, u) + ')' : H.n(x, u)
+};
+
+const S = { mode: null, opt: {}, v: {}, store: {}, def: {}, ivs: [], gx: null, dv: null, hot: null, t: 0, anim: {} };
+
+function bar(){
+  const b = $('bar'); b.innerHTML = '';
+  const group = (label, items, cur, onpick) => {
+    const g = document.createElement('div'); g.className = 'seg'; g.setAttribute('role', 'group');
+    if (label){ const l = document.createElement('span'); l.className = 'lab'; l.textContent = label; g.appendChild(l); }
+    items.forEach(([id, txt]) => { const bt = document.createElement('button'); bt.textContent = txt; bt.setAttribute('aria-pressed', String(id === cur)); bt.onclick = () => onpick(id); g.appendChild(bt); });
+    b.appendChild(g);
+  };
+  const tip = document.createElement('span'); tip.className = 'hint'; tip.style.marginLeft = 'auto'; tip.style.whiteSpace = 'nowrap'; tip.innerHTML = '● = the variable on the graph’s x-axis · drag any slider';
+  if (SIM.modes) group(null, SIM.modes.map(m => [m.id, m.label]), S.mode, id => { S.mode = id; S.anim = {}; setup(); });
+  (SIM.opts || []).filter(o => !o.modes || o.modes.includes(S.mode)).forEach(o => {
+    if (!(o.id in S.opt)) S.opt[o.id] = o.choices[0][0];
+    group(o.label, o.choices, S.opt[o.id], id => { S.opt[o.id] = id; S.anim = {}; setup(); });
+  });
+  b.appendChild(tip);
+  if (b.scrollWidth > b.clientWidth + 1) tip.remove();
+  if (b.scrollWidth > b.clientWidth + 1) b.querySelectorAll('.seg button').forEach(x => { x.style.fontSize = '13px'; x.style.padding = '6px 8px'; });
+}
+
+function setup(){
+  bar();
+  S.ivs = SIM.ivs(S.mode, S.opt); S.def = {}; S.v = {};
+  S.ivs.forEach(d => { S.def[d.id] = d; const k = S.mode + ':' + d.id; S.v[d.id] = (k in S.store) ? S.store[k] : d.val; });
+  if (!S.gx || !S.def[S.gx]) S.gx = S.ivs.find(d => d.graph) ? S.ivs.find(d => d.graph).id : S.ivs[1] ? S.ivs[1].id : S.ivs[0].id;
+  const c = $('ctl'); c.innerHTML = '';
+  S.ivs.forEach(d => {
+    const w = document.createElement('div'); w.className = 'iv';
+    w.innerHTML = '<input type="radio" name="gx" value="' + d.id + '" aria-label="Graph against ' + d.label + '" title="Put this on the graph’s x-axis"' + (S.gx === d.id ? ' checked' : '') + '>' +
+      '<span class="nm">' + d.label + ' <i>' + d.sym + '</i></span><span class="val" id="val-' + d.id + '"></span>' +
+      '<input type="range" id="r-' + d.id + '" min="' + d.min + '" max="' + d.max + '" step="' + d.step + '" value="' + S.v[d.id] + '" aria-label="' + d.label + '">';
+    c.appendChild(w);
+    const r = w.querySelector('input[type=range]');
+    r.oninput = () => { S.v[d.id] = +r.value; S.store[S.mode + ':' + d.id] = +r.value; S.hot = d.id; clearTimeout(S.hotT); S.hotT = setTimeout(() => { S.hot = null; update(); }, 700); S.anim.reset = true; update(); };
+    w.querySelector('input[type=radio]').onchange = () => { S.gx = d.id; update(); };
+  });
+  if (SIM.presets){
+    const p = document.createElement('div'); p.id = 'presets'; p.innerHTML = '<span class="lab">Try:</span>';
+    SIM.presets.forEach(ps => { const bt = document.createElement('button'); bt.textContent = ps.label; bt.onclick = () => { if (ps.mode && ps.mode !== S.mode){ S.mode = ps.mode; } Object.entries(ps.v).forEach(([k, val]) => S.store[(ps.mode || S.mode) + ':' + k] = val); S.anim = {}; setup(); }; p.appendChild(bt); });
+    c.appendChild(p);
+  }
+  const dvs = SIM.dvs(S.mode, S.opt), sel = $('dvsel');
+  if (!S.dv || !dvs.find(d => d.id === S.dv)) S.dv = dvs[0].id;
+  sel.innerHTML = dvs.map(d => '<option value="' + d.id + '"' + (d.id === S.dv ? ' selected' : '') + '>' + d.name + '</option>').join('');
+  sel.onchange = () => { S.dv = sel.value; update(); };
+  update();
+}
+
+function calcWith(over){ const v = Object.assign({}, S.v, over || {}); return SIM.calc(v, S.mode, S.opt); }
+
+function update(){
+  S.ivs.forEach(d => { $('val-' + d.id).innerHTML = d.show ? d.show(S.v[d.id]) : fnum(S.v[d.id]) + (d.unit ? '&nbsp;' + d.unit : ''); });
+  S.d = calcWith();
+  $('work').innerHTML = '<div class="wt"><span>Show the work</span><span class="hint">' + (SIM.hint || 'g = 10 m/s²') + '</span></div>' + SIM.work(S.v, S.d, S.mode, S.opt);
+  document.querySelectorAll('input[name=gx]').forEach(r => r.checked = (r.value === S.gx));
+  graph();
+}
+
+function graph(){
+  const cv = $('gv'), g = cv.getContext('2d'), W = 340, Hh = 150; g.setTransform(2, 0, 0, 2, 0, 0); g.clearRect(0, 0, W, Hh);
+  const dvs = SIM.dvs(S.mode, S.opt), dv = dvs.find(d => d.id === S.dv), ref = dv.vs ? dvs.find(d => d.id === dv.vs) : null;
+  const x = S.def[S.gx]; $('ivname').innerHTML = '<i>' + x.sym + '</i>' + (x.unit && !x.show ? ' (' + x.unit + ')' : '');
+  const N = 160, xs = [], ys = [], rs = [];
+  for (let i = 0; i <= N; i++){ const xv = x.min + (x.max - x.min) * i / N; const d = calcWith({ [S.gx]: xv }); xs.push(xv); ys.push(dv.f(d)); rs.push(ref ? ref.f(d) : null); }
+  const all = ys.concat(ref ? rs : []).filter(isFinite);
+  let ymin = Math.min(0, ...all), ymax = Math.max(...all, 0); if (ymax === ymin) ymax = ymin + 1; const pad = (ymax - ymin) * 0.08; ymax += pad; if (ymin < 0) ymin -= pad;
+  const L = 46, R = 8, T = 8, B = 22, X = v => L + (v - x.min) / (x.max - x.min) * (W - L - R), Y = v => T + (ymax - v) / (ymax - ymin) * (Hh - T - B);
+  g.strokeStyle = '#111'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(L, T); g.lineTo(L, Hh - B); g.lineTo(W - R, Hh - B); g.stroke();
+  if (ymin < 0){ g.strokeStyle = '#999'; g.setLineDash([3, 3]); g.beginPath(); g.moveTo(L, Y(0)); g.lineTo(W - R, Y(0)); g.stroke(); g.setLineDash([]);
+    if (dv.negNote){ g.fillStyle = 'rgba(196,58,0,0.08)'; g.fillRect(L, Y(0), W - R - L, Hh - B - Y(0)); g.fillStyle = '#c43a00'; g.font = '600 10px "Space Grotesk",sans-serif'; g.textAlign = 'left'; g.fillText(dv.negNote, L + 4, Hh - B - 4); } }
+  g.font = '500 10px "IBM Plex Mono",monospace'; g.fillStyle = '#4a4a4a'; g.textAlign = 'right';
+  g.fillText(fplain(ymax), L - 4, T + 8); g.fillText(fplain(ymin < 0 ? ymin : 0), L - 4, Hh - B); if (ymin < 0) g.fillText('0', L - 4, Y(0) + 3);
+  g.textAlign = 'center'; g.fillText(fplain(x.min), L, Hh - 8); g.fillText(fplain(x.max), W - R - 10, Hh - 8);
+  g.fillText((x.symText || x.id) + (x.unit ? ' (' + x.unit + ')' : ''), (L + W) / 2, Hh - 8);
+  g.save(); g.translate(10, (T + Hh - B) / 2); g.rotate(-PI / 2); g.textAlign = 'center'; g.fillText(dv.short + (dv.unit ? ' (' + dv.unit + ')' : ''), 0, 0); g.restore();
+  const line = (arr, col, dash) => { g.strokeStyle = col; g.lineWidth = 2.2; g.setLineDash(dash || []); g.beginPath(); let on = false; arr.forEach((y, i) => { if (!isFinite(y)){ on = false; return; } const px = X(xs[i]), py = Math.max(T - 4, Math.min(Hh - B + 4, Y(y))); on ? g.lineTo(px, py) : g.moveTo(px, py); on = true; }); g.stroke(); g.setLineDash([]); };
+  if (ref){ line(rs, '#4a4a4a', [5, 4]); g.fillStyle = '#4a4a4a'; g.textAlign = 'right'; g.font = '600 10px "Space Grotesk",sans-serif'; const lastY = rs.filter(isFinite).pop(); if (isFinite(lastY)) g.fillText(ref.short, W - R - 2, Math.max(T + 9, Y(lastY) - 4)); }
+  line(ys, '#1546d6');
+  const cx = S.v[S.gx], cy = dv.f(S.d);
+  if (isFinite(cy)){ g.strokeStyle = '#ff6a2b'; g.setLineDash([2, 3]); g.lineWidth = 1; g.beginPath(); g.moveTo(X(cx), Hh - B); g.lineTo(X(cx), Y(cy)); g.lineTo(L, Y(cy)); g.stroke(); g.setLineDash([]);
+    g.fillStyle = '#ff6a2b'; g.strokeStyle = '#111'; g.lineWidth = 1.5; g.beginPath(); g.arc(X(cx), Math.max(T, Math.min(Hh - B, Y(cy))), 4.5, 0, 7); g.fill(); g.stroke(); }
+  // doubling readout
+  const d2 = calcWith({ [S.gx]: cx * 2 }), y1 = dv.f(S.d), y2 = dv.f(d2);
+  let msg = '';
+  if (cx === 0 || Math.abs(y1) < 1e-12) msg = '<span class="hint">Move off zero to see the ×2 test.</span>';
+  else if (!isFinite(y1) || !isFinite(y2)) msg = '<span class="hint">The ×2 test doesn’t apply here (doubling takes it outside what this quantity covers).</span>';
+  else {
+    const k = y2 / y1;
+    if (k < 0){ $('dbl').innerHTML = 'If <b>' + x.sym + '</b> doubles (' + fnum(cx) + ' → ' + fnum(2 * cx) + (x.unit ? ' ' + x.unit : '') + '), <b>' + dv.sym + '</b> goes from ' + fnum(y1) + ' to ' + fnum(y2) + (dv.unit ? ' ' + dv.unit : '') + (dv.signOK ? ': it changes sign. ' + dv.signOK : ': it changes sign, so that can’t really happen.'); return; }
+    const tags = [[1, 'doesn’t depend on it'], [2, 'proportional'], [4, 'goes as the square'], [0.5, 'inversely proportional'], [0.25, 'inverse square'], [Math.SQRT2, 'goes as the square root'], [Math.SQRT1_2, 'goes as 1/√'], [8, 'goes as the cube'], [2 * Math.SQRT2, 'goes as the 3/2 power']];
+    const tag = tags.find(([v]) => Math.abs(k - v) < 0.004 * v);
+    msg = 'If <b>' + x.sym + '</b> doubles (' + fnum(cx) + ' → ' + fnum(2 * cx) + (x.unit ? ' ' + x.unit : '') + '), <b>' + dv.sym + '</b> becomes <b>×' + (Math.abs(k) >= 100 ? fnum(k) : k.toFixed(2)) + '</b>' + (tag && !dv.noTag ? ' — ' + tag[1] : '') + '.' + (dv.dblNote ? ' <span class="hint">' + dv.dblNote + '</span>' : '');
+  }
+  $('dbl').innerHTML = msg;
+}
+
+// drawing helpers (canvas is drawn in 600×330 units)
+const cv = $('cv'), ctx = cv.getContext('2d');
+function arrow(x1, y1, x2, y2, col, label, opts){
+  opts = opts || {}; const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy); if (len < 2) return;
+  const ux = dx / len, uy = dy / len, hw = opts.head || 9;
+  ctx.save(); ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = opts.w || 3.5; ctx.lineCap = 'round';
+  if (opts.dash) ctx.setLineDash(opts.dash);
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2 - ux * hw * 0.8, y2 - uy * hw * 0.8); ctx.stroke(); ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x2, y2); ctx.lineTo(x2 - ux * hw - uy * hw * 0.55, y2 - uy * hw + ux * hw * 0.55); ctx.lineTo(x2 - ux * hw + uy * hw * 0.55, y2 - uy * hw - ux * hw * 0.55); ctx.closePath(); ctx.fill();
+  if (label){ ctx.font = '700 13px "Space Grotesk",sans-serif'; ctx.textAlign = opts.align || 'left'; ctx.textBaseline = 'middle';
+    const lx = x2 + (opts.lx !== undefined ? opts.lx : (ux >= 0 ? 6 : -6)), ly = y2 + (opts.ly !== undefined ? opts.ly : (uy >= 0 ? 10 : -10));
+    if (opts.align === undefined) ctx.textAlign = ux >= -0.2 ? 'left' : 'right';
+    ctx.fillText(label, lx, ly); }
+  ctx.restore();
+}
+function text(s, x, y, o){ o = o || {}; ctx.save(); ctx.font = (o.font || '600 13px "Space Grotesk",sans-serif'); ctx.fillStyle = o.col || '#111'; ctx.textAlign = o.align || 'left'; ctx.textBaseline = o.base || 'alphabetic'; ctx.fillText(s, x, y); ctx.restore(); }
+function panelTitle(s, x, y){ text(s, x, y, { font: '700 11px "IBM Plex Mono",monospace', col: '#4a4a4a' }); }
+const COL = { F: '#c43a00', W: '#111', N: '#1e7d45', V: '#1546d6', T: '#7a3fb0', comp: '#8a8a8a' };
+
+let last = 0;
+function loop(ts){ const dt = Math.min(0.05, (ts - (last || ts)) / 1000); last = ts; S.t += dt;
+  ctx.setTransform(2, 0, 0, 2, 0, 0); ctx.clearRect(0, 0, 600, 330);
+  SIM.draw(S.v, S.d, S.mode, S.opt, S.t, dt, S.anim); S.anim.reset = false;
+  requestAnimationFrame(loop); }
+
+// ---------------- this sim ----------------
+// Photoelectric Effect (AP 15.5, IB E.2 HL): K_max = hf − φ, threshold frequency, stopping potential, why brightness changes the current but not the electron energy, and the K_max vs f graph (slope h, intercept −φ).
+const METALS = { cs: ['Cesium', 2.1], na: ['Sodium', 2.28], zn: ['Zinc', 4.3], cu: ['Copper', 4.7] }, HEV = 4.14e-15; // h in eV·s
+function wlRGB(l){ let r = 0, g = 0, b = 0; if (l < 440){ r = (440 - l) / 60; b = 1; } else if (l < 490){ g = (l - 440) / 50; b = 1; } else if (l < 510){ g = 1; b = (510 - l) / 20; } else if (l < 580){ r = (l - 510) / 70; g = 1; } else if (l < 645){ r = 1; g = (645 - l) / 65; } else r = 1;
+  return 'rgb(' + [r, g, b].map(c => Math.round(255 * Math.max(0, Math.min(1, c)))).join(',') + ')'; }
+const SIM = {
+  title: 'Photoelectric Effect',
+  hint: 'K_max = hf − φ',
+  opts: [{ id: 'm', label: 'Metal', choices: [['na', 'Sodium'], ['cs', 'Cesium'], ['zn', 'Zinc'], ['cu', 'Copper']] }],
+  ivs(){ return [
+    { id: 'f', sym: 'f', symText: 'f', label: 'Light frequency (×10¹⁴ Hz)', unit: '×10¹⁴ Hz', min: 3, max: 15, step: 0.05, val: 7.5, graph: true, show: x => x.toFixed(2) + '×10¹⁴ Hz' },
+    { id: 'B', sym: 'N', symText: 'N', label: 'Brightness (photons per second, %)', unit: '%', min: 0, max: 100, step: 1, val: 60 },
+    { id: 'V', sym: 'V', symText: 'V', label: 'Battery voltage (− = stopping)', unit: 'V', min: -4, max: 3, step: 0.02, val: 0 }]; },
+  presets: [{ label: 'Red light (any brightness)', v: { f: 4.5, B: 100 } }, { label: 'Dim UV', v: { f: 12, B: 10 } }, { label: 'Find the stopping voltage', v: { f: 9, V: -1.45 } }],
+  calc(v, mode, opt){
+    const [nm, phi] = METALS[opt.m || 'na'], f = v.f * 1e14, E = HEV * f, K = E - phi, lam = 3e8 / f * 1e9, f0 = phi / HEV, yes = K > 0;
+    const frac = !yes ? 0 : v.V >= 0 ? 1 : Math.max(0, 1 + v.V / K), I = v.B / 100 * frac;
+    return { nm, phi, E, K, Kmax: yes ? K : 0, lam, f0, yes, I, Vs: yes ? K : 0 };
+  },
+  dvs(){ return [{ id: 'K', name: 'Maximum kinetic energy of the electrons', short: 'K_max', sym: 'K<sub>max</sub>', unit: 'eV', f: d => d.Kmax }, { id: 'I', name: 'Current (fraction of maximum)', short: 'I', sym: 'I', unit: '', f: d => d.I }, { id: 'Vs', name: 'Stopping voltage', short: 'V_s', sym: 'V<sub>s</sub>', unit: 'V', f: d => d.Vs }]; },
+  work(v, d){
+    let s = '<h4>1 · Energy of one photon</h4><div class="eq">E = hf = (4.14×10⁻¹⁵ eV·s)(' + H.iv('f') + ') = <b>' + H.n(d.E, 'eV') + '</b> (λ = ' + fnum(d.lam) + ' nm)</div>' +
+      '<h4>2 · Compare with the work function</h4><div class="eq">' + d.nm + ': φ = ' + fnum(d.phi) + ' eV → threshold f₀ = φ/h = ' + H.n(d.f0, 'Hz') + '</div>';
+    if (!d.yes) return s + '<div class="bad">hf < φ: no single photon has enough energy to free an electron. <b>No electrons, no matter how bright the light.</b> A wave model predicted that bright enough light should eventually work — it doesn’t.</div>';
+    s += '<h4>3 · Fastest electrons</h4><div class="eq">K<sub>max</sub> = hf − φ = ' + fnum(d.E) + ' − ' + fnum(d.phi) + ' = <b>' + H.n(d.K, 'eV') + '</b> = ' + H.n(d.K * 1.6e-19, 'J') + '</div>' +
+      '<h4>4 · Stopping voltage</h4><div class="eq">To stop even the fastest electrons: eV<sub>s</sub> = K<sub>max</sub> → V<sub>s</sub> = <b>' + H.n(d.K, 'V') + '</b>. Now the battery is ' + H.iv('V') + ' → current = ' + Math.round(d.I * 100) + '% of max' + (v.V <= -d.K ? ' (all stopped)' : '') + '.</div>';
+    return s + '<p class="note">Brighter light = more photons → <b>more electrons</b> (more current), but each electron gets the same K<sub>max</sub>. Higher frequency → bigger K<sub>max</sub>. Graph K<sub>max</sub> vs f: slope = h, x-intercept = f₀, y-intercept = −φ. Uses: solar cells, light sensors on street lights, camera sensors.</p>';
+  },
+  draw(v, d, mode, opt, t, dt, A){
+    panelTitle('PHOTOELECTRIC TUBE', 10, 18);
+    ctx.fillStyle = 'rgba(200,220,240,0.35)'; ctx.strokeStyle = '#111'; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(200, 130, 160, 80, 0, 0, 7); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#9aa7b8'; ctx.fillRect(70, 85, 14, 90); text(d.nm.toLowerCase(), 77, 190, { align: 'center', font: '600 10px "IBM Plex Mono",monospace' }); ctx.fillStyle = '#555'; ctx.fillRect(320, 95, 8, 70);
+    const col = d.lam >= 380 && d.lam <= 750 ? wlRGB(d.lam) : d.lam < 380 ? '#9b59d0' : '#8a1a1a'; ctx.globalAlpha = 0.15 + 0.5 * v.B / 100; ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(150, 20); ctx.lineTo(200, 20); ctx.lineTo(84, 175); ctx.lineTo(84, 85); ctx.closePath(); ctx.fill(); ctx.globalAlpha = 1;
+    text(d.lam < 380 ? 'UV ' : d.lam > 750 ? 'IR ' : '', 205, 26, { font: '700 11px "Space Grotesk",sans-serif' }); text(fplain(d.lam) + ' nm', 205, 40, { font: '600 10px "IBM Plex Mono",monospace' });
+    // electrons
+    if (!A.e || A.reset) A.e = []; const rate = d.yes ? v.B / 100 * 30 : 0; A.acc = (A.acc || 0) + rate * dt; while (A.acc > 1){ A.acc--; A.e.push({ x: 86, y: 90 + Math.random() * 80, vx: 40 + 160 * Math.sqrt(Math.random()) * Math.sqrt(d.K / 3) , vy: (Math.random() - 0.5) * 20 }); }
+    const acc = v.V * 40; A.e.forEach(e => { e.vx += acc * dt; e.x += e.vx * dt; e.y += e.vy * dt; }); A.e = A.e.filter(e => e.x > 84 && e.x < 320 && A.e.length < 200);
+    ctx.fillStyle = '#1546d6'; A.e.forEach(e => { ctx.beginPath(); ctx.arc(e.x, e.y, 2.5, 0, 7); ctx.fill(); });
+    // circuit
+    ctx.strokeStyle = '#111'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(77, 175); ctx.lineTo(77, 280); ctx.lineTo(160, 280); ctx.moveTo(240, 280); ctx.lineTo(324, 280); ctx.lineTo(324, 165); ctx.stroke();
+    ctx.beginPath(); ctx.arc(200, 280, 24, 0, 7); ctx.fillStyle = '#fff'; ctx.fill(); ctx.stroke(); text('A', 200, 285, { align: 'center', font: '700 14px "Space Grotesk",sans-serif' }); ctx.beginPath(); ctx.moveTo(176, 280); ctx.lineTo(160, 280); ctx.moveTo(224, 280); ctx.lineTo(240, 280); ctx.stroke();
+    text('I = ' + Math.round(d.I * 100) + '%', 200, 318, { align: 'center', font: '700 13px "Space Grotesk",sans-serif' }); text('V = ' + v.V.toFixed(2) + ' V', 340, 230, { font: '700 12px "IBM Plex Mono",monospace' }); text(v.V < 0 ? '(collector −: pushes back)' : '', 340, 246, { font: '500 9px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+    panelTitle('K_max vs f (ALL METALS)', 395, 18);
+    const gx = 410, gy = 150, gw = 175, gh = 115, X = f => gx + gw * (f - 0) / 15, Y = K => gy - gh * K / 5;
+    ctx.strokeStyle = '#111'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(gx, gy - gh); ctx.lineTo(gx, gy + 20); ctx.moveTo(gx, gy); ctx.lineTo(gx + gw, gy); ctx.stroke();
+    Object.entries(METALS).forEach(([k, [n, p]]) => { const on = n === d.nm; ctx.strokeStyle = on ? '#1546d6' : '#ccc'; ctx.lineWidth = on ? 2.2 : 1.2; ctx.beginPath(); const f0 = p / HEV / 1e14; ctx.moveTo(X(f0), Y(0)); ctx.lineTo(X(15), Y(HEV * 15e14 - p)); ctx.stroke(); if (on){ ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(X(0), Y(-p) ); ctx.lineTo(X(f0), Y(0)); ctx.stroke(); ctx.setLineDash([]); } });
+    if (d.yes){ ctx.fillStyle = '#ff6a2b'; ctx.beginPath(); ctx.arc(X(v.f), Y(d.K), 5, 0, 7); ctx.fill(); } else { ctx.fillStyle = '#ff6a2b'; ctx.beginPath(); ctx.arc(X(v.f), Y(0), 5, 0, 7); ctx.fill(); }
+    text('f (×10¹⁴ Hz)', gx + gw, gy + 14, { align: 'right', font: '500 9px "IBM Plex Mono",monospace' }); text('slope = h', gx + 100, gy - 70, { font: '600 10px "IBM Plex Mono",monospace', col: '#1546d6' });
+    panelTitle('CURRENT vs BATTERY VOLTAGE', 395, 200);
+    const hx = 410, hy = 290, hw = 175, hh = 70, XV = V => hx + hw * (V + 4) / 7; ctx.strokeStyle = '#111'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(hx + hw, hy); ctx.moveTo(XV(0), hy); ctx.lineTo(XV(0), hy - hh - 6); ctx.stroke();
+    ctx.strokeStyle = '#1546d6'; ctx.lineWidth = 2; ctx.beginPath(); for (let i = 0; i <= 100; i++){ const V = -4 + 7 * i / 100, fr = !d.yes ? 0 : V >= 0 ? 1 : Math.max(0, 1 + V / d.K), y = hy - hh * fr * v.B / 100; i ? ctx.lineTo(XV(V), y) : ctx.moveTo(XV(V), y); } ctx.stroke();
+    ctx.fillStyle = '#ff6a2b'; ctx.beginPath(); ctx.arc(XV(v.V), hy - hh * d.I, 4, 0, 7); ctx.fill(); text('−V_s', XV(-d.Vs), hy + 12, { align: 'center', font: '500 9px "IBM Plex Mono",monospace' });
+  }
+};
+
+
+S.mode = SIM.modes ? SIM.modes[0].id : 'one';
+setup(); requestAnimationFrame(loop);
+window.APP = { select(name){ const m = (SIM.modes || []).find(m => m.label === name || m.id === name); if (m && m.id !== S.mode){ S.mode = m.id; S.anim = {}; setup(); } } };
+addEventListener('message', e => { const d = e.data; if (d && d.select) try { APP.select(d.select); } catch (er) {} });
+</script>
+</body></html>
