@@ -2,10 +2,13 @@
 const SIM = {
   title: 'Standing Waves',
   hint: 'v = fλ · N = node, A = antinode',
-  modes: [{ id: 'string', label: 'Strings' }, { id: 'pipe', label: 'Pipes' }, { id: 'tube', label: 'Resonance tube lab' }],
+  modes: [{ id: 'string', label: 'Strings' }, { id: 'pipe', label: 'Pipes' }, { id: 'tube', label: 'Resonance tube lab' }, { id: 'micro', label: 'Microwave oven' }],
   opts: [{ id: 'se', label: 'Ends', modes: ['string'], choices: [['ff', 'Fixed–fixed'], ['fr', 'Fixed–free'], ['rr', 'Free–free']] },
     { id: 'pe', label: 'Ends', modes: ['pipe'], choices: [['oo', 'Open–open'], ['co', 'Closed–open'], ['cc', 'Closed–closed']] }],
   ivs(mode){
+    if (mode === 'micro') return [
+      { id: 'fg', sym: 'f', symText: 'f', label: 'Oven frequency (on the label)', unit: 'GHz', min: 2.4, max: 2.5, step: 0.005, val: 2.45 },
+      { id: 'g', sym: 'Δx', symText: 'Δx', label: 'Your measured gap between melted spots', unit: 'cm', min: 4, max: 8, step: 0.1, val: 6.0, graph: true }];
     if (mode === 'tube') return [
       { id: 'f', sym: 'f', symText: 'f', label: 'Tuning fork', unit: 'Hz', min: 256, max: 1024, step: 1, val: 512 },
       { id: 'La', sym: 'L', symText: 'L', label: 'Length of air column (raise or lower the tube)', unit: 'cm', min: 5, max: 100, step: 0.2, val: 20, graph: true },
@@ -17,6 +20,7 @@ const SIM = {
   },
   presets: [{ label: 'Guitar string', mode: 'string', v: { m: 1, L: 0.65, v: 285 } }, { label: 'Next harmonic', mode: 'string', v: { m: 2 } }, { label: 'Clarinet (closed–open)', mode: 'pipe', v: { m: 1, L: 0.6, v: 340 } }, { label: 'First resonance', mode: 'tube', v: { La: 16.7 } }],
   calc(v, mode, opt){
+    if (mode === 'micro'){ const lam = 3e8 / (v.fg * 1e9); return { lam, gapTrue: lam / 2, c: 2 * (v.g / 100) * v.fg * 1e9 }; }
     if (mode === 'tube'){ const lam = v.vs / v.f, L = v.La / 100, ns = [1, 3, 5, 7].map(k => k * lam / 4), near = ns.reduce((a, b) => Math.abs(b - L) < Math.abs(a - L) ? b : a), off = (L - near) / lam;
       const loud = 1 / (1 + Math.pow(off / 0.03, 2)); return { lam, ns, near, loud, k: Math.round(4 * near / lam) }; }
     const ends = mode === 'pipe' ? (opt.pe || 'oo') : (opt.se || 'ff'), asym = ends === 'fr' || ends === 'co';
@@ -26,10 +30,15 @@ const SIM = {
     return { ends, asym, n, lam, f, f1, nodeAt0 };
   },
   dvs(mode){
+    if (mode === 'micro') return [{ id: 'c', name: 'Speed of light from your measurement', short: 'c', sym: 'c', unit: 'm/s', f: d => d.c }];
     if (mode === 'tube') return [{ id: 'loud', name: 'Loudness (resonance)', short: 'loud', sym: 'loudness', unit: '', f: d => d.loud }];
     return [{ id: 'f', name: 'Frequency', short: 'f', sym: 'f', unit: 'Hz', f: d => d.f }, { id: 'lam', name: 'Wavelength', short: 'λ', sym: 'λ', unit: 'm', f: d => d.lam }];
   },
   work(v, d, mode){
+    if (mode === 'micro') return '<h4>1 · A standing wave inside the oven</h4><div class="eq">Microwaves reflect off the metal walls. The waves going each way make a standing wave: hot spots (antinodes) and cold spots (nodes). Take the turntable out so the food stays still.</div>' +
+      '<h4>2 · Hot spots are half a wavelength apart</h4><div class="eq">Each wavelength has two antinodes, so the gap between melted spots is λ/2. Measure it on the ruler: Δx = ' + H.iv('g') + ' → λ = 2Δx = ' + H.n(2 * v.g, 'cm') + '</div>' +
+      '<h4>3 · Speed of light</h4><div class="eq">c = fλ = (' + H.iv('fg') + ')(' + fnum(2 * v.g / 100) + ' m) = <b>' + H.n(d.c, 'm/s') + '</b> (accepted 3.00×10⁸ m/s, ' + fnum(Math.abs(d.c - 3e8) / 3e8 * 100) + '% off)</div>' +
+      '<p class="note">Read the real gap off the ruler under the bar, then set the slider to it. Lab tip: measure across several spots and divide, and use chocolate, cheese or marshmallows on a plate for about 20 s. The turntable is there to move food through the hot spots so it heats evenly.</p>';
     if (mode === 'tube') return '<h4>1 · The set-up</h4><div class="eq">A tube in water: closed at the water surface, open at the top. Closed end = displacement node; open end = antinode. So resonance needs L = λ/4, 3λ/4, 5λ/4, …</div>' +
       '<h4>2 · Where it should be loud</h4><div class="eq">λ = v/f = ' + H.iv('vs') + '/' + H.iv('f') + ' = ' + H.n(d.lam * 100, 'cm') + ' → L = ' + d.ns.slice(0, 3).map(x => fnum(x * 100) + ' cm').join(', ') + ' …</div>' +
       '<h4>3 · The lab trick</h4><div class="eq">Successive loud lengths differ by <b>λ/2 = ' + H.n(d.lam * 50, 'cm') + '</b>. Measure two of them, double the gap to get λ, then v = fλ. No end correction needed!</div>' +
@@ -42,6 +51,20 @@ const SIM = {
       '<p class="note">' + (d.asym ? 'Only odd harmonics exist, so this ' + (mode === 'pipe' ? 'pipe' : 'string') + ' has no 2nd harmonic. ' : '') + 'Points between neighbouring nodes move in phase; points on either side of a node are in antiphase. ' + (mode === 'pipe' ? 'For pipes the pattern shows how far the air moves (displacement).' : 'Tighter string → faster wave → higher pitch.') + '</p>';
   },
   draw(v, d, mode, opt, t){
+    if (mode === 'micro'){
+      panelTitle('CHOCOLATE BAR IN A MICROWAVE (TURNTABLE REMOVED)', 10, 18);
+      const x0 = 30, x1 = 370, pxcm = (x1 - x0) / 30, y0 = 130, k = 2 * PI / (d.lam * 100), off = 1.7;
+      ctx.fillStyle = '#e9e9e9'; ctx.fillRect(14, 40, 372, 200); ctx.strokeStyle = '#111'; ctx.lineWidth = 2; ctx.strokeRect(14, 40, 372, 200);
+      ctx.fillStyle = '#5a3a22'; ctx.fillRect(x0, y0 - 26, x1 - x0, 52);
+      for (let i = 0; i <= 300; i++){ const xc = 30 * i / 300, e = Math.abs(Math.sin(k * xc + off)); if (e > 0.93){ ctx.fillStyle = 'rgba(160,110,70,' + (e - 0.9) * 8 + ')'; ctx.beginPath(); ctx.arc(x0 + xc * pxcm, y0, 16 * (e - 0.9) * 10, 0, 7); ctx.fill(); } }
+      ctx.strokeStyle = '#ff6a2b'; ctx.lineWidth = 2; [1, -1].forEach(sg => { ctx.beginPath(); for (let i = 0; i <= 300; i++){ const xc = 30 * i / 300, y = y0 - 70 - sg * 18 * Math.sin(k * xc + off) * Math.cos(2 * PI * t); i ? ctx.lineTo(x0 + xc * pxcm, y) : ctx.moveTo(x0, y); } ctx.stroke(); });
+      text('wave pattern', x0, 52, { font: '600 10px "IBM Plex Mono",monospace', col: '#ff6a2b' });
+      for (let c = 0; c <= 30; c++){ const x = x0 + c * pxcm, big = c % 5 === 0; ctx.strokeStyle = '#111'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x, 200); ctx.lineTo(x, 200 + (big ? 14 : 7)); ctx.stroke(); if (big) text(String(c), x, 228, { align: 'center', font: '600 10px "IBM Plex Mono",monospace' }); }
+      text('cm', x1 + 6, 228, { font: '600 10px "IBM Plex Mono",monospace' }); text('melted spots = antinodes', 12, 300, { font: '700 12px "Space Grotesk",sans-serif', col: '#5a3a22' });
+      panelTitle('YOUR RESULT', 395, 18);
+      [['gap Δx', v.g + ' cm'], ['λ = 2Δx', fplain(2 * v.g) + ' cm'], ['f', v.fg + ' GHz'], ['c = fλ', fplain(d.c) + ' m/s']].forEach(([a, b], i) => { text(a, 400, 50 + i * 26, { font: '600 12px "Space Grotesk",sans-serif', col: '#4a4a4a' }); text(b, 590, 50 + i * 26, { align: 'right', font: '700 13px "IBM Plex Mono",monospace' }); });
+      return;
+    }
     if (mode === 'tube'){
       panelTitle('RESONANCE TUBE', 10, 18);
       const x = 160, w = 46, top = 60, bot = 300, Lpx = v.La * 2.2, ws = top + Lpx;

@@ -103,6 +103,9 @@ SIMS = {
     'optics':  {'file': 'units/sims/circ-optics.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'phetW':   {'file': 'units/sims/phet-waves.html', 'kind': 'plain', 'ar': '16 / 10', 'credit': 'Wave on a String, Waves Intro, Wave Interference and Sound Waves: ' + PHET},
     'phetO':   {'file': 'units/sims/phet-optics.html', 'kind': 'plain', 'ar': '16 / 10', 'credit': 'Bending Light and Geometric Optics: ' + PHET},
+    'world':   {'file': 'units/sims/circ-world.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Refraction in the World, The Eye &amp; Eyeglasses and Sound &amp; Hearing are original.'},
+    'eye':     {'file': 'units/sims/circ-eye.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'sound':   {'file': 'units/sims/circ-sound.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'lum':     {'file': 'units/sims/circ-lum.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Luminosity &amp; Brightness is original.'},
     'graph':   {'file': 'units/sims/graphmaker.html', 'kind': 'plain', 'ar': '1000 / 880', 'credit': ''},
     'scatter': {'file': 'units/sims/circ-scatter.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
@@ -908,12 +911,17 @@ UNITS.update({
         '<b>Boundary:</b> predict whether the reflected pulse is upright or inverted for each end. Then check.',
         'Send the pulse into a heavier string, then a lighter one. Which pulse is wider? Why?',
         '<b>Beats:</b> a 256 Hz fork and a guitar string give 4 beats per second. What two frequencies could the string have? How can you tell which?']},
-    {'code': '', 'name': 'Standing Waves', 'sim': 'standing', 'tasks': [
+    {'code': '', 'name': 'Standing Waves', 'sim': 'standing', 'select': 'Strings', 'tasks': [
         'Draw the first three harmonics for a string fixed at both ends. Find λ and f for each. Check with the sim.',
         'Switch to a closed–open pipe. Why are there no even harmonics?',
         'A 0.5 m pipe: compare the lowest frequency when it is open–open and closed–open. What is the ratio?',
         '<b>Resonance tube lab:</b> find two lengths that are loud. Use them to find the speed of sound (cover up the v slider).',
         'How does the pitch of a guitar string change when you tighten it? When you press it against a fret?']},
+    {'code': '', 'name': 'Microwave Oven', 'sim': 'standing', 'select': 'Microwave oven', 'tasks': [
+        'Why does a microwave oven heat food unevenly when the turntable is taken out?',
+        'Read the gap between two melted spots off the ruler. Set the slider to your value and find the speed of light.',
+        'Why is the gap between hot spots λ/2 and not λ?',
+        '<b>Lab:</b> try it at home with a chocolate bar or marshmallows (turntable out, about 20 s). How could you measure the gap more precisely?']},
     {'code': '', 'name': 'Doppler Effect', 'sim': 'doppler', 'tasks': [
         'An ambulance approaches, passes and drives away. Describe the pitch you hear at each stage. Use the wavefront diagram to explain.',
         '<span style="color:#7a3fb0">IB HL</span>: find the frequency heard when the source moves at 30 m/s toward you, then away.',
@@ -921,6 +929,17 @@ UNITS.update({
         '<b>Red shift:</b> Hα from a galaxy is at 669 nm. How fast is the galaxy moving, and in which direction?',
         '<b>Radar:</b> a 24 GHz radar gun measures a 4800 Hz shift. How fast is the car? Is it over the 25 m/s limit?'],
      'note': 'AP Physics 2: Doppler is qualitative only. IB: light shifts are SL; the sound formula is HL.'},
+    {'code': '', 'name': 'Sonar & Instruments', 'sim': 'sound', 'select': 'Sonar & echolocation', 'tasks': [
+        'A ship’s sonar echo returns after 4.0 s. How deep is the sea floor?',
+        'Why do bats use ultrasound instead of sounds we can hear? Find λ for a 50 kHz call.',
+        '<b>Instruments:</b> listen to a flute, a clarinet and a guitar playing the same note (click the picture). Use the harmonics to explain why they sound different.',
+        'How long must a flute be to play 262 Hz? A clarinet? Why is the clarinet shorter?',
+        '<b>Guitar:</b> where is the 12th fret, and what happens to the frequency when you press there?']},
+    {'code': '', 'name': 'The Ear', 'sim': 'sound', 'select': 'The ear', 'tasks': [
+        'Treat the ear canal as a pipe closed at the eardrum. Find its resonant frequency for a 2.5 cm canal.',
+        'Use your answer to explain why we hear best around 3000–4000 Hz.',
+        'The eardrum is about 17× bigger in area than the oval window. Why does that increase the pressure?',
+        'Slide the frequency from 20 Hz to 20 000 Hz. Where along the cochlea does each pitch get detected? Why do people lose high pitches first?']},
     {'code': '', 'name': 'PhET Waves', 'sim': 'phetW', 'tasks': [
         '<b>Wave on a String:</b> use Oscillate and No End. Measure λ with the ruler and T with the timer. Check v = fλ.',
         'Switch to Fixed End and adjust the frequency until you get a standing wave. Which frequencies work?',
@@ -954,6 +973,11 @@ UNITS.update({
         'Find the critical angle for glass to air. Then go past it. Where does the light go?',
         'Why does a diamond sparkle more than glass?',
         '<b>Optical fiber:</b> find the largest angle the light can enter and still be trapped. What happens if the cladding index gets closer to the core’s?']},
+    {'code': '', 'name': 'Prisms, Rainbows & Mirages', 'sim': 'world', 'tasks': [
+        '<b>Prism:</b> which colour bends the most? Compare crown and flint glass. Why does a diamond show more colour than glass?',
+        '<b>Rainbow:</b> follow a ray through the drop. Why is red on the outside of the bow? Why must the sun be behind you?',
+        '<b>Mirage:</b> why does a hot road look wet? Why do you only see it far away, looking almost along the road?',
+        '<b>Apparent depth:</b> a fish is 1.0 m deep. How deep does it look straight down? Where should a spear fisher aim?']},
     {'code': '', 'name': 'Lenses', 'sim': 'optics', 'select': 'Lens', 'tasks': [
         'Draw the three principal rays for an object beyond 2f. Then check with the sim. Describe the image.',
         'Move the object from far away toward the lens. Describe how the image changes at 2f, between f and 2f, and inside f.',
@@ -961,6 +985,13 @@ UNITS.update({
         'Why does a diverging lens always give a small, upright, virtual image?',
         'Your eye lens changes shape to focus on near objects. Explain using 1/sₒ + 1/sᵢ = 1/f.'],
      'note': 'AP Physics 2 topic 13.4. Lenses are not in the 2025 IB syllabus.'},
+    {'code': '', 'name': 'The Eye & Eyeglasses', 'sim': 'eye', 'tasks': [
+        'The lens-to-retina distance is fixed. How does the eye focus on near and far things? Find the power needed for 25 cm and for 10 m.',
+        '<b>Nearsighted:</b> a student can’t see past 50 cm. Find the prescription. Converging or diverging?',
+        '<b>Farsighted / aging:</b> a 60-year-old’s near point is 1.5 m. What reading glasses (in diopters) do they need?',
+        'Turn the glasses on. What range can each person now see clearly?',
+        'Look at a real glasses prescription (yours, a parent’s). What do SPH, CYL and AXIS mean?'],
+     'note': 'Application of AP Physics 2 topic 13.4. Diopters are not on the AP exam, but P = 1/f is the thin-lens equation.'},
     {'code': '', 'name': 'Mirrors', 'sim': 'optics', 'select': 'Mirror', 'tasks': [
         'Concave mirror: find where to put the object for a real, inverted, enlarged image.',
         'Why do makeup mirrors use a concave mirror? Where must your face be?',
