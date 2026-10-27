@@ -105,12 +105,13 @@ function bar(){
     if (!(o.id in S.opt)) S.opt[o.id] = o.choices[0][0];
     group(o.label, o.choices, S.opt[o.id], id => { S.opt[o.id] = id; S.anim = {}; setup(); });
   });
-  b.appendChild(tip);
+  if (!SIM.noGraph) b.appendChild(tip);
   if (b.scrollWidth > b.clientWidth + 1) tip.remove();
   if (b.scrollWidth > b.clientWidth + 1) b.querySelectorAll('.seg button').forEach(x => { x.style.fontSize = '13px'; x.style.padding = '6px 8px'; });
 }
 
 function setup(){
+  if (SIM.noGraph){ $('gcard').style.display = 'none'; $('cv').style.gridArea = '2 / 1 / 3 / 2'; $('work').style.gridArea = '2 / 2 / 4 / 3'; $('ctl').style.gridArea = '3 / 1 / 4 / 2'; }
   bar();
   S.ivs = SIM.ivs(S.mode, S.opt); S.def = {}; S.v = {};
   S.ivs.forEach(d => { S.def[d.id] = d; const k = S.mode + ':' + d.id; S.v[d.id] = (k in S.store) ? S.store[k] : d.val; });
@@ -118,7 +119,7 @@ function setup(){
   const c = $('ctl'); c.innerHTML = '';
   S.ivs.forEach(d => {
     const w = document.createElement('div'); w.className = 'iv';
-    w.innerHTML = '<input type="radio" name="gx" value="' + d.id + '" aria-label="Graph against ' + d.label + '" title="Put this on the graph’s x-axis"' + (S.gx === d.id ? ' checked' : '') + '>' +
+    w.innerHTML = '<input type="radio" name="gx"' + (SIM.noGraph ? ' style="display:none"' : '') + ' value="' + d.id + '" aria-label="Graph against ' + d.label + '" title="Put this on the graph’s x-axis"' + (S.gx === d.id ? ' checked' : '') + '>' +
       '<span class="nm">' + d.label + ' <i>' + d.sym + '</i></span><span class="val" id="val-' + d.id + '"></span>' +
       '<input type="range" id="r-' + d.id + '" min="' + d.min + '" max="' + d.max + '" step="' + d.step + '" value="' + S.v[d.id] + '" aria-label="' + d.label + '">';
     c.appendChild(w);
@@ -149,6 +150,7 @@ function update(){
 }
 
 function graph(){
+  if (SIM.noGraph) return;
   const cv = $('gv'), g = cv.getContext('2d'), W = 340, Hh = 150; g.setTransform(2, 0, 0, 2, 0, 0); g.clearRect(0, 0, W, Hh);
   const dvs = SIM.dvs(S.mode, S.opt), dv = dvs.find(d => d.id === S.dv), ref = dv.vs ? dvs.find(d => d.id === dv.vs) : null;
   const x = S.def[S.gx]; $('ivname').innerHTML = '<i>' + x.sym + '</i>' + (x.unit && !x.show ? ' (' + x.unit + ')' : '');
