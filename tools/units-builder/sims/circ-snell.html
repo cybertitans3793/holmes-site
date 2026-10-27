@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Refraction & Total Internal Reflection</title>
+<!-- Refraction & Total Internal Reflection: original Holmes Sims, built from frame.html + snell.js. g = 10 m/s². -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@500;700&display=swap">
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#fff;font-family:"Space Grotesk",system-ui,sans-serif;color:#111}
+#app{position:absolute;left:0;top:0;width:1000px;height:640px;transform-origin:0 0;padding:10px 14px 12px;box-sizing:border-box;
+  display:grid;grid-template-columns:600px 1fr;grid-template-rows:34px 330px 1fr;gap:10px 14px}
+#bar{grid-column:1/-1;display:flex;gap:16px;align-items:center;flex-wrap:nowrap;overflow:hidden}
+.seg{display:flex;align-items:center}
+.seg .lab{font:700 12px "IBM Plex Mono",monospace;margin-right:8px;text-transform:uppercase}
+.seg button{white-space:nowrap;font:700 14px "Space Grotesk",sans-serif;padding:6px 11px;border:2px solid #111;background:#fff;color:#111;cursor:pointer}
+.seg button+button{margin-left:-2px}
+.seg button[aria-pressed="true"]{background:#111;color:#fff}
+.seg button:hover:not([aria-pressed="true"]){background:#ffe2d3}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #ff6a2b;outline-offset:2px;position:relative;z-index:1}
+#cv{border:2px solid #111;background:#fbfbfb;width:600px;height:330px;box-sizing:border-box;display:block}
+#work{border:2px solid #111;padding:8px 12px 10px;overflow:auto;font-size:14px;line-height:1.55;box-sizing:border-box}
+#work .wt{font:700 12px "IBM Plex Mono",monospace;text-transform:uppercase;margin:0 0 4px;display:flex;justify-content:space-between}
+#work .wt .hint{text-transform:none}
+#work h4{margin:9px 0 1px;font-size:13px;font-weight:700;color:#4a4a4a}
+#work h4:first-of-type{margin-top:2px}
+#work .eq{font-variant-numeric:tabular-nums}
+#work .n{font-family:"IBM Plex Mono",monospace;font-size:13px}
+#work b .n,#work .ans{font-weight:700}
+#work .note{font-size:12.5px;color:#4a4a4a;margin:2px 0 0}
+#work .ok{background:#e5f4ea;border-left:4px solid #1e7d45;padding:3px 8px;margin-top:4px}
+#work .bad{background:#fde7df;border-left:4px solid #c43a00;padding:3px 8px;margin-top:4px}
+.ivv{border-radius:2px;padding:0 2px;transition:background .25s}
+.ivv.gx{background:#ffe2d3}
+.ivv.hot{background:#ff6a2b;color:#fff}
+#ctl{display:grid;grid-template-columns:1fr 1fr;gap:4px 18px;align-content:start}
+.iv{display:grid;grid-template-columns:auto 1fr auto;align-items:center;column-gap:6px}
+.iv .nm{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iv .val{font:700 13px "IBM Plex Mono",monospace;white-space:nowrap}
+.iv input[type=range]{grid-column:1/-1;width:100%;margin:0;accent-color:#111;height:22px}
+.iv input[type=radio]{accent-color:#ff6a2b;margin:0}
+#presets{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:2px}
+#presets .lab{font:700 12px "IBM Plex Mono",monospace}
+#presets button{font:600 12.5px "Space Grotesk",sans-serif;padding:3px 8px;border:2px solid #111;background:#fff;cursor:pointer}
+#presets button:hover{background:#ffe2d3}
+#gcard{border:2px solid #111;padding:5px 8px 6px;display:flex;flex-direction:column;box-sizing:border-box;min-height:0}
+.ghead{display:flex;align-items:center;gap:6px;font-size:13px;white-space:nowrap}
+.ghead select{font:600 13px "Space Grotesk",sans-serif;border:2px solid #111;padding:1px 4px;max-width:200px}
+#gv{width:340px;height:150px;flex:none;display:block;margin-top:3px}
+#dbl{font-size:12.5px;line-height:1.35;margin-top:2px}
+#dbl b{font-weight:700}
+.hint{font:500 11px "IBM Plex Mono",monospace;color:#4a4a4a}
+</style></head><body>
+<div id="app">
+  <div id="bar"></div>
+  <canvas id="cv" width="1200" height="660" aria-label="Animation of the situation with force arrows"></canvas>
+  <div id="work" aria-live="polite"></div>
+  <div id="ctl"></div>
+  <div id="gcard">
+    <div class="ghead"><span>Graph</span><select id="dvsel" aria-label="Quantity to graph"></select><span>vs <b id="ivname"></b></span></div>
+    <canvas id="gv" width="680" height="300" aria-label="Graph of the chosen quantity against the chosen variable"></canvas>
+    <div id="dbl"></div>
+  </div>
+</div>
+<script>
+// ---------------- shared frame ----------------
+const $ = id => document.getElementById(id);
+const G10 = 10, PI = Math.PI, DEG = PI / 180;
+function fit(){ const s = Math.min(innerWidth / 1000, innerHeight / 640); $('app').style.transform = 'scale(' + s + ')'; }
+addEventListener('resize', fit); fit();
+
+function fnum(x){ const r = fnum0(x); return typeof r === 'string' ? r.replace(/^-/, '−') : r; }
+function fnum0(x){
+  if (x === null || x === undefined || !isFinite(x)) return '—';
+  const a = Math.abs(x);
+  if (a === 0) return '0';
+  if (a >= 1e5 || a < 1e-3){
+    const e = Math.floor(Math.log10(a)); let m = x / Math.pow(10, e);
+    let ms = m.toFixed(2); if (Math.abs(+ms) >= 10){ m /= 10; ms = m.toFixed(2); return ms + '×10<sup>' + (e + 1) + '</sup>'; }
+    return ms + '×10<sup>' + e + '</sup>';
+  }
+  if (a >= 1000) return String(Math.round(x));
+  return x.toPrecision(3);
+}
+function fplain(x){ return fnum(x).replace(/<sup>(.*?)<\/sup>/g, (m, e) => '^' + e).replace('×10^', 'e'); }
+const H = {
+  n: (x, u) => '<span class="n">' + fnum(x) + (u ? '&nbsp;' + u : '') + '</span>',
+  iv: id => { const d = S.def[id]; const val = S.v[id]; const txt = (d.show ? d.show(val) : fnum(val) + (d.unit ? '&nbsp;' + d.unit : ''));
+              return '<span class="ivv n' + (S.gx === id ? ' gx' : '') + (S.hot === id ? ' hot' : '') + '" data-iv="' + id + '">' + txt + '</span>'; },
+  g: () => '<span class="n">10&nbsp;m/s²</span>',
+  p: (x, u) => x < 0 ? '(' + H.n(x, u) + ')' : H.n(x, u)
+};
+
+const S = { mode: null, opt: {}, v: {}, store: {}, def: {}, ivs: [], gx: null, dv: null, hot: null, t: 0, anim: {} };
+
+function bar(){
+  const b = $('bar'); b.innerHTML = '';
+  const group = (label, items, cur, onpick) => {
+    const g = document.createElement('div'); g.className = 'seg'; g.setAttribute('role', 'group');
+    if (label){ const l = document.createElement('span'); l.className = 'lab'; l.textContent = label; g.appendChild(l); }
+    items.forEach(([id, txt]) => { const bt = document.createElement('button'); bt.textContent = txt; bt.setAttribute('aria-pressed', String(id === cur)); bt.onclick = () => onpick(id); g.appendChild(bt); });
+    b.appendChild(g);
+  };
+  const tip = document.createElement('span'); tip.className = 'hint'; tip.style.marginLeft = 'auto'; tip.style.whiteSpace = 'nowrap'; tip.innerHTML = '● = the variable on the graph’s x-axis · drag any slider';
+  if (SIM.modes) group(null, SIM.modes.map(m => [m.id, m.label]), S.mode, id => { S.mode = id; S.anim = {}; setup(); });
+  (SIM.opts || []).filter(o => !o.modes || o.modes.includes(S.mode)).forEach(o => {
+    if (!(o.id in S.opt)) S.opt[o.id] = o.choices[0][0];
+    group(o.label, o.choices, S.opt[o.id], id => { S.opt[o.id] = id; S.anim = {}; setup(); });
+  });
+  b.appendChild(tip);
+  if (b.scrollWidth > b.clientWidth + 1) tip.remove();
+  if (b.scrollWidth > b.clientWidth + 1) b.querySelectorAll('.seg button').forEach(x => { x.style.fontSize = '13px'; x.style.padding = '6px 8px'; });
+}
+
+function setup(){
+  bar();
+  S.ivs = SIM.ivs(S.mode, S.opt); S.def = {}; S.v = {};
+  S.ivs.forEach(d => { S.def[d.id] = d; const k = S.mode + ':' + d.id; S.v[d.id] = (k in S.store) ? S.store[k] : d.val; });
+  if (!S.gx || !S.def[S.gx]) S.gx = S.ivs.find(d => d.graph) ? S.ivs.find(d => d.graph).id : S.ivs[1] ? S.ivs[1].id : S.ivs[0].id;
+  const c = $('ctl'); c.innerHTML = '';
+  S.ivs.forEach(d => {
+    const w = document.createElement('div'); w.className = 'iv';
+    w.innerHTML = '<input type="radio" name="gx" value="' + d.id + '" aria-label="Graph against ' + d.label + '" title="Put this on the graph’s x-axis"' + (S.gx === d.id ? ' checked' : '') + '>' +
+      '<span class="nm">' + d.label + ' <i>' + d.sym + '</i></span><span class="val" id="val-' + d.id + '"></span>' +
+      '<input type="range" id="r-' + d.id + '" min="' + d.min + '" max="' + d.max + '" step="' + d.step + '" value="' + S.v[d.id] + '" aria-label="' + d.label + '">';
+    c.appendChild(w);
+    const r = w.querySelector('input[type=range]');
+    r.oninput = () => { S.v[d.id] = +r.value; S.store[S.mode + ':' + d.id] = +r.value; S.hot = d.id; clearTimeout(S.hotT); S.hotT = setTimeout(() => { S.hot = null; update(); }, 700); S.anim.reset = true; update(); };
+    w.querySelector('input[type=radio]').onchange = () => { S.gx = d.id; update(); };
+  });
+  if (SIM.presets){
+    const p = document.createElement('div'); p.id = 'presets'; p.innerHTML = '<span class="lab">Try:</span>';
+    SIM.presets.forEach(ps => { const bt = document.createElement('button'); bt.textContent = ps.label; bt.onclick = () => { if (ps.mode && ps.mode !== S.mode){ S.mode = ps.mode; } Object.entries(ps.v).forEach(([k, val]) => S.store[(ps.mode || S.mode) + ':' + k] = val); S.anim = {}; setup(); }; p.appendChild(bt); });
+    c.appendChild(p);
+  }
+  const dvs = SIM.dvs(S.mode, S.opt), sel = $('dvsel');
+  if (!S.dv || !dvs.find(d => d.id === S.dv)) S.dv = dvs[0].id;
+  sel.innerHTML = dvs.map(d => '<option value="' + d.id + '"' + (d.id === S.dv ? ' selected' : '') + '>' + d.name + '</option>').join('');
+  sel.onchange = () => { S.dv = sel.value; update(); };
+  update();
+}
+
+function calcWith(over){ const v = Object.assign({}, S.v, over || {}); return SIM.calc(v, S.mode, S.opt); }
+
+function update(){
+  S.ivs.forEach(d => { $('val-' + d.id).innerHTML = d.show ? d.show(S.v[d.id]) : fnum(S.v[d.id]) + (d.unit ? '&nbsp;' + d.unit : ''); });
+  S.d = calcWith();
+  $('work').innerHTML = '<div class="wt"><span>Show the work</span><span class="hint">' + (SIM.hint || 'g = 10 m/s²') + '</span></div>' + SIM.work(S.v, S.d, S.mode, S.opt);
+  document.querySelectorAll('input[name=gx]').forEach(r => r.checked = (r.value === S.gx));
+  graph();
+}
+
+function graph(){
+  const cv = $('gv'), g = cv.getContext('2d'), W = 340, Hh = 150; g.setTransform(2, 0, 0, 2, 0, 0); g.clearRect(0, 0, W, Hh);
+  const dvs = SIM.dvs(S.mode, S.opt), dv = dvs.find(d => d.id === S.dv), ref = dv.vs ? dvs.find(d => d.id === dv.vs) : null;
+  const x = S.def[S.gx]; $('ivname').innerHTML = '<i>' + x.sym + '</i>' + (x.unit && !x.show ? ' (' + x.unit + ')' : '');
+  const N = 160, xs = [], ys = [], rs = [];
+  for (let i = 0; i <= N; i++){ const xv = x.min + (x.max - x.min) * i / N; const d = calcWith({ [S.gx]: xv }); xs.push(xv); ys.push(dv.f(d)); rs.push(ref ? ref.f(d) : null); }
+  const all = ys.concat(ref ? rs : []).filter(isFinite);
+  let ymin = Math.min(0, ...all), ymax = Math.max(...all, 0); if (ymax === ymin) ymax = ymin + 1; const pad = (ymax - ymin) * 0.08; ymax += pad; if (ymin < 0) ymin -= pad;
+  const L = 46, R = 8, T = 8, B = 22, X = v => L + (v - x.min) / (x.max - x.min) * (W - L - R), Y = v => T + (ymax - v) / (ymax - ymin) * (Hh - T - B);
+  g.strokeStyle = '#111'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(L, T); g.lineTo(L, Hh - B); g.lineTo(W - R, Hh - B); g.stroke();
+  if (ymin < 0){ g.strokeStyle = '#999'; g.setLineDash([3, 3]); g.beginPath(); g.moveTo(L, Y(0)); g.lineTo(W - R, Y(0)); g.stroke(); g.setLineDash([]);
+    if (dv.negNote){ g.fillStyle = 'rgba(196,58,0,0.08)'; g.fillRect(L, Y(0), W - R - L, Hh - B - Y(0)); g.fillStyle = '#c43a00'; g.font = '600 10px "Space Grotesk",sans-serif'; g.textAlign = 'left'; g.fillText(dv.negNote, L + 4, Hh - B - 4); } }
+  g.font = '500 10px "IBM Plex Mono",monospace'; g.fillStyle = '#4a4a4a'; g.textAlign = 'right';
+  g.fillText(fplain(ymax), L - 4, T + 8); g.fillText(fplain(ymin < 0 ? ymin : 0), L - 4, Hh - B); if (ymin < 0) g.fillText('0', L - 4, Y(0) + 3);
+  g.textAlign = 'center'; g.fillText(fplain(x.min), L, Hh - 8); g.fillText(fplain(x.max), W - R - 10, Hh - 8);
+  g.fillText((x.symText || x.id) + (x.unit ? ' (' + x.unit + ')' : ''), (L + W) / 2, Hh - 8);
+  g.save(); g.translate(10, (T + Hh - B) / 2); g.rotate(-PI / 2); g.textAlign = 'center'; g.fillText(dv.short + (dv.unit ? ' (' + dv.unit + ')' : ''), 0, 0); g.restore();
+  const line = (arr, col, dash) => { g.strokeStyle = col; g.lineWidth = 2.2; g.setLineDash(dash || []); g.beginPath(); let on = false; arr.forEach((y, i) => { if (!isFinite(y)){ on = false; return; } const px = X(xs[i]), py = Math.max(T - 4, Math.min(Hh - B + 4, Y(y))); on ? g.lineTo(px, py) : g.moveTo(px, py); on = true; }); g.stroke(); g.setLineDash([]); };
+  if (ref){ line(rs, '#4a4a4a', [5, 4]); g.fillStyle = '#4a4a4a'; g.textAlign = 'right'; g.font = '600 10px "Space Grotesk",sans-serif'; const lastY = rs.filter(isFinite).pop(); if (isFinite(lastY)) g.fillText(ref.short, W - R - 2, Math.max(T + 9, Y(lastY) - 4)); }
+  line(ys, '#1546d6');
+  const cx = S.v[S.gx], cy = dv.f(S.d);
+  if (isFinite(cy)){ g.strokeStyle = '#ff6a2b'; g.setLineDash([2, 3]); g.lineWidth = 1; g.beginPath(); g.moveTo(X(cx), Hh - B); g.lineTo(X(cx), Y(cy)); g.lineTo(L, Y(cy)); g.stroke(); g.setLineDash([]);
+    g.fillStyle = '#ff6a2b'; g.strokeStyle = '#111'; g.lineWidth = 1.5; g.beginPath(); g.arc(X(cx), Math.max(T, Math.min(Hh - B, Y(cy))), 4.5, 0, 7); g.fill(); g.stroke(); }
+  // doubling readout
+  const d2 = calcWith({ [S.gx]: cx * 2 }), y1 = dv.f(S.d), y2 = dv.f(d2);
+  let msg = '';
+  if (cx === 0 || Math.abs(y1) < 1e-12) msg = '<span class="hint">Move off zero to see the ×2 test.</span>';
+  else if (!isFinite(y1) || !isFinite(y2)) msg = '<span class="hint">The ×2 test doesn’t apply here (doubling takes it outside what this quantity covers).</span>';
+  else {
+    const k = y2 / y1;
+    if (k < 0){ $('dbl').innerHTML = 'If <b>' + x.sym + '</b> doubles (' + fnum(cx) + ' → ' + fnum(2 * cx) + (x.unit ? ' ' + x.unit : '') + '), <b>' + dv.sym + '</b> goes from ' + fnum(y1) + ' to ' + fnum(y2) + (dv.unit ? ' ' + dv.unit : '') + (dv.signOK ? ': it changes sign. ' + dv.signOK : ': it changes sign, so that can’t really happen.'); return; }
+    const tags = [[1, 'doesn’t depend on it'], [2, 'proportional'], [4, 'goes as the square'], [0.5, 'inversely proportional'], [0.25, 'inverse square'], [Math.SQRT2, 'goes as the square root'], [Math.SQRT1_2, 'goes as 1/√'], [8, 'goes as the cube'], [2 * Math.SQRT2, 'goes as the 3/2 power']];
+    const tag = tags.find(([v]) => Math.abs(k - v) < 0.004 * v);
+    msg = 'If <b>' + x.sym + '</b> doubles (' + fnum(cx) + ' → ' + fnum(2 * cx) + (x.unit ? ' ' + x.unit : '') + '), <b>' + dv.sym + '</b> becomes <b>×' + (Math.abs(k) >= 100 ? fnum(k) : k.toFixed(2)) + '</b>' + (tag ? ' — ' + tag[1] : '') + '.' + (dv.dblNote ? ' <span class="hint">' + dv.dblNote + '</span>' : '');
+  }
+  $('dbl').innerHTML = msg;
+}
+
+// drawing helpers (canvas is drawn in 600×330 units)
+const cv = $('cv'), ctx = cv.getContext('2d');
+function arrow(x1, y1, x2, y2, col, label, opts){
+  opts = opts || {}; const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy); if (len < 2) return;
+  const ux = dx / len, uy = dy / len, hw = opts.head || 9;
+  ctx.save(); ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = opts.w || 3.5; ctx.lineCap = 'round';
+  if (opts.dash) ctx.setLineDash(opts.dash);
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2 - ux * hw * 0.8, y2 - uy * hw * 0.8); ctx.stroke(); ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x2, y2); ctx.lineTo(x2 - ux * hw - uy * hw * 0.55, y2 - uy * hw + ux * hw * 0.55); ctx.lineTo(x2 - ux * hw + uy * hw * 0.55, y2 - uy * hw - ux * hw * 0.55); ctx.closePath(); ctx.fill();
+  if (label){ ctx.font = '700 13px "Space Grotesk",sans-serif'; ctx.textAlign = opts.align || 'left'; ctx.textBaseline = 'middle';
+    const lx = x2 + (opts.lx !== undefined ? opts.lx : (ux >= 0 ? 6 : -6)), ly = y2 + (opts.ly !== undefined ? opts.ly : (uy >= 0 ? 10 : -10));
+    if (opts.align === undefined) ctx.textAlign = ux >= -0.2 ? 'left' : 'right';
+    ctx.fillText(label, lx, ly); }
+  ctx.restore();
+}
+function text(s, x, y, o){ o = o || {}; ctx.save(); ctx.font = (o.font || '600 13px "Space Grotesk",sans-serif'); ctx.fillStyle = o.col || '#111'; ctx.textAlign = o.align || 'left'; ctx.textBaseline = o.base || 'alphabetic'; ctx.fillText(s, x, y); ctx.restore(); }
+function panelTitle(s, x, y){ text(s, x, y, { font: '700 11px "IBM Plex Mono",monospace', col: '#4a4a4a' }); }
+const COL = { F: '#c43a00', W: '#111', N: '#1e7d45', V: '#1546d6', T: '#7a3fb0', comp: '#8a8a8a' };
+
+let last = 0;
+function loop(ts){ const dt = Math.min(0.05, (ts - (last || ts)) / 1000); last = ts; S.t += dt;
+  ctx.setTransform(2, 0, 0, 2, 0, 0); ctx.clearRect(0, 0, 600, 330);
+  SIM.draw(S.v, S.d, S.mode, S.opt, S.t, dt, S.anim); S.anim.reset = false;
+  requestAnimationFrame(loop); }
+
+// ---------------- this sim ----------------
+// Refraction & Total Internal Reflection (AP 13.1, 13.3; IB C.3): Snell's law with rays and wavefronts, the critical angle, and light guided down an optical fiber.
+const SIM = {
+  title: 'Refraction & Total Internal Reflection',
+  hint: 'n₁ sin θ₁ = n₂ sin θ₂ · n = c/v',
+  modes: [{ id: 'refr', label: 'Snell’s law' }, { id: 'fiber', label: 'Optical fiber' }],
+  ivs(mode){
+    if (mode === 'fiber') return [
+      { id: 'th', sym: 'θ', symText: 'θ', label: 'Angle the light enters the end of the fiber', unit: '°', min: 0, max: 80, step: 0.5, val: 30, graph: true },
+      { id: 'nc', sym: 'n<sub>core</sub>', symText: 'ncore', label: 'Core index', unit: '', min: 1.3, max: 1.8, step: 0.01, val: 1.5, show: x => x.toFixed(2) },
+      { id: 'ncl', sym: 'n<sub>clad</sub>', symText: 'nclad', label: 'Cladding index', unit: '', min: 1, max: 1.7, step: 0.01, val: 1.4, show: x => x.toFixed(2) }];
+    return [
+      { id: 'th1', sym: 'θ<sub>1</sub>', symText: 'θ1', label: 'Angle of incidence (from the normal)', unit: '°', min: 0, max: 89, step: 0.5, val: 40, graph: true },
+      { id: 'n1', sym: 'n<sub>1</sub>', symText: 'n1', label: 'Index of medium 1 (top)', unit: '', min: 1, max: 2.5, step: 0.01, val: 1, show: x => x.toFixed(2) },
+      { id: 'n2', sym: 'n<sub>2</sub>', symText: 'n2', label: 'Index of medium 2 (bottom)', unit: '', min: 1, max: 2.5, step: 0.01, val: 1.33, show: x => x.toFixed(2) },
+      { id: 'lam', sym: 'λ<sub>1</sub>', symText: 'λ1', label: 'Wavelength in medium 1', unit: 'nm', min: 400, max: 700, step: 5, val: 600 }];
+  },
+  presets: [{ label: 'Air → water', mode: 'refr', v: { n1: 1, n2: 1.33, th1: 40 } }, { label: 'Glass → air, past critical', mode: 'refr', v: { n1: 1.5, n2: 1, th1: 50 } }, { label: 'Diamond → air', mode: 'refr', v: { n1: 2.42, n2: 1, th1: 30 } }, { label: 'Light leaks out', mode: 'fiber', v: { th: 70, ncl: 1.45 } }],
+  calc(v, mode){
+    if (mode === 'fiber'){ const tr = Math.asin(Math.sin(v.th * DEG) / v.nc) / DEG, wall = 90 - tr, crit = v.ncl < v.nc ? Math.asin(v.ncl / v.nc) / DEG : 90, tir = wall > crit;
+      const NA = Math.sqrt(Math.max(0, v.nc * v.nc - v.ncl * v.ncl)), acc = NA >= 1 ? 90 : Math.asin(NA) / DEG; return { tr, wall, crit, tir, acc }; }
+    const s2 = v.n1 * Math.sin(v.th1 * DEG) / v.n2, tir = s2 > 1, th2 = tir ? NaN : Math.asin(s2) / DEG, crit = v.n1 > v.n2 ? Math.asin(v.n2 / v.n1) / DEG : NaN;
+    return { s2, tir, th2, crit, v1: 3e8 / v.n1, v2: 3e8 / v.n2, lam2: v.lam * v.n1 / v.n2 };
+  },
+  dvs(mode){
+    if (mode === 'fiber') return [{ id: 'wall', name: 'Angle at the core–cladding wall', short: 'θ_wall', sym: 'θ<sub>wall</sub>', unit: '°', f: d => d.wall, vs: 'crit' }, { id: 'crit', name: 'Critical angle', short: 'θ_c', sym: 'θ<sub>c</sub>', unit: '°', f: d => d.crit }];
+    return [{ id: 'th2', name: 'Angle of refraction', short: 'θ₂', sym: 'θ<sub>2</sub>', unit: '°', f: d => d.th2 }, { id: 'lam2', name: 'Wavelength in medium 2', short: 'λ₂', sym: 'λ<sub>2</sub>', unit: 'nm', f: d => d.lam2 }];
+  },
+  work(v, d, mode){
+    if (mode === 'fiber') return '<h4>1 · Refraction into the end of the fiber</h4><div class="eq">(1.00) sin ' + H.iv('th') + ' = (' + fnum(v.nc) + ') sin θ<sub>r</sub> → θ<sub>r</sub> = <b>' + H.n(d.tr, '°') + '</b></div>' +
+      '<h4>2 · Angle at the wall</h4><div class="eq">The wall is parallel to the axis, so the ray hits it at 90° − θ<sub>r</sub> = <b>' + H.n(d.wall, '°') + '</b> from the normal.</div>' +
+      '<h4>3 · Critical angle at the wall</h4><div class="eq">' + (v.ncl < v.nc ? 'sin θ<sub>c</sub> = n<sub>clad</sub>/n<sub>core</sub> = ' + fnum(v.ncl) + '/' + fnum(v.nc) + ' → θ<sub>c</sub> = <b>' + H.n(d.crit, '°') + '</b>' : 'n<sub>clad</sub> ≥ n<sub>core</sub>: no total internal reflection possible.') + '</div>' +
+      (d.tir ? '<div class="eq">' + fnum(d.wall) + '° > ' + fnum(d.crit) + '° → <b>total internal reflection</b>: the light stays in the core.</div>' : '<div class="bad">' + fnum(d.wall) + '° < θ<sub>c</sub>: some light refracts into the cladding and leaks away every bounce.</div>') +
+      '<p class="note">Light entering at up to ' + fnum(d.acc) + '° is trapped. Uses: internet cables, endoscopes for seeing inside the body. Why have a cladding at all? It protects the core surface and keeps scratches and other fibers from letting light out.</p>';
+    let s = '<h4>1 · Snell’s law</h4><div class="eq">n₁ sin θ₁ = n₂ sin θ₂ → sin θ₂ = (' + fnum(v.n1) + ')(sin ' + H.iv('th1') + ')/' + fnum(v.n2) + ' = <b>' + fnum(d.s2) + '</b></div>';
+    if (d.tir) s += '<div class="bad">sin θ₂ can’t be more than 1: no refracted ray. <b>Total internal reflection</b> — all the light reflects (θ₁ = ' + fnum(v.th1) + '° > θ<sub>c</sub> = ' + fnum(d.crit) + '°).</div>';
+    else s += '<div class="eq">θ₂ = <b>' + H.n(d.th2, '°') + '</b> — bends ' + (v.n2 > v.n1 ? '<b>toward</b> the normal (into a slower medium).' : v.n2 < v.n1 ? '<b>away from</b> the normal (into a faster medium).' : 'not at all.') + '</div>';
+    s += '<h4>2 · Critical angle</h4><div class="eq">' + (v.n1 > v.n2 ? 'sin θ<sub>c</sub> = n₂/n₁ → θ<sub>c</sub> = <b>' + H.n(d.crit, '°') + '</b>' : 'Only possible going from higher n to lower n. Here n₁ ≤ n₂, so no critical angle.') + '</div>' +
+      '<h4>3 · Speed and wavelength change; frequency doesn’t</h4><div class="eq">v₂ = c/n₂ = ' + H.n(d.v2, 'm/s') + '; λ₂ = λ₁n₁/n₂ = <b>' + H.n(d.lam2, 'nm') + '</b></div>' +
+      '<p class="note">The wavefronts (thin lines) slow down on entering the bottom medium, so they get closer together and the ray turns. Some light always reflects at the surface too.</p>';
+    return s;
+  },
+  draw(v, d, mode){
+    if (mode === 'fiber'){
+      panelTitle('LIGHT IN AN OPTICAL FIBER', 10, 18);
+      const x0 = 70, x1 = 385, yc = 160, hc = 20, hcl = 40;
+      ctx.fillStyle = 'rgba(120,120,140,0.18)'; ctx.fillRect(x0, yc - hcl, x1 - x0, 2 * hcl); ctx.fillStyle = 'rgba(21,120,214,0.15)'; ctx.fillRect(x0, yc - hc, x1 - x0, 2 * hc);
+      ctx.strokeStyle = '#111'; ctx.lineWidth = 1.5; ctx.strokeRect(x0, yc - hcl, x1 - x0, 2 * hcl); ctx.beginPath(); ctx.moveTo(x0, yc - hc); ctx.lineTo(x1, yc - hc); ctx.moveTo(x0, yc + hc); ctx.lineTo(x1, yc + hc); ctx.stroke();
+      text('cladding', x1 - 4, yc - hcl - 6, { align: 'right', font: '600 10px "IBM Plex Mono",monospace', col: '#4a4a4a' }); text('core', x1 - 4, yc + 4, { align: 'right', font: '600 10px "IBM Plex Mono",monospace', col: '#1546d6' });
+      const a = v.th * DEG, L = 60; ctx.strokeStyle = '#c43a00'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(x0 - L * Math.cos(a), yc + L * Math.sin(a)); ctx.lineTo(x0, yc); ctx.stroke();
+      ctx.setLineDash([4, 4]); ctx.strokeStyle = '#8a8a8a'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x0 - 50, yc); ctx.lineTo(x0, yc); ctx.stroke(); ctx.setLineDash([]);
+      let x = x0, y = yc, dir = -1, tr = d.tr * DEG, I = 1; const slope = Math.tan(tr);
+      for (let b = 0; b < 30 && x < x1; b++){ const yt = dir < 0 ? yc - hc : yc + hc, dx = Math.abs(yt - y) / Math.max(slope, 1e-6), xn = Math.min(x1, x + dx), yn = y + (xn - x) * slope * dir;
+        ctx.strokeStyle = 'rgba(196,58,0,' + I + ')'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(xn, yn); ctx.stroke(); if (xn >= x1) break;
+        if (!d.tir){ const sOut = v.nc * Math.cos(tr) / v.ncl; if (sOut < 1){ const ao = Math.asin(sOut); ctx.strokeStyle = 'rgba(196,58,0,' + I * 0.7 + ')'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(xn, yn); ctx.lineTo(xn + 24 * Math.sin(ao), yn + dir * 24 * Math.cos(ao)); ctx.stroke(); } I *= 0.55; }
+        x = xn; y = yn; dir = -dir; if (I < 0.05) break; }
+      text(d.tir ? 'trapped by total internal reflection' : 'leaking at every bounce', 12, 300, { font: '700 13px "Space Grotesk",sans-serif', col: d.tir ? '#1e7d45' : '#c43a00' });
+      panelTitle('AT THE WALL', 395, 18);
+      [['angle in core θr', fplain(d.tr) + '°'], ['angle at wall', fplain(d.wall) + '°'], ['critical angle', v.ncl < v.nc ? fplain(d.crit) + '°' : 'none'], ['accepts up to', fplain(d.acc) + '°']].forEach(([a2, b], i) => { text(a2, 400, 50 + i * 30, { font: '600 12px "Space Grotesk",sans-serif', col: '#4a4a4a' }); text(b, 590, 50 + i * 30, { align: 'right', font: '700 13px "IBM Plex Mono",monospace' }); });
+      return;
+    }
+    panelTitle('RAY AND WAVEFRONTS AT A BOUNDARY', 10, 18);
+    const cx = 200, cy = 160, R = 140, a1 = v.th1 * DEG, sh = n => 'rgba(21,120,214,' + Math.min(0.5, (n - 1) * 0.3) + ')';
+    ctx.fillStyle = sh(v.n1); ctx.fillRect(20, 26, 365, cy - 26); ctx.fillStyle = sh(v.n2); ctx.fillRect(20, cy, 365, 300 - cy);
+    ctx.strokeStyle = '#111'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(20, cy); ctx.lineTo(385, cy); ctx.stroke();
+    ctx.setLineDash([5, 4]); ctx.strokeStyle = '#4a4a4a'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(cx, 30); ctx.lineTo(cx, 296); ctx.stroke(); ctx.setLineDash([]);
+    text('n₁ = ' + v.n1.toFixed(2), 26, 44, { font: '700 12px "IBM Plex Mono",monospace' }); text('n₂ = ' + v.n2.toFixed(2), 26, 290, { font: '700 12px "IBM Plex Mono",monospace' });
+    const ix = cx - R * Math.sin(a1), iy = cy - R * Math.cos(a1); ctx.save(); ctx.beginPath(); ctx.rect(20, 26, 365, 274); ctx.clip();
+    // wavefronts: lines perpendicular to the ray, spacing ∝ λ
+    const sp1 = 22 * v.lam / 600, ux = Math.sin(a1), uy = Math.cos(a1);
+    ctx.strokeStyle = 'rgba(17,17,17,0.35)'; ctx.lineWidth = 1;
+    for (let s = sp1; s < R; s += sp1){ const px = cx - ux * s, py = cy - uy * s; if (py > cy) continue; ctx.beginPath(); ctx.moveTo(px - uy * 26, py + ux * 26); ctx.lineTo(px + uy * 26, py - ux * 26); ctx.stroke(); }
+    if (!d.tir){ const a2 = d.th2 * DEG, vx = Math.sin(a2), vy = Math.cos(a2), sp2 = sp1 * v.n1 / v.n2; for (let s = sp2; s < R; s += sp2){ const px = cx + vx * s, py = cy + vy * s; ctx.beginPath(); ctx.moveTo(px - vy * 26, py + vx * 26); ctx.lineTo(px + vy * 26, py - vx * 26); ctx.stroke(); } }
+    ctx.restore();
+    arrow(ix, iy, cx, cy, '#c43a00', null, { w: 3 });
+    const refl = d.tir ? 1 : 0.35; arrow(cx, cy, cx + R * Math.sin(a1), cy - R * Math.cos(a1), 'rgba(196,58,0,' + refl + ')', null, { w: d.tir ? 3 : 2 });
+    if (!d.tir){ const a2 = d.th2 * DEG; arrow(cx, cy, cx + R * Math.sin(a2), cy + R * Math.cos(a2), '#c43a00', null, { w: 3 }); text('θ₂ = ' + fplain(d.th2) + '°', cx + 12, cy + 40, { font: '700 12px "Space Grotesk",sans-serif' }); }
+    text('θ₁ = ' + v.th1 + '°', cx - 12, cy - 40, { align: 'right', font: '700 12px "Space Grotesk",sans-serif' });
+    if (d.tir) text('TOTAL INTERNAL REFLECTION', cx, cy + 50, { align: 'center', font: '700 14px "Space Grotesk",sans-serif', col: '#c43a00' });
+    panelTitle('NUMBERS', 395, 18);
+    [['θ₂', d.tir ? 'none (TIR)' : fplain(d.th2) + '°'], ['critical angle', isFinite(d.crit) ? fplain(d.crit) + '°' : 'none'], ['v₁', fplain(d.v1) + ' m/s'], ['v₂', fplain(d.v2) + ' m/s'], ['λ₁', v.lam + ' nm'], ['λ₂', fplain(d.lam2) + ' nm']].forEach(([a, b], i) => { text(a, 400, 50 + i * 26, { font: '600 12px "Space Grotesk",sans-serif', col: '#4a4a4a' }); text(b, 590, 50 + i * 26, { align: 'right', font: '700 13px "IBM Plex Mono",monospace' }); });
+    panelTitle('COMMON INDICES', 395, 220); text('air 1.00 · water 1.33', 400, 238, { font: '500 10px "IBM Plex Mono",monospace', col: '#4a4a4a' }); text('glass 1.5 · diamond 2.42', 400, 252, { font: '500 10px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+  }
+};
+
+
+S.mode = SIM.modes ? SIM.modes[0].id : 'one';
+setup(); requestAnimationFrame(loop);
+window.APP = { select(name){ const m = (SIM.modes || []).find(m => m.label === name || m.id === name); if (m && m.id !== S.mode){ S.mode = m.id; S.anim = {}; setup(); } } };
+addEventListener('message', e => { const d = e.data; if (d && d.select) try { APP.select(d.select); } catch (er) {} });
+</script>
+</body></html>

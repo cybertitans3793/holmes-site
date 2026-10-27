@@ -95,7 +95,7 @@ const SIMS = {
   const tabsEl = $('tabs'), frame = $('frame');
   let cur = -1, ifr = null, ifrSim = null;
   const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-  if (REVIEW_URL && /^P1-/.test(UNIT.id)) {
+  if (REVIEW_URL && /^P[12]-/.test(UNIT.id)) {
     const u = REVIEW_URL + (REVIEW_URL.includes('?') ? '&' : '?') + 'unit=' + encodeURIComponent(UNIT.id);
     const rev = $('review'); rev.hidden = false; $('ropen').href = u;
     let loaded = false; const load = () => { if (loaded) return; loaded = true; $('rframe').innerHTML = '<iframe title="Practice questions" src="' + u + '"></iframe>'; };

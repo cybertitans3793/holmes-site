@@ -19,6 +19,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 #cv{border:2px solid #111;background:#fbfbfb;width:600px;height:330px;box-sizing:border-box;display:block}
 #work{border:2px solid #111;padding:8px 12px 10px;overflow:auto;font-size:14px;line-height:1.55;box-sizing:border-box}
 #work .wt{font:700 12px "IBM Plex Mono",monospace;text-transform:uppercase;margin:0 0 4px;display:flex;justify-content:space-between}
+#work .wt .hint{text-transform:none}
 #work h4{margin:9px 0 1px;font-size:13px;font-weight:700;color:#4a4a4a}
 #work h4:first-of-type{margin-top:2px}
 #work .eq{font-variant-numeric:tabular-nums}
@@ -177,7 +178,7 @@ function graph(){
   else if (!isFinite(y1) || !isFinite(y2)) msg = '<span class="hint">The ×2 test doesn’t apply here (doubling takes it outside what this quantity covers).</span>';
   else {
     const k = y2 / y1;
-    if (k < 0){ $('dbl').innerHTML = 'If <b>' + x.sym + '</b> doubles (' + fnum(cx) + ' → ' + fnum(2 * cx) + (x.unit ? ' ' + x.unit : '') + '), <b>' + dv.sym + '</b> goes from ' + fnum(y1) + ' to ' + fnum(y2) + (dv.unit ? ' ' + dv.unit : '') + ': it changes sign, so that can’t really happen.'; return; }
+    if (k < 0){ $('dbl').innerHTML = 'If <b>' + x.sym + '</b> doubles (' + fnum(cx) + ' → ' + fnum(2 * cx) + (x.unit ? ' ' + x.unit : '') + '), <b>' + dv.sym + '</b> goes from ' + fnum(y1) + ' to ' + fnum(y2) + (dv.unit ? ' ' + dv.unit : '') + (dv.signOK ? ': it changes sign. ' + dv.signOK : ': it changes sign, so that can’t really happen.'); return; }
     const tags = [[1, 'doesn’t depend on it'], [2, 'proportional'], [4, 'goes as the square'], [0.5, 'inversely proportional'], [0.25, 'inverse square'], [Math.SQRT2, 'goes as the square root'], [Math.SQRT1_2, 'goes as 1/√'], [8, 'goes as the cube'], [2 * Math.SQRT2, 'goes as the 3/2 power']];
     const tag = tags.find(([v]) => Math.abs(k - v) < 0.004 * v);
     msg = 'If <b>' + x.sym + '</b> doubles (' + fnum(cx) + ' → ' + fnum(2 * cx) + (x.unit ? ' ' + x.unit : '') + '), <b>' + dv.sym + '</b> becomes <b>×' + (Math.abs(k) >= 100 ? fnum(k) : k.toFixed(2)) + '</b>' + (tag ? ' — ' + tag[1] : '') + '.' + (dv.dblNote ? ' <span class="hint">' + dv.dblNote + '</span>' : '');
@@ -288,5 +289,7 @@ const SIM = {
 
 S.mode = SIM.modes ? SIM.modes[0].id : 'one';
 setup(); requestAnimationFrame(loop);
+window.APP = { select(name){ const m = (SIM.modes || []).find(m => m.label === name || m.id === name); if (m && m.id !== S.mode){ S.mode = m.id; S.anim = {}; setup(); } } };
+addEventListener('message', e => { const d = e.data; if (d && d.select) try { APP.select(d.select); } catch (er) {} });
 </script>
 </body></html>
