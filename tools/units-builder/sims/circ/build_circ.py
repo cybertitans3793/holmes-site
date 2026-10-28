@@ -16,6 +16,7 @@ VAR_JS = """
 (function (V) {
   if (V.title) SIM.title = V.title;
   if (V.hint) SIM.hint = V.hint;
+  if (V.flag) window[V.flag] = true;
   if (V.modes && SIM.modes) SIM.modes = V.modes.map(id => SIM.modes.find(m => m.id === id)).filter(Boolean);
   if (V.opts && SIM.opts) SIM.opts = SIM.opts.map(o => V.opts[o.id] ? Object.assign({}, o, { choices: o.choices.filter(c => V.opts[o.id].includes(c[0])) }) : o).filter(o => o.choices.length);
   if (SIM.opts && V.oneChoiceHidden !== false) SIM.opts = SIM.opts.filter(o => o.choices.length > 1);
@@ -31,7 +32,7 @@ VARIANTS = {
   'ab-elevator': ('elevator', {'modes': ['up', 'down']}),
   'ab-blocks': ('blocks', {'modes': ['push']}),
   'ab-curve': ('curve', {'modes': ['flat']}),
-  'ab-track': ('track', {'modes': ['valley', 'hump', 'loop']}),
+  'ab-track': ('track', {'modes': ['valley', 'hump', 'loop', 'rough'], 'opts': {'sys': ['earth']}, 'flag': 'ABP', 'hint': 'KEi + PEi + W = KEf + PEf · g = 10 m/s²'}),
   'ab-coulomb': ('coulomb', {'modes': ['two']}),
   'ab-efield': ('efield', {'modes': ['one', 'two']}),
   'ab-ohm': ('ohm', {'modes': ['wire', 'iv'], 'opts': {'dev': ['res', 'lamp']}}),

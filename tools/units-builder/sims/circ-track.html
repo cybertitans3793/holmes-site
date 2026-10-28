@@ -105,12 +105,13 @@ function bar(){
     if (!(o.id in S.opt)) S.opt[o.id] = o.choices[0][0];
     group(o.label, o.choices, S.opt[o.id], id => { S.opt[o.id] = id; S.anim = {}; setup(); });
   });
-  b.appendChild(tip);
+  if (!SIM.noGraph) b.appendChild(tip);
   if (b.scrollWidth > b.clientWidth + 1) tip.remove();
   if (b.scrollWidth > b.clientWidth + 1) b.querySelectorAll('.seg button').forEach(x => { x.style.fontSize = '13px'; x.style.padding = '6px 8px'; });
 }
 
 function setup(){
+  if (SIM.noGraph){ $('gcard').style.display = 'none'; $('cv').style.gridArea = '2 / 1 / 3 / 2'; $('work').style.gridArea = '2 / 2 / 4 / 3'; $('ctl').style.gridArea = '3 / 1 / 4 / 2'; }
   bar();
   S.ivs = SIM.ivs(S.mode, S.opt); S.def = {}; S.v = {};
   S.ivs.forEach(d => { S.def[d.id] = d; const k = S.mode + ':' + d.id; S.v[d.id] = (k in S.store) ? S.store[k] : d.val; });
@@ -118,7 +119,7 @@ function setup(){
   const c = $('ctl'); c.innerHTML = '';
   S.ivs.forEach(d => {
     const w = document.createElement('div'); w.className = 'iv';
-    w.innerHTML = '<input type="radio" name="gx" value="' + d.id + '" aria-label="Graph against ' + d.label + '" title="Put this on the graph’s x-axis"' + (S.gx === d.id ? ' checked' : '') + '>' +
+    w.innerHTML = '<input type="radio" name="gx"' + (SIM.noGraph ? ' style="display:none"' : '') + ' value="' + d.id + '" aria-label="Graph against ' + d.label + '" title="Put this on the graph’s x-axis"' + (S.gx === d.id ? ' checked' : '') + '>' +
       '<span class="nm">' + d.label + ' <i>' + d.sym + '</i></span><span class="val" id="val-' + d.id + '"></span>' +
       '<input type="range" id="r-' + d.id + '" min="' + d.min + '" max="' + d.max + '" step="' + d.step + '" value="' + S.v[d.id] + '" aria-label="' + d.label + '">';
     c.appendChild(w);
@@ -128,7 +129,7 @@ function setup(){
   });
   if (SIM.presets){
     const p = document.createElement('div'); p.id = 'presets'; p.innerHTML = '<span class="lab">Try:</span>';
-    SIM.presets.forEach(ps => { const bt = document.createElement('button'); bt.textContent = ps.label; bt.onclick = () => { if (ps.mode && ps.mode !== S.mode){ S.mode = ps.mode; } Object.entries(ps.v).forEach(([k, val]) => S.store[(ps.mode || S.mode) + ':' + k] = val); S.anim = {}; setup(); }; p.appendChild(bt); });
+    SIM.presets.forEach(ps => { const bt = document.createElement('button'); bt.textContent = ps.label; bt.onclick = () => { if (ps.mode && ps.mode !== S.mode){ S.mode = ps.mode; } if (ps.opt) Object.assign(S.opt, ps.opt); Object.entries(ps.v).forEach(([k, val]) => S.store[(ps.mode || S.mode) + ':' + k] = val); S.anim = {}; setup(); }; p.appendChild(bt); });
     c.appendChild(p);
   }
   const dvs = SIM.dvs(S.mode, S.opt), sel = $('dvsel');
@@ -149,6 +150,7 @@ function update(){
 }
 
 function graph(){
+  if (SIM.noGraph) return;
   const cv = $('gv'), g = cv.getContext('2d'), W = 340, Hh = 150; g.setTransform(2, 0, 0, 2, 0, 0); g.clearRect(0, 0, W, Hh);
   const dvs = SIM.dvs(S.mode, S.opt), dv = dvs.find(d => d.id === S.dv), ref = dv.vs ? dvs.find(d => d.id === dv.vs) : null;
   const x = S.def[S.gx]; $('ivname').innerHTML = '<i>' + x.sym + '</i>' + (x.unit && !x.show ? ' (' + x.unit + ')' : '');
@@ -288,6 +290,19 @@ const SIM = {
     return l;
   },
   work(v, d, mode, opt){
+    if (window.ABP){ const W = d.Eth > 0 ? -d.Eth : 0, dR = roughBefore(d.tr, d.sB);
+      let h = '<h4>1 · Start (point A)</h4><div class="eq">KE<sub>i</sub> = ½mv² = ½(' + H.iv('m') + ')(' + H.iv('v0') + ')² = ' + H.n(d.KA, 'J') + '<br>PE<sub>i</sub> = mgh = (' + H.iv('m') + ')(10)(' + H.iv('h0') + ') = ' + H.n(d.UgA, 'J') + '<br>TME = <b>' + H.n(d.E0, 'J') + '</b></div>' +
+        '<h4>2 · Point B</h4><div class="eq">h = ' + H.n(d.hB, 'm') + ' → PE<sub>f</sub> = mgh = <b>' + H.n(d.UgB, 'J') + '</b></div>';
+      let n = 3;
+      if (mode === 'rough') h += '<h4>' + (n++) + ' · Work done by friction</h4><div class="eq">' + (dR > 0 ? 'Friction force F<sub>f</sub> = μF<sub>N</sub> = μmg = (' + H.iv('mu') + ')(' + H.iv('m') + ')(10) = ' + H.n(v.mu * v.m * 10, 'N') + '<br>Rough ground crossed before B: d = ' + H.n(dR, 'm') + '<br>W = −F<sub>f</sub> × d = <b>' + H.n(W, 'J') + '</b> (negative: friction takes energy out)' : 'The cart hasn’t reached the rough patch yet: W = 0 J so far.') + '</div>';
+      h += '<h4>' + (n++) + ' · KE<sub>i</sub> + PE<sub>i</sub> + W = KE<sub>f</sub> + PE<sub>f</sub></h4><div class="eq">' + H.n(d.KA) + ' + ' + H.n(d.UgA) + (mode === 'rough' ? ' + (' + H.n(W) + ')' : ' + 0') + ' = KE<sub>f</sub> + ' + H.n(d.UgB) + '<br>KE<sub>f</sub> = <b>' + H.n(d.KB, 'J') + '</b></div>';
+      if (!d.reach) h += '<div class="bad">' + (d.why === 'fall' ? 'The cart falls off the loop before it gets to B.' : 'KE would be negative: the cart runs out of energy and turns back before B.') + '</div>';
+      else h += '<h4>' + (n++) + ' · Speed at B</h4><div class="eq">KE = ½mv² → v = √(2KE/m) = √(2 × ' + H.n(d.KB) + ' / ' + H.iv('m') + ') = <b>' + H.n(d.vB, 'm/s') + '</b></div>';
+      if (mode === 'rough') h += '<h4>' + (n++) + ' · TME</h4><div class="eq">TME at B = ' + H.n(d.E0) + ' − ' + H.n(-W) + ' = <b>' + H.n(d.E0 + W, 'J') + '</b>. Friction lowers the total mechanical energy; the lost energy heats the cart and ground.</div>' +
+        '<div class="eq">Height it climbs on the far ramp: ' + (d.hf > 0 ? '<b>' + H.n(d.hf, 'm') + '</b> (lower than the start)' : 'none — it stops on the rough patch.') + '</div>';
+      if (mode === 'loop') h += '<h4>' + (n++) + ' · Making the loop</h4><div class="eq">It has to be going fast enough at the top. Starting from rest, the start must be at least <b>2.5 × the loop radius</b> = ' + H.n(2.5 * v.R, 'm') + ' high.</div>';
+      return h + (mode === 'rough' ? '' : '<p class="note">No friction: W = 0, so TME stays the same everywhere. PE turns into KE and back. The mass cancels: every cart has the same speed at B.</p>');
+    }
     const cart = opt.sys === 'cart';
     let h = '<h4>1 · Start (point A)</h4><div class="eq">' + (cart ? 'K<sub>A</sub> = ½mv<sub>A</sub>² = ½(' + H.iv('m') + ')(' + H.iv('v0') + ')² = <b>' + H.n(d.KA, 'J') + '</b>'
         : 'E<sub>A</sub> = mgh<sub>A</sub> + ½mv<sub>A</sub>² = (' + H.iv('m') + ')(' + H.g() + ')(' + H.iv('h0') + ') + ½(' + H.iv('m') + ')(' + H.iv('v0') + ')² = <b>' + H.n(d.E0, 'J') + '</b>') + '</div>' +
@@ -367,14 +382,17 @@ const SIM = {
     panelTitle(cart ? 'WORK DONE ON CART SO FAR' : 'ENERGY RIGHT NOW', 438, 18);
     const bars = cart
       ? [['K', K, '#1546d6'], ['W_g', qn ? m * G10 * (v.h0 - qn.y) : 0, '#111'], ['W_f', -Eth, '#c43a00'], ['W_s', -Us, '#7a3fb0']]
+      : window.ABP ? [['KE', K, '#1546d6'], ['PE', Ug, '#111'], ['TME', K + Ug, '#9a9a9a'], ['heat', Eth, '#c43a00']]
       : [['K', K, '#1546d6'], ['U_g', Ug, '#111'], ['U_s', Us, '#7a3fb0'], ['E_th', Eth, '#c43a00'], ['Total', K + Ug + Us + Eth, '#9a9a9a']];
     const base = cart ? 190 : 270, top = 40, Emax = Math.max(d.E0, 1) * 1.05, hgt = cart ? 150 : 230, bw = cart ? 30 : 24, gap = cart ? 8 : 5;
     ctx.strokeStyle = '#111'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(440, base); ctx.lineTo(595, base); ctx.stroke();
     bars.forEach(([lab, val, col], i) => { const x0 = 446 + i * (bw + gap), hh = hgt * val / Emax; ctx.fillStyle = col; ctx.fillRect(x0, hh >= 0 ? base - hh : base, bw, Math.abs(hh)); ctx.strokeStyle = '#111'; ctx.lineWidth = 1; ctx.strokeRect(x0, hh >= 0 ? base - hh : base, bw, Math.abs(hh));
       text(lab, x0 + bw / 2, cart ? base + Math.max(0, -hh) + 13 : base + 13, { align: 'center', font: '700 10px "IBM Plex Mono",monospace' }); });
     if (cart) text('W_g + W_f + W_s = ΔK', 445, 318, { font: '600 11px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+    else if (window.ABP) text(mode === 'rough' ? 'TME drops on rough ground' : 'TME stays the same', 445, 300, { font: '600 11px "IBM Plex Mono",monospace', col: '#4a4a4a' });
     else text('Total stays the same', 445, 300, { font: '600 11px "IBM Plex Mono",monospace', col: '#4a4a4a' });
-    if (!cart) text('(friction → E_th)', 445, 314, { font: '500 10px "IBM Plex Mono",monospace', col: '#8a8a8a' });
+    if (!cart && window.ABP && mode === 'rough') text('(friction → heat)', 445, 314, { font: '500 10px "IBM Plex Mono",monospace', col: '#8a8a8a' });
+    else if (!cart && !window.ABP) text('(friction → E_th)', 445, 314, { font: '500 10px "IBM Plex Mono",monospace', col: '#8a8a8a' });
   }
 };
 

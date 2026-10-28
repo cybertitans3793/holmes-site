@@ -220,9 +220,12 @@ const SIM = {
   title: 'Work',
   hint: 'W = F × d · W_net = ΔKE',
   noGraph: true,
-  modes: [{ id: 'push', label: 'Push a box across the floor' }, { id: 'lift', label: 'Lift or carry a box' }],
+  modes: [{ id: 'push', label: 'Push a box across the floor' }, { id: 'lift', label: 'Lift or carry a box' }, { id: 'stop', label: 'Stopping a car' }],
   opts: [{ id: 'fric', label: 'Friction', modes: ['push'], choices: [['off', 'Off (ice)'], ['on', 'On']] }, { id: 'how', label: 'You', modes: ['lift'], choices: [['lift', 'Lift it up'], ['carry', 'Carry it across the room']] }],
   ivs(mode, opt){
+    if (mode === 'stop') return [{ id: 'm', sym: '', symText: 'm', label: 'Car mass', unit: 'kg', show: x => fint(x) + ' kg', min: 600, max: 2400, step: 100, val: 1200 },
+      { id: 'v', sym: '', symText: 'v', label: 'Speed when the brakes go on', unit: 'm/s', show: x => fint(x) + ' m/s', min: 5, max: 40, step: 1, val: 15 },
+      { id: 'Ff', sym: '', symText: 'Ff', label: 'Friction (braking) force', unit: 'N', show: x => fint(x) + ' N', min: 1000, max: 12000, step: 200, val: 5400 }];
     if (mode === 'lift') return [{ id: 'm', sym: '', symText: 'm', label: 'Box mass', unit: 'kg', show: x => fint(x) + ' kg', min: 1, max: 30, step: 1, val: 10 },
       { id: 'h', sym: '', symText: opt.how === 'carry' ? 'd' : 'h', label: opt.how === 'carry' ? 'Distance carried' : 'Height lifted', unit: 'm', show: x => fint(x) + ' m', min: 0.5, max: 5, step: 0.5, val: 2 }];
     const L = [{ id: 'F', sym: '', symText: 'F', label: 'Your push', unit: 'N', show: x => fint(x) + ' N', min: 0, max: 100, step: 5, val: 50 },
@@ -231,15 +234,21 @@ const SIM = {
     if (opt.fric === 'on') L.push({ id: 'Ff', sym: '', symText: 'Ff', label: 'Friction force', unit: 'N', show: x => fint(x) + ' N', min: 5, max: 60, step: 5, val: 20 });
     return L;
   },
-  presets: [{ label: '50 N, 4 m, no friction', mode: 'push', opt: { fric: 'off' }, v: { F: 50, d: 4, m: 10 } }, { label: 'Constant speed (push = friction)', mode: 'push', opt: { fric: 'on' }, v: { F: 30, d: 5, m: 20, Ff: 30 } }, { label: 'Lift 10 kg up 2 m', mode: 'lift', opt: { how: 'lift' }, v: { m: 10, h: 2 } }, { label: 'Carry it sideways', mode: 'lift', opt: { how: 'carry' }, v: { m: 10, h: 2 } }],
+  presets: [{ label: '50 N, 4 m, no friction', mode: 'push', opt: { fric: 'off' }, v: { F: 50, d: 4, m: 10 } }, { label: 'Constant speed (push = friction)', mode: 'push', opt: { fric: 'on' }, v: { F: 30, d: 5, m: 20, Ff: 30 } }, { label: 'Lift 10 kg up 2 m', mode: 'lift', opt: { how: 'lift' }, v: { m: 10, h: 2 } }, { label: 'Carry it sideways', mode: 'lift', opt: { how: 'carry' }, v: { m: 10, h: 2 } }, { label: 'Car at 15 m/s', mode: 'stop', v: { m: 1200, v: 15, Ff: 5400 } }, { label: 'Same car at 30 m/s', mode: 'stop', v: { m: 1200, v: 30, Ff: 5400 } }],
   calc(v, mode, opt){
+    if (mode === 'stop'){ const KE = 0.5 * v.m * v.v * v.v, d = KE / v.Ff; return { KE, Wf: -KE, dist: d, mu: v.Ff / (v.m * 10), weight: v.m * 10 }; }
     if (mode === 'lift'){ const W = v.m * 10, carry = opt.how === 'carry'; return { W, carry, work: carry ? 0 : W * v.h, PE: carry ? 0 : W * v.h }; }
     const Ff = opt.fric === 'on' ? v.Ff : 0, stuck = Ff > 0 && v.F <= Ff && v.F < Ff;
     const Wa = v.F * v.d, Wf = -Ff * v.d, Wn = Wa + Wf, KE = Math.max(0, Wn), vel = Math.sqrt(2 * KE / v.m);
     return { Ff, Wa, Wf, Wn, KE, vel, stuck, weight: v.m * 10 };
   },
-  dvs(mode){ return mode === 'lift' ? [{ id: 'work', name: 'Work you do', short: 'W', sym: 'W', unit: 'J', noTag: true, f: d => d.work }] : [{ id: 'Wn', name: 'Net work', short: 'W net', sym: 'W', unit: 'J', noTag: true, f: d => d.Wn }]; },
+  dvs(mode){ if (mode === 'stop') return [{ id: 'dist', name: 'Stopping distance', short: 'd', sym: 'd', unit: 'm', noTag: true, f: d => d.dist }]; return mode === 'lift' ? [{ id: 'work', name: 'Work you do', short: 'W', sym: 'W', unit: 'J', noTag: true, f: d => d.work }] : [{ id: 'Wn', name: 'Net work', short: 'W net', sym: 'W', unit: 'J', noTag: true, f: d => d.Wn }]; },
   work(v, d, mode, opt){
+    if (mode === 'stop') return '<h4>1 · Kinetic energy before braking</h4><div class="eq">KE<sub>i</sub> = ½mv² = ½(' + fint(v.m) + ')(' + fint(v.v) + ')² = <b>' + fint(d.KE) + ' J</b></div>' +
+      '<h4>2 · Work done by friction</h4><div class="eq">The car stops, so KE<sub>f</sub> = 0. Friction takes all of the KE away:<br>W = KE<sub>f</sub> − KE<sub>i</sub> = <b>−' + fint(d.KE) + ' J</b></div>' +
+      '<h4>3 · Stopping distance</h4><div class="eq">W = F × d → d = ' + fint(d.KE) + ' J ÷ ' + fint(v.Ff) + ' N = <b>' + fint(d.dist) + ' m</b></div>' +
+      '<h4>4 · Coefficient of friction</h4><div class="eq">F<sub>f</sub> = μF<sub>N</sub> → μ = ' + fint(v.Ff) + ' ÷ (' + fint(v.m) + ' × 10) = <b>' + fint(d.mu) + '</b>' + (d.mu > 1 ? ' — higher than real tires on dry road (about 0.7–0.9)' : '') + '</div>' +
+      '<p class="note">KE depends on v², so <b>twice the speed means 4 times the KE</b>, and with the same brakes, 4 times the stopping distance. That’s why speeding is so dangerous. The KE turns into heat in the brakes and tires.</p>';
     if (mode === 'lift'){
       if (d.carry) return '<h4>1 · Force and motion</h4><div class="eq">You hold the box up with ' + fint(d.W) + ' N (its weight). The box moves sideways ' + fint(v.h) + ' m.</div>' +
         '<h4>2 · Work = 0</h4><div class="eq">Your force is <b>up</b>, the motion is <b>sideways</b>. A force only does work if the object moves along the force.<br>W = <b>0 J</b></div>' +
@@ -259,6 +268,22 @@ const SIM = {
   },
   draw(v, d, mode, opt, t){
     const floor = 230;
+    if (mode === 'stop'){
+      panelTitle('CAR BRAKING TO A STOP', 10, 18);
+      const sc = 330 / Math.max(60, d.dist), x0 = 40, T = 3, u = Math.min(1, (t % (T + 1.2)) / T), s = d.dist * (1 - (1 - u) * (1 - u)), cx = x0 + s * sc;
+      ctx.fillStyle = '#555'; ctx.fillRect(12, floor, 376, 26); ctx.fillStyle = '#fff'; for (let k = 0; k < 8; k++) ctx.fillRect(20 + k * 48, floor + 12, 24, 3);
+      ctx.fillStyle = '#222'; ctx.fillRect(x0 + 14, floor - 3, s * sc, 3);
+      ctx.fillStyle = '#1546d6'; ctx.fillRect(cx - 4, floor - 34, 64, 22); ctx.fillRect(cx + 10, floor - 48, 34, 16); ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(cx + 10, floor - 10, 8, 0, 7); ctx.arc(cx + 46, floor - 10, 8, 0, 7); ctx.fill();
+      if (u < 1) arrow(cx + 28, floor + 40, cx + 28 - Math.min(60, v.Ff / 150), floor + 40, '#c43a00', 'Ff = ' + fint(v.Ff) + ' N', { w: 3, ly: 14 });
+      ctx.strokeStyle = '#888'; ctx.setLineDash([4, 3]); ctx.beginPath(); ctx.moveTo(x0, floor - 70); ctx.lineTo(x0, floor); ctx.moveTo(x0 + d.dist * sc, floor - 70); ctx.lineTo(x0 + d.dist * sc, floor); ctx.stroke(); ctx.setLineDash([]);
+      arrow(x0, floor - 76, x0 + d.dist * sc, floor - 76, '#111', 'd = ' + fint(d.dist) + ' m', { w: 1.5, head: 5, ly: -8 });
+      const vnow = v.v * (1 - u); text('speed: ' + vnow.toFixed(1) + ' m/s', 14, 60, { font: '700 13px "IBM Plex Mono",monospace' });
+      panelTitle('KINETIC ENERGY LEFT', 400, 18); const KEn = 0.5 * v.m * vnow * vnow, mx = 0.5 * 2400 * 40 * 40;
+      ctx.fillStyle = '#e8e8e8'; ctx.fillRect(420, 50, 50, 220); ctx.fillStyle = '#ff6a2b'; const hh = 220 * Math.sqrt(KEn / mx); ctx.fillRect(420, 270 - hh, 50, hh); ctx.strokeStyle = '#111'; ctx.lineWidth = 1.5; ctx.strokeRect(420, 50, 50, 220);
+      text(fint(Math.round(KEn)) + ' J', 480, 270 - hh + 4, { font: '700 12px "IBM Plex Mono",monospace' }); text('(bar on a √ scale)', 400, 290, { font: '500 9px "IBM Plex Mono",monospace', col: '#8a8a8a' });
+      text('heat made: ' + fint(Math.round(d.KE - KEn)) + ' J', 400, 312, { font: '700 11px "IBM Plex Mono",monospace', col: '#c43a00' });
+      return;
+    }
     if (mode === 'lift'){
       panelTitle(d.carry ? 'CARRYING THE BOX ACROSS THE ROOM' : 'LIFTING THE BOX', 10, 18);
       ctx.fillStyle = '#ccc'; ctx.fillRect(15, floor + 40, 370, 6);
