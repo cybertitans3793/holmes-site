@@ -1,4 +1,4 @@
-let AC = null;
+let AC = null, OSC = null, GN = null, SND = false;
 // Doppler Effect (AP 14.5 qualitative; IB C.5 SL light, HL sound): wavefront diagrams for a moving source and observer, the sonic boom, red shift of galaxies, and radar / ultrasound speed measurement.
 const LINES = [[656.3, 'Hα'], [486.1, 'Hβ'], [434.0, 'Hγ'], [410.2, 'Hδ']];
 function wlRGB(l){ let r = 0, g = 0, b = 0; if (l < 440){ r = (440 - l) / 60; b = 1; } else if (l < 490){ g = (l - 440) / 50; b = 1; } else if (l < 510){ g = 1; b = (510 - l) / 20; } else if (l < 580){ r = (l - 510) / 70; g = 1; } else if (l < 645){ r = 1; g = (645 - l) / 65; } else r = 1;
@@ -55,13 +55,25 @@ const SIM = {
       '<div class="eq">Behind the source: f = ' + H.n(d.fb, 'Hz') + '</div>' +
       '<p class="note">AP: qualitative only — toward → higher pitch, away → lower pitch, same velocity → no shift. The source’s own frequency f₀ never changes; only the waves reaching you do.</p>';
   },
-  play(v, d, mode){ if (mode !== 'sound') return; try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); const t0 = AC.currentTime + 0.05, g = AC.createGain(); g.connect(AC.destination);
-      if (d.shock){ const n = AC.sampleRate * 0.6, buf = AC.createBuffer(1, n, AC.sampleRate), ch = buf.getChannelData(0); for (let i = 0; i < n; i++) ch[i] = (Math.random() * 2 - 1) * Math.exp(-i / (n / 6)); const src = AC.createBufferSource(); src.buffer = buf; const lp = AC.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 300; src.connect(lp); lp.connect(g); g.gain.value = 0.9; src.start(t0); return; }
-      const o = AC.createOscillator(); o.type = 'triangle'; o.connect(g); g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(0.25, t0 + 0.4); g.gain.setValueAtTime(0.25, t0 + 1.3); g.gain.linearRampToValueAtTime(0.35, t0 + 1.5); g.gain.linearRampToValueAtTime(0, t0 + 3);
-      o.frequency.setValueAtTime(d.fa, t0); o.frequency.setValueAtTime(d.fa, t0 + 1.4); o.frequency.linearRampToValueAtTime(d.fb, t0 + 1.6); o.start(t0); o.stop(t0 + 3.05); } catch (e) {} },
+  play(v, d, mode){ if (mode !== 'sound') return; try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.state === 'suspended') AC.resume();
+      if (!OSC){ OSC = AC.createOscillator(); OSC.type = 'triangle'; GN = AC.createGain(); GN.gain.value = 0; OSC.connect(GN); GN.connect(AC.destination); OSC.start(); }
+      SND = true; S.anim.reset = true; } catch (e) {} },
+  boom(){ try { const n = AC.sampleRate * 0.7, buf = AC.createBuffer(1, n, AC.sampleRate), ch = buf.getChannelData(0); for (let i = 0; i < n; i++) ch[i] = (Math.random() * 2 - 1) * Math.exp(-i / (n / 6)); const src = AC.createBufferSource(); src.buffer = buf; const lp = AC.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 300; const g = AC.createGain(); g.gain.value = 0.9; src.connect(lp); lp.connect(g); g.connect(AC.destination); src.start(); } catch (e) {} },
+  // Set the audio to what the observer hears right now: the wavefront arriving now was sent at time te, when the source was at x0 + vs·te.
+  hear(v, d, A, xo, yo, y, SC){
+    const tt = A.tt, sx = te => A.x0 + v.vs * SC * te, g = te => Math.hypot(xo - sx(te), yo - y) - v.c * SC * (tt - te);
+    let f = null, dist = 0;
+    if (d.shock){ let hit = false; for (let k = 0; k <= 60; k++) if (g(tt * k / 60) <= 0){ hit = true; break; } if (hit && !A.boomed){ A.boomed = true; if (SND) SIM.boom(); } }
+    else if (g(0) <= 0){ let lo = 0, hi = tt; for (let k = 0; k < 40; k++){ const m = (lo + hi) / 2; if (g(m) <= 0) lo = m; else hi = m; }
+      const te = lo; dist = Math.hypot(xo - sx(te), yo - y); const ux = (xo - sx(te)) / dist; f = v.f0 * (v.c + v.vo * ux) / (v.c - v.vs * ux); }
+    A.fNow = f;
+    if (OSC){ const now = AC.currentTime, on = SND && f && isFinite(f);
+      if (on) OSC.frequency.setTargetAtTime(f, now, 0.02); GN.gain.setTargetAtTime(on ? 0.06 + 0.22 * Math.min(1, 60 / dist) : 0, now, 0.05);
+      clearTimeout(window._dopMute); window._dopMute = setTimeout(() => { SND = false; GN.gain.setTargetAtTime(0, AC.currentTime, 0.05); }, 300); }
+  },
   draw(v, d, mode, opt, t, dt, A){
     if (!window._dopHook){ window._dopHook = 1; cv.style.cursor = 'pointer'; cv.addEventListener('click', () => SIM.play(S.v, S.d, S.mode)); }
-    if (mode === 'sound') text('click the picture to hear it go past', 590, 318, { align: 'right', font: '600 10px "IBM Plex Mono",monospace', col: '#ff6a2b' });
+    if (mode === 'sound') text(SND ? 'playing… (stops after one pass)' : 'click the picture to hear it go past', 590, 318, { align: 'right', font: '600 10px "IBM Plex Mono",monospace', col: '#ff6a2b' });
     if (mode === 'color'){
       panelTitle('A MOVING LIGHT SOURCE (SLOWED WAY DOWN)', 10, 18);
       const SC = 85, T0 = 0.28, z = d.z, vx = z * SC;
@@ -108,20 +120,21 @@ const SIM = {
       return;
     }
     panelTitle(d.shock ? 'SHOCK WAVE (SONIC BOOM)' : 'WAVEFRONT DIAGRAM', 10, 18);
-    const SC = 0.25, T0 = 0.22; // px per (m/s · s) and visual emission period
-    if (!A.em || A.reset){ A.em = []; A.tt = 0; A.xs = d.shock || v.vs > 0 ? 40 : 200; A.next = 0; }
+    const SC = 0.5, T0 = 0.11; // px per (m/s · s) and visual emission period
+    if (!A.em || A.reset){ A.em = []; A.tt = 0; A.xs = d.shock || v.vs > 0 ? 40 : 200; A.x0 = A.xs; A.next = 0; A.boomed = false; }
     A.tt += dt; A.xs += v.vs * SC * dt; const xo0 = 340 - v.vo * SC * A.tt;
-    if (A.xs > 400 || A.xs < -20 || xo0 < 40){ A.em = []; A.xs = v.vs >= 0 ? 40 : 330; A.tt = 0; A.next = 0; }
-    while (A.next <= A.tt){ A.em.push([A.xs - v.vs * SC * (A.tt - A.next), A.next]); A.next += T0; } if (A.em.length > 60) A.em.shift();
+    if (A.xs > (SND ? 640 : 400) || A.xs < (SND ? -240 : -20) || xo0 < 40 || A.tt > 14){ A.em = []; A.xs = v.vs >= 0 ? 40 : 330; A.x0 = A.xs; A.tt = 0; A.next = 0; A.boomed = false; SND = false; }
+    while (A.next <= A.tt){ A.em.push([A.xs - v.vs * SC * (A.tt - A.next), A.next]); A.next += T0; } if (A.em.length > 90) A.em.shift();
     const y = 150; ctx.save(); ctx.beginPath(); ctx.rect(10, 26, 375, 260); ctx.clip();
     A.em.forEach(([x0, te]) => { const r = v.c * SC * (A.tt - te); ctx.strokeStyle = 'rgba(21,70,214,0.7)'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(x0, y, r, 0, 7); ctx.stroke(); });
     ctx.restore();
-    ctx.fillStyle = '#c43a00'; ctx.beginPath(); ctx.arc(A.xs, y, 7, 0, 7); ctx.fill(); text('source', A.xs, y + 24, { align: 'center', font: '600 10px "IBM Plex Mono",monospace', col: '#c43a00' });
-    const xo = Math.max(40, Math.min(380, xo0)); ctx.fillStyle = '#1e7d45'; ctx.beginPath(); ctx.arc(xo, y - 60, 7, 0, 7); ctx.fill(); text('observer', xo, y - 72, { align: 'center', font: '600 10px "IBM Plex Mono",monospace', col: '#1e7d45' });
+    if (A.xs < 385 && A.xs > 10){ ctx.fillStyle = '#c43a00'; ctx.beginPath(); ctx.arc(A.xs, y, 7, 0, 7); ctx.fill(); } if (A.xs < 385 && A.xs > 10) text('source', A.xs, y + 24, { align: 'center', font: '600 10px "IBM Plex Mono",monospace', col: '#c43a00' });
+    const xo = Math.max(40, Math.min(380, xo0)); SIM.hear(v, d, A, 340 - v.vo * SC * A.tt, y - 60, y, SC); ctx.fillStyle = '#1e7d45'; ctx.beginPath(); ctx.arc(xo, y - 60, 7, 0, 7); ctx.fill(); text('observer', xo, y - 72, { align: 'center', font: '600 10px "IBM Plex Mono",monospace', col: '#1e7d45' });
     text(d.shock ? 'Mach ' + fplain(d.mach) : 'ahead: λ = ' + fplain(d.lamA) + ' m   behind: λ = ' + fplain(d.lamB) + ' m', 12, 310, { font: '700 13px "Space Grotesk",sans-serif' });
     panelTitle('PITCH HEARD', 395, 18);
     const bars = [['source (f₀)', v.f0], ['ahead (f′)', d.fa], ['behind', d.fb]]; const fm = Math.max(...bars.map(b => isFinite(b[1]) ? b[1] : 0), v.f0);
     bars.forEach(([n, f], i) => { const yy = 50 + i * 50; text(n, 400, yy, { font: '700 12px "Space Grotesk",sans-serif' }); ctx.fillStyle = i ? (f > v.f0 ? '#ff6a2b' : '#1546d6') : '#8a8a8a'; if (isFinite(f)) ctx.fillRect(400, yy + 8, 170 * f / fm, 14); text(isFinite(f) ? fplain(f) + ' Hz' : '—', 404, yy + 36, { font: '600 11px "IBM Plex Mono",monospace' }); });
-    text('waves slowed down to watch', 400, 230, { font: '500 10px "IBM Plex Mono",monospace', col: '#8a8a8a' });
+    text('Observer hears now', 400, 214, { font: '700 12px "Space Grotesk",sans-serif' }); text(A.fNow ? fplain(A.fNow) + ' Hz' : d.shock ? (A.boomed ? 'BOOM!' : 'silence…') : 'waiting for the waves…', 400, 238, { font: '700 16px "IBM Plex Mono",monospace', col: A.fNow ? (A.fNow > v.f0 ? '#ff6a2b' : '#1546d6') : '#4a4a4a' });
+    text('waves slowed down to watch', 400, 262, { font: '500 10px "IBM Plex Mono",monospace', col: '#8a8a8a' });
   }
 };
