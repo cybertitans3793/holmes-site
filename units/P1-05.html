@@ -55,6 +55,25 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
 .rframe{position:relative;height:900px;background:#fff}
 .rframe iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 
+
+.sbtns{display:flex;gap:8px}
+body.present{overflow:hidden}
+body.present .wrap{max-width:none;height:100vh;padding:10px 14px 12px;display:flex;flex-direction:column}
+body.present .uhead,body.present .review,body.present .credits{display:none}
+body.present .tabs{margin-bottom:10px;flex:none}
+body.present .tab{font-size:19px;padding:12px 18px}
+body.present .main{flex:1;min-height:0;flex-wrap:nowrap;align-items:stretch}
+body.present .simcard{flex:1;display:flex;flex-direction:column;min-height:0;box-shadow:none}
+body.present .simbar h2{font-size:22px}
+body.present .simbar button{font-size:15px;padding:9px 14px}
+body.present .frame{flex:1;aspect-ratio:auto!important;min-height:0}
+body.present .try{display:none;flex:0 0 340px;overflow:auto}
+body.present.tasks .try{display:block}
+body.present .try h2{font-size:30px}
+body.present .try ol{font-size:20px;gap:14px}
+body.present #pres{background:var(--ink);color:#fff}
+body.present #fs{display:none}
+
 </style>
 </head>
 <body>
@@ -66,7 +85,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
   <nav class="tabs" role="tablist" aria-label="Sims in this unit" id="tabs"></nav>
   <div class="main">
     <section class="simcard" aria-live="polite">
-      <div class="simbar"><h2 id="simname"></h2><button id="fs" type="button">Full screen</button></div>
+      <div class="simbar"><h2 id="simname"></h2><div class="sbtns"><button id="pres" type="button">Present</button><button id="ptasks" type="button" hidden>Tasks</button><button id="fs" type="button">Full screen</button></div></div>
       <div class="frame" id="frame"></div>
     </section>
     <aside class="try" aria-label="Try this">
@@ -148,6 +167,21 @@ const SIMS = {
   const h = location.hash.slice(1); let start = UNIT.tabs.findIndex(t => slug(t.name) === h);
   show(start < 0 ? 0 : start, false);
   window.HOLMES = { show, unit: UNIT };
+
+  const pres = $('pres'), ptasks = $('ptasks');
+  const setPresent = on => {
+    document.body.classList.toggle('present', on); document.body.classList.remove('tasks');
+    pres.textContent = on ? 'Exit present' : 'Present'; ptasks.hidden = !on;
+  };
+  pres.onclick = () => {
+    const on = !document.body.classList.contains('present'); setPresent(on);
+    if (on && !document.fullscreenElement && document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {});
+    if (!on && document.fullscreenElement === document.documentElement) document.exitFullscreen();
+  };
+  ptasks.onclick = () => document.body.classList.toggle('tasks');
+  document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && document.body.classList.contains('present') && pres.dataset.fs) setPresent(false); pres.dataset.fs = document.fullscreenElement === document.documentElement ? '1' : ''; });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.body.classList.contains('present') && !document.fullscreenElement) setPresent(false); });
+
 })();
 </script>
 </body>

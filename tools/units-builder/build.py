@@ -74,6 +74,7 @@ PAGE = """<!doctype html>
 {fonts}
 <style>
 {css}
+{present_css}
 </style>
 </head>
 <body>
@@ -85,7 +86,7 @@ PAGE = """<!doctype html>
   <nav class="tabs" role="tablist" aria-label="Sims in this unit" id="tabs"></nav>
   <div class="main">
     <section class="simcard" aria-live="polite">
-      <div class="simbar"><h2 id="simname"></h2><button id="fs" type="button">Full screen</button></div>
+      <div class="simbar"><h2 id="simname"></h2><div class="sbtns">{present_btns}<button id="fs" type="button">Full screen</button></div></div>
       <div class="frame" id="frame"></div>
     </section>
     <aside class="try" aria-label="Try this">
@@ -160,10 +161,50 @@ const SIMS = {{
   const h = location.hash.slice(1); let start = UNIT.tabs.findIndex(t => slug(t.name) === h);
   show(start < 0 ? 0 : start, false);
   window.HOLMES = {{ show, unit: UNIT }};
+{present_js}
 }})();
 </script>
 </body>
 </html>
+"""
+
+# "Present" mode for projecting (trial: only these units). Whole page goes full screen; header, Try-this panel,
+# practice questions and credits hide; tabs get bigger; the sim fills the rest. "Tasks" slides the Try-this list in.
+PRESENT_UNITS = {'P1-05'}
+PRESENT_BTNS = '<button id="pres" type="button">Present</button><button id="ptasks" type="button" hidden>Tasks</button>'
+PRESENT_CSS = """
+.sbtns{display:flex;gap:8px}
+body.present{overflow:hidden}
+body.present .wrap{max-width:none;height:100vh;padding:10px 14px 12px;display:flex;flex-direction:column}
+body.present .uhead,body.present .review,body.present .credits{display:none}
+body.present .tabs{margin-bottom:10px;flex:none}
+body.present .tab{font-size:19px;padding:12px 18px}
+body.present .main{flex:1;min-height:0;flex-wrap:nowrap;align-items:stretch}
+body.present .simcard{flex:1;display:flex;flex-direction:column;min-height:0;box-shadow:none}
+body.present .simbar h2{font-size:22px}
+body.present .simbar button{font-size:15px;padding:9px 14px}
+body.present .frame{flex:1;aspect-ratio:auto!important;min-height:0}
+body.present .try{display:none;flex:0 0 340px;overflow:auto}
+body.present.tasks .try{display:block}
+body.present .try h2{font-size:30px}
+body.present .try ol{font-size:20px;gap:14px}
+body.present #pres{background:var(--ink);color:#fff}
+body.present #fs{display:none}
+"""
+PRESENT_JS = """
+  const pres = $('pres'), ptasks = $('ptasks');
+  const setPresent = on => {
+    document.body.classList.toggle('present', on); document.body.classList.remove('tasks');
+    pres.textContent = on ? 'Exit present' : 'Present'; ptasks.hidden = !on;
+  };
+  pres.onclick = () => {
+    const on = !document.body.classList.contains('present'); setPresent(on);
+    if (on && !document.fullscreenElement && document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {});
+    if (!on && document.fullscreenElement === document.documentElement) document.exitFullscreen();
+  };
+  ptasks.onclick = () => document.body.classList.toggle('tasks');
+  document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && document.body.classList.contains('present') && pres.dataset.fs) setPresent(false); pres.dataset.fs = document.fullscreenElement === document.documentElement ? '1' : ''; });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.body.classList.contains('present') && !document.fullscreenElement) setPresent(false); });
 """
 
 REVIEW = 'https://script.google.com/a/macros/fcps.org/s/AKfycbzW6NpFGf5yjZ843WN0pDy-mzI0r1iCcBIuoJpMCEJeWwbUARiSnAC_lf2bWQeHWoGjHA/exec'
@@ -209,8 +250,10 @@ def build(uid):
     unit = {'id': uid, 'tabs': [{k: t.get(k) for k in ('code', 'name', 'sim', 'select', 'tasks', 'note', 'gapBefore') if t.get(k) is not None} for t in u['tabs']]}
     sims_js = ',\n'.join('%s:{ar:%s,html:%s}' % (json.dumps(k), json.dumps(SIMS[k]['ar']), js_str(prep_sim(k))) for k in used)
     credits = ' '.join(SIMS[k]['credit'] for k in used if SIMS[k].get('credit'))
+    pr = uid in PRESENT_UNITS
     out = PAGE.format(uid=uid, title=html.escape(u['title']), num=u['num'], course=u['course'], fonts=FONTS, css=css,
-                      unit_json=js_str(unit), sims_js=sims_js, credits=credits or 'Original simulations.')
+                      unit_json=js_str(unit), sims_js=sims_js, credits=credits or 'Original simulations.',
+                      present_css=PRESENT_CSS if pr else '', present_btns=PRESENT_BTNS if pr else '', present_js=PRESENT_JS if pr else '')
     os.makedirs(os.path.join(D, 'out'), exist_ok=True)
     p = os.path.join(D, 'out', uid + '.html'); open(p, 'w', encoding='utf-8').write(out)
     print(uid, len(out) // 1024, 'KB')
