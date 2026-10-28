@@ -129,7 +129,7 @@ function setup(){
   });
   if (SIM.presets){
     const p = document.createElement('div'); p.id = 'presets'; p.innerHTML = '<span class="lab">Try:</span>';
-    SIM.presets.forEach(ps => { const bt = document.createElement('button'); bt.textContent = ps.label; bt.onclick = () => { if (ps.mode && ps.mode !== S.mode){ S.mode = ps.mode; } Object.entries(ps.v).forEach(([k, val]) => S.store[(ps.mode || S.mode) + ':' + k] = val); S.anim = {}; setup(); }; p.appendChild(bt); });
+    SIM.presets.forEach(ps => { const bt = document.createElement('button'); bt.textContent = ps.label; bt.onclick = () => { if (ps.mode && ps.mode !== S.mode){ S.mode = ps.mode; } if (ps.opt) Object.assign(S.opt, ps.opt); Object.entries(ps.v).forEach(([k, val]) => S.store[(ps.mode || S.mode) + ':' + k] = val); S.anim = {}; setup(); }; p.appendChild(bt); });
     c.appendChild(p);
   }
   const dvs = SIM.dvs(S.mode, S.opt), sel = $('dvsel');
@@ -218,6 +218,8 @@ function loop(ts){ const dt = Math.min(0.05, (ts - (last || ts)) / 1000); last =
 let AC = null;
 function playTone(f, amps, dur){ try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); const t0 = AC.currentTime, g = AC.createGain(); g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(0.25, t0 + 0.03); g.gain.exponentialRampToValueAtTime(0.001, t0 + dur); g.connect(AC.destination);
   const tot = amps.reduce((a, b) => a + b, 0) || 1; amps.forEach((a, i) => { if (a <= 0 || f * (i + 1) > 15000) return; const o = AC.createOscillator(), og = AC.createGain(); o.frequency.value = f * (i + 1); og.gain.value = a / tot; o.connect(og); og.connect(g); o.start(t0); o.stop(t0 + dur); }); } catch (e) {} }
+const NOTES = ['C', 'C♯', 'D', 'E♭', 'E', 'F', 'F♯', 'G', 'A♭', 'A', 'B♭', 'B'];
+function noteName(f){ const m = Math.round(12 * Math.log2(f / 440) + 69); return NOTES[(m % 12 + 12) % 12] + (Math.floor(m / 12) - 1); }
 const INSTR = { flute: ['Flute (open–open pipe)', [1, 0.55, 0.35, 0.15, 0.1, 0.05, 0.03, 0.02]], clar: ['Clarinet (closed–open pipe)', [1, 0.02, 0.65, 0.02, 0.4, 0.02, 0.25, 0.02, 0.15]], guitar: ['Guitar (string, both ends fixed)', [1, 0.6, 0.4, 0.15, 0.02, 0.1, 0.08, 0.05]] };
 const SIM = {
   title: 'Sound & Hearing',
@@ -267,21 +269,64 @@ const SIM = {
   },
   play(v, d, mode){ if (mode === 'instr') playTone(d.f, d.amps, 1.4); else if (mode === 'ear') playTone(v.f, [1], 0.8); else playTone(d.bat ? 2000 : 1200, [1, 0.3], 0.25); },
   draw(v, d, mode, opt, t, dt, A){
-    if (!window._sndHook){ window._sndHook = 1; cv.style.cursor = 'pointer'; cv.addEventListener('click', () => SIM.play(S.v, S.d, S.mode)); }
+    if (!window._sndHook){ window._sndHook = 1; cv.style.cursor = 'pointer'; cv.addEventListener('click', e => { const r = cv.getBoundingClientRect(), x = (e.clientX - r.left) * 600 / r.width, y = (e.clientY - r.top) * 330 / r.height;
+      const row = S.mode === 'instr' && x < 390 && (window._sndRows || []).find(q => y >= q[0] && y <= q[1]);
+      if (row){ const n = row[2]; S.anim.solo = n; clearTimeout(window._soloT); window._soloT = setTimeout(() => { S.anim.solo = 0; }, 1500); playTone(n * S.d.f, [1], 1.4); }
+      else SIM.play(S.v, S.d, S.mode); }); }
     if (mode === 'instr'){
-      panelTitle(INSTR[d.ins][0].toUpperCase() + ' · CLICK TO HEAR', 10, 18);
-      const y0 = 110; ctx.strokeStyle = '#111'; ctx.lineWidth = 1.5;
-      if (d.ins === 'guitar'){ const x0 = 30, x1 = 370; ctx.fillStyle = '#c99a5b'; ctx.fillRect(x0, y0 - 22, x1 - x0, 44); for (let n = 1; n <= 12; n++){ const x = x0 + (x1 - x0) * (1 - Math.pow(2, -n / 12)); if (x < x1){ ctx.fillStyle = '#ddd'; ctx.fillRect(x, y0 - 22, 2, 44); } }
-        const xf = x0 + (x1 - x0) * (1 - Math.pow(2, -v.fret / 12)); ctx.strokeStyle = '#111'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y0); ctx.stroke();
-        if (v.fret > 0){ ctx.fillStyle = '#ff6a2b'; ctx.beginPath(); ctx.arc(xf - 6, y0, 6, 0, 7); ctx.fill(); } ctx.strokeStyle = '#1546d6'; ctx.lineWidth = 2.5; ctx.beginPath(); for (let i = 0; i <= 100; i++){ const x = xf + (x1 - xf) * i / 100, y = y0 - 16 * Math.sin(PI * i / 100) * Math.cos(2 * PI * 2 * t); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.stroke();
-        text('vibrating length ' + fplain(d.L * 100) + ' cm', 200, y0 + 40, { align: 'center', font: '600 11px "IBM Plex Mono",monospace' }); }
-      else { const len = Math.min(340, d.L * 100 * 3.5), x0 = 30; ctx.fillStyle = d.ins === 'clar' ? '#333' : '#c9c9c9'; ctx.fillRect(x0, y0 - 12, len, 24); if (d.ins === 'clar'){ ctx.fillStyle = '#c43a00'; ctx.fillRect(x0 - 6, y0 - 12, 6, 24); }
-        text(fplain(d.L * 100) + ' cm long' + (d.ins === 'clar' ? ' (closed at the reed)' : ''), x0, y0 + 32, { font: '600 11px "IBM Plex Mono",monospace' }); }
-      // waveform
-      panelTitle('WAVEFORM (3 CYCLES)', 10, 176); const wy = 232; ctx.strokeStyle = '#1546d6'; ctx.lineWidth = 2; ctx.beginPath(); const tot = d.amps.reduce((a, b) => a + b, 0);
-      for (let i = 0; i <= 360; i++){ const ph = 2 * PI * 3 * i / 360; let y = 0; d.amps.forEach((a, k) => y += a * Math.sin((k + 1) * ph + k)); i ? ctx.lineTo(20 + i, wy - 45 * y / tot * 1.6) : ctx.moveTo(20, wy - 45 * y / tot * 1.6); } ctx.stroke();
-      panelTitle('HARMONICS (SPECTRUM)', 395, 18); d.amps.forEach((a, k) => { const x = 405 + k * 20, h = 150 * a; ctx.fillStyle = k % 2 ? '#8a8a8a' : '#ff6a2b'; ctx.fillRect(x, 200 - h, 14, h); text(String(k + 1), x + 7, 214, { align: 'center', font: '500 10px "IBM Plex Mono",monospace' }); });
-      text('harmonic number n', 405, 230, { font: '600 10px "IBM Plex Mono",monospace', col: '#4a4a4a' }); text('f = ' + fplain(d.f) + ' Hz', 400, 270, { font: '700 14px "Space Grotesk",sans-serif' });
+      const ins = d.ins, f1 = d.f, ns = ins === 'clar' ? [1, 3, 5, 7] : [1, 2, 3, 4], mono = '"IBM Plex Mono",monospace', sg = '"Space Grotesk",sans-serif';
+      panelTitle(INSTR[ins][0].toUpperCase(), 10, 18);
+      // 1. the instrument
+      const iy = 54; ctx.save();
+      if (ins === 'guitar'){
+        ctx.fillStyle = '#c98a3d'; ctx.beginPath(); ctx.ellipse(70, iy, 38, 30, 0, 0, 7); ctx.ellipse(118, iy, 30, 24, 0, 0, 7); ctx.fill(); ctx.strokeStyle = '#6b4314'; ctx.lineWidth = 2; ctx.stroke();
+        ctx.fillStyle = '#2a1a08'; ctx.beginPath(); ctx.arc(108, iy, 11, 0, 7); ctx.fill(); ctx.fillStyle = '#5a3a14'; ctx.fillRect(48, iy - 10, 8, 20);
+        ctx.fillStyle = '#7a4a1c'; ctx.fillRect(140, iy - 7, 210, 14); ctx.fillStyle = '#5a3412'; ctx.beginPath(); ctx.moveTo(350, iy - 9); ctx.lineTo(385, iy - 13); ctx.lineTo(385, iy + 13); ctx.lineTo(350, iy + 9); ctx.fill();
+        for (let n = 1; n <= 12; n++){ const x = 350 - 270 * (1 - Math.pow(2, -n / 12)); if (x > 140){ ctx.fillStyle = '#ddd'; ctx.fillRect(x, iy - 7, 1.5, 14); } }
+        ctx.fillStyle = '#f2f2f2'; [167, 222, 260].forEach(x => { if (350 - 270 * (1 - Math.pow(2, -0)) && x){ ctx.beginPath(); ctx.arc(x, iy, 1.8, 0, 7); ctx.fill(); } });
+        const xf = 350 - 270 * (1 - Math.pow(2, -v.fret / 12)); ctx.strokeStyle = '#eee'; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.moveTo(80, iy); ctx.lineTo(352, iy); ctx.stroke(); ctx.fillStyle = '#2a1a08'; ctx.fillRect(77, iy - 12, 5, 24);
+        if (v.fret > 0){ ctx.fillStyle = '#ff6a2b'; ctx.beginPath(); ctx.arc(xf + 4, iy, 5, 0, 7); ctx.fill(); }
+        ctx.strokeStyle = '#ffcf3a'; ctx.lineWidth = 2; ctx.beginPath(); for (let k = 0; k <= 60; k++){ const x = 80 + (xf - 80) * k / 60, y = iy + 5 * Math.sin(PI * k / 60) * Math.cos(2 * PI * 3 * t); k ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.stroke();
+        text(v.fret ? 'finger on fret ' + v.fret : 'open string', xf, iy - 16, { align: 'center', font: '700 10px ' + mono, col: '#c43a00' });
+      } else if (ins === 'flute'){
+        const x0 = 30, x1 = 370; const gr = ctx.createLinearGradient(0, iy - 9, 0, iy + 9); gr.addColorStop(0, '#f4f6f8'); gr.addColorStop(0.5, '#b9c0c8'); gr.addColorStop(1, '#7d858e'); ctx.fillStyle = gr; ctx.fillRect(x0, iy - 8, x1 - x0, 16); ctx.strokeStyle = '#555'; ctx.lineWidth = 1; ctx.strokeRect(x0, iy - 8, x1 - x0, 16);
+        ctx.fillStyle = '#333'; ctx.beginPath(); ctx.ellipse(62, iy, 5, 3.5, 0, 0, 7); ctx.fill(); text('blow across here', 62, iy - 14, { align: 'center', font: '600 9px ' + mono, col: '#4a4a4a' });
+        for (let k = 0; k < 9; k++){ const x = 150 + k * 24; ctx.fillStyle = '#dfe3e7'; ctx.beginPath(); ctx.arc(x, iy, 6, 0, 7); ctx.fill(); ctx.strokeStyle = '#666'; ctx.stroke(); }
+        text('open end', x1, iy + 20, { align: 'right', font: '600 9px ' + mono, col: '#4a4a4a' }); text('open (mouth hole)', x0, iy + 20, { font: '600 9px ' + mono, col: '#4a4a4a' });
+      } else {
+        const x0 = 46, x1 = 330; ctx.fillStyle = '#1b1b1b'; ctx.fillRect(x0, iy - 8, x1 - x0, 16); ctx.fillStyle = '#c9ccd0'; [110, 190, 270].forEach(x => ctx.fillRect(x, iy - 9, 5, 18));
+        ctx.beginPath(); ctx.moveTo(x1, iy - 8); ctx.lineTo(372, iy - 22); ctx.lineTo(372, iy + 22); ctx.lineTo(x1, iy + 8); ctx.fillStyle = '#1b1b1b'; ctx.fill();
+        ctx.beginPath(); ctx.moveTo(x0, iy - 7); ctx.lineTo(24, iy - 4); ctx.lineTo(24, iy + 4); ctx.lineTo(x0, iy + 7); ctx.fill(); ctx.fillStyle = '#e7c98a'; ctx.fillRect(20, iy + 3, 22, 3);
+        for (let k = 0; k < 7; k++){ ctx.fillStyle = '#555'; ctx.beginPath(); ctx.arc(130 + k * 26, iy, 4, 0, 7); ctx.fill(); }
+        text('reed (closed end)', 24, iy - 14, { font: '600 9px ' + mono, col: '#c43a00' }); text('bell (open end)', 372, iy + 32, { align: 'right', font: '600 9px ' + mono, col: '#4a4a4a' });
+      }
+      ctx.restore();
+      // 2. standing waves for each harmonic
+      panelTitle('HARMONICS INSIDE IT · CLICK A ROW TO HEAR ONE', 10, 100);
+      const rx0 = 150, rx1 = 380, rows = []; const amp = n => d.amps[n - 1] || 0, amax = Math.max(...d.amps);
+      ns.forEach((n, r) => { const yy = 128 + r * 34, a = amp(n) / amax, on = A.solo === n; rows.push([yy - 16, yy + 16, n]);
+        if (on){ ctx.fillStyle = '#ffe2d3'; ctx.fillRect(12, yy - 16, 372, 32); }
+        text((n === 1 ? '1st' : n === 2 ? '2nd' : n === 3 ? '3rd' : n + 'th') + ' harmonic', 14, yy - 3, { font: '700 11px ' + sg }); text(fplain(n * f1) + ' Hz · ' + noteName(n * f1), 14, yy + 11, { font: '600 10px ' + mono, col: '#4a4a4a' });
+        ctx.strokeStyle = '#bbb'; ctx.lineWidth = 1; if (ins === 'guitar'){ ctx.beginPath(); ctx.moveTo(rx0, yy); ctx.lineTo(rx1, yy); ctx.stroke(); ctx.fillStyle = '#111'; ctx.fillRect(rx0 - 2, yy - 8, 3, 16); ctx.fillRect(rx1 - 1, yy - 8, 3, 16); }
+        else { ctx.strokeRect(rx0, yy - 12, rx1 - rx0, 24); if (ins === 'clar'){ ctx.fillStyle = '#c43a00'; ctx.fillRect(rx0 - 3, yy - 12, 4, 24); } }
+        const env = x => ins === 'guitar' ? Math.sin(n * PI * x) : ins === 'clar' ? Math.sin(n * PI * x / 2) : Math.cos(n * PI * x), osc = Math.cos(2 * PI * 0.8 * Math.sqrt(n) * t);
+        ctx.globalAlpha = 0.25 + 0.75 * a; ctx.lineWidth = 1 + 2 * a; [1, -1].forEach((sgn, k) => { ctx.strokeStyle = k ? 'rgba(21,70,214,0.35)' : '#1546d6'; ctx.beginPath(); for (let q = 0; q <= 120; q++){ const x = q / 120, y = yy - sgn * 10 * env(x) * (k ? 1 : osc); q ? ctx.lineTo(rx0 + (rx1 - rx0) * x, y) : ctx.moveTo(rx0, y); } ctx.stroke(); }); ctx.globalAlpha = 1;
+        text(Math.round(100 * a) + '%', rx0 - 6, yy + 4, { align: 'right', font: '700 10px ' + mono, col: a > 0.1 ? '#c43a00' : '#999' }); });
+      window._sndRows = rows;
+      text(ins === 'clar' ? 'closed at the reed → node there → only odd harmonics fit' : ins === 'flute' ? 'open both ends → antinodes at both ends → every harmonic fits' : 'fixed both ends → nodes at both ends → every harmonic fits', 14, 270, { font: '600 10px ' + mono, col: '#4a4a4a' });
+      // 3. combined waveform
+      text('ALL TOGETHER:', 14, 296, { font: '700 10px ' + mono }); const wy = 300; ctx.strokeStyle = '#ff6a2b'; ctx.lineWidth = 1.8; ctx.beginPath(); const tot = d.amps.reduce((x, y) => x + y, 0);
+      for (let q = 0; q <= 280; q++){ const ph = 2 * PI * 3 * q / 280; let y = 0; d.amps.forEach((a, k) => y += a * Math.sin((k + 1) * ph + k)); const Y = wy - 22 * y / tot * 1.6; q ? ctx.lineTo(112 + q * 0.95, Y) : ctx.moveTo(112, Y); } ctx.stroke();
+      // right: spectrum + keyboard
+      panelTitle('HARMONIC MIX (TIMBRE)', 395, 18); d.amps.forEach((a, k) => { const x = 405 + k * 20, h = 110 * a, hi = A.solo === k + 1; ctx.fillStyle = hi ? '#c43a00' : a < 0.05 ? '#ccc' : '#ff6a2b'; ctx.fillRect(x, 150 - h, 14, Math.max(1, h)); text(String(k + 1), x + 7, 164, { align: 'center', font: '500 10px ' + mono }); });
+      text('harmonic number n', 405, 178, { font: '600 10px ' + mono, col: '#4a4a4a' });
+      text('Note: ' + noteName(f1) + ' (' + fplain(f1) + ' Hz)', 400, 202, { font: '700 14px ' + sg });
+      // keyboard from the note's C, 3 octaves
+      const m1 = 12 * Math.log2(f1 / 440) + 69, base = Math.floor(Math.round(m1) / 12) * 12, kx = 400, kw = 190 / 21, ky = 220, kh = 52, wpos = [0, 2, 4, 5, 7, 9, 11], hits = ns.map(n => Math.round(m1 + 12 * Math.log2(n)));
+      for (let o = 0; o < 3; o++) wpos.forEach((p, w) => { const m = base + 12 * o + p, x = kx + (o * 7 + w) * kw, hit = hits.indexOf(m); ctx.fillStyle = hit >= 0 ? (hit ? '#ffb08a' : '#ff6a2b') : '#fff'; ctx.fillRect(x, ky, kw, kh); ctx.strokeStyle = '#111'; ctx.lineWidth = 1; ctx.strokeRect(x, ky, kw, kh); if (hit >= 0) text(String(ns[hit]), x + kw / 2, ky + kh - 5, { align: 'center', font: '700 9px ' + mono }); });
+      for (let o = 0; o < 3; o++) [1, 3, 6, 8, 10].forEach(p => { const m = base + 12 * o + p, w = [0, 1, 0, 2, 0, 0, 3, 0, 4, 0, 5][p], x = kx + (o * 7 + [0.65, 0, 1.65, 0, 0, 0, 3.65, 0, 4.65, 0, 5.65][p]) * kw, hit = hits.indexOf(m); ctx.fillStyle = hit >= 0 ? '#ff6a2b' : '#111'; ctx.fillRect(x, ky, kw * 0.7, kh * 0.6); if (hit >= 0) text(String(ns[hit]), x + kw * 0.35, ky + kh * 0.6 - 3, { align: 'center', font: '700 8px ' + mono, col: '#fff' }); });
+      text('keys = nearest note to each harmonic', 400, 288, { font: '600 9px ' + mono, col: '#4a4a4a' });
+      text('click the instrument to hear it', 400, 312, { font: '700 10px ' + mono, col: '#ff6a2b' });
       return;
     }
     if (mode === 'ear'){

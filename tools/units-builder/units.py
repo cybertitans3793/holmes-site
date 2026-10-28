@@ -960,7 +960,8 @@ UNITS.update({
         'Find the fringe spacing for a red laser. Switch to blue. Which one has wider fringes? Why?',
         'You measure 10 fringes across 50.6 mm with the screen 2.00 m away. Find the slit separation.',
         'What happens to the pattern if the screen is moved twice as far away?',
-        'Why is Young’s experiment evidence that light is a wave?']},
+        'Why is Young’s experiment evidence that light is a wave?',
+        'Flip <b>Symbols</b> between AP and IB. Which letters change? Is AP’s y<sub>max</sub> (m = 1) the same number as IB’s s?']},
     {'code': '', 'name': 'Single Slit & Gratings', 'sim': 'slits', 'select': 'Single slit', 'tasks': [
         'Make the slit narrower. What happens to the width of the central maximum? Is that what you expected?',
         'Why is the central maximum twice as wide as the others?',
