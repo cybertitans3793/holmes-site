@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Earthquake Location Lab</title>
+<!-- Earthquake Location Lab: original Holmes Sims, built from frame.html + abquake.js. g = 10 m/s². -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@500;700&display=swap">
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#fff;font-family:"Space Grotesk",system-ui,sans-serif;color:#111}
+#app{position:absolute;left:0;top:0;width:1000px;height:640px;transform-origin:0 0;padding:10px 14px 12px;box-sizing:border-box;
+  display:grid;grid-template-columns:600px 1fr;grid-template-rows:34px 330px 1fr;gap:10px 14px}
+#bar{grid-column:1/-1;display:flex;gap:16px;align-items:center;flex-wrap:nowrap;overflow:hidden}
+.seg{display:flex;align-items:center}
+.seg .lab{font:700 12px "IBM Plex Mono",monospace;margin-right:8px;text-transform:uppercase}
+.seg button{white-space:nowrap;font:700 14px "Space Grotesk",sans-serif;padding:6px 11px;border:2px solid #111;background:#fff;color:#111;cursor:pointer}
+.seg button+button{margin-left:-2px}
+.seg button[aria-pressed="true"]{background:#111;color:#fff}
+.seg button:hover:not([aria-pressed="true"]){background:#ffe2d3}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #ff6a2b;outline-offset:2px;position:relative;z-index:1}
+#cv{border:2px solid #111;background:#fbfbfb;width:600px;height:330px;box-sizing:border-box;display:block}
+#work{border:2px solid #111;padding:8px 12px 10px;overflow:auto;font-size:14px;line-height:1.55;box-sizing:border-box}
+#work .wt{font:700 12px "IBM Plex Mono",monospace;text-transform:uppercase;margin:0 0 4px;display:flex;justify-content:space-between}
+#work .wt .hint{text-transform:none}
+#work h4{margin:9px 0 1px;font-size:13px;font-weight:700;color:#4a4a4a}
+#work h4:first-of-type{margin-top:2px}
+#work .eq{font-variant-numeric:tabular-nums}
+#work .n{font-family:"IBM Plex Mono",monospace;font-size:13px}
+#work b .n,#work .ans{font-weight:700}
+#work .note{font-size:12.5px;color:#4a4a4a;margin:2px 0 0}
+#work .ok{background:#e5f4ea;border-left:4px solid #1e7d45;padding:3px 8px;margin-top:4px}
+#work .bad{background:#fde7df;border-left:4px solid #c43a00;padding:3px 8px;margin-top:4px}
+.ivv{border-radius:2px;padding:0 2px;transition:background .25s}
+.ivv.gx{background:#ffe2d3}
+.ivv.hot{background:#ff6a2b;color:#fff}
+#ctl{display:grid;grid-template-columns:1fr 1fr;gap:4px 18px;align-content:start}
+.iv{display:grid;grid-template-columns:auto 1fr auto;align-items:center;column-gap:6px}
+.iv .nm{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iv .val{font:700 13px "IBM Plex Mono",monospace;white-space:nowrap}
+.iv input[type=range]{grid-column:1/-1;width:100%;margin:0;accent-color:#111;height:22px}
+.iv input[type=radio]{accent-color:#ff6a2b;margin:0}
+#presets{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:2px}
+#presets .lab{font:700 12px "IBM Plex Mono",monospace}
+#presets button{font:600 12.5px "Space Grotesk",sans-serif;padding:3px 8px;border:2px solid #111;background:#fff;cursor:pointer}
+#presets button:hover{background:#ffe2d3}
+#gcard{border:2px solid #111;padding:5px 8px 6px;display:flex;flex-direction:column;box-sizing:border-box;min-height:0}
+.ghead{display:flex;align-items:center;gap:6px;font-size:13px;white-space:nowrap}
+.ghead select{font:600 13px "Space Grotesk",sans-serif;border:2px solid #111;padding:1px 4px;max-width:200px}
+#gv{width:340px;height:150px;flex:none;display:block;margin-top:3px}
+#dbl{font-size:12.5px;line-height:1.35;margin-top:2px}
+#dbl b{font-weight:700}
+.hint{font:500 11px "IBM Plex Mono",monospace;color:#4a4a4a}
+</style></head><body>
+<div id="app">
+  <div id="bar"></div>
+  <canvas id="cv" width="1200" height="660" aria-label="Animation of the situation with force arrows"></canvas>
+  <div id="work" aria-live="polite"></div>
+  <div id="ctl"></div>
+  <div id="gcard">
+    <div class="ghead"><span>Graph</span><select id="dvsel" aria-label="Quantity to graph"></select><span>vs <b id="ivname"></b></span></div>
+    <canvas id="gv" width="680" height="300" aria-label="Graph of the chosen quantity against the chosen variable"></canvas>
+    <div id="dbl"></div>
+  </div>
+</div>
+<script>
+// ---------------- shared frame ----------------
+const $ = id => document.getElementById(id);
+const G10 = 10, PI = Math.PI, DEG = PI / 180;
+function fit(){ const s = Math.min(innerWidth / 1000, innerHeight / 640); $('app').style.transform = 'scale(' + s + ')'; }
+addEventListener('resize', fit); fit();
+
+function fnum(x){ const r = fnum0(x); return typeof r === 'string' ? r.replace(/^-/, '−') : r; }
+function fnum0(x){
+  if (x === null || x === undefined || !isFinite(x)) return '—';
+  const a = Math.abs(x);
+  if (a === 0) return '0';
+  if (a >= 1e5 || a < 1e-3){
+    const e = Math.floor(Math.log10(a)); let m = x / Math.pow(10, e);
+    let ms = m.toFixed(2); if (Math.abs(+ms) >= 10){ m /= 10; ms = m.toFixed(2); return ms + '×10<sup>' + (e + 1) + '</sup>'; }
+    return ms + '×10<sup>' + e + '</sup>';
+  }
+  if (a >= 1000) return String(Math.round(x));
+  return x.toPrecision(3);
+}
+function fplain(x){ return fnum(x).replace(/<sup>(.*?)<\/sup>/g, (m, e) => '^' + e).replace('×10^', 'e'); }
+const H = {
+  n: (x, u) => '<span class="n">' + fnum(x) + (u ? '&nbsp;' + u : '') + '</span>',
+  iv: id => { const d = S.def[id]; const val = S.v[id]; const txt = (d.show ? d.show(val) : fnum(val) + (d.unit ? '&nbsp;' + d.unit : ''));
+              return '<span class="ivv n' + (S.gx === id ? ' gx' : '') + (S.hot === id ? ' hot' : '') + '" data-iv="' + id + '">' + txt + '</span>'; },
+  g: () => '<span class="n">10&nbsp;m/s²</span>',
+  p: (x, u) => x < 0 ? '(' + H.n(x, u) + ')' : H.n(x, u)
+};
+
+const S = { mode: null, opt: {}, v: {}, store: {}, def: {}, ivs: [], gx: null, dv: null, hot: null, t: 0, anim: {} };
+
+function bar(){
+  const b = $('bar'); b.innerHTML = '';
+  const group = (label, items, cur, onpick) => {
+    const g = document.createElement('div'); g.className = 'seg'; g.setAttribute('role', 'group');
+    if (label){ const l = document.createElement('span'); l.className = 'lab'; l.textContent = label; g.appendChild(l); }
+    items.forEach(([id, txt]) => { const bt = document.createElement('button'); bt.textContent = txt; bt.setAttribute('aria-pressed', String(id === cur)); bt.onclick = () => onpick(id); g.appendChild(bt); });
+    b.appendChild(g);
+  };
+  const tip = document.createElement('span'); tip.className = 'hint'; tip.style.marginLeft = 'auto'; tip.style.whiteSpace = 'nowrap'; tip.innerHTML = '● = the variable on the graph’s x-axis · drag any slider';
+  if (SIM.modes && SIM.modes.length > 1) group(null, SIM.modes.map(m => [m.id, m.label]), S.mode, id => { S.mode = id; S.anim = {}; setup(); });
+  (SIM.opts || []).filter(o => !o.modes || o.modes.includes(S.mode)).forEach(o => {
+    if (!(o.id in S.opt)) S.opt[o.id] = o.choices[0][0];
+    group(o.label, o.choices, S.opt[o.id], id => { S.opt[o.id] = id; S.anim = {}; setup(); });
+  });
+  if (!SIM.noGraph) b.appendChild(tip);
+  if (b.scrollWidth > b.clientWidth + 1) tip.remove();
+  if (b.scrollWidth > b.clientWidth + 1) b.querySelectorAll('.seg button').forEach(x => { x.style.fontSize = '13px'; x.style.padding = '6px 8px'; });
+}
+
+function setup(){
+  if (SIM.noGraph){ $('gcard').style.display = 'none'; $('cv').style.gridArea = '2 / 1 / 3 / 2'; $('work').style.gridArea = '2 / 2 / 4 / 3'; $('ctl').style.gridArea = '3 / 1 / 4 / 2'; }
+  bar();
+  S.ivs = SIM.ivs(S.mode, S.opt); S.def = {}; S.v = {};
+  S.ivs.forEach(d => { S.def[d.id] = d; const k = S.mode + ':' + d.id; S.v[d.id] = (k in S.store) ? S.store[k] : d.val; });
+  if (!S.gx || !S.def[S.gx]) S.gx = S.ivs.find(d => d.graph) ? S.ivs.find(d => d.graph).id : S.ivs[1] ? S.ivs[1].id : S.ivs[0].id;
+  const c = $('ctl'); c.innerHTML = '';
+  S.ivs.forEach(d => {
+    const w = document.createElement('div'); w.className = 'iv';
+    w.innerHTML = '<input type="radio" name="gx"' + (SIM.noGraph ? ' style="display:none"' : '') + ' value="' + d.id + '" aria-label="Graph against ' + d.label + '" title="Put this on the graph’s x-axis"' + (S.gx === d.id ? ' checked' : '') + '>' +
+      '<span class="nm">' + d.label + ' <i>' + d.sym + '</i></span><span class="val" id="val-' + d.id + '"></span>' +
+      '<input type="range" id="r-' + d.id + '" min="' + d.min + '" max="' + d.max + '" step="' + d.step + '" value="' + S.v[d.id] + '" aria-label="' + d.label + '">';
+    c.appendChild(w);
+    const r = w.querySelector('input[type=range]');
+    r.oninput = () => { S.v[d.id] = +r.value; S.store[S.mode + ':' + d.id] = +r.value; S.hot = d.id; clearTimeout(S.hotT); S.hotT = setTimeout(() => { S.hot = null; update(); }, 700); S.anim.reset = true; update(); };
+    w.querySelector('input[type=radio]').onchange = () => { S.gx = d.id; update(); };
+  });
+  if (SIM.presets){
+    const p = document.createElement('div'); p.id = 'presets'; p.innerHTML = '<span class="lab">Try:</span>';
+    SIM.presets.forEach(ps => { const bt = document.createElement('button'); bt.textContent = ps.label; bt.onclick = () => { if (ps.mode && ps.mode !== S.mode){ S.mode = ps.mode; } if (ps.opt) Object.assign(S.opt, ps.opt); Object.entries(ps.v).forEach(([k, val]) => S.store[(ps.mode || S.mode) + ':' + k] = val); S.anim = {}; setup(); }; p.appendChild(bt); });
+    c.appendChild(p);
+  }
+  const dvs = SIM.dvs(S.mode, S.opt), sel = $('dvsel');
+  if (!S.dv || !dvs.find(d => d.id === S.dv)) S.dv = dvs[0].id;
+  sel.innerHTML = dvs.map(d => '<option value="' + d.id + '"' + (d.id === S.dv ? ' selected' : '') + '>' + d.name + '</option>').join('');
+  sel.onchange = () => { S.dv = sel.value; update(); };
+  update();
+}
+
+function calcWith(over){ const v = Object.assign({}, S.v, over || {}); return SIM.calc(v, S.mode, S.opt); }
+
+function update(){
+  S.ivs.forEach(d => { $('val-' + d.id).innerHTML = d.show ? d.show(S.v[d.id]) : fnum(S.v[d.id]) + (d.unit ? '&nbsp;' + d.unit : ''); });
+  S.d = calcWith();
+  $('work').innerHTML = '<div class="wt"><span>Show the work</span><span class="hint">' + (SIM.hint || 'g = 10 m/s²') + '</span></div>' + (SIM.strip ? SIM.strip(SIM.work(S.v, S.d, S.mode, S.opt)) : SIM.work(S.v, S.d, S.mode, S.opt));
+  document.querySelectorAll('input[name=gx]').forEach(r => r.checked = (r.value === S.gx));
+  graph();
+}
+
+function graph(){
+  if (SIM.noGraph) return;
+  const cv = $('gv'), g = cv.getContext('2d'), W = 340, Hh = 150; g.setTransform(2, 0, 0, 2, 0, 0); g.clearRect(0, 0, W, Hh);
+  const dvs = SIM.dvs(S.mode, S.opt), dv = dvs.find(d => d.id === S.dv), ref = dv.vs ? dvs.find(d => d.id === dv.vs) : null;
+  const x = S.def[S.gx]; $('ivname').innerHTML = '<i>' + x.sym + '</i>' + (x.unit && !x.show ? ' (' + x.unit + ')' : '');
+  const N = 160, xs = [], ys = [], rs = [];
+  for (let i = 0; i <= N; i++){ const xv = x.min + (x.max - x.min) * i / N; const d = calcWith({ [S.gx]: xv }); xs.push(xv); ys.push(dv.f(d)); rs.push(ref ? ref.f(d) : null); }
+  const all = ys.concat(ref ? rs : []).filter(isFinite);
+  let ymin = Math.min(0, ...all), ymax = Math.max(...all, 0); if (ymax === ymin) ymax = ymin + 1; const pad = (ymax - ymin) * 0.08; ymax += pad; if (ymin < 0) ymin -= pad;
+  const L = 46, R = 8, T = 8, B = 22, X = v => L + (v - x.min) / (x.max - x.min) * (W - L - R), Y = v => T + (ymax - v) / (ymax - ymin) * (Hh - T - B);
+  g.strokeStyle = '#111'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(L, T); g.lineTo(L, Hh - B); g.lineTo(W - R, Hh - B); g.stroke();
+  if (ymin < 0){ g.strokeStyle = '#999'; g.setLineDash([3, 3]); g.beginPath(); g.moveTo(L, Y(0)); g.lineTo(W - R, Y(0)); g.stroke(); g.setLineDash([]);
+    if (dv.negNote){ g.fillStyle = 'rgba(196,58,0,0.08)'; g.fillRect(L, Y(0), W - R - L, Hh - B - Y(0)); g.fillStyle = '#c43a00'; g.font = '600 10px "Space Grotesk",sans-serif'; g.textAlign = 'left'; g.fillText(dv.negNote, L + 4, Hh - B - 4); } }
+  g.font = '500 10px "IBM Plex Mono",monospace'; g.fillStyle = '#4a4a4a'; g.textAlign = 'right';
+  g.fillText(fplain(ymax), L - 4, T + 8); g.fillText(fplain(ymin < 0 ? ymin : 0), L - 4, Hh - B); if (ymin < 0) g.fillText('0', L - 4, Y(0) + 3);
+  g.textAlign = 'center'; g.fillText(fplain(x.min), L, Hh - 8); g.fillText(fplain(x.max), W - R - 10, Hh - 8);
+  g.fillText((x.symText || x.id) + (x.unit ? ' (' + x.unit + ')' : ''), (L + W) / 2, Hh - 8);
+  g.save(); g.translate(10, (T + Hh - B) / 2); g.rotate(-PI / 2); g.textAlign = 'center'; g.fillText(dv.short + (dv.unit ? ' (' + dv.unit + ')' : ''), 0, 0); g.restore();
+  const line = (arr, col, dash) => { g.strokeStyle = col; g.lineWidth = 2.2; g.setLineDash(dash || []); g.beginPath(); let on = false; arr.forEach((y, i) => { if (!isFinite(y)){ on = false; return; } const px = X(xs[i]), py = Math.max(T - 4, Math.min(Hh - B + 4, Y(y))); on ? g.lineTo(px, py) : g.moveTo(px, py); on = true; }); g.stroke(); g.setLineDash([]); };
+  if (ref){ line(rs, '#4a4a4a', [5, 4]); g.fillStyle = '#4a4a4a'; g.textAlign = 'right'; g.font = '600 10px "Space Grotesk",sans-serif'; const lastY = rs.filter(isFinite).pop(); if (isFinite(lastY)) g.fillText(ref.short, W - R - 2, Math.max(T + 9, Y(lastY) - 4)); }
+  line(ys, '#1546d6');
+  const cx = S.v[S.gx], cy = dv.f(S.d);
+  if (isFinite(cy)){ g.strokeStyle = '#ff6a2b'; g.setLineDash([2, 3]); g.lineWidth = 1; g.beginPath(); g.moveTo(X(cx), Hh - B); g.lineTo(X(cx), Y(cy)); g.lineTo(L, Y(cy)); g.stroke(); g.setLineDash([]);
+    g.fillStyle = '#ff6a2b'; g.strokeStyle = '#111'; g.lineWidth = 1.5; g.beginPath(); g.arc(X(cx), Math.max(T, Math.min(Hh - B, Y(cy))), 4.5, 0, 7); g.fill(); g.stroke(); }
+  // doubling readout
+  const d2 = calcWith({ [S.gx]: cx * 2 }), y1 = dv.f(S.d), y2 = dv.f(d2);
+  let msg = '';
+  if (cx === 0 || Math.abs(y1) < 1e-12) msg = '<span class="hint">Move off zero to see the ×2 test.</span>';
+  else if (!isFinite(y1) || !isFinite(y2)) msg = '<span class="hint">The ×2 test doesn’t apply here (doubling takes it outside what this quantity covers).</span>';
+  else {
+    const k = y2 / y1;
+    if (k < 0){ $('dbl').innerHTML = 'If <b>' + x.sym + '</b> doubles (' + fnum(cx) + ' → ' + fnum(2 * cx) + (x.unit ? ' ' + x.unit : '') + '), <b>' + dv.sym + '</b> goes from ' + fnum(y1) + ' to ' + fnum(y2) + (dv.unit ? ' ' + dv.unit : '') + (dv.signOK ? ': it changes sign. ' + dv.signOK : ': it changes sign, so that can’t really happen.'); return; }
+    const tags = [[1, 'doesn’t depend on it'], [2, 'proportional'], [4, 'goes as the square'], [0.5, 'inversely proportional'], [0.25, 'inverse square'], [Math.SQRT2, 'goes as the square root'], [Math.SQRT1_2, 'goes as 1/√'], [8, 'goes as the cube'], [2 * Math.SQRT2, 'goes as the 3/2 power']];
+    const tag = tags.find(([v]) => Math.abs(k - v) < 0.004 * v);
+    msg = 'If <b>' + x.sym + '</b> doubles (' + fnum(cx) + ' → ' + fnum(2 * cx) + (x.unit ? ' ' + x.unit : '') + '), <b>' + dv.sym + '</b> becomes <b>×' + (Math.abs(k) >= 100 ? fnum(k) : k.toFixed(2)) + '</b>' + (tag && !dv.noTag ? ' — ' + tag[1] : '') + '.' + (dv.dblNote ? ' <span class="hint">' + dv.dblNote + '</span>' : '');
+  }
+  $('dbl').innerHTML = msg;
+}
+
+// drawing helpers (canvas is drawn in 600×330 units)
+const cv = $('cv'), ctx = cv.getContext('2d');
+function arrow(x1, y1, x2, y2, col, label, opts){
+  opts = opts || {}; const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy); if (len < 2) return;
+  const ux = dx / len, uy = dy / len, hw = opts.head || 9;
+  ctx.save(); ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = opts.w || 3.5; ctx.lineCap = 'round';
+  if (opts.dash) ctx.setLineDash(opts.dash);
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2 - ux * hw * 0.8, y2 - uy * hw * 0.8); ctx.stroke(); ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x2, y2); ctx.lineTo(x2 - ux * hw - uy * hw * 0.55, y2 - uy * hw + ux * hw * 0.55); ctx.lineTo(x2 - ux * hw + uy * hw * 0.55, y2 - uy * hw - ux * hw * 0.55); ctx.closePath(); ctx.fill();
+  if (label){ ctx.font = '700 13px "Space Grotesk",sans-serif'; ctx.textAlign = opts.align || 'left'; ctx.textBaseline = 'middle';
+    const lx = x2 + (opts.lx !== undefined ? opts.lx : (ux >= 0 ? 6 : -6)), ly = y2 + (opts.ly !== undefined ? opts.ly : (uy >= 0 ? 10 : -10));
+    if (opts.align === undefined) ctx.textAlign = ux >= -0.2 ? 'left' : 'right';
+    ctx.fillText(label, lx, ly); }
+  ctx.restore();
+}
+function text(s, x, y, o){ o = o || {}; ctx.save(); ctx.font = (o.font || '600 13px "Space Grotesk",sans-serif'); ctx.fillStyle = o.col || '#111'; ctx.textAlign = o.align || 'left'; ctx.textBaseline = o.base || 'alphabetic'; ctx.fillText(s, x, y); ctx.restore(); }
+function panelTitle(s, x, y){ text(s, x, y, { font: '700 11px "IBM Plex Mono",monospace', col: '#4a4a4a' }); }
+const COL = { F: '#c43a00', W: '#111', N: '#1e7d45', V: '#1546d6', T: '#7a3fb0', comp: '#8a8a8a' };
+
+let last = 0;
+function loop(ts){ const dt = Math.min(0.05, (ts - (last || ts)) / 1000); last = ts; S.t += dt;
+  ctx.setTransform(2, 0, 0, 2, 0, 0); ctx.clearRect(0, 0, 600, 330);
+  SIM.draw(S.v, S.d, S.mode, S.opt, S.t, dt, S.anim); S.anim.reset = false;
+  requestAnimationFrame(loop); }
+
+// ---------------- this sim ----------------
+// ABP Earthquake location lab: S–P time lag → distance → three circles → epicenter. P waves 8 km/s, S waves 4 km/s (simplified), so distance = 8 × (S − P). Original.
+const fint = x => Number.isInteger(x) ? String(x) : (Math.abs(x) >= 10 ? x.toFixed(1) : x.toFixed(2)).replace(/\.?0+$/, '');
+const VP = 8, VS = 4, STA = [['A', 100, 130, '#1546d6'], ['B', 500, 210, '#1e7d45'], ['C', 230, 610, '#7a3fb0']];
+const rng = q => { let a = (q * 2654435761) >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; }; };
+const QUAKE = q => { const r = rng(q + 7); let x, y; do { x = 60 + Math.round(r() * 48) * 10; y = 60 + Math.round(r() * 58) * 10; } while (STA.some(s => Math.hypot(s[1] - x, s[2] - y) < 120 || Math.hypot(s[1] - x, s[2] - y) > 600)); return { x, y, t0: 41 * 60 + Math.round(r() * 50) }; };
+const clk = s => { s = Math.round(s); const m = Math.floor(s / 60), ss = s - 60 * m; return '10:' + String(m).padStart(2, '0') + ':' + String(ss).padStart(2, '0'); };
+const wig = (t, tP, tS, k) => { const n = Math.sin(t * 2.9 + k) * Math.sin(t * 0.7 + 3 * k); let y = 0.035 * n;
+  if (t >= tP){ const u = t - tP; y += (0.3 * Math.exp(-u / 14) + 0.07) * Math.sin(u * 2.4 + k); }
+  if (t >= tS){ const u = t - tS; y += (0.8 * Math.exp(-u / 18) + 0.12) * Math.sin(u * 1.5 + 2 * k); } return Math.max(-1, Math.min(1, y)); };
+const SIM = {
+  title: 'Earthquake Location Lab',
+  hint: 'P: 8 km/s · S: 4 km/s · distance = 8 × (S − P)',
+  noGraph: true,
+  modes: [{ id: 'how', label: 'How it works' }, { id: 'lab', label: 'Find the epicenter' }],
+  opts: [{ id: 'chk', label: 'Answer', modes: ['lab'], choices: [['no', 'Hidden'], ['yes', 'Check my answer']] }],
+  ivs(mode){
+    if (mode === 'how') return [{ id: 'd', sym: '', symText: 'd', label: 'Distance from the earthquake to the station', unit: 'km', show: x => fint(x) + ' km', min: 80, max: 640, step: 40, val: 400 }];
+    return [{ id: 'q', sym: '', symText: '#', label: 'Earthquake number (your teacher may assign one)', unit: '', show: x => '#' + x, min: 1, max: 30, step: 1, val: 1 },
+      { id: 'r0', sym: '', symText: 'rA', label: 'Circle around station A', unit: 'km', show: x => fint(x) + ' km', min: 0, max: 800, step: 5, val: 0 },
+      { id: 'r1', sym: '', symText: 'rB', label: 'Circle around station B', unit: 'km', show: x => fint(x) + ' km', min: 0, max: 800, step: 5, val: 0 },
+      { id: 'r2', sym: '', symText: 'rC', label: 'Circle around station C', unit: 'km', show: x => fint(x) + ' km', min: 0, max: 800, step: 5, val: 0 }];
+  },
+  presets: [{ label: 'Close station (120 km)', mode: 'how', v: { d: 120 } }, { label: 'Far station (640 km)', mode: 'how', v: { d: 640 } }, { label: 'Start the lab (quake #1)', mode: 'lab', v: { q: 1, r0: 0, r1: 0, r2: 0 } }],
+  calc(v, mode){
+    if (mode === 'how') return { tP: v.d / VP, tS: v.d / VS, lag: v.d / VP };
+    const Q = QUAKE(v.q), st = STA.map(([n, x, y, c], i) => { const D = Math.hypot(x - Q.x, y - Q.y), tP = Q.t0 + D / VP, tS = Q.t0 + D / VS; return { n, x, y, c, D, tP, tS, lag: tS - tP, w0: Math.floor((tP - 8 - (i * 2)) / 10) * 10, r: v['r' + i] }; });
+    return { Q, st, col: 'ABCDEF'[Math.floor(Q.x / 100)], row: Math.floor(Q.y / 100) + 1 };
+  },
+  dvs(mode){ return [{ id: 'x', name: '—', short: '', sym: '', unit: '', noTag: true, f: () => 0 }]; },
+  work(v, d, mode, opt){
+    if (mode === 'how') return '<h4>1 · Two kinds of waves leave at the same moment</h4><div class="eq">P waves (push–pull) travel about <b>8 km/s</b>. S waves (side to side) travel about <b>4 km/s</b>. The P wave always arrives first.</div>' +
+      '<h4>2 · Travel times for ' + fint(v.d) + ' km</h4><div class="eq">P: time = distance ÷ speed = ' + fint(v.d) + ' ÷ 8 = <b>' + fint(d.tP) + ' s</b><br>S: ' + fint(v.d) + ' ÷ 4 = <b>' + fint(d.tS) + ' s</b></div>' +
+      '<h4>3 · The time lag (S − P)</h4><div class="eq">' + fint(d.tS) + ' − ' + fint(d.tP) + ' = <b>' + fint(d.lag) + ' s</b></div>' +
+      '<h4>4 · Work backwards</h4><div class="eq">Every 1 s of lag means 8 km of distance:<br><b>distance = 8 × (S − P)</b> = 8 × ' + fint(d.lag) + ' = ' + fint(v.d) + ' km</div>' +
+      '<p class="note">The farther away the station, the bigger the gap between the P and S waves — like seeing lightning before you hear thunder. (Real speeds vary with the rock; we use 8 and 4 km/s to keep the numbers simple.)</p>';
+    const chk = opt.chk === 'yes';
+    const rows = d.st.map(s => { const r = s.r, ok = r && Math.abs(r - s.D) <= 25;
+      return '<tr><td style="color:' + s.c + '"><b>' + s.n + '</b></td>' + (chk ? '<td>' + clk(s.tP) + '</td><td>' + clk(s.tS) + '</td><td>' + fint(Math.round(s.lag)) + ' s</td><td>' + fint(Math.round(8 * Math.round(s.lag))) + ' km</td>' : '<td>?</td><td>?</td><td>?</td><td>?</td>') + '<td>' + (r ? fint(r) + ' km' + (chk ? (ok ? ' ✓' : ' ✗') : '') : '—') + '</td></tr>'; }).join('');
+    return '<h4>1 · Read each seismogram</h4><div class="eq">Find the time the <b>P wave</b> starts (first small wiggles) and the <b>S wave</b> starts (big wiggles). Subtract: S − P.</div>' +
+      '<h4>2 · Distance to each station</h4><div class="eq">distance = 8 km/s × (S − P)</div>' +
+      '<h4>3 · Draw the circles</h4><div class="eq">Set each circle’s radius to that station’s distance. The quake is somewhere on each circle. Where all <b>three</b> circles cross is the <b>epicenter</b>. Name its grid square (like C4).</div>' +
+      '<table style="width:100%;font:12px \'IBM Plex Mono\',monospace;border-collapse:collapse;margin:6px 0" border="1" cellpadding="3"><tr><th>Stn</th><th>P</th><th>S</th><th>S−P</th><th>dist.</th><th>your circle</th></tr>' + rows + '</table>' +
+      (chk ? '<div class="eq">Epicenter of quake #' + v.q + ': grid square <b>' + d.col + d.row + '</b> (the star).</div>' : '<p class="note">Copy the table onto your lab sheet and fill in the ? boxes from the seismograms. Turn on <b>Check my answer</b> when you are done.</p>');
+  },
+  draw(v, d, mode, opt, t){
+    const mono = '"IBM Plex Mono",monospace', sg = '"Space Grotesk",sans-serif';
+    if (mode === 'how'){
+      panelTitle('SIDE VIEW: WAVES RACE TO THE STATION', 10, 18);
+      const x0 = 30, sc = 330 / 640, xs = x0 + v.d * sc, gy = 120, T = d.tS + 25, tt = (t * 16) % T;
+      ctx.fillStyle = '#d9c7a6'; ctx.fillRect(12, gy, 376, 170); ctx.fillStyle = '#9ec98a'; ctx.fillRect(12, gy - 6, 376, 6);
+      ctx.fillStyle = '#c43a00'; ctx.beginPath(); for (let k = 0; k < 10; k++){ const a = k * PI / 5, r = k % 2 ? 4 : 10; ctx.lineTo(x0 + r * Math.sin(a), gy + 18 - r * Math.cos(a)); } ctx.fill(); text('earthquake', x0, gy + 42, { align: 'center', font: '700 10px ' + sg, col: '#c43a00' });
+      ctx.fillStyle = '#111'; ctx.beginPath(); ctx.moveTo(xs, gy - 22); ctx.lineTo(xs - 9, gy - 6); ctx.lineTo(xs + 9, gy - 6); ctx.fill(); text('station', xs, gy - 28, { align: 'center', font: '700 10px ' + sg });
+      ctx.save(); ctx.beginPath(); ctx.rect(12, gy, 376, 170); ctx.clip();
+      const pP = Math.min(xs, x0 + VP * tt * sc), pS = Math.min(xs, x0 + VS * tt * sc);
+      ctx.strokeStyle = '#1546d6'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x0, gy + 18, Math.max(1, pP - x0), -PI / 2, PI / 2); ctx.stroke();
+      ctx.strokeStyle = '#c43a00'; ctx.beginPath(); ctx.arc(x0, gy + 18, Math.max(1, pS - x0), -PI / 2, PI / 2); ctx.stroke(); ctx.restore();
+      text('P (8 km/s)', 20, 60, { font: '700 11px ' + sg, col: '#1546d6' }); text('S (4 km/s)', 110, 60, { font: '700 11px ' + sg, col: '#c43a00' });
+      arrow(x0, gy + 150, xs, gy + 150, '#111', null, { w: 1.2, head: 5 }); arrow(xs, gy + 150, x0, gy + 150, '#111', null, { w: 1.2, head: 5 }); text(fint(v.d) + ' km', (x0 + xs) / 2, gy + 144, { align: 'center', font: '700 12px ' + sg });
+      text('time since the quake: ' + Math.floor(tt) + ' s', 20, 80, { font: '700 12px ' + mono });
+      // seismogram
+      panelTitle('SEISMOGRAM AT THE STATION', 395, 18);
+      const sx0 = 400, sw = 188, tm = 170, X = s => sx0 + sw * s / tm, cy = 120;
+      ctx.strokeStyle = '#ddd'; ctx.lineWidth = 1; for (let s = 0; s <= tm; s += 10){ ctx.beginPath(); ctx.moveTo(X(s), 50); ctx.lineTo(X(s), 190); ctx.stroke(); if (s % 50 === 0) text(String(s), X(s), 204, { align: 'center', font: '600 9px ' + mono }); }
+      text('seconds after the quake', 400, 218, { font: '600 9px ' + mono, col: '#4a4a4a' });
+      ctx.strokeStyle = '#111'; ctx.lineWidth = 1; ctx.beginPath(); for (let s = 0; s <= Math.min(tt, tm); s += 0.25){ const y = cy - 60 * wig(s, d.tP, d.tS, 1); s ? ctx.lineTo(X(s), y) : ctx.moveTo(X(s), y); } ctx.stroke();
+      if (tt > d.tP){ ctx.strokeStyle = '#1546d6'; ctx.setLineDash([3, 2]); ctx.beginPath(); ctx.moveTo(X(d.tP), 50); ctx.lineTo(X(d.tP), 190); ctx.stroke(); text('P', X(d.tP), 46, { align: 'center', font: '700 11px ' + sg, col: '#1546d6' }); }
+      if (tt > d.tS){ ctx.strokeStyle = '#c43a00'; ctx.beginPath(); ctx.moveTo(X(d.tS), 50); ctx.lineTo(X(d.tS), 190); ctx.stroke(); text('S', X(d.tS), 46, { align: 'center', font: '700 11px ' + sg, col: '#c43a00' }); ctx.setLineDash([]);
+        arrow(X(d.tP), 240, X(d.tS), 240, '#111', null, { w: 1.5, head: 5 }); text('S − P = ' + fint(d.lag) + ' s', (X(d.tP) + X(d.tS)) / 2, 258, { align: 'center', font: '700 12px ' + mono }); }
+      ctx.setLineDash([]);
+      text('distance = 8 × ' + fint(d.lag) + ' = ' + fint(v.d) + ' km', 400, 290, { font: '700 13px ' + sg, col: tt > d.tS ? '#c43a00' : '#bbb' });
+      return;
+    }
+    // map
+    const mx = 12, my = 28, k = 0.4, M = (x, y) => [mx + x * k, my + y * k];
+    ctx.fillStyle = '#eef3e6'; ctx.fillRect(mx, my, 240, 280); ctx.strokeStyle = '#c9d3bd'; ctx.lineWidth = 1;
+    for (let i = 0; i <= 6; i++){ ctx.beginPath(); ctx.moveTo(mx + i * 40, my); ctx.lineTo(mx + i * 40, my + 280); ctx.stroke(); }
+    for (let j = 0; j <= 7; j++){ ctx.beginPath(); ctx.moveTo(mx, my + j * 40); ctx.lineTo(mx + 240, my + j * 40); ctx.stroke(); }
+    for (let i = 0; i < 6; i++) for (let j = 0; j < 7; j++) text('ABCDEF'[i] + (j + 1), mx + i * 40 + 3, my + j * 40 + 10, { font: '500 8px ' + mono, col: '#9aa58c' });
+    ctx.strokeStyle = '#111'; ctx.lineWidth = 2; ctx.strokeRect(mx, my, 240, 280);
+    panelTitle('MAP (EACH SQUARE = 100 km)', 10, 18);
+    ctx.save(); ctx.beginPath(); ctx.rect(mx, my, 240, 280); ctx.clip();
+    d.st.forEach(s => { const [px, py] = M(s.x, s.y); if (s.r){ ctx.strokeStyle = s.c; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(px, py, s.r * k, 0, 7); ctx.stroke(); } });
+    if (opt.chk === 'yes'){ const [qx, qy] = M(d.Q.x, d.Q.y); ctx.fillStyle = '#ff6a2b'; ctx.strokeStyle = '#111'; ctx.lineWidth = 1; ctx.beginPath(); for (let q = 0; q < 10; q++){ const a = q * PI / 5, r = q % 2 ? 4 : 10; ctx.lineTo(qx + r * Math.sin(a), qy - r * Math.cos(a)); } ctx.closePath(); ctx.fill(); ctx.stroke(); }
+    ctx.restore();
+    d.st.forEach(s => { const [px, py] = M(s.x, s.y); ctx.fillStyle = s.c; ctx.beginPath(); ctx.moveTo(px, py - 9); ctx.lineTo(px - 7, py + 5); ctx.lineTo(px + 7, py + 5); ctx.closePath(); ctx.fill(); text(s.n, px + 9, py + 4, { font: '700 12px ' + sg, col: s.c }); });
+    text('quake #' + v.q, 14, 322, { font: '700 11px ' + mono });
+    // seismograms
+    const sx0 = 262, sw = 326, win = 110, X = s => sx0 + sw * s / win;
+    panelTitle('SEISMOGRAMS (CLOCK TIME, 10:mm:ss)', 262, 18);
+    d.st.forEach((s, i) => { const y0 = 30 + i * 96, cy = y0 + 42;
+      ctx.fillStyle = '#fff'; ctx.fillRect(sx0, y0, sw, 70); ctx.strokeStyle = '#ccc'; ctx.lineWidth = 1; ctx.strokeRect(sx0, y0, sw, 70);
+      for (let q = 0; q <= win; q += 2){ ctx.strokeStyle = q % 10 ? '#f0f0f0' : '#cfcfcf'; ctx.beginPath(); ctx.moveTo(X(q), y0); ctx.lineTo(X(q), y0 + 70); ctx.stroke(); if (q % 10 === 0 && q > 0 && q < win) text(clk(s.w0 + q).slice(3), X(q), y0 + 82, { align: 'center', font: '500 8px ' + mono, col: '#4a4a4a' }); }
+      text('Station ' + s.n, sx0 + 4, y0 + 11, { font: '700 11px ' + sg, col: s.c });
+      ctx.strokeStyle = '#111'; ctx.lineWidth = 1; ctx.beginPath(); for (let q = 0; q <= win; q += 0.15){ const y = cy - 30 * wig(s.w0 + q, s.tP, s.tS, i + 1); q ? ctx.lineTo(X(q), y) : ctx.moveTo(X(q), y); } ctx.stroke();
+      if (opt.chk === 'yes'){ ctx.setLineDash([3, 2]); [[s.tP, '#1546d6', 'P'], [s.tS, '#c43a00', 'S']].forEach(([tt, c, l]) => { const xx = X(tt - s.w0); if (xx <= sx0 + sw){ ctx.strokeStyle = c; ctx.beginPath(); ctx.moveTo(xx, y0); ctx.lineTo(xx, y0 + 70); ctx.stroke(); text(l, xx + 3, y0 + 22, { font: '700 10px ' + sg, col: c }); } }); ctx.setLineDash([]); } });
+  }
+};
+
+
+
+S.mode = SIM.modes ? SIM.modes[0].id : 'one';
+setup(); requestAnimationFrame(loop);
+window.APP = { select(name){ const m = (SIM.modes || []).find(m => m.label === name || m.id === name); if (m && m.id !== S.mode){ S.mode = m.id; S.anim = {}; setup(); } } };
+addEventListener('message', e => { const d = e.data; if (d && d.select) try { APP.select(d.select); } catch (er) {} });
+</script>
+</body></html>
