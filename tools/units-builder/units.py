@@ -120,6 +120,7 @@ SIMS = {
     'ab-elevator': {'file': 'units/sims/circ-ab-elevator.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'ab-vertical': {'file': 'units/sims/circ-ab-vertical.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'abkepler': {'file': 'units/sims/circ-abkepler.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Kepler’s 2nd & 3rd Laws and Work are original.'},
+    'abbang': {'file': 'units/sims/circ-abbang.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Big Bang Evidence is original (HS-ESS1-2).'},
     'abquake': {'file': 'units/sims/circ-abquake.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Earthquake Location Lab is original.'},
     'abwork': {'file': 'units/sims/circ-abwork.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'ab-blocks': {'file': 'units/sims/circ-ab-blocks.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
@@ -678,6 +679,13 @@ UNITS.update({
     {'code': '', 'name': 'PhET Energy', 'sim': 'phetE', 'tasks': ['<b>Energy Skate Park: Basics:</b> watch the pie chart. When is all the energy kinetic? All potential?', 'Add friction. Where does the energy go?']},
     {'code': '', 'name': 'Star Life Cycle', 'sim': 'star', 'tasks': ['Follow the Sun through its life. At each stage, which is winning: gravity pulling in or pressure pushing out?', 'Where does a star’s energy come from? Watch the core during the main sequence.', 'Compare a small star with a very big star. Which one lives longer? Is that what you expected?', 'Which stars end as white dwarfs, and which explode as supernovas?']},
     {'code': '', 'name': 'The HR Diagram', 'sim': 'ab-stars', 'tasks': ['Place the Sun on the diagram. Then find Betelgeuse and Sirius B.', 'Why can a cool star be very bright? Use its size.', 'Which main-sequence stars live longest: big or small? Why?']},
+    {'code': '', 'name': 'Big Bang Evidence', 'sim': 'abbang', 'tasks': [
+        '<b>Expanding & cooling:</b> slide from the Big Bang to today. Write down the temperature, the kind of light and what the universe is made of at 3 minutes, 380,000 years and today.',
+        'Why does the universe cool as it expands? What happens to the light?',
+        'At “Today”, click a different galaxy to stand on it. Does everything still move away from you? Where is the center of the universe?',
+        '<b>Red shift:</b> for each galaxy, read where the red hydrogen line lands, find Δλ and the speed. Plot speed against distance. What pattern do you see? Then turn on Show to check.',
+        '<b>Star spectra:</b> which elements are in the Sun? In the glowing gas cloud? Which element shows up in every source? How does that match the Big Bang?',
+        '<b>Leftover glow:</b> what color did the universe glow at 380,000 years? Why can’t we see that glow with our eyes today?']},
 ]},
 'AB-05': {'course': AB, 'num': '05', 'title': 'Momentum', 'review': '05-R', 'tabs': [
     {'code': '', 'name': 'Crash Test', 'sim': 'crash', 'tasks': ['A car hits a wall. Find the change in momentum and the impulse.', 'Make the crash last longer (an airbag or crumple zone). What happens to the force?', 'Car bounces back: why is the impulse bigger than when it stops dead?']},
