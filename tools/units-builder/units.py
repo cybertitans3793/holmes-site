@@ -679,7 +679,7 @@ UNITS.update({
     {'code': '', 'name': 'Star Life Cycle', 'sim': 'star', 'tasks': ['Follow the Sun through its life. At each stage, which is winning: gravity pulling in or pressure pushing out?', 'Where does a star’s energy come from? Watch the core during the main sequence.', 'Compare a small star with a very big star. Which one lives longer? Is that what you expected?', 'Which stars end as white dwarfs, and which explode as supernovas?']},
     {'code': '', 'name': 'The HR Diagram', 'sim': 'ab-stars', 'tasks': ['Place the Sun on the diagram. Then find Betelgeuse and Sirius B.', 'Why can a cool star be very bright? Use its size.', 'Which main-sequence stars live longest: big or small? Why?']},
 ]},
-'AB-05': {'course': AB, 'num': '05', 'title': 'Momentum', 'tabs': [
+'AB-05': {'course': AB, 'num': '05', 'title': 'Momentum', 'review': '05-R', 'tabs': [
     {'code': '', 'name': 'Crash Test', 'sim': 'crash', 'tasks': ['A car hits a wall. Find the change in momentum and the impulse.', 'Make the crash last longer (an airbag or crumple zone). What happens to the force?', 'Car bounces back: why is the impulse bigger than when it stops dead?']},
     {'code': '', 'name': 'Collision Carts', 'sim': 'carts', 'tasks': ['Two carts stick together. Find their speed after the collision.', 'Check: is momentum the same before and after? Is kinetic energy?', 'Explosion: two carts push apart from rest. Why is the total momentum still zero?']},
     {'code': '', 'name': 'Bouncing Ball', 'sim': 'bounce', 'tasks': ['Drop a ball. Find the impulse from the floor.', 'Which takes more impulse to stop: a ball that sticks or a ball that bounces? Why?']},
