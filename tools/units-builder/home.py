@@ -26,6 +26,8 @@ def card(big, name, prefix, sub, hot):
         rows.append(f'<a class="row{"" if ready else " soon"}" href="{SITE}{FOLDER[prefix]}/{k.lower()}" target="_blank" rel="noopener">'
                     f'<span class="code">{k}</span><span class="nm">{E(u["title"])}</span>'
                     f'{"" if ready else "<span class=tag>SOON</span>"}</a>')
+    rows.append(f'<a class="row hw" href="{SITE}{FOLDER[prefix]}/homework" target="_blank" rel="noopener">'
+                f'<span class="code">HW</span><span class="nm">Homework</span><span class="arr">→</span></a>')
     return (f'<section class="card{" hot" if hot else ""}"><div class="top"><div class="line"><div class="big">{big}</div>'
             f'<div class="meta">{len(units)} UNITS<br>{E(sub.upper())}</div></div><h2>{E(name)}</h2></div>'
             f'<nav class="list" aria-label="{E(name)} units">{"".join(rows)}</nav></section>')
@@ -61,6 +63,9 @@ h2{margin:12px 0 0;font-size:26px;line-height:1.05;letter-spacing:-.02em}
 .row:focus-visible{outline:3px solid var(--hot);outline-offset:2px}
 .row .code{font:700 12px var(--f-mono);width:44px;flex:none}
 .row.soon{color:var(--muted)}
+.row.hw{margin-top:8px;padding:10px 12px;border:2px solid var(--ink);background:var(--soft);font-weight:700;box-shadow:3px 3px 0 var(--ink)}
+.row.hw:hover{background:var(--hot);box-shadow:3px 3px 0 var(--ink)}
+.row.hw .arr{margin-left:auto;font:700 14px var(--f-mono)}
 .tag{font:700 11px var(--f-mono);color:var(--muted);margin-left:auto;white-space:nowrap}
 .foot{margin-top:28px;font:500 12px/1.5 var(--f-mono);color:#4a4a4a}
 </style>
@@ -72,7 +77,7 @@ h2{margin:12px 0 0;font-size:26px;line-height:1.05;letter-spacing:-.02em}
 <div class="cards">
 {cards}
 </div>
-<p class="foot">SOON = sims for that unit are on the way. Each unit page has its sims and things to try; AP 1 units also have practice questions.</p>
+<p class="foot">Each unit page has its sims and things to try, plus practice questions where they’re ready. Homework is at the bottom of each class.</p>
 </main>
 </body>
 </html>
