@@ -114,8 +114,10 @@ const SIMS = {{
   const tabsEl = $('tabs'), frame = $('frame');
   let cur = -1, ifr = null, ifrSim = null;
   const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-  if (REVIEW_URL && /^P[12]-/.test(UNIT.id)) {{
-    const u = REVIEW_URL + (REVIEW_URL.includes('?') ? '&' : '?') + 'unit=' + encodeURIComponent(UNIT.id);
+  /* AP units use the Review app; an ABP unit with a review (units.py 'review') uses its Homework-app assignment. */
+  const PRACTICE = UNIT.practice || ((REVIEW_URL && /^P[12]-/.test(UNIT.id)) ? REVIEW_URL + (REVIEW_URL.includes('?') ? '&' : '?') + 'unit=' + encodeURIComponent(UNIT.id) : '');
+  if (PRACTICE) {{
+    const u = PRACTICE;
     const rev = $('review'); rev.hidden = false; $('ropen').href = u;
     let loaded = false; const load = () => {{ if (loaded) return; loaded = true; $('rframe').innerHTML = '<iframe title="Practice questions" src="' + u + '"></iframe>'; }};
     [$('cta'), $('plink')].forEach(a => {{ a.href = '#review'; a.removeAttribute('target'); a.addEventListener('click', e => {{ e.preventDefault(); load(); rev.scrollIntoView({{ behavior: 'smooth' }}); }}); }});
@@ -208,6 +210,13 @@ PRESENT_JS = """
 """
 
 REVIEW = 'https://script.google.com/a/macros/fcps.org/s/AKfycbzW6NpFGf5yjZ843WN0pDy-mzI0r1iCcBIuoJpMCEJeWwbUARiSnAC_lf2bWQeHWoGjHA/exec'
+HOMEWORK = 'https://script.google.com/a/macros/fcps.org/s/AKfycbxm2XXzPq2s0JUlS2T0a2lQJ8Pm97_zyibH9rGrW4VUB3EAHWQy5SmQvxsOUYyUL08M/exec'
+
+def practice_url(uid, u):
+    """AP units: the Review app for that unit. ABP units: the Homework-app review assignment named by units.py 'review' (e.g. '04-R')."""
+    if uid.startswith(('P1-', 'P2-')): return REVIEW + '?unit=' + uid
+    if u.get('review'): return HOMEWORK + '?a=' + u['review']
+    return ''
 COMING = """<!doctype html>
 <html lang="en">
 <head>
@@ -240,7 +249,7 @@ def build(uid):
         css = open(os.path.join(D, 'shell.css'), encoding='utf-8').read()
         out = COMING.format(uid=uid, title=html.escape(u['title']), num=u['num'], course=u['course'], fonts=FONTS, css=css,
                             note=u.get('note', 'Check back soon. The practice questions for this unit are below.' if uid.startswith('P1-') else 'Check back soon.'),
-                            review=('<section class="review"><div class="simbar"><h2>Practice questions</h2><a class="mono" href="%s?unit=%s" target="_blank" rel="noopener">Open in a new tab ↗</a></div><div class="rframe"><iframe title="Practice questions" src="%s?unit=%s"></iframe></div></section>' % (REVIEW, uid, REVIEW, uid)) if uid.startswith('P1-') else '')
+                            review=('<section class="review"><div class="simbar"><h2>Practice questions</h2><a class="mono" href="%s" target="_blank" rel="noopener">Open in a new tab ↗</a></div><div class="rframe"><iframe title="Practice questions" src="%s"></iframe></div></section>' % (practice_url(uid, u), practice_url(uid, u))) if (uid.startswith('P1-') or u.get('review')) else '')
         os.makedirs(os.path.join(D, 'out'), exist_ok=True)
         open(os.path.join(D, 'out', uid + '.html'), 'w', encoding='utf-8').write(out); print(uid, 'coming soon'); return
     used = []
@@ -248,6 +257,7 @@ def build(uid):
         if t['sim'] not in used: used.append(t['sim'])
     css = open(os.path.join(D, 'shell.css'), encoding='utf-8').read()
     unit = {'id': uid, 'tabs': [{k: t.get(k) for k in ('code', 'name', 'sim', 'select', 'tasks', 'note', 'gapBefore') if t.get(k) is not None} for t in u['tabs']]}
+    if u.get('review'): unit['practice'] = practice_url(uid, u)
     sims_js = ',\n'.join('%s:{ar:%s,html:%s}' % (json.dumps(k), json.dumps(SIMS[k]['ar']), js_str(prep_sim(k))) for k in used)
     credits = ' '.join(SIMS[k]['credit'] for k in used if SIMS[k].get('credit'))
     pr = uid in PRESENT_UNITS
