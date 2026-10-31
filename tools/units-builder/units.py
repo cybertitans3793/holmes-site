@@ -644,7 +644,7 @@ SIMS['plates'] = {'file': 'pt/out.html', 'kind': 'xl', 'ar': '1008 / 676',
 
 AB = 'Algebra-Based Physics'
 UNITS.update({
-'AB-01': {'course': AB, 'num': '01', 'title': 'Kinematics', 'tabs': [
+'AB-01': {'course': AB, 'num': '01', 'title': 'Kinematics', 'review': '01-R', 'tabs': [
     {'code': '', 'name': 'Distance & Displacement', 'sim': 'abmove', 'select': 'Walk east & west', 'tasks': ['Rhee Verse walks 6 m east, then 4 m west. Predict the distance and the displacement, then check.', 'Kent Decide walks 2 m east, 8 m west and 4 m east. Find the distance and the displacement.', 'Make a walk where the distance and the displacement are the same. What has to be true?', 'Make a round trip. What is the displacement? Why?']},
     {'code': '', 'name': 'Speed & Velocity', 'sim': 'abmove', 'select': 'Coach on the sideline', 'tasks': ['Coach Ulcer goes from the 10 to the 40, back to the 0, then to the 30 in 100 s. Find his average speed and average velocity.', 'Your turn: 30 → 10 → 50 → 20 in 200 s. Work it out first, then check.', '<b>Round trip:</b> you run 3 mi to a friend’s house in 30 min and walk home in 1 hr. Why is your average velocity zero?', 'Can an object move fast for 10 s and have an average velocity of zero? Make one.']},
     {'code': '', 'name': 'Acceleration', 'sim': 'abaccel', 'select': 'Car speeding up / slowing down', 'tasks': ['A car speeds up from rest to +16 m/s in 4 s. Set it up and find the acceleration from the table.', 'A car slows down from +32 m/s to +8 m/s. Which way does the acceleration point?', 'Make the car move left (−) and speed up. Is the acceleration + or −?', 'Use the rule: speeding up → a in the same direction it moves; slowing down → a opposite. Check four different cases.']},
