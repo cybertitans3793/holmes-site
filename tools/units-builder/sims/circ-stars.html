@@ -232,7 +232,8 @@ const SIM = {
     if (mode === 'par'){ const d = 1 / v.p; return { d, ly: d * 3.26, au: d * 206265, m: d * 3.086e16 }; }
     const L = Math.pow(10, v.lL), R = Math.sqrt(L) * Math.pow(5778 / v.T, 2), lms = 7.5 * Math.log10(v.T / 5778), off = v.lL - lms;
     let reg = 'between the main regions';
-    if (Math.abs(off) < 0.8) reg = 'main sequence'; else if (off > 0 && R >= 100) reg = 'supergiant'; else if (off > 0 && R >= 8) reg = 'red giant'; else if (off < 0 && R < 0.05) reg = 'white dwarf';
+    const ist = v.lL > 1.5 && v.lL < 5 && Math.abs(v.T - (7000 - 300 * (v.lL - 1.5))) < 800;
+    if (Math.abs(off) < 0.8) reg = 'main sequence'; else if (ist) reg = 'instability strip (Cepheid variable)'; else if (off > 0 && R >= 100) reg = 'supergiant'; else if (off > 0 && R >= 8) reg = 'red giant'; else if (off < 0 && R < 0.05) reg = 'white dwarf';
     const ms = reg === 'main sequence', M = ms ? Math.pow(L, 1 / 3.5) : NaN, life = ms ? 1e10 * Math.pow(M, -2.5) : NaN;
     return { L, R, reg, ms, M, life, Rm: R * 6.96e8, P: L * 3.83e26 };
   },
@@ -246,8 +247,8 @@ const SIM = {
       '<h4>3 · Convert</h4><div class="eq">1 pc = 3.26 ly = 206 265 AU = 3.086×10¹⁶ m → ' + H.n(d.ly, 'ly') + ' = ' + H.n(d.au, 'AU') + ' = ' + H.n(d.m, 'm') + '</div>' +
       '<p class="note">A parsec is the distance at which 1 AU subtends 1 arcsecond (1/3600 of a degree). Even the nearest star (Proxima Centauri, 0.768″) is 1.3 pc away. Telescopes on the ground can measure down to about 0.01″ (100 pc); the Gaia satellite reaches thousands of parsecs. Farther stars need other methods (their luminosity).</p>';
     return '<h4>1 · Radius from L and T</h4><div class="eq">L = 4πR²σT⁴ → R/R☉ = √(L/L☉) × (T☉/T)² = √(' + fnum(d.L) + ') × (5778/' + H.iv('T') + ')² = <b>' + H.n(d.R, 'R☉') + '</b> (' + H.n(d.Rm, 'm') + ')</div>' +
-      '<h4>2 · Where it sits</h4><div class="eq">This star is in the <b>' + d.reg + '</b> region.</div>' +
-      (d.ms ? '<h4>3 · Main-sequence star (IB HL: mass–luminosity)</h4><div class="eq">L ∝ M<sup>3.5</sup> → M = (' + fnum(d.L) + ')<sup>1/3.5</sup> = <b>' + H.n(d.M, 'M☉') + '</b>. Lifetime ∝ M/L ≈ 10¹⁰ yr × M<sup>−2.5</sup> = <b>' + H.n(d.life, 'yr') + '</b></div>' : '') +
+      '<h4>2 · Where it sits</h4><div class="eq">This star is in the <b>' + d.reg + '</b> region.' + (d.reg.startsWith('instab') ? ' Stars here are unstable: their outer layers swell and shrink, so their brightness pulses with a regular period. Brighter Cepheids pulse more slowly, so the period gives L, and comparing L with b gives the distance.' : '') + '</div>' +
+      (d.ms ? '<h4>3 · Main-sequence star (Extension: mass–luminosity)</h4><div class="eq">L ∝ M<sup>3.5</sup> → M = (' + fnum(d.L) + ')<sup>1/3.5</sup> = <b>' + H.n(d.M, 'M☉') + '</b>. Lifetime ∝ M/L ≈ 10¹⁰ yr × M<sup>−2.5</sup> = <b>' + H.n(d.life, 'yr') + '</b></div>' : '') +
       '<p class="note">Main sequence: fusing hydrogen in the core; gravity pulling in is balanced by radiation and gas pressure pushing out. Hotter and brighter = more massive, and it burns out faster. Red giants and supergiants are cool but huge, so they are very luminous. White dwarfs are hot but tiny (Earth-sized), so they are dim. Lines of constant radius run diagonally.</p>';
   },
   draw(v, d, mode){
@@ -271,6 +272,8 @@ const SIM = {
     ctx.save(); ctx.beginPath(); ctx.rect(gx, gy - gh, gw, gh); ctx.clip();
     [0.01, 0.1, 1, 10, 100, 1000].forEach(R => { ctx.strokeStyle = 'rgba(255,255,255,0.18)'; ctx.setLineDash([3, 4]); ctx.lineWidth = 1; ctx.beginPath(); for (let i = 0; i <= 40; i++){ const T = Math.pow(10, lt1 + (lt0 - lt1) * i / 40), l = Math.log10(R * R * Math.pow(T / 5778, 4)); i ? ctx.lineTo(X(T), Y(l)) : ctx.moveTo(X(T), Y(l)); } ctx.stroke(); ctx.setLineDash([]); const Tl = 3000, ll = Math.log10(R * R * Math.pow(Tl / 5778, 4)); if (ll > -3.8 && ll < 5.6) text(R + ' R☉', X(Tl) - 2, Y(ll) - 3, { align: 'right', font: '500 8px "IBM Plex Mono",monospace', col: 'rgba(255,255,255,0.5)' }); });
     ctx.strokeStyle = 'rgba(120,180,255,0.35)'; ctx.lineWidth = 16; ctx.beginPath(); for (let i = 0; i <= 40; i++){ const T = Math.pow(10, lt1 + (lt0 - lt1) * i / 40), l = 7.5 * Math.log10(T / 5778); i ? ctx.lineTo(X(T), Y(l)) : ctx.moveTo(X(T), Y(l)); } ctx.stroke();
+    ctx.fillStyle = 'rgba(255,220,90,0.18)'; ctx.beginPath(); [[7800, 1.5], [6200, 1.5], [5150, 5], [6750, 5]].forEach(([T, l], i) => i ? ctx.lineTo(X(T), Y(l)) : ctx.moveTo(X(T), Y(l))); ctx.closePath(); ctx.fill();
+    text('instability strip', X(6000), Y(4.7), { align: 'center', font: '600 8px "Space Grotesk",sans-serif', col: '#ffe08a' });
     STARS.forEach(([n, T, l]) => { ctx.fillStyle = starCol(T); ctx.beginPath(); ctx.arc(X(T), Y(l), 3, 0, 7); ctx.fill(); text(n, X(T) + 5, Y(l) + 3, { font: '500 8px "IBM Plex Mono",monospace', col: 'rgba(255,255,255,0.7)' }); });
     text('main sequence', X(9000), Y(2.9), { font: '600 9px "Space Grotesk",sans-serif', col: '#9fc4ff' }); text('red giants', X(4200), Y(3.0), { font: '600 9px "Space Grotesk",sans-serif', col: '#ffb380' }); text('supergiants', X(9000), Y(5.6), { font: '600 9px "Space Grotesk",sans-serif', col: '#ffd0a0' }); text('white dwarfs', X(22000), Y(-3.2), { font: '600 9px "Space Grotesk",sans-serif', col: '#e0e8ff' });
     ctx.fillStyle = starCol(v.T); ctx.strokeStyle = '#ff6a2b'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(X(v.T), Y(v.lL), 7, 0, 7); ctx.fill(); ctx.stroke();

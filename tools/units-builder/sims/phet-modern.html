@@ -20,9 +20,9 @@ iframe{flex:1;border:0;width:100%}
 </div>
 <script>
 // PhET Interactive Simulations, University of Colorado Boulder, CC BY 4.0. Loaded from phet.colorado.edu.
-const SIMS = [['models-of-the-hydrogen-atom', 'Models of the Hydrogen Atom'], ['rutherford-scattering', 'Rutherford Scattering'], ['build-a-nucleus', 'Build a Nucleus'], ['alpha-decay', 'Alpha Decay'], ['beta-decay', 'Beta Decay']];
+const SIMS = [['models-of-the-hydrogen-atom', 'Models of the Hydrogen Atom'], ['build-a-nucleus', 'Build a Nucleus'], ['alpha-decay', 'Alpha Decay'], ['beta-decay', 'Beta Decay'], ['photoelectric', 'Photoelectric Effect', 'https://phet.colorado.edu/sims/cheerpj/photoelectric/latest/photoelectric.html?simulation=photoelectric']];
 const bar = document.getElementById('bar'), f = document.getElementById('f');
-function pick(id){ f.src = 'https://phet.colorado.edu/sims/html/' + id + '/latest/' + id + '_all.html'; [...bar.querySelectorAll('button')].forEach(b => b.setAttribute('aria-pressed', String(b.dataset.id === id))); }
+function pick(id){ const e = SIMS.find(x => x[0] === id); f.src = e[2] || ('https://phet.colorado.edu/sims/html/' + id + '/latest/' + id + '_all.html'); [...bar.querySelectorAll('button')].forEach(b => b.setAttribute('aria-pressed', String(b.dataset.id === id))); }
 SIMS.forEach(([id, name]) => { const b = document.createElement('button'); b.textContent = name; b.dataset.id = id; b.onclick = () => pick(id); bar.appendChild(b); });
 const s = document.createElement('span'); s.className = 'src'; s.textContent = 'from phet.colorado.edu'; bar.appendChild(s);
 pick(SIMS[0][0]);

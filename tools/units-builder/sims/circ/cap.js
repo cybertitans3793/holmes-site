@@ -5,7 +5,7 @@ const SIM = {
   title: 'Capacitors',
   hint: 'ε₀ = 8.85×10⁻¹² C²/(N·m²) · 1 pF = 10⁻¹² F',
   modes: [{ id: 'basic', label: 'Parallel-plate capacitor' }, { id: 'pull', label: 'Pull the plates apart' }],
-  opts: [{ id: 'conn', label: 'While pulling', modes: ['pull'], choices: [['iso', 'Battery disconnected'], ['bat', 'Battery connected']] }],
+  opts: [{ id: 'bc', label: 'Battery', modes: ['basic'], choices: [['on', 'Connected'], ['off', 'Disconnected (charged, then removed)']] }, { id: 'conn', label: 'While pulling', modes: ['pull'], choices: [['iso', 'Battery disconnected'], ['bat', 'Battery connected']] }],
   ivs(mode){
     const A = { id: 'A', sym: 'A', symText: 'A', label: 'Plate area', unit: 'cm²', min: 10, max: 1000, step: 10, val: 200 }, V = { id: 'V', sym: 'V', symText: 'V', label: 'Battery voltage', unit: 'V', min: 1, max: 100, step: 1, val: 12 };
     if (mode === 'pull') return [A, V, { id: 'd1', sym: 'd<sub>1</sub>', symText: 'd1', label: 'Starting separation', unit: 'mm', min: 0.5, max: 5, step: 0.1, val: 1 }, { id: 'd2', sym: 'd<sub>2</sub>', symText: 'd2', label: 'Final separation', unit: 'mm', min: 0.5, max: 10, step: 0.1, val: 2, graph: true }];
@@ -16,7 +16,9 @@ const SIM = {
     if (mode === 'pull'){ const A = v.A / 1e4, a = st(A, v.d1 / 1000, 1, v.V), bat = (opt.conn || 'iso') === 'bat'; let b;
       if (bat) b = st(A, v.d2 / 1000, 1, v.V); else { const C = EPS * A / (v.d2 / 1000), Q = a.Q, V = Q / C; b = { C, Q, V, E: V / (v.d2 / 1000), U: 0.5 * Q * V }; }
       return { a, b, bat, dU: b.U - a.U, Wbat: bat ? (b.Q - a.Q) * v.V : 0, Wyou: bat ? (b.U - a.U) - (b.Q - a.Q) * v.V : b.U - a.U }; }
-    const s = st(v.A / 1e4, v.d / 1000, v.k, v.V); return { ...s, Efree: s.Q / (EPS * v.A / 1e4), Eind: s.Q / (EPS * v.A / 1e4) - s.E };
+    let s = st(v.A / 1e4, v.d / 1000, v.k, v.V); const off = opt.bc === 'off';
+    if (off){ const Q = EPS * v.A / 1e4 / (v.d / 1000) * v.V, Vn = Q / s.C; s = { C: s.C, Q, V: Vn, E: Vn / (v.d / 1000), U: 0.5 * Q * Vn }; }
+    return { ...s, off, Efree: s.Q / (EPS * v.A / 1e4), Eind: s.Q / (EPS * v.A / 1e4) - s.E };
   },
   dvs(mode){
     if (mode === 'pull') return [{ id: 'C', name: 'Final capacitance', short: 'C', sym: 'C', unit: 'F', f: d => d.b.C }, { id: 'Q', name: 'Final charge', short: 'Q', sym: 'Q', unit: 'C', f: d => d.b.Q }, { id: 'Vf', name: 'Final voltage', short: 'V', sym: 'V', unit: 'V', f: d => d.b.V }, { id: 'E', name: 'Final field between plates', short: 'E', sym: 'E', unit: 'V/m', f: d => d.b.E }, { id: 'U', name: 'Final stored energy', short: 'U', sym: 'U', unit: 'J', f: d => d.b.U }];
@@ -31,10 +33,10 @@ const SIM = {
         '<h4>3 · Energy</h4><div class="eq">' + (d.bat ? 'U = ½CV² drops, but you still had to pull (the plates attract). Your work + the energy given back to the battery: W<sub>you</sub> = ' + H.n(d.Wyou, 'J') + ', battery gains ' + H.n(-d.Wbat, 'J') + '.' : 'U = Q²/2C grows: the extra energy is the work you did pulling the attracting plates apart, W = ' + H.n(d.Wyou, 'J') + '. E stays the same because the charge density Q/A is the same.') + '</div>' +
         '<p class="note">FRQ habit: write the constant quantity first, then use C = ε₀A/d, Q = CV, E = V/d and U = ½QV to get each factor.</p>'; }
     return '<h4>1 · Capacitance depends only on the geometry and the material</h4><div class="eq">C = κε₀A/d = (' + fnum(v.k) + ')(8.85×10⁻¹²)(' + fnum(v.A / 1e4) + ')/(' + fnum(v.d / 1000) + ') = <b>' + H.n(d.C * 1e12, 'pF') + '</b></div>' +
-      '<h4>2 · Connected to ' + H.iv('V') + '</h4><div class="eq">Q = CV = <b>' + H.n(d.Q, 'C') + '</b> on each plate (+Q and −Q)</div>' +
-      '<div class="eq">E = V/d = <b>' + H.n(d.E, 'V/m') + '</b>: uniform between the plates, pointing from + to −</div>' +
+      (d.off ? '<h4>2 · Charged to ' + H.iv('V') + ' with air, then disconnected</h4><div class="eq">Q = C<sub>air</sub>V = <b>' + H.n(d.Q, 'C') + '</b> is trapped on the plates. With the dielectric, ΔV = Q/C = <b>' + H.n(d.V, 'V') + '</b>' + (v.k > 1 ? ' (÷' + fnum(v.k) + ')' : '') + '</div>' : '<h4>2 · Connected to ' + H.iv('V') + '</h4><div class="eq">Q = CV = <b>' + H.n(d.Q, 'C') + '</b> on each plate (+Q and −Q)</div>') +
+      '<div class="eq">E = ΔV/d = <b>' + H.n(d.E, 'V/m') + '</b>: uniform between the plates, pointing from + to −</div>' +
       '<div class="eq">U = ½QV = ½CV² = <b>' + H.n(d.U, 'J') + '</b> (the area under the Q–V graph)</div>' +
-      (v.k > 1 ? '<h4>3 · The dielectric</h4><div class="eq">Its molecules polarize and make an opposing field of ' + H.n(d.Eind, 'V/m') + ', so the plates can hold κ = ' + fnum(v.k) + ' times as much charge at the same V.</div>' : '') +
+      (v.k > 1 ? '<h4>3 · The dielectric</h4><div class="eq">Its molecules polarize and make an opposing field' + (d.off ? '. Q can’t change, so ΔV, E and U all drop by κ = ' + fnum(v.k) + '. (The dielectric gets pulled in: the field does work on it.)' : ' of ' + H.n(d.Eind, 'V/m') + ', so the plates can hold κ = ' + fnum(v.k) + ' times as much charge at the same V.') + '</div>' : '') +
       '<p class="note">Double A → double C. Double d → half C. C doesn’t depend on Q or V: those just tell you how full it is.</p>';
   },
   draw(v, d, mode, opt){
@@ -53,13 +55,13 @@ const SIM = {
       return;
     }
     panelTitle('PARALLEL-PLATE CAPACITOR', 10, 18);
-    cap(160, 10 + 18 * v.d, Math.max(1, 2 + 2 * Math.log10(d.Q / 1e-10)), v.k, true, 'C = ' + fplain(d.C * 1e12) + ' pF');
+    cap(160, 10 + 18 * v.d, Math.max(1, 2 + 2 * Math.log10(d.Q / 1e-10)), v.k, !d.off, 'C = ' + fplain(d.C * 1e12) + ' pF');
     panelTitle('Q vs V (slope = C, area = U)', 395, 18);
     const gx = 410, gy = 260, gw = 170, gh = 200, Vm = 100, Qm = d.C * Vm * 1.1; ctx.strokeStyle = '#111'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(gx, gy - gh); ctx.lineTo(gx, gy); ctx.lineTo(gx + gw, gy); ctx.stroke();
     const Y = q => gy - gh * Math.min(1, q / Qm), X = V => gx + gw * V / Vm;
-    ctx.fillStyle = 'rgba(30,125,69,0.25)'; ctx.beginPath(); ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(v.V), Y(d.Q)); ctx.lineTo(X(v.V), Y(0)); ctx.fill();
+    ctx.fillStyle = 'rgba(30,125,69,0.25)'; ctx.beginPath(); ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(d.V), Y(d.Q)); ctx.lineTo(X(d.V), Y(0)); ctx.fill();
     if (v.k > 1){ const C0 = d.C / v.k; ctx.setLineDash([5, 4]); ctx.strokeStyle = '#8a8a8a'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(Vm), Y(C0 * Vm)); ctx.stroke(); ctx.setLineDash([]); text('air', X(Vm) - 2, Y(C0 * Vm) - 4, { align: 'right', font: '600 9px "IBM Plex Mono",monospace', col: '#8a8a8a' }); }
-    ctx.strokeStyle = '#1546d6'; ctx.lineWidth = 2.2; ctx.beginPath(); ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(Vm), Y(d.C * Vm)); ctx.stroke(); ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(X(v.V), Y(d.Q), 4, 0, 7); ctx.fill();
+    ctx.strokeStyle = '#1546d6'; ctx.lineWidth = 2.2; ctx.beginPath(); ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(Vm), Y(d.C * Vm)); ctx.stroke(); ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(X(d.V), Y(d.Q), 4, 0, 7); ctx.fill();
     text('V (V)', gx + gw, gy + 13, { align: 'right', font: '600 9px "IBM Plex Mono",monospace', col: '#4a4a4a' }); text('Q', gx + 4, gy - gh + 8, { font: '600 9px "IBM Plex Mono",monospace', col: '#4a4a4a' });
     text('U = ' + fplain(d.U) + ' J', 410, 300, { font: '700 13px "Space Grotesk",sans-serif', col: '#1e7d45' });
   }

@@ -13,9 +13,12 @@ const SYMZ = { 90: 'Th', 86: 'Rn', 93: 'Np', 7: 'N', 39: 'Y', 54: 'Xe', 8: 'O', 
 const SIM = {
   title: 'Radioactive Decay',
   hint: 'A = λN · λ = ln2/t½',
-  modes: [{ id: 'half', label: 'Half-life' }, { id: 'types', label: 'Decay types' }, { id: 'date', label: 'Radioactive dating' }],
-  opts: [{ id: 'clock', label: 'Clock', modes: ['date'], choices: [['c14', 'Carbon-14'], ['u', 'Uranium → lead']] }],
+  modes: [{ id: 'half', label: 'Half-life' }, { id: 'types', label: 'Decay types' }, { id: 'date', label: 'Radioactive dating' }, { id: 'pen', label: 'Penetration & background' }],
+  opts: [{ id: 'clock', label: 'Clock', modes: ['date'], choices: [['c14', 'Carbon-14'], ['u', 'Uranium → lead']] },
+    { id: 'src', label: 'Source', modes: ['pen'], choices: [['a', 'Alpha'], ['b', 'Beta'], ['g', 'Gamma']] },
+    { id: 'ab', label: 'Absorber', modes: ['pen'], choices: [['none', 'None'], ['paper', 'Paper'], ['al', 'Aluminium 3 mm'], ['pb', 'Lead 2 cm']] }],
   ivs(mode, opt){
+    if (mode === 'pen') return [{ id: 'x', sym: 'd', symText: 'd', label: 'Source to detector', unit: 'cm', min: 1, max: 30, step: 0.5, val: 3, graph: true }, { id: 'B', sym: 'B', symText: 'B', label: 'Background count rate', unit: 'counts/min', min: 0, max: 60, step: 1, val: 30 }];
     if (mode === 'types') return [{ id: 'k', sym: 'isotope', symText: 'isotope', label: 'Isotope', unit: '', min: 0, max: ISO.length - 1, step: 1, val: 0, show: x => ISO[x][0] }];
     if (mode === 'date') return (opt && opt.clock) === 'u' ? [{ id: 'r', sym: 'Pb/U', symText: 'Pb/U', label: 'Lead-206 atoms per uranium-238 atom in the rock', unit: '', min: 0, max: 2, step: 0.01, val: 0.9, graph: true, show: x => x.toFixed(2) }]
       : [{ id: 'pc', sym: '%', symText: '%', label: 'Carbon-14 left, compared with a living sample', unit: '%', min: 1, max: 100, step: 0.5, val: 25, graph: true }];
@@ -26,6 +29,9 @@ const SIM = {
   },
   presets: [{ label: 'Two half-lives', mode: 'half', v: { t: 12, th: 6 } }, { label: 'PET scan isotope', mode: 'types', v: { k: 6 } }, { label: 'Smoke detector', mode: 'types', v: { k: 2 } }, { label: 'Ötzi the Iceman (53% left)', mode: 'date', v: { pc: 53 } }],
   calc(v, mode, opt){
+    if (mode === 'pen'){ const src = opt.src || 'a', ab = opt.ab || 'none', TR = { a: { none: 1, paper: 0, al: 0, pb: 0 }, b: { none: 1, paper: 0.9, al: 0.01, pb: 0 }, g: { none: 1, paper: 1, al: 0.95, pb: 0.35 } };
+      const reach = src === 'a' ? (v.x <= 5 ? 1 : 0) : 1, S = 1200 * Math.pow(3 / v.x, 2) * reach * TR[src][ab], meas = S + v.B;
+      return { src, ab, S, meas, corr: meas - v.B, reach }; }
     if (mode === 'types'){ const [nm, sym, Z, A, ty, hl, use] = ISO[Math.max(0, Math.min(ISO.length - 1, Math.round(v.k)))]; let Z2 = Z, A2 = A; if (ty === 'a'){ Z2 = Z - 2; A2 = A - 4; } else if (ty.startsWith('b-')) Z2 = Z + 1; else if (ty === 'b+') Z2 = Z - 1;
       return { nm, sym, Z, A, ty, hl, use, Z2, A2, sym2: ty === 'g' ? sym : (SYMZ[Z2] || '?') }; }
     if (mode === 'date'){ if ((opt.clock || 'c14') === 'u'){ const th = 4.47e9, n = Math.log2(1 + v.r); return { u: true, th, n, age: th * n, frac: 1 / (1 + v.r) }; }
@@ -33,11 +39,18 @@ const SIM = {
     const lam = Math.LN2 / v.th, N = v.N0 * Math.pow(0.5, v.t / v.th); return { lam, N, A: lam * N, n: v.t / v.th };
   },
   dvs(mode){
+    if (mode === 'pen') return [{ id: 'meas', name: 'Count rate on the counter', short: 'C', sym: 'C', unit: 'counts/min', f: d => d.meas }, { id: 'corr', name: 'Corrected count rate (minus background)', short: 'C − B', sym: 'C−B', unit: 'counts/min', f: d => d.corr }];
     if (mode === 'types') return [{ id: 'A2', name: 'Mass number after', short: 'A', sym: 'A', unit: '', f: d => d.A2 }, { id: 'Z2', name: 'Proton number after', short: 'Z', sym: 'Z', unit: '', f: d => d.Z2 }];
     if (mode === 'date') return [{ id: 'age', name: 'Age of the sample', short: 'age', sym: 'age', unit: 'yr', f: d => d.age }];
     return [{ id: 'N', name: 'Nuclei left (prediction)', short: 'N', sym: 'N', unit: '', f: d => d.N, noTag: true, dblNote: 'Exponential decay: every extra half-life halves N, so it is not a power law.' }, { id: 'A', name: 'Activity (decays per second)', short: 'A', sym: 'A', unit: 'Bq', f: d => d.A, noTag: true }];
   },
   work(v, d, mode){
+    if (mode === 'pen'){ const nm = { a: 'Alpha (a helium nucleus, +2)', b: 'Beta (a fast electron, −1)', g: 'Gamma (a photon, no charge)' }[d.src];
+      const ion = { a: 'Very strongly ionizing: it rips electrons off thousands of atoms per mm, so it loses its energy fast.', b: 'Medium ionizing: it is light and fast and has half the charge of an alpha.', g: 'Weakly ionizing: no charge, so it rarely hits anything.' }[d.src];
+      const stop = { a: 'a sheet of paper or about 5 cm of air', b: 'a few mm of aluminium', g: 'is only reduced by thick lead or concrete' }[d.src];
+      return '<h4>1 · ' + nm + '</h4><div class="eq">' + ion + ' Stopped by <b>' + stop + '</b>.</div>' +
+        '<h4>2 · Correct for background</h4><div class="eq">Counter reads ' + H.n(d.meas, 'counts/min') + '. Background (rocks, cosmic rays, radon) = ' + H.iv('B') + '. Corrected: ' + fnum(d.meas) + ' − ' + v.B + ' = <b>' + H.n(d.corr, 'counts/min') + '</b>.</div>' +
+        '<p class="note">More ionizing → less penetrating. Always measure the background first, with no source, and subtract it from every reading.' + (d.src === 'a' && !d.reach ? ' Alphas only travel about 5 cm in air, so the counter only sees background.' : '') + '</p>'; }
     if (mode === 'types'){
       const nuc = (s, Z, A) => '<sup>' + A + '</sup><sub>' + Z + '</sub>' + s, emit = { a: ' + <sup>4</sup><sub>2</sub>α', 'b-': ' + <sup>0</sup><sub>−1</sub>e + ν̄', 'b-g': ' + <sup>0</sup><sub>−1</sub>e + ν̄ (then γ)', 'b+': ' + <sup>0</sup><sub>+1</sub>e + ν', g: ' + γ' }[d.ty];
       const what = { a: 'Alpha: the nucleus throws out 2 protons + 2 neutrons. A drops by 4, Z by 2 — a different element.', 'b-': 'Beta-minus: a neutron turns into a proton, emitting an electron and an antineutrino. A stays, Z goes up 1.', 'b-g': 'Beta-minus (a neutron → proton + electron + antineutrino), leaving the nucleus excited; it then drops to its ground state by emitting gamma rays.', 'b+': 'Beta-plus: a proton turns into a neutron, emitting a positron and a neutrino. A stays, Z goes down 1.', g: 'Gamma: an excited nucleus (m = metastable) drops to a lower energy level and emits a photon. A and Z don’t change.' }[d.ty];
@@ -56,6 +69,7 @@ const SIM = {
       '<p class="note">Watch the live sample: you can’t predict <i>which</i> nucleus decays next, but a big sample follows the curve closely. Small samples wobble more. AP dice lab: remove the dice that show 1 each roll — “half-life” ≈ 3.8 rolls.</p>';
   },
   draw(v, d, mode, opt, t, dt, A){
+    if (mode === 'pen') return drawPen(v, d, t);
     if (mode === 'types'){
       panelTitle('WHAT GETS THROUGH?', 10, 18);
       const col = { a: '#c43a00', b: '#1546d6', g: '#7a3fb0' }, kinds = d.ty === 'b-g' ? ['b', 'g'] : [d.ty[0] === 'b' ? 'b' : d.ty];
@@ -100,3 +114,25 @@ const SIM = {
     text('each gridline = 1 half-life', gx, gy + 16, { font: '500 9px "IBM Plex Mono",monospace', col: '#4a4a4a' });
   }
 };
+
+function drawPen(v, d, t){
+  const F = '"Space Grotesk",sans-serif', Mo = '"IBM Plex Mono",monospace', col = { a: '#c43a00', b: '#1546d6', g: '#7a3fb0' }[d.src];
+  panelTitle('ALPHA, BETA, GAMMA: WHAT GETS THROUGH?', 10, 18);
+  const xs = 40, xd = Math.min(360, 70 + v.x * 9.5), yc = 160, xa = (xs + xd) / 2;
+  ctx.fillStyle = '#555'; ctx.fillRect(xs - 22, yc - 25, 26, 50); text('source', xs - 9, yc + 42, { align: 'center', font: '600 10px ' + F });
+  ctx.fillStyle = '#d9d4c7'; ctx.fillRect(xd, yc - 18, 40, 36); ctx.strokeStyle = '#111'; ctx.lineWidth = 1.5; ctx.strokeRect(xd, yc - 18, 40, 36); text('G–M', xd + 20, yc + 4, { align: 'center', font: '700 10px ' + Mo }); text('counter', xd + 20, yc + 34, { align: 'center', font: '600 10px ' + F });
+  const abw = { none: 0, paper: 2, al: 6, pb: 18 }[d.ab], abc = { paper: '#f2efe6', al: '#b9c2cc', pb: '#6b6f78' }[d.ab];
+  if (abw){ ctx.fillStyle = abc; ctx.fillRect(xa - abw / 2, yc - 60, abw, 120); ctx.strokeStyle = '#555'; ctx.lineWidth = 1; ctx.strokeRect(xa - abw / 2, yc - 60, abw, 120); text({ paper: 'paper', al: 'aluminium', pb: 'lead' }[d.ab], xa, yc - 66, { align: 'center', font: '600 10px ' + F }); }
+  const range = d.src === 'a' ? 70 + 5 * 9.5 - xs : 1e9, tr = d.S / Math.max(1, 1200 * Math.pow(3 / v.x, 2) * d.reach);
+  for (let i = 0; i < 9; i++){
+    const yy = yc - 14 + (i % 5) * 7, ph = ((t || 0) * 0.9 + i / 9) % 1; let x = xs + 4 + ph * (xd - xs);
+    const blocked = (abw && x > xa - abw / 2 && i / 9 >= tr) || (x - xs > range);
+    if (abw && i / 9 >= tr && x > xa - abw / 2) x = xa - abw / 2; if (x - xs > range) x = xs + range;
+    ctx.fillStyle = blocked ? 'rgba(0,0,0,0.25)' : col; ctx.beginPath(); ctx.arc(x, yy, d.src === 'a' ? 4 : 2.6, 0, 7); ctx.fill();
+  }
+  if (d.src === 'a'){ ctx.setLineDash([3, 3]); ctx.strokeStyle = '#c43a00'; ctx.beginPath(); ctx.moveTo(xs + range, yc - 40); ctx.lineTo(xs + range, yc + 40); ctx.stroke(); ctx.setLineDash([]); text('~5 cm of air', xs + range, yc + 54, { align: 'center', font: '500 9px ' + Mo, col: '#c43a00' }); }
+  text('d = ' + v.x + ' cm', (xs + xd) / 2, 300, { align: 'center', font: '700 12px ' + F });
+  panelTitle('THE COUNTER', 395, 18);
+  [['source', { a: 'alpha α', b: 'beta β⁻', g: 'gamma γ' }[d.src]], ['ionizing', { a: 'strong', b: 'medium', g: 'weak' }[d.src]], ['penetrating', { a: 'weak', b: 'medium', g: 'strong' }[d.src]], ['reading C', fplain(d.meas) + '/min'], ['background B', v.B + '/min'], ['C − B', fplain(d.corr) + '/min']].forEach(([a, b], i) => { text(a, 400, 50 + i * 26, { font: '600 12px ' + F, col: '#4a4a4a' }); text(b, 590, 50 + i * 26, { align: 'right', font: '700 13px ' + Mo }); });
+  text('subtract the background', 400, 220, { font: '700 11px ' + F, col: '#1e7d45' });
+}
