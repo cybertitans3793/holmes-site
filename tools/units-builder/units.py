@@ -80,11 +80,14 @@ SIMS = {
     'coulomb': {'file': 'units/sims/circ-coulomb.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Coulomb’s Law, Electric Fields, Electric Potential, Charges Between Plates and Capacitors are original.'},
     'efield':  {'file': 'units/sims/circ-efield.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'potential': {'file': 'units/sims/circ-potential.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
-    'plates':  {'file': 'units/sims/circ-plates.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'eplates': {'file': 'units/sims/circ-plates.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'cap':     {'file': 'units/sims/circ-cap.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'phetES':  {'file': 'units/sims/phet-estat.html', 'kind': 'plain', 'ar': '16 / 10', 'credit': 'Charges and Fields, Coulomb’s Law and Capacitor Lab: Basics: ' + PHET},
     'ohm':     {'file': 'units/sims/circ-ohm.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Resistance &amp; Ohm’s Law, Series &amp; Parallel, Kirchhoff’s Rules, Internal Resistance, RC Circuits, Fields of Wires, Charges in Magnetic Fields and Induction are original.'},
     'circuits': {'file': 'units/sims/circ-circuits.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'capnet':  {'file': 'units/sims/circ-capnet.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Capacitors in Circuits, Magnetic Field Patterns and Earth’s Field Lab are original.'},
+    'magfield': {'file': 'units/sims/circ-magfield.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'compass': {'file': 'units/sims/circ-compass.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'kirch':   {'file': 'units/sims/circ-kirch.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'emf':     {'file': 'units/sims/circ-emf.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'rc':      {'file': 'units/sims/circ-rc.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
@@ -603,11 +606,11 @@ UNITS = {
         '<b>Release from rest.</b> Find the bead’s speed at r₂ using energy. Why can’t you use constant-acceleration equations here?',
         '<b>Conducting sphere.</b> Sketch E vs r and V vs r. Why is E zero inside while V is not?'],
      'note': 'IB: electric potential, potential energy and equipotentials are HL (D.2).'},
-    {'code': '', 'name': 'Charges Between Plates', 'sim': 'plates', 'tasks': [
+    {'code': '', 'name': 'Charges Between Plates', 'sim': 'eplates', 'tasks': [
         'Find E between the plates, then the electron’s deflection. Compare the path with a ball thrown sideways.',
         'Double the voltage, then the entry speed. Predict each change in deflection before you try it.',
         'Switch to protons with the same settings. Why do they barely bend?',
-        '<b>Accelerate from rest.</b> Find the electron’s speed after 1000 V, in J and in eV. Does the plate separation matter?',
+        '<b>Accelerate from rest.</b> Find the energy (in J) and speed of an electron after 1000 V. Does the plate separation matter?',
         '<span style="color:#7a3fb0">IB</span> <b>Millikan.</b> Balance drops A, B and C. Find each charge. What do the charges have in common?']},
     {'code': '', 'name': 'Capacitors', 'sim': 'cap', 'tasks': [
         'Find C, Q, E and U. Then double the area, then double the separation. Predict each change first.',
@@ -880,60 +883,86 @@ UNITS.update({
      'note': 'IB C.4 only. AP Physics 1 does not include damping or resonance.'},
 ]},
 'P2-03': {'course': 'AP Physics 2 / IB', 'num': '03', 'title': 'Current Electricity and Magnetism', 'tabs': [
-    {'code': '', 'name': 'Resistance & Ohm’s Law', 'sim': 'ohm', 'tasks': [
+    {'code': '03-2', 'name': 'Resistance & Ohm’s Law', 'sim': 'ohm', 'tasks': [
         'Double the length of the wire, then double its diameter. Predict each change in R before you try it.',
         'Compare nichrome and copper wires of the same size. Why is nichrome used in toasters?',
-        '<b>Lab design:</b> describe how you would find the resistivity of pencil lead (graphite). What would you graph?',
+        '<b>Pencil-lead lab:</b> graphite, d = 0.5 mm: record R for five lengths and graph R vs L (slope = ρ/A). Then fix L and use d = 0.5, 0.7, 0.9 mm: graph R vs 1/A (slope = ρL).',
         '<b>I–V characteristics.</b> Find R = V/I for the filament lamp at 2 V and at 10 V. Why is the lamp non-ohmic?',
-        'Why is the diode’s “resistance” different in each direction?']},
-    {'code': '', 'name': 'Series & Parallel', 'sim': 'circuits', 'tasks': [
+        '<span style="color:#8a8a8a;font-weight:700">Extension</span> Why is the diode’s “resistance” different in each direction?']},
+    {'code': '03-3', 'name': 'Series & Parallel', 'sim': 'circuits', 'tasks': [
         'Three equal bulbs in series, then in parallel. Which arrangement is brighter? Which draws more current from the battery?',
         '<b>Series:</b> make bulb 1 bigger. Which bulb is brightest now? Explain using V = IR and P = I²R.',
         '<b>Combination:</b> predict what happens to bulbs 1 and 2 when bulb 3 is removed. Then check.',
         'In each circuit, check that the power used by the bulbs equals εI.']},
-    {'code': '', 'name': 'Circuit Construction Kit', 'sim': 'phetC', 'tasks': [
+    {'code': '03-5', 'name': 'Circuit Construction Kit', 'sim': 'phetC', 'tasks': [
         'Build a battery with three bulbs in series. Measure the voltage across each bulb and the battery. What do you notice?',
         'Rebuild them in parallel. Use the ammeter to measure the current in each branch and from the battery.',
+        'Put the ammeter in a branch. Would a real ammeter read more or less than the true current? Why?',
         'Build the “combination” circuit from the Series &amp; Parallel tab. Do your measurements match the worked values?',
         '<b>Virtual Lab:</b> measure V and I for a resistor at five voltages. Graph them and find R from the slope.']},
-    {'code': '', 'name': 'Kirchhoff’s Rules', 'sim': 'kirch', 'tasks': [
-        'Write the junction rule and both loop equations before looking. Then solve and check with the sim.',
-        'Which current comes out negative? What does a negative answer mean?',
-        'Turn the right battery off. How does the circuit simplify?',
-        'Flip the right battery. Which battery is now being charged? How can you tell from the power?']},
-    {'code': '', 'name': 'Internal Resistance', 'sim': 'emf', 'tasks': [
+    {'code': '03-5', 'name': 'Kirchhoff’s Rules', 'sim': 'kirch', 'tasks': [
+        '<b>One loop:</b> with 12 V and 3 V pushing opposite ways, write the loop rule going clockwise and solve for I. Check with the sim.',
+        'Which battery is being charged? Use which terminal the current enters. Then switch the right battery to push the same way. What changes?',
+        'Make the right battery stronger than the left. Which way does the current go now? Which battery is charged?',
+        'Read the V-vs-position graph. Where does the potential go up? Down? Why does it end where it started?',
+        '<b>One battery, two loops:</b> write the junction rule and both loop equations, solve for I₁, I₂ and I₃, then check.']},
+    {'code': '03-6', 'name': 'Internal Resistance', 'sim': 'emf', 'tasks': [
         'Lower the load resistance. What happens to the current and the terminal voltage? Explain with V = ε − Ir.',
         'From the V vs I graph, read off ε and r. Where does the line cross each axis?',
-        'Find the load resistance that gets the most power. Compare it with r.',
+        '<span style="color:#8a8a8a;font-weight:700">Extension</span> Find the load resistance that gets the most power. Compare it with r.',
         '<span style="color:#7a3fb0">IB</span> <b>Potential divider.</b> Design a circuit that switches a street light on at dusk. Which resistor should the output be taken across?']},
-    {'code': '', 'name': 'RC Circuits', 'sim': 'rc', 'tasks': [
+    {'code': '03-7', 'name': 'Capacitors in Circuits', 'sim': 'capnet', 'tasks': [
+        '<b>Parallel:</b> 2 μF and 6 μF on a 12 V battery. Find the charge on each and C<sub>eq</sub>. Which stores more charge?',
+        '<b>Series:</b> same capacitors. Find C<sub>eq</sub>, the charge, and the voltage on each. Which capacitor gets the bigger voltage? Why?',
+        'Why is C<sub>eq</sub> bigger than either capacitor in parallel, but smaller in series? Compare with resistors.',
+        'Make the capacitors equal. What happens to the voltages in series?']},
+    {'code': '03-8', 'name': 'RC Circuits', 'sim': 'rc', 'tasks': [
         'Charging: what are the current and the capacitor voltage at t = 0? After a long time? Explain each.',
-        'Find τ = RC. What fraction of the final charge is reached at t = τ? At 3τ?',
+        'Find τ = RC. Double C: does it charge faster or slower? Does the final charge change? Sketch q, V<sub>C</sub> and I against t, then check.',
         'Double R. What happens to the time constant, the starting current and the final charge?',
         '<b>Capacitor in a branch.</b> Rank the currents in R₁ and R₂ just after the switch closes and a long time later. Explain using what the capacitor acts like.'],
      'note': 'AP Physics 2 topic 11.8. RC circuits are not in the IB syllabus.'},
-    {'code': '', 'name': 'Fields of Wires', 'sim': 'bwire', 'tasks': [
+    {'code': '03-9', 'name': 'Magnetic Field Patterns', 'sim': 'magfield', 'tasks': [
+        '<b>Bar magnet:</b> sketch the field lines, then drag the compass around it. Which way does the needle point near each pole?',
+        'Which way does the field go inside the magnet? Why must every field line be a closed loop?',
+        '<b>Current loop and solenoid:</b> use the right-hand rule to predict which end is N. Flip the current to check.',
+        'Why is the field inside a solenoid nearly uniform? How could you make it stronger (three ways)?',
+        '<b>Earth:</b> is the pole near the geographic North Pole a magnetic north or south pole? Move the compass toward the poles. What happens to the dip?']},
+    {'code': '03-9', 'name': 'Fields of Wires', 'sim': 'bwire', 'tasks': [
         'Use the right-hand grip rule to predict which way B circles a wire with current out of the page. Check with the compasses.',
         'Double the distance from the wire. What happens to B? Compare with the electric field of a point charge.',
         '<b>Two wires.</b> Find B halfway between them for currents in the same direction, then opposite directions.',
-        'Do parallel wires with currents in the same direction attract or repel? Find the force per meter.',
+        '<span style="color:#7a3fb0">IB</span> Do parallel wires with currents in the same direction attract or repel? Find the force per meter.',
         '<b>Magnet poles.</b> Find the force on the wire at 90°, 30° and 0°. Use the right-hand rule for its direction.']},
-    {'code': '', 'name': 'Charges in Magnetic Fields', 'sim': 'bforce', 'tasks': [
+    {'code': '03-10', 'name': 'Earth’s Field Lab', 'sim': 'compass', 'tasks': [
+        'With no current, the wire lies right under the needle. Why must the wire run north–south?',
+        'Turn the current up. Which way does the needle turn? Use the right-hand rule to explain. Then reverse the current.',
+        'Record θ for I = 0.5, 1.0, 1.5, 2.0 and 2.5 A at r = 2.0 cm. Graph tan θ against I.',
+        'Use the slope to find Earth’s field: B<sub>Earth</sub> = μ₀/(2πr × slope). Compare with 2 × 10⁻⁵ T.',
+        'Move the compass farther from the wire. What happens to the slope of your graph? Why?']},
+    {'code': '03-11', 'name': 'Charges in Magnetic Fields', 'sim': 'bforce', 'tasks': [
         'A proton moves in a circle. Why doesn’t its speed change? How much work does the magnetic force do?',
         'Double the speed. What happens to the radius? To the period?',
         'Switch to an electron with the same speed. Which way does it circle? Why is its radius so much smaller?',
         '<b>Velocity selector.</b> Find the speed that goes straight through. Does it depend on the charge or mass?',
+        '<b>Hall effect.</b> Which edge do the carriers pile up on? Switch from electrons to positive carriers: what changes, and what doesn’t? Find ΔV<sub>H</sub>.',
         '<span style="color:#7a3fb0">IB</span> <b>Mass spectrometer.</b> Find q/m from the radius. How far apart do ¹²C⁺ and ¹⁴C⁺ land?']},
-    {'code': '', 'name': 'Induction', 'sim': 'induct', 'tasks': [
+    {'code': '03-13', 'name': 'Induction', 'sim': 'induct', 'select': 'Rod on rails', 'modes': ['rail', 'loop', 'gen'], 'tasks': [
         '<b>Rod on rails.</b> Find ε, I and the force needed to keep the rod moving. Use Lenz’s law to find the current direction.',
         'Show that the power you supply equals I²R. What does that tell you about Lenz’s law?',
         '<b>Loop through a field.</b> Sketch Φ vs time and ε vs time before you watch. Why is ε zero while the loop is fully inside?',
-        '<span style="color:#7a3fb0">IB HL</span> <b>Generator.</b> Double the frequency. What happens to the peak emf and the period?'],
-     'note': 'IB: induction (D.4) is HL only.'},
-    {'code': '', 'name': 'PhET Magnetism', 'sim': 'phetMag', 'tasks': [
+        '<span style="color:#8a8a8a;font-weight:700">Extension</span> <b>Generator.</b> Double the frequency. What happens to the peak emf and the period?'],
+     'note': '<span style="color:#7a3fb0">IB</span> : HL in the syllabus, but it’s on our test.'},
+    {'code': '03-15', 'name': 'Magnet Through a Coil', 'sim': 'induct', 'select': 'Magnet through a coil', 'modes': ['drop'], 'tasks': [
+        'Watch the emf–time graph. Why are there two pulses, and why are they opposite signs?',
+        'Why is the second pulse taller and narrower than the first? What stays the same for both?',
+        'Record the peak emf for drop heights of 10, 20, 40, 60 and 90 cm. Graph peak emf against √h. Why is it a straight line?',
+        'Stack 2 and then 3 magnets. What happens to the peak emf? Why?']},
+    {'code': '03-9', 'name': 'PhET Magnetism', 'sim': 'phetMag', 'tasks': [
         '<b>Magnets and Electromagnets:</b> make an electromagnet stronger in three different ways.',
+        'Sketch the bar magnet and coil fields with the compass. Which end of the coil is N?',
         '<b>Faraday’s Electromagnetic Lab:</b> move a magnet through a coil. What makes the bulb brightest? What happens when the magnet stops?',
-        'Use the generator screen. How does turning faster change the light?']},
+        '<span style="color:#8a8a8a;font-weight:700">Extension</span> Use the generator screen. How does turning faster change the light?']},
 ]},
 'P2-04': {'course': 'AP Physics 2 / IB', 'num': '04', 'title': 'Waves & Optics', 'tabs': [
     {'code': '', 'name': 'Wave Basics', 'sim': 'wave', 'modes': ['trans', 'long', 'medium'], 'select': 'Transverse', 'tasks': [

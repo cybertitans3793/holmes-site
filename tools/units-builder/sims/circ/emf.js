@@ -13,7 +13,7 @@ const SIM = {
       { id: 'r', sym: 'r', symText: 'r', label: 'Internal resistance', unit: 'Ω', min: 0, max: 5, step: 0.1, val: 1 },
       { id: 'R', sym: 'R', symText: 'R', label: 'Load resistance', unit: 'Ω', min: 0.1, max: 30, step: 0.1, val: 5, graph: true }];
   },
-  presets: [{ label: 'Short circuit', mode: 'int', v: { R: 0.1 } }, { label: 'R = r (max power)', mode: 'int', v: { R: 1, r: 1 } }, { label: 'Dusk', mode: 'div', v: { x: 5 } }],
+  presets: [{ label: 'Short circuit', mode: 'int', v: { R: 0.1 } }, { label: 'R = r (max power, Extension)', mode: 'int', v: { R: 1, r: 1 } }, { label: 'Dusk', mode: 'div', v: { x: 5 } }],
   calc(v, mode, opt){
     if (mode === 'div'){ const kind = opt.sen || 'ldr', Rs = rSensor(kind, v.x), R1 = v.R1 * 1000, Vout = v.E * Rs / (R1 + Rs); return { kind, Rs, Vout, V1: v.E - Vout, I: v.E / (R1 + Rs) }; }
     const I = v.E / (v.R + v.r), V = I * v.R, lost = I * v.r, P = I * I * v.R, Pmax = v.E * v.E / (4 * Math.max(v.r, 1e-6));

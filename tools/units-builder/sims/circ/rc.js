@@ -11,7 +11,7 @@ const SIM = {
     return [E, { id: 'R', sym: 'R', symText: 'R', label: 'Resistance', unit: 'kΩ', min: 1, max: 100, step: 1, val: 10 }, { id: 'C', sym: 'C', symText: 'C', label: 'Capacitance', unit: 'μF', min: 10, max: 1000, step: 10, val: 100 },
       { id: 't', sym: 't', symText: 't', label: 'Time after the switch is thrown', unit: 's', min: 0, max: 10, step: 0.05, val: 1, graph: true }];
   },
-  presets: [{ label: 't = τ', mode: 'chg', v: { R: 10, C: 100, t: 1 } }, { label: 'Double R', mode: 'chg', v: { R: 20 } }, { label: 'Equal resistors', mode: 'fork', v: { R1: 30, R2: 30 } }],
+  presets: [{ label: 'Double R', mode: 'chg', v: { R: 20 } }, { label: 'Double C', mode: 'chg', v: { C: 200 } }, { label: 'Equal resistors', mode: 'fork', v: { R1: 30, R2: 30 } }],
   calc(v, mode, opt){
     if (mode === 'fork'){ const zero = (opt.when || 'zero') === 'zero';
       if (zero) return { zero, I1: v.E / v.R1, I2: 0, Ic: v.E / v.R1, Vc: 0, Q: 0, U: 0 };
@@ -35,9 +35,9 @@ const SIM = {
         '<p class="note">Classic FRQ ranking: which resistor has the larger current at t = 0? A long time later? (t = 0: R₁. Later: equal.)</p>';
     }
     const ch = mode === 'chg';
-    return '<h4>1 · Time constant</h4><div class="eq">τ = RC = (' + H.iv('R') + ')(' + H.iv('C') + ') = <b>' + H.n(d.tau, 's') + '</b>. In one τ it gets ' + (ch ? '63% charged' : 'down to 37%') + '.</div>' +
+    return '<h4>1 · Time constant</h4><div class="eq">τ = RC = (' + H.iv('R') + ')(' + H.iv('C') + ') = <b>' + H.n(d.tau, 's') + '</b>. Bigger τ → it charges and discharges more slowly.</div>' +
       '<h4>2 · At t = 0</h4><div class="eq">' + (ch ? 'Uncharged C acts like a wire: I₀ = ε/R = ' + H.n(d.I0, 'A') + ', V<sub>C</sub> = 0' : 'Fully charged: V<sub>C</sub> = ε, I₀ = ε/R = ' + H.n(d.I0, 'A') + ' (now flowing the other way)') + '</div>' +
-      '<h4>3 · At t = ' + H.iv('t') + ' (' + fnum(v.t / d.tau) + ' τ)</h4><div class="eq">Q = ' + H.n(d.Q, 'C') + ' (' + H.n(100 * d.Q / d.Q0, '%') + ' of CE) · V<sub>C</sub> = <b>' + H.n(d.Vc, 'V') + '</b> · I = <b>' + H.n(d.I, 'A') + '</b></div>' +
+      '<h4>3 · At t = ' + H.iv('t') + '</h4><div class="eq">Read off the graphs: Q = ' + H.n(d.Q, 'C') + ' · V<sub>C</sub> = <b>' + H.n(d.Vc, 'V') + '</b> · I = <b>' + H.n(d.I, 'A') + '</b></div>' +
       '<div class="eq">' + (ch ? 'Loop: ε = V<sub>R</sub> + V<sub>C</sub> → ' + fnum(d.VR) + ' + ' + fnum(d.Vc) + ' = ' + v.E + ' V ✓' : 'V<sub>R</sub> = V<sub>C</sub> = ' + fnum(d.Vc) + ' V') + '</div>' +
       '<h4>4 · Long time</h4><div class="eq">' + (ch ? 'Q → Cε = ' + H.n(d.Q0, 'C') + ', I → 0: the capacitor acts like a break.' : 'Q → 0, I → 0.') + '</div>' +
       '<p class="note">AP: know the shapes. Current always decays. Q and V<sub>C</sub> rise to a limit (charging) or decay (discharging). Bigger R or C → slower.</p>';

@@ -105,12 +105,13 @@ function bar(){
     if (!(o.id in S.opt)) S.opt[o.id] = o.choices[0][0];
     group(o.label, o.choices, S.opt[o.id], id => { S.opt[o.id] = id; S.anim = {}; setup(); });
   });
-  b.appendChild(tip);
+  if (!SIM.noGraph) b.appendChild(tip);
   if (b.scrollWidth > b.clientWidth + 1) tip.remove();
   if (b.scrollWidth > b.clientWidth + 1) b.querySelectorAll('.seg button').forEach(x => { x.style.fontSize = '13px'; x.style.padding = '6px 8px'; });
 }
 
 function setup(){
+  if (SIM.noGraph){ $('gcard').style.display = 'none'; $('cv').style.gridArea = '2 / 1 / 3 / 2'; $('work').style.gridArea = '2 / 2 / 4 / 3'; $('ctl').style.gridArea = '3 / 1 / 4 / 2'; }
   bar();
   S.ivs = SIM.ivs(S.mode, S.opt); S.def = {}; S.v = {};
   S.ivs.forEach(d => { S.def[d.id] = d; const k = S.mode + ':' + d.id; S.v[d.id] = (k in S.store) ? S.store[k] : d.val; });
@@ -118,7 +119,7 @@ function setup(){
   const c = $('ctl'); c.innerHTML = '';
   S.ivs.forEach(d => {
     const w = document.createElement('div'); w.className = 'iv';
-    w.innerHTML = '<input type="radio" name="gx" value="' + d.id + '" aria-label="Graph against ' + d.label + '" title="Put this on the graph’s x-axis"' + (S.gx === d.id ? ' checked' : '') + '>' +
+    w.innerHTML = '<input type="radio" name="gx"' + (SIM.noGraph ? ' style="display:none"' : '') + ' value="' + d.id + '" aria-label="Graph against ' + d.label + '" title="Put this on the graph’s x-axis"' + (S.gx === d.id ? ' checked' : '') + '>' +
       '<span class="nm">' + d.label + ' <i>' + d.sym + '</i></span><span class="val" id="val-' + d.id + '"></span>' +
       '<input type="range" id="r-' + d.id + '" min="' + d.min + '" max="' + d.max + '" step="' + d.step + '" value="' + S.v[d.id] + '" aria-label="' + d.label + '">';
     c.appendChild(w);
@@ -128,7 +129,7 @@ function setup(){
   });
   if (SIM.presets){
     const p = document.createElement('div'); p.id = 'presets'; p.innerHTML = '<span class="lab">Try:</span>';
-    SIM.presets.forEach(ps => { const bt = document.createElement('button'); bt.textContent = ps.label; bt.onclick = () => { if (ps.mode && ps.mode !== S.mode){ S.mode = ps.mode; } Object.entries(ps.v).forEach(([k, val]) => S.store[(ps.mode || S.mode) + ':' + k] = val); S.anim = {}; setup(); }; p.appendChild(bt); });
+    SIM.presets.filter(ps => !ps.mode || (SIM.modes || []).some(m => m.id === ps.mode)).forEach(ps => { const bt = document.createElement('button'); bt.textContent = ps.label; bt.onclick = () => { if (ps.mode && ps.mode !== S.mode){ S.mode = ps.mode; } if (ps.opt) Object.assign(S.opt, ps.opt); Object.entries(ps.v).forEach(([k, val]) => S.store[(ps.mode || S.mode) + ':' + k] = val); S.anim = {}; setup(); }; p.appendChild(bt); });
     c.appendChild(p);
   }
   const dvs = SIM.dvs(S.mode, S.opt), sel = $('dvsel');
@@ -149,6 +150,7 @@ function update(){
 }
 
 function graph(){
+  if (SIM.noGraph) return;
   const cv = $('gv'), g = cv.getContext('2d'), W = 340, Hh = 150; g.setTransform(2, 0, 0, 2, 0, 0); g.clearRect(0, 0, W, Hh);
   const dvs = SIM.dvs(S.mode, S.opt), dv = dvs.find(d => d.id === S.dv), ref = dv.vs ? dvs.find(d => d.id === dv.vs) : null;
   const x = S.def[S.gx]; $('ivname').innerHTML = '<i>' + x.sym + '</i>' + (x.unit && !x.show ? ' (' + x.unit + ')' : '');
@@ -216,25 +218,36 @@ function loop(ts){ const dt = Math.min(0.05, (ts - (last || ts)) / 1000); last =
 const SIM = {
   title: 'Induction',
   hint: 'Φ = BA cos θ · ε = −NΔΦ/Δt · ⊗ = B into the page',
-  modes: [{ id: 'rail', label: 'Rod on rails' }, { id: 'loop', label: 'Loop through a field' }, { id: 'gen', label: 'Generator (IB HL)' }],
+  modes: [{ id: 'rail', label: 'Rod on rails' }, { id: 'loop', label: 'Loop through a field' }, { id: 'drop', label: 'Magnet through a coil' }, { id: 'gen', label: 'Generator (Extension)' }],
   ivs(mode){
+    if (mode === 'drop') return [{ id: 'h', sym: 'h', symText: 'h', label: 'Drop height above the coil', unit: 'cm', min: 8, max: 100, step: 1, val: 30, graph: true }, { id: 'n', sym: 'n', symText: 'n', label: 'Number of stacked magnets', unit: '', min: 1, max: 3, step: 1, val: 1, show: x => String(x) }];
     if (mode === 'loop') return [{ id: 'B', sym: 'B', symText: 'B', label: 'Field strength', unit: 'T', min: 0.1, max: 2, step: 0.05, val: 0.5 }, { id: 'a', sym: 'a', symText: 'a', label: 'Side of the square loop', unit: 'cm', min: 5, max: 20, step: 0.5, val: 10 }, { id: 'w', sym: 'w', symText: 'w', label: 'Width of the field region', unit: 'cm', min: 10, max: 40, step: 1, val: 25 }, { id: 'v', sym: 'v', symText: 'v', label: 'Loop speed', unit: 'm/s', min: 0.1, max: 2, step: 0.05, val: 0.5, graph: true }];
     if (mode === 'gen') return [{ id: 'N', sym: 'N', symText: 'N', label: 'Turns', unit: '', min: 1, max: 500, step: 1, val: 100, show: x => x.toFixed(0) }, { id: 'B', sym: 'B', symText: 'B', label: 'Field strength', unit: 'T', min: 0.01, max: 1, step: 0.01, val: 0.2 }, { id: 'A', sym: 'A', symText: 'A', label: 'Coil area', unit: 'cm²', min: 10, max: 400, step: 10, val: 100 }, { id: 'f', sym: 'f', symText: 'f', label: 'Rotation frequency', unit: 'Hz', min: 0.2, max: 60, step: 0.1, val: 1, graph: true }];
     return [{ id: 'B', sym: 'B', symText: 'B', label: 'Field strength (into page)', unit: 'T', min: 0.1, max: 2, step: 0.05, val: 0.5 }, { id: 'L', sym: 'L', symText: 'L', label: 'Rod length (rail spacing)', unit: 'm', min: 0.1, max: 1, step: 0.05, val: 0.4 }, { id: 'v', sym: 'v', symText: 'v', label: 'Rod speed (to the right)', unit: 'm/s', min: 0.5, max: 10, step: 0.5, val: 4, graph: true }, { id: 'R', sym: 'R', symText: 'R', label: 'Resistance of the circuit', unit: 'Ω', min: 0.5, max: 20, step: 0.5, val: 2 }];
   },
   presets: [{ label: 'Double the speed', mode: 'rail', v: { v: 8 } }, { label: 'Narrow field', mode: 'loop', v: { w: 10 } }, { label: 'Double the frequency', mode: 'gen', v: { f: 2 } }],
   calc(v, mode){
+    if (mode === 'drop'){ const a = 0.015, h = v.h / 100, g = 10, Phi0 = 200 * 0.05 * v.n * PI * a * a, P = z => Phi0 / Math.pow(1 + (z / a) * (z / a), 1.5), dP = z => -3 * Phi0 * z / (a * a) / Math.pow(1 + (z / a) * (z / a), 2.5);
+      const z0 = Math.min(h, 4 * a), pts = []; for (let i = 0; i <= 400; i++){ const z = z0 - (z0 + 4 * a) * i / 400, t = Math.sqrt(2 * (h - z) / g), e = -dP(z) * g * t; pts.push([t, e, z]); }
+      const t0 = pts[0][0]; pts.forEach(p => p[0] -= t0); let p1 = 0, p2 = 0; pts.forEach(([, e]) => { if (e > p1) p1 = e; if (e < p2) p2 = e; });
+      return { pts, p1, p2: -p2, vc: Math.sqrt(2 * g * h), Phi0, pk: -p2 }; }
     if (mode === 'loop'){ const a = v.a / 100, w = v.w / 100, emf = v.B * a * v.v, tIn = a / v.v, tFull = Math.max(w, a) / v.v; return { a, w, emf, tIn, Phimax: v.B * a * Math.min(a, w), tTot: (w + a) / v.v }; }
     if (mode === 'gen'){ const om = 2 * PI * v.f, peak = v.N * v.B * (v.A / 1e4) * om; return { om, peak, rms: peak / Math.SQRT2, T: 1 / v.f }; }
     const emf = v.B * v.L * v.v, I = emf / v.R, F = v.B * I * v.L, P = F * v.v;
     return { emf, I, F, P, Pr: I * I * v.R };
   },
   dvs(mode){
+    if (mode === 'drop') return [{ id: 'pk', name: 'Peak emf (second pulse)', short: 'ε_peak', sym: 'ε<sub>peak</sub>', unit: 'V', f: d => d.pk }, { id: 'vc', name: 'Speed through the coil', short: 'v', sym: 'v', unit: 'm/s', f: d => d.vc }];
     if (mode === 'loop') return [{ id: 'emf', name: 'emf while entering or leaving', short: 'ε', sym: 'ε', unit: 'V', f: d => d.emf }];
     if (mode === 'gen') return [{ id: 'peak', name: 'Peak emf', short: 'ε₀', sym: 'ε<sub>0</sub>', unit: 'V', f: d => d.peak }];
     return [{ id: 'emf', name: 'Induced emf', short: 'ε', sym: 'ε', unit: 'V', f: d => d.emf }, { id: 'I', name: 'Current', short: 'I', sym: 'I', unit: 'A', f: d => d.I }, { id: 'F', name: 'Force needed to keep it moving', short: 'F', sym: 'F', unit: 'N', f: d => d.F }, { id: 'P', name: 'Power you supply', short: 'P', sym: 'P', unit: 'W', f: d => d.P }];
   },
   work(v, d, mode){
+    if (mode === 'drop') return '<h4>1 · Falling into the coil: flux goes up</h4><div class="eq">As the magnet comes closer, more field passes through the coil. Changing flux → an emf (Faraday). First pulse: <b>' + H.n(d.p1, 'V') + '</b></div>' +
+      '<h4>2 · Falling out: flux goes down</h4><div class="eq">Leaving, the flux decreases, so the emf has the <b>opposite sign</b> (Lenz). Second pulse: <b>' + H.n(d.p2, 'V') + '</b>. It is <b>taller and narrower</b> because the magnet is moving faster by then.</div>' +
+      '<h4>3 · Same area under both pulses</h4><div class="eq">Area under an emf–time pulse = ΔΦ. The flux rises to Φ<sub>max</sub> and falls back by the same amount, so both pulses have the same area: a faster pulse must be taller and thinner.</div>' +
+      '<h4>4 · Higher drop → bigger emf</h4><div class="eq">Speed through the coil v = √(2gh) = <b>' + H.n(d.vc, 'm/s') + '</b>. emf = rate of change of flux ∝ v, so peak emf ∝ √h. Graph peak emf against √h: a straight line. More magnets → stronger B → bigger emf.</div>' +
+      '<p class="note">Lab: a data logger records the coil voltage as the magnet drops through a tube. Try the copper-pipe demo (extension): currents induced in the pipe slow the magnet down a lot.</p>';
     if (mode === 'loop') return '<h4>1 · Flux through the loop: Φ = BA (only the part inside the field)</h4><div class="eq">Entering: area inside grows at a × v per second → ΔΦ/Δt = Bav</div>' +
       '<h4>2 · emf while entering or leaving</h4><div class="eq">ε = Bav = (' + H.iv('B') + ')(' + fnum(d.a) + ' m)(' + H.iv('v') + ') = <b>' + H.n(d.emf, 'V') + '</b> for ' + H.n(d.tIn, 's') + '</div>' +
       '<div class="eq">' + (d.w >= d.a ? 'Fully inside: Φ = constant → <b>ε = 0</b> (no change, no emf), even though it’s in the field.' : 'The loop is wider than the field: some part is always entering while another leaves.') + '</div>' +
@@ -252,6 +265,25 @@ const SIM = {
   },
   draw(v, d, mode, opt, t, dt, A){
     const cross = (x0, y0, x1, y1) => { ctx.strokeStyle = 'rgba(122,63,176,0.35)'; ctx.lineWidth = 1.2; for (let x = x0 + 12; x < x1; x += 26) for (let y = y0 + 12; y < y1; y += 26){ ctx.beginPath(); ctx.moveTo(x - 4, y - 4); ctx.lineTo(x + 4, y + 4); ctx.moveTo(x + 4, y - 4); ctx.lineTo(x - 4, y + 4); ctx.stroke(); } };
+    if (mode === 'drop'){
+      panelTitle('MAGNET FALLING THROUGH A COIL', 10, 18);
+      const coilY = 230, cmpx = 3.2, topY = Math.max(36, coilY - v.h * cmpx * 0.6), T = Math.sqrt(2 * (v.h / 100 + 0.1) / 10) * 3 + 0.6;
+      if (A.s === undefined || A.reset) A.s = 0; A.s = (A.s + dt) % T; const u = Math.min(1, A.s / (T - 0.6)), my = topY + (coilY + 60 - topY) * u * u;
+      ctx.fillStyle = 'rgba(180,200,220,0.35)'; ctx.fillRect(170, 30, 60, 290); ctx.strokeStyle = '#999'; ctx.lineWidth = 1; ctx.strokeRect(170, 30, 60, 290);
+      for (let k = 0; k < 7; k++){ ctx.strokeStyle = '#c47a3a'; ctx.lineWidth = 4; ctx.beginPath(); ctx.ellipse(200, coilY - 15 + k * 5, 38, 7, 0, 0, 7); ctx.stroke(); }
+      text('coil', 244, coilY + 4, { font: '700 11px "Space Grotesk",sans-serif', col: '#c47a3a' });
+      const hM = 18 * v.n; ctx.fillStyle = '#e2453c'; ctx.fillRect(188, my - hM, 24, hM / 2); ctx.fillStyle = '#1546d6'; ctx.fillRect(188, my - hM / 2, 24, hM / 2); ctx.strokeStyle = '#111'; ctx.lineWidth = 1.5; ctx.strokeRect(188, my - hM, 24, hM);
+      text('N', 200, my - hM + 12, { align: 'center', font: '700 10px "Space Grotesk",sans-serif', col: '#fff' });
+      ctx.strokeStyle = '#888'; ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(120, topY); ctx.lineTo(170, topY); ctx.moveTo(120, coilY); ctx.lineTo(160, coilY); ctx.stroke(); ctx.setLineDash([]);
+      arrow(130, topY, 130, coilY, '#111', null, { w: 1.2, head: 5 }); arrow(130, coilY, 130, topY, '#111', null, { w: 1.2, head: 5 }); text('h = ' + v.h + ' cm', 124, (topY + coilY) / 2 + 4, { align: 'right', font: '700 11px "IBM Plex Mono",monospace' });
+      text('v through coil = ' + fplain(d.vc) + ' m/s', 12, 312, { font: '700 12px "Space Grotesk",sans-serif' });
+      panelTitle('COIL emf vs TIME (DATA LOGGER)', 395, 18); const gx = 405, gw = 182, gy = 165, gh = 110, P = d.pts, tEnd = P[P.length - 1][0], tA = P.findIndex(p => p[2] < 3 * 0.015), tS = P[Math.max(0, tA)][0], span = tEnd - tS, X = t => gx + gw * (t - tS) / span, emax = Math.max(0.05, 1.4 * Math.max(d.p1, d.p2));
+      ctx.strokeStyle = '#bbb'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(gx, gy); ctx.lineTo(gx + gw, gy); ctx.moveTo(gx, gy - gh); ctx.lineTo(gx, gy + gh); ctx.stroke();
+      ctx.strokeStyle = '#c43a00'; ctx.lineWidth = 2.2; ctx.beginPath(); let st = false; P.forEach(([t, e]) => { if (t < tS) return; const x = X(t), y = gy - gh * e / emax; st ? ctx.lineTo(x, y) : ctx.moveTo(x, y); st = true; }); ctx.stroke();
+      text('+' + fplain(+d.p1.toFixed(3)) + ' V', gx + 4, gy - gh * d.p1 / emax - 6, { font: '700 10px "IBM Plex Mono",monospace', col: '#c43a00' }); text('−' + fplain(+d.p2.toFixed(3)) + ' V', gx + gw - 4, gy + gh * d.p2 / emax + 14, { align: 'right', font: '700 10px "IBM Plex Mono",monospace', col: '#c43a00' });
+      text('time →  (' + fplain(+(span * 1000).toFixed(0)) + ' ms shown)', gx + gw, gy + gh + 14, { align: 'right', font: '600 9px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+      return;
+    }
     if (mode === 'gen'){
       if (A.th === undefined || A.reset){ A.th = 0; A.tt = 0; } const wv = 2 * PI * Math.min(v.f, 1.2); A.th += wv * dt; A.tt += dt;
       panelTitle('COIL ROTATING IN A FIELD (side view)', 10, 18);
@@ -296,7 +328,10 @@ const SIM = {
 
 S.mode = SIM.modes ? SIM.modes[0].id : 'one';
 setup(); requestAnimationFrame(loop);
-window.APP = { select(name){ const m = (SIM.modes || []).find(m => m.label === name || m.id === name); if (m && m.id !== S.mode){ S.mode = m.id; S.anim = {}; setup(); } } };
-addEventListener('message', e => { const d = e.data; if (d && d.select) try { APP.select(d.select); } catch (er) {} });
+window.APP = { select(name, only){ if (!SIM.modes) return; if (!SIM._all) SIM._all = SIM.modes.slice(); const before = SIM.modes.map(m => m.id).join();
+  SIM.modes = only && only.length ? SIM._all.filter(m => only.includes(m.id) || only.includes(m.label)) : SIM._all.slice(); if (!SIM.modes.length) SIM.modes = SIM._all.slice();
+  const m = SIM.modes.find(m => m.label === name || m.id === name) || SIM.modes.find(m => m.id === S.mode) || SIM.modes[0];
+  if (m.id !== S.mode || SIM.modes.map(m => m.id).join() !== before){ S.mode = m.id; S.anim = {}; setup(); } } };
+addEventListener('message', e => { const d = e.data; if (d && d.select) try { APP.select(d.select, d.modes); } catch (er) {} });
 </script>
 </body></html>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Capacitors in Series & Parallel</title>
+<!-- Capacitors in Series & Parallel: original Holmes Sims, built from frame.html + capnet.js. g = 10 m/s². -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@500;700&display=swap">
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#fff;font-family:"Space Grotesk",system-ui,sans-serif;color:#111}
+#app{position:absolute;left:0;top:0;width:1000px;height:640px;transform-origin:0 0;padding:10px 14px 12px;box-sizing:border-box;
+  display:grid;grid-template-columns:600px 1fr;grid-template-rows:34px 330px 1fr;gap:10px 14px}
+#bar{grid-column:1/-1;display:flex;gap:16px;align-items:center;flex-wrap:nowrap;overflow:hidden}
+.seg{display:flex;align-items:center}
+.seg .lab{font:700 12px "IBM Plex Mono",monospace;margin-right:8px;text-transform:uppercase}
+.seg button{white-space:nowrap;font:700 14px "Space Grotesk",sans-serif;padding:6px 11px;border:2px solid #111;background:#fff;color:#111;cursor:pointer}
+.seg button+button{margin-left:-2px}
+.seg button[aria-pressed="true"]{background:#111;color:#fff}
+.seg button:hover:not([aria-pressed="true"]){background:#ffe2d3}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #ff6a2b;outline-offset:2px;position:relative;z-index:1}
+#cv{border:2px solid #111;background:#fbfbfb;width:600px;height:330px;box-sizing:border-box;display:block}
+#work{border:2px solid #111;padding:8px 12px 10px;overflow:auto;font-size:14px;line-height:1.55;box-sizing:border-box}
+#work .wt{font:700 12px "IBM Plex Mono",monospace;text-transform:uppercase;margin:0 0 4px;display:flex;justify-content:space-between}
+#work .wt .hint{text-transform:none}
+#work h4{margin:9px 0 1px;font-size:13px;font-weight:700;color:#4a4a4a}
+#work h4:first-of-type{margin-top:2px}
+#work .eq{font-variant-numeric:tabular-nums}
+#work .n{font-family:"IBM Plex Mono",monospace;font-size:13px}
+#work b .n,#work .ans{font-weight:700}
+#work .note{font-size:12.5px;color:#4a4a4a;margin:2px 0 0}
+#work .ok{background:#e5f4ea;border-left:4px solid #1e7d45;padding:3px 8px;margin-top:4px}
+#work .bad{background:#fde7df;border-left:4px solid #c43a00;padding:3px 8px;margin-top:4px}
+.ivv{border-radius:2px;padding:0 2px;transition:background .25s}
+.ivv.gx{background:#ffe2d3}
+.ivv.hot{background:#ff6a2b;color:#fff}
+#ctl{display:grid;grid-template-columns:1fr 1fr;gap:4px 18px;align-content:start}
+.iv{display:grid;grid-template-columns:auto 1fr auto;align-items:center;column-gap:6px}
+.iv .nm{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iv .val{font:700 13px "IBM Plex Mono",monospace;white-space:nowrap}
+.iv input[type=range]{grid-column:1/-1;width:100%;margin:0;accent-color:#111;height:22px}
+.iv input[type=radio]{accent-color:#ff6a2b;margin:0}
+#presets{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:2px}
+#presets .lab{font:700 12px "IBM Plex Mono",monospace}
+#presets button{font:600 12.5px "Space Grotesk",sans-serif;padding:3px 8px;border:2px solid #111;background:#fff;cursor:pointer}
+#presets button:hover{background:#ffe2d3}
+#gcard{border:2px solid #111;padding:5px 8px 6px;display:flex;flex-direction:column;box-sizing:border-box;min-height:0}
+.ghead{display:flex;align-items:center;gap:6px;font-size:13px;white-space:nowrap}
+.ghead select{font:600 13px "Space Grotesk",sans-serif;border:2px solid #111;padding:1px 4px;max-width:200px}
+#gv{width:340px;height:150px;flex:none;display:block;margin-top:3px}
+#dbl{font-size:12.5px;line-height:1.35;margin-top:2px}
+#dbl b{font-weight:700}
+.hint{font:500 11px "IBM Plex Mono",monospace;color:#4a4a4a}
+</style></head><body>
+<div id="app">
+  <div id="bar"></div>
+  <canvas id="cv" width="1200" height="660" aria-label="Animation of the situation with force arrows"></canvas>
+  <div id="work" aria-live="polite"></div>
+  <div id="ctl"></div>
+  <div id="gcard">
+    <div class="ghead"><span>Graph</span><select id="dvsel" aria-label="Quantity to graph"></select><span>vs <b id="ivname"></b></span></div>
+    <canvas id="gv" width="680" height="300" aria-label="Graph of the chosen quantity against the chosen variable"></canvas>
+    <div id="dbl"></div>
+  </div>
+</div>
+<script>
+// ---------------- shared frame ----------------
+const $ = id => document.getElementById(id);
+const G10 = 10, PI = Math.PI, DEG = PI / 180;
+function fit(){ const s = Math.min(innerWidth / 1000, innerHeight / 640); $('app').style.transform = 'scale(' + s + ')'; }
+addEventListener('resize', fit); fit();
+
+function fnum(x){ const r = fnum0(x); return typeof r === 'string' ? r.replace(/^-/, '−') : r; }
+function fnum0(x){
+  if (x === null || x === undefined || !isFinite(x)) return '—';
+  const a = Math.abs(x);
+  if (a === 0) return '0';
+  if (a >= 1e5 || a < 1e-3){
+    const e = Math.floor(Math.log10(a)); let m = x / Math.pow(10, e);
+    let ms = m.toFixed(2); if (Math.abs(+ms) >= 10){ m /= 10; ms = m.toFixed(2); return ms + '×10<sup>' + (e + 1) + '</sup>'; }
+    return ms + '×10<sup>' + e + '</sup>';
+  }
+  if (a >= 1000) return String(Math.round(x));
+  return x.toPrecision(3);
+}
+function fplain(x){ return fnum(x).replace(/<sup>(.*?)<\/sup>/g, (m, e) => '^' + e).replace('×10^', 'e'); }
+const H = {
+  n: (x, u) => '<span class="n">' + fnum(x) + (u ? '&nbsp;' + u : '') + '</span>',
+  iv: id => { const d = S.def[id]; const val = S.v[id]; const txt = (d.show ? d.show(val) : fnum(val) + (d.unit ? '&nbsp;' + d.unit : ''));
+              return '<span class="ivv n' + (S.gx === id ? ' gx' : '') + (S.hot === id ? ' hot' : '') + '" data-iv="' + id + '">' + txt + '</span>'; },
+  g: () => '<span class="n">10&nbsp;m/s²</span>',
+  p: (x, u) => x < 0 ? '(' + H.n(x, u) + ')' : H.n(x, u)
+};
+
+const S = { mode: null, opt: {}, v: {}, store: {}, def: {}, ivs: [], gx: null, dv: null, hot: null, t: 0, anim: {} };
+
+function bar(){
+  const b = $('bar'); b.innerHTML = '';
+  const group = (label, items, cur, onpick) => {
+    const g = document.createElement('div'); g.className = 'seg'; g.setAttribute('role', 'group');
+    if (label){ const l = document.createElement('span'); l.className = 'lab'; l.textContent = label; g.appendChild(l); }
+    items.forEach(([id, txt]) => { const bt = document.createElement('button'); bt.textContent = txt; bt.setAttribute('aria-pressed', String(id === cur)); bt.onclick = () => onpick(id); g.appendChild(bt); });
+    b.appendChild(g);
+  };
+  const tip = document.createElement('span'); tip.className = 'hint'; tip.style.marginLeft = 'auto'; tip.style.whiteSpace = 'nowrap'; tip.innerHTML = '● = the variable on the graph’s x-axis · drag any slider';
+  if (SIM.modes && SIM.modes.length > 1) group(null, SIM.modes.map(m => [m.id, m.label]), S.mode, id => { S.mode = id; S.anim = {}; setup(); });
+  (SIM.opts || []).filter(o => !o.modes || o.modes.includes(S.mode)).forEach(o => {
+    if (!(o.id in S.opt)) S.opt[o.id] = o.choices[0][0];
+    group(o.label, o.choices, S.opt[o.id], id => { S.opt[o.id] = id; S.anim = {}; setup(); });
+  });
+  if (!SIM.noGraph) b.appendChild(tip);
+  if (b.scrollWidth > b.clientWidth + 1) tip.remove();
+  if (b.scrollWidth > b.clientWidth + 1) b.querySelectorAll('.seg button').forEach(x => { x.style.fontSize = '13px'; x.style.padding = '6px 8px'; });
+}
+
+function setup(){
+  if (SIM.noGraph){ $('gcard').style.display = 'none'; $('cv').style.gridArea = '2 / 1 / 3 / 2'; $('work').style.gridArea = '2 / 2 / 4 / 3'; $('ctl').style.gridArea = '3 / 1 / 4 / 2'; }
+  bar();
+  S.ivs = SIM.ivs(S.mode, S.opt); S.def = {}; S.v = {};
+  S.ivs.forEach(d => { S.def[d.id] = d; const k = S.mode + ':' + d.id; S.v[d.id] = (k in S.store) ? S.store[k] : d.val; });
+  if (!S.gx || !S.def[S.gx]) S.gx = S.ivs.find(d => d.graph) ? S.ivs.find(d => d.graph).id : S.ivs[1] ? S.ivs[1].id : S.ivs[0].id;
+  const c = $('ctl'); c.innerHTML = '';
+  S.ivs.forEach(d => {
+    const w = document.createElement('div'); w.className = 'iv';
+    w.innerHTML = '<input type="radio" name="gx"' + (SIM.noGraph ? ' style="display:none"' : '') + ' value="' + d.id + '" aria-label="Graph against ' + d.label + '" title="Put this on the graph’s x-axis"' + (S.gx === d.id ? ' checked' : '') + '>' +
+      '<span class="nm">' + d.label + ' <i>' + d.sym + '</i></span><span class="val" id="val-' + d.id + '"></span>' +
+      '<input type="range" id="r-' + d.id + '" min="' + d.min + '" max="' + d.max + '" step="' + d.step + '" value="' + S.v[d.id] + '" aria-label="' + d.label + '">';
+    c.appendChild(w);
+    const r = w.querySelector('input[type=range]');
+    r.oninput = () => { S.v[d.id] = +r.value; S.store[S.mode + ':' + d.id] = +r.value; S.hot = d.id; clearTimeout(S.hotT); S.hotT = setTimeout(() => { S.hot = null; update(); }, 700); S.anim.reset = true; update(); };
+    w.querySelector('input[type=radio]').onchange = () => { S.gx = d.id; update(); };
+  });
+  if (SIM.presets){
+    const p = document.createElement('div'); p.id = 'presets'; p.innerHTML = '<span class="lab">Try:</span>';
+    SIM.presets.filter(ps => !ps.mode || (SIM.modes || []).some(m => m.id === ps.mode)).forEach(ps => { const bt = document.createElement('button'); bt.textContent = ps.label; bt.onclick = () => { if (ps.mode && ps.mode !== S.mode){ S.mode = ps.mode; } if (ps.opt) Object.assign(S.opt, ps.opt); Object.entries(ps.v).forEach(([k, val]) => S.store[(ps.mode || S.mode) + ':' + k] = val); S.anim = {}; setup(); }; p.appendChild(bt); });
+    c.appendChild(p);
+  }
+  const dvs = SIM.dvs(S.mode, S.opt), sel = $('dvsel');
+  if (!S.dv || !dvs.find(d => d.id === S.dv)) S.dv = dvs[0].id;
+  sel.innerHTML = dvs.map(d => '<option value="' + d.id + '"' + (d.id === S.dv ? ' selected' : '') + '>' + d.name + '</option>').join('');
+  sel.onchange = () => { S.dv = sel.value; update(); };
+  update();
+}
+
+function calcWith(over){ const v = Object.assign({}, S.v, over || {}); return SIM.calc(v, S.mode, S.opt); }
+
+function update(){
+  S.ivs.forEach(d => { $('val-' + d.id).innerHTML = d.show ? d.show(S.v[d.id]) : fnum(S.v[d.id]) + (d.unit ? '&nbsp;' + d.unit : ''); });
+  S.d = calcWith();
+  $('work').innerHTML = '<div class="wt"><span>Show the work</span><span class="hint">' + (SIM.hint || 'g = 10 m/s²') + '</span></div>' + (SIM.strip ? SIM.strip(SIM.work(S.v, S.d, S.mode, S.opt)) : SIM.work(S.v, S.d, S.mode, S.opt));
+  document.querySelectorAll('input[name=gx]').forEach(r => r.checked = (r.value === S.gx));
+  graph();
+}
+
+function graph(){
+  if (SIM.noGraph) return;
+  const cv = $('gv'), g = cv.getContext('2d'), W = 340, Hh = 150; g.setTransform(2, 0, 0, 2, 0, 0); g.clearRect(0, 0, W, Hh);
+  const dvs = SIM.dvs(S.mode, S.opt), dv = dvs.find(d => d.id === S.dv), ref = dv.vs ? dvs.find(d => d.id === dv.vs) : null;
+  const x = S.def[S.gx]; $('ivname').innerHTML = '<i>' + x.sym + '</i>' + (x.unit && !x.show ? ' (' + x.unit + ')' : '');
+  const N = 160, xs = [], ys = [], rs = [];
+  for (let i = 0; i <= N; i++){ const xv = x.min + (x.max - x.min) * i / N; const d = calcWith({ [S.gx]: xv }); xs.push(xv); ys.push(dv.f(d)); rs.push(ref ? ref.f(d) : null); }
+  const all = ys.concat(ref ? rs : []).filter(isFinite);
+  let ymin = Math.min(0, ...all), ymax = Math.max(...all, 0); if (ymax === ymin) ymax = ymin + 1; const pad = (ymax - ymin) * 0.08; ymax += pad; if (ymin < 0) ymin -= pad;
+  const L = 46, R = 8, T = 8, B = 22, X = v => L + (v - x.min) / (x.max - x.min) * (W - L - R), Y = v => T + (ymax - v) / (ymax - ymin) * (Hh - T - B);
+  g.strokeStyle = '#111'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(L, T); g.lineTo(L, Hh - B); g.lineTo(W - R, Hh - B); g.stroke();
+  if (ymin < 0){ g.strokeStyle = '#999'; g.setLineDash([3, 3]); g.beginPath(); g.moveTo(L, Y(0)); g.lineTo(W - R, Y(0)); g.stroke(); g.setLineDash([]);
+    if (dv.negNote){ g.fillStyle = 'rgba(196,58,0,0.08)'; g.fillRect(L, Y(0), W - R - L, Hh - B - Y(0)); g.fillStyle = '#c43a00'; g.font = '600 10px "Space Grotesk",sans-serif'; g.textAlign = 'left'; g.fillText(dv.negNote, L + 4, Hh - B - 4); } }
+  g.font = '500 10px "IBM Plex Mono",monospace'; g.fillStyle = '#4a4a4a'; g.textAlign = 'right';
+  g.fillText(fplain(ymax), L - 4, T + 8); g.fillText(fplain(ymin < 0 ? ymin : 0), L - 4, Hh - B); if (ymin < 0) g.fillText('0', L - 4, Y(0) + 3);
+  g.textAlign = 'center'; g.fillText(fplain(x.min), L, Hh - 8); g.fillText(fplain(x.max), W - R - 10, Hh - 8);
+  g.fillText((x.symText || x.id) + (x.unit ? ' (' + x.unit + ')' : ''), (L + W) / 2, Hh - 8);
+  g.save(); g.translate(10, (T + Hh - B) / 2); g.rotate(-PI / 2); g.textAlign = 'center'; g.fillText(dv.short + (dv.unit ? ' (' + dv.unit + ')' : ''), 0, 0); g.restore();
+  const line = (arr, col, dash) => { g.strokeStyle = col; g.lineWidth = 2.2; g.setLineDash(dash || []); g.beginPath(); let on = false; arr.forEach((y, i) => { if (!isFinite(y)){ on = false; return; } const px = X(xs[i]), py = Math.max(T - 4, Math.min(Hh - B + 4, Y(y))); on ? g.lineTo(px, py) : g.moveTo(px, py); on = true; }); g.stroke(); g.setLineDash([]); };
+  if (ref){ line(rs, '#4a4a4a', [5, 4]); g.fillStyle = '#4a4a4a'; g.textAlign = 'right'; g.font = '600 10px "Space Grotesk",sans-serif'; const lastY = rs.filter(isFinite).pop(); if (isFinite(lastY)) g.fillText(ref.short, W - R - 2, Math.max(T + 9, Y(lastY) - 4)); }
+  line(ys, '#1546d6');
+  const cx = S.v[S.gx], cy = dv.f(S.d);
+  if (isFinite(cy)){ g.strokeStyle = '#ff6a2b'; g.setLineDash([2, 3]); g.lineWidth = 1; g.beginPath(); g.moveTo(X(cx), Hh - B); g.lineTo(X(cx), Y(cy)); g.lineTo(L, Y(cy)); g.stroke(); g.setLineDash([]);
+    g.fillStyle = '#ff6a2b'; g.strokeStyle = '#111'; g.lineWidth = 1.5; g.beginPath(); g.arc(X(cx), Math.max(T, Math.min(Hh - B, Y(cy))), 4.5, 0, 7); g.fill(); g.stroke(); }
+  // doubling readout
+  const d2 = calcWith({ [S.gx]: cx * 2 }), y1 = dv.f(S.d), y2 = dv.f(d2);
+  let msg = '';
+  if (cx === 0 || Math.abs(y1) < 1e-12) msg = '<span class="hint">Move off zero to see the ×2 test.</span>';
+  else if (!isFinite(y1) || !isFinite(y2)) msg = '<span class="hint">The ×2 test doesn’t apply here (doubling takes it outside what this quantity covers).</span>';
+  else {
+    const k = y2 / y1;
+    if (k < 0){ $('dbl').innerHTML = 'If <b>' + x.sym + '</b> doubles (' + fnum(cx) + ' → ' + fnum(2 * cx) + (x.unit ? ' ' + x.unit : '') + '), <b>' + dv.sym + '</b> goes from ' + fnum(y1) + ' to ' + fnum(y2) + (dv.unit ? ' ' + dv.unit : '') + (dv.signOK ? ': it changes sign. ' + dv.signOK : ': it changes sign, so that can’t really happen.'); return; }
+    const tags = [[1, 'doesn’t depend on it'], [2, 'proportional'], [4, 'goes as the square'], [0.5, 'inversely proportional'], [0.25, 'inverse square'], [Math.SQRT2, 'goes as the square root'], [Math.SQRT1_2, 'goes as 1/√'], [8, 'goes as the cube'], [2 * Math.SQRT2, 'goes as the 3/2 power']];
+    const tag = tags.find(([v]) => Math.abs(k - v) < 0.004 * v);
+    msg = 'If <b>' + x.sym + '</b> doubles (' + fnum(cx) + ' → ' + fnum(2 * cx) + (x.unit ? ' ' + x.unit : '') + '), <b>' + dv.sym + '</b> becomes <b>×' + (Math.abs(k) >= 100 ? fnum(k) : k.toFixed(2)) + '</b>' + (tag && !dv.noTag ? ' — ' + tag[1] : '') + '.' + (dv.dblNote ? ' <span class="hint">' + dv.dblNote + '</span>' : '');
+  }
+  $('dbl').innerHTML = msg;
+}
+
+// drawing helpers (canvas is drawn in 600×330 units)
+const cv = $('cv'), ctx = cv.getContext('2d');
+function arrow(x1, y1, x2, y2, col, label, opts){
+  opts = opts || {}; const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy); if (len < 2) return;
+  const ux = dx / len, uy = dy / len, hw = opts.head || 9;
+  ctx.save(); ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = opts.w || 3.5; ctx.lineCap = 'round';
+  if (opts.dash) ctx.setLineDash(opts.dash);
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2 - ux * hw * 0.8, y2 - uy * hw * 0.8); ctx.stroke(); ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x2, y2); ctx.lineTo(x2 - ux * hw - uy * hw * 0.55, y2 - uy * hw + ux * hw * 0.55); ctx.lineTo(x2 - ux * hw + uy * hw * 0.55, y2 - uy * hw - ux * hw * 0.55); ctx.closePath(); ctx.fill();
+  if (label){ ctx.font = '700 13px "Space Grotesk",sans-serif'; ctx.textAlign = opts.align || 'left'; ctx.textBaseline = 'middle';
+    const lx = x2 + (opts.lx !== undefined ? opts.lx : (ux >= 0 ? 6 : -6)), ly = y2 + (opts.ly !== undefined ? opts.ly : (uy >= 0 ? 10 : -10));
+    if (opts.align === undefined) ctx.textAlign = ux >= -0.2 ? 'left' : 'right';
+    ctx.fillText(label, lx, ly); }
+  ctx.restore();
+}
+function text(s, x, y, o){ o = o || {}; ctx.save(); ctx.font = (o.font || '600 13px "Space Grotesk",sans-serif'); ctx.fillStyle = o.col || '#111'; ctx.textAlign = o.align || 'left'; ctx.textBaseline = o.base || 'alphabetic'; ctx.fillText(s, x, y); ctx.restore(); }
+function panelTitle(s, x, y){ text(s, x, y, { font: '700 11px "IBM Plex Mono",monospace', col: '#4a4a4a' }); }
+const COL = { F: '#c43a00', W: '#111', N: '#1e7d45', V: '#1546d6', T: '#7a3fb0', comp: '#8a8a8a' };
+
+let last = 0;
+function loop(ts){ const dt = Math.min(0.05, (ts - (last || ts)) / 1000); last = ts; S.t += dt;
+  ctx.setTransform(2, 0, 0, 2, 0, 0); ctx.clearRect(0, 0, 600, 330);
+  SIM.draw(S.v, S.d, S.mode, S.opt, S.t, dt, S.anim); S.anim.reset = false;
+  requestAnimationFrame(loop); }
+
+// ---------------- this sim ----------------
+// Capacitors in Series and Parallel (AP 11.7 / 03-7): two capacitors and a battery. C_eq, the charge and the voltage on each. Original.
+// shared schematic helpers (pasted into circuit sims by build_circ.py via //@include _schem.js)
+function wire(pts, col){ ctx.strokeStyle = col || '#111'; ctx.lineWidth = 2; ctx.beginPath(); pts.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.stroke(); }
+function resistor(x1, y1, x2, y2, lab, col){ const L = Math.hypot(x2 - x1, y2 - y1), ux = (x2 - x1) / L, uy = (y2 - y1) / L, z = 36, a = (L - z) / 2;
+  ctx.strokeStyle = col || '#111'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x1 + ux * a, y1 + uy * a);
+  for (let i = 1; i <= 6; i++){ const s = a + z * i / 6 - z / 12, o = (i % 2 ? 7 : -7); ctx.lineTo(x1 + ux * s - uy * o, y1 + uy * s + ux * o); }
+  ctx.lineTo(x1 + ux * (a + z), y1 + uy * (a + z)); ctx.lineTo(x2, y2); ctx.stroke();
+  if (lab) text(lab, (x1 + x2) / 2 + (Math.abs(uy) > 0.5 ? 12 : 0), (y1 + y2) / 2 + (Math.abs(uy) > 0.5 ? 4 : -12), { align: Math.abs(uy) > 0.5 ? 'left' : 'center', font: '700 11px "IBM Plex Mono",monospace', col: col || '#111' }); }
+function battery(x1, y1, x2, y2, lab){ // + terminal toward (x2,y2)
+  const L = Math.hypot(x2 - x1, y2 - y1), ux = (x2 - x1) / L, uy = (y2 - y1) / L, mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+  ctx.strokeStyle = '#111'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(mx - ux * 4, my - uy * 4); ctx.moveTo(mx + ux * 4, my + uy * 4); ctx.lineTo(x2, y2); ctx.stroke();
+  ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(mx + ux * 4 - uy * 13, my + uy * 4 + ux * 13); ctx.lineTo(mx + ux * 4 + uy * 13, my + uy * 4 - ux * 13); ctx.stroke();
+  ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(mx - ux * 4 - uy * 6, my - uy * 4 + ux * 6); ctx.lineTo(mx - ux * 4 + uy * 6, my - uy * 4 - ux * 6); ctx.stroke();
+  if (lab) text(lab, mx + (Math.abs(uy) > 0.5 ? -18 : 0), my + (Math.abs(uy) > 0.5 ? 4 : -18), { align: Math.abs(uy) > 0.5 ? 'right' : 'center', font: '700 11px "IBM Plex Mono",monospace' }); }
+function bulb(x, y, glow, lab, off){ if (glow > 0.01 && !off){ const g = ctx.createRadialGradient(x, y, 2, x, y, 10 + 26 * glow); g.addColorStop(0, 'rgba(255,214,60,' + Math.min(1, 0.4 + glow) + ')'); g.addColorStop(1, 'rgba(255,214,60,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 10 + 26 * glow, 0, 7); ctx.fill(); }
+  ctx.fillStyle = off ? '#eee' : '#fff8d6'; ctx.strokeStyle = off ? '#bbb' : '#111'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, 11, 0, 7); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x - 7, y - 7); ctx.lineTo(x + 7, y + 7); ctx.moveTo(x + 7, y - 7); ctx.lineTo(x - 7, y + 7); ctx.stroke();
+  if (lab) text(lab, x + 16, y - 12, { font: '700 11px "IBM Plex Mono",monospace', col: off ? '#bbb' : '#111' }); }
+function curArrow(x, y, dx, dy, lab, col){ const L = Math.hypot(dx, dy) || 1; arrow(x - dx * 9 / L, y - dy * 9 / L, x + dx * 9 / L, y + dy * 9 / L, col || '#1e7d45', null, { w: 2.5, head: 7 }); if (lab) text(lab, x + (Math.abs(dy) > 0.5 ? 8 : 0), y + (Math.abs(dy) > 0.5 ? 4 : -9), { align: Math.abs(dy) > 0.5 ? 'left' : 'center', font: '600 10px "IBM Plex Mono",monospace', col: col || '#1e7d45' }); }
+function dotN(x, y){ ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(x, y, 3.5, 0, 7); ctx.fill(); }
+
+const fnu = x => fnum(x);
+const SIM = {
+  title: 'Capacitors in Series & Parallel',
+  hint: 'parallel: C_eq = C₁ + C₂ · series: 1/C_eq = 1/C₁ + 1/C₂ · Q = CΔV',
+  modes: [{ id: 'par', label: 'Parallel' }, { id: 'ser', label: 'Series' }],
+  ivs(){ return [
+    { id: 'E', sym: 'ΔV', symText: 'dV', label: 'Battery', unit: 'V', min: 1, max: 24, step: 0.5, val: 12 },
+    { id: 'C1', sym: 'C<sub>1</sub>', symText: 'C1', label: 'Capacitor 1', unit: 'μF', min: 1, max: 20, step: 1, val: 2, graph: true },
+    { id: 'C2', sym: 'C<sub>2</sub>', symText: 'C2', label: 'Capacitor 2', unit: 'μF', min: 1, max: 20, step: 1, val: 6 }]; },
+  presets: [{ label: 'Equal capacitors', v: { C1: 4, C2: 4 } }, { label: 'One much bigger', v: { C1: 1, C2: 20 } }],
+  calc(v, mode){
+    const C1 = v.C1 * 1e-6, C2 = v.C2 * 1e-6;
+    if (mode === 'par'){ const Ceq = C1 + C2; return { Ceq, Q: Ceq * v.E, Q1: C1 * v.E, Q2: C2 * v.E, V1: v.E, V2: v.E, U: 0.5 * Ceq * v.E * v.E }; }
+    const Ceq = 1 / (1 / C1 + 1 / C2), Q = Ceq * v.E; return { Ceq, Q, Q1: Q, Q2: Q, V1: Q / C1, V2: Q / C2, U: 0.5 * Ceq * v.E * v.E };
+  },
+  dvs(){ return [{ id: 'Ceq', name: 'Equivalent capacitance', short: 'C_eq', sym: 'C<sub>eq</sub>', unit: 'F', f: d => d.Ceq }, { id: 'Q', name: 'Charge from the battery', short: 'Q', sym: 'Q', unit: 'C', f: d => d.Q }, { id: 'V1', name: 'Voltage across C₁', short: 'ΔV₁', sym: 'ΔV<sub>1</sub>', unit: 'V', f: d => d.V1 }]; },
+  work(v, d, mode){
+    const uC = x => H.n(x * 1e6, 'μC'), uF = x => H.n(x * 1e6, 'μF');
+    if (mode === 'par') return '<h4>1 · Parallel: same ΔV on each</h4><div class="eq">Both capacitors connect straight across the battery: ΔV₁ = ΔV₂ = <b>' + fnu(v.E) + ' V</b></div>' +
+      '<h4>2 · Charges add</h4><div class="eq">Q₁ = C₁ΔV = ' + uC(d.Q1) + ' · Q₂ = C₂ΔV = ' + uC(d.Q2) + '<br>Q = Q₁ + Q₂ = <b>' + uC(d.Q) + '</b></div>' +
+      '<h4>3 · Equivalent capacitance</h4><div class="eq">C_eq = Q/ΔV = C₁ + C₂ = <b>' + uF(d.Ceq) + '</b> (bigger than either one)</div>' +
+      '<p class="note">Parallel capacitors act like one capacitor with more plate area. The bigger capacitor stores more charge. (Opposite to resistors: parallel resistors make R smaller.)</p>';
+    return '<h4>1 · Series: same charge on each</h4><div class="eq">The middle plates are isolated, so charge only moves around: Q₁ = Q₂ = Q.</div>' +
+      '<h4>2 · Equivalent capacitance</h4><div class="eq">1/C_eq = 1/C₁ + 1/C₂ = 1/' + fnu(v.C1) + ' + 1/' + fnu(v.C2) + ' → C_eq = <b>' + uF(d.Ceq) + '</b> (smaller than either one)</div>' +
+      '<h4>3 · Charge and voltages</h4><div class="eq">Q = C_eq ΔV = <b>' + uC(d.Q) + '</b><br>ΔV₁ = Q/C₁ = <b>' + H.n(d.V1, 'V') + '</b> · ΔV₂ = Q/C₂ = <b>' + H.n(d.V2, 'V') + '</b><br>Check: ' + fnu(d.V1) + ' + ' + fnu(d.V2) + ' = ' + fnu(v.E) + ' V ✓ (loop rule)</div>' +
+      '<p class="note">In series the <b>smaller</b> capacitor gets the <b>bigger</b> voltage (same Q, ΔV = Q/C). Series capacitors act like one capacitor with a wider gap.</p>';
+  },
+  draw(v, d, mode){
+    panelTitle(mode === 'par' ? 'TWO CAPACITORS IN PARALLEL' : 'TWO CAPACITORS IN SERIES', 10, 18);
+    const cap = (x, y, horiz, lab, Q, V) => { const g = 7, w = 22; ctx.strokeStyle = '#111'; ctx.lineWidth = 3;
+      if (horiz){ ctx.beginPath(); ctx.moveTo(x - g, y - w); ctx.lineTo(x - g, y + w); ctx.moveTo(x + g, y - w); ctx.lineTo(x + g, y + w); ctx.stroke(); text(lab, x, y - w - 8, { align: 'center', font: '700 11px "IBM Plex Mono",monospace' }); text('+' + fplain(+(Q * 1e6).toFixed(2)) + ' μC', x - g - 4, y + w + 14, { align: 'right', font: '600 9px "IBM Plex Mono",monospace', col: '#c43a00' }); text('ΔV = ' + fplain(+V.toFixed(2)) + ' V', x, y + w + 28, { align: 'center', font: '600 9px "IBM Plex Mono",monospace', col: '#7a3fb0' }); }
+      else { ctx.beginPath(); ctx.moveTo(x - w, y - g); ctx.lineTo(x + w, y - g); ctx.moveTo(x - w, y + g); ctx.lineTo(x + w, y + g); ctx.stroke(); text(lab, x + w + 6, y - 2, { font: '700 11px "IBM Plex Mono",monospace' }); text('+' + fplain(+(Q * 1e6).toFixed(2)) + ' μC', x + w + 6, y + 12, { font: '600 9px "IBM Plex Mono",monospace', col: '#c43a00' }); text('ΔV = ' + fplain(+V.toFixed(2)) + ' V', x + w + 6, y + 24, { font: '600 9px "IBM Plex Mono",monospace', col: '#7a3fb0' }); } };
+    const xL = 60, T = 70, B = 270;
+    if (mode === 'par'){ const x1 = 200, x2 = 320; wire([[xL, T], [x2, T]]); wire([[xL, B], [x2, B]]); dotN(x1, T); dotN(x1, B);
+      wire([[xL, T], [xL, 145]]); battery(xL, 195, xL, 145, fplain(v.E) + ' V'); wire([[xL, 195], [xL, B]]);
+      wire([[x1, T], [x1, 163]]); wire([[x1, 177], [x1, B]]); cap(x1, 170, false, 'C₁ ' + v.C1 + ' μF', d.Q1, d.V1);
+      wire([[x2, T], [x2, 163]]); wire([[x2, 177], [x2, B]]); cap(x2, 170, false, 'C₂ ' + v.C2 + ' μF', d.Q2, d.V2); }
+    else { const xR = 330; wire([[xL, T], [140, T]]); wire([[154, T], [250, T]]); wire([[264, T], [xR, T]]); wire([[xR, T], [xR, B]]); wire([[xL, B], [xR, B]]);
+      wire([[xL, T], [xL, 145]]); battery(xL, 195, xL, 145, fplain(v.E) + ' V'); wire([[xL, 195], [xL, B]]);
+      cap(147, T, true, 'C₁ ' + v.C1 + ' μF', d.Q1, d.V1); cap(257, T, true, 'C₂ ' + v.C2 + ' μF', d.Q2, d.V2);
+      text('isolated middle: total charge 0', 202, T + 84, { align: 'center', font: '600 9px "IBM Plex Mono",monospace', col: '#8a8a8a' }); }
+    text('C_eq = ' + fplain(+(d.Ceq * 1e6).toFixed(3)) + ' μF   Q from battery = ' + fplain(+(d.Q * 1e6).toFixed(2)) + ' μC', 12, 312, { font: '700 12px "Space Grotesk",sans-serif' });
+    panelTitle('COMPARE', 395, 18);
+    const bars = (y, title, a, b, unit, mx) => { text(title, 400, y, { font: '700 12px "Space Grotesk",sans-serif' }); [[a, 'C₁', '#1546d6'], [b, 'C₂', '#ff6a2b']].forEach(([val, n, c], i) => { ctx.fillStyle = c; ctx.fillRect(430, y + 8 + i * 22, 140 * val / mx, 16); text(n, 400, y + 21 + i * 22, { font: '700 10px "IBM Plex Mono",monospace' }); text(fplain(+val.toFixed(2)) + ' ' + unit, 434 + 140 * val / mx, y + 21 + i * 22, { font: '600 9px "IBM Plex Mono",monospace' }); }); };
+    bars(50, 'Charge', d.Q1 * 1e6, d.Q2 * 1e6, 'μC', Math.max(d.Q1, d.Q2) * 1e6 * 1.4);
+    bars(130, 'Voltage', d.V1, d.V2, 'V', v.E * 1.4);
+    text(mode === 'par' ? 'same ΔV, charges add' : 'same Q, voltages add', 400, 216, { font: '700 11px "IBM Plex Mono",monospace', col: '#c43a00' });
+  }
+};
+
+
+
+S.mode = SIM.modes ? SIM.modes[0].id : 'one';
+setup(); requestAnimationFrame(loop);
+window.APP = { select(name, only){ if (!SIM.modes) return; if (!SIM._all) SIM._all = SIM.modes.slice(); const before = SIM.modes.map(m => m.id).join();
+  SIM.modes = only && only.length ? SIM._all.filter(m => only.includes(m.id) || only.includes(m.label)) : SIM._all.slice(); if (!SIM.modes.length) SIM.modes = SIM._all.slice();
+  const m = SIM.modes.find(m => m.label === name || m.id === name) || SIM.modes.find(m => m.id === S.mode) || SIM.modes[0];
+  if (m.id !== S.mode || SIM.modes.map(m => m.id).join() !== before){ S.mode = m.id; S.anim = {}; setup(); } } };
+addEventListener('message', e => { const d = e.data; if (d && d.select) try { APP.select(d.select, d.modes); } catch (er) {} });
+</script>
+</body></html>
