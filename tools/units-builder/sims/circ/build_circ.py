@@ -3,7 +3,7 @@
 import os, re
 D = os.path.dirname(os.path.abspath(__file__))
 frame = open(os.path.join(D, 'frame.html'), encoding='utf-8').read()
-for name in ['curve', 'vertical', 'conical', 'turntable', 'orbits', 'crate', 'track', 'launcher', 'power', 'hang', 'crash', 'carts', 'bounce', 'ballistic', 'hockey', 'stack', 'vectors', 'ropes', 'cannon', 'springs', 'pulleys', 'gears', 'assist', 'truck', 'meet', 'balance', 'puck', 'cartball', 'chase', 'elevator', 'updown', 'brake', 'fgraphs', 'blocks', 'proj', 'incline', 'river', 'anglepull', 'torque', 'spin', 'inertia', 'mpulley', 'roll', 'angmom', 'pressure', 'float', 'scale', 'pipe', 'tank', 'stokes', 'shm', 'pend', 'circle', 'clay', 'reson', 'meas', 'scatter', 'prop', 'errbars', 'linear', 'kinetic', 'abszero', 'gasprob', 'piston', 'cycle', 'calor', 'conduct', 'entropy', 'heatcurve', 'realgas', 'lum', 'engine', 'coulomb', 'efield', 'potential', 'plates', 'cap', 'ohm', 'circuits', 'kirch', 'emf', 'rc', 'bwire', 'bforce', 'induct', 'wave', 'pulses', 'standing', 'doppler', 'snell', 'optics', 'slits', 'thinfilm', 'world', 'eye', 'sound', 'spectra', 'photo', 'quantum', 'decay', 'binding', 'ruth', 'stars', 'abmove', 'abaccel', 'abgraph', 'abkepler', 'abwork', 'abquake', 'abbang', 'abmatch', 'abtrans', 'abtable', 'capnet', 'magfield', 'compass', 'reactor']:
+for name in ['curve', 'vertical', 'conical', 'turntable', 'orbits', 'crate', 'track', 'launcher', 'power', 'hang', 'crash', 'carts', 'bounce', 'ballistic', 'hockey', 'stack', 'vectors', 'ropes', 'cannon', 'springs', 'pulleys', 'gears', 'assist', 'truck', 'meet', 'balance', 'puck', 'cartball', 'chase', 'elevator', 'updown', 'brake', 'fgraphs', 'blocks', 'proj', 'incline', 'river', 'anglepull', 'torque', 'spin', 'inertia', 'mpulley', 'roll', 'angmom', 'pressure', 'float', 'scale', 'pipe', 'tank', 'stokes', 'shm', 'pend', 'circle', 'clay', 'reson', 'meas', 'scatter', 'prop', 'errbars', 'linear', 'kinetic', 'abszero', 'gasprob', 'piston', 'cycle', 'calor', 'conduct', 'entropy', 'heatcurve', 'realgas', 'lum', 'engine', 'coulomb', 'efield', 'potential', 'plates', 'cap', 'ohm', 'circuits', 'kirch', 'emf', 'rc', 'bwire', 'bforce', 'induct', 'wave', 'pulses', 'standing', 'doppler', 'snell', 'optics', 'slits', 'thinfilm', 'world', 'eye', 'sound', 'spectra', 'photo', 'quantum', 'decay', 'binding', 'ruth', 'stars', 'abmove', 'abaccel', 'abgraph', 'abkepler', 'abwork', 'abquake', 'abbang', 'abmatch', 'abtrans', 'abtable', 'capnet', 'magfield', 'compass', 'reactor', 'rub', 'bill', 'release', 'pairs']:
     js = open(os.path.join(D, name + '.js'), encoding='utf-8').read()
     js = re.sub(r'//@include (\S+)', lambda m: open(os.path.join(D, m.group(1)), encoding='utf-8').read(), js)
     title = re.search(r"title: '([^']+)'", js).group(1)
@@ -18,6 +18,7 @@ VAR_JS = """
   if (V.hint) SIM.hint = V.hint;
   if (V.flag) window[V.flag] = true;
   if (V.modes && SIM.modes) SIM.modes = V.modes.map(id => SIM.modes.find(m => m.id === id)).filter(Boolean);
+  if (V.labels && SIM.modes) SIM.modes = SIM.modes.map(m => V.labels[m.id] ? Object.assign({}, m, { label: V.labels[m.id] }) : m);
   if (V.opts && SIM.opts) SIM.opts = SIM.opts.map(o => V.opts[o.id] ? Object.assign({}, o, { choices: o.choices.filter(c => V.opts[o.id].includes(c[0])) }) : o).filter(o => o.choices.length);
   if (SIM.opts && V.oneChoiceHidden !== false) SIM.opts = SIM.opts.filter(o => o.choices.length > 1);
   if (SIM.presets) SIM.presets = SIM.presets.filter(p => (!p.mode || !SIM.modes || SIM.modes.some(m => m.id === p.mode)) && !(V.dropPresets || []).includes(p.label));
@@ -33,6 +34,8 @@ VARIANTS = {
   'ab-blocks': ('blocks', {'modes': ['push']}),
   'ab-curve': ('curve', {'modes': ['flat']}),
   'ab-track': ('track', {'modes': ['valley', 'hump', 'loop', 'rough'], 'opts': {'sys': ['earth']}, 'flag': 'ABP', 'hint': 'KEi + PEi + W = KEf + PEf · g = 10 m/s²'}),
+  'ab-carts': ('carts', {'flag': 'ABP', 'labels': {'elastic': 'Rebound (bouncy bumpers)', 'sticky': 'Hit and stick (clay)', 'explode': 'Explosion (push apart)'}}),
+  'ab-magfield': ('magfield', {'modes': ['bar', 'dom'], 'title': 'Magnets & Domains'}),
   'ab-coulomb': ('coulomb', {'modes': ['two']}),
   'ab-efield': ('efield', {'modes': ['one', 'two']}),
   'ab-ohm': ('ohm', {'modes': ['wire', 'iv'], 'opts': {'dev': ['res', 'lamp']}}),

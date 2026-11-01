@@ -309,6 +309,7 @@ const SIM = {
   if (V.hint) SIM.hint = V.hint;
   if (V.flag) window[V.flag] = true;
   if (V.modes && SIM.modes) SIM.modes = V.modes.map(id => SIM.modes.find(m => m.id === id)).filter(Boolean);
+  if (V.labels && SIM.modes) SIM.modes = SIM.modes.map(m => V.labels[m.id] ? Object.assign({}, m, { label: V.labels[m.id] }) : m);
   if (V.opts && SIM.opts) SIM.opts = SIM.opts.map(o => V.opts[o.id] ? Object.assign({}, o, { choices: o.choices.filter(c => V.opts[o.id].includes(c[0])) }) : o).filter(o => o.choices.length);
   if (SIM.opts && V.oneChoiceHidden !== false) SIM.opts = SIM.opts.filter(o => o.choices.length > 1);
   if (SIM.presets) SIM.presets = SIM.presets.filter(p => (!p.mode || !SIM.modes || SIM.modes.some(m => m.id === p.mode)) && !(V.dropPresets || []).includes(p.label));

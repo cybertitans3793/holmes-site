@@ -4,16 +4,21 @@ const SIM = {
   title: 'Magnetic Field Patterns',
   hint: 'outside a magnet: N → S · compass north end points along B',
   noGraph: true,
-  modes: [{ id: 'bar', label: 'Bar magnet' }, { id: 'loop', label: 'Current loop' }, { id: 'sol', label: 'Solenoid' }, { id: 'earth', label: 'Earth' }],
-  opts: [{ id: 'view', label: 'Show', choices: [['lines', 'Field lines'], ['grid', 'Compass grid'], ['both', 'Both']] }],
-  ivs(mode){
+  modes: [{ id: 'bar', label: 'Bar magnet' }, { id: 'loop', label: 'Current loop' }, { id: 'sol', label: 'Solenoid' }, { id: 'earth', label: 'Earth' }, { id: 'dom', label: 'Domains' }],
+  opts: [{ id: 'dact', label: 'Try', modes: ['dom'], choices: [['nail', 'Magnetize a nail'], ['break', 'Break a magnet'], ['heat', 'Heat or drop a magnet']] }, { id: 'view', label: 'Show', modes: ['bar', 'loop', 'sol', 'earth'], choices: [['lines', 'Field lines'], ['grid', 'Compass grid'], ['both', 'Both']] }],
+  ivs(mode, opt){
+    if (mode === 'dom'){ const a = (opt && opt.dact) || 'nail';
+      if (a === 'break') return [{ id: 'pc', sym: '', symText: 'pieces', label: 'Number of pieces', unit: '', min: 1, max: 4, step: 1, val: 1, show: x => String(x) }];
+      if (a === 'heat') return [{ id: 'hh', sym: '', symText: 'hits', label: 'Heating or dropping (how much)', unit: '%', min: 0, max: 100, step: 5, val: 0 }];
+      return [{ id: 'st', sym: '', symText: 'strokes', label: 'Strokes with a magnet (same direction)', unit: '', min: 0, max: 20, step: 1, val: 0, show: x => String(x) }]; }
     if (mode === 'bar') return [{ id: 'flip', sym: '', symText: 'flip', label: 'Which way the magnet faces', unit: '', show: x => x ? 'N on the left' : 'N on the right', min: 0, max: 1, step: 1, val: 0 }];
     if (mode === 'earth') return [{ id: 'lat', sym: '', symText: 'lat', label: 'Compass latitude (drag up for north)', unit: '°', show: x => Math.abs(x) + '° ' + (x > 0 ? 'N' : x < 0 ? 'S' : '(equator)'), min: -80, max: 80, step: 5, val: 40 }];
     const L = [{ id: 'I', sym: 'I', symText: 'I', label: 'Current (+ = out of the page on top)', unit: 'A', min: -5, max: 5, step: 1, val: 3 }];
     if (mode === 'sol') L.push({ id: 'n', sym: 'N', symText: 'N', label: 'Number of turns shown', unit: '', min: 4, max: 12, step: 1, val: 8 });
     return L;
   },
-  calc(v, mode){
+  calc(v, mode, opt){
+    if (mode === 'dom'){ const a = opt.dact || 'nail', al = a === 'nail' ? 1 - Math.exp(-v.st / 5) : a === 'heat' ? 1 - v.hh / 100 : 1; return { dom: true, a, al }; }
     const cx = 200, cy = 171; let src = [], body = null;
     if (mode === 'bar'){ const s = v.flip ? -1 : 1; src = [{ k: 'm', x: cx + 52 * s, y: cy, q: 1 }, { k: 'm', x: cx - 52 * s, y: cy, q: -1 }]; body = { x0: cx - 66, x1: cx + 66, y0: cy - 15, y1: cy + 15, nRight: s > 0 }; }
     else if (mode === 'loop'){ src = [{ k: 'w', x: cx, y: cy - 55, I: v.I }, { k: 'w', x: cx, y: cy + 55, I: -v.I }]; }
@@ -23,6 +28,11 @@ const SIM = {
   },
   dvs(){ return [{ id: 'x', name: '—', short: '', sym: '', unit: '', noTag: true, f: () => 0 }]; },
   work(v, d, mode){
+    if (mode === 'dom'){ if (d.a === 'break') return '<h4>1 · Every piece is a magnet</h4><div class="eq">The domains inside stay lined up, so each piece has its own <b>N and S</b> poles. You can never get a lone N or a lone S.</div><p class="note">Keep cutting all the way down to single atoms: each one is still a tiny magnet.</p>';
+      if (d.a === 'heat') return '<h4>1 · Knocking the domains out of line</h4><div class="eq">Heating or hammering a magnet jiggles its domains so they point every which way. Lined up: ' + Math.round(100 * d.al) + '%.</div><p class="note">With the domains random their fields cancel, and the magnet gets weak or stops being a magnet.</p>';
+      return '<h4>1 · Domains</h4><div class="eq">Iron is made of tiny regions called domains, each a little magnet. In an ordinary nail they point every which way, so their fields cancel.</div>' +
+        '<h4>2 · Stroking with a magnet</h4><div class="eq">Each stroke turns more domains to line up with the magnet’s field. Lined up now: <b>' + Math.round(100 * d.al) + '%</b>.' + (d.al > 0.5 ? ' The nail is now a magnet with its own N and S poles.' : '') + '</div>' +
+        '<p class="note">Iron, nickel and cobalt have domains. Wood, aluminium and copper don’t, so magnets don’t pick them up.</p>'; }
     if (mode === 'bar') return '<h4>1 · Field lines</h4><div class="eq">Outside the magnet the field goes from <b>N to S</b>. Inside it goes from S back to N, so every line is a closed loop.</div>' +
       '<h4>2 · Compasses</h4><div class="eq">A compass needle is a tiny magnet: its north end points along the field. Lines are closest together near the poles, where the field is strongest.</div>' +
       '<h4>3 · Magnetic materials</h4><div class="eq">Iron is made of tiny regions (domains) that are each a little magnet. In a magnet most domains line up. Near a magnet, the domains in a nail line up too, so the nail is attracted.</div>' +
@@ -37,6 +47,7 @@ const SIM = {
       '<p class="note">Outside, a ' + nm + '’s field looks like a bar magnet’s. More current or more turns → stronger field. Flip the current to swap N and S. Put an iron core inside to make an electromagnet.</p>';
   },
   draw(v, d, mode, opt){
+    if (mode === 'dom') return drawDom(v, d);
     const view = opt.view || 'lines', S0 = d.src; let body = d.body;
     const B = (x, y) => { let bx = 0, by = 0; for (const s of S0){ const dx = x - s.x, dy = y - s.y, r2 = dx * dx + dy * dy + 1; if (s.k === 'm'){ const r3 = r2 * Math.sqrt(r2); bx += s.q * dx / r3; by += s.q * dy / r3; } else { /* current out of page (+I): B counterclockwise on screen (y down) */ bx += s.I * dy / r2 * 0.02; by += -s.I * dx / r2 * 0.02; } }
       if (body && body.x0 !== undefined && !body.sol && x > body.x0 && x < body.x1 && y > body.y0 && y < body.y1){ return [body.nRight ? 1 : -1, 0]; }
@@ -85,3 +96,27 @@ const SIM = {
     if (mode === 'earth'){ const dip = Math.atan(2 * Math.tan(Math.abs(v.lat) * DEG)) / DEG; text('dip at ' + Math.abs(v.lat) + '°: ' + Math.round(dip) + '°', 400, 100, { font: '700 13px "Space Grotesk",sans-serif' }); k(118, '(needle tips ' + (v.lat >= 0 ? 'into' : 'out of') + ' the ground)'); }
   }
 };
+
+function drawDom(v, d){
+  const F = '"Space Grotesk",sans-serif', Mo = '"IBM Plex Mono",monospace';
+  const rnd = i => { const x = Math.sin(i * 12.9898) * 43758.5453; return x - Math.floor(x); };
+  const domArrow = (x, y, ang, L) => { const dx = Math.cos(ang) * L / 2, dy = Math.sin(ang) * L / 2; ctx.strokeStyle = '#111'; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(x - dx, y - dy); ctx.lineTo(x + dx, y + dy); ctx.stroke(); const a = Math.atan2(dy, dx); ctx.fillStyle = '#c43a00'; ctx.beginPath(); ctx.moveTo(x + dx, y + dy); ctx.lineTo(x + dx - 6 * Math.cos(a - 0.5), y + dy - 6 * Math.sin(a - 0.5)); ctx.lineTo(x + dx - 6 * Math.cos(a + 0.5), y + dy - 6 * Math.sin(a + 0.5)); ctx.closePath(); ctx.fill(); };
+  const bar = (x0, y0, w, h, al, label, poles) => { ctx.fillStyle = '#d6d3cc'; ctx.fillRect(x0, y0, w, h); ctx.strokeStyle = '#555'; ctx.lineWidth = 1.5; ctx.strokeRect(x0, y0, w, h);
+    const nx = Math.max(1, Math.floor(w / 26)), ny = Math.max(1, Math.floor(h / 26)); let k = 0;
+    for (let i = 0; i < nx; i++) for (let j = 0; j < ny; j++){ const r = (rnd(k++ + x0) - 0.5) * 2 * PI * (1 - al); domArrow(x0 + (i + 0.5) * w / nx, y0 + (j + 0.5) * h / ny, r, 16); }
+    if (poles){ text('S', x0 - 9, y0 + h / 2 + 5, { align: 'center', font: '700 14px ' + F, col: '#1546d6' }); text('N', x0 + w + 9, y0 + h / 2 + 5, { align: 'center', font: '700 14px ' + F, col: '#c43a00' }); }
+    if (label) text(label, x0 + w / 2, y0 + h + 16, { align: 'center', font: '600 10px ' + F, col: '#4a4a4a' }); };
+  if (d.a === 'break'){
+    panelTitle('BREAK A MAGNET', 10, 18);
+    const n = v.pc, gap = 40, W = 320 - gap * (n - 1), w = W / n;
+    for (let i = 0; i < n; i++) bar(30 + i * (w + gap), 130, w, 70, 1, n > 1 ? 'piece ' + (i + 1) : 'bar magnet', true);
+  } else {
+    panelTitle(d.a === 'nail' ? 'MAGNETIZE A NAIL' : 'HEAT OR DROP A MAGNET', 10, 18);
+    if (d.a === 'nail'){ ctx.fillStyle = '#9aa7b8'; ctx.fillRect(355, 145, 12, 40); ctx.beginPath(); ctx.moveTo(355, 185); ctx.lineTo(361, 200); ctx.lineTo(367, 185); ctx.fill(); }
+    bar(40, 130, 300, 70, d.al, d.a === 'nail' ? 'iron nail (domains magnified)' : 'bar magnet (domains magnified)', d.al > 0.5);
+    if (d.a === 'nail'){ ctx.fillStyle = '#c43a00'; ctx.fillRect(60, 80, 60, 24); ctx.fillStyle = '#1546d6'; ctx.fillRect(120, 80, 60, 24); text('S', 90, 97, { align: 'center', font: '700 12px ' + F, col: '#fff' }); text('N', 150, 97, { align: 'center', font: '700 12px ' + F, col: '#fff' }); arrow(190, 92, 290, 92, '#4a4a4a', 'stroke this way', { w: 2, ly: -8, align: 'center', lx: 0 }); }
+  }
+  panelTitle('THE DOMAINS', 395, 18);
+  [['lined up', Math.round(100 * d.al) + '%'], ['magnet?', d.al > 0.5 ? 'yes' : d.al > 0.2 ? 'weak' : 'no']].concat(d.a === 'break' ? [['pieces', String(v.pc)], ['poles each', 'N and S']] : []).forEach(([a, b], i) => { text(a, 400, 50 + i * 26, { font: '600 12px ' + F, col: '#4a4a4a' }); text(b, 590, 50 + i * 26, { align: 'right', font: '700 13px ' + Mo }); });
+  text('arrow = one domain (N end red)', 400, 300, { font: '500 10px ' + Mo, col: '#8a8a8a' });
+}
