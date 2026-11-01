@@ -648,16 +648,16 @@ SIMS['plates'] = {'file': 'pt/out.html', 'kind': 'xl', 'ar': '1008 / 676',
 AB = 'Algebra-Based Physics'
 UNITS.update({
 'AB-01': {'course': AB, 'num': '01', 'title': 'Kinematics', 'review': '01-R', 'tabs': [
-    {'code': '', 'name': 'Distance & Displacement', 'sim': 'abmove', 'select': 'Walk east & west', 'tasks': ['Rhee Verse walks 6 m east, then 4 m west. Predict the distance and the displacement, then check.', 'Kent Decide walks 2 m east, 8 m west and 4 m east. Find the distance and the displacement.', 'Make a walk where the distance and the displacement are the same. What has to be true?', 'Make a round trip. What is the displacement? Why?']},
-    {'code': '', 'name': 'Speed & Velocity', 'sim': 'abmove', 'select': 'Coach on the sideline', 'tasks': ['Coach Ulcer goes from the 10 to the 40, back to the 0, then to the 30 in 100 s. Find his average speed and average velocity.', 'Your turn: 30 → 10 → 50 → 20 in 200 s. Work it out first, then check.', '<b>Round trip:</b> you run 3 mi to a friend’s house in 30 min and walk home in 1 hr. Why is your average velocity zero?', 'Can an object move fast for 10 s and have an average velocity of zero? Make one.']},
-    {'code': '', 'name': 'Acceleration', 'sim': 'abaccel', 'select': 'Car speeding up / slowing down', 'tasks': ['A car speeds up from rest to +16 m/s in 4 s. Set it up and find the acceleration from the table.', 'A car slows down from +32 m/s to +8 m/s. Which way does the acceleration point?', 'Make the car move left (−) and speed up. Is the acceleration + or −?', 'Use the rule: speeding up → a in the same direction it moves; slowing down → a opposite. Check four different cases.']},
+    {'code': '', 'name': 'Distance & Displacement', 'sim': 'abmove', 'modes': ['walk'], 'select': 'Walk east & west', 'tasks': ['Rhee Verse walks 6 m east, then 4 m west. Predict the distance and the displacement, then check.', 'Kent Decide walks 2 m east, 8 m west and 4 m east. Find the distance and the displacement.', 'Make a walk where the distance and the displacement are the same. What has to be true?', 'Make a round trip. What is the displacement? Why?']},
+    {'code': '', 'name': 'Speed & Velocity', 'sim': 'abmove', 'modes': ['coach', 'trip'], 'select': 'Coach on the sideline', 'tasks': ['Coach Ulcer goes from the 10 to the 40, back to the 0, then to the 30 in 100 s. Find his average speed and average velocity.', 'Your turn: 30 → 10 → 50 → 20 in 200 s. Work it out first, then check.', '<b>Round trip:</b> you run 3 mi to a friend’s house in 30 min and walk home in 1 hr. Why is your average velocity zero?', 'Can an object move fast for 10 s and have an average velocity of zero? Make one.']},
+    {'code': '', 'name': 'Acceleration', 'sim': 'abaccel', 'modes': ['car'], 'select': 'Car speeding up / slowing down', 'tasks': ['A car speeds up from rest to +16 m/s in 4 s. Set it up and find the acceleration from the table.', 'A car slows down from +32 m/s to +8 m/s. Which way does the acceleration point?', 'Make the car move left (−) and speed up. Is the acceleration + or −?', 'Use the rule: speeding up → a in the same direction it moves; slowing down → a opposite. Check four different cases.']},
     {'code': '', 'name': 'Data Table Detective', 'sim': 'abtable', 'tasks': [
         'For each table, find the change each second, then pick: at rest, constant velocity, speeding up or slowing down.',
         'Is it a position table or a velocity table? What does the change each second tell you in each kind?',
         'For the velocity tables, find the acceleration with a = Δv ÷ Δt. Then turn on Show to check.',
         'Tables #9–#12 have negative numbers. Which way is each one moving? Does a negative acceleration always mean slowing down?']},
-    {'code': '', 'name': 'Position–Time Graphs', 'sim': 'abgraph', 'select': 'Position–time graphs', 'tasks': ['Make the car walk, stop, then walk back. Describe the slope of each stage.', 'Find the velocity of each stage using slope = rise ÷ run.', 'Make a fast stage and a slow stage in the + direction. How can you tell which is faster from the graph?', 'Which graph shape means “at rest”? Which means moving in the − direction?']},
-    {'code': '', 'name': 'Velocity–Time Graphs', 'sim': 'abgraph', 'select': 'Velocity–time graphs', 'tasks': ['Speed up, cruise, stop: describe each stage. Find the acceleration (slope) of each.', 'Find the displacement for each stage from the area: rectangles and triangles.', 'Make the line cross the time axis. What does that mean? What happens to the area below the axis?', 'Thinksheet check: v-t graph from 0 to +20 m/s in 5 s, then constant for 10 s. Set it up (use 5 s stages) and find a and the displacement.']},
+    {'code': '', 'name': 'Position–Time Graphs', 'sim': 'abgraph', 'modes': ['pt'], 'select': 'Position–time graphs', 'tasks': ['Make the car walk, stop, then walk back. Describe the slope of each stage.', 'Find the velocity of each stage using slope = rise ÷ run.', 'Make a fast stage and a slow stage in the + direction. How can you tell which is faster from the graph?', 'Which graph shape means “at rest”? Which means moving in the − direction?']},
+    {'code': '', 'name': 'Velocity–Time Graphs', 'sim': 'abgraph', 'modes': ['vt'], 'select': 'Velocity–time graphs', 'tasks': ['Speed up, cruise, stop: describe each stage. Find the acceleration (slope) of each.', 'Find the displacement for each stage from the area: rectangles and triangles.', 'Make the line cross the time axis. What does that mean? What happens to the area below the axis?', 'Thinksheet check: v-t graph from 0 to +20 m/s in 5 s, then constant for 10 s. Set it up (use 5 s stages) and find a and the displacement.']},
     {'code': '', 'name': 'Graph Translator', 'sim': 'abtrans', 'tasks': [
         'Drag the position–time dots. Make a steep line, a flat line and a line going down. What does each look like on the velocity–time graph?',
         'For any 2-second piece, find the slope of the position–time graph. Check that it matches the height of the velocity–time graph.',
@@ -670,7 +670,7 @@ UNITS.update({
         'Targets #5–#8 are curves. Which ones mean speeding up? Slowing down? Match one of each.',
         'Switch to the velocity–time graphs and use the speed lever. How do you show standing still? Moving backward?',
         'Stuck? Pick Show me the answer, watch the walker, then try again yourself.']},
-    {'code': '', 'name': 'Free Fall', 'sim': 'abaccel', 'select': 'Free fall', 'tasks': ['Throw a ball up at 30 m/s. Fill in the velocity each second. What happens at the top?', 'What is the acceleration on the way up? At the top? On the way down?', 'Drop a ball. How fast is it going after 3 s?', 'Why does the velocity change by −10 m/s every second, no matter how heavy the ball is?']},
+    {'code': '', 'name': 'Free Fall', 'sim': 'abaccel', 'modes': ['fall'], 'select': 'Free fall', 'tasks': ['Throw a ball up at 30 m/s. Fill in the velocity each second. What happens at the top?', 'What is the acceleration on the way up? At the top? On the way down?', 'Drop a ball. How fast is it going after 3 s?', 'Why does the velocity change by −10 m/s every second, no matter how heavy the ball is?']},
     {'code': '', 'name': 'Moving Man', 'sim': 'mman', 'tasks': ['Make the man walk to the right at a steady 2 m/s. What does the position–time graph look like?', 'Now make him walk to the left at the same speed. What changed on the graph? What stayed the same?', 'Start him at rest and speed him up. How is the position–time graph different from a steady walk?', 'Read his velocity from the velocity–time graph at two times. Use a = Δv/Δt to find his acceleration.']},
     {'code': '', 'name': 'Maze Game', 'sim': 'maze', 'tasks': ['Play with <b>position</b> control. Then switch to <b>velocity</b>. What does dragging the arrow control now?', 'Try <b>acceleration</b> control. Why is it so hard to stop on the goal?', 'With velocity control, how do you make the ball stop? With acceleration control?']},
 ]},
@@ -936,13 +936,13 @@ UNITS.update({
         'Use the generator screen. How does turning faster change the light?']},
 ]},
 'P2-04': {'course': 'AP Physics 2 / IB', 'num': '04', 'title': 'Waves & Optics', 'tabs': [
-    {'code': '', 'name': 'Wave Basics', 'sim': 'wave', 'select': 'Transverse', 'tasks': [
+    {'code': '', 'name': 'Wave Basics', 'sim': 'wave', 'modes': ['trans', 'long', 'medium'], 'select': 'Transverse', 'tasks': [
         'Double the frequency. What happens to λ and T? What stays the same? Why?',
         'Compare the two graphs. Which one lets you read off λ? Which one gives T?',
         'Find a distance from P to Q where they are in phase, then one where they are in antiphase.',
         '<b>Longitudinal:</b> find a compression. Where is it on the displacement–distance graph?',
         '<b>New medium:</b> a wave goes from v = 2 m/s to v = 1 m/s. Predict λ₂ before you look. What happens to f?']},
-    {'code': '', 'name': 'Polarization', 'sim': 'wave', 'select': 'Polarization', 'tasks': [
+    {'code': '', 'name': 'Polarization', 'sim': 'wave', 'modes': ['polar'], 'select': 'Polarization', 'tasks': [
         'Unpolarized light of 400 W/m² meets one filter. How much gets through? Does the angle of that filter matter?',
         'Set the second filter to 0°, 45° and 90°. Find the intensity each time and check with I = I₁cos²θ.',
         '<b>Three filters:</b> crossed outer filters pass nothing. Add the middle one. Which angle lets the most light through?',
@@ -954,13 +954,13 @@ UNITS.update({
         '<b>Boundary:</b> predict whether the reflected pulse is upright or inverted for each end. Then check.',
         'Send the pulse into a heavier string, then a lighter one. Which pulse is wider? Why?',
         '<b>Beats:</b> a 256 Hz fork and a guitar string give 4 beats per second. What two frequencies could the string have? How can you tell which?']},
-    {'code': '', 'name': 'Standing Waves', 'sim': 'standing', 'select': 'Strings', 'tasks': [
+    {'code': '', 'name': 'Standing Waves', 'sim': 'standing', 'modes': ['string', 'pipe', 'tube'], 'select': 'Strings', 'tasks': [
         'Draw the first three harmonics for a string fixed at both ends. Find λ and f for each. Check with the sim.',
         'Switch to a closed–open pipe. Why are there no even harmonics?',
         'A 0.5 m pipe: compare the lowest frequency when it is open–open and closed–open. What is the ratio?',
         '<b>Resonance tube lab:</b> find two lengths that are loud. Use them to find the speed of sound (cover up the v slider).',
         'How does the pitch of a guitar string change when you tighten it? When you press it against a fret?']},
-    {'code': '', 'name': 'Microwave Oven', 'sim': 'standing', 'select': 'Microwave oven', 'tasks': [
+    {'code': '', 'name': 'Microwave Oven', 'sim': 'standing', 'modes': ['micro'], 'select': 'Microwave oven', 'tasks': [
         'Why does a microwave oven heat food unevenly when the turntable is taken out?',
         'Read the gap between two melted spots off the ruler. Set the slider to your value and find the speed of light.',
         'Why is the gap between hot spots λ/2 and not λ?',
@@ -972,13 +972,13 @@ UNITS.update({
         '<b>Red shift:</b> Hα from a galaxy is at 669 nm. How fast is the galaxy moving, and in which direction?',
         '<b>Radar:</b> a 24 GHz radar gun measures a 4800 Hz shift. How fast is the car? Is it over the 25 m/s limit?'],
      'note': 'AP Physics 2: Doppler is qualitative only. IB: light shifts are SL; the sound formula is HL.'},
-    {'code': '', 'name': 'Sonar & Instruments', 'sim': 'sound', 'select': 'Sonar & echolocation', 'tasks': [
+    {'code': '', 'name': 'Sonar & Instruments', 'sim': 'sound', 'modes': ['sonar', 'instr'], 'select': 'Sonar & echolocation', 'tasks': [
         'A ship’s sonar echo returns after 4.0 s. How deep is the sea floor?',
         'Why do bats use ultrasound instead of sounds we can hear? Find λ for a 50 kHz call.',
         '<b>Instruments:</b> listen to a flute, a clarinet and a guitar playing the same note (click the picture). Use the harmonics to explain why they sound different.',
         'How long must a flute be to play 262 Hz? A clarinet? Why is the clarinet shorter?',
         '<b>Guitar:</b> where is the 12th fret, and what happens to the frequency when you press there?']},
-    {'code': '', 'name': 'The Ear', 'sim': 'sound', 'select': 'The ear', 'tasks': [
+    {'code': '', 'name': 'The Ear', 'sim': 'sound', 'modes': ['ear'], 'select': 'The ear', 'tasks': [
         'Treat the ear canal as a pipe closed at the eardrum. Find its resonant frequency for a 2.5 cm canal.',
         'Use your answer to explain why we hear best around 3000–4000 Hz.',
         'The eardrum is about 17× bigger in area than the oval window. Why does that increase the pressure?',
@@ -988,17 +988,17 @@ UNITS.update({
         'Switch to Fixed End and adjust the frequency until you get a standing wave. Which frequencies work?',
         '<b>Wave Interference:</b> use two sources. Where are the nodal lines? What happens when you move the sources apart?',
         '<b>Sound Waves:</b> how does the air move as the sound passes? What changes when you raise the pitch?']},
-    {'code': '', 'name': 'Two-Source Interference', 'sim': 'slits', 'select': 'Two speakers', 'tasks': [
+    {'code': '', 'name': 'Two-Source Interference', 'sim': 'slits', 'modes': ['two'], 'select': 'Two speakers', 'tasks': [
         'Two speakers 2 m apart play 340 Hz. Walk along the wall. Find the first quiet spot. What is the path difference there?',
         'Raise the frequency. Do the quiet spots get closer together or farther apart? Why?',
         'Explain why noise-cancelling headphones need to make a wave that is half a cycle out of phase.']},
-    {'code': '', 'name': 'Double Slit', 'sim': 'slits', 'select': 'Double slit', 'tasks': [
+    {'code': '', 'name': 'Double Slit', 'sim': 'slits', 'modes': ['double'], 'select': 'Double slit', 'tasks': [
         'Find the fringe spacing for a red laser. Switch to blue. Which one has wider fringes? Why?',
         'You measure 10 fringes across 50.6 mm with the screen 2.00 m away. Find the slit separation.',
         'What happens to the pattern if the screen is moved twice as far away?',
         'Why is Young’s experiment evidence that light is a wave?',
         'Flip <b>Symbols</b> between AP and IB. Which letters change? Is AP’s y<sub>max</sub> (m = 1) the same number as IB’s s?']},
-    {'code': '', 'name': 'Single Slit & Gratings', 'sim': 'slits', 'select': 'Single slit', 'tasks': [
+    {'code': '', 'name': 'Single Slit & Gratings', 'sim': 'slits', 'modes': ['single', 'grating'], 'select': 'Single slit', 'tasks': [
         'Make the slit narrower. What happens to the width of the central maximum? Is that what you expected?',
         'Why is the central maximum twice as wide as the others?',
         '<span style="color:#7a3fb0">IB HL</span>: switch to two slits of this width. Which double-slit fringes are missing?',
@@ -1022,7 +1022,7 @@ UNITS.update({
         '<b>Rainbow:</b> follow a ray through the drop. Why is red on the outside of the bow? Why must the sun be behind you?',
         '<b>Mirage:</b> why does a hot road look wet? Why do you only see it far away, looking almost along the road?',
         '<b>Apparent depth:</b> a fish is 1.0 m deep. How deep does it look straight down? Where should a spear fisher aim?']},
-    {'code': '', 'name': 'Lenses', 'sim': 'optics', 'select': 'Lens', 'tasks': [
+    {'code': '', 'name': 'Lenses', 'sim': 'optics', 'modes': ['lens'], 'select': 'Lens', 'tasks': [
         'Draw the three principal rays for an object beyond 2f. Then check with the sim. Describe the image.',
         'Move the object from far away toward the lens. Describe how the image changes at 2f, between f and 2f, and inside f.',
         'Which positions would a camera, a projector and a magnifying glass use?',
@@ -1036,7 +1036,7 @@ UNITS.update({
         'Turn the glasses on. What range can each person now see clearly?',
         'Look at a real glasses prescription (yours, a parent’s). What do SPH, CYL and AXIS mean?'],
      'note': 'Application of AP Physics 2 topic 13.4. Diopters are not on the AP exam, but P = 1/f is the thin-lens equation.'},
-    {'code': '', 'name': 'Mirrors', 'sim': 'optics', 'select': 'Mirror', 'tasks': [
+    {'code': '', 'name': 'Mirrors', 'sim': 'optics', 'modes': ['mirror'], 'select': 'Mirror', 'tasks': [
         'Concave mirror: find where to put the object for a real, inverted, enlarged image.',
         'Why do makeup mirrors use a concave mirror? Where must your face be?',
         'Why are car side mirrors convex? What does “objects are closer than they appear” mean?',

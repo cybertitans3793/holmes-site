@@ -50,6 +50,7 @@ def prep_sim(key):
     s = SIMS[key]
     h = open(os.path.join(SP, s['file']), encoding='utf-8').read()
     kind = s.get('kind', 'plain')
+    if (kind == 'xl' and LISTEN in h) or (kind == 'panel' and PANEL_CSS in h): return h  # already prepared (recovered from a built page)
     if kind == 'xl':
         n = 0
         for a, b in [('window.innerHeight / 718', 'window.innerHeight / 676'), ('(718 * s - 718)', '(676 * s - 676)')]:
@@ -152,7 +153,7 @@ const SIMS = {{
   }}
   function select() {{
     const t = UNIT.tabs[cur];
-    if (ifr && ifr.dataset.ready && t.select) ifr.contentWindow.postMessage({{ select: t.select }}, '*');
+    if (ifr && ifr.dataset.ready && t.select) ifr.contentWindow.postMessage({{ select: t.select, modes: t.modes || null }}, '*');
   }}
   $('fs').onclick = () => {{
     if (document.fullscreenElement) document.exitFullscreen();
@@ -256,7 +257,7 @@ def build(uid):
     for t in u['tabs']:
         if t['sim'] not in used: used.append(t['sim'])
     css = open(os.path.join(D, 'shell.css'), encoding='utf-8').read()
-    unit = {'id': uid, 'tabs': [{k: t.get(k) for k in ('code', 'name', 'sim', 'select', 'tasks', 'note', 'gapBefore') if t.get(k) is not None} for t in u['tabs']]}
+    unit = {'id': uid, 'tabs': [{k: t.get(k) for k in ('code', 'name', 'sim', 'select', 'modes', 'tasks', 'note', 'gapBefore') if t.get(k) is not None} for t in u['tabs']]}
     if u.get('review'): unit['practice'] = practice_url(uid, u)
     sims_js = ',\n'.join('%s:{ar:%s,html:%s}' % (json.dumps(k), json.dumps(SIMS[k]['ar']), js_str(prep_sim(k))) for k in used)
     credits = ' '.join(SIMS[k]['credit'] for k in used if SIMS[k].get('credit'))

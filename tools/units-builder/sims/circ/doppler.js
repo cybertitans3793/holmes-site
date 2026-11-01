@@ -6,8 +6,8 @@ function wlRGB(l){ let r = 0, g = 0, b = 0; if (l < 440){ r = (440 - l) / 60; b 
 const SIM = {
   title: 'Doppler Effect',
   hint: 'toward → higher f · away → lower f',
-  modes: [{ id: 'sound', label: 'Moving source (sound)' }, { id: 'color', label: 'Red & blue shift (color)' }, { id: 'light', label: 'Red shift (light)' }, { id: 'radar', label: 'Radar & ultrasound' }],
-  opts: [{ id: 'dev', label: 'Device', modes: ['radar'], choices: [['radar', 'Police radar'], ['us', 'Ultrasound (blood flow)']] }],
+  modes: [{ id: 'sound', label: 'Sound' }, { id: 'color', label: 'Red & blue shift (color)' }, { id: 'light', label: 'Red shift (light)' }, { id: 'radar', label: 'Radar & ultrasound' }],
+  opts: [{ id: 'who', label: 'Move', modes: ['sound'], choices: [['source', 'The source'], ['observer', 'The observer']] }, { id: 'dev', label: 'Device', modes: ['radar'], choices: [['radar', 'Police radar'], ['us', 'Ultrasound (blood flow)']] }],
   ivs(mode, opt){
     if (mode === 'color') return [
       { id: 'vc', sym: 'v', symText: 'v', label: 'Speed of the light source (% of light speed, + = moving right)', unit: '% c', min: -30, max: 30, step: 1, val: 15, graph: true },
@@ -18,17 +18,17 @@ const SIM = {
       { id: 'u', sym: 'u', symText: 'u', label: us ? 'Blood speed toward the probe' : 'Car speed toward the radar', unit: 'm/s', min: us ? -1 : -40, max: us ? 1 : 40, step: us ? 0.01 : 0.5, val: us ? 0.4 : 30, graph: true }]; }
     return [
       { id: 'f0', sym: 'f<sub>0</sub>', symText: 'f0', label: 'Frequency of the siren', unit: 'Hz', min: 200, max: 1000, step: 10, val: 500 },
-      { id: 'vs', sym: 'u<sub>s</sub>', symText: 'us', label: 'Source speed toward the observer (− = away)', unit: 'm/s', min: -200, max: 500, step: 1, val: 100, graph: true },
-      { id: 'vo', sym: 'u<sub>o</sub>', symText: 'uo', label: 'Observer speed toward the source', unit: 'm/s', min: -100, max: 100, step: 1, val: 0 },
+      (opt && opt.who) === 'observer' ? { id: 'vo', sym: 'u<sub>o</sub>', symText: 'uo', label: 'Observer speed toward the source (− = away)', unit: 'm/s', min: -150, max: 150, step: 1, val: 60, graph: true }
+        : { id: 'vs', sym: 'u<sub>s</sub>', symText: 'us', label: 'Source speed toward the observer (− = away)', unit: 'm/s', min: -200, max: 500, step: 1, val: 100, graph: true },
       { id: 'c', sym: 'v', symText: 'v', label: 'Speed of sound', unit: 'm/s', min: 300, max: 360, step: 1, val: 340 }];
   },
-  presets: [{ label: 'Ambulance passing', mode: 'sound', v: { vs: 30, vo: 0 } }, { label: 'Sonic boom', mode: 'sound', v: { vs: 400, vo: 0 } }, { label: 'Distant galaxy', mode: 'light', v: { vr: 22000 } }, { label: 'Speeding car', mode: 'radar', v: { u: 35 } }],
+  presets: [{ label: 'Ambulance passing', mode: 'sound', opt: { who: 'source' }, v: { vs: 30 } }, { label: 'Sonic boom', mode: 'sound', opt: { who: 'source' }, v: { vs: 400 } }, { label: 'Driving toward a siren', mode: 'sound', opt: { who: 'observer' }, v: { vo: 30 } }, { label: 'Distant galaxy', mode: 'light', v: { vr: 22000 } }, { label: 'Speeding car', mode: 'radar', v: { u: 35 } }],
   calc(v, mode, opt){
     if (mode === 'color'){ const z = v.vc / 100; return { z, la: v.l0 * (1 - z), lb: v.l0 * (1 + z) }; }
     if (mode === 'light'){ const z = v.vr / 3e5; return { z, lines: LINES.map(([l, n]) => [l, l * (1 + z), n]), dl: 656.3 * z }; }
     if (mode === 'radar'){ const us = (opt.dev || 'radar') === 'us', c = us ? 1540 : 3e8, f = v.f * (us ? 1e6 : 1e9), df = 2 * v.u * f / c; return { us, c, fHz: f, df }; }
-    const shock = v.vs >= v.c, fa = shock ? NaN : v.f0 * (v.c + v.vo) / (v.c - v.vs), lamA = (v.c - v.vs) / v.f0, lamB = (v.c + v.vs) / v.f0, fb = v.f0 * (v.c - v.vo) / (v.c + v.vs);
-    return { shock, fa, fb, lamA, lamB, mach: v.vs / v.c, lam0: v.c / v.f0, f0: v.f0 };
+    const shock = (v.vs || 0) >= v.c, fa = shock ? NaN : v.f0 * (v.c + (v.vo || 0)) / (v.c - (v.vs || 0)), lamA = (v.c - (v.vs || 0)) / v.f0, lamB = (v.c + (v.vs || 0)) / v.f0, fb = v.f0 * (v.c - (v.vo || 0)) / (v.c + (v.vs || 0));
+    return { shock, fa, fb, lamA, lamB, mach: (v.vs || 0) / v.c, lam0: v.c / v.f0, f0: v.f0 };
   },
   dvs(mode){
     if (mode === 'color') return [{ id: 'la', name: 'Wavelength seen in front', short: 'λ front', sym: 'λ', unit: 'nm', f: d => d.la }, { id: 'lb', name: 'Wavelength seen behind', short: 'λ behind', sym: 'λ', unit: 'nm', f: d => d.lb }];
@@ -36,7 +36,7 @@ const SIM = {
     if (mode === 'radar') return [{ id: 'df', name: 'Frequency shift of the echo', short: 'Δf', sym: 'Δf', unit: 'Hz', f: d => d.df }];
     return [{ id: 'fa', name: 'Frequency heard by the observer ahead', short: 'f', sym: 'f′', unit: 'Hz', f: d => d.fa < 4 * d.f0 ? d.fa : NaN }, { id: 'la', name: 'Wavelength in front of the source', short: 'λ ahead', sym: 'λ', unit: 'm', f: d => d.lamA }];
   },
-  work(v, d, mode){
+  work(v, d, mode, opt){
     if (mode === 'color'){ const nm = l => l < 450 ? 'violet' : l < 495 ? 'blue' : l < 570 ? 'green' : l < 590 ? 'yellow' : l < 620 ? 'orange' : 'red';
       return '<h4>1 · Light is a wave too</h4><div class="eq">A moving light source bunches up its waves in front and stretches them out behind, just like sound.</div>' +
         '<h4>2 · In front: waves squeezed → shorter wavelength → <span style="color:#1546d6">bluer</span></h4><div class="eq">λ ≈ λ₀(1 − v/c) = ' + H.iv('l0') + ' × (1 − ' + fnum(Math.abs(d.z)) + ') = <b>' + H.n(d.la, 'nm') + '</b> (' + nm(d.la) + ')</div>' +
@@ -48,12 +48,15 @@ const SIM = {
     if (mode === 'radar') return '<h4>1 · Two Doppler shifts</h4><div class="eq">The ' + (d.us ? 'moving blood cells receive a shifted wave, then re-emit it' : 'moving car receives a shifted wave, then re-emits it') + ' as a moving source. So the echo is shifted twice: Δf ≈ 2uf/c.</div>' +
       '<h4>2 · Calculate the shift</h4><div class="eq">Δf = 2(' + H.iv('u') + ')(' + fnum(d.fHz) + ' Hz)/(' + fnum(d.c) + ' m/s) = <b>' + H.n(d.df, 'Hz') + '</b></div>' +
       '<p class="note">' + (d.us ? 'c here is the speed of sound in soft tissue (1540 m/s). Doctors use this to find blockages in arteries.' : 'The radar mixes the echo with its own signal and counts the beats: f<sub>beat</sub> = Δf. Rearranged for the exam: u = cΔf/(2f).') + '</p>';
-    let s = '<h4>1 · Wavefronts bunch up in front</h4><div class="eq">The source moves ' + fnum(Math.abs(v.vs)) + ' m/s ' + (v.vs >= 0 ? 'toward' : 'away from') + ' the observer between wavefronts, so the gap ahead is λ = (v − u<sub>s</sub>)/f₀ = <b>' + H.n(d.lamA, 'm') + '</b> (at rest it would be ' + fnum(d.lam0) + ' m).</div>';
+    if ((v.vo || 0) !== 0 || (opt && opt.who) === 'observer'){ const uo = v.vo || 0;
+      return '<h4>1 · The source is still, so the waves are evenly spaced</h4><div class="eq">λ = v/f₀ = ' + fnum(v.c) + ' ÷ ' + H.iv('f0') + ' = <b>' + H.n(d.lam0, 'm') + '</b> in every direction. <b>Moving the observer does not change the wavelength.</b></div>' +
+        '<h4>2 · But you meet the crests ' + (uo > 0 ? 'more often' : uo < 0 ? 'less often' : 'at the normal rate') + '</h4><div class="eq">' + (uo > 0 ? 'Moving toward the source, the waves pass you at v + u<sub>o</sub>.' : uo < 0 ? 'Moving away, the waves catch you at only v − |u<sub>o</sub>|.' : 'Standing still, the waves pass at v.') + '<br>f′ = (v + u<sub>o</sub>)/λ = f₀(v + u<sub>o</sub>)/v = ' + H.iv('f0') + '(' + fnum(v.c) + ' + ' + fnum(uo) + ')/' + fnum(v.c) + ' = <b>' + H.n(d.fa, 'Hz') + '</b> (IB HL)</div>' +
+        '<p class="note"><b>Key idea:</b> a moving <b>source</b> squeezes or stretches the waves themselves (the wavelength changes). A moving <b>observer</b> leaves the waves alone and just runs into them faster or slower. Either way the pitch goes up when you get closer and down when you get farther apart. AP: qualitative only. IB: problems have either the source or the observer moving, never both.</p>'; }
     if (d.shock) return '<h4>1 · Faster than sound!</h4><div class="bad">u<sub>s</sub> ≥ v: the source outruns its own waves. The wavefronts pile up into a cone (shock wave). The observer hears nothing until the cone sweeps past, then a sonic boom. Mach ' + fnum(d.mach) + '. The Doppler formula no longer applies.</div>';
-    if (false) return s + '<h4>2 · Faster than sound!</h4><div class="bad">u<sub>s</sub> ≥ v: the wavefronts pile up into a cone (shock wave). The observer hears nothing until the cone sweeps past, then a sonic boom. Mach ' + fnum(d.mach) + '. The Doppler formula no longer applies.</div>';
-    return s + '<h4>2 · Frequency heard (IB HL formula)</h4><div class="eq">f′ = f₀(v + u<sub>o</sub>)/(v − u<sub>s</sub>) = ' + H.iv('f0') + '(' + fnum(v.c) + ' + ' + fnum(v.vo) + ')/(' + fnum(v.c) + ' − ' + fnum(v.vs) + ') = <b>' + H.n(d.fa, 'Hz') + '</b></div>' +
-      '<div class="eq">Behind the source: f = ' + H.n(d.fb, 'Hz') + '</div>' +
-      '<p class="note">AP: qualitative only — toward → higher pitch, away → lower pitch, same velocity → no shift. The source’s own frequency f₀ never changes; only the waves reaching you do.</p>';
+    const us = v.vs || 0;
+    return '<h4>1 · The moving source changes the wavelength</h4><div class="eq">The source moves ' + fnum(Math.abs(us)) + ' m/s ' + (us >= 0 ? 'toward' : 'away from') + ' the observer between wavefronts.<br>Ahead: λ = (v − u<sub>s</sub>)/f₀ = <b>' + H.n(d.lamA, 'm') + '</b> · Behind: λ = (v + u<sub>s</sub>)/f₀ = <b>' + H.n(d.lamB, 'm') + '</b><br>(still: ' + fnum(d.lam0) + ' m)</div>' +
+      '<h4>2 · Frequency heard (IB HL)</h4><div class="eq">Ahead: f′ = f₀v/(v − u<sub>s</sub>) = ' + H.iv('f0') + '(' + fnum(v.c) + ')/(' + fnum(v.c) + ' − ' + fnum(us) + ') = <b>' + H.n(d.fa, 'Hz') + '</b><br>Behind: f′ = f₀v/(v + u<sub>s</sub>) = <b>' + H.n(d.fb, 'Hz') + '</b></div>' +
+      '<p class="note"><b>Key idea:</b> a moving source squeezes the waves in front (shorter λ, higher pitch) and stretches them behind (longer λ, lower pitch). Switch to <b>The observer</b> to see that moving the listener doesn’t change λ at all. AP: qualitative only — toward → higher, away → lower. The siren’s own f₀ never changes.</p>';
   },
   play(v, d, mode){ if (mode !== 'sound') return; try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.state === 'suspended') AC.resume();
       if (!OSC){ OSC = AC.createOscillator(); OSC.type = 'triangle'; GN = AC.createGain(); GN.gain.value = 0; OSC.connect(GN); GN.connect(AC.destination); OSC.start(); }
@@ -61,11 +64,11 @@ const SIM = {
   boom(){ try { const n = AC.sampleRate * 0.7, buf = AC.createBuffer(1, n, AC.sampleRate), ch = buf.getChannelData(0); for (let i = 0; i < n; i++) ch[i] = (Math.random() * 2 - 1) * Math.exp(-i / (n / 6)); const src = AC.createBufferSource(); src.buffer = buf; const lp = AC.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 300; const g = AC.createGain(); g.gain.value = 0.9; src.connect(lp); lp.connect(g); g.connect(AC.destination); src.start(); } catch (e) {} },
   // Set the audio to what the observer hears right now: the wavefront arriving now was sent at time te, when the source was at x0 + vs·te.
   hear(v, d, A, xo, yo, y, SC){
-    const tt = A.tt, sx = te => A.x0 + v.vs * SC * te, g = te => Math.hypot(xo - sx(te), yo - y) - v.c * SC * (tt - te);
+    const tt = A.tt, sx = te => A.x0 + (v.vs || 0) * SC * te, g = te => Math.hypot(xo - sx(te), yo - y) - v.c * SC * (tt - te);
     let f = null, dist = 0;
     if (d.shock){ let hit = false; for (let k = 0; k <= 60; k++) if (g(tt * k / 60) <= 0){ hit = true; break; } if (hit && !A.boomed){ A.boomed = true; if (SND) SIM.boom(); } }
     else if (g(0) <= 0){ let lo = 0, hi = tt; for (let k = 0; k < 40; k++){ const m = (lo + hi) / 2; if (g(m) <= 0) lo = m; else hi = m; }
-      const te = lo; dist = Math.hypot(xo - sx(te), yo - y); const ux = (xo - sx(te)) / dist; f = v.f0 * (v.c + v.vo * ux) / (v.c - v.vs * ux); }
+      const te = lo; dist = Math.hypot(xo - sx(te), yo - y); const ux = (xo - sx(te)) / dist; f = v.f0 * (v.c + (v.vo || 0) * ux) / (v.c - (v.vs || 0) * ux); }
     A.fNow = f;
     if (OSC){ const now = AC.currentTime, on = SND && f && isFinite(f);
       if (on) OSC.frequency.setTargetAtTime(f, now, 0.02); GN.gain.setTargetAtTime(on ? 0.06 + 0.22 * Math.min(1, 60 / dist) : 0, now, 0.05);
@@ -121,18 +124,19 @@ const SIM = {
     }
     panelTitle(d.shock ? 'SHOCK WAVE (SONIC BOOM)' : 'WAVEFRONT DIAGRAM', 10, 18);
     const SC = 0.5, T0 = 0.11; // px per (m/s · s) and visual emission period
-    if (!A.em || A.reset){ A.em = []; A.tt = 0; A.xs = d.shock || v.vs > 0 ? 40 : 200; A.x0 = A.xs; A.next = 0; A.boomed = false; }
-    A.tt += dt; A.xs += v.vs * SC * dt; const xo0 = 340 - v.vo * SC * A.tt;
-    if (A.xs > (SND ? 640 : 400) || A.xs < (SND ? -240 : -20) || xo0 < 40 || A.tt > 14){ A.em = []; A.xs = v.vs >= 0 ? 40 : 330; A.x0 = A.xs; A.tt = 0; A.next = 0; A.boomed = false; SND = false; }
-    while (A.next <= A.tt){ A.em.push([A.xs - v.vs * SC * (A.tt - A.next), A.next]); A.next += T0; } if (A.em.length > 90) A.em.shift();
+    if (!A.em || A.reset){ A.em = []; A.tt = 0; A.xs = d.shock || (v.vs || 0) > 0 ? 40 : 200; A.x0 = A.xs; A.next = 0; A.boomed = false; }
+    const OBS = opt.who === 'observer', xb = OBS ? ((v.vo || 0) >= 0 ? 380 : 110) : 340; if (OBS && (A.reset || !A.obs)){ A.obs = 1; A.em = []; A.tt = 0; A.next = 0; A.xs = 60; A.x0 = 60; }
+    A.tt += dt; A.xs += (v.vs || 0) * SC * dt; const xo0 = xb - (v.vo || 0) * SC * A.tt;
+    if (A.xs > (SND ? 640 : 400) || A.xs < (SND ? -240 : -20) || xo0 < (OBS ? 15 : 40) || xo0 > 390 || A.tt > 14){ A.em = []; A.xs = OBS ? 60 : (v.vs || 0) >= 0 ? 40 : 330; A.x0 = A.xs; A.tt = 0; A.next = 0; A.boomed = false; SND = false; }
+    while (A.next <= A.tt){ A.em.push([A.xs - (v.vs || 0) * SC * (A.tt - A.next), A.next]); A.next += T0; } if (A.em.length > 90) A.em.shift();
     const y = 150; ctx.save(); ctx.beginPath(); ctx.rect(10, 26, 375, 260); ctx.clip();
     A.em.forEach(([x0, te]) => { const r = v.c * SC * (A.tt - te); ctx.strokeStyle = 'rgba(21,70,214,0.7)'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(x0, y, r, 0, 7); ctx.stroke(); });
     ctx.restore();
     if (A.xs < 385 && A.xs > 10){ ctx.fillStyle = '#c43a00'; ctx.beginPath(); ctx.arc(A.xs, y, 7, 0, 7); ctx.fill(); } if (A.xs < 385 && A.xs > 10) text('source', A.xs, y + 24, { align: 'center', font: '600 10px "IBM Plex Mono",monospace', col: '#c43a00' });
-    const xo = Math.max(40, Math.min(380, xo0)); SIM.hear(v, d, A, 340 - v.vo * SC * A.tt, y - 60, y, SC); ctx.fillStyle = '#1e7d45'; ctx.beginPath(); ctx.arc(xo, y - 60, 7, 0, 7); ctx.fill(); text('observer', xo, y - 72, { align: 'center', font: '600 10px "IBM Plex Mono",monospace', col: '#1e7d45' });
-    text(d.shock ? 'Mach ' + fplain(d.mach) : 'ahead: λ = ' + fplain(d.lamA) + ' m   behind: λ = ' + fplain(d.lamB) + ' m', 12, 310, { font: '700 13px "Space Grotesk",sans-serif' });
+    const xo = Math.max(15, Math.min(385, xo0)); SIM.hear(v, d, A, xb - (v.vo || 0) * SC * A.tt, y - 60, y, SC); ctx.fillStyle = '#1e7d45'; ctx.beginPath(); ctx.arc(xo, y - 60, 7, 0, 7); ctx.fill(); text('observer', xo, y - 72, { align: 'center', font: '600 10px "IBM Plex Mono",monospace', col: '#1e7d45' });
+    text(d.shock ? 'Mach ' + fplain(d.mach) : opt.who === 'observer' ? 'λ = ' + fplain(d.lam0) + ' m everywhere: the source isn’t moving' : 'ahead: λ = ' + fplain(d.lamA) + ' m   behind: λ = ' + fplain(d.lamB) + ' m', 12, 310, { font: '700 13px "Space Grotesk",sans-serif' });
     panelTitle('PITCH HEARD', 395, 18);
-    const bars = [['source (f₀)', v.f0], ['ahead (f′)', d.fa], ['behind', d.fb]]; const fm = Math.max(...bars.map(b => isFinite(b[1]) ? b[1] : 0), v.f0);
+    const bars = opt.who === 'observer' ? [['source (f₀)', v.f0], ['observer hears (f′)', d.fa]] : [['source (f₀)', v.f0], ['ahead (f′)', d.fa], ['behind', d.fb]]; const fm = Math.max(...bars.map(b => isFinite(b[1]) ? b[1] : 0), v.f0);
     bars.forEach(([n, f], i) => { const yy = 50 + i * 50; text(n, 400, yy, { font: '700 12px "Space Grotesk",sans-serif' }); ctx.fillStyle = i ? (f > v.f0 ? '#ff6a2b' : '#1546d6') : '#8a8a8a'; if (isFinite(f)) ctx.fillRect(400, yy + 8, 170 * f / fm, 14); text(isFinite(f) ? fplain(f) + ' Hz' : '—', 404, yy + 36, { font: '600 11px "IBM Plex Mono",monospace' }); });
     text('Observer hears now', 400, 214, { font: '700 12px "Space Grotesk",sans-serif' }); text(A.fNow ? fplain(A.fNow) + ' Hz' : d.shock ? (A.boomed ? 'BOOM!' : 'silence…') : 'waiting for the waves…', 400, 238, { font: '700 16px "IBM Plex Mono",monospace', col: A.fNow ? (A.fNow > v.f0 ? '#ff6a2b' : '#1546d6') : '#4a4a4a' });
     text('waves slowed down to watch', 400, 262, { font: '500 10px "IBM Plex Mono",monospace', col: '#8a8a8a' });
