@@ -231,7 +231,7 @@ const SIM = {
     { id: 'src', label: 'Light', modes: ['grating'], choices: [['mono', 'One wavelength'], ['white', 'White light']] }],
   ivs(mode, opt){
     if (mode === 'two') return [
-      { id: 'f', sym: 'f', symText: 'f', label: 'Frequency of both speakers (in phase)', unit: 'Hz', min: 100, max: 800, step: 5, val: 340 },
+      { id: 'f', sym: 'f', symText: 'f', label: 'Frequency of both speakers (in phase)', unit: 'Hz', min: 100, max: 800, step: 1, val: 343 },
       { id: 'd', sym: 'd', symText: 'd', label: 'Speaker separation', unit: 'm', min: 0.5, max: 3, step: 0.05, val: 2 },
       { id: 'y', sym: 'y', symText: 'y', label: 'Your position along the far wall', unit: 'm', min: -3.5, max: 3.5, step: 0.02, val: 0, graph: true }];
     if (mode === 'grating') return [
@@ -245,9 +245,9 @@ const SIM = {
     if (mode === 'single' && (opt && opt.pat) === 'two') a.push({ id: 'ds', sym: 'd', symText: 'd', label: 'Slit separation', unit: 'μm', min: 100, max: 800, step: 5, val: 300 });
     return a;
   },
-  presets: [{ label: 'Quiet spot', mode: 'two', v: { f: 340, d: 2, y: 1.55 } }, { label: 'Red vs blue laser', mode: 'double', v: { lam: 450 } }, { label: 'Narrower slit', mode: 'single', v: { b: 30 } }, { label: 'CD tracks (625/mm)', mode: 'grating', v: { N: 625 } }],
+  presets: [{ label: 'Quiet spot', mode: 'two', v: { f: 343, d: 2, y: 1.55 } }, { label: 'Red vs blue laser', mode: 'double', v: { lam: 450 } }, { label: 'Narrower slit', mode: 'single', v: { b: 30 } }, { label: 'CD tracks (625/mm)', mode: 'grating', v: { N: 625 } }],
   calc(v, mode, opt){
-    if (mode === 'two'){ const lam = 340 / v.f, D = 6, r1 = Math.hypot(D, v.y - v.d / 2), r2 = Math.hypot(D, v.y + v.d / 2), pd = Math.abs(r1 - r2), n = pd / lam, I = Math.pow(Math.cos(PI * n), 2);
+    if (mode === 'two'){ const lam = 343 / v.f, D = 6, r1 = Math.hypot(D, v.y - v.d / 2), r2 = Math.hypot(D, v.y + v.d / 2), pd = Math.abs(r1 - r2), n = pd / lam, I = Math.pow(Math.cos(PI * n), 2);
       return { lam, D, r1, r2, pd, n, I }; }
     if (mode === 'grating'){ const dg = 1e-3 / v.N, white = (opt.src || 'mono') === 'white', lam = v.lam * 1e-9, nmax = Math.floor(dg / lam), ords = [];
       for (let n = 1; n <= Math.min(nmax, 6); n++) ords.push([n, Math.asin(n * lam / dg) / DEG]); return { dg, white, nmax, ords, th1: nmax >= 1 ? ords[0][1] : NaN, nmaxW: Math.floor(dg / 700e-9) }; }
@@ -264,7 +264,7 @@ const SIM = {
   },
   work(v, d, mode, opt){ const Y = SY(opt), m = Y.m, P = Y.ib ? 'path difference' : 'ΔD';
     if (mode === 'two'){ const nr = Math.round(d.n * 2) / 2, kind = Math.abs(d.n - Math.round(d.n)) < 0.05 ? 'constructive: <b>loud</b>' : Math.abs(d.n - Math.round(d.n)) > 0.45 ? 'destructive: <b>quiet</b>' : 'in between';
-      return '<h4>1 · Wavelength</h4><div class="eq">λ = v/f = (340 m/s)/' + H.iv('f') + ' = <b>' + H.n(d.lam, 'm') + '</b></div>' +
+      return '<h4>1 · Wavelength</h4><div class="eq">λ = v/f = (343 m/s)/' + H.iv('f') + ' = <b>' + H.n(d.lam, 'm') + '</b></div>' +
         '<h4>2 · Distance from each speaker</h4><div class="eq">r₁ = √(6² + (y − d/2)²) = ' + H.n(d.r1, 'm') + '; r₂ = ' + H.n(d.r2, 'm') + '</div>' +
         '<h4>3 · Path length difference</h4><div class="eq">' + P + ' = |r₁ − r₂| = ' + H.n(d.pd, 'm') + ' = <b>' + fnum(d.n) + ' λ</b> → ' + kind + '</div>' +
         '<h4>4 · Rules</h4><div class="eq">Constructive (loud): ' + P + ' = ' + m + 'λ<br>Destructive (quiet): ' + P + ' = (' + m + ' + ½)λ &nbsp;&nbsp; ' + m + ' = 0, 1, 2 …</div>' +

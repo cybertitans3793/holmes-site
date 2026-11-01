@@ -229,7 +229,7 @@ const SIM = {
   ivs(mode, opt){
     if (mode === 'instr'){ const g = (opt && opt.ins) === 'guitar'; return [
       { id: 'f', sym: 'f<sub>1</sub>', symText: 'f1', label: g ? 'Open-string note' : 'Lowest note', unit: 'Hz', min: 110, max: 880, step: 1, val: g ? 330 : 262 },
-      g ? { id: 'fret', sym: 'n', symText: 'fret', label: 'Fret pressed (0 = open string)', unit: '', min: 0, max: 12, step: 1, val: 0, graph: true, show: x => String(x) } : { id: 'vs', sym: 'v', symText: 'v', label: 'Speed of sound (air temperature)', unit: 'm/s', min: 330, max: 355, step: 1, val: 343, graph: true }]; }
+      g ? { id: 'fret', sym: 'n', symText: 'fret', label: 'Fret pressed (0 = open string)', unit: '', min: 0, max: 12, step: 1, val: 0, graph: true, show: x => String(x) } : { id: 'T', sym: 'T', symText: 'T', label: 'Air temperature', unit: '°C', min: 0, max: 40, step: 1, val: 20, graph: true }]; }
     if (mode === 'ear') return [
       { id: 'L', sym: 'L', symText: 'L', label: 'Length of the ear canal', unit: 'cm', min: 1.5, max: 3.5, step: 0.05, val: 2.5, graph: true },
       { id: 'f', sym: 'f', symText: 'f', label: 'Frequency you hear', unit: 'Hz', min: 20, max: 20000, step: 10, val: 1000 }];
@@ -241,7 +241,7 @@ const SIM = {
   calc(v, mode, opt){
     if (mode === 'instr'){ const ins = opt.ins || 'flute', amps = INSTR[ins][1];
       if (ins === 'guitar'){ const f = v.f * Math.pow(2, v.fret / 12), L0 = 0.65, L = L0 / Math.pow(2, v.fret / 12); return { ins, amps, f, L, vw: 2 * L0 * v.f, lam: 2 * L }; }
-      const L = ins === 'clar' ? v.vs / (4 * v.f) : v.vs / (2 * v.f); return { ins, amps, f: v.f, L, lam: ins === 'clar' ? 4 * L : 2 * L }; }
+      const vs = 331 + 0.6 * v.T, L = ins === 'clar' ? vs / (4 * v.f) : vs / (2 * v.f); return { vs, ins, amps, f: v.f, L, lam: ins === 'clar' ? 4 * L : 2 * L }; }
     if (mode === 'ear'){ const vs = 343, L = v.L / 100, f1 = vs / (4 * L), x = Math.log10(v.f / 165.4 + 0.88) / 2.1; // Greenwood map: x = 0 apex, 1 base
       return { f1, f3: 3 * f1, lam: 4 * L, x: Math.max(0, Math.min(1, x)), gain: (55 / 3.2) * 1.3 }; }
     const bat = (opt.who || 'ship') === 'bat', vs = bat ? 343 : 1500, t = 2 * v.D / vs, lam = vs / (v.f * 1000);
@@ -256,7 +256,7 @@ const SIM = {
     if (mode === 'instr'){ const nm = INSTR[d.ins][0];
       let s = '<h4>1 · Same note, different harmonics</h4><div class="eq">' + nm + '. Every instrument playing ' + fnum(d.f) + ' Hz has that as its 1st harmonic, but the mix of higher harmonics (the bars) is different. That mix is the <b>timbre</b>: why a flute and a clarinet don’t sound alike.</div>';
       if (d.ins === 'guitar') return s + '<h4>2 · Frets shorten the string</h4><div class="eq">Same tension, same string → same v = 2L₀f₀ = ' + H.n(d.vw, 'm/s') + '. Pressing fret ' + v.fret + ' makes L = ' + H.n(d.L * 100, 'cm') + ', so f = v/2L = <b>' + H.n(d.f, 'Hz') + '</b>.</div><p class="note">The 12th fret is exactly halfway: half the length → double the frequency → one octave up. Thicker strings have more mass per length → slower waves → lower notes. Tightening the peg raises the tension → faster waves → higher pitch.</p>';
-      return s + '<h4>2 · Length of the air column</h4><div class="eq">' + (d.ins === 'clar' ? 'Closed–open (the reed end acts closed): L = λ/4 = v/(4f)' : 'Open–open: L = λ/2 = v/(2f)') + ' = ' + H.iv('vs') + '/(' + (d.ins === 'clar' ? 4 : 2) + ' × ' + fnum(d.f) + ' Hz) = <b>' + H.n(d.L * 100, 'cm') + '</b></div>' +
+      return s + '<h4>2 · Length of the air column</h4><div class="eq">' + (d.ins === 'clar' ? 'Closed–open (the reed end acts closed): L = λ/4 = v/(4f)' : 'Open–open: L = λ/2 = v/(2f)') + '. With v = 331 + 0.6T = 331 + 0.6(' + v.T + ') = ' + fnum(d.vs) + ' m/s: L = ' + fnum(d.vs) + '/(' + (d.ins === 'clar' ? 4 : 2) + ' × ' + fnum(d.f) + ' Hz) = <b>' + H.n(d.L * 100, 'cm') + '</b></div>' +
         '<p class="note">' + (d.ins === 'clar' ? 'Closed at one end → only odd harmonics are strong, giving the clarinet its hollow sound. It can play as low as a flute twice its length.' : 'Open at both ends → all harmonics are present. Opening finger holes effectively shortens the pipe → higher notes.') + ' Warm air → faster sound → wind instruments go slightly sharp as they warm up.</p>'; }
     if (mode === 'ear') return '<h4>1 · The ear canal is a closed pipe</h4><div class="eq">Open at the outside, closed by the eardrum: L = λ/4 → f₁ = v/(4L) = 343/(4 × ' + fnum(v.L / 100) + ' m) = <b>' + H.n(d.f1, 'Hz') + '</b>; next resonance 3f₁ = ' + H.n(d.f3, 'Hz') + '</div>' +
       '<div class="eq">Sounds near f₁ are boosted, which is why human hearing is most sensitive around 3000–4000 Hz (and why smoke alarms beep near there).</div>' +

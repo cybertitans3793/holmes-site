@@ -39,9 +39,9 @@ VARIANTS = {
   'ab-circuits': ('circuits', {}),
   'ab-bwire': ('bwire', {'modes': ['one']}),
   'ab-wave': ('wave', {'modes': ['trans', 'long']}),
-  'ab-standing': ('standing', {'modes': ['string', 'pipe', 'micro'], 'opts': {'se': ['ff'], 'pe': ['oo', 'co']}}),
+  'ab-standing': ('standing', {'modes': ['string', 'pipe', 'micro'], 'opts': {'se': ['ff'], 'pe': ['oo', 'co'], 'vsrc': ['v']}, 'flag': 'ABP'}),
   'ab-vertical': ('vertical', {'modes': ['string', 'loop', 'hill'], 'opts': {'pos': ['top', 'bottom']}}),
-  'ab-doppler': ('doppler', {'modes': ['sound', 'color']}),
+  'ab-doppler': ('doppler', {'modes': ['sound', 'color'], 'flag': 'ABP'}),
   'ab-sound': ('sound', {}),
   'ab-stars': ('stars', {'modes': ['hr'], 'title': 'The HR Diagram', 'hint': 'L = 4πR²σT⁴'}),
 }

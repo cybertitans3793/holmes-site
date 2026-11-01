@@ -963,122 +963,129 @@ UNITS.update({
         '<span style="color:#8a8a8a;font-weight:700">Extension</span> Use the generator screen. How does turning faster change the light?']},
 ]},
 'P2-04': {'course': 'AP Physics 2 / IB', 'num': '04', 'title': 'Waves & Optics', 'tabs': [
-    {'code': '', 'name': 'Wave Basics', 'sim': 'wave', 'modes': ['trans', 'long', 'medium'], 'select': 'Transverse', 'tasks': [
+    {'code': '04-1', 'name': 'Wave Basics', 'sim': 'wave', 'modes': ['trans', 'long', 'medium'], 'select': 'Transverse', 'tasks': [
         'Double the frequency. What happens to λ and T? What stays the same? Why?',
         'Compare the two graphs. Which one lets you read off λ? Which one gives T?',
         'Find a distance from P to Q where they are in phase, then one where they are in antiphase.',
         '<b>Longitudinal:</b> find a compression. Where is it on the displacement–distance graph?',
-        '<b>New medium:</b> a wave goes from v = 2 m/s to v = 1 m/s. Predict λ₂ before you look. What happens to f?']},
-    {'code': '', 'name': 'Polarization', 'sim': 'wave', 'modes': ['polar'], 'select': 'Polarization', 'tasks': [
-        'Unpolarized light of 400 W/m² meets one filter. How much gets through? Does the angle of that filter matter?',
-        'Set the second filter to 0°, 45° and 90°. Find the intensity each time and check with I = I₁cos²θ.',
-        '<b>Three filters:</b> crossed outer filters pass nothing. Add the middle one. Which angle lets the most light through?',
+        '<b>New medium:</b> a wave goes from v = 2 m/s to v = 1 m/s. Predict λ₂ before you look. What happens to f?',
+        'A ribbon is tied to the medium. Where is it after the wave passes? What moved, and what didn’t?',
+        '<b>EM spectrum:</b> put radio, microwaves, infrared, visible, ultraviolet, X-rays and gamma rays in order of wavelength. Which has the highest frequency? What do they all share in a vacuum?']},
+    {'code': '04-2', 'name': 'Polarization', 'sim': 'wave', 'modes': ['polar'], 'select': 'Polarization', 'tasks': [
+        'Rotate the second filter. At what angle does no light get through? Is the light after one filter brighter or dimmer than before?',
+        'Light reflected off a lake is partly polarized horizontally. Why do polarized sunglasses cut the glare?',
         'Why can light be polarized but sound cannot?'],
      'note': 'AP Physics 2 topic 14.3. Polarization is not in the 2025 IB syllabus.'},
-    {'code': '', 'name': 'Superposition & Boundaries', 'sim': 'pulses', 'tasks': [
+    {'code': '04-3', 'name': 'Superposition & Boundaries', 'sim': 'pulses', 'tasks': [
         'Sketch the string at t = 2 s before you move the slider. Then check.',
         'Make the pulses equal and opposite. At t = 2 s the string is flat. Where did the energy go?',
         '<b>Boundary:</b> predict whether the reflected pulse is upright or inverted for each end. Then check.',
         'Send the pulse into a heavier string, then a lighter one. Which pulse is wider? Why?',
-        '<b>Beats:</b> a 256 Hz fork and a guitar string give 4 beats per second. What two frequencies could the string have? How can you tell which?']},
-    {'code': '', 'name': 'Standing Waves', 'sim': 'standing', 'modes': ['string', 'pipe', 'tube'], 'select': 'Strings', 'tasks': [
+        '<b>Beats:</b> a 256 Hz fork and a guitar string give 4 beats per second. What two frequencies could the string have? How can you tell which?',
+        '<b>Coherence:</b> why do two flashlights never make a steady interference pattern, but two speakers on one amplifier do?']},
+    {'code': '04-3', 'name': 'Refraction & TIR', 'sim': 'snell', 'tasks': [
+        'Light goes from air into water at 40°. Find θ₂, v₂ and λ₂. Which ones change and which don’t?',
+        'Watch the wavefronts as they cross the boundary. Use them to explain why the ray bends.',
+        'Find the critical angle for glass to air. Then go past it. Where does the light go?',
+        'Why does a diamond sparkle more than glass?',
+        'Find the smallest angle inside the core for total internal reflection (core 1.50, cladding 1.40).']},
+    {'code': '04-4', 'name': 'Two-Source Interference', 'sim': 'slits', 'modes': ['two'], 'select': 'Two speakers', 'tasks': [
+        'Two speakers 2 m apart play 343 Hz. Walk along the wall. Find the first quiet spot. What is the path difference there?',
+        'Raise the frequency. Do the quiet spots get closer together or farther apart? Why?',
+        'Explain why noise-cancelling headphones need to make a wave that is half a cycle out of phase.']},
+    {'code': '04-5', 'name': 'Double Slit', 'sim': 'slits', 'modes': ['double'], 'select': 'Double slit', 'tasks': [
+        'Find the fringe spacing for a red laser. Switch to blue. Which one has wider fringes? Why?',
+        '10 fringe spacings span 50.6 mm with a 633 nm laser, screen 2.00 m away. Find d.',
+        '<b>Lab rehearsal:</b> λ = 650 nm, d = 0.25 mm. Measure 10 spacings at D = 1.0, 1.5, 2.0, 2.5 and 3.0 m. Graph s vs D; λ = slope × d.',
+        'What happens to the pattern if the screen is moved twice as far away?',
+        'Why is Young’s experiment evidence that light is a wave?',
+        'Flip <b>Symbols</b> between AP and IB. Which letters change? Is AP’s y<sub>max</sub> (m = 1) the same number as IB’s s?']},
+    {'code': '04-5', 'name': 'Single Slit & Gratings', 'sim': 'slits', 'modes': ['single', 'grating'], 'select': 'Single slit', 'tasks': [
+        'Make the slit narrower. What happens to the width of the central maximum? Is that what you expected?',
+        'Why is the central maximum twice as wide as the others?',
+        '<b>Grating:</b> a 600 lines/mm grating and a 633 nm laser. Find the angles of every order you can see.',
+        '<b>White light:</b> which colour is farthest from the centre? Do the 2nd and 3rd orders overlap?'],
+     'note': 'AP 14.7–14.8. IB: single slit and gratings are HL.'},
+    {'code': '04-7', 'name': 'Doppler Effect', 'sim': 'doppler', 'tasks': [
+        'An ambulance approaches, passes and drives away. Describe the pitch you hear at each stage. Use the wavefront diagram to explain.',
+        'Rank the pitch heard at 10, 30 and 60 m/s toward you. What does a bigger relative speed do?',
+        '<span style="color:#8a8a8a;font-weight:700">Extension</span> Push the source past the speed of sound. Describe what happens to the wavefronts.',
+        'Set the source still and run toward it. Does the wavelength in the air change? Why does the frequency you hear go up?',
+        '<b>Red shift:</b> Hα from a galaxy is at 669 nm. How fast is the galaxy moving, and in which direction?',
+        '<b>Radar:</b> a 24 GHz radar gun measures a 4800 Hz shift. How fast is the car? Is it over the 25 m/s limit?'],
+     'note': 'AP Physics 2: Doppler is qualitative only. IB: light shifts are SL; the sound formula is HL.'},
+    {'code': '04-8', 'name': 'Standing Waves', 'sim': 'standing', 'modes': ['string', 'pipe', 'tube'], 'select': 'Strings', 'tasks': [
         'Draw the first three harmonics for a string fixed at both ends. Find λ and f for each. Check with the sim.',
         'Switch to a closed–open pipe. Why are there no even harmonics?',
         'A 0.5 m pipe: compare the lowest frequency when it is open–open and closed–open. What is the ratio?',
-        '<b>Resonance tube lab:</b> find two lengths that are loud. Use them to find the speed of sound (cover up the v slider).',
+        '<b>Resonance tube lab:</b> set the speed of sound to Hidden. Find the first loud L for 256, 320, 384, 480 and 512 Hz. Graph L vs 1/f; v = 4 × slope. Compare with 331 + 0.6T.',
+        '<b>Tension:</b> switch Wave speed to “From tension & μ”. Double the tension: what happens to v and f? What would you have to do to μ to get the same change?',
         'How does the pitch of a guitar string change when you tighten it? When you press it against a fret?']},
-    {'code': '', 'name': 'Microwave Oven', 'sim': 'standing', 'modes': ['micro'], 'select': 'Microwave oven', 'tasks': [
+    {'code': '04-8', 'name': 'Microwave Oven', 'sim': 'standing', 'modes': ['micro'], 'select': 'Microwave oven', 'tasks': [
         'Why does a microwave oven heat food unevenly when the turntable is taken out?',
         'Read the gap between two melted spots off the ruler. Set the slider to your value and find the speed of light.',
         'Why is the gap between hot spots λ/2 and not λ?',
         '<b>Lab:</b> try it at home with a chocolate bar or marshmallows (turntable out, about 20 s). How could you measure the gap more precisely?']},
-    {'code': '', 'name': 'Doppler Effect', 'sim': 'doppler', 'tasks': [
-        'An ambulance approaches, passes and drives away. Describe the pitch you hear at each stage. Use the wavefront diagram to explain.',
-        '<span style="color:#7a3fb0">IB HL</span>: find the frequency heard when the source moves at 30 m/s toward you, then away.',
-        'Push the source past the speed of sound. Describe what happens to the wavefronts.',
-        '<b>Red shift:</b> Hα from a galaxy is at 669 nm. How fast is the galaxy moving, and in which direction?',
-        '<b>Radar:</b> a 24 GHz radar gun measures a 4800 Hz shift. How fast is the car? Is it over the 25 m/s limit?'],
-     'note': 'AP Physics 2: Doppler is qualitative only. IB: light shifts are SL; the sound formula is HL.'},
-    {'code': '', 'name': 'Sonar & Instruments', 'sim': 'sound', 'modes': ['sonar', 'instr'], 'select': 'Sonar & echolocation', 'tasks': [
+    {'code': '04-8', 'name': 'Sonar & Instruments', 'sim': 'sound', 'modes': ['sonar', 'instr'], 'select': 'Sonar & echolocation', 'tasks': [
         'A ship’s sonar echo returns after 4.0 s. How deep is the sea floor?',
         'Why do bats use ultrasound instead of sounds we can hear? Find λ for a 50 kHz call.',
         '<b>Instruments:</b> listen to a flute, a clarinet and a guitar playing the same note (click the picture). Use the harmonics to explain why they sound different.',
         'How long must a flute be to play 262 Hz? A clarinet? Why is the clarinet shorter?',
-        '<b>Guitar:</b> where is the 12th fret, and what happens to the frequency when you press there?']},
-    {'code': '', 'name': 'The Ear', 'sim': 'sound', 'modes': ['ear'], 'select': 'The ear', 'tasks': [
+        '<b>Guitar:</b> where is the 12th fret, and what happens to the frequency when you press there?',
+        '<b>Temperature:</b> warm the air from 0 °C to 30 °C. Compare the speed with v ≈ 331 + 0.6T. What happens to the flute length needed for 262 Hz?']},
+    {'code': '04-8', 'name': 'The Ear', 'sim': 'sound', 'modes': ['ear'], 'select': 'The ear', 'tasks': [
         'Treat the ear canal as a pipe closed at the eardrum. Find its resonant frequency for a 2.5 cm canal.',
         'Use your answer to explain why we hear best around 3000–4000 Hz.',
-        'The eardrum is about 17× bigger in area than the oval window. Why does that increase the pressure?',
-        'Slide the frequency from 20 Hz to 20 000 Hz. Where along the cochlea does each pitch get detected? Why do people lose high pitches first?']},
-    {'code': '', 'name': 'PhET Waves', 'sim': 'phetW', 'tasks': [
-        '<b>Wave on a String:</b> use Oscillate and No End. Measure λ with the ruler and T with the timer. Check v = fλ.',
-        'Switch to Fixed End and adjust the frequency until you get a standing wave. Which frequencies work?',
-        '<b>Wave Interference:</b> use two sources. Where are the nodal lines? What happens when you move the sources apart?',
-        '<b>Sound Waves:</b> how does the air move as the sound passes? What changes when you raise the pitch?']},
-    {'code': '', 'name': 'Two-Source Interference', 'sim': 'slits', 'modes': ['two'], 'select': 'Two speakers', 'tasks': [
-        'Two speakers 2 m apart play 340 Hz. Walk along the wall. Find the first quiet spot. What is the path difference there?',
-        'Raise the frequency. Do the quiet spots get closer together or farther apart? Why?',
-        'Explain why noise-cancelling headphones need to make a wave that is half a cycle out of phase.']},
-    {'code': '', 'name': 'Double Slit', 'sim': 'slits', 'modes': ['double'], 'select': 'Double slit', 'tasks': [
-        'Find the fringe spacing for a red laser. Switch to blue. Which one has wider fringes? Why?',
-        'You measure 10 fringes across 50.6 mm with the screen 2.00 m away. Find the slit separation.',
-        'What happens to the pattern if the screen is moved twice as far away?',
-        'Why is Young’s experiment evidence that light is a wave?',
-        'Flip <b>Symbols</b> between AP and IB. Which letters change? Is AP’s y<sub>max</sub> (m = 1) the same number as IB’s s?']},
-    {'code': '', 'name': 'Single Slit & Gratings', 'sim': 'slits', 'modes': ['single', 'grating'], 'select': 'Single slit', 'tasks': [
-        'Make the slit narrower. What happens to the width of the central maximum? Is that what you expected?',
-        'Why is the central maximum twice as wide as the others?',
-        '<span style="color:#7a3fb0">IB HL</span>: switch to two slits of this width. Which double-slit fringes are missing?',
-        '<b>Grating:</b> a 600 lines/mm grating and a 633 nm laser. Find the angles of every order you can see.',
-        '<b>White light:</b> which colour is farthest from the centre? Do the 2nd and 3rd orders overlap?'],
-     'note': 'AP 14.7–14.8. IB: single slit and gratings are HL.'},
-    {'code': '', 'name': 'Thin Films', 'sim': 'thinfilm', 'tasks': [
+        '<span style="color:#8a8a8a;font-weight:700">Extension</span> The eardrum is about 17× bigger in area than the oval window. Why does that increase the pressure?',
+        '<span style="color:#8a8a8a;font-weight:700">Extension</span> Slide the frequency from 20 Hz to 20 000 Hz. Where along the cochlea does each pitch get detected? Why do people lose high pitches first?']},
+    {'code': '04-8', 'name': 'Resonance & Damping', 'sim': 'reson', 'tasks': [
+        'Drive the system below, at and above its natural frequency. Where is the amplitude biggest?',
+        'Increase the damping. What happens to the peak height and to the frequency where it occurs?',
+        'Compare light, critical and heavy damping. Which would you want for a car’s shock absorbers? For a door closer?',
+        'Give one useful and one destructive example of resonance.'],
+     'note': 'IB C.4. Also used in P1-10.'},
+    {'code': '04-10', 'name': 'Mirrors', 'sim': 'optics', 'modes': ['mirror', 'refl'], 'select': 'Mirror', 'tasks': [
+        'Concave mirror: find where to put the object for a real, inverted, enlarged image.',
+        'Why do makeup mirrors use a concave mirror? Where must your face be?',
+        'Why are car side mirrors convex? What does “objects are closer than they appear” mean?',
+        '<b>Plane mirror:</b> switch to Plane mirror & reflection. How far behind the mirror is your image? Find the shortest mirror that shows your whole body. Does it change when you step back?',
+        '<b>Smooth vs rough:</b> raise the roughness. Does each ray still obey θᵣ = θᵢ? Why can you see your face in a mirror but not in a sheet of paper?'],
+     'note': 'AP Physics 2 topic 13.2. Mirrors are not in the 2025 IB syllabus.'},
+    {'code': '04-11', 'name': 'Lenses', 'sim': 'optics', 'modes': ['lens'], 'select': 'Lens', 'tasks': [
+        'Draw the three principal rays for an object beyond 2f. Then check with the sim. Describe the image.',
+        'Move the object from far away toward the lens. Describe how the image changes at 2f, between f and 2f, and inside f.',
+        'Which positions would a camera, a projector and a magnifying glass use?',
+        'Why does a diverging lens always give a small, upright, virtual image?',
+        'Your eye lens changes shape to focus on near objects. Explain using 1/sₒ + 1/sᵢ = 1/f.',
+        '<b>Optics bench rehearsal:</b> f = 10 cm. Record sᵢ for sₒ = 15, 20, 30, 40 and 60 cm. Graph 1/sᵢ against 1/sₒ. Slope? Intercepts?'],
+     'note': 'AP Physics 2 topic 13.4. Lenses are not in the 2025 IB syllabus.'},
+    {'code': '04-12', 'name': 'Thin Films', 'sim': 'thinfilm', 'tasks': [
         'For a soap bubble in air, which reflection has a ½λ shift? Find the thinnest film that strongly reflects 550 nm light.',
         'Why does a soap film look black just before it pops?',
         'Oil (n = 1.45) floats on water (n = 1.33). How many phase shifts are there now? Find the thinnest film that reflects red (650 nm).',
         '<b>Anti-reflection coating:</b> find the thinnest MgF₂ layer (n = 1.38) on glass that cancels 550 nm reflection.'],
      'note': 'AP Physics 2 topic 14.9. Thin films are not in the IB syllabus.'},
-    {'code': '', 'name': 'Refraction & TIR', 'sim': 'snell', 'tasks': [
-        'Light goes from air into water at 40°. Find θ₂, v₂ and λ₂. Which ones change and which don’t?',
-        'Watch the wavefronts as they cross the boundary. Use them to explain why the ray bends.',
-        'Find the critical angle for glass to air. Then go past it. Where does the light go?',
-        'Why does a diamond sparkle more than glass?',
-        '<b>Optical fiber:</b> find the largest angle the light can enter and still be trapped. What happens if the cladding index gets closer to the core’s?']},
-    {'code': '', 'name': 'Prisms, Rainbows & Mirages', 'sim': 'world', 'tasks': [
-        '<b>Prism:</b> which colour bends the most? Compare crown and flint glass. Why does a diamond show more colour than glass?',
-        '<b>Rainbow:</b> follow a ray through the drop. Why is red on the outside of the bow? Why must the sun be behind you?',
-        '<b>Mirage:</b> why does a hot road look wet? Why do you only see it far away, looking almost along the road?',
-        '<b>Apparent depth:</b> a fish is 1.0 m deep. How deep does it look straight down? Where should a spear fisher aim?']},
-    {'code': '', 'name': 'Lenses', 'sim': 'optics', 'modes': ['lens'], 'select': 'Lens', 'tasks': [
-        'Draw the three principal rays for an object beyond 2f. Then check with the sim. Describe the image.',
-        'Move the object from far away toward the lens. Describe how the image changes at 2f, between f and 2f, and inside f.',
-        'Which positions would a camera, a projector and a magnifying glass use?',
-        'Why does a diverging lens always give a small, upright, virtual image?',
-        'Your eye lens changes shape to focus on near objects. Explain using 1/sₒ + 1/sᵢ = 1/f.'],
-     'note': 'AP Physics 2 topic 13.4. Lenses are not in the 2025 IB syllabus.'},
-    {'code': '', 'name': 'The Eye & Eyeglasses', 'sim': 'eye', 'tasks': [
+    {'code': 'Ext', 'name': 'The Eye & Eyeglasses', 'gapBefore': True, 'sim': 'eye', 'tasks': [
         'The lens-to-retina distance is fixed. How does the eye focus on near and far things? Find the power needed for 25 cm and for 10 m.',
         '<b>Nearsighted:</b> a student can’t see past 50 cm. Find the prescription. Converging or diverging?',
         '<b>Farsighted / aging:</b> a 60-year-old’s near point is 1.5 m. What reading glasses (in diopters) do they need?',
         'Turn the glasses on. What range can each person now see clearly?',
         'Look at a real glasses prescription (yours, a parent’s). What do SPH, CYL and AXIS mean?'],
      'note': 'Application of AP Physics 2 topic 13.4. Diopters are not on the AP exam, but P = 1/f is the thin-lens equation.'},
-    {'code': '', 'name': 'Mirrors', 'sim': 'optics', 'modes': ['mirror'], 'select': 'Mirror', 'tasks': [
-        'Concave mirror: find where to put the object for a real, inverted, enlarged image.',
-        'Why do makeup mirrors use a concave mirror? Where must your face be?',
-        'Why are car side mirrors convex? What does “objects are closer than they appear” mean?',
-        'Plane mirror: what is the smallest mirror that shows your whole body?'],
-     'note': 'AP Physics 2 topic 13.2. Mirrors are not in the 2025 IB syllabus.'},
-    {'code': '', 'name': 'PhET Optics', 'sim': 'phetO', 'tasks': [
+    {'code': 'Ext', 'name': 'Prisms, Rainbows & Mirages', 'sim': 'world', 'tasks': [
+        '<b>Prism:</b> which colour bends the most? Compare crown and flint glass. Why does a diamond show more colour than glass?',
+        '<span style="color:#8a8a8a;font-weight:700">Extension</span> <b>Rainbow:</b> follow a ray through the drop. Why is red on the outside of the bow? Why must the sun be behind you?',
+        '<span style="color:#8a8a8a;font-weight:700">Extension</span> <b>Mirage:</b> why does a hot road look wet? Why do you only see it far away, looking almost along the road?',
+        '<span style="color:#8a8a8a;font-weight:700">Extension</span> <b>Apparent depth:</b> a fish is 1.0 m deep. How deep does it look straight down? Where should a spear fisher aim?']},
+    {'code': 'Ext', 'name': 'PhET Waves', 'sim': 'phetW', 'tasks': [
+        '<b>Wave on a String:</b> use Oscillate and No End. Measure λ with the ruler and T with the timer. Check v = fλ.',
+        'Switch to Fixed End and adjust the frequency until you get a standing wave. Which frequencies work?',
+        '<b>Wave Interference:</b> use two sources. Where are the nodal lines? What happens when you move the sources apart?',
+        '<b>Sound Waves:</b> how does the air move as the sound passes? What changes when you raise the pitch?']},
+    {'code': 'Ext', 'name': 'PhET Optics', 'sim': 'phetO', 'tasks': [
         '<b>Bending Light:</b> use the protractor to measure θ₁ and θ₂ for five angles. Graph sin θ₂ vs sin θ₁ and find n.',
         'Find the critical angle for the mystery material.',
         '<b>Geometric Optics:</b> move the object and find where the image is the same size. Is it at 2f?']},
-    {'code': 'IB', 'name': 'Resonance & Damping', 'sim': 'reson', 'gapBefore': True, 'tasks': [
-        'Drive the system below, at and above its natural frequency. Where is the amplitude biggest?',
-        'Increase the damping. What happens to the peak height and to the frequency where it occurs?',
-        'Compare light, critical and heavy damping. Which would you want for a car’s shock absorbers? For a door closer?',
-        'Give one useful and one destructive example of resonance.'],
-     'note': 'IB C.4. Also used in P1-10.'},
 ]},
 })
 for k in ('AB-05', 'AB-07'):

@@ -219,7 +219,7 @@ const SIM = {
   title: 'Wave Basics',
   hint: 'v = fλ · T = 1/f',
   modes: [{ id: 'trans', label: 'Transverse' }, { id: 'long', label: 'Longitudinal' }, { id: 'medium', label: 'New medium' }, { id: 'polar', label: 'Polarization' }],
-  opts: [{ id: 'npol', label: 'Filters', modes: ['polar'], choices: [['two', 'Two'], ['three', 'Three (crossed outer pair)']] }],
+  opts: [{ id: 'npol', label: 'Filters', modes: ['polar'], choices: [['two', 'Two']] }],
   ivs(mode, opt){
     if (mode === 'polar') return [
       { id: 'I0', sym: 'I<sub>0</sub>', symText: 'I0', label: 'Intensity of unpolarized light', unit: 'W/m²', min: 10, max: 1000, step: 10, val: 400 },
@@ -251,7 +251,7 @@ const SIM = {
   work(v, d, mode){
     if (mode === 'polar'){
       let s = '<h4>1 · First filter: unpolarized → polarized</h4><div class="eq">Unpolarized light vibrates in every direction. A filter lets through only one plane, so half the intensity gets through: I₁ = I₀/2 = <b>' + H.n(d.I1, 'W/m²') + '</b></div>' +
-        '<h4>2 · Next filter at θ to the first (Malus’s law)</h4><div class="eq">I₂ = I₁ cos²θ = ' + fnum(d.I1) + ' × cos²(' + H.iv('th') + ') = <b>' + H.n(d.I2, 'W/m²') + '</b></div>';
+        '<h4>2 · The second filter at θ to the first</h4><div class="eq">' + (v.th === 0 ? 'Lined up (0°): all of the polarized light gets through.' : v.th >= 90 ? 'Crossed (90°): <b>no light</b> gets through. The light’s vibration is completely across the second filter’s axis.' : 'At ' + H.iv('th') + ' only part of the light gets through: the bigger the angle, the dimmer it gets, down to nothing at 90°.') + '</div>';
       if (d.three) s += '<h4>3 · Last filter at 90° to the first, so (90° − θ) to the middle one</h4><div class="eq">I₃ = I₂ cos²(90° − θ) = <b>' + H.n(d.I3, 'W/m²') + '</b></div><p class="note">With no middle filter, crossed filters pass nothing. Adding a filter <i>between</i> them lets light through: the middle filter re-polarizes the light at a new angle. Most light gets through at θ = 45°.</p>';
       else s += '<p class="note">Only <b>transverse</b> waves can be polarized; sound (longitudinal) can’t. Uses: polarized sunglasses block glare (light reflected off water or a road is partly polarized), LCD screens, 3-D movie glasses.</p>';
       return s;
@@ -273,7 +273,7 @@ const SIM = {
         const mid = (x1 + x2) / 2; ctx.strokeStyle = '#111'; ctx.lineWidth = 2;
         if (ang === null){ [0, 45, 90, 135].forEach(q => { const c = Math.cos(q * DEG) * 18 * Math.sqrt(a + 0.05), s = Math.sin(q * DEG) * 18 * Math.sqrt(a + 0.05); ctx.beginPath(); ctx.moveTo(mid - s, y - c); ctx.lineTo(mid + s, y + c); ctx.stroke(); }); }
         else if (I > 0.5){ const L = 20 * Math.sqrt(a), c = Math.cos(ang * DEG) * L, s = Math.sin(ang * DEG) * L; arrow(mid, y, mid + s, y - c, '#111', null, { w: 2, head: 6 }); arrow(mid, y, mid - s, y + c, '#111', null, { w: 2, head: 6 }); }
-        text(fplain(I) + ' W/m²', mid, y + 44, { align: 'center', font: '600 10px "IBM Plex Mono",monospace' }); };
+        text(ang === null || ang === 0 && I === d.I1 ? fplain(I) + ' W/m²' : (I < 0.5 ? 'dark' : 'dimmer'), mid, y + 44, { align: 'center', font: '600 10px "IBM Plex Mono",monospace' }); };
       const edges = [20].concat(xs).concat([385]);
       for (let i = 0; i < edges.length - 1; i++) seg(edges[i] + (i ? 6 : 0), edges[i + 1] - (i < edges.length - 2 ? 6 : 0), Is[i], i === 0 ? null : angs[i - 1]);
       xs.forEach((x, i) => { ctx.save(); ctx.translate(x, y); ctx.fillStyle = 'rgba(120,120,140,0.25)'; ctx.strokeStyle = '#111'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.ellipse(0, 0, 8, 52, 0, 0, 7); ctx.fill(); ctx.stroke();
