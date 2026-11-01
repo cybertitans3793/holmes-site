@@ -3,10 +3,11 @@ const MATS = { glass: ['glass', 0.8], brick: ['brick', 0.6], wood: ['wood', 0.12
 const SIM = {
   title: 'Conduction',
   hint: 'ΔQ/Δt = kAΔT/Δx · L<sub>f</sub>(ice) = 3.34×10⁵ J/kg',
-  modes: [{ id: 'wall', label: 'Window or wall' }, { id: 'rod', label: 'Rod: boiling water to ice' }, { id: 'touch', label: 'Tile vs bath mat' }],
+  modes: [{ id: 'wall', label: 'Window or wall' }, { id: 'rod', label: 'Rod: boiling water to ice' }, { id: 'touch', label: 'Tile vs bath mat' }, { id: 'convect', label: 'Convection & radiation' }],
   opts: [{ id: 'mw', label: 'Material', modes: ['wall'], choices: [['glass', 'Glass'], ['brick', 'Brick'], ['wood', 'Wood'], ['foam', 'Foam']] },
          { id: 'mr', label: 'Rod', modes: ['rod'], choices: [['cu', 'Copper'], ['al', 'Aluminum'], ['steel', 'Steel'], ['glass', 'Glass']] }],
   ivs(mode){
+    if (mode === 'convect') return [{ id: 'P', sym: 'P', symText: 'P', label: 'Burner setting', unit: '', min: 0, max: 10, step: 1, val: 6, graph: true, show: x => String(x) }];
     if (mode === 'rod') return [
       { id: 'L', sym: 'L', symText: 'L', label: 'Rod length', unit: 'cm', min: 5, max: 100, step: 1, val: 40, graph: true },
       { id: 'A', sym: 'A', symText: 'A', label: 'Cross-sectional area', unit: 'cm²', min: 0.5, max: 10, step: 0.1, val: 2 },
@@ -22,17 +23,23 @@ const SIM = {
   },
   presets: [{ label: 'Double the thickness', mode: 'wall', v: { dx: 1 } }, { label: 'Very cold night', mode: 'wall', v: { To: -20 } }, { label: 'Short fat rod', mode: 'rod', v: { L: 10, A: 8 } }],
   calc(v, mode, opt){
+    if (mode === 'convect') return { sp: v.P / 10 };
     if (mode === 'rod'){ const [nm, k] = MATS[opt.mr || 'cu'], dT = 100 - v.Tc, P = k * (v.A / 1e4) * dT / (v.L / 100); return { nm, k, dT, P, grad: dT / v.L, melt: P * 60 / 3.34e5 * 1000 }; }
     if (mode === 'touch'){ const dT = 33 - v.Tr, d = 0.01, Pt = 1.0 * (v.A / 1e4) * dT / d, Pm = 0.04 * (v.A / 1e4) * dT / d; return { dT, Pt, Pm, ratio: Pt / Pm }; }
     const [nm, k] = MATS[opt.mw || 'glass'], dT = v.Ti - v.To, P = k * v.A * dT / (v.dx / 100);
     return { nm, k, dT, P, day: P * 86400 / 1e6, kwh: P * 24 / 1000 };
   },
   dvs(mode){
+    if (mode === 'convect') return [{ id: 'sp', name: 'How fast the water circulates (relative)', short: 'speed', sym: '', unit: '', f: d => d.sp }];
     if (mode === 'touch') return [{ id: 'Pt', name: 'Rate into the tile', short: 'P_tile', sym: 'P<sub>tile</sub>', unit: 'W', f: d => d.Pt, vs: 'Pm' }, { id: 'Pm', name: 'Rate into the mat', short: 'P_mat', sym: 'P<sub>mat</sub>', unit: 'W', f: d => d.Pm }];
     if (mode === 'rod') return [{ id: 'P', name: 'Rate of energy flow', short: 'P', sym: 'ΔQ/Δt', unit: 'W', f: d => d.P }, { id: 'melt', name: 'Ice melted per minute', short: 'ice/min', sym: 'm/min', unit: 'g', f: d => d.melt }];
     return [{ id: 'P', name: 'Rate of energy flow', short: 'P', sym: 'ΔQ/Δt', unit: 'W', f: d => d.P }, { id: 'kwh', name: 'Energy lost per day', short: 'E/day', sym: 'E<sub>day</sub>', unit: 'kWh', f: d => d.kwh }];
   },
   work(v, d, mode){
+    if (mode === 'convect') return '<h4>1 · Heating the bottom</h4><div class="eq">Water at the bottom is heated by conduction from the hot pot. Its particles move faster and spread out, so it <b>expands</b> and becomes <b>less dense</b>.</div>' +
+      '<h4>2 · Convection: the fluid itself moves</h4><div class="eq">The warm, less dense water <b>rises</b> (buoyancy). Cooler, denser water at the top <b>sinks</b> to take its place. The loop (a convection current) carries energy through the whole pot.</div>' +
+      '<h4>3 · Radiation: no material needed</h4><div class="eq">The burner and the pot also give off infrared radiation (your hand feels it from the side). Radiation is the only way energy reaches us from the Sun through empty space. Hotter objects radiate much more.</div>' +
+      '<p class="note">Three ways energy moves as heat: <b>conduction</b> (particles bump neighbors, mainly solids), <b>convection</b> (the fluid moves and carries energy, liquids and gases), <b>radiation</b> (electromagnetic waves, works in a vacuum). Why is a heater placed low in a room and an air conditioner high?</p>';
     if (mode === 'touch') return '<h4>1 · Same temperature, but they don’t feel the same</h4><div class="eq">Tile and mat are both at ' + H.iv('Tr') + '. Your foot is about 33 °C, so ΔT = ' + H.n(d.dT, '°C') + ' for both.</div>' +
       '<h4>2 · What you feel is the RATE energy leaves your foot</h4><div class="eq">Tile (k ≈ 1.0): ΔQ/Δt = kAΔT/Δx = (1.0)(' + fnum(v.A / 1e4) + ')(' + fnum(d.dT) + ')/(0.01) = <b>' + H.n(d.Pt, 'W') + '</b></div>' +
       '<div class="eq">Mat (k ≈ 0.04): <b>' + H.n(d.Pm, 'W') + '</b> → the tile pulls energy ' + fnum(d.ratio) + '× faster</div>' +
@@ -48,6 +55,21 @@ const SIM = {
       '<p class="note">Rate ∝ A and ΔT, ∝ 1/Δx. Thin glass loses a lot; that’s why houses use double glazing (a trapped air layer, k ≈ 0.025) and foam in the walls.</p>';
   },
   draw(v, d, mode, opt, t){
+    if (mode === 'convect'){
+      panelTitle('A POT OF WATER ON A BURNER', 10, 18);
+      const x0 = 90, x1 = 310, y0 = 80, y1 = 260, sp = d.sp;
+      ctx.fillStyle = '#d7ecfb'; ctx.fillRect(x0, y0, x1 - x0, y1 - y0); ctx.strokeStyle = '#555'; ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(x0, y0 - 10); ctx.lineTo(x0, y1); ctx.lineTo(x1, y1); ctx.lineTo(x1, y0 - 10); ctx.stroke();
+      for (let k = 0; k < 7; k++){ const fx = 130 + k * 24, fh = sp ? 10 + 14 * sp + 4 * Math.sin(t * 12 + k) : 0; if (fh){ ctx.fillStyle = 'rgba(255,140,30,0.9)'; ctx.beginPath(); ctx.moveTo(fx - 6, y1 + 30); ctx.quadraticCurveTo(fx, y1 + 30 - fh * 1.6, fx + 6, y1 + 30); ctx.fill(); } }
+      ctx.fillStyle = '#333'; ctx.fillRect(110, y1 + 30, 180, 8);
+      const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2, rx = 90, ry = 70;
+      // two convection cells drawn as moving dots along loops
+      for (let cell = -1; cell <= 1; cell += 2) for (let k = 0; k < 18; k++){ const ph = (k / 18 + cell * t * 0.15 * sp) % 1, a = 2 * PI * ph, X = cx + cell * 52 + 42 * Math.cos(a), Y = cy + 70 * Math.sin(a), hot = Math.sin(a) * cell < 0 ? 0 : 1, warm = (cell > 0 ? Math.cos(a) < 0 : Math.cos(a) > 0); ctx.fillStyle = warm ? '#e2453c' : '#1546d6'; ctx.beginPath(); ctx.arc(X, Y, 3.5, 0, 7); ctx.fill(); }
+      if (sp){ arrow(cx - 8, y1 - 30, cx - 8, y0 + 30, '#e2453c', null, { w: 2.5 }); text('warm, less dense: rises', cx, y1 - 12, { align: 'center', font: '700 10px "IBM Plex Mono",monospace', col: '#e2453c' }); arrow(x0 + 18, y0 + 30, x0 + 18, y1 - 30, '#1546d6', null, { w: 2.5 }); arrow(x1 - 18, y0 + 30, x1 - 18, y1 - 30, '#1546d6', null, { w: 2.5 }); text('cool, denser: sinks', cx, y0 + 16, { align: 'center', font: '700 10px "IBM Plex Mono",monospace', col: '#1546d6' }); }
+      for (let k = 0; k < 3; k++){ const yy = y1 + 10 - k * 0; ctx.strokeStyle = 'rgba(196,58,0,0.5)'; ctx.lineWidth = 2; ctx.beginPath(); for (let q = 0; q <= 20; q++){ const xx = x1 + 12 + q * 3, yv = y1 + 20 - k * 22 + 3 * Math.sin(q * 1.2 - t * 6); q ? ctx.lineTo(xx, yv) : ctx.moveTo(xx, yv); } if (sp) ctx.stroke(); }
+      if (sp) text('infrared radiation', x1 + 12, y1 - 40, { font: '700 10px "IBM Plex Mono",monospace', col: '#c43a00' });
+      panelTitle('THREE WAYS HEAT MOVES', 395, 18); [['Conduction', 'particles bump neighbors'], ['Convection', 'the fluid moves'], ['Radiation', 'EM waves, even in a vacuum']].forEach(([a, b], i) => { text(a, 400, 52 + i * 40, { font: '700 13px "Space Grotesk",sans-serif' }); text(b, 400, 68 + i * 40, { font: '600 10px "IBM Plex Mono",monospace', col: '#4a4a4a' }); });
+      return;
+    }
     const flow = (x1, x2, y, P, Pref) => { const n = Math.max(1, Math.min(7, Math.round(7 * Math.sqrt(P / Pref)))); for (let i = 0; i < n; i++){ const yy = y - 40 + i * 80 / Math.max(1, n - 1) * (n > 1 ? 1 : 0); const ph = ((t * 0.6 + i * 0.13) % 1); arrow(x1 + (x2 - x1) * ph * 0.6, yy, x1 + (x2 - x1) * (ph * 0.6 + 0.4), yy, '#c43a00', null, { w: 2.5, head: 7 }); } };
     if (mode === 'touch'){
       panelTitle('BARE FOOT ON TILE vs BATH MAT (both ' + v.Tr + ' °C)', 10, 18);

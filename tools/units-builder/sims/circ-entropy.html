@@ -240,15 +240,13 @@ const SIM = {
   },
   work(v, d, mode){
     if (mode === 'heat') return '<h4>1 · The hot object loses Q, the cold object gains Q</h4><div class="eq">Energy is conserved either way. The first law doesn’t say which way it goes.</div>' +
-      '<h4>2 · <span style="color:#7a3fb0">IB HL</span> Entropy changes: ΔS = Q/T</h4><div class="eq">Hot: ΔS = −' + H.iv('Q') + '/' + H.iv('Th') + ' = ' + H.n(d.dSh, 'J/K') + ' &nbsp; Cold: ΔS = +' + H.iv('Q') + '/' + H.iv('Tc') + ' = ' + H.n(d.dSc, 'J/K') + '</div>' +
-      '<div class="eq">Total: <b>' + H.n(d.dS, 'J/K') + '</b> &gt; 0 because the same Q is divided by a smaller T on the cold side</div>' +
-      '<h4>3 · The reverse would decrease entropy</h4><div class="eq">Cold → hot on its own: ΔS = ' + H.n(d.rev, 'J/K') + ' &lt; 0. The second law forbids it for an isolated system. A fridge can do it only with work input, and dumps extra entropy outside.</div>' +
+      '<h4>2 · Why heat only flows hot → cold</h4><div class="eq">Energy spreading from the hot object into the cold one spreads it over more particles and more ways of sharing it, so entropy goes up. The reverse would need energy to gather itself back into the hot object, which an isolated system never does on its own.</div>' +
+      '<h4>3 · Fridges</h4><div class="eq">A fridge does move heat from cold to hot, but only because work is done on it, and it dumps even more energy (and entropy) into the room.</div>' +
       '<p class="note">AP: describe it qualitatively. Energy spreads out; isolated systems move toward thermal equilibrium, where entropy is maximum.</p>';
     return '<h4>1 · Remove the wall: the gas spreads into the empty side</h4><div class="eq">No energy is added and no work is done, yet it never goes back on its own. Why?</div>' +
       '<h4>2 · Count the ways (microstates)</h4><div class="eq">Each molecule can be left or right: 2<sup>N</sup> = ' + H.n(d.total) + ' arrangements. All on the left: just 1.</div>' +
       '<div class="eq">Chance they’re all back on the left at any moment = (½)<sup>N</sup> = <b>' + H.n(d.p) + '</b></div>' +
       '<div class="eq">Even split: Ω = ' + H.n(d.Omega) + ' ways. The spread-out state wins by sheer numbers.</div>' +
-      '<h4>3 · <span style="color:#7a3fb0">IB HL</span> Entropy S = k<sub>B</sub> ln Ω</h4><div class="eq">Even split: S = 1.38×10⁻²³ × ' + fnum(d.lnO) + ' = ' + H.n(d.S, 'J/K') + '. All on one side: S = k ln 1 = 0.</div>' +
       '<p class="note">With 10²³ molecules the chance of going back is effectively zero. That’s the second law: the entropy of an isolated system doesn’t decrease.</p>';
   },
   draw(v, d, mode, opt, t, dt, A){
@@ -259,8 +257,8 @@ const SIM = {
       ctx.fillStyle = col(v.Th); ctx.fillRect(30, 90, 150, 150); ctx.fillStyle = col(v.Tc); ctx.fillRect(180, 90, 150, 150); ctx.strokeStyle = '#111'; ctx.lineWidth = 2; ctx.strokeRect(30, 90, 150, 150); ctx.strokeRect(180, 90, 150, 150);
       text(v.Th + ' K', 105, 170, { align: 'center', font: '700 18px "Space Grotesk",sans-serif', col: '#fff' }); text(v.Tc + ' K', 255, 170, { align: 'center', font: '700 18px "Space Grotesk",sans-serif', col: '#fff' });
       const ph = (t * 0.7) % 1; arrow(150 + 60 * ph - 20, 70, 150 + 60 * ph + 20, 70, '#c43a00', 'Q', { w: 3 });
-      text('ΔS = ' + fplain(d.dSh) + ' J/K', 105, 265, { align: 'center', font: '600 11px "IBM Plex Mono",monospace' }); text('ΔS = +' + fplain(d.dSc) + ' J/K', 255, 265, { align: 'center', font: '600 11px "IBM Plex Mono",monospace' });
-      panelTitle('TOTAL ENTROPY CHANGE', 395, 18);
+      text('energy spreads out →', 180, 265, { align: 'center', font: '600 11px "IBM Plex Mono",monospace' });
+      panelTitle('ENTROPY CHANGE (QUALITATIVE)', 395, 18);
       const b0 = 160, sc = 80 / Math.max(Math.abs(d.dS), Math.abs(d.dSc), 0.001);
       [['hot', d.dSh, '#c43a00'], ['cold', d.dSc, '#1546d6'], ['total', d.dS, '#1e7d45']].forEach(([l, q, c], i) => { const hh = q * sc, x = 410 + i * 58; ctx.fillStyle = c; ctx.fillRect(x, Math.min(b0, b0 - hh), 34, Math.abs(hh)); text(l, x + 17, b0 + (q < 0 ? -hh + 14 : 14), { align: 'center', font: '700 11px "IBM Plex Mono",monospace' }); });
       ctx.strokeStyle = '#bbb'; ctx.beginPath(); ctx.moveTo(400, b0); ctx.lineTo(585, b0); ctx.stroke();

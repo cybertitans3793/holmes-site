@@ -1,9 +1,9 @@
 // Mixing & Calorimetry (AP 9.3/9.5 Q = mcΔT, thermal equilibrium; IB B.1 incl. latent heat): hot metal into water, mixing water, ice in a drink (does it all melt?).
-const CW = 4200, CI = 2100, LF = 3.34e5;
+const CW = 4186, CI = 2100, LF = 3.34e5;
 const METALS = { al: ['aluminum', 900], cu: ['copper', 385], fe: ['iron', 450], pb: ['lead', 130] };
 const SIM = {
   title: 'Mixing & Calorimetry',
-  hint: 'c<sub>water</sub> = 4200 · c<sub>ice</sub> = 2100 J/(kg·K) · L<sub>f</sub> = 3.34×10⁵ J/kg',
+  hint: 'c<sub>water</sub> = 4186 · c<sub>ice</sub> = 2100 J/(kg·K) · L<sub>f</sub> = 3.34×10⁵ J/kg',
   modes: [{ id: 'metal', label: 'Hot metal into water' }, { id: 'mix', label: 'Mix hot and cold water' }, { id: 'ice', label: 'Ice in a drink (IB)' }],
   opts: [{ id: 'met', label: 'Metal', modes: ['metal'], choices: [['al', 'Aluminum'], ['cu', 'Copper'], ['fe', 'Iron'], ['pb', 'Lead']] }],
   ivs(mode){

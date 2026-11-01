@@ -220,7 +220,6 @@ const SIM = {
   title: 'Gas in a Piston',
   hint: 'R = 8.31 J/(mol·K) · kPa × L = J · monatomic ideal gas',
   modes: [{ id: 'bar', label: 'Constant P (heat it)' }, { id: 'vol', label: 'Constant V (sealed can)' }, { id: 'iso', label: 'Constant T (slow push)' }, { id: 'adi', label: 'No heat (fast push)' }],
-  opts: [{ id: 'sign', label: 'Sign convention', choices: [['ap', 'AP: ΔU = Q + W'], ['ib', 'IB: Q = ΔU + W']] }],
   ivs(mode){
     const n = { id: 'n', sym: 'n', symText: 'n', label: 'Amount of gas', unit: 'mol', min: 0.02, max: 0.5, step: 0.01, val: 0.1 };
     if (mode === 'bar') return [n, { id: 'P', sym: 'P', symText: 'P', label: 'Pressure (set by the weights)', unit: 'kPa', min: 100, max: 400, step: 5, val: 150 },

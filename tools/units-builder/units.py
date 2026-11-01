@@ -491,8 +491,6 @@ UNITS = {
 # ------------------------------------------------------------------ AP PHYSICS 2 / IB
 'P2-00': {'course': 'AP Physics 2 / IB', 'num': '00', 'title': 'Greenhouse Effect (IB)', 'tabs': [
     {'code': '', 'name': 'Black Bodies', 'sim': 'green', 'select': 'Black Bodies', 'tasks': [
-        'Raise the temperature. Which way does the peak move? Check that λ<sub>max</sub>·T stays about 2.9 × 10⁻³ m·K.',
-        'Double the temperature. By what factor does the power per square meter go up? Explain with σT⁴.',
         'Compare the Sun (about 5800 K) with the Earth (about 290 K). Which part of the spectrum does each one mostly give off?',
         'A stove burner glows red, but your body doesn’t glow. Both are black bodies. What’s different?']},
     {'code': '', 'name': 'Sunlight & Albedo', 'sim': 'green', 'select': 'Sunlight & Albedo', 'tasks': [
@@ -504,68 +502,74 @@ UNITS = {
         'Pick <b>Earth, no greenhouse</b>. Find the equilibrium temperature and compare it with the real average of about 288 K.',
         'Raise the albedo. Predict the new temperature, then check it.',
         'Try Venus, Mars and the Moon. Which one ends up far hotter than a no-greenhouse planet at its distance? Why?',
-        'Use <b>Start cold</b> and <b>Start hot</b>. Why does the planet end up at the same temperature either way?']},
+        'Use <b>Start cold</b> and <b>Start hot</b>. Why does the planet end up at the same temperature either way?',
+        '<span style="color:#8a8a8a;font-weight:700">Extension</span> Press Snowball Earth. Explain why more ice makes the planet colder, which makes more ice.']},
     {'code': '', 'name': 'Atmosphere', 'sim': 'green', 'select': 'Atmosphere', 'tasks': [
-        'Turn on the one-layer atmosphere. How much warmer is the surface than with no atmosphere?',
+        'Set ε to 0 (no atmosphere), then back to 0.77. How much warmer is the surface?',
         'Change the emissivity of the atmosphere. Predict the surface temperature, then check it.',
         'Open <b>IB-style practice</b>. Solve a problem on paper before you press Check.',
-        'Add CO₂. Explain the <b>enhanced</b> greenhouse effect in two sentences.']},
+        'Add CO₂. Explain the <b>enhanced</b> greenhouse effect in two sentences.',
+        '<span style="color:#8a8a8a;font-weight:700">Extension</span> Turn on Water-vapour feedback and press 2100 (high). Why does the warming get bigger?']},
     {'code': '', 'name': 'Molecules & IR', 'sim': 'green', 'select': 'Molecules & IR', 'tasks': [
-        'Shine infrared on N₂, O₂, CO₂ and H₂O. Which molecules absorb it?',
+        'Shine infrared on N₂, O₂, CO₂, H₂O, CH₄ and N₂O. Which absorb it?',
+        'Switch to Resonance. Why does CO₂ absorb strongly near 15 µm but not at 10 µm?',
         'Match the photon energy to the gap between energy levels. What happens when they don’t match?',
         'N₂ and O₂ make up 99 % of the air. Why don’t they trap infrared?',
         'Name a natural and a human source for each greenhouse gas.']},
 ]},
 'P2-01': {'course': 'AP Physics 2 / IB', 'num': '01', 'title': 'Thermodynamics', 'tabs': [
-    {'code': '', 'name': 'Particles & Pressure', 'sim': 'kinetic', 'tasks': [
+    {'code': '01-1', 'name': 'Particles & Pressure', 'sim': 'kinetic', 'tasks': [
         'Quadruple the absolute temperature. By what factor does the average KE change? The rms speed? Check with the ×2 test.',
-        '<b>Two gases, same T.</b> Helium and argon are mixed. Which has the greater average KE? The greater rms speed? By what factor?',
+        'At 2T, does every molecule move faster than every molecule at T? Use the speed distribution.',
         '<b>One molecule.</b> Derive the average force on the wall, F = mv²/L. Why does doubling v quadruple the force?',
         'Explain, in terms of molecules, why pressure increases when you halve the volume at constant temperature.']},
-    {'code': '', 'name': 'Finding Absolute Zero', 'sim': 'abszero', 'tasks': [
-        'Use the constant-volume data to find absolute zero. How close do you get to −273 °C?',
-        'Add a gauge zero error. What happens to the gradient? The intercept? The value of absolute zero? Is this random or systematic?',
-        '<b>Experimental design:</b> describe how you would collect P vs T data with a sealed flask and water baths. What must stay constant?',
-        '<b>Boyle.</b> Plot P against V, then against 1/V. Which is linear? What does the gradient tell you? What does gas hidden in the tubing do?']},
-    {'code': '', 'name': 'Gas Law Problems', 'sim': 'gasprob', 'tasks': [
+    {'code': '01-2', 'name': 'Gas Law Problems', 'sim': 'gasprob', 'tasks': [
         '<b>Tire.</b> Find the hot gauge pressure. Then show why using gauge pressure and °C gives the wrong answer.',
         '<b>Bubble.</b> A bubble rises from 20 m. By what factor does its volume grow? How much is due to pressure and how much to temperature?',
         '<b>Cylinder.</b> What fraction of the oxygen has been used when the pressure drops from 15 000 kPa to 5000 kPa?',
         '<b>Balloon.</b> Why does a hot-air balloon lift less on a hot day? Use ρ = PM/RT.']},
-    {'code': '', 'name': 'Gas in a Piston', 'sim': 'piston', 'tasks': [
-        '<b>Constant P.</b> Heat the gas. Find Q, W and ΔU. Why is Q bigger than ΔU?',
-        '<b>Constant V.</b> Why is W = 0? Where does all of Q go?',
-        '<b>Constant T.</b> Push the piston in slowly. Why is ΔU = 0? Is heat added or removed?',
-        '<b>No heat.</b> Push it in fast. Why does the gas get hotter if no heat is added? Then switch the sign convention and explain what changes.']},
-    {'code': '', 'name': 'P–V Cycles', 'sim': 'cycle', 'tasks': [
-        'Fill in a table of W, ΔU and Q for each leg before looking. Then check with the sim.',
-        'Which legs take in heat? Explain using how T changes on a P–V diagram.',
-        'Show that the net work equals the area inside the loop. Why is ΣΔU = 0 for a whole cycle?',
-        'Run the cycle counter-clockwise. What changes? What kind of device is that?',
-        '<span style="color:#7a3fb0">IB HL</span>: find the efficiency and compare it with the Carnot limit.']},
-    {'code': '', 'name': 'Heat Engines', 'sim': 'engine', 'tasks': [
-        '<b>Steam engine.</b> Watch one revolution. On the indicator diagram, find admission, expansion and exhaust. Which part does the most work?',
-        'Compare the sim with the class steam engine. Where does the heat come in, where does work come out, and where does the rest of the energy go?',
-        'Use <b>Add a condenser</b>. Why does lowering the exhaust pressure raise both the work and the efficiency?',
-        'Use <b>Early cutoff</b> with no condenser. Why does the loop cross itself? What does that part of the loop mean?',
-        '<b>Energy flow.</b> Explain why an engine must give out some heat Q<sub>c</sub>. What would ΔS be if it didn’t?',
-        '<span style="color:#7a3fb0">IB HL</span>: <b>Carnot cycle.</b> Show that changing the expansion ratio changes the work but not the efficiency.']},
-    {'code': '', 'name': 'Mixing & Calorimetry', 'sim': 'calor', 'tasks': [
+    {'code': '01-2', 'name': 'Real vs Ideal Gas', 'sim': 'realgas', 'tasks': [
+        'Use the presets. Under what conditions is nitrogen close to ideal (Z ≈ 1)?',
+        'Make the gas cold and squeezed. Is Z above or below 1? Explain with forces between molecules.',
+        'At very high pressure Z &gt; 1. Explain using the volume of the molecules.',
+        'Make helium very cold and squeezed. Give two reasons the ideal model fails.',
+        'Compare He, N₂ and CO₂. Which is most ideal? Why?'],
+     'note': 'Taught to everyone in 01-2 (IB B.3: when an ideal gas is a good approximation).'},
+    {'code': '01-3', 'name': 'Conduction', 'sim': 'conduct', 'tasks': [
+        'Double the thickness of the window. What happens to the rate? Double the area? Use ΔQ/Δt = kAΔT/Δx.',
+        'Plot rate against thickness for 1–4 panes. Why is it a curve, not a line?',
+        'Compare glass, wood and foam walls. Rank them by energy lost per day.',
+        '<b>Rod.</b> Which rod melts ice fastest? Design an experiment to find k using rods of different lengths.',
+        '<b>Tile vs mat.</b> Both are at 20 °C. Explain why the tile feels colder without saying the tile is colder.',
+        '<b>Convection &amp; radiation.</b> Why does the warm water rise? Why is a heater placed low in a room and an air conditioner high?']},
+    {'code': '01-4', 'name': 'Mixing & Calorimetry', 'sim': 'calor', 'tasks': [
         'Drop hot aluminum into water. Why does the water warm only a little? Predict T<sub>f</sub> for copper, then check.',
         'Use the measured T<sub>f</sub> to find c of the metal. Then add a real cup. Is the c you find too high or too low? Why?',
         'Mix equal masses of hot and cold water. Where is T<sub>f</sub>? What if there is twice as much cold water?',
-        '<b>Ice in a drink.</b> How do you know whether all the ice melts? Find the most ice that can melt completely.']},
-    {'code': '', 'name': 'Conduction', 'sim': 'conduct', 'tasks': [
-        'Double the thickness of the window. What happens to the rate? Double the area? Use ΔQ/Δt = kAΔT/Δx.',
-        'Compare glass, wood and foam walls. Rank them by energy lost per day.',
-        '<b>Rod.</b> Which rod melts ice fastest? Design an experiment to find k using rods of different lengths.',
-        '<b>Tile vs mat.</b> Both are at 20 °C. Explain why the tile feels colder without saying the tile is colder.']},
-    {'code': '', 'name': 'Entropy', 'sim': 'entropy', 'tasks': [
+        '<span style="color:#7a3fb0">IB</span> <b>Ice in a drink.</b> How do you know whether all the ice melts? Find the most ice that can melt completely.']},
+    {'code': '01-5', 'name': 'Finding Absolute Zero', 'sim': 'abszero', 'tasks': [
+        'Use the constant-volume data to find absolute zero. How close do you get to −273 °C?',
+        'Graph P against T in kelvins. The gradient is nR/V. Find n.',
+        'Add a gauge zero error. What happens to the gradient? The intercept? The value of absolute zero? Is this random or systematic?',
+        '<b>Experimental design:</b> describe how you would collect P vs T data with a sealed flask and water baths. What must stay constant?',
+        '<b>Boyle.</b> Plot P against V, then against 1/V. Which is linear? What does the gradient tell you? What does gas hidden in the tubing do?']},
+    {'code': '01-6', 'name': 'Gas in a Piston', 'sim': 'piston', 'tasks': [
+        '<b>Constant P.</b> Heat the gas. Find Q, W and ΔU. Why is Q bigger than ΔU?',
+        '<b>Constant V.</b> Why is W = 0? Where does all of Q go?',
+        '<b>Constant T.</b> Push the piston in slowly. Why is ΔU = 0? Is heat added or removed?',
+        '<b>No heat.</b> Push it in fast. Why does the gas get hotter if no heat is added?',
+        'Compress to the same final volume in Constant T and in No heat. Which ends at higher pressure? Explain with ΔU.']},
+    {'code': '01-6', 'name': 'P–V Cycles', 'sim': 'cycle', 'tasks': [
+        'Fill in a table of W, ΔU and Q for each leg before looking. Then check with the sim.',
+        'Which legs take in heat? Explain using how T changes on a P–V diagram.',
+        'Show that the net work equals the area inside the loop. Why is ΣΔU = 0 for a whole cycle?',
+        'Rectangle: go from bottom-left to top-right along the top path, then along the bottom path. Add up Q and W for each. Why is ΔU the same but Q different?']},
+    {'code': '01-7', 'name': 'Entropy', 'sim': 'entropy', 'tasks': [
         'Remove the wall. Does the gas ever go back to one side? Try 2 molecules, then 60.',
         'Use the bar chart to explain why the even split is most likely. How many ways are there for all to be on one side?',
         'Heat flows from hot to cold. Explain why the reverse never happens on its own. Is energy conserved either way?',
-        '<span style="color:#7a3fb0">IB HL</span>: calculate ΔS for each object and the total. Why is the total positive?']},
-    {'code': '', 'name': 'PhET Sims', 'sim': 'phetT', 'tasks': [
+        'A fridge makes food colder, so the food’s entropy goes down. Does that break the second law?']},
+    {'code': '01-3', 'name': 'PhET Sims', 'sim': 'phetT', 'tasks': [
         '<b>Gas Properties:</b> hold the volume constant and heat the gas. How do pressure and temperature change together?',
         '<b>States of Matter:</b> add heat to a solid. What happens to the motion of the particles at each phase?',
         '<b>Energy Forms and Changes:</b> put a hot brick in cool water. Watch the energy chunks. When does the transfer stop?']},
@@ -575,12 +579,6 @@ UNITS = {
         'On a plateau the temperature stays constant. Where does the energy go? Use internal energy = KE + PE.',
         '<b>Kettle.</b> Show that heat loss makes the measured L<sub>v</sub> too large. How does using two powers fix it?'],
      'note': 'IB B.1: specific latent heat. AP Physics 2 does not include latent heat.'},
-    {'code': 'IB', 'name': 'Real vs Ideal Gas', 'sim': 'realgas', 'tasks': [
-        'Use the presets. Under what conditions is nitrogen close to ideal (Z ≈ 1)?',
-        'Make the gas cold and squeezed. Is Z above or below 1? Explain with forces between molecules.',
-        'At very high pressure Z &gt; 1. Explain using the volume of the molecules.',
-        'Compare He, N₂ and CO₂. Which is most ideal? Why?'],
-     'note': 'IB B.3: when an ideal gas is a good approximation of a real gas.'},
 ]},
 'P2-02': {'course': 'AP Physics 2 / IB', 'num': '02', 'title': 'Electrostatics', 'tabs': [
     {'code': '', 'name': 'Charging & the Electroscope', 'sim': 'scope', 'tasks': [

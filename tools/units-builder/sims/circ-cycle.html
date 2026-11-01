@@ -214,7 +214,7 @@ function loop(ts){ const dt = Math.min(0.05, (ts - (last || ts)) / 1000); last =
   requestAnimationFrame(loop); }
 
 // ---------------- this sim ----------------
-// P–V Cycles & the First Law (AP 9.4 FRQ staple; IB HL B.4 heat engines): leg-by-leg Q, W, ΔU table, net work = enclosed area, efficiency and the Carnot limit.
+// P–V Cycles & the First Law (AP 9.4 FRQ staple; AP ΔU = Q + W): leg-by-leg Q, W, ΔU table, net work = enclosed area. No heat engines or Carnot (not taught).
 const RG = 8.31;
 function legs(v, mode){
   const n = v.n, T = (P, V) => P * V / (n * RG);
@@ -236,7 +236,7 @@ const SIM = {
   title: 'P–V Cycles',
   hint: 'kPa × L = J · monatomic ideal gas · R = 8.31',
   modes: [{ id: 'rect', label: 'Rectangle' }, { id: 'tri', label: 'Triangle' }, { id: 'ap', label: 'Isochoric → isothermal → isobaric' }],
-  opts: [{ id: 'dir', label: 'Direction', choices: [['cw', 'Clockwise (engine)'], ['ccw', 'Counter-clockwise (fridge)']] }, { id: 'sign', label: 'Sign convention', choices: [['ap', 'AP'], ['ib', 'IB']] }],
+  opts: [{ id: 'dir', label: 'Direction', choices: [['cw', 'Clockwise'], ['ccw', 'Counter-clockwise']] }],
   ivs(mode){ return [
     { id: 'n', sym: 'n', symText: 'n', label: 'Amount of gas', unit: 'mol', min: 0.05, max: 0.5, step: 0.01, val: 0.2 },
     { id: 'Ph', sym: 'P<sub>high</sub>', symText: 'Ph', label: 'High pressure', unit: 'kPa', min: 150, max: 500, step: 5, val: 300, graph: true },
@@ -251,7 +251,6 @@ const SIM = {
     return { L, Wnet, Qin, Qout, eff: Wnet > 0 ? Wnet / Qin : NaN, carnot: 1 - Tc / Th, Th, Tc, ib: (opt.sign || 'ap') === 'ib', sumU: L.reduce((a, g) => a + g.dU, 0) };
   },
   dvs(){ return [{ id: 'Wnet', name: 'Net work done BY the gas per cycle', short: 'W_net', sym: 'W<sub>net,by</sub>', unit: 'J', f: d => d.Wnet },
-    { id: 'eff', name: 'Efficiency (engine only)', short: 'η', sym: 'η', unit: '', f: d => d.eff, vs: 'carnot' }, { id: 'carnot', name: 'Carnot limit 1 − Tc/Th', short: 'η_Carnot', sym: 'η<sub>C</sub>', unit: '', f: d => d.carnot },
     { id: 'Qin', name: 'Heat taken in per cycle', short: 'Q_in', sym: 'Q<sub>in</sub>', unit: 'J', f: d => d.Qin }]; },
   work(v, d, mode, opt){
     const W = g => d.ib ? g.Wby : g.Won, td = 'style="padding:2px 6px;border-bottom:1px solid #ddd;text-align:right"';
@@ -260,9 +259,7 @@ const SIM = {
       '<div class="eq">' + (d.ib ? 'IB: W = work BY the gas = +area when V grows; Q = ΔU + W' : 'AP: W = work ON the gas = −area when V grows; ΔU = Q + W → Q = ΔU − W') + '</div>' +
       '<table style="border-collapse:collapse;font:500 13px \'IBM Plex Mono\',monospace;margin:6px 0"><tr><th style="text-align:left;padding:2px 6px">leg</th><th style="padding:2px 6px">W (J)</th><th style="padding:2px 6px">ΔU (J)</th><th style="padding:2px 6px">Q (J)</th></tr>' + rows + '</table>' +
       '<h4>2 · Around the whole cycle</h4><div class="eq">ΣΔU = ' + fnum(Math.abs(d.sumU) < 1e-6 ? 0 : d.sumU) + ' J (back to the start, same T) → net Q = net work by the gas = enclosed area = <b>' + H.n(d.Wnet, 'J') + '</b></div>' +
-      ((opt.dir || 'cw') === 'cw' ? '<h4>3 · <span style="color:#7a3fb0">IB HL</span> Engine efficiency</h4><div class="eq">η = W<sub>net</sub>/Q<sub>in</sub> = ' + fnum(d.Wnet) + '/' + fnum(d.Qin) + ' = <b>' + H.n(100 * d.eff, '%') + '</b></div>' +
-        '<div class="eq">Carnot limit between T<sub>h</sub> = ' + H.n(d.Th, 'K') + ' and T<sub>c</sub> = ' + H.n(d.Tc, 'K') + ': 1 − T<sub>c</sub>/T<sub>h</sub> = ' + H.n(100 * d.carnot, '%') + '. A real cycle always does worse.</div>'
-        : '<h4>3 · Counter-clockwise: net work is done ON the gas</h4><div class="eq">Heat is taken in at low T and dumped at high T: a refrigerator or heat pump. That needs work input (second law).</div>') +
+      ((opt.dir || 'cw') === 'cw' ? '<h4>3 · Clockwise: net work is done BY the gas</h4><div class="eq">Net heat in = net work by the gas = the area inside the loop.</div>' : '<h4>3 · Counter-clockwise: net work is done ON the gas</h4><div class="eq">Net work on the gas = the area inside the loop, and the gas gives out that much net heat.</div>') +
       '<p class="note">Find which legs take heat in: Q &gt; 0. On a P–V diagram, T rises as you move up and to the right (T ∝ PV).</p>';
   },
   draw(v, d, mode, opt, t, dt, A){
@@ -287,8 +284,7 @@ const SIM = {
     bars.forEach(([l, val, c], i) => { const hh = 80 * val / mx, x = 415 + i * 58; ctx.fillStyle = c; ctx.fillRect(x, Math.min(b0, b0 - hh), 34, Math.abs(hh)); text(l, x + 17, val < 0 ? b0 - 4 : b0 + 14, { align: 'center', font: '700 12px "IBM Plex Mono",monospace' }); text(fplain(val), x + 17, val < 0 ? b0 - hh + 12 : b0 - hh - 4, { align: 'center', font: '500 9px "IBM Plex Mono",monospace', col: '#4a4a4a' }); });
     text(d.ib ? 'IB: W by gas' : 'AP: W on gas', 400, 236, { font: '600 10px "IBM Plex Mono",monospace', col: '#4a4a4a' });
     text('net work by gas: ' + fplain(d.Wnet) + ' J', 400, 262, { font: '700 13px "Space Grotesk",sans-serif' });
-    if ((opt.dir || 'cw') === 'cw') text('η = ' + fplain(100 * d.eff) + '%  (Carnot ' + fplain(100 * d.carnot) + '%)', 400, 284, { font: '700 13px "Space Grotesk",sans-serif', col: '#1e7d45' });
-    else text('fridge / heat pump', 400, 284, { font: '700 13px "Space Grotesk",sans-serif', col: '#c43a00' });
+    text((opt.dir || 'cw') === 'cw' ? 'net work BY the gas' : 'net work ON the gas', 400, 284, { font: '700 11px "IBM Plex Mono",monospace', col: '#c43a00' });
   }
 };
 
