@@ -1,7 +1,9 @@
 <section class="guide" id="guide" aria-label="Study guide">
 <style>
 .guide{margin-top:28px}
-.guide .gtip{margin:0 0 14px;font-size:16px;max-width:900px}
+.guide .gtip{margin:0 0 10px;font-size:19px;line-height:1.45;max-width:1000px}
+.guide .gbelow{display:inline-block;margin:0 0 16px;font-size:19px;font-weight:700;border:3px solid var(--ink);background:var(--soft);padding:6px 14px;box-shadow:4px 4px 0 var(--ink);color:var(--ink);text-decoration:none}
+.guide .gbelow:hover{background:var(--hot)}
 .guide .ggrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-bottom:22px}
 .guide .gcard{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
 .guide .gcard h3,.guide .gcheck h3,.guide .gsteps h3{margin:0 0 10px;font-size:20px;letter-spacing:-.01em}
@@ -39,10 +41,11 @@
 .guide .gnext{margin:16px 0 0;font-weight:700}
 .guide .gnext a{color:var(--ink)}
 body.present .guide{display:none}
-@media (max-width:520px){.guide td:first-child{white-space:normal}.guide .ggrid,.guide .gex{grid-template-columns:1fr}.guide .ex svg{float:none;display:block;margin:0 auto 8px}}
+@media (max-width:520px){.guide .gtip,.guide .gbelow{font-size:17px}.guide td:first-child{white-space:normal}.guide .ggrid,.guide .gex{grid-template-columns:1fr}.guide .ex svg{float:none;display:block;margin:0 auto 8px}}
 </style>
 <div class="simbar"><h2>Study guide</h2><span class="mono">Unit 5 · Circular Motion and Gravity</span></div>
 <p class="gtip"><b>How to use this:</b> read the key ideas, then cover each worked example and try it yourself before reading the solution. Do the self-check questions on paper <i>before</i> you open the answers, mark the ones you miss, and come back to them in a day or two without looking. Rereading won't do much; answering questions will.</p>
+<a class="gbelow" href="#review">Review problems for this unit are below the study guide ↓</a>
 <div class="tabs gtabs" role="tablist" aria-label="Study guide sections">
   <button class="tab" role="tab" type="button" aria-selected="true" aria-controls="g-ideas" id="gt-ideas">Key ideas</button>
   <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-solve" id="gt-solve" tabindex="-1">How to solve</button>
