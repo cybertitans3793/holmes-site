@@ -97,11 +97,11 @@ PAGE = """<!doctype html>
       <a class="plink" id="plink" href="#" target="_blank" rel="noopener">Practice {uid} questions →</a>
     </aside>
   </div>
+  {guide}
   <section class="review" id="review" hidden>
     <div class="simbar"><h2>Practice questions</h2><a id="ropen" class="mono" href="#" target="_blank" rel="noopener">Open in a new tab ↗</a></div>
     <div class="rframe" id="rframe"><div class="loading">Loading questions…</div></div>
   </section>
-  {guide}
   <p class="credits">{credits}</p>
 </div>
 <script>
@@ -220,7 +220,7 @@ def practice_url(uid, u):
     if u.get('review'): return HOMEWORK + '?a=' + u['review']
     return ''
 def guide_html(u):
-    """Optional study guide below the practice questions: units.py 'guide' names an HTML fragment under tools/units-builder/ (e.g. 'guides/P1-05.html')."""
+    """Optional study guide above the practice questions: units.py 'guide' names an HTML fragment under tools/units-builder/ (e.g. 'guides/P1-05.html')."""
     g = u.get('guide')
     return open(os.path.join(D, g), encoding='utf-8').read().strip() if g else ''
 COMING = """<!doctype html>
@@ -243,8 +243,8 @@ COMING = """<!doctype html>
     <div class="uid"><div class="big" aria-hidden="true">{num}</div><div><div class="mono">{course} · {uid}</div><h1>{title}</h1></div></div>
   </header>
   <section class="soon"><h2>Sims for this unit are on the way.</h2><p>{note}</p></section>
-  {review}
   {guide}
+  {review}
 </div>
 </body>
 </html>

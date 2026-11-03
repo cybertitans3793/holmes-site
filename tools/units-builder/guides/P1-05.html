@@ -34,11 +34,22 @@
 .guide summary:hover{background:var(--soft)}
 .guide details[open] summary{background:var(--ink);color:#fff}
 .guide details>div{border-left:4px solid var(--hot);padding:8px 12px;margin-top:8px;background:#fff}
+.guide .gpanel>.ggrid,.guide .gpanel>.gsteps,.guide .gpanel>.gex{margin-bottom:0}
+.guide .gtabs{margin-bottom:18px}
+.guide .gnext{margin:16px 0 0;font-weight:700}
+.guide .gnext a{color:var(--ink)}
 body.present .guide{display:none}
 @media (max-width:520px){.guide td:first-child{white-space:normal}.guide .ggrid,.guide .gex{grid-template-columns:1fr}.guide .ex svg{float:none;display:block;margin:0 auto 8px}}
 </style>
 <div class="simbar"><h2>Study guide</h2><span class="mono">Unit 5 · Circular Motion and Gravity</span></div>
 <p class="gtip"><b>How to use this:</b> read the key ideas, then cover each worked example and try it yourself before reading the solution. Do the self-check questions on paper <i>before</i> you open the answers, mark the ones you miss, and come back to them in a day or two without looking. Rereading won't do much; answering questions will.</p>
+<div class="tabs gtabs" role="tablist" aria-label="Study guide sections">
+  <button class="tab" role="tab" type="button" aria-selected="true" aria-controls="g-ideas" id="gt-ideas">Key ideas</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-solve" id="gt-solve" tabindex="-1">How to solve</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-examples" id="gt-examples" tabindex="-1">Worked examples</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-check" id="gt-check" tabindex="-1">Self-check</button>
+</div>
+<div class="gpanel" role="tabpanel" id="g-ideas" aria-labelledby="gt-ideas">
 
 <div class="ggrid">
   <div class="gcard">
@@ -83,6 +94,8 @@ body.present .guide{display:none}
   </div>
 </div>
 
+</div>
+<div class="gpanel" role="tabpanel" id="g-solve" aria-labelledby="gt-solve" hidden>
 <div class="gsteps">
   <h3>How to solve a circular motion problem</h3>
   <ol>
@@ -95,7 +108,8 @@ body.present .guide{display:none}
   </ol>
 </div>
 
-<h3 class="ghead">Worked examples</h3>
+</div>
+<div class="gpanel" role="tabpanel" id="g-examples" aria-labelledby="gt-examples" hidden>
 <div class="gex">
   <div class="ex">
     <div class="kind">Vertical circle</div>
@@ -161,6 +175,8 @@ body.present .guide{display:none}
   </div>
 </div>
 
+</div>
+<div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
 <div class="gcheck">
   <h3>Self-check</h3>
   <p>Answer first, then open.</p>
@@ -187,4 +203,16 @@ body.present .guide{display:none}
       <details><summary>Answer</summary><div>No. 400 km is small compared with Earth's 6400 km radius, so gravity there is still about 90% of its surface value. The astronauts float because they and the station are in free fall together, both moving in the same orbit, so nothing pushes on them.</div></details></li>
   </ol>
 </div>
+</div>
+<p class="gnext"><a href="#review">Practice questions ↓</a></p>
+<script>
+(function(){
+  var tabs=[].slice.call(document.querySelectorAll('.gtabs .tab'));
+  function show(t){tabs.forEach(function(b){var on=b===t;b.setAttribute('aria-selected',on?'true':'false');b.tabIndex=on?0:-1;document.getElementById(b.getAttribute('aria-controls')).hidden=!on;});}
+  tabs.forEach(function(b,i){
+    b.addEventListener('click',function(){show(b);});
+    b.addEventListener('keydown',function(e){var k=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(k){var n=tabs[(i+k+tabs.length)%tabs.length];show(n);n.focus();e.preventDefault();}});
+  });
+})();
+</script>
 </section>
