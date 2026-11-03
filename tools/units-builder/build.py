@@ -101,6 +101,7 @@ PAGE = """<!doctype html>
     <div class="simbar"><h2>Practice questions</h2><a id="ropen" class="mono" href="#" target="_blank" rel="noopener">Open in a new tab ↗</a></div>
     <div class="rframe" id="rframe"><div class="loading">Loading questions…</div></div>
   </section>
+  {guide}
   <p class="credits">{credits}</p>
 </div>
 <script>
@@ -218,6 +219,10 @@ def practice_url(uid, u):
     if uid.startswith(('P1-', 'P2-')): return REVIEW + '?unit=' + uid
     if u.get('review'): return HOMEWORK + '?a=' + u['review']
     return ''
+def guide_html(u):
+    """Optional study guide below the practice questions: units.py 'guide' names an HTML fragment under tools/units-builder/ (e.g. 'guides/P1-05.html')."""
+    g = u.get('guide')
+    return open(os.path.join(D, g), encoding='utf-8').read().strip() if g else ''
 COMING = """<!doctype html>
 <html lang="en">
 <head>
@@ -239,6 +244,7 @@ COMING = """<!doctype html>
   </header>
   <section class="soon"><h2>Sims for this unit are on the way.</h2><p>{note}</p></section>
   {review}
+  {guide}
 </div>
 </body>
 </html>
@@ -250,7 +256,7 @@ def build(uid):
         css = open(os.path.join(D, 'shell.css'), encoding='utf-8').read()
         out = COMING.format(uid=uid, title=html.escape(u['title']), num=u['num'], course=u['course'], fonts=FONTS, css=css,
                             note=u.get('note', 'Check back soon. The practice questions for this unit are below.' if uid.startswith('P1-') else 'Check back soon.'),
-                            review=('<section class="review"><div class="simbar"><h2>Practice questions</h2><a class="mono" href="%s" target="_blank" rel="noopener">Open in a new tab ↗</a></div><div class="rframe"><iframe title="Practice questions" src="%s"></iframe></div></section>' % (practice_url(uid, u), practice_url(uid, u))) if (uid.startswith('P1-') or u.get('review')) else '')
+                            guide=guide_html(u), review=('<section class="review"><div class="simbar"><h2>Practice questions</h2><a class="mono" href="%s" target="_blank" rel="noopener">Open in a new tab ↗</a></div><div class="rframe"><iframe title="Practice questions" src="%s"></iframe></div></section>' % (practice_url(uid, u), practice_url(uid, u))) if (uid.startswith('P1-') or u.get('review')) else '')
         os.makedirs(os.path.join(D, 'out'), exist_ok=True)
         open(os.path.join(D, 'out', uid + '.html'), 'w', encoding='utf-8').write(out); print(uid, 'coming soon'); return
     used = []
@@ -263,7 +269,7 @@ def build(uid):
     credits = ' '.join(SIMS[k]['credit'] for k in used if SIMS[k].get('credit'))
     pr = uid in PRESENT_UNITS
     out = PAGE.format(uid=uid, title=html.escape(u['title']), num=u['num'], course=u['course'], fonts=FONTS, css=css,
-                      unit_json=js_str(unit), sims_js=sims_js, credits=credits or 'Original simulations.',
+                      unit_json=js_str(unit), sims_js=sims_js, credits=credits or 'Original simulations.', guide=guide_html(u),
                       present_css=PRESENT_CSS if pr else '', present_btns=PRESENT_BTNS if pr else '', present_js=PRESENT_JS if pr else '')
     os.makedirs(os.path.join(D, 'out'), exist_ok=True)
     p = os.path.join(D, 'out', uid + '.html'); open(p, 'w', encoding='utf-8').write(out)

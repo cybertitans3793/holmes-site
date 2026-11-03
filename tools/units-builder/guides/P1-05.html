@@ -1,0 +1,100 @@
+<section class="guide" id="guide" aria-label="Study guide">
+<style>
+.guide{margin-top:28px}
+.guide .gtip{margin:0 0 14px;font-size:16px;max-width:900px}
+.guide .ggrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-bottom:22px}
+.guide .gcard{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcard h3{margin:0 0 10px;font-size:20px;letter-spacing:-.01em}
+.guide .gcard ul{margin:0;padding-left:20px}
+.guide .gcard li{margin:0 0 7px}
+.guide .ib{display:inline-block;font-family:var(--f-mono);font-size:11px;font-weight:700;border:2px solid var(--ink);padding:0 5px;margin-left:4px;vertical-align:1px;background:var(--soft)}
+.guide table{border-collapse:collapse;width:100%;font-size:15px}
+.guide td{border-top:2px solid var(--ink);padding:6px 4px;vertical-align:top}
+.guide td:first-child{font-family:var(--f-mono);font-weight:700;white-space:nowrap;padding-right:12px}
+.guide .gcheck{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcheck h3{margin:0 0 4px;font-size:20px}
+.guide .gcheck>p{margin:0 0 12px;color:var(--muted)}
+.guide ol.q{margin:0;padding-left:26px}
+.guide ol.q>li{margin:0 0 14px}
+.guide details{margin-top:6px}
+.guide summary{cursor:pointer;display:inline-block;font-weight:700;border:2px solid var(--ink);padding:2px 10px;background:#fff;list-style:none}
+.guide summary::-webkit-details-marker{display:none}
+.guide summary:hover{background:var(--soft)}
+.guide details[open] summary{background:var(--ink);color:#fff}
+.guide details>div{border-left:4px solid var(--hot);padding:8px 12px;margin-top:8px;background:#fff}
+body.present .guide{display:none}
+@media (max-width:520px){.guide td:first-child{white-space:normal}.guide .ggrid{grid-template-columns:1fr}}
+</style>
+<div class="simbar"><h2>Study guide</h2><span class="mono">Unit 5 · Circular Motion and Gravity</span></div>
+<p class="gtip"><b>How to use this:</b> try each self-check question on paper <i>before</i> you open the answer. Mark the ones you miss and come back to them in a day or two without looking. Rereading this page won't do much; answering the questions will.</p>
+
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Key ideas</h3>
+    <ul>
+      <li>Moving in a circle at constant speed is still <b>accelerating</b>: the direction of the velocity keeps changing. The acceleration points toward the center, a<sub>c</sub> = v²/r.</li>
+      <li>A real force (or several) must point toward the center: tension, friction, a normal force, gravity. <b>“Centripetal force” is the name for the net inward force</b>, not an extra force.</li>
+      <li>Write Newton's 2nd law along the radius: (forces toward the center) − (forces away from the center) = mv²/r.</li>
+      <li><b>Vertical circles:</b> at the top, gravity points toward the center and helps; at the bottom it points away, so whatever holds the object up has to push or pull harder.</li>
+      <li>Any two masses attract: F<sub>g</sub> = Gm₁m₂/r², with r measured <b>center to center</b>. Twice the distance gives ¼ the force.</li>
+      <li><b>Gravitational field strength</b> g = F<sub>g</sub>/m = GM/r²: the force on each kilogram placed at that point (N/kg, the same as m/s²). <span class="ib">IB</span></li>
+      <li>In a circular orbit, gravity <i>is</i> the centripetal force: GMm/r² = mv²/r. Solve that for whatever the question asks.</li>
+      <li><b>Kepler:</b> orbits are ellipses with the Sun at one focus; a planet sweeps equal areas in equal times (fastest when closest); T² ∝ r³ for everything orbiting the same central body.</li>
+      <li>Astronauts in orbit still feel gravity. They float because they and their spacecraft are falling together.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Equations</h3>
+    <table>
+      <tr><td>v = 2πr/T</td><td>speed from the period (T in seconds)</td></tr>
+      <tr><td>f = 1/T</td><td>revolutions per second ↔ period</td></tr>
+      <tr><td>ω = 2π/T, v = ωr</td><td>angular speed <span class="ib">IB</span></td></tr>
+      <tr><td>a<sub>c</sub> = v²/r = 4π²r/T² = ω²r</td><td>centripetal acceleration</td></tr>
+      <tr><td>ΣF<sub>toward center</sub> = mv²/r</td><td>Newton's 2nd law for circles</td></tr>
+      <tr><td>F<sub>g</sub> = Gm₁m₂/r²</td><td>universal gravitation</td></tr>
+      <tr><td>g = GM/r²</td><td>field strength at distance r</td></tr>
+      <tr><td>T² ∝ r³</td><td>Kepler's 3rd law (same central mass)</td></tr>
+      <tr><td>G</td><td>6.67 × 10⁻¹¹ N·m²/kg²</td></tr>
+    </table>
+  </div>
+  <div class="gcard">
+    <h3>Common mistakes</h3>
+    <ul>
+      <li>Drawing a “centripetal force” or “centrifugal force” arrow on a free-body diagram. Only draw real forces.</li>
+      <li>Saying a released object flies <i>outward</i>. It moves off along the tangent, in a straight line.</li>
+      <li>Using the height above the surface as r. Gravity's r is measured from the planet's center.</li>
+      <li>Forgetting to square: 3× the distance gives <sup>1</sup>/<sub>9</sub> the force, not ⅓.</li>
+      <li>At the top of a loop, drawing the normal force upward. On the inside of a loop the track pushes toward the center, which is down.</li>
+      <li>Thinking gravity is zero in orbit.</li>
+      <li>Plugging in rpm or revolutions per second as if it were a speed. Find T in seconds first.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="gcheck">
+  <h3>Self-check</h3>
+  <p>Answer first, then open.</p>
+  <ol class="q">
+    <li>A puck on a string slides in a circle on frictionless ice. The string snaps when the puck is moving due north. Describe the puck's path afterward.
+      <details><summary>Answer</summary><div>A straight line due north at constant speed. Once the string breaks there is no net horizontal force, so nothing changes the velocity. It does not fly outward.</div></details></li>
+    <li>A car turns left on a flat road at constant speed. Which force on the car points toward the center of the turn? On an icy day the car takes the same turn too fast. What happens, and why?
+      <details><summary>Answer</summary><div>Static friction from the road on the tires. On ice the most friction the road can supply is less than mv²/r, so the car can't curve that sharply: it follows a wider, straighter path than the road. Nothing pushes it outward; it just isn't pulled in enough.</div></details></li>
+    <li>A washing-machine drum of radius 0.25 m spins at 10 revolutions per second. Find the centripetal acceleration of a sock stuck to the wall. Which force provides it?
+      <details><summary>Answer</summary><div>T = 1/10 = 0.10 s. v = 2πr/T = 2π(0.25)/0.10 ≈ 15.7 m/s. a<sub>c</sub> = v²/r ≈ 990 m/s², about 100 times g. The drum wall's normal force pushes the sock toward the center.</div></details></li>
+    <li>You swing a bucket of water in a vertical circle of radius 0.80 m. What is the slowest speed at the top that keeps the water in the bucket?
+      <details><summary>Answer</summary><div>At the slowest speed the bucket pushes on the water with zero force, so gravity alone provides the centripetal force: mg = mv²/r, so v = √(gr) = √(10 × 0.80) ≈ 2.8 m/s. Any slower and the water needs less inward force than gravity supplies, so it falls out of its circle.</div></details></li>
+    <li>Earth pulls on the Moon with a gravitational force F. How hard does the Moon pull on Earth? Why is it the Moon that does most of the moving?
+      <details><summary>Answer</summary><div>Exactly F (Newton's 3rd law). Earth's mass is about 81 times the Moon's, so the same force gives Earth about <sup>1</sup>/<sub>81</sub> of the Moon's acceleration.</div></details></li>
+    <li>Satellite A is 2 Earth radii from Earth's center; satellite B is 6 Earth radii from the center. How does the gravitational field strength at B compare with that at A?
+      <details><summary>Answer</summary><div>g ∝ 1/r². B is 3 times as far from the center, so its field strength is (⅓)² = <sup>1</sup>/<sub>9</sub> of A's.</div></details></li>
+    <li><span class="ib">IB</span> Sketch the gravitational field lines around Earth as a whole, then just above your classroom floor. What do the direction and spacing of the lines tell you?
+      <details><summary>Answer</summary><div>Around Earth: lines point radially inward toward the center and spread apart with distance (the field gets weaker). Near the floor: parallel, evenly spaced lines pointing straight down (a uniform field). Closer lines mean a stronger field; the arrows show the direction of the force on a mass.</div></details></li>
+    <li>Mars orbits the Sun at about 1.5 times Earth's orbital radius. Estimate the length of a Martian year.
+      <details><summary>Answer</summary><div>T² ∝ r³, so T<sub>Mars</sub>/T<sub>Earth</sub> = 1.5<sup>3/2</sup> ≈ 1.8. A Martian year is about 1.8 Earth years (the real value is 1.88).</div></details></li>
+    <li>A comet moves on a long, thin ellipse around the Sun. Where in its orbit is it moving fastest, and which law tells you?
+      <details><summary>Answer</summary><div>Closest to the Sun. Kepler's 2nd law: the line from the Sun sweeps equal areas in equal times, so where that line is short the comet must cover more distance in the same time.</div></details></li>
+    <li>Astronauts on the space station, about 400 km up, float around the cabin. Is gravity zero up there? Explain why they float.
+      <details><summary>Answer</summary><div>No. 400 km is small compared with Earth's 6400 km radius, so gravity there is still about 90% of its surface value. The astronauts float because they and the station are in free fall together, both moving in the same orbit, so nothing pushes on them.</div></details></li>
+  </ol>
+</div>
+</section>

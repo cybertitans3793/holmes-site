@@ -295,7 +295,7 @@ UNITS = {
         '<b>From a height.</b> Launch at 15 m/s, 30° from a 20 m cliff. Find the time, range and impact speed. Is 45° still the best angle here?',
         '<b>Hit the target.</b> A target is 30 m away and 5 m up. Find the launch speed needed at 45°, then find an angle that needs less.']},
 ]},
-'P1-05': {'course': 'AP Physics 1 / IB', 'num': '05', 'title': 'Circular Motion and Gravity', 'tabs': [
+'P1-05': {'course': 'AP Physics 1 / IB', 'num': '05', 'title': 'Circular Motion and Gravity', 'guide': 'guides/P1-05.html', 'tabs': [
     {'code': '', 'name': 'Car on a Curve', 'sim': 'curve', 'tasks': [
         '<b>Predict, then check.</b> If the car’s speed doubles, by what factor does the friction force it needs change? Write your prediction, then read the ×2 line under the graph. Justify it with a<sub>c</sub> = v²/r.',
         '<b>Claim.</b> A student says a heavier car is more likely to skid because it needs more force to turn. Use steps 3–5 to explain why the fastest safe speed does not depend on mass.',
