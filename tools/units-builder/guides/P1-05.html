@@ -4,16 +4,28 @@
 .guide .gtip{margin:0 0 14px;font-size:16px;max-width:900px}
 .guide .ggrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-bottom:22px}
 .guide .gcard{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
-.guide .gcard h3{margin:0 0 10px;font-size:20px;letter-spacing:-.01em}
+.guide .gcard h3,.guide .gcheck h3,.guide .gsteps h3{margin:0 0 10px;font-size:20px;letter-spacing:-.01em}
 .guide .gcard ul{margin:0;padding-left:20px}
 .guide .gcard li{margin:0 0 7px}
 .guide .ib{display:inline-block;font-family:var(--f-mono);font-size:11px;font-weight:700;border:2px solid var(--ink);padding:0 5px;margin-left:4px;vertical-align:1px;background:var(--soft)}
 .guide table{border-collapse:collapse;width:100%;font-size:15px}
 .guide td{border-top:2px solid var(--ink);padding:6px 4px;vertical-align:top}
 .guide td:first-child{font-family:var(--f-mono);font-weight:700;white-space:nowrap;padding-right:12px}
+.guide .gsteps{background:var(--soft);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px;margin-bottom:22px}
+.guide .gsteps ol{margin:0;padding-left:24px;columns:2 360px;column-gap:28px}
+.guide .gsteps li{margin:0 0 8px;break-inside:avoid}
+.guide h3.ghead{font-size:22px;margin:0 0 12px}
+.guide .gex{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:18px;margin-bottom:22px}
+.guide .ex{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .ex h4{margin:0 0 6px;font-size:18px}
+.guide .ex .kind{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--hot);text-transform:uppercase;letter-spacing:.04em}
+.guide .ex p{margin:0 0 8px}
+.guide .work{font-family:var(--f-mono);font-size:14px;line-height:1.6;border-left:4px solid var(--hot);background:#fff;padding:6px 12px;margin:8px 0}
+.guide .work b{font-family:var(--f-display)}
+.guide .ex .take{margin:8px 0 0;font-weight:500}
+.guide .ex svg{float:right;margin:0 0 6px 12px}
 .guide .gcheck{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
-.guide .gcheck h3{margin:0 0 4px;font-size:20px}
-.guide .gcheck>p{margin:0 0 12px;color:var(--muted)}
+.guide .gcheck>p{margin:-4px 0 12px;color:var(--muted)}
 .guide ol.q{margin:0;padding-left:26px}
 .guide ol.q>li{margin:0 0 14px}
 .guide details{margin-top:6px}
@@ -23,23 +35,25 @@
 .guide details[open] summary{background:var(--ink);color:#fff}
 .guide details>div{border-left:4px solid var(--hot);padding:8px 12px;margin-top:8px;background:#fff}
 body.present .guide{display:none}
-@media (max-width:520px){.guide td:first-child{white-space:normal}.guide .ggrid{grid-template-columns:1fr}}
+@media (max-width:520px){.guide td:first-child{white-space:normal}.guide .ggrid,.guide .gex{grid-template-columns:1fr}.guide .ex svg{float:none;display:block;margin:0 auto 8px}}
 </style>
 <div class="simbar"><h2>Study guide</h2><span class="mono">Unit 5 · Circular Motion and Gravity</span></div>
-<p class="gtip"><b>How to use this:</b> try each self-check question on paper <i>before</i> you open the answer. Mark the ones you miss and come back to them in a day or two without looking. Rereading this page won't do much; answering the questions will.</p>
+<p class="gtip"><b>How to use this:</b> read the key ideas, then cover each worked example and try it yourself before reading the solution. Do the self-check questions on paper <i>before</i> you open the answers, mark the ones you miss, and come back to them in a day or two without looking. Rereading won't do much; answering questions will.</p>
 
 <div class="ggrid">
   <div class="gcard">
     <h3>Key ideas</h3>
     <ul>
-      <li>Moving in a circle at constant speed is still <b>accelerating</b>: the direction of the velocity keeps changing. The acceleration points toward the center, a<sub>c</sub> = v²/r.</li>
+      <li>Moving in a circle at constant speed is still <b>accelerating</b>: the velocity's direction keeps changing. The acceleration points toward the center, a<sub>c</sub> = v²/r.</li>
       <li>A real force (or several) must point toward the center: tension, friction, a normal force, gravity. <b>“Centripetal force” is the name for the net inward force</b>, not an extra force.</li>
-      <li>Write Newton's 2nd law along the radius: (forces toward the center) − (forces away from the center) = mv²/r.</li>
+      <li><b>Speeding up or slowing down on a circle</b> (like a ball on a string in a vertical circle) adds a tangential acceleration along the path. The total acceleration is the vector sum of the tangential and centripetal parts.</li>
       <li><b>Vertical circles:</b> at the top, gravity points toward the center and helps; at the bottom it points away, so whatever holds the object up has to push or pull harder.</li>
-      <li>Any two masses attract: F<sub>g</sub> = Gm₁m₂/r², with r measured <b>center to center</b>. Twice the distance gives ¼ the force.</li>
-      <li><b>Gravitational field strength</b> g = F<sub>g</sub>/m = GM/r²: the force on each kilogram placed at that point (N/kg, the same as m/s²). <span class="ib">IB</span></li>
+      <li><b>Apparent weight</b> is what a scale or seat pushes on you (the normal force). It changes around a loop or over a hill; your true weight mg doesn't.</li>
+      <li>Any two masses attract: F<sub>g</sub> = Gm₁m₂/r², with r measured <b>center to center</b>. A sphere or planet acts like a point mass at its center for anything outside it. <span class="ib">IB</span></li>
+      <li><b>Gravitational field strength</b> g = F<sub>g</sub>/m = GM/r²: the force on each kilogram placed at that point (N/kg, the same as m/s²). Fields from two masses add as vectors.</li>
       <li>In a circular orbit, gravity <i>is</i> the centripetal force: GMm/r² = mv²/r. Solve that for whatever the question asks.</li>
       <li><b>Kepler:</b> orbits are ellipses with the Sun at one focus; a planet sweeps equal areas in equal times (fastest when closest); T² ∝ r³ for everything orbiting the same central body.</li>
+      <li>The mass that resists acceleration (inertial mass) and the mass that gravity pulls on (gravitational mass) are the same, which is why everything falls with the same g.</li>
       <li>Astronauts in orbit still feel gravity. They float because they and their spacecraft are falling together.</li>
     </ul>
   </div>
@@ -64,10 +78,86 @@ body.present .guide{display:none}
       <li>Saying a released object flies <i>outward</i>. It moves off along the tangent, in a straight line.</li>
       <li>Using the height above the surface as r. Gravity's r is measured from the planet's center.</li>
       <li>Forgetting to square: 3× the distance gives <sup>1</sup>/<sub>9</sub> the force, not ⅓.</li>
-      <li>At the top of a loop, drawing the normal force upward. On the inside of a loop the track pushes toward the center, which is down.</li>
-      <li>Thinking gravity is zero in orbit.</li>
       <li>Plugging in rpm or revolutions per second as if it were a speed. Find T in seconds first.</li>
     </ul>
+  </div>
+</div>
+
+<div class="gsteps">
+  <h3>How to solve a circular motion problem</h3>
+  <ol>
+    <li><b>Find the circle.</b> Where is its center, and what is r?</li>
+    <li><b>Draw a free-body diagram</b> with real forces only. No “centripetal force” arrow.</li>
+    <li><b>Call “toward the center” positive.</b> Forces pointing away from the center are negative.</li>
+    <li><b>Write Newton's 2nd law along the radius:</b> ΣF<sub>toward center</sub> = mv²/r. Add a second equation for any direction with no acceleration (often vertical: ΣF = 0).</li>
+    <li><b>Substitute the force rules</b> (mg, μN, Gm₁m₂/r²) and solve, in symbols first.</li>
+    <li><b>Check it makes sense.</b> Do the units work? Does the answer change the right way if v or r gets bigger?</li>
+  </ol>
+</div>
+
+<h3 class="ghead">Worked examples</h3>
+<div class="gex">
+  <div class="ex">
+    <div class="kind">Vertical circle</div>
+    <svg width="132" height="150" viewBox="0 0 132 150" aria-label="Free-body diagrams at the top and bottom of the circle">
+      <circle cx="66" cy="75" r="50" fill="none" stroke="#111" stroke-width="1.5" stroke-dasharray="4 4"/>
+      <circle cx="66" cy="25" r="6" fill="#111"/><circle cx="66" cy="125" r="6" fill="#111"/>
+      <line x1="66" y1="31" x2="66" y2="57" stroke="#ff6a2b" stroke-width="3"/><polygon points="61,55 71,55 66,63" fill="#ff6a2b"/>
+      <line x1="72" y1="28" x2="72" y2="48" stroke="#111" stroke-width="3"/><polygon points="67,46 77,46 72,54" fill="#111"/>
+      <text x="40" y="54" font-size="11" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">T</text><text x="78" y="50" font-size="11" font-family="IBM Plex Mono,monospace">mg</text>
+      <line x1="60" y1="119" x2="60" y2="91" stroke="#ff6a2b" stroke-width="3"/><polygon points="55,93 65,93 60,85" fill="#ff6a2b"/>
+      <line x1="72" y1="131" x2="72" y2="145" stroke="#111" stroke-width="3"/><polygon points="67,143 77,143 72,150" fill="#111"/>
+      <text x="40" y="102" font-size="11" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">T</text><text x="80" y="146" font-size="11" font-family="IBM Plex Mono,monospace">mg</text>
+    </svg>
+    <h4>Ball on a string: tension at the top and bottom</h4>
+    <p>A 0.50 kg ball on a string swings in a vertical circle of radius 0.80 m. It moves at 4.0 m/s at the top and again at the bottom. Find the tension at each point.</p>
+    <div class="work">
+      Needed inward force: mv²/r = (0.50)(4.0)²/0.80 = 10 N<br>
+      <b>Top</b> (center is <i>down</i>): T + mg = mv²/r<br>
+      &nbsp;&nbsp;T = 10 − (0.50)(10) = <b>5 N</b><br>
+      <b>Bottom</b> (center is <i>up</i>): T − mg = mv²/r<br>
+      &nbsp;&nbsp;T = 10 + 5 = <b>15 N</b>
+    </div>
+    <p class="take">At the top, gravity supplies part of the inward force, so the string pulls less. At the bottom, the string has to hold the ball up <i>and</i> pull it toward the center. At the same speed, the difference is always 2mg.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Flat curve with friction</div>
+    <h4>What coefficient of friction does the car need?</h4>
+    <p>A 1200 kg car rounds a flat, unbanked curve of radius 50 m at 15 m/s. What is the smallest coefficient of static friction that keeps it from sliding?</p>
+    <div class="work">
+      Vertical: N − mg = 0, so N = mg<br>
+      Toward the center: friction is the only inward force<br>
+      &nbsp;&nbsp;f<sub>s</sub> = mv²/r, and f<sub>s</sub> ≤ μ<sub>s</sub>N = μ<sub>s</sub>mg<br>
+      Smallest μ<sub>s</sub>: μ<sub>s</sub>mg = mv²/r → μ<sub>s</sub> = v²/(gr)<br>
+      &nbsp;&nbsp;μ<sub>s</sub> = (15)²/(10 × 50) = <b>0.45</b>
+    </div>
+    <p class="take">The mass cancels, so a truck needs the same μ<sub>s</sub> at the same speed and radius. Doubling the speed would need four times the friction coefficient.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Gravity by ratios</div>
+    <h4>Surface gravity on another planet</h4>
+    <p>A planet has 3 times Earth's mass and 2 times Earth's radius. What is the gravitational field strength at its surface? (Earth: g = 10 N/kg.)</p>
+    <div class="work">
+      g = GM/r², so g ∝ M/r²<br>
+      g<sub>planet</sub> = g<sub>Earth</sub> × (3)/(2)²<br>
+      &nbsp;&nbsp;= 10 × 3/4 = <b>7.5 N/kg</b>
+    </div>
+    <p class="take">No need to look up G or Earth's mass: “shrink” Earth into the new planet. Multiply by the mass factor, divide by the radius factor <i>squared</i>.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Orbit</div>
+    <h4>A satellite's speed and period</h4>
+    <p>A satellite orbits Earth in a circle with radius r = 1.28 × 10⁷ m (twice Earth's radius). Earth's mass is 6.0 × 10²⁴ kg. Find the satellite's speed and period.</p>
+    <div class="work">
+      Gravity is the centripetal force: GMm/r² = mv²/r<br>
+      v = √(GM/r) = √[(6.67×10⁻¹¹)(6.0×10²⁴)/(1.28×10⁷)]<br>
+      &nbsp;&nbsp;= <b>5.6 × 10³ m/s</b><br>
+      T = 2πr/v = 2π(1.28×10⁷)/(5.6×10³) = 1.4 × 10⁴ s ≈ <b>4.0 hours</b>
+    </div>
+    <p class="take">The satellite's mass m cancels. Only Earth's mass and the orbit radius matter, and a bigger orbit means a slower speed and a longer period.</p>
   </div>
 </div>
 
@@ -82,7 +172,7 @@ body.present .guide{display:none}
     <li>A washing-machine drum of radius 0.25 m spins at 10 revolutions per second. Find the centripetal acceleration of a sock stuck to the wall. Which force provides it?
       <details><summary>Answer</summary><div>T = 1/10 = 0.10 s. v = 2πr/T = 2π(0.25)/0.10 ≈ 15.7 m/s. a<sub>c</sub> = v²/r ≈ 990 m/s², about 100 times g. The drum wall's normal force pushes the sock toward the center.</div></details></li>
     <li>You swing a bucket of water in a vertical circle of radius 0.80 m. What is the slowest speed at the top that keeps the water in the bucket?
-      <details><summary>Answer</summary><div>At the slowest speed the bucket pushes on the water with zero force, so gravity alone provides the centripetal force: mg = mv²/r, so v = √(gr) = √(10 × 0.80) ≈ 2.8 m/s. Any slower and the water needs less inward force than gravity supplies, so it falls out of its circle.</div></details></li>
+      <details><summary>Answer</summary><div>At the slowest speed the bucket pushes on the water with zero force, so gravity alone provides the centripetal force: mg = mv²/r, so v = √(gr) = √(10 × 0.80) ≈ 2.8 m/s. Any slower and gravity pulls the water into a tighter curve than the bucket follows, so it falls out.</div></details></li>
     <li>Earth pulls on the Moon with a gravitational force F. How hard does the Moon pull on Earth? Why is it the Moon that does most of the moving?
       <details><summary>Answer</summary><div>Exactly F (Newton's 3rd law). Earth's mass is about 81 times the Moon's, so the same force gives Earth about <sup>1</sup>/<sub>81</sub> of the Moon's acceleration.</div></details></li>
     <li>Satellite A is 2 Earth radii from Earth's center; satellite B is 6 Earth radii from the center. How does the gravitational field strength at B compare with that at A?
