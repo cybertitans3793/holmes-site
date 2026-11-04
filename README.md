@@ -18,6 +18,8 @@ python3 build.py            # all unit pages -> out/   (or: python3 build.py P1-
 python3 home.py ../../units/HOME.html
 cp out/*.html ../../units/
 ```
+Before pushing, run `python3 check.py` (in `tools/units-builder`): it rebuilds everything and fails if any page in `units/` doesn't match its source. GitHub runs the same check on every push; a red ✗ next to a commit means a page is out of step.
+
 Students see a change about 10 minutes after it is pushed (the web app's cache). Add `&refresh=1` to a link to see it at once.
 
 ## Not allowed here
