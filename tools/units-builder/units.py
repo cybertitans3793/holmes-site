@@ -123,6 +123,7 @@ SIMS = {
     'rub': {'file': 'units/sims/circ-rub.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Charging by Rubbing &amp; Polarization is original.'},
     'ab-magfield': {'file': 'units/sims/circ-ab-magfield.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Magnets &amp; Domains is original.'},
     'bill': {'file': 'units/sims/circ-bill.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Electric Power &amp; the Electric Bill is original.'},
+    'phetBB': {'file': 'units/sims/phet-blackbody.html', 'kind': 'plain', 'ar': '16 / 10', 'credit': 'Blackbody Spectrum: ' + PHET},
     'phetMod': {'file': 'units/sims/phet-modern.html', 'kind': 'plain', 'ar': '16 / 10', 'credit': 'Models of the Hydrogen Atom, Build a Nucleus, Alpha Decay, Beta Decay and Photoelectric Effect: ' + PHET},
     'ab-meet': {'file': 'units/sims/circ-ab-meet.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'ab-chase': {'file': 'units/sims/circ-ab-chase.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
@@ -784,6 +785,13 @@ UNITS.update({
     {'code': '', 'name': 'Power', 'sim': 'power', 'tasks': ['A motor lifts a load. Find the work done and the power.', 'Run up the stairs: measure your own power in watts! Use your mass, the height and your time.', '<b>Same job, different time:</b> lifter 2 carries twice the mass in twice the time. Who does more work? Who has more power?', 'Give both lifters the same box. Make lifter 1 take half the time. Compare work and power now.', '<b>P = Fv:</b> a boat engine pushes with 4000 N at a steady 12 m/s. Find the power in watts and horsepower. What happens to the power if it goes twice as fast?']},
     {'code': '', 'name': 'PhET Energy', 'sim': 'phetE', 'tasks': ['<b>Energy Skate Park: Basics:</b> watch the pie chart. When is all the energy kinetic? All potential?', 'Add friction. Where does the energy go?']},
     {'code': '', 'name': 'Star Life Cycle', 'sim': 'star', 'tasks': ['Follow the Sun through its life. At each stage, which is winning: gravity pulling in or pressure pushing out?', 'Where does a star’s energy come from? Watch the core during the main sequence.', 'Compare a small star with a very big star. Which one lives longer? Is that what you expected?', 'Which stars end as white dwarfs, and which explode as supernovas?']},
+    {'code': '', 'name': 'PhET Blackbody Spectrum', 'sim': 'phetBB', 'tasks': [
+        'Press the Sun preset (about 5800 K). Read the wavelength at the peak. What colour of light is that?',
+        'Turn on Graph Values. Record the peak wavelength at 3000, 4000, 5000, 6000 and 8000 K. As the temperature goes up, which way does the peak move?',
+        'Multiply each peak wavelength by its temperature. What do you notice?',
+        'What happens to the height of the curve (how much light the star gives off) when it gets hotter?',
+        'Use your data to explain why cool stars look red and hot stars look blue-white. Where are they on the HR diagram?',
+        'Press the Earth preset. Earth glows too. Why can’t we see it with our eyes?']},
     {'code': '', 'name': 'The HR Diagram', 'sim': 'ab-stars', 'tasks': ['Place the Sun on the diagram. Then find Betelgeuse and Sirius B.', 'Why can a cool star be very bright? Use its size.', 'Which main-sequence stars live longest: big or small? Why?']},
     {'code': '', 'name': 'Big Bang Evidence', 'sim': 'abbang', 'tasks': [
         '<b>Expanding & cooling:</b> slide from the Big Bang to today. Write down the temperature, the kind of light and what the universe is made of at 3 minutes, 380,000 years and today.',
