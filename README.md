@@ -3,12 +3,13 @@
 Source for the sims pages on Mr. Holmes's class Google Site (https://sites.google.com/fcps.org/holmes/home). No student data lives here.
 
 ## Layout
-- `units/` — the built pages students see: one per unit (`P1-09.html`, `P2-01.html`, `AB-03.html` …) plus `HOME.html`. **Generated. Never edit these by hand.**
+- `units/` — the built pages students see: one per unit (`P1-09.html`, `P2-01.html`, `AB-03.html` …) plus `HOME.html` and the two Exam Skills pages `EXAM-AP.html`, `EXAM-IB.html`. **Generated. Never edit these by hand.**
 - `tools/units-builder/` — everything the pages are built from:
   - `sims/` — every sim, one self-contained HTML file each
   - `guides/` — study-guide sections (e.g. `P1-05.html`)
   - `units.py` — which sims go on which unit page, tab names, lesson codes, "Try this" tasks, reviews, guides
   - `build.py` (unit pages), `home.py` (homepage), `shell.css` (Big Type look)
+  - `exam.py` + `exam/` (Exam Skills pages: exam format, task verbs and command terms, IA guide). The practice sets on those pages stay in the Review app
 - `apps-script/holmes-sims/Code.gs` — the "Holmes Sims" web app. It fetches `units/<UNIT>.html` from this repo (Drive folder as backup) and serves it at `…/exec?unit=P1-09`.
 
 ## Build
@@ -16,6 +17,7 @@ Source for the sims pages on Mr. Holmes's class Google Site (https://sites.googl
 cd tools/units-builder
 python3 build.py            # all unit pages -> out/   (or: python3 build.py P1-05 AB-03)
 python3 home.py ../../units/HOME.html
+python3 exam.py            # EXAM-AP and EXAM-IB -> out/
 cp out/*.html ../../units/
 ```
 Before pushing, run `python3 check.py` (in `tools/units-builder`): it rebuilds everything and fails if any page in `units/` doesn't match its source. GitHub runs the same check on every push; a red ✗ next to a commit means a page is out of step.

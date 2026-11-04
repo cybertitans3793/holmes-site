@@ -2,7 +2,7 @@
 """Check that every page in units/ is exactly what the builder makes from the current source.
 Run before pushing:  python3 check.py      (exit code 1 if anything is out of step)
 GitHub runs this on every push (.github/workflows/check-pages.yml).
-Fix a failure by rebuilding:  python3 build.py && python3 home.py ../../units/HOME.html && cp out/*.html ../../units/
+Fix a failure by rebuilding:  python3 build.py && python3 home.py ../../units/HOME.html && python3 exam.py && cp out/*.html ../../units/
 """
 import contextlib, io, os, subprocess, sys
 
@@ -13,6 +13,7 @@ from units import UNITS, SIMS
 import build
 
 problems = []
+EXAM_PAGES = ['EXAM-AP', 'EXAM-IB']
 
 # 1. every sim file named in units.py exists
 for k, s in SIMS.items():
@@ -39,10 +40,19 @@ if not problems:
     subprocess.run([sys.executable, os.path.join(D, 'home.py'), home_tmp], check=True, stdout=subprocess.DEVNULL)
     if open(home_tmp, encoding='utf-8').read() != open(os.path.join(UNITS_DIR, 'HOME.html'), encoding='utf-8').read():
         problems.append('units/HOME.html does not match its source (rebuild it)')
+    # Exam Skills pages (exam.py)
+    exam_tmp = os.path.join(D, 'out', 'exam-check')
+    subprocess.run([sys.executable, os.path.join(D, 'exam.py'), exam_tmp], check=True, stdout=subprocess.DEVNULL)
+    for name in EXAM_PAGES:
+        live_path = os.path.join(UNITS_DIR, name + '.html')
+        if not os.path.exists(live_path):
+            problems.append('units/%s.html is missing (run exam.py)' % name)
+        elif open(os.path.join(exam_tmp, name + '.html'), encoding='utf-8').read() != open(live_path, encoding='utf-8').read():
+            problems.append('units/%s.html does not match its source (rebuild it with exam.py)' % name)
 
 # 4. pages in units/ that nothing builds
 for f in sorted(os.listdir(UNITS_DIR)):
-    if f.endswith('.html') and f[:-5] not in UNITS and f != 'HOME.html':
+    if f.endswith('.html') and f[:-5] not in UNITS and f[:-5] not in EXAM_PAGES and f != 'HOME.html':
         problems.append('units/%s is not built from units.py (stray page)' % f)
 
 if unused:
@@ -51,4 +61,4 @@ if problems:
     print('PAGES OUT OF STEP WITH SOURCE:')
     for p in problems: print('  - ' + p)
     sys.exit(1)
-print('All %d unit pages and HOME match their source.' % len(UNITS))
+print('All %d unit pages, HOME and the %d Exam Skills pages match their source.' % (len(UNITS), len(EXAM_PAGES)))

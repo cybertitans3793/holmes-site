@@ -3,7 +3,7 @@
 One chat, the **Site chat**, owns this repo's shared files and the Google Sites editor. Other chats (sims, review, homework, course chats) contribute their own files and hand off.
 
 ## Owned by the Site chat only
-- `tools/units-builder/units.py`, `build.py`, `home.py`, `shell.css`
+- `tools/units-builder/units.py`, `build.py`, `home.py`, `exam.py` and `exam/`, `shell.css`
 - everything in `units/` (built output)
 - `apps-script/holmes-sims/Code.gs`
 - the Google Sites editor: pages, menus, embeds, publishing

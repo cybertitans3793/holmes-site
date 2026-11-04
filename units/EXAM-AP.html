@@ -1,0 +1,76 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>AP exam skills</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&family=IBM+Plex+Sans:wght@400;600;700&display=swap">
+<style>
+:root{--paper:#f7f6f3;--ink:#111;--white:#fff;--orange:#ff6a2b;--peach:#fde1d6;--muted:#5e5a55;--line:#d9d5ce;--ok:#1f7a3d;--okbg:#dff2e4;--bad:#b3261e;--badbg:#fbe3e1;
+--display:"Space Grotesk","Helvetica Neue",Arial,sans-serif;--mono:"Space Mono",ui-monospace,Menlo,monospace;--body:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;display:flex;flex-direction:column}
+header{padding:18px 28px 0;background:var(--paper)}
+.kick{font-family:var(--mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--display);font-size:clamp(2rem,5vw,3.2rem);line-height:1;letter-spacing:-.03em;margin:.15em 0 .3em}
+nav{display:flex;flex-wrap:wrap;gap:8px;padding:6px 0 14px;border-bottom:2px solid var(--ink)}
+nav button{font-family:var(--display);font-weight:500;font-size:.98rem;border:2px solid var(--ink);background:var(--white);color:var(--ink);padding:7px 14px;cursor:pointer;box-shadow:3px 3px 0 var(--ink)}
+nav button small{font-family:var(--mono);font-size:.7rem;color:var(--muted);margin-left:6px}
+nav button[aria-selected=true]{background:var(--ink);color:var(--white);box-shadow:3px 3px 0 var(--orange)}
+nav button[aria-selected=true] small{color:#cfcac2}
+nav button:focus-visible,nav a:focus-visible,a.tile:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+nav a.navlink{font-family:var(--display);font-weight:500;font-size:.98rem;border:2px dashed var(--ink);background:var(--paper);color:var(--ink);padding:7px 14px;text-decoration:none}
+nav a.navlink:hover{background:var(--white);border-style:solid}
+a.tile{text-decoration:none}
+button.tile{display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start}
+main{flex:1;min-height:0;position:relative}
+.panel{position:absolute;inset:0;overflow:auto;padding:22px 28px 60px;display:none}
+.panel.on{display:block}
+.panel.frame{padding:0;overflow:hidden}
+.panel.frame iframe{border:0;width:100%;height:100%;display:block;background:var(--paper)}
+.wrap{max-width:860px}
+h2{font-family:var(--display);font-size:1.6rem;letter-spacing:-.02em;margin:0 0 .4em}
+h3{font-family:var(--display);font-size:1.2rem;margin:1.4em 0 .4em}
+.wrap>h3:first-child,.card>h3:first-child{margin-top:0}
+.tbl{overflow-x:auto}
+.card{background:var(--white);border:2px solid var(--ink);box-shadow:5px 5px 0 var(--ink);padding:20px 22px;margin:0 0 22px}
+table{border-collapse:collapse;width:100%;margin:8px 0;background:var(--white)}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{font-family:var(--mono);font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;background:#efede8}
+td:first-child b{font-family:var(--display)}
+ul{padding-left:22px}li{margin:6px 0}
+.muted{color:var(--muted);font-size:.9rem}
+.note{border-left:4px solid var(--orange);background:var(--peach);padding:10px 14px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:10px}
+.tile{display:block;text-align:left;font:inherit;background:var(--white);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:14px 16px;cursor:pointer;color:inherit}
+.tile .k{font-family:var(--mono);font-size:.72rem;color:var(--muted);letter-spacing:.06em}
+.tile b{display:block;font-family:var(--display);font-size:1.1rem;margin:4px 0}
+.tile:hover{box-shadow:4px 4px 0 var(--orange)}
+.ck{list-style:none;padding:0}.ck li{margin:8px 0}.ck input{margin-right:8px;transform:scale(1.15)}
+.bad,.good{border:2px solid;padding:12px 14px;margin:10px 0}.bad{border-color:var(--bad);background:var(--badbg)}.good{border-color:var(--ok);background:var(--okbg)}
+.bad h4,.good h4{margin:0 0 4px;font-family:var(--display)}
+.rq{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:10px}
+.rq label{display:grid;gap:4px;font-size:.92rem;color:var(--muted)}
+.rq input,textarea{font:inherit;color:var(--ink);padding:8px 10px;border:2px solid var(--ink);background:var(--white);width:100%}
+textarea{font-family:var(--mono);font-size:.9rem;min-height:9em}
+.out{margin-top:12px;font-size:1.05rem}
+canvas{width:100%;max-width:680px;height:auto;margin-top:12px;background:#fff;border:2px solid var(--ink)}
+@media (max-width:600px){header{padding:14px 16px 0}.panel{padding:16px 16px 50px}}
+</style></head><body>
+<header><div class="kick">Exam skills · AP Physics 1 and 2</div><h1>AP exam skills</h1><nav role="tablist"><button role="tab" data-t="0" aria-selected="true">The exam</button><button role="tab" data-t="1" aria-selected="false">Task verbs</button><a class="navlink" href="https://sites.google.com/fcps.org/holmes/exam-skills/ap-multiple-choice" target="_blank" rel="noopener">Multiple-choice practice <span aria-hidden="true">↗</span></a><a class="navlink" href="https://sites.google.com/fcps.org/holmes/exam-skills/ap-free-response" target="_blank" rel="noopener">Free-response practice <span aria-hidden="true">↗</span></a></nav></header>
+<main><section class="panel on" data-p="0"><div class="wrap"><div class="card"><h3>The AP Physics exam</h3><p>AP Physics 1 and AP Physics 2 use the same format (May 2027). You can use a calculator and the equation sheet in both sections.</p>
+<div class="tbl"><table><tr><th>Section</th><th>What</th><th>Time</th><th>Score</th></tr>
+<tr><td>I. Multiple choice</td><td>42 questions, answered in Bluebook</td><td>85 min</td><td>50 %</td></tr>
+<tr><td>II. Free response</td><td>4 questions, handwritten in a booklet</td><td>95 min</td><td>50 %</td></tr></table></div>
+<h3>The four free-response types (one of each)</h3><ul>
+<li><b>MR, Mathematical routines:</b> derive relationships and calculate values, then make and justify a claim about the scenario.</li>
+<li><b>TBR, Translation between representations:</b> draw a representation of the scenario, derive equations and draw graphs for it, then show they agree or use them to make a prediction.</li>
+<li><b>LAB, Experimental design and analysis:</b> design a procedure, then plot and analyze data to answer a question.</li>
+<li><b>QQT, Qualitative/quantitative translation:</b> make and justify a claim, derive an equation, then connect the two.</li></ul>
+<p class="muted">Tip: the task verb tells you what earns the points. Check the <b>Task verbs</b> tab before you start the free-response practice.</p></div><h3>Practice</h3><div class="tiles"><a class="tile" href="https://sites.google.com/fcps.org/holmes/exam-skills/ap-multiple-choice" target="_blank" rel="noopener"><span class="k">MULTIPLE CHOICE ↗</span><b>Task verbs and question types</b>Tell the verbs apart and recognise each free-response type.</a><a class="tile" href="https://sites.google.com/fcps.org/holmes/exam-skills/ap-free-response" target="_blank" rel="noopener"><span class="k">WRITTEN, SELF-MARKED ↗</span><b>Free-response practice</b>One task of each type. Write your answer, then mark it against the scoring points.</a></div></div></section><section class="panel" data-p="1"><div class="wrap"><div class="card"><h3>Task verbs</h3><p>These are the verbs College Board uses in free-response questions. The verb tells you what earns the points.</p><div class="tbl"><table><tr><th>Verb</th><th>What it asks for</th></tr><tr><td><b>Calculate</b></td><td>Work through the math to a final answer: the equation, numbers substituted correctly, and the answer with units and sensible significant figures.</td></tr><tr><td><b>Compare</b></td><td>Describe or explain how two (or more) things are similar and/or different.</td></tr><tr><td><b>Derive</b></td><td>Start from a fundamental law or relationship and carry out the math steps to the final answer.</td></tr><tr><td><b>Describe</b></td><td>Give the relevant characteristics of the thing asked about.</td></tr><tr><td><b>Determine</b></td><td>Reach a decision or conclusion by reasoning, observation, or calculation.</td></tr><tr><td><b>Draw</b></td><td>Make a diagram or schematic that shows relationships or physical objects, or that is consistent with another representation. Labels may or may not be needed.</td></tr><tr><td><b>Estimate</b></td><td>Roughly work out a value, a comparison (greater than, equal to, less than), or a sign (+ or −) from data or experimental evidence. Steps do not have to be shown.</td></tr><tr><td><b>Indicate</b></td><td>Give the information asked for, with no elaboration or explanation.</td></tr><tr><td><b>Justify</b></td><td>Give reasoning in words, beyond equations or derivations, that supports, qualifies, or defends a claim.</td></tr><tr><td><b>Label</b></td><td>Add labels for units, scale, and/or parts of a diagram, graph, or model.</td></tr><tr><td><b>Plot</b></td><td>Put data points on a graph using the given scale (or a scale you choose and mark, with units), consistent with the other representations.</td></tr><tr><td><b>Rank</b></td><td>Put quantities in order, usually by size.</td></tr><tr><td><b>Sketch</b></td><td>Make a graph, diagram, or model that shows a relationship or behavior, consistent with the other representations. Labels may or may not be needed.</td></tr><tr><td><b>Verify</b></td><td>Show that the conditions of a definition, law, or test are met, so it applies here; or use data, observations, or experiments to confirm or support a hypothesis.</td></tr></table></div><p class="muted">Source: AP Physics 2 Course and Exam Description (College Board, 2024), “Task Verbs Used in Free-Response Questions”, p. 194, and Exam Information, pp. 189–193.</p>
+</div></div></section></main>
+<script>
+const tabs=[...document.querySelectorAll('nav button')], panels=[...document.querySelectorAll('.panel')];
+function show(i){ tabs.forEach((b,k)=>b.setAttribute('aria-selected',k==i)); panels.forEach((p,k)=>p.classList.toggle('on',k==i));
+  try{ localStorage.setItem('xs-tab-'+document.title, i); }catch(e){} }
+tabs.forEach((b,i)=>b.onclick=()=>show(i));
+document.addEventListener('click',e=>{ const g=e.target.closest('[data-go]'); if(g) show(+g.dataset.go); });
+let start=0; try{ start=+localStorage.getItem('xs-tab-'+document.title)||0; }catch(e){}
+if(start>0 && start<tabs.length) show(start);
+
+</script></body></html>
