@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<!--
+  Star Life Cycle — fusion, forces and size. An original simulation (single self-contained file, no network).
+  Five starting masses, each followed through its life stages:
+    - true-scale size view with the Sun, the Earth and planetary orbits for comparison
+    - cutaway of the interior (not to scale) showing which fusion runs in the core and shells, with inward gravity
+      vs outward pressure arrows (balanced, contracting, expanding, collapsing, exploding)
+    - animated fusion reactions (p-p chain, CNO cycle, triple-alpha, carbon, neon, oxygen, silicon burning)
+      with the core temperature and density compared to each fuel's ignition point
+    - H-R diagram with lines of constant radius and the star's track.
+  Stage values are representative textbook figures, rounded. Main-sequence values follow L = M^3.5, R = M^0.8
+  and t = 10^10 yr x M^-2.5 so they match the relations students use; R always follows from L = 4 pi R^2 sigma T^4.
+-->
+<html lang="en"><head><meta charset="utf-8">
+<title>Star Life Cycle</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#0b0f19;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:#1d2733}
+#app{position:absolute;left:0;top:0;width:1100px;height:650px;transform-origin:0 0;display:flex;background:#fff}
+#cv{width:800px;height:650px;display:block;touch-action:none}
+#panel{width:300px;height:650px;box-sizing:border-box;padding:9px 11px;border-left:1px solid #d5dde6;overflow-y:auto;font-size:12.5px;line-height:1.35;background:#fbfcfd}
+h1{font-size:15px;margin:0 0 7px}
+.lbl{font-weight:700;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:#5b6b7c;margin:7px 0 3px}
+.masses{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px}
+.masses button{padding:4px 2px;font-size:11.5px;line-height:1.15;border:1px solid #c3cdd8;background:#f2f5f8;border-radius:5px;cursor:pointer;color:#1d2733}
+.masses button b{display:block;font-size:13px}
+.masses button.on{background:#2f6fd0;color:#fff;border-color:#2f6fd0}
+.row{display:flex;gap:4px;align-items:center}
+.row button{padding:5px 7px;font-size:12.5px;border:1px solid #c3cdd8;background:#f2f5f8;border-radius:5px;cursor:pointer;color:#1d2733}
+#play{flex:1;font-weight:600}
+select{font-size:12px;padding:3px;border-radius:5px;border:1px solid #c3cdd8}
+#stages{margin:0;padding:0;list-style:none;border:1px solid #d5dde6;border-radius:6px;overflow:hidden}
+#stages li{display:flex;justify-content:space-between;gap:6px;padding:2px 7px;cursor:pointer;border-top:1px solid #edf1f5;font-size:12px}
+#stages li:first-child{border-top:0}
+#stages li .d{color:#6a7886;white-space:nowrap;font-size:11.5px}
+#stages li.cur{background:#e5efff;font-weight:600}
+#stages li.fut{color:#8a96a3;font-style:italic}
+table{width:100%;border-collapse:collapse;font-size:12px}
+td{padding:1.5px 2px;vertical-align:top}td.v{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+label{display:block;cursor:pointer;margin:1px 0}
+.checks{display:flex;gap:9px;margin-top:5px;font-size:12px}.checks label{margin:0}
+.foot{color:#6a7886;font-size:11px;margin-top:6px}
+</style><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@500;700&display=swap"><style id="holmes-embed">
+html,body{background:#fff!important}
+#app{box-shadow:none!important}
+#panel{font-family:"Space Grotesk",system-ui,sans-serif!important;background:#fff!important;border-left:3px solid #111!important}
+#panel button{border:2px solid #111!important;border-radius:0!important;background:#fff!important;color:#111!important;font-family:"Space Grotesk",system-ui,sans-serif!important}
+#panel button:hover{background:#ffe2d3!important}
+#panel button.on{background:#111!important;color:#fff!important}
+#panel .box,#panel #stages{border:2px solid #111!important;border-radius:0!important}
+#panel select{border:2px solid #111!important;border-radius:0!important}
+#panel input[type=range],#panel input[type=checkbox]{accent-color:#111}
+</style></head>
+<body>
+<div id="app">
+<canvas id="cv" width="800" height="650" aria-label="Star life cycle simulation"></canvas>
+<div id="panel">
+  <h1>Star Life Cycle</h1>
+  <div class="lbl" style="margin-top:0">Starting mass</div>
+  <div class="masses" id="masses"></div>
+  <div class="lbl">Time</div>
+  <div class="row"><button id="prev" title="Previous stage">&#9664;&#9664;</button><button id="play">&#9654; Play</button><button id="next" title="Next stage">&#9654;&#9654;</button>
+    <select id="speed"><option value="0.5">&frac12;&times;</option><option value="1" selected>1&times;</option><option value="2">2&times;</option></select></div>
+  <div class="checks"><label><input type="checkbox" id="lock"> Lock zoom</label><label><input type="checkbox" id="orbits" checked> Orbits</label><label><input type="checkbox" id="forces" checked> Forces</label></div>
+  <div class="lbl">Life stages <span style="font-weight:400;text-transform:none;letter-spacing:0">(click to jump)</span></div>
+  <ul id="stages"></ul>
+  <div class="lbl">Right now</div>
+  <table id="read"></table>
+  <div class="foot">M&#8857;, L&#8857;, R&#8857; = the Sun's mass, luminosity and radius. Values are rounded, representative figures.</div>
+</div>
+</div>
+<script>
+(function () {
+'use strict';
+var CW = 800, CH = 650;
+var cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+var RSUN_KM = 695700, AU = 215.03; // R_sun per AU
+var YR = 1;
+
+/* ---------------- star data ---------------- */
+function msZ(M) { var L = Math.pow(M, 3.5), R = Math.pow(M, 0.8); return [L, 5778 * Math.pow(L / (R * R), 0.25)]; }
+function wdPts(R, Ts) { return Ts.map(function (T) { return [R * R * Math.pow(T / 5778, 4), T]; }); }
+var Y = 1, KY = 1e3, MY = 1e6, GY = 1e9, DAY = 1 / 365.25, SEC = 1 / 3.156e7;
+// layer = [outer radius fraction, material, burning label or '', label]
+var ENV = function (t) { return [1, 'H', '', t || 'Envelope: hydrogen & helium']; };
+function MASSIVE(M, o) {
+  var z = msZ(M), Ls = o.Lsg;
+  return [
+    { n: 'Protostar', dur: o.pre, pts: [[z[0] * 1.3, 4000], [z[0], 9000], z], m: [M, M], Tc: [1e6, o.tc0 * 0.9], rho: [1e-2, o.rc0], f: 'contract', pr: 'gas', prl: 'Gas pressure (heat from contraction)',
+      lay: [ENV('Hydrogen & helium gas, contracting and heating up')], rx: null, why: 'No fusion yet: the core is still below about 10 million K. The heat comes from gravitational contraction.' },
+    { n: 'Main sequence', dur: 1e10 * Math.pow(M, -2.5), pts: [z, [z[0] * 1.5, z[1] * 0.92], [z[0] * 2.1, z[1] * 0.82]], m: [M, M * 0.97], Tc: [o.tc0, o.tc0 * 1.15], rho: [o.rc0, o.rc0 * 1.6], f: 'bal', pr: 'gas',
+      lay: [[0.32, 'H', 'H → He', 'Core: hydrogen → helium (CNO cycle)'], ENV()], rx: 'cno', where: 'core', cno: [0.98, 0.99] },
+    { n: 'Becomes a red supergiant', dur: o.cross, pts: [[z[0] * 2.1, z[1] * 0.82], [Ls * 0.8, 8000], [Ls, 3900]], m: [M * 0.97, M * 0.95], Tc: [o.tc0 * 1.15, 1.7e8], rho: [o.rc0 * 1.6, 1e3], f: 'expand', pr: 'gas',
+      lay: [[0.16, 'He', '', 'Helium core: no fusion, shrinking & heating'], [0.24, 'H', 'H → He', 'Hydrogen-burning shell'], ENV('Envelope swelling hugely')], rx: 'cno', where: 'shell', cno: [0.99, 0.995] },
+    { n: 'Helium burning', dur: o.he, pts: [[Ls, 3900], [Ls * 1.35, 3750]], m: [M * 0.95, M * 0.85], Tc: [1.8e8, 2.5e8], rho: [1e3, 3e3], f: 'bal', pr: 'gas',
+      lay: [[0.16, 'He', 'He → C, O', 'Core: helium → carbon, oxygen'], [0.24, 'H', 'H → He', 'Hydrogen shell'], ENV('Red supergiant envelope')], rx: '3a', where: 'core' },
+    { n: 'Carbon burning', dur: o.c, pts: [[Ls * 1.35, 3750], [Ls * 1.5, 3650]], m: [M * 0.85, M * 0.8], Tc: [8e8, 1e9], rho: [2e5, 3e5], f: 'bal', pr: 'gas',
+      lay: [[0.16, 'CO', 'C → Ne, Mg', 'Core: carbon → neon, magnesium'], [0.24, 'He', 'He → C', 'Helium shell'], [0.32, 'H', 'H → He', 'Hydrogen shell'], ENV('Envelope')], rx: 'C', where: 'core' },
+    { n: 'Neon burning', dur: 1 * Y, pts: [[Ls * 1.5, 3650], [Ls * 1.52, 3640]], m: [M * 0.8, M * 0.8], Tc: [1.5e9, 1.7e9], rho: [4e6, 5e6], f: 'bal', pr: 'gas',
+      lay: [[0.15, 'Ne', 'Ne → O, Mg', 'Core: neon → oxygen, magnesium'], [0.22, 'CO', 'C → Ne', 'Carbon shell'], [0.29, 'He', 'He → C', 'Helium shell'], [0.36, 'H', 'H → He', 'Hydrogen shell'], ENV('Envelope')], rx: 'Ne', where: 'core' },
+    { n: 'Oxygen burning', dur: 0.5 * Y, pts: [[Ls * 1.52, 3640], [Ls * 1.55, 3630]], m: [M * 0.8, M * 0.8], Tc: [2e9, 2.3e9], rho: [1e7, 1.5e7], f: 'bal', pr: 'gas',
+      lay: [[0.14, 'O', 'O → Si, S', 'Core: oxygen → silicon, sulfur'], [0.21, 'Ne', 'Ne → O', 'Neon shell'], [0.28, 'CO', 'C → Ne', 'Carbon shell'], [0.35, 'He', 'He → C', 'Helium shell'], [0.42, 'H', 'H → He', 'Hydrogen shell'], ENV('Envelope')], rx: 'O', where: 'core' },
+    { n: 'Silicon burning', dur: 1 * DAY, pts: [[Ls * 1.55, 3630], [Ls * 1.56, 3625]], m: [M * 0.8, M * 0.8], Tc: [3.5e9, 4e9], rho: [3e7, 5e7], f: 'bal', pr: 'gas',
+      lay: [[0.13, 'Si', 'Si → Fe, Ni', 'Core: silicon → iron, nickel'], [0.2, 'O', 'O → Si', 'Oxygen shell'], [0.27, 'Ne', 'Ne → O', 'Neon shell'], [0.34, 'CO', 'C → Ne', 'Carbon shell'], [0.41, 'He', 'He → C', 'Helium shell'], [0.48, 'H', 'H → He', 'Hydrogen shell'], ENV('Envelope')], rx: 'Si', where: 'core' },
+    { n: 'Iron core collapses', dur: 0.3 * SEC, pts: [[Ls * 1.56, 3625], [Ls * 1.56, 3625]], m: [M * 0.8, M * 0.8], Tc: [5e9, 1e11], rho: [1e9, 4e14], f: 'collapse', pr: 'gas', prl: 'Pressure (fails: iron can\'t release fusion energy)',
+      lay: [[0.13, 'Fe', '', 'Iron core: no energy from fusion, collapsing'], [0.2, 'Si', 'Si → Fe', 'Silicon shell'], [0.27, 'O', '', 'Oxygen shell'], [0.34, 'Ne', '', 'Neon shell'], [0.41, 'CO', '', 'Carbon shell'], [0.48, 'He', '', 'Helium shell'], ENV('Envelope (doesn\'t know yet)')], rx: 'Fe', where: 'core' },
+    { n: 'Supernova', dur: 0.5 * Y, pts: [[Ls * 1.56, 3625], [o.snL, 15000], [o.snL / 20, 6000]], m: [M * 0.8, o.rem], Tc: [1e11, 1e10], rho: [4e14, 4e14], f: 'explode', pr: 'gas', prl: 'Rebound shock + neutrino pressure', kind: 'sn',
+      lay: [], rx: 'SN', where: 'core' },
+    o.bh ? { n: 'Black hole', dur: 1e10, pts: null, m: [o.rem, o.rem], Tc: [0, 0], rho: [0, 0], f: 'bh', pr: 'none', prl: 'Nothing can hold it up', kind: 'bh', lay: [], rx: null,
+      why: 'No fusion and no pressure strong enough: the core collapsed into a black hole. Even light can\'t escape from inside the event horizon.' }
+         : { n: 'Neutron star', dur: 1e10, pts: null, m: [o.rem, o.rem], Tc: [1e9, 1e8], rho: [4e14, 4e14], f: 'bal', pr: 'ndeg', kind: 'ns', lay: [[1, 'n', '', 'Neutrons packed as tightly as an atomic nucleus']], rx: null,
+      why: 'No fusion. A neutron star is held up by neutron degeneracy pressure, not by fusion.' }
+  ];
+}
+var STARS = [
+  { key: '0.3', M: 0.3, title: '0.3 M☉', sub: 'red dwarf', stages: [
+    { n: 'Protostar', dur: 2e8, pts: [[0.3, 3100], [0.05, 3250], msZ(0.3)], m: [0.3, 0.3], Tc: [5e5, 6e6], rho: [0.05, 80], f: 'contract', pr: 'gas', prl: 'Gas pressure (heat from contraction)',
+      lay: [ENV('Hydrogen & helium gas, contracting and heating up')], rx: null, why: 'No fusion yet: the core is still below about 10 million K. The heat comes from gravitational contraction.' },
+    { n: 'Main sequence', dur: 1e10 * Math.pow(0.3, -2.5), pts: [msZ(0.3), [0.022, 3400], [0.035, 3550]], m: [0.3, 0.3], Tc: [7e6, 9e6], rho: [90, 130], f: 'bal', pr: 'gas',
+      lay: [[0.35, 'H', 'H → He', 'Core: hydrogen → helium (p-p chain)'], ENV('Whole star churns (convection), so it uses almost all its hydrogen')], rx: 'pp', where: 'core', cno: [0.0005, 0.001] },
+    { n: 'Blue dwarf', fut: true, dur: 5e9, pts: [[0.035, 3550], [0.15, 6000], [0.3, 7500]], m: [0.3, 0.3], Tc: [9e6, 1.4e7], rho: [130, 1e3], f: 'bal', pr: 'gas',
+      lay: [[0.5, 'He', 'H → He', 'Mostly helium now; last hydrogen fusing'], ENV('Thin hydrogen layer')], rx: 'pp', where: 'core', cno: [0.005, 0.02] },
+    { n: 'Helium white dwarf', fut: true, dur: 1e10, pts: wdPts(0.016, [7500, 6000, 5000, 4000]), m: [0.3, 0.3], Tc: [1e7, 3e6], rho: [1e5, 1e5], f: 'bal', pr: 'edeg', kind: 'wd',
+      lay: [[1, 'He', '', 'Helium, no fusion']], rx: null, why: 'No fusion: it is too small to ever get hot enough to fuse helium. It just cools.' }
+  ] },
+  { key: '1', M: 1, title: '1 M☉', sub: 'like the Sun', stages: [
+    { n: 'Protostar', dur: 5e7, pts: [[30, 3600], [3, 4000], [1.2, 4400], msZ(1)], m: [1, 1], Tc: [1e6, 1e7], rho: [0.01, 80], f: 'contract', pr: 'gas', prl: 'Gas pressure (heat from contraction)',
+      lay: [ENV('Hydrogen & helium gas, contracting and heating up')], rx: null, why: 'No fusion yet: the core is still below about 10 million K. The heat comes from gravitational contraction.' },
+    { n: 'Main sequence', dur: 1e10, pts: [msZ(1), [1.2, 5772], [1.8, 5800]], m: [1, 1], Tc: [1.4e7, 1.9e7], rho: [80, 150], f: 'bal', pr: 'gas', today: 0.46,
+      lay: [[0.3, 'H', 'H → He', 'Core: hydrogen → helium (p-p chain)'], ENV()], rx: 'pp', where: 'core', cno: [0.008, 0.05] },
+    { n: 'Subgiant', dur: 7e8, pts: [[1.8, 5800], [2.4, 5000]], m: [1, 1], Tc: [1.9e7, 3e7], rho: [150, 1e4], f: 'expand', pr: 'gas',
+      lay: [[0.14, 'He', '', 'Helium core: no fusion, shrinking'], [0.2, 'H', 'H → He', 'Hydrogen-burning shell'], ENV('Envelope starting to swell')], rx: 'pp', where: 'shell', cno: [0.1, 0.7] },
+    { n: 'Red giant', dur: 5e8, pts: [[2.4, 5000], [10, 4600], [100, 4100], [2000, 3200]], m: [1, 0.8], Tc: [3e7, 1e8], rho: [1e4, 1e6], f: 'expand', pr: 'gas',
+      lay: [[0.14, 'He', '', 'Helium core: no fusion, shrinking & heating'], [0.2, 'H', 'H → He', 'Hydrogen-burning shell'], ENV('Envelope swells to ~100× the Sun')], rx: 'pp', where: 'shell', cno: [0.8, 0.95] },
+    { n: 'Helium flash, helium burning', dur: 1e8, pts: [[2000, 3200], [60, 4800], [55, 4700]], m: [0.8, 0.75], Tc: [1e8, 1.2e8], rho: [1e4, 1e4], f: 'bal', pr: 'gas',
+      lay: [[0.14, 'He', 'He → C, O', 'Core: helium → carbon, oxygen'], [0.2, 'H', 'H → He', 'Hydrogen shell'], ENV('Envelope (smaller again)')], rx: '3a', where: 'core' },
+    { n: 'Asymptotic giant', dur: 2e7, pts: [[55, 4700], [1000, 3400], [5000, 3000]], m: [0.75, 0.6], Tc: [1.2e8, 2e8], rho: [1e4, 1e6], f: 'expand', pr: 'gas',
+      lay: [[0.12, 'CO', '', 'Carbon-oxygen core: no fusion'], [0.18, 'He', 'He → C, O', 'Helium-burning shell'], [0.24, 'H', 'H → He', 'Hydrogen-burning shell'], ENV('Huge, cool envelope')], rx: '3a', where: 'shell' },
+    { n: 'Planetary nebula', dur: 3e4, pts: [[5000, 3000], [5000, 30000], [13, 100000]], m: [0.6, 0.55], Tc: [2e8, 1.5e8], rho: [1e6, 1e6], f: 'eject', pr: 'gas', prl: 'Outer layers pushed off', kind: 'pn',
+      lay: [[0.35, 'CO', '', 'Exposed hot carbon-oxygen core'], [1, 'gas', '', 'Outer layers drifting away (glowing nebula)']], rx: null, why: 'Fusion has stopped. The outer layers drift off and glow, lit by the hot core left behind.' },
+    { n: 'White dwarf', dur: 1e10, pts: wdPts(0.012, [100000, 30000, 12000, 6000, 4000]), m: [0.55, 0.55], Tc: [1e8, 5e6], rho: [1e6, 1e6], f: 'bal', pr: 'edeg', kind: 'wd',
+      lay: [[1, 'CO', '', 'Carbon & oxygen, no fusion (about Earth-sized)']], rx: null, why: 'No fusion. A white dwarf is held up by electron degeneracy pressure, not by fusion. It slowly cools.' }
+  ] },
+  { key: '4', M: 4, title: '4 M☉', sub: 'blue-white', stages: [
+    { n: 'Protostar', dur: 1e6, pts: [[400, 4300], [200, 6500], msZ(4)], m: [4, 4], Tc: [1e6, 2e7], rho: [0.01, 20], f: 'contract', pr: 'gas', prl: 'Gas pressure (heat from contraction)',
+      lay: [ENV('Hydrogen & helium gas, contracting and heating up')], rx: null, why: 'No fusion yet: the core is still below about 10 million K. The heat comes from gravitational contraction.' },
+    { n: 'Main sequence', dur: 1e10 * Math.pow(4, -2.5), pts: [msZ(4), [200, 10500], [260, 9300]], m: [4, 4], Tc: [2.4e7, 3e7], rho: [20, 40], f: 'bal', pr: 'gas',
+      lay: [[0.3, 'H', 'H → He', 'Core: hydrogen → helium (CNO cycle)'], ENV()], rx: 'cno', where: 'core', cno: [0.93, 0.96] },
+    { n: 'Red giant', dur: 4e6, pts: [[260, 9300], [230, 6000], [350, 4300], [1000, 3900]], m: [4, 3.95], Tc: [3e7, 1e8], rho: [40, 1e3], f: 'expand', pr: 'gas',
+      lay: [[0.14, 'He', '', 'Helium core: no fusion, shrinking & heating'], [0.2, 'H', 'H → He', 'Hydrogen-burning shell'], ENV('Envelope swelling')], rx: 'cno', where: 'shell', cno: [0.97, 0.99] },
+    { n: 'Helium burning', dur: 5e7, pts: [[1000, 3900], [600, 5000], [700, 6800], [800, 4600]], m: [3.95, 3.8], Tc: [1.2e8, 2e8], rho: [1e3, 1e4], f: 'bal', pr: 'gas',
+      lay: [[0.14, 'He', 'He → C, O', 'Core: helium → carbon, oxygen'], [0.2, 'H', 'H → He', 'Hydrogen shell'], ENV()], rx: '3a', where: 'core' },
+    { n: 'Asymptotic giant', dur: 3e6, pts: [[800, 4600], [5000, 3500], [2e4, 3100]], m: [3.8, 1.2], Tc: [2e8, 3e8], rho: [1e4, 1e6], f: 'expand', pr: 'gas',
+      lay: [[0.12, 'CO', '', 'Carbon-oxygen core: no fusion'], [0.18, 'He', 'He → C, O', 'Helium-burning shell'], [0.24, 'H', 'H → He', 'Hydrogen-burning shell'], ENV('Huge, cool envelope, blowing away')], rx: '3a', where: 'shell' },
+    { n: 'Planetary nebula', dur: 3e4, pts: [[2e4, 3100], [2e4, 40000], [21, 130000]], m: [1.2, 0.85], Tc: [3e8, 2e8], rho: [1e6, 2e6], f: 'eject', pr: 'gas', prl: 'Outer layers pushed off', kind: 'pn',
+      lay: [[0.35, 'CO', '', 'Exposed hot carbon-oxygen core'], [1, 'gas', '', 'Outer layers drifting away (glowing nebula)']], rx: null, why: 'Fusion has stopped. The outer layers drift off and glow, lit by the hot core left behind.' },
+    { n: 'White dwarf', dur: 1e10, pts: wdPts(0.009, [130000, 30000, 12000, 6000, 4000]), m: [0.85, 0.85], Tc: [2e8, 5e6], rho: [2e6, 2e6], f: 'bal', pr: 'edeg', kind: 'wd',
+      lay: [[1, 'CO', '', 'Carbon & oxygen, no fusion (smaller than Earth)']], rx: null, why: 'No fusion. A white dwarf is held up by electron degeneracy pressure, not by fusion. It slowly cools.' }
+  ] },
+  { key: '15', M: 15, title: '15 M☉', sub: 'massive', stages: MASSIVE(15, { pre: 1e5, cross: 3e4, he: 1.2e6, c: 1e3, tc0: 3.4e7, rc0: 6, Lsg: 5e4, snL: 1e9, rem: 1.4, bh: false }) },
+  { key: '30', M: 30, title: '30 M☉', sub: 'very massive', stages: MASSIVE(30, { pre: 3e4, cross: 1e4, he: 3e5, c: 3e2, tc0: 3.8e7, rc0: 3, Lsg: 3e5, snL: 2e9, rem: 10, bh: true }) }
+];
+var NS_R = 12 / RSUN_KM, NS_T = 1e6;
+
+/* ---------------- state ---------------- */
+var star = STARS[1], si = 0, sp = 0, playing = false, speed = 1, pxPerR = null;
+function cur() { return star.stages[si]; }
+function ageAt(i, p) { var a = 0; for (var k = 0; k < i; k++) a += star.stages[k].dur; return a + p * star.stages[i].dur; }
+function interp(pts, p) {
+  if (!pts) return null;
+  var n = pts.length - 1, x = Math.min(n - 1e-9, p * n), i = Math.floor(x), f = x - i;
+  var a = pts[i], b = pts[i + 1];
+  return [Math.pow(10, Math.log10(a[0]) * (1 - f) + Math.log10(b[0]) * f), Math.pow(10, Math.log10(a[1]) * (1 - f) + Math.log10(b[1]) * f)];
+}
+function lerpLog(a, b, p) { if (a <= 0 || b <= 0) return a + (b - a) * p; return Math.pow(10, Math.log10(a) * (1 - p) + Math.log10(b) * p); }
+function props() {
+  var s = cur(), o = { kind: s.kind || 'star', M: s.m[0] + (s.m[1] - s.m[0]) * sp, Tc: lerpLog(s.Tc[0], s.Tc[1], sp), rho: lerpLog(s.rho[0], s.rho[1], sp) };
+  if (s.kind === 'ns') { o.T = NS_T * Math.pow(0.4, sp); o.R = NS_R; o.L = o.R * o.R * Math.pow(o.T / 5778, 4); }
+  else if (s.kind === 'bh') { o.R = 2.95 * o.M / RSUN_KM; o.L = 0; o.T = 0; }
+  else { var lt = interp(s.pts, sp); o.L = lt[0]; o.T = lt[1]; o.R = Math.sqrt(o.L) / Math.pow(o.T / 5778, 2); }
+  return o;
+}
+
+/* ---------------- formatting ---------------- */
+function sig(x, n) { if (x === 0) return '0'; var d = Math.floor(Math.log10(Math.abs(x))); var v = Math.round(x / Math.pow(10, d - n + 1)) * Math.pow(10, d - n + 1); return d >= n - 1 ? Math.round(v).toLocaleString('en-US') : v.toFixed(Math.max(0, n - 1 - d)); }
+function sci(x, n) {
+  if (x === 0) return '0';
+  var e = Math.floor(Math.log10(x)); if (e >= -2 && e <= 4) return sig(x, n || 2);
+  var m = x / Math.pow(10, e); var ms = m.toFixed((n || 2) - 1); if (ms === '10' || ms === '10.0') { e++; ms = (1).toFixed((n || 2) - 1); }
+  return ms + ' × 10' + sup(e);
+}
+function sup(e) { var M = { '-': '⁻', '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹' }; return String(e).split('').map(function (c) { return M[c]; }).join(''); }
+function fmtT(y) {
+  if (y >= 1e9) return sig(y / 1e9, 2) + ' billion years';
+  if (y >= 1e6) return sig(y / 1e6, 2) + ' million years';
+  if (y >= 1e4) return sig(y / 1e3, 2) + ' thousand years';
+  if (y >= 1.5) return sig(y, 2) + ' years';
+  if (y >= 60 * DAY) return sig(y * 12, 2) + ' months';
+  if (y >= 1.5 * DAY) return sig(y / DAY, 2) + ' days';
+  if (y >= 1 * DAY) return 'about a day';
+  if (y >= 3600 * SEC) return sig(y / (3600 * SEC), 2) + ' hours';
+  return 'under a second';
+}
+function fmtK(T) { return T >= 1e9 ? sig(T / 1e9, 2) + ' billion K' : T >= 1e6 ? sig(T / 1e6, 2) + ' million K' : sig(T, 2) + ' K'; }
+function fmtR(R) {
+  var km = R * RSUN_KM;
+  if (R >= 0.1) return sig(R, 2) + ' R☉' + (R > 50 ? ' (' + sig(R / AU, 2) + ' AU)' : '');
+  return sig(km, 2) + ' km (' + sci(R, 2) + ' R☉)';
+}
+
+/* ---------------- colors ---------------- */
+function bbColor(T) { // approximate blackbody color
+  var t = Math.max(1000, Math.min(40000, T)) / 100, r, g, b;
+  if (t <= 66) { r = 255; g = 99.47 * Math.log(t) - 161.12; b = t <= 19 ? 0 : 138.52 * Math.log(t - 10) - 305.04; }
+  else { r = 329.7 * Math.pow(t - 60, -0.1332); g = 288.12 * Math.pow(t - 60, -0.0755); b = 255; }
+  var c = function (v) { return Math.max(0, Math.min(255, Math.round(v))); };
+  return [c(r), c(g), c(b)];
+}
+function rgb(a, k) { k = k == null ? 1 : k; return 'rgb(' + Math.round(a[0] * k) + ',' + Math.round(a[1] * k) + ',' + Math.round(a[2] * k) + ')'; }
+var MAT = { H: '#f3b54a', He: '#7fb7e0', CO: '#9b8f8a', Ne: '#79c38a', O: '#e07f86', Si: '#b796d8', Fe: '#7b7f87', n: '#8a97a8', gas: '#c56cf0' };
+var MAT_N = { H: 'H', He: 'He', CO: 'C, O', Ne: 'Ne', O: 'O', Si: 'Si', Fe: 'Fe', n: 'n', gas: '' };
+
+/* ---------------- drawing helpers ---------------- */
+function txt(s, x, y, o) {
+  o = o || {}; ctx.font = (o.w || '') + ' ' + (o.s || 12) + 'px system-ui,Segoe UI,Arial'; ctx.fillStyle = o.c || '#dfe6ef';
+  ctx.textAlign = o.a || 'left'; ctx.textBaseline = o.b || 'middle'; ctx.fillText(s, x, y);
+}
+function wrap(s, x, y, w, lh, o) {
+  o = o || {}; ctx.font = (o.w || '') + ' ' + (o.s || 12) + 'px system-ui,Segoe UI,Arial';
+  var words = s.split(' '), line = '', yy = y;
+  for (var i = 0; i < words.length; i++) { var t = line ? line + ' ' + words[i] : words[i]; if (ctx.measureText(t).width > w && line) { txt(line, x, yy, o); line = words[i]; yy += lh; } else line = t; }
+  if (line) txt(line, x, yy, o); return yy;
+}
+function arrow(x1, y1, x2, y2, col, w) {
+  var dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy); if (L < 2) return;
+  var ux = dx / L, uy = dy / L, h = Math.min(9, L * 0.45);
+  ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = w || 3; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2 - ux * h * 0.8, y2 - uy * h * 0.8); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x2, y2); ctx.lineTo(x2 - ux * h - uy * h * 0.6, y2 - uy * h + ux * h * 0.6); ctx.lineTo(x2 - ux * h + uy * h * 0.6, y2 - uy * h - ux * h * 0.6); ctx.closePath(); ctx.fill();
+  ctx.lineCap = 'butt';
+}
+function panel(x, y, w, h, title) {
+  ctx.fillStyle = '#0e1424'; ctx.fillRect(x, y, w, h);
+  ctx.strokeStyle = '#26314a'; ctx.lineWidth = 1; ctx.strokeRect(x + 0.5, y + 0.5, w - 1, h - 1);
+  if (title) txt(title, x + 10, y + 13, { s: 12, w: '600', c: '#9fb3cf' });
+}
+var STARFIELD = []; (function () { var s = 7; function r() { s = (s * 16807) % 2147483647; return s / 2147483647; } for (var i = 0; i < 110; i++) STARFIELD.push([r() * 400, r() * 330, r() * 1.1 + 0.2, r()]); })();
+
+/* ---------------- size view ---------------- */
+var SV = { x: 0, y: 0, w: 400, h: 330 }, SCX = 118, SCY = 170;
+function drawSize(P, t) {
+  var s = cur();
+  panel(SV.x, SV.y, SV.w, SV.h, 'True size');
+  ctx.save(); ctx.beginPath(); ctx.rect(1, 1, SV.w - 2, SV.h - 2); ctx.clip();
+  STARFIELD.forEach(function (p) { ctx.fillStyle = 'rgba(220,230,255,' + (0.25 + 0.4 * p[3]) + ')'; ctx.fillRect(p[0], p[1], p[2], p[2]); });
+  var lock = document.getElementById('lock').checked;
+  var Rshow = P.R;
+  if (s.kind === 'sn') Rshow = Math.max(P.R, 1);
+  if (!lock || pxPerR == null) pxPerR = 74 / Rshow;
+  var k = pxPerR, rpx = P.R * k;
+  // planet orbits
+  if (document.getElementById('orbits').checked) {
+    [['Mercury', 0.387], ['Venus', 0.723], ['Earth', 1], ['Mars', 1.524], ['Jupiter', 5.2], ['Neptune', 30.1]].forEach(function (pl) {
+      var r = pl[1] * AU * k; if (r < 14 || r > 5000 || r < rpx * 1.04) return;
+      ctx.strokeStyle = pl[0] === 'Earth' ? 'rgba(110,170,255,.7)' : 'rgba(160,175,200,.35)'; ctx.setLineDash([3, 4]); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(SCX, SCY, r, 0, 7); ctx.stroke(); ctx.setLineDash([]);
+      var a = -0.62, lx = SCX + r * Math.cos(a), ly = SCY + r * Math.sin(a);
+      if (lx > 4 && lx < SV.w - 40 && ly > 24 && ly < SV.h - 6) txt(pl[0] + "'s orbit", lx + 3, ly - 6, { s: 10.5, c: pl[0] === 'Earth' ? '#9cc3ff' : '#9aa6b8' });
+    });
+  }
+  // the star itself
+  if (s.kind === 'bh') {
+    var g0 = ctx.createRadialGradient(SCX, SCY, rpx * 0.9, SCX, SCY, rpx * 2.2);
+    g0.addColorStop(0, 'rgba(255,170,80,.0)'); g0.addColorStop(0.25, 'rgba(255,170,80,.55)'); g0.addColorStop(0.5, 'rgba(255,120,40,.18)'); g0.addColorStop(1, 'rgba(255,120,40,0)');
+    ctx.fillStyle = g0; ctx.beginPath(); ctx.arc(SCX, SCY, rpx * 2.2, 0, 7); ctx.fill();
+    ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(SCX, SCY, rpx, 0, 7); ctx.fill();
+    txt('event horizon', SCX, SCY + rpx + 14, { a: 'center', s: 11, c: '#c9b9a8' });
+  } else {
+    var col = bbColor(P.T);
+    if (s.kind === 'sn') { col = [255, 250, 235]; }
+    var glow = ctx.createRadialGradient(SCX, SCY, rpx * 0.6, SCX, SCY, rpx * (s.kind === 'sn' ? 2.4 : 1.45));
+    glow.addColorStop(0, 'rgba(' + col.join(',') + ',.55)'); glow.addColorStop(1, 'rgba(' + col.join(',') + ',0)');
+    ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(SCX, SCY, Math.max(rpx * (s.kind === 'sn' ? 2.4 : 1.45), 3), 0, 7); ctx.fill();
+    if (s.kind === 'pn') { // the nebula, schematic
+      var nr = 60 + 90 * sp;
+      var ng = ctx.createRadialGradient(SCX, SCY, nr * 0.55, SCX, SCY, nr);
+      ng.addColorStop(0, 'rgba(120,220,210,0)'); ng.addColorStop(0.7, 'rgba(120,220,210,' + (0.35 * (1 - sp * 0.5)) + ')'); ng.addColorStop(0.9, 'rgba(230,110,200,' + (0.4 * (1 - sp * 0.5)) + ')'); ng.addColorStop(1, 'rgba(230,110,200,0)');
+      ctx.fillStyle = ng; ctx.beginPath(); ctx.arc(SCX, SCY, nr, 0, 7); ctx.fill();
+    }
+    var body = ctx.createRadialGradient(SCX - rpx * 0.25, SCY - rpx * 0.25, rpx * 0.05, SCX, SCY, Math.max(rpx, 0.5));
+    body.addColorStop(0, rgb(col, 1)); body.addColorStop(0.8, rgb(col, 0.92)); body.addColorStop(1, rgb(col, 0.7));
+    ctx.fillStyle = body; ctx.beginPath(); ctx.arc(SCX, SCY, Math.max(rpx, 0.6), 0, 7); ctx.fill();
+    if (s.kind === 'sn') {
+      ctx.strokeStyle = 'rgba(255,240,200,.5)'; ctx.lineWidth = 1.5;
+      for (var i = 0; i < 18; i++) { var a = i / 18 * 6.283 + t * 0.2, r1 = rpx * 1.05, r2 = rpx * (1.6 + 0.5 * Math.sin(i * 7.1 + t * 3)); ctx.beginPath(); ctx.moveTo(SCX + r1 * Math.cos(a), SCY + r1 * Math.sin(a)); ctx.lineTo(SCX + r2 * Math.cos(a), SCY + r2 * Math.sin(a)); ctx.stroke(); }
+    }
+  }
+  // comparison objects
+  var sunR = k, earthR = 6371 / RSUN_KM * k;
+  if (sunR > 400) wall('Sun', '#ffd36a', 'rgba(255,211,106,.16)', 348, 30);
+  else ring('Sun', '#ffd36a', 'rgba(255,211,106,.12)', 236, SCY, sunR);
+  if (earthR > 60) wall('Earth', '#5aa0ff', 'rgba(90,160,255,.2)', 290, 30);
+  else if (sunR > 400) ring('Earth', '#5aa0ff', 'rgba(90,160,255,.28)', 236, SCY, earthR);
+  else ring('Earth', '#5aa0ff', 'rgba(90,160,255,.28)', 236, Math.min(SV.h - 40, SCY + Math.max(sunR, 2) + 30), earthR);
+  if (s.kind === 'pn') txt('nebula not to scale', SCX, SV.h - 46, { a: 'center', s: 10.5, c: '#a59bb8' });
+  // scale bar
+  var units = [[1, 'km', 1 / RSUN_KM], [1, 'R☉', 1], [1, 'AU', AU]], best = null;
+  [1e-3, 1e-2, 0.1, 1, 10, 100, 1000, 1e4, 1e5, 1e6].forEach(function (m) { [1, 2, 5].forEach(function (q) { units.forEach(function (u) { var len = m * q * u[2] * k; if (len >= 50 && len <= 120 && (!best || Math.abs(len - 80) < Math.abs(best[0] - 80))) best = [len, m * q, u[1]]; }); }); });
+  if (best) {
+    var bx = 14, by = SV.h - 16; ctx.strokeStyle = '#cfd8e6'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(bx, by - 4); ctx.lineTo(bx, by); ctx.lineTo(bx + best[0], by); ctx.lineTo(bx + best[0], by - 4); ctx.stroke();
+    txt(sig(best[1], 1) + ' ' + best[2], bx + best[0] + 6, by - 2, { s: 11, c: '#cfd8e6' });
+  }
+  txt('Radius: ' + fmtR(P.R), SV.w - 10, 13, { a: 'right', s: 11.5, c: '#e8edf5' });
+  ctx.restore();
+}
+function wall(name, col, fill, x, ly) {
+  ctx.fillStyle = fill; ctx.fillRect(x, 18, SV.w - x, SV.h - 36);
+  ctx.strokeStyle = col; ctx.setLineDash([5, 4]); ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(x, 18); ctx.lineTo(x, SV.h - 18); ctx.stroke(); ctx.setLineDash([]);
+  txt('edge of', x + 5, ly, { s: 10.5, c: col }); txt('the ' + name, x + 5, ly + 12, { s: 10.5, c: col });
+}
+function ring(name, col, fill, xLeft, cy, r) {
+  if (r >= 1.2) {
+    ctx.strokeStyle = col; ctx.setLineDash([5, 4]); ctx.lineWidth = 1.3; ctx.beginPath(); ctx.arc(xLeft + r, cy, r, 0, 7); ctx.fillStyle = fill; ctx.fill(); ctx.stroke(); ctx.setLineDash([]);
+    txt(name, xLeft + r, cy - r - 9, { a: 'center', s: 11, c: col });
+  } else {
+    ctx.fillStyle = col; ctx.beginPath(); ctx.arc(xLeft + 1, cy, 1.3, 0, 7); ctx.fill();
+    txt(name + ' (a dot at this scale)', xLeft + 7, cy, { s: 11, c: col });
+  }
+}
+
+/* ---------------- interior view ---------------- */
+var IV = { x: 400, y: 0, w: 400, h: 330 }, ICX = 512, ICY = 172, IR = 98;
+var FORCES = { contract: [1.35, 0.7], bal: [1, 1], expand: [0.8, 1.35], eject: [0.3, 0.95], collapse: [1.6, 0.15], explode: [0.55, 1.9], bh: [1.7, 0] };
+var MOTION = { contract: -1, expand: 1, eject: 1, collapse: -1, explode: 1 };
+function drawInterior(P, t) {
+  var s = cur();
+  panel(IV.x, IV.y, IV.w, IV.h, 'Inside the star (not to scale)');
+  ctx.save(); ctx.beginPath(); ctx.rect(IV.x + 1, IV.y + 1, IV.w - 2, IV.h - 2); ctx.clip();
+  var R = IR;
+  if (s.kind === 'bh') {
+    ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(ICX, ICY, R * 0.55, 0, 7); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,170,80,.7)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(ICX, ICY, R * 0.6, 0, 7); ctx.stroke();
+    txt('Black hole', ICX, ICY + R * 0.6 + 16, { a: 'center', s: 12, c: '#e9c7a6' });
+    R = R * 0.6;
+  } else if (s.kind === 'sn') {
+    var rr = R * (0.5 + 0.5 * ((t * 0.6) % 1));
+    var g = ctx.createRadialGradient(ICX, ICY, 4, ICX, ICY, R * 1.05);
+    g.addColorStop(0, '#ffffff'); g.addColorStop(0.35, 'rgba(255,230,160,.95)'); g.addColorStop(0.7, 'rgba(255,140,70,.6)'); g.addColorStop(1, 'rgba(200,60,60,0)');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(ICX, ICY, R * 1.05, 0, 7); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,.7)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(ICX, ICY, rr, 0, 7); ctx.stroke();
+    ctx.fillStyle = MAT.n; ctx.beginPath(); ctx.arc(ICX, ICY, 7, 0, 7); ctx.fill();
+    layerLabels([['n', '', 'Core becomes a ' + (star.key === '30' ? 'black hole' : 'neutron star')], ['gas', '', 'Shock wave blasts the outer layers into space']]);
+  } else {
+    var mo = document.getElementById('forces').checked && MOTION[s.f] && s.f !== 'collapse' ? MOTION[s.f] : 0;
+    if (mo) { var ph = (t / 2.2) % 1; ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.setLineDash([4, 4]); ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(ICX, ICY, R, 0, 7); ctx.stroke(); ctx.setLineDash([]); R = R * (1 + mo * 0.1 * ph); }
+    var lays = s.lay.slice().reverse();
+    lays.forEach(function (L) {
+      var r = R * L[0], c = MAT[L[1]];
+      if (L[1] === 'gas') { ctx.fillStyle = 'rgba(197,108,240,.18)'; ctx.beginPath(); ctx.arc(ICX, ICY, r, 0, 7); ctx.fill(); ctx.strokeStyle = 'rgba(197,108,240,.6)'; ctx.setLineDash([3, 4]); ctx.lineWidth = 1.5; ctx.stroke(); ctx.setLineDash([]); return; }
+      var g = ctx.createRadialGradient(ICX, ICY, r * 0.2, ICX, ICY, r); g.addColorStop(0, c); g.addColorStop(1, shade(c, 0.78));
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(ICX, ICY, r, 0, 7); ctx.fill();
+    });
+    // burning regions glow
+    s.lay.forEach(function (L, i) {
+      if (!L[2]) return;
+      var rOut = R * L[0], rIn = i ? R * s.lay[i - 1][0] : 0, fl = 0.55 + 0.25 * Math.sin(t * 9 + i * 2) + 0.2 * Math.sin(t * 23 + i);
+      ctx.save(); ctx.beginPath(); ctx.arc(ICX, ICY, rOut, 0, 7); if (rIn) ctx.arc(ICX, ICY, rIn, 0, 7, true); ctx.clip();
+      var gg = ctx.createRadialGradient(ICX, ICY, rIn, ICX, ICY, rOut);
+      gg.addColorStop(0, 'rgba(255,255,220,' + 0.75 * fl + ')'); gg.addColorStop(1, 'rgba(255,170,60,' + 0.35 * fl + ')');
+      ctx.fillStyle = gg; ctx.fillRect(ICX - rOut, ICY - rOut, rOut * 2, rOut * 2);
+      for (var k = 0; k < 10; k++) { var a = (k * 2.39996 + t * (0.8 + k * 0.07)) % 6.283, rr2 = rIn + (rOut - rIn) * (0.25 + 0.5 * ((k * 0.618 + t * 0.3) % 1)); ctx.fillStyle = 'rgba(255,255,255,' + (0.4 + 0.6 * ((k * 0.37 + t * 1.7) % 1)) + ')'; ctx.fillRect(ICX + rr2 * Math.cos(a) - 1, ICY + rr2 * Math.sin(a) - 1, 2, 2); }
+      ctx.restore();
+    });
+    if (s.kind === 'wd' || s.kind === 'ns') { ctx.strokeStyle = 'rgba(255,255,255,.35)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(ICX, ICY, R, 0, 7); ctx.stroke(); }
+    if (s.f === 'collapse') { for (var c2 = 0; c2 < 8; c2++) { var a2 = c2 / 8 * 6.283; arrow(ICX + 30 * Math.cos(a2), ICY + 30 * Math.sin(a2), ICX + 15 * Math.cos(a2), ICY + 15 * Math.sin(a2), '#ff6b6b', 2); } }
+    layerLabels(s.lay.slice().reverse().map(function (L) { return [L[1], L[2], L[3]]; }));
+  }
+  // forces
+  if (document.getElementById('forces').checked) {
+    var F = FORCES[s.f] || [1, 1], base = 34, wob = s.f === 'bal' ? 0 : 0.05 * Math.sin(t * 4);
+    for (var i = 0; i < 8; i++) {
+      var ag = i / 8 * 6.283 - 1.571, ap = ag + 0.3927, cg = Math.cos(ag), sg = Math.sin(ag), cp = Math.cos(ap), spn = Math.sin(ap);
+      var Lg = base * F[0] * (1 + wob), Lp = base * F[1] * (1 - wob);
+      if (F[0] > 0) arrow(ICX + (R + 3 + Lg) * cg, ICY + (R + 3 + Lg) * sg, ICX + (R + 3) * cg, ICY + (R + 3) * sg, '#a78bfa', 3.2);
+      if (F[1] > 0) arrow(ICX + (R - Lp * 0.15) * cp, ICY + (R - Lp * 0.15) * spn, ICX + (R + Lp * 0.85) * cp, ICY + (R + Lp * 0.85) * spn, '#ff9a3d', 3.2);
+    }
+    var lx = 664, ly = 256, net = F[1] - F[0];
+    // net force arrows on the left and right of the star
+    if (Math.abs(net) > 0.05) {
+      [0.785, 2.356, 3.927, 5.498].forEach(function (a) { var c = Math.cos(a), sn = Math.sin(a), core = s.f === 'collapse', r1 = core ? R * 0.17 : R * 0.6, r2 = core ? R * 0.34 : R * 0.6 + R * 0.3 * Math.min(1, 0.35 + Math.abs(net) * 0.5);
+        var p1 = net > 0 ? r1 : r2, p2 = net > 0 ? r2 : r1;
+        arrow(ICX + p1 * c, ICY + p1 * sn, ICX + p2 * c, ICY + p2 * sn, 'rgba(0,0,0,.55)', 7);
+        arrow(ICX + p1 * c, ICY + p1 * sn, ICX + p2 * c, ICY + p2 * sn, '#46d36b', 4); });
+    }
+
+    var st = { contract: 'Gravity wins: the star contracts and heats up', bal: 'Balanced: the size stays steady', expand: 'Outer layers pushed outward: the star swells', eject: 'Outer layers escape into space', collapse: 'Gravity wins by far: the core collapses', explode: 'Outward push wins: the star explodes', bh: 'Gravity wins completely' }[s.f];
+    wrap(st, lx, 224, 128, 12, { s: 11, c: '#ffffff', w: '600' });
+    arrow(lx, ly, lx + 16, ly, '#a78bfa', 2.5); txt('Gravity (inward)', lx + 21, ly, { s: 10.5, c: '#cbbcff' });
+    arrow(lx, ly + 18, lx + 16, ly + 18, '#ff9a3d', 2.5);
+    var prl = s.prl || ({ gas: 'Gas + radiation pressure (from fusion energy)', edeg: 'Electron degeneracy pressure', ndeg: 'Neutron degeneracy pressure', none: 'No pressure can hold it up' })[s.pr];
+    var ny = wrap(prl, lx + 21, ly + 18, 110, 12, { s: 10.5, c: '#ffc79a' }) + 17;
+    arrow(lx, ny, lx + 16, ny, '#46d36b', 2.5);
+    txt(Math.abs(net) <= 0.05 ? 'Net force = 0' : net > 0 ? 'Net force: outward' : 'Net force: inward', lx + 21, ny, { s: 10.5, c: '#9ff0b4', w: '600' });
+  }
+  ctx.restore();
+}
+function shade(hex, k) { var n = parseInt(hex.slice(1), 16); return rgb([(n >> 16) & 255, (n >> 8) & 255, n & 255], k); }
+function layerLabels(list) { // outermost first
+  var x = 664, y0 = 40, step = Math.min(30, 170 / Math.max(1, list.length));
+  list.forEach(function (L, i) {
+    var y = y0 + i * step;
+    ctx.fillStyle = MAT[L[0]]; ctx.fillRect(x, y - 6, 10, 10);
+    if (L[1]) { ctx.strokeStyle = '#fff6b0'; ctx.lineWidth = 1.5; ctx.strokeRect(x - 0.5, y - 6.5, 11, 11); }
+    wrap(L[2], x + 15, y - 1, 116, 11.5, { s: 10.5, c: L[1] ? '#fff2c4' : '#c9d3e0', w: L[1] ? '600' : '' });
+  });
+}
+
+/* ---------------- H-R diagram ---------------- */
+var HV = { x: 0, y: 330, w: 400, h: 320 }, HX0 = 52, HX1 = 388, HY0 = 352, HY1 = 610;
+var TMAX = 130000, TMIN = 2200, LMIN = 1e-5, LMAX = 1e7;
+function hx(T) { return HX0 + (HX1 - HX0) * (Math.log10(TMAX) - Math.log10(T)) / (Math.log10(TMAX) - Math.log10(TMIN)); }
+function hy(L) { return HY1 - (HY1 - HY0) * (Math.log10(L) - Math.log10(LMIN)) / (Math.log10(LMAX) - Math.log10(LMIN)); }
+var BGSTARS = []; (function () {
+  var s = 11; function r() { s = (s * 16807) % 2147483647; return s / 2147483647; }
+  for (var i = 0; i < 170; i++) { var M = Math.pow(10, -0.9 + r() * 2.3), z = msZ(M); BGSTARS.push([z[0] * Math.pow(10, (r() - 0.5) * 0.5), z[1] * Math.pow(10, (r() - 0.5) * 0.04)]); }
+  for (i = 0; i < 40; i++) BGSTARS.push([Math.pow(10, 1 + r() * 2.2), 3600 + r() * 1500]);
+  for (i = 0; i < 12; i++) BGSTARS.push([Math.pow(10, 4.2 + r() * 1.3), 3300 + r() * 12000]);
+  for (i = 0; i < 26; i++) { var T = 5000 + r() * 25000, Rw = 0.01 + r() * 0.006; BGSTARS.push([Rw * Rw * Math.pow(T / 5778, 4), T]); }
+})();
+function drawHR(P) {
+  var s = cur();
+  panel(HV.x, HV.y, HV.w, HV.h, '');
+  ctx.save(); ctx.beginPath(); ctx.rect(HX0, HY0, HX1 - HX0, HY1 - HY0); ctx.clip();
+  // constant radius lines
+  [0.001, 0.01, 0.1, 1, 10, 100, 1000].forEach(function (R) {
+    ctx.strokeStyle = 'rgba(150,170,200,.22)'; ctx.setLineDash([2, 4]); ctx.lineWidth = 1; ctx.beginPath();
+    var first = true; for (var lt = Math.log10(TMIN); lt <= Math.log10(TMAX); lt += 0.05) { var T = Math.pow(10, lt), L = R * R * Math.pow(T / 5778, 4); var x = hx(T), y = hy(L); if (first) { ctx.moveTo(x, y); first = false; } else ctx.lineTo(x, y); }
+    ctx.stroke(); ctx.setLineDash([]);
+    var Tl = R >= 100 ? 2600 : R >= 1 ? 3300 : 4800, Ll = R * R * Math.pow(Tl / 5778, 4); if (Ll < LMIN * 3) { Ll = LMIN * 6; Tl = 5778 * Math.pow(Ll / (R * R), 0.25); }
+    if (Ll < LMAX / 3) txt(sig(R, 1) + ' R☉', hx(Tl) - 2, hy(Ll) - 6, { s: 9.5, c: 'rgba(170,190,215,.75)', a: 'right' });
+  });
+  BGSTARS.forEach(function (b) { var c = bbColor(b[1]); ctx.fillStyle = 'rgba(' + c.join(',') + ',.38)'; ctx.fillRect(hx(b[1]) - 1, hy(b[0]) - 1, 2.2, 2.2); });
+  txt('Main sequence', hx(15000) + 6, hy(4000) + 18, { s: 10.5, c: '#a9b8cc', a: 'left' });
+  txt('Red giants', hx(4300), hy(150), { s: 10.5, c: '#d7a99b', a: 'center' });
+  txt('Supergiants', hx(5500), hy(3e5), { s: 10.5, c: '#d7a99b', a: 'center' });
+  txt('White dwarfs', hx(14000), hy(2e-4), { s: 10.5, c: '#a9b8cc', a: 'center' });
+  // Sun today
+  ctx.strokeStyle = '#ffd36a'; ctx.lineWidth = 1.3; ctx.beginPath(); ctx.arc(hx(5772), hy(1), 4.5, 0, 7); ctx.stroke(); ctx.fillStyle = '#ffd36a'; ctx.fillRect(hx(5772) - 1, hy(1) - 1, 2, 2);
+  txt('Sun today', hx(5772) + 7, hy(1) + 9, { s: 10, c: '#ffd36a' });
+  // track
+  var all = [], upto = [];
+  star.stages.forEach(function (st, i) {
+    if (!st.pts) return;
+    var n = 24; for (var k = 0; k <= n; k++) { var q = interp(st.pts, k / n); all.push([q, st.fut]); if (i < si || (i === si && k / n <= sp)) upto.push(q); }
+  });
+  ctx.lineWidth = 1.4; ctx.strokeStyle = 'rgba(255,255,255,.18)'; ctx.setLineDash([3, 3]); ctx.beginPath(); all.forEach(function (q, i) { var x = hx(q[0][1]), y = hy(Math.min(q[0][0], LMAX * 5)); if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y); }); ctx.stroke(); ctx.setLineDash([]);
+  ctx.lineWidth = 2; ctx.strokeStyle = 'rgba(255,255,255,.75)'; ctx.beginPath(); upto.forEach(function (q, i) { var x = hx(q[1]), y = hy(Math.min(q[0], LMAX * 5)); if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y); }); ctx.stroke();
+  ctx.restore();
+  // current point (may be off the chart)
+  var note = '';
+  if (s.kind === 'bh') note = 'A black hole gives off no light: not on an H-R diagram';
+  else {
+    var x = hx(P.T), y = hy(Math.max(P.L, 1e-30)), off = x < HX0 || x > HX1 || y < HY0 || y > HY1;
+    var cx = Math.max(HX0 + 4, Math.min(HX1 - 4, x)), cy = Math.max(HY0 + 4, Math.min(HY1 - 4, y));
+    var c = bbColor(P.T);
+    if (off) {
+      ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.moveTo(cx + (x < HX0 ? -6 : x > HX1 ? 6 : 0), cy + (y < HY0 ? -6 : y > HY1 ? 6 : 0)); ctx.arc(cx, cy, 4, 0, 7); ctx.fill();
+      note = s.kind === 'ns' ? 'Neutron star: far too hot and small for this chart' : (y < HY0 ? 'Off the top of the chart (brighter than 10 million Suns)' : 'Off the chart');
+    } else {
+      ctx.fillStyle = rgb(c); ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(cx, cy, 6, 0, 7); ctx.fill(); ctx.stroke();
+    }
+  }
+  if (note) txt(note, (HX0 + HX1) / 2, HY0 + 12, { a: 'center', s: 11, c: '#ffe2a8', w: '600' });
+  // axes
+  ctx.strokeStyle = '#7f8ea6'; ctx.lineWidth = 1; ctx.strokeRect(HX0 + 0.5, HY0 + 0.5, HX1 - HX0, HY1 - HY0);
+  [1e-4, 1e-2, 1, 100, 1e4, 1e6].forEach(function (L) { var y = hy(L); ctx.beginPath(); ctx.moveTo(HX0 - 4, y); ctx.lineTo(HX0, y); ctx.stroke(); txt(L >= 1 && L <= 100 ? String(L) : '10' + sup(Math.round(Math.log10(L))), HX0 - 6, y, { a: 'right', s: 10.5, c: '#b8c4d6' }); });
+  [100000, 40000, 20000, 10000, 5000, 3000].forEach(function (T) { var x = hx(T); ctx.beginPath(); ctx.moveTo(x, HY1); ctx.lineTo(x, HY1 + 4); ctx.stroke(); txt(T.toLocaleString('en-US'), x, HY1 + 12, { a: 'center', s: 10, c: '#b8c4d6' }); });
+  txt('Surface temperature (K) ← hotter', (HX0 + HX1) / 2, HY1 + 28, { a: 'center', s: 11, c: '#cfd8e6' });
+  ctx.save(); ctx.translate(13, (HY0 + HY1) / 2); ctx.rotate(-Math.PI / 2); txt('Luminosity (L☉)', 0, 0, { a: 'center', s: 11, c: '#cfd8e6' }); ctx.restore();
+  txt('H-R diagram', HX0 + 6, HY0 - 11, { s: 12, w: '600', c: '#9fb3cf' });
+}
+
+/* ---------------- fusion view ---------------- */
+var FV = { x: 400, y: 330, w: 400, h: 320 };
+var NUC = {
+  p: [1, 1, 'H'], d: [2, 1, 'H'], He3: [3, 2, 'He'], He4: [4, 2, 'He'], Be8: [8, 4, 'Be'], C12: [12, 6, 'C'], N13: [13, 7, 'N'], C13: [13, 6, 'C'], N14: [14, 7, 'N'], O15: [15, 8, 'O'], N15: [15, 7, 'N'],
+  O16: [16, 8, 'O'], Ne20: [20, 10, 'Ne'], Na23: [23, 11, 'Na'], Mg24: [24, 12, 'Mg'], Si28: [28, 14, 'Si'], S32: [32, 16, 'S'], Ar36: [36, 18, 'Ar'], Ni56: [56, 28, 'Ni'], Fe56: [56, 26, 'Fe'], n: [1, 0, 'n']
+};
+var RX = {
+  pp: { name: 'Proton-proton (p-p) chain', steps: [[['p', 'p'], ['d', 'e+', 'nu']], [['d', 'p'], ['He3', 'g']], [['He3', 'He3'], ['He4', 'p', 'p']]], net: '4 ¹H → ⁴He + 2e⁺ + 2ν + energy (26.7 MeV)' },
+  cno: { name: 'CNO cycle (carbon is reused: a catalyst)', steps: [[['C12', 'p'], ['N13', 'g']], [['N13'], ['C13', 'e+', 'nu']], [['C13', 'p'], ['N14', 'g']], [['N14', 'p'], ['O15', 'g']], [['O15'], ['N15', 'e+', 'nu']], [['N15', 'p'], ['C12', 'He4']]], net: 'Net: 4 ¹H → ⁴He + 2e⁺ + 2ν + energy (26.7 MeV)' },
+  '3a': { name: 'Triple-alpha process (helium burning)', steps: [[['He4', 'He4'], ['Be8']], [['Be8', 'He4'], ['C12', 'g']], [['C12', 'He4'], ['O16', 'g']]], net: '3 ⁴He → ¹²C + energy (7.3 MeV); some ¹²C + ⁴He → ¹⁶O' },
+  C: { name: 'Carbon burning', steps: [[['C12', 'C12'], ['Ne20', 'He4']], [['C12', 'C12'], ['Na23', 'p']], [['C12', 'C12'], ['Mg24', 'g']]], net: '¹²C + ¹²C → ²⁰Ne + ⁴He + energy (4.6 MeV), and others' },
+  Ne: { name: 'Neon burning', steps: [[['Ne20', 'g'], ['O16', 'He4']], [['Ne20', 'He4'], ['Mg24', 'g']]], net: 'Light breaks neon apart; the helium freed is captured by more neon' },
+  O: { name: 'Oxygen burning', steps: [[['O16', 'O16'], ['Si28', 'He4']], [['O16', 'O16'], ['S32', 'g']]], net: '¹⁶O + ¹⁶O → ²⁸Si + ⁴He + energy (9.6 MeV), and others' },
+  Si: { name: 'Silicon burning', steps: [[['Si28', 'He4'], ['S32', 'g']], [['S32', 'He4'], ['Ar36', 'g']], [['Ni56'], ['Fe56', 'e+', 'e+', 'nu', 'nu']]], net: 'Helium captures build up to ⁵⁶Ni, which decays to ⁵⁶Fe (iron)' },
+  Fe: { name: 'No fusion: iron is the end of the line', steps: [[['p', 'e-'], ['n', 'nu']]], net: '⁵⁶Fe has the most tightly bound nucleus. Fusing it would absorb energy, so the core loses support. Protons and electrons are crushed into neutrons.' },
+  SN: { name: 'Supernova: making heavy elements', steps: [[['Fe56', 'n'], ['Fe56n', 'g']], [['p', 'e-'], ['n', 'nu']]], net: 'In the blast, nuclei grab neutrons quickly, building elements heavier than iron (gold, uranium...)' }
+};
+NUC.Fe56n = [57, 26, 'Fe'];
+function nucLabel(k) { var a = NUC[k]; if (!a) return k; if (k === 'n') return 'n'; return sup(a[0]) + a[2]; }
+function drawNucleus(k, x, y, sc) {
+  if (k === 'e+' || k === 'e-') { ctx.fillStyle = k === 'e+' ? '#ff7ad9' : '#5ab0ff'; ctx.beginPath(); ctx.arc(x, y, 4, 0, 7); ctx.fill(); txt(k === 'e+' ? 'e⁺' : 'e⁻', x, y - 11, { a: 'center', s: 11, c: '#e8edf5' }); return 6; }
+  if (k === 'nu') { ctx.strokeStyle = '#9be8a0'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(x, y, 3.5, 0, 7); ctx.stroke(); txt('ν', x, y - 11, { a: 'center', s: 12, c: '#9be8a0' }); return 6; }
+  if (k === 'g') { ctx.strokeStyle = '#ffe066'; ctx.lineWidth = 1.6; ctx.beginPath(); for (var i = 0; i <= 18; i++) { var xx = x - 9 + i, yy = y + 3.5 * Math.sin(i * 1.2); if (i) ctx.lineTo(xx, yy); else ctx.moveTo(xx, yy); } ctx.stroke(); txt('γ', x, y - 11, { a: 'center', s: 12, c: '#ffe066' }); return 10; }
+  var a = NUC[k], A = a[0], Z = a[1], r;
+  if (A <= 16) {
+    var pos = [], i2;
+    for (i2 = 0; i2 < A; i2++) { var rr = 3.6 * Math.sqrt(i2) * sc, an = i2 * 2.39996; pos.push([x + rr * Math.cos(an), y + rr * Math.sin(an)]); }
+    // spread protons and neutrons evenly
+    var prot = {}; for (i2 = 0; i2 < Z; i2++) prot[Math.floor((i2 + 0.5) * A / Z)] = 1;
+    for (i2 = A - 1; i2 >= 0; i2--) { ctx.fillStyle = prot[i2] ? '#e2534b' : '#a4adb8'; ctx.strokeStyle = 'rgba(0,0,0,.35)'; ctx.lineWidth = 0.8; ctx.beginPath(); ctx.arc(pos[i2][0], pos[i2][1], 3.9 * sc, 0, 7); ctx.fill(); ctx.stroke(); }
+    r = 3.6 * Math.sqrt(A - 1) * sc + 4;
+  } else {
+    r = 4.2 * Math.cbrt(A) * sc + 2;
+    var g = ctx.createRadialGradient(x - r * 0.3, y - r * 0.3, 1, x, y, r); g.addColorStop(0, '#f39a8f'); g.addColorStop(1, '#8d4f57');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
+  }
+  txt(nucLabel(k), x, y + r + 10, { a: 'center', s: 12, c: '#e8edf5', w: '600' });
+  return r;
+}
+function eqText(st) {
+  var f = function (k) { return k === 'e+' ? 'e⁺' : k === 'e-' ? 'e⁻' : k === 'nu' ? 'ν' : k === 'g' ? 'γ' : nucLabel(k); };
+  return st[0].map(f).join(' + ') + '  →  ' + st[1].map(f).join(' + ');
+}
+function drawFusion(P, t) {
+  var s = cur();
+  panel(FV.x, FV.y, FV.w, FV.h, '');
+  var cf = s.cno ? s.cno[0] + (s.cno[1] - s.cno[0]) * sp : null;
+  var key = cf != null ? (cf >= 0.5 ? 'cno' : 'pp') : s.rx, R = key ? RX[key] : null;
+  var head = !key ? 'No fusion' : key === 'Fe' || key === 'SN' ? R.name : (s.where === 'shell' ? 'Fusion in a shell around the core: ' : 'Fusion in the core: ') + R.name;
+  wrap(head, FV.x + 10, FV.y + 14, 380, 14, { s: 12, w: '600', c: '#9fb3cf' });
+  if (!R) {
+    wrap(s.why || '', FV.x + 14, FV.y + 70, 370, 17, { s: 13, c: '#e8edf5' });
+  } else {
+    var nst = R.steps.length, per = 2.6, tt = t / per, idx = Math.floor(tt) % nst, ph = tt - Math.floor(tt), st = R.steps[idx];
+    var cy = FV.y + 96, cxm = FV.x + FV.w / 2;
+    if (ph < 0.5) { // reactants approach
+      var q = Math.min(1, ph / 0.42), gap = 110 * (1 - q * q) + 30;
+      var n = st[0].length;
+      st[0].forEach(function (k, i) { var off = n === 1 ? 0 : (i === 0 ? -gap / 2 : gap / 2); drawNucleus(k, cxm + off, cy, 1.45); });
+      if (n > 1 && q < 1) { arrow(cxm - gap / 2 - 30, cy + 28, cxm - gap / 2 - 10, cy + 28, 'rgba(255,255,255,.35)', 1.5); arrow(cxm + gap / 2 + 30, cy + 28, cxm + gap / 2 + 10, cy + 28, 'rgba(255,255,255,.35)', 1.5); }
+    } else { // flash, then products fly apart
+      var q2 = (ph - 0.5) / 0.5, fl = Math.max(0, 1 - q2 * 4);
+      if (fl > 0) { var g = ctx.createRadialGradient(cxm, cy, 2, cxm, cy, 50); g.addColorStop(0, 'rgba(255,255,230,' + fl + ')'); g.addColorStop(1, 'rgba(255,200,100,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cxm, cy, 50, 0, 7); ctx.fill(); }
+      var prods = st[1], heavy = prods.filter(function (k) { return NUC[k]; }), light = prods.filter(function (k) { return !NUC[k]; });
+      heavy.forEach(function (k, i) { var dir = heavy.length === 1 ? 0 : (i === 0 ? -1 : 1) * (i === 2 ? 1.6 : 1); drawNucleus(k, cxm + dir * (24 + 70 * q2), cy, 1.45); });
+      light.forEach(function (k, i) { var a = -2.2 + i * (1.5 / Math.max(1, light.length - 1)) + (light.length === 1 ? 0.7 : 0), d = 20 + 120 * q2; drawNucleus(k, cxm + d * Math.cos(a) * 1.2, cy - 18 + d * Math.sin(a) * 0.45, 1); });
+    }
+    txt('Step ' + (idx + 1) + ' of ' + nst + ':   ' + eqText(st), FV.x + FV.w / 2, FV.y + 172, { a: 'center', s: 13, c: '#ffffff', w: '600' });
+    wrap(R.net, FV.x + 14, FV.y + 196, 372, 15, { s: 11.5, c: '#c9d3e0' });
+  }
+  // shells that are also burning
+  var shells = s.lay ? s.lay.filter(function (L, i) { return L[2] && !(i === 0 && s.where === 'core'); }).map(function (L) { return L[2]; }) : [];
+  if (s.where === 'shell') shells = shells.slice(1);
+  if (shells.length) txt('Also burning in shells: ' + shells.join(',  '), FV.x + 14, FV.y + 246, { s: 11, c: '#ffe2a8' });
+  if (cf != null) { // how the hydrogen fusion is split between the two routes
+    var sx = FV.x + 116, sw = 268, sy = FV.y + 226, pw = sw * (1 - cf);
+    txt('H \u2192 He by', FV.x + 12, sy, { s: 11.5, c: '#cfd8e6' });
+    ctx.fillStyle = '#e5864b'; ctx.fillRect(sx, sy - 7, pw, 14); ctx.fillStyle = '#4fb3a9'; ctx.fillRect(sx + pw, sy - 7, sw - pw, 14);
+    var pct = function (x) { return x < 0.01 ? '<1%' : x > 0.99 ? '>99%' : Math.round(x * 100) + '%'; };
+    txt('p-p ' + pct(1 - cf), pw > 70 ? sx + 5 : sx + pw + 5, sy, { s: 10.5, c: '#fff', w: '600', a: 'left' });
+    txt('CNO ' + pct(cf), sw - pw > 70 ? sx + sw - 5 : sx + pw - 5, sy, { s: 10.5, c: '#fff', w: '600', a: 'right' });
+  }
+  // core conditions
+  var bx = FV.x + 116, bw = 268, by1 = FV.y + 274, by2 = FV.y + 305;
+  txt('Core temp.', FV.x + 12, by1 - 6, { s: 11.5, c: '#cfd8e6' }); txt('Core density', FV.x + 12, by2 - 6, { s: 11.5, c: '#cfd8e6' });
+  logBar(bx, by1, bw, 1e6, 1e11, P.Tc, [[1e7, 'H'], [1e8, 'He'], [6e8, 'C'], [1.2e9, 'Ne'], [1.5e9, 'O'], [2.7e9, 'Si']], fmtK(P.Tc), '#ff9a3d', s.kind === 'bh');
+  logBar(bx, by2, bw, 1e-2, 1e15, P.rho, [[1, 'water'], [1e6, ''], [2e14, 'nucleus']], P.rho ? sci(P.rho, 2) + ' g/cm³' : '', '#6fb6ff', s.kind === 'bh');
+}
+function logBar(x, y, w, a, b, v, marks, label, col, none) {
+  var la = Math.log10(a), lb = Math.log10(b), f = function (q) { return x + w * (Math.log10(q) - la) / (lb - la); };
+  ctx.fillStyle = '#1f2940'; ctx.fillRect(x, y - 5, w, 10);
+  if (!none && v > 0) { ctx.fillStyle = col; ctx.fillRect(x, y - 5, Math.max(1, Math.min(w, f(v) - x)), 10); }
+  marks.forEach(function (m) {
+    var xx = f(m[0]); ctx.strokeStyle = 'rgba(255,255,255,.85)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(xx, y - 8); ctx.lineTo(xx, y + 6); ctx.stroke();
+    if (m[1]) txt(m[1], xx, y - 13, { a: 'center', s: 9.5, c: (!none && v >= m[0]) ? '#ffffff' : '#7f8ea6' });
+  });
+  txt(none ? '—' : label, x - 104, y + 8, { s: 10.5, c: '#ffffff', w: '600' });
+}
+
+/* ---------------- panel ---------------- */
+var massesEl = document.getElementById('masses'), stagesEl = document.getElementById('stages'), readEl = document.getElementById('read');
+STARS.forEach(function (S, i) {
+  var b = document.createElement('button'); b.innerHTML = '<b>' + S.title + '</b>' + S.sub; b.onclick = function () { pick(i); }; massesEl.appendChild(b);
+});
+function pick(i) { star = STARS[i]; si = 0; sp = 0; pxPerR = null; setPlay(false); buildStages(); [].forEach.call(massesEl.children, function (b, j) { b.classList.toggle('on', j === i); }); }
+function buildStages() {
+  stagesEl.innerHTML = '';
+  star.stages.forEach(function (s, i) {
+    var li = document.createElement('li'); li.className = s.fut ? 'fut' : '';
+    var d = s.dur >= 1e10 && (s.kind === 'wd' || s.kind === 'ns' || s.kind === 'bh') ? 'billions of years +' : fmtT(s.dur);
+    li.innerHTML = '<span>' + (i + 1) + '. ' + s.n + (s.fut ? ' (future)' : '') + '</span><span class="d">' + d + '</span>';
+    li.onclick = function () { si = i; sp = 0; };
+    stagesEl.appendChild(li);
+  });
+}
+function setPlay(v) { playing = v; document.getElementById('play').innerHTML = v ? '&#10074;&#10074; Pause' : '&#9654; Play'; }
+document.getElementById('play').onclick = function () { if (!playing && si === star.stages.length - 1 && sp >= 1) { si = 0; sp = 0; } setPlay(!playing); };
+document.getElementById('prev').onclick = function () { if (sp > 0.05) sp = 0; else if (si > 0) { si--; sp = 0; } };
+document.getElementById('next').onclick = function () { if (si < star.stages.length - 1) { si++; sp = 0; } else sp = 1; };
+document.getElementById('speed').onchange = function () { speed = +this.value; };
+function readouts(P) {
+  var s = cur(), rows = [];
+  rows.push(['Stage', s.n + (s.fut ? ' (future)' : '')]);
+  var age = ageAt(si, sp);
+  rows.push(['Age', fmtT(age)]);
+  if (s.today && Math.abs(sp - s.today) < 0.03) rows.push(['', '☉ about where the Sun is today']);
+  if (s.fut) rows.push(['', 'No star this small has got here yet: the universe is only 13.8 billion years old']);
+  rows.push(['Mass', sig(P.M, 2) + ' M☉']);
+  if (s.kind === 'bh') { rows.push(['Event horizon radius', sig(P.R * RSUN_KM, 2) + ' km']); }
+  else {
+    rows.push(['Luminosity', sci(P.L, 2) + ' L☉']);
+    rows.push(['Surface temperature', sig(P.T, 2) + ' K']);
+    rows.push(['Radius', fmtR(P.R)]);
+    var lam = 2.9e-3 / P.T * 1e9; rows.push(['Peak wavelength', lam >= 1000 ? sig(lam / 1000, 2) + ' µm' : sig(lam, 2) + ' nm']);
+  }
+  rows.push(['Main-sequence lifetime', fmtT(1e10 * Math.pow(star.M, -2.5))]);
+  var html = rows.map(function (r) { return r[0] ? '<tr><td>' + r[0] + '</td><td class="v">' + r[1] + '</td></tr>' : '<tr><td colspan="2" style="color:#6a7886;font-size:11.5px">' + r[1] + '</td></tr>'; }).join('');
+  if (readEl._h !== html) { readEl.innerHTML = html; readEl._h = html; }
+  [].forEach.call(stagesEl.children, function (li, i) { li.classList.toggle('cur', i === si); });
+}
+
+/* ---------------- loop ---------------- */
+var app = document.getElementById('app');
+function fit() {
+  var s = Math.min(window.innerWidth / 1100, window.innerHeight / 650);
+  app.style.transform = 'scale(' + s + ')';
+  var px = Math.max(1, Math.min(3, s * (window.devicePixelRatio || 1)));
+  var w = Math.round(CW * px); if (cv.width !== w) { cv.width = w; cv.height = Math.round(CH * px); }
+}
+window.addEventListener('resize', fit);
+pick(1); fit();
+var last = performance.now(), T0 = 0;
+var STAGE_SECONDS = 7;
+function frame(now) {
+  var dt = Math.min(0.05, (now - last) / 1000); last = now; T0 += dt;
+  if (playing) {
+    var s = cur(), secs = s.f === 'collapse' ? 3.5 : STAGE_SECONDS;
+    sp += dt * speed / secs;
+    if (sp >= 1) { if (si < star.stages.length - 1) { si++; sp = 0; } else { sp = 1; setPlay(false); } }
+  }
+  var P = props();
+  var W = cv.width / CW; ctx.setTransform(W, 0, 0, W, 0, 0);
+  ctx.fillStyle = '#0b0f19'; ctx.fillRect(0, 0, CW, CH);
+  drawSize(P, T0); drawInterior(P, T0); drawHR(P); drawFusion(P, T0);
+  readouts(P);
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+window.SIM = { pick: pick, set: function (i, p) { si = i; sp = p; }, props: props, get stage() { return cur(); } };
+})();
+</script>
+</body></html>

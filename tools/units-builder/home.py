@@ -15,11 +15,9 @@ COURSES = [  # (big label, course name, code prefix, line under the unit count)
 ]
 E = html.escape
 FOLDER = {'AB': 'algebra-based-physics', 'P1': 'ap-physics-1-ib', 'P2': 'ap-physics-2-ib'}  # menu-section folders on the Site
-# Hand-built unit pages that aren't generated from units.py
-EXTRA = {'P1-06': {'title': 'Work, Power, and Energy', 'tabs': [1]}, 'P1-07': {'title': 'Impulse and Momentum', 'tabs': [1]}}
 
 def card(big, name, prefix, sub, hot):
-    units = sorted((k, v) for k, v in {**UNITS, **EXTRA}.items() if k.startswith(prefix + '-'))
+    units = sorted((k, v) for k, v in UNITS.items() if k.startswith(prefix + '-'))
     rows = []
     for k, u in units:
         ready = bool(u.get('tabs'))

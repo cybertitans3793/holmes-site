@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<!--
+  Electric Field Hockey - single-file HTML5 port of the PhET Java simulation "Electric Field Hockey".
+  Original: PhET Interactive Simulations, University of Colorado Boulder (https://phet.colorado.edu).
+  Original credits: lead design Michael Dubson; software development Michael Dubson, Sam Reid.
+  This port reproduces the Java version's model exactly (Coulomb force 1e6*q1*q2/r^2 with r clamped to >= 25 px,
+  position-Verlet with dt = 3, force factor 0.002, default mass 25, 700x600 field, same mazes, goal and
+  8 px collision margin). PhET's Java simulation code is GPL-licensed; this port is offered under the same terms.
+  Deviations from the Java version:
+    - Goal/collision sounds are synthesized in the browser (the original audio files are not included).
+    - The "Charges" counter also updates when Clear is pressed (the Java version left it stale).
+    - The whole sim scales to fit the window/embed frame; mouse and touch both work.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Electric Field Hockey</title>
+<style>
+  html, body { margin: 0; padding: 0; background: #ffffff; overflow: hidden; }
+  body { font-family: "Lucida Sans", "Lucida Grande", "Segoe UI", Arial, sans-serif; font-size: 13px; color: #000; }
+  #wrap { position: relative; margin: 0 auto; }
+  #app { width: 700px; position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+  #field { display: block; width: 700px; height: 600px; touch-action: none; cursor: default; }
+  #cp { width: 700px; }
+  #cp .row { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px 6px; padding: 4px 4px; }
+  #cp .top { background: #ffff00; }
+  #cp .bottom { background: #00ff00; display: grid; grid-template-columns: 1fr 1fr; padding: 0; }
+  #cp .bottom > div { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 2px 6px; padding: 5px 4px; }
+  #cp .grp { display: inline-flex; align-items: center; gap: 6px; padding: 0 6px; }
+  #cp label { display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; user-select: none; cursor: pointer; }
+  #cp button { font: inherit; padding: 3px 12px; border: 1px solid #7a8a99; border-radius: 3px;
+               background: linear-gradient(#ffffff, #dde3ea); cursor: pointer; }
+  #cp button:disabled { color: #999; cursor: default; background: #eef0f2; border-color: #b8c2cc; }
+  #cp input[type=text] { width: 34px; font: inherit; padding: 1px 3px; }
+  #cp input[type=range] { width: 190px; }
+  #cp .lbl { white-space: pre; }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="app">
+    <canvas id="field" width="700" height="600"></canvas>
+    <div id="cp">
+      <div class="row top">
+        <span class="grp">
+          <button id="startBtn">Start</button>
+          <button id="resetBtn" disabled>Reset</button>
+          <span id="triesLbl" class="lbl">Tries: 0</span>
+        </span>
+        <span class="grp">
+          <label><input type="checkbox" id="pauseChk">Pause</label>
+          <button id="clearBtn">Clear</button>
+        </span>
+        <span class="grp">
+          <label><input type="checkbox" id="posChk" checked>Puck Is Positive</label>
+          <label><input type="checkbox" id="traceChk">Trace</label>
+          <label><input type="checkbox" id="fieldChk">Field</label>
+          <label><input type="checkbox" id="aaChk">Antialias</label>
+        </span>
+      </div>
+      <div class="bottom">
+        <div>
+          <label><input type="radio" name="level" value="0" checked>Practice</label>
+          <span class="lbl">   Difficulty:</span>
+          <label><input type="radio" name="level" value="1">1</label>
+          <label><input type="radio" name="level" value="2">2</label>
+          <label><input type="radio" name="level" value="3">3</label>
+          <span id="chargesLbl" class="lbl">    Charges: 0</span>
+        </div>
+        <div>
+          <span>Mass</span>
+          <input type="text" id="massText" value="25">
+          <input type="range" id="massSlider" min="1" max="100" step="1" value="25">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script id="model">
+/* ===== Model: direct port of edu.colorado.phet.electrichockey (Model, Force, Charge, BarrierList, FieldGrid) ===== */
+var EFH = (function () {
+  'use strict';
+  var W = 700, H = 600;
+  var trunc = Math.trunc;
+
+  // BarrierList.rectArray0..3 (x, y, width, height) - drawn as-is; collision uses copies grown by 8 px.
+  var BASE = [[625, 265, 15, 5], [625, 330, 10, 5], [635, 265, 5, 70]];
+  var RECTS = [
+    BASE.slice(),
+    BASE.concat([[360, 150, 10, 210]]),
+    BASE.concat([[450, 210, 10, 230], [280, 70, 10, 210]]),
+    BASE.concat([[370, -20, 10, 350], [240, 180, 10, 450], [500, 180, 10, 430],
+                 [470, 170, 70, 10], [340, 330, 70, 10], [210, 170, 70, 10]])
+  ];
+  function rectContains(r, x, y) { return x >= r[0] && y >= r[1] && x < r[0] + r[2] && y < r[1] + r[3]; }
+  var COLLISION = RECTS.map(function (rs) {
+    var g = rs.map(function (r) { return [r[0] - 8, r[1] - 8, r[2] + 16, r[3] + 16]; });
+    var a = new Uint8Array(W * H);
+    for (var x = 0; x < W; x++) for (var y = 0; y < H; y++) {
+      for (var k = 0; k < g.length; k++) if (rectContains(g[k], x, y)) { a[x * H + y] = 1; break; }
+    }
+    return a;
+  });
+  // PlayingField.goal = new Rectangle(89*w/100, h/2 - 30, 13, 60)
+  var GOAL = [trunc(89 * W / 100), trunc(H / 2) - 30, 13, 60];
+
+  // Charge: integer "position" (used as a force source / for drawing) and double "position2D" (used as a force target)
+  function Charge(x, y, sign) { this.x = trunc(x); this.y = trunc(y); this.x2 = x; this.y2 = y; this.sign = sign; this.radius = 8; }
+  Charge.prototype.contains = function (px, py) {
+    return px < this.x + this.radius && px > this.x - this.radius && py < this.y + this.radius && py > this.y - this.radius;
+  };
+
+  // ElectricHockeyArrow.setPosition -> 8-point polygon (integer offsets, as in Java)
+  function hockeyArrow(n, n2, n3, n4) {
+    var d = n3 - n, d2 = n4 - n2, L = Math.pow(d * d + d2 * d2, 0.5);
+    var w = Math.min(6.0, L / 10.0), h = 4.0 * w * Math.sqrt(3.0) / 2.0;
+    var ax = [w / 2 * (-d2 / L), w / 2 * (-d2 / L) + (L - h) * (d / L), w * (-d2 / L) + (L - h) * (d / L), L * (d / L),
+              w * (d2 / L) + (L - h) * (d / L), w / 2 * (d2 / L) + (L - h) * (d / L), w / 2 * (d2 / L), w / 2 * (-d2 / L)];
+    var ay = [w / 2 * d / L, w / 2 * (d / L) + (L - h) * (d2 / L), w * (d / L) + (L - h) * (d2 / L), L * (d2 / L),
+              w * (-d / L) + (L - h) * (d2 / L), w / 2 * (-d / L) + (L - h) * (d2 / L), w / 2 * (-d / L), w / 2 * (d / L)];
+    var pts = [];
+    for (var i = 0; i < 8; i++) pts.push([n + trunc(ax[i]), n2 + trunc(ay[i])]);
+    return pts;
+  }
+
+  // Force(charge, charge2): force on charge2 due to charge
+  var FORCE_FACTOR = 1000000.0, CUTOFF = 25.0;
+  function force(src, tgt) {
+    var x0 = tgt.x2, y0 = tgt.y2, dx = x0 - src.x, dy = y0 - src.y;
+    var r = Math.sqrt(dx * dx + dy * dy);
+    if (r < CUTOFF) r = CUTOFF;
+    var rSq = r * r, k = FORCE_FACTOR * src.sign * tgt.sign;
+    var fx = k * dx / (r * rSq), fy = k * dy / (r * rSq);
+    return { fx: fx, fy: fy, sign: src.sign,
+             arrow: hockeyArrow(trunc(x0), trunc(y0), trunc(x0) + trunc(fx), trunc(y0) + trunc(fy)) };
+  }
+
+  function Model() {
+    this.W = W; this.H = H;
+    this.RECTS = RECTS; this.GOAL = GOAL;
+    this.initX = W / 5.0; this.initY = H / 2.0;
+    this.puck = new Charge(this.initX, this.initY, 1);
+    this.x = this.puck.x2; this.y = this.puck.y2;
+    this.xBefore = 0; this.yBefore = 0;
+    this.mass = 25.0; this.fFactor = 0.002; this.dt = 3;
+    this.charges = []; this.forces = [];
+    this.starting = true; this.running = false; this.time = 0;
+    this.goalState = false; this.collisionState = false;
+    this.level = 0; this.trace = false;
+    this.path = []; this.pathStarted = false;     // array of subpaths, each an array of [x, y]
+    this.onGoal = null; this.onCollision = null;
+  }
+  Model.prototype.updateForceList = function () {
+    for (var i = 0; i < this.forces.length; i++) this.forces[i] = force(this.charges[i], this.puck);
+  };
+  Model.prototype.addCharge = function (c) { this.charges.push(c); this.forces.push(force(c, this.puck)); };
+  Model.prototype.removeChargeAt = function (i) { this.charges.splice(i, 1); this.forces.splice(i, 1); };
+  Model.prototype.netForce = function () {
+    var fx = 0, fy = 0;
+    for (var i = 0; i < this.forces.length; i++) { fx += this.forces[i].fx; fy += this.forces[i].fy; }
+    return [fx, fy];
+  };
+  Model.prototype.updatePuckPositionVerlet = function () {
+    var f, dt = this.dt;
+    if (this.starting) {
+      f = this.netForce();
+      this.xBefore = this.x; this.yBefore = this.y;
+      this.x += this.fFactor * f[0] / (2.0 * this.mass) * dt * dt;
+      this.y += this.fFactor * f[1] / (2.0 * this.mass) * dt * dt;
+      this.starting = false;
+    } else {
+      f = this.netForce();
+      var xT = this.x, yT = this.y;
+      this.x = 2.0 * this.x - this.xBefore + this.fFactor * f[0] / this.mass * dt * dt;
+      this.y = 2.0 * this.y - this.yBefore + this.fFactor * f[1] / this.mass * dt * dt;
+      this.xBefore = xT; this.yBefore = yT;
+      this.puck.x2 = this.x; this.puck.y2 = this.y;
+      this.puck.x = javaInt(this.x); this.puck.y = javaInt(this.y);
+      this.updateForceList();
+      if (this.x > 3 * W || this.x < -3 * W || this.y > 3 * H || this.y < -3 * H) this.running = false;
+    }
+  };
+  // Java (int) cast of a double: truncates, NaN -> 0, saturates at int range
+  function javaInt(v) { if (v !== v) return 0; if (v >= 2147483647) return 2147483647; if (v <= -2147483648) return -2147483648; return trunc(v); }
+  Model.prototype.updatePath = function () {
+    if (!this.pathStarted) { this.path.push([[this.puck.x, this.puck.y]]); this.pathStarted = true; }
+    else { if (!this.path.length) this.path.push([]); this.path[this.path.length - 1].push([this.puck.x, this.puck.y]); }
+  };
+  Model.prototype.resetPath = function () { this.path = []; };
+  // Model.timerHandler.actionPerformed - one tick (every 3 ms in the Java version)
+  Model.prototype.tick = function () {
+    var n = this.puck.x, n2 = this.puck.y, g = GOAL;
+    if (n >= g[0] && n2 >= g[1] && n < g[0] + g[2] && n2 < g[1] + g[3]) {
+      this.goalState = true; this.running = false; if (this.onGoal) this.onGoal(); return;
+    }
+    if (n > 0 && n < W && n2 > 0 && n2 < H && COLLISION[this.level][n * H + n2] === 1) {
+      this.collisionState = true; this.running = false; if (this.onCollision) this.onCollision(); return;
+    }
+    this.time++;
+    this.updatePuckPositionVerlet();
+    if (this.trace) this.updatePath();
+  };
+  Model.prototype.resetTimer = function () {
+    this.running = false; this.time = 0;
+    this.x = this.initX; this.y = this.initY;
+    this.puck.x2 = this.initX; this.puck.y2 = this.initY;
+    this.puck.x = trunc(this.initX); this.puck.y = trunc(this.initY);
+    this.updateForceList();
+    this.path = []; this.pathStarted = false; this.starting = true;
+    this.goalState = false; this.collisionState = false;
+  };
+
+  // FieldGrid: 25 columns, spacing 28 px, test charge sign 3
+  var GRID_N = 25, GRID_S = trunc(W / GRID_N), GRID_NY = trunc(H / GRID_S);
+  function fieldGrid(charges) {
+    var out = [];
+    for (var i = 0; i < GRID_N; i++) for (var j = 0; j < GRID_NY; j++) {
+      var p = new Charge(i * GRID_S + trunc(GRID_S / 2), j * GRID_S + trunc(GRID_S / 2), 3);
+      var d = 0, d2 = 0;
+      for (var k = 0; k < charges.length; k++) { var f = force(charges[k], p); d += f.fx; d2 += f.fy; }
+      var mag = Math.pow(Math.pow(d, 2) + Math.pow(d2, 2), 0.5);
+      var gray = trunc(-255.0 * mag / 300.0 + 255.0);
+      if (gray < 1) gray = 1; else if (gray > 255) gray = 255;
+      out.push({ x: p.x, y: p.y, dx: javaInt(25.0 * d / mag), dy: javaInt(25.0 * d2 / mag), gray: gray });
+    }
+    return out;
+  }
+
+  return { Model: Model, Charge: Charge, force: force, fieldGrid: fieldGrid, W: W, H: H, COLLISION: COLLISION, GOAL: GOAL };
+})();
+if (typeof module !== 'undefined') module.exports = EFH;
+</script>
+
+<script>
+/* ===== View + controls: port of PlayingField / ControlPanel / ElectricHockeySimulationPanel ===== */
+(function () {
+  'use strict';
+  var IMG_SRC = {
+    plusDisk: 'data:image/gif;base64,R0lGODlhEQARAPcAAP////39/ezs7M/P0M3NztPT0+7u7v7+/t3d3YWFh21sb2hnamNiZFxcX2JiZISEhuLi4rm4uaiEhNZfX+k8POo1Nd9QUL12d4V7fV5eYWRkZrm5usWzs+g+PvwGBv4AAP4CAv0BAfYeHrt5emdnal9fYb29vuPQ0PEnJ/5DQ/6hofsKCstpamRkZ2trbfHx8ffz8+1AQf5YWP7T0/wJCal3ebGxsuilpf0CAuo8PHBtcH5+gPz8/OxSUvsMDJR8fmpqbPX19fQqKv4NDf4QEP5iYv7W1v4DA7h7fPbt7fgaGv68vP7s7P7y8v77+/7q6v44OP4BAbtyc3t7ffb19fUoKP4hIf4pKf5zc/7a2v4oKP4KCv0EBK19fqGhouxeXvkUFI+ChObm5+e4uN9SUqioqfr4+OxXV/kWFrGam/j4+PHq6uxOTv4SEv4rK/kZGdGZmfPu7ux/f/gWFvwICO4+PuW+vvDk5Oevr+aLi+xubumVlejKyvj39////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////yH5BAEAAH4ALAAAAAARABEAAAjRAP0IHChwAIECBBMKRJBAwQIGDRw8UCgwgoQJFCpYuIAhg4YNCTl08PABBIgPIUSMIFHCxMATKD7ITKFC5ocVLFq4EAgjhs0PMmb8pFGjgQ0/N3D8DPrzQw4dO/z0aMr0p48fQIII+TCEiNciRrx6PXIECZAkSj4sYcK2iRO2TJ5AiSJlCpUqH6xc2Ysly94rWrZw6eLFzxeqQn+CCSNwDEmbVW2SKTPwTAjIiWWiSUNwDZvLH9q4sfkGjsI4cuZEsUmnjh2KAu/gyaNnDx+FAQEAOw==',
+    minusDisk: 'data:image/gif;base64,R0lGODlhEQARAPcAAP////n5+ebm55ycnoeHiXNzdXBwcoCAgpSUldTU1ff395iYqTY2uScnuh0dzhoa0ysrtDs7mFxcX2dnapKSk+np6fPz8z09yAoK7wAA/xER4ufn5zMz4wQE9wcH8zQ0poqKjPX19VFR8gMD+WRkZsbGx7Oz/woK+AoK7VZWaX19fz4+/y4urikp/xUV2mhoahcX/zAw/0BA/xQU3WtrbQ8P/5CQ/8DA/3Z2eCIi/xMT3YSEhTc3/y0twtra2ouL/wsL/wkJ8ZGRsvr6+jU1/zY2z/b29+/v/zY25vj4+ExM/xUV92Fh+VlZ/0VF/yMj/x8f/09P/2Ji/9/f/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////yH5BAEAAFQALAAAAAARABEAAAiTAKkIHDiAQAEDBxAkGMiQygIGDRw8gBBBwgQKDalcwJCho0cNFQsw5NDBo8kMHj5IACFQxMmXIyKQKGHixMuXKFKoWHHzJosCLXq+dPECRscYMpIqVdpxBo0aHW3cmEqVakcNOHIIPaljB4+tJnv4+AEEbIYgQgQSMVuEYVChSDIqKXtyCZOMAk00cfIEShQpGQMCADs=',
+    plusBag: 'data:image/gif;base64,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',
+    minusBag: 'data:image/gif;base64,R0lGODlhLgAuAPcAAAAA/////8LC/0FB/wAA+/v7+4KC/+/v/wAA911dXQgI7yAg/76+/wQE+11dYQAA7wgI/zEx/xwcYUlJfSAgxhwc/xQUhgAA8wgIwhAQ/wQE62Fh//Pz86qqqs7O/1FRcRgYcRgY0ggIxhAQ4wQE90FBjhAQphwcXcrKygwM52FhZRQUjgQE321tbQwMqggIyt/f/z09/xQU/+fn5wQE5yQkwgwM/wgIzjU1/7Kysu/v72lp/yQk/1VVaSgotggI0hAQmuvr7xAQ32VlaQgI8xAQlhQU2wQE/y0t/3l50nV1/xgYeTk5rgQE7xwcZba2xgwMvmVl/319+0VFipaWmqamqpqa/wwMtoqK/xgYaQgI61VV/wwM8wQE88bGxtvb2zU1onV1eevr62VlZSgo/5aWlgwM63l5eZKS/xQU47q6ul1d/1lZ711dqtfX166u6wwM71lZeRAQ1xwconl5fT09XRwc776++66uzhQUlqampkFBnhwczpKSkmlpaXl59yQkfZaW/xgY23V1lk1N/wwM+xAQoklJwnFxdRQU92FhyigovsbG5ygokgQE23Fx29/f4zExqllZXSgoYRgY576+voKCghgY1xQUfQgI40FBzklJcSAg+xwcVWFhtuPj987O0oqKjklJ/yQk9xwcyhgY/319ypqamn1987q6256erhQU3wgI52FhYWlpbTk5+zk5puPj4wQE466usmlp3zk5znFx/0VFhhAQ9wwMslFR/0VF/9LS0hAQ0hgYojk5XRgY67q6+46OjiQkvgQE1319ghQU1wgI387OzoqKiklJ+xAQ8////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////yH5BAEAAMwALAAAAAAuAC4AAAj/AJkJHEiwoMGDAzuEUeFgzJlZCCNKlPiESY0aIfj4+OCgBbKJICcmSQGgpEkiNXq08hKSmZ5iLVpY6gCSDQmTOEuO6OEHpCpYPi5R8DHBgR+IBBUy3HMzZ85VDspI1AQnJ4kQRaUyq3gxYxenTklEGhLRDtiSZko4mDXyrNuSKRzwOvjqLQAzExY1tQsWjgMUBrFA4Jtir9MFAxIrVpwBQINbgAuS4QuAwNsNDDJr1hzB8a2DCyiLdgsHkUEGo1M7HaHmtMkAsGPHRl0S8eIYg00S6KKhCQKTJA4d9NBYNObNDGwNRgDFQhYJEkDkOUaAUkQeqsHSMHHlxo8XUPKc/3AyR+KW7DlpEPud0xEgSVQkVsi5u/dvEoXOIvh6Fo7a1ggJIENJzDkHnXS1oGEDWOyR9kELEgkQwXbdfRfeLyroocyCACBwDBQaUAYVSxG9YYxhJa1SFBVSjCLCEpiswJ9dJHxwSkTBcEGaWjl40ksmM1IGRjIRJWIXHJtMooVTGSzmZGgA1CAMQqJQdowEIjgVAXKbbVBSDTQdVAplCIAABHpgfHEQbZQZskJ2RAyC0A4lNemkYlCK8KZqq0REJwBbcpmZlwCI4IJqcKQSEZt8+fKIAZBCugGHYC2DykTzgdXFCyYAYQIGjUgRaaQ7ZJoTJaa4MREhYblggQV5WP9wQidO5NKgU02YccklNRTVCh2gSISdSRpgcAwNBNLwAggnWBCkST/cUFhJRIywiEphHiTAmACQgKx2JpywgmU4afCtU0IUVUlEHuDQ4VsImCABFDgRQG5/H/Qk0WR2aQDCEg3e6xZUerCbm12OSMACAIUUR2MJZ0S0hmis1KGIEgwgIRopY0TkLmVEfBAZlHxdokJEMZR0nKCdAXDLXMzkhoagmenkise13ckYAETEMRCUEeicWEmXEInQeZSZ0cdA/PIVQmTDHfzWJQQhTWMbEw3Alxl4FDTsW2mEZCpYDdBiUCBSO8UFIyFJeFYifyCExdc5jXJHSwLtgASlPOwZ4sFEMTRtAyc74F0QA1ZgbDgDBljBQEQBAQA7',
+    puckPositive: 'data:image/gif;base64,R0lGODlhEgASAPcAAP////z8/M7OzoKChGFhZFxcX2FhY3R0drOztPX19fb294iIiiEhIRoaGw4ODxEREhAQEC4uMFZWWV1dYH5+f+bm5zw8PQoKCwAAADs7PXV1d+vr6ycnJwMDA4yMjvv7+1xcXDAwMMDAwAYGBkFBQ2BgYtLS07Ozsw0NDUBAQA8PD5OTlEVFRT8/QXFxcykpKWZmaB8fH2dnaQcHBxcXGHNzdSIiIpeXmS8vLycnKNfX2HR0dIKCgu/v7yoqK/Dw8KSkpBERERMTE9/f34uLiyQkJMzMzM/Pzz4+PhUVFV1dXYaGho+Pj2tra3d3d5+fn////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////yH5BAEAAFAALAAAAAASABIAAAimAKEIFChgAIECCA0cQDCwIZQFDBo4eAChQQQJEyg4hGLhAoaPIDE4yFBAQ0MOIVNi6BChgAeBIFKGEJFyBIkSJk6gSJkCgEoVBVawUNlTJYYWLl4Q9amyAYwYS40+kDHjowgAWLNmpYmBRg0bUVU+uIEjbMocOnaYBTmCh0CwIYum9DEQSJCQEFKkFOKQCFSjGIoY2XgESZKUSZRsdLiESRMnTxYHBAA7',
+    puckNegative: 'data:image/gif;base64,R0lGODlhEgASAPcAAP////z8/M7OzoKChGFhZFxcX2FhY3R0drOztPX19fb294iIiiEhIRoaGw4ODxEREhAQEC4uMFZWWV1dYH5+f+bm5zw8PQoKCwAAADs7PXV1d+vr6ycnJwMDA4yMjvv7+1xcXDAwMMDAwAYGBkFBQ2BgYtLS07Ozsw0NDUBAQA8PD5OTlEVFRT8/QXFxcykpKWZmaB8fH2dnaQcHBxcXGHNzdSIiIpeXmS8vLycnKNfX2HR0dIKCgu/v7yoqK/Dw8KSkpBERERMTE9/f34uLiyQkJMzMzM/Pzz4+PhUVFV1dXYaGho+Pj2tra3d3d5+fn////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////yH5BAEAAFAALAAAAAASABIAAAicAKEIFChgAIECCA0cQDCwIZQFDBo4eAChQQQJEyg4hGLhAoaPIDE4yFBAQ0MOIVNi6BChgAeBIFSqHEGihIkTKGSqVFFgBQudMlu4eAFUZQMYMT4SWMq0KcgHMmZ8FAGgqlWrIj7SqGGjaMoHN3B4DZlDx46xH0fwENh1rI+BQIJ4FeKQSFKdRYxsPIIkScokSjY6XMKkiZMnggMCADs='
+  };
+  var IMG = {};
+  Object.keys(IMG_SRC).forEach(function (k) { var im = new Image(); im.onload = function () { draw(); }; im.src = IMG_SRC[k]; IMG[k] = im; });
+
+  var EFHm = EFH, model = new EFHm.Model(), W = EFHm.W, H = EFHm.H;
+  var $ = function (id) { return document.getElementById(id); };
+  var canvas = $('field'), ctx = canvas.getContext('2d');
+  var gridCanvas = document.createElement('canvas'), gctx = gridCanvas.getContext('2d');
+
+  var FIELD_COLOR = 'rgb(230,235,255)', BARRIER = [100, 100, 250];
+  var bagWidth = Math.trunc(W / 15);
+  var plusBag = [Math.trunc(8 * W / 10), 10, bagWidth, bagWidth];
+  var minusBag = [Math.trunc(8 * W / 10) + bagWidth, 10, bagWidth, bagWidth];
+  var chargeBag = [plusBag[0], 10, 2 * bagWidth, bagWidth];
+  function inRect(r, x, y) { return x >= r[0] && y >= r[1] && x < r[0] + r[2] && y < r[1] + r[3]; }
+
+  var showField = false, antialias = false, tries = 0;
+  var grabbed = null, grabbedForce = null, newGrabbed = false, oldGrabbed = false, grabbedIndex = -1;
+  var grid = [];
+  var scale = 1, pxRatio = 1;
+
+  /* ---------- sounds (synthesized) ---------- */
+  var audioCtx = null;
+  function ac() { try { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if (audioCtx.state === 'suspended') audioCtx.resume(); } catch (e) { audioCtx = null; } return audioCtx; }
+  function tone(freq, t0, dur, type, vol) {
+    var a = ac(); if (!a) return;
+    var o = a.createOscillator(), g = a.createGain();
+    o.type = type || 'triangle'; o.frequency.setValueAtTime(freq, a.currentTime + t0);
+    g.gain.setValueAtTime(0.0001, a.currentTime + t0);
+    g.gain.exponentialRampToValueAtTime(vol || 0.25, a.currentTime + t0 + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, a.currentTime + t0 + dur);
+    o.connect(g); g.connect(a.destination); o.start(a.currentTime + t0); o.stop(a.currentTime + t0 + dur + 0.02);
+  }
+  // SOUNDS: synthesized (no audio files). makeTada/makeCork take any AudioContext so they can also be rendered offline.
+  function brassNote(a, out, freq, t0, dur, vol) {
+    var o1 = a.createOscillator(), o2 = a.createOscillator(), lp = a.createBiquadFilter(), g = a.createGain();
+    o1.type = 'sawtooth'; o2.type = 'square';
+    o1.frequency.setValueAtTime(freq, t0); o2.frequency.setValueAtTime(freq * 1.003, t0);
+    if (dur > 0.4) { // gentle vibrato on the long chord
+      var lfo = a.createOscillator(), lg = a.createGain();
+      lfo.frequency.value = 5.5; lg.gain.setValueAtTime(0, t0); lg.gain.linearRampToValueAtTime(freq * 0.006, t0 + 0.3);
+      lfo.connect(lg); lg.connect(o1.frequency); lg.connect(o2.frequency); lfo.start(t0); lfo.stop(t0 + dur + 0.05);
+    }
+    lp.type = 'lowpass'; lp.Q.value = 1;
+    lp.frequency.setValueAtTime(600, t0); lp.frequency.exponentialRampToValueAtTime(3200, t0 + 0.04);
+    lp.frequency.exponentialRampToValueAtTime(1600, t0 + dur);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(vol, t0 + 0.025);
+    g.gain.setValueAtTime(vol * 0.8, t0 + Math.min(0.1, dur * 0.5));
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    o1.connect(lp); o2.connect(lp); lp.connect(g); g.connect(out);
+    o1.start(t0); o2.start(t0); o1.stop(t0 + dur + 0.05); o2.stop(t0 + dur + 0.05);
+  }
+  function makeTada(a, out, t) {
+    var short = [392.00, 523.25, 659.25], long = [523.25, 659.25, 783.99, 1046.5]; // "ta" (G-C-E), "DA!" (C major)
+    short.forEach(function (f) { brassNote(a, out, f, t, 0.13, 0.09); });
+    long.forEach(function (f) { brassNote(a, out, f, t + 0.17, 1.15, 0.08); });
+    var c = a.createOscillator(), cg = a.createGain(); // little sparkle on top
+    c.type = 'sine'; c.frequency.setValueAtTime(2093, t + 0.17);
+    cg.gain.setValueAtTime(0.0001, t + 0.17); cg.gain.exponentialRampToValueAtTime(0.05, t + 0.2); cg.gain.exponentialRampToValueAtTime(0.0001, t + 0.9);
+    c.connect(cg); cg.connect(out); c.start(t + 0.17); c.stop(t + 0.95);
+  }
+  function makeCork(a, out, t) {
+    var len = Math.floor(a.sampleRate * 0.09), buf = a.createBuffer(1, len, a.sampleRate), d = buf.getChannelData(0), seed = 12345;
+    for (var i = 0; i < len; i++) { seed = (seed * 1103515245 + 12345) & 0x7fffffff; d[i] = (seed / 0x3fffffff - 1) * Math.pow(1 - i / len, 3); }
+    var n = a.createBufferSource(), bp = a.createBiquadFilter(), ng = a.createGain();
+    n.buffer = buf; bp.type = 'bandpass'; bp.Q.value = 2.5;
+    bp.frequency.setValueAtTime(2200, t); bp.frequency.exponentialRampToValueAtTime(500, t + 0.08);
+    ng.gain.setValueAtTime(0.9, t);
+    n.connect(bp); bp.connect(ng); ng.connect(out); n.start(t);
+    var o = a.createOscillator(), g = a.createGain(); // the hollow "pop"
+    o.type = 'sine'; o.frequency.setValueAtTime(1100, t); o.frequency.exponentialRampToValueAtTime(260, t + 0.06);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.5, t + 0.004); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.11);
+    o.connect(g); g.connect(out); o.start(t); o.stop(t + 0.13);
+  }
+  function playTada() { var a = ac(); if (a) makeTada(a, a.destination, a.currentTime + 0.01); }
+  function playCork() { var a = ac(); if (a) makeCork(a, a.destination, a.currentTime + 0.005); }
+  model.onGoal = playTada;
+  model.onCollision = playCork;
+  window.__efhSounds = { makeTada: makeTada, makeCork: makeCork };
+
+  /* ---------- drawing ---------- */
+  function rgb(c) { return 'rgb(' + c[0] + ',' + c[1] + ',' + c[2] + ')'; }
+  function brighter(c) { // java.awt.Color.brighter()
+    var r = c[0], g = c[1], b = c[2], i = Math.trunc(1.0 / 0.3);
+    if (r === 0 && g === 0 && b === 0) return [i, i, i];
+    if (r > 0 && r < i) r = i; if (g > 0 && g < i) g = i; if (b > 0 && b < i) b = i;
+    return [Math.min(Math.trunc(r / 0.7), 255), Math.min(Math.trunc(g / 0.7), 255), Math.min(Math.trunc(b / 0.7), 255)];
+  }
+  function darker(c) { return [Math.max(Math.trunc(c[0] * 0.7), 0), Math.max(Math.trunc(c[1] * 0.7), 0), Math.max(Math.trunc(c[2] * 0.7), 0)]; }
+  function fill3DRect(g, x, y, w, h, c) {
+    g.fillStyle = rgb(c); g.fillRect(x + 1, y + 1, w - 2, h - 2);
+    g.fillStyle = rgb(brighter(c)); g.fillRect(x, y, 1, h); g.fillRect(x + 1, y, w - 2, 1);
+    g.fillStyle = rgb(darker(c)); g.fillRect(x + 1, y + h - 1, w - 1, 1); g.fillRect(x + w - 1, y, 1, h - 1);
+  }
+  function fillPoly(g, pts) {
+    g.beginPath(); g.moveTo(pts[0][0], pts[0][1]);
+    for (var i = 1; i < pts.length; i++) g.lineTo(pts[i][0], pts[i][1]);
+    g.closePath(); g.fill();
+  }
+  function drawForce(f) {
+    if (!isFinite(f.arrow[3][0]) || !isFinite(f.arrow[3][1])) return;
+    var bad = f.arrow.some(function (p) { return p[0] !== p[0] || p[1] !== p[1]; });
+    if (bad) return;
+    ctx.fillStyle = f.sign === 1 ? 'rgb(255,175,175)' : 'rgb(0,255,255)'; // Color.pink / Color.cyan
+    fillPoly(ctx, f.arrow);
+  }
+  // phetcommon Arrow(tail, tip, headHeight 6, headWidth 6, tailWidth 2), drawn as an outline
+  function gridArrowPath(g, x0, y0, x1, y1) {
+    var dx = x1 - x0, dy = y1 - y0, L = Math.sqrt(dx * dx + dy * dy);
+    if (!(L > 0)) return false;
+    var ux = dx / L, uy = dy / L, nx = -uy, ny = ux, hh = Math.min(6, L), hw = 6, tw = 2;
+    var bx = x1 - ux * hh, by = y1 - uy * hh;
+    g.beginPath();
+    g.moveTo(x0 + nx * tw / 2, y0 + ny * tw / 2);
+    g.lineTo(bx + nx * tw / 2, by + ny * tw / 2);
+    g.lineTo(bx + nx * hw / 2, by + ny * hw / 2);
+    g.lineTo(x1, y1);
+    g.lineTo(bx - nx * hw / 2, by - ny * hw / 2);
+    g.lineTo(bx - nx * tw / 2, by - ny * tw / 2);
+    g.lineTo(x0 - nx * tw / 2, y0 - ny * tw / 2);
+    g.closePath();
+    return true;
+  }
+  function renderGrid() {
+    // Rendered at 1x like Java's BufferedImage; "Antialias" toggles smooth vs pixel rendering
+    gridCanvas.width = W; gridCanvas.height = H;
+    gctx.fillStyle = '#ffffff'; gctx.fillRect(0, 0, W, H);
+    gctx.lineWidth = 1;
+    for (var i = 0; i < grid.length; i++) {
+      var a = grid[i];
+      if (gridArrowPath(gctx, a.x + 0.5, a.y + 0.5, a.x + a.dx + 0.5, a.y + a.dy + 0.5)) {
+        gctx.strokeStyle = 'rgb(' + a.gray + ',' + a.gray + ',' + a.gray + ')'; gctx.stroke();
+      }
+    }
+  }
+  function updateGrid() { grid = EFHm.fieldGrid(model.charges); }
+
+  function draw() {
+    ctx.setTransform(pxRatio, 0, 0, pxRatio, 0, 0);
+    ctx.imageSmoothingEnabled = true;
+    ctx.fillStyle = FIELD_COLOR; ctx.fillRect(0, 0, W, H);
+    if (showField && model.charges.length !== 0) {
+      ctx.imageSmoothingEnabled = antialias;
+      ctx.drawImage(gridCanvas, 0, 0, W, H);
+      ctx.imageSmoothingEnabled = true;
+    }
+    if (IMG.plusBag.complete) ctx.drawImage(IMG.plusBag, plusBag[0], plusBag[1]);
+    ctx.strokeStyle = '#000'; ctx.lineWidth = 1;
+    ctx.strokeRect(plusBag[0] + 0.5, plusBag[1] + 0.5, plusBag[2], plusBag[3]);
+    if (IMG.minusBag.complete) ctx.drawImage(IMG.minusBag, minusBag[0], minusBag[1]);
+    ctx.strokeRect(minusBag[0] + 0.5, minusBag[1] + 0.5, minusBag[2], minusBag[3]);
+    if (newGrabbed && grabbed) {
+      ctx.fillStyle = grabbed.sign === -1 ? '#0000ff' : (grabbed.sign === 1 ? '#ff0000' : '#000');
+      ctx.beginPath(); ctx.arc(grabbed.x, grabbed.y, grabbed.radius, 0, Math.PI * 2); ctx.fill();
+      drawForce(grabbedForce);
+    }
+    var rs = model.RECTS[model.level];
+    for (var i = 0; i < rs.length; i++) fill3DRect(ctx, rs[i][0], rs[i][1], rs[i][2], rs[i][3], BARRIER);
+    for (var j = 0; j < model.charges.length; j++) {
+      var c = model.charges[j];
+      var im = c.sign === -1 ? IMG.minusDisk : IMG.plusDisk;
+      if (im.complete) ctx.drawImage(im, c.x - c.radius, c.y - c.radius);
+      drawForce(model.forces[j]);
+    }
+    var p = model.puck, pim = p.sign === 1 ? IMG.puckPositive : IMG.puckNegative;
+    if (pim.complete && isFinite(p.x) && Math.abs(p.x) < 1e6 && Math.abs(p.y) < 1e6) ctx.drawImage(pim, p.x - p.radius, p.y - p.radius);
+    if (model.goalState) {
+      ctx.fillStyle = 'rgb(0,125,0)'; ctx.font = '110px "Lucida Sans", "Lucida Grande", Arial, sans-serif';
+      ctx.fillText('Goal!', 3 * W / 10, H / 5);
+    }
+    if (model.collisionState && !model.goalState) {
+      ctx.fillStyle = '#ff0000'; ctx.font = '50px "Lucida Sans", "Lucida Grande", Arial, sans-serif';
+      ctx.fillText('Collision!', 2 * W / 5, H / 10);
+    }
+    if (model.trace) {
+      ctx.strokeStyle = '#ff0000'; ctx.lineWidth = 1; ctx.lineCap = 'square'; ctx.lineJoin = 'miter'; ctx.setLineDash([10, 5]);
+      ctx.beginPath();
+      for (var s = 0; s < model.path.length; s++) {
+        var sp = model.path[s];
+        for (var q = 0; q < sp.length; q++) { if (q === 0) ctx.moveTo(sp[q][0] + 0.5, sp[q][1] + 0.5); else ctx.lineTo(sp[q][0] + 0.5, sp[q][1] + 0.5); }
+      }
+      ctx.stroke(); ctx.setLineDash([]); ctx.lineCap = 'butt';
+    }
+  }
+
+  /* ---------- timer (Java: javax.swing.Timer every 3 ms) ---------- */
+  var last = null, acc = 0, TICK_MS = 3;
+  function frame(t) {
+    if (last === null) last = t;
+    var elapsed = Math.min(t - last, 100); last = t;
+    if (model.running) {
+      acc += elapsed;
+      var n = 0;
+      while (acc >= TICK_MS && model.running && n < 60) { model.tick(); acc -= TICK_MS; n++; }
+      if (!model.running) acc = 0;
+    } else acc = 0;
+    draw();
+    requestAnimationFrame(frame);
+  }
+  function startTimer() { model.running = true; }
+  function stopTimer() { model.running = false; }
+
+  /* ---------- controls (ControlPanel) ---------- */
+  var startBtn = $('startBtn'), resetBtn = $('resetBtn'), clearBtn = $('clearBtn'), pauseChk = $('pauseChk');
+  function setTries() { $('triesLbl').textContent = 'Tries: ' + tries; }
+  function setCharges() { $('chargesLbl').textContent = '    Charges: ' + model.charges.length; }
+  startBtn.onclick = function () { ac(); resetBtn.disabled = false; startBtn.disabled = true; startTimer(); };
+  resetBtn.onclick = function () { model.resetTimer(); tries++; setTries(); resetBtn.disabled = true; startBtn.disabled = false; };
+  clearBtn.onclick = function () {
+    for (var i = model.charges.length - 1; i >= 0; i--) model.removeChargeAt(i);
+    updateGrid(); stopTimer(); setCharges();
+  };
+  pauseChk.onchange = function () {
+    if (pauseChk.checked) { stopTimer(); startBtn.disabled = true; resetBtn.disabled = true; clearBtn.disabled = true; }
+    else { startTimer(); startBtn.disabled = false; resetBtn.disabled = false; clearBtn.disabled = false; }
+  };
+  $('posChk').onchange = function () {
+    model.puck.sign = this.checked ? 1 : -1;
+    model.updatePath(); model.updateForceList();
+  };
+  $('traceChk').onchange = function () {
+    if (this.checked) { model.trace = true; model.pathStarted = false; model.resetPath(); } else model.trace = false;
+  };
+  $('fieldChk').onchange = function () { showField = this.checked; };
+  $('aaChk').onchange = function () { antialias = this.checked; renderGrid(); };
+  Array.prototype.forEach.call(document.querySelectorAll('input[name=level]'), function (r) {
+    r.onchange = function () { if (r.checked) { model.level = +r.value; tries = 0; setTries(); } };
+  });
+  var massText = $('massText'), massSlider = $('massSlider');
+  function applyMassText() {
+    var s = massText.value.trim(); if (s === '' || isNaN(Number(s))) return;
+    var d = Number(s); model.mass = d;
+    if (d >= 1 && d <= 99) massSlider.value = Math.trunc(d); else if (d < 1) massSlider.value = 1; else if (d > 100) massSlider.value = 99;
+  }
+  massText.addEventListener('keydown', function (e) { if (e.key === 'Enter') applyMassText(); });
+  massText.addEventListener('change', applyMassText);
+  massSlider.addEventListener('input', function () { var n = +massSlider.value; model.mass = n; massText.value = String(n); });
+
+  /* ---------- mouse / touch (PlayingField listeners) ---------- */
+  function evPoint(e) {
+    var r = canvas.getBoundingClientRect();
+    return [Math.floor((e.clientX - r.left) * W / r.width), Math.floor((e.clientY - r.top) * H / r.height)];
+  }
+  var pointerDown = false;
+  canvas.addEventListener('pointerdown', function (e) {
+    e.preventDefault(); ac(); pointerDown = true;
+    try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
+    var pt = evPoint(e);
+    if (inRect(plusBag, pt[0], pt[1])) {
+      newGrabbed = true; grabbed = new EFHm.Charge(pt[0], pt[1], 1); grabbedForce = EFHm.force(grabbed, model.puck);
+    } else if (inRect(minusBag, pt[0], pt[1])) {
+      newGrabbed = true; grabbed = new EFHm.Charge(pt[0], pt[1], -1); grabbedForce = EFHm.force(grabbed, model.puck);
+    } else {
+      for (var i = 0; i < model.charges.length; i++) {
+        if (model.charges[i].contains(pt[0], pt[1])) { oldGrabbed = true; grabbedIndex = i; grabbed = model.charges[i]; }
+      }
+    }
+  });
+  canvas.addEventListener('pointermove', function (e) {
+    if (!pointerDown) return;
+    var pt = evPoint(e);
+    if (newGrabbed || oldGrabbed) { grabbed.x = pt[0]; grabbed.y = pt[1]; grabbedForce = EFHm.force(grabbed, model.puck); }
+    if (oldGrabbed) {
+      model.charges[grabbedIndex] = grabbed;
+      model.forces[grabbedIndex] = EFHm.force(grabbed, model.puck);
+      updateGrid();
+    }
+    renderGrid();
+  });
+  function release(e) {
+    if (!pointerDown) return; pointerDown = false;
+    var pt = evPoint(e);
+    if (newGrabbed) {
+      newGrabbed = false;
+      if (!inRect(chargeBag, pt[0], pt[1])) { model.addCharge(grabbed); setCharges(); }
+    }
+    if (oldGrabbed) {
+      oldGrabbed = false;
+      if (inRect(chargeBag, pt[0], pt[1])) { model.removeChargeAt(grabbedIndex); setCharges(); }
+    }
+    updateGrid(); renderGrid();
+  }
+  canvas.addEventListener('pointerup', release);
+  canvas.addEventListener('pointercancel', release);
+
+  /* ---------- fit to window / embed frame ---------- */
+  function fit() {
+    var app = $('app'), wrap = $('wrap');
+    var natH = app.offsetHeight || 680;
+    scale = Math.min(window.innerWidth / 700, window.innerHeight / natH);
+    if (!(scale > 0)) scale = 1;
+    scale = Math.min(scale, 2);
+    app.style.transform = 'scale(' + scale + ')';
+    wrap.style.width = (700 * scale) + 'px'; wrap.style.height = (natH * scale) + 'px';
+    var pr = Math.max(1, Math.min(3, Math.ceil(scale * (window.devicePixelRatio || 1) * 2) / 2));
+    if (pr !== pxRatio || canvas.width !== Math.round(W * pr)) { pxRatio = pr; canvas.width = Math.round(W * pr); canvas.height = Math.round(H * pr); }
+    draw();
+  }
+  window.addEventListener('resize', fit);
+
+  updateGrid(); renderGrid(); fit();
+  requestAnimationFrame(frame);
+  window.__efh = { model: model, draw: draw };
+})();
+</script>
+</body>
+</html>

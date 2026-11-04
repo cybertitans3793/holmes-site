@@ -10,7 +10,7 @@ import json, os, re, sys, html
 from units import UNITS, SIMS
 
 D = os.path.dirname(os.path.abspath(__file__))
-SP = os.path.dirname(D)
+SP = D  # sim paths in units.py are relative to this folder
 FONTS = '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@500;700&display=swap">'
 
 # ---------- per-kind tweaks injected into the sim's own HTML ----------

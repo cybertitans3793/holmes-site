@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<!--
+  Charging & the Electroscope — an original simulation (polarization, charging by conduction, charging by induction).
+  Single self-contained file: no network, no libraries. Works with mouse, trackpad and touch.
+  Model: each metal object is a set of surface nodes. Every frame the charge distribution on each connected
+  conductor is solved so the whole conductor sits at one potential (method of moments, Coulomb 1/r),
+  given the charges on the rod, the cloth and the other conductors. Whole electrons are then moved
+  node-to-node through the metal to match it. Grounding = conductor held at the Earth's potential (0);
+  whole electrons flow through the hand when the required charge differs by more than half an electron.
+  The rod is an insulator: its charge stays where it was rubbed and only the bits that touch metal transfer.
+-->
+<html lang="en"><head><meta charset="utf-8">
+<title>Charging &amp; the Electroscope</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#e9eef4;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:#1d2733}
+#app{position:absolute;left:0;top:0;width:1100px;height:650px;transform-origin:0 0;display:flex;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.15)}
+#cv{width:800px;height:650px;display:block;touch-action:none;cursor:default}
+#panel{width:300px;height:650px;box-sizing:border-box;padding:9px 11px 8px;border-left:1px solid #d5dde6;overflow-y:auto;font-size:12.5px;line-height:1.35;background:#fbfcfd}
+h1{font-size:15px;margin:0 0 6px}
+.tabs{display:flex;gap:3px;margin-bottom:7px}
+.tabs button{flex:1;padding:5px 2px;font-size:11.5px;border:1px solid #c3cdd8;background:#f2f5f8;border-radius:5px;cursor:pointer;color:#1d2733}
+.tabs button.on{background:#2f6fd0;color:#fff;border-color:#2f6fd0}
+.box{border:1px solid #d5dde6;border-radius:7px;padding:6px 8px;margin-bottom:7px;background:#fff}
+.box b.t{display:block;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:#5b6b7c;margin-bottom:2px}
+#nowText{margin:0;min-height:68px}
+#steps ol{margin:2px 0 0;padding-left:18px}
+#steps li{margin:2px 0;color:#7a8794}
+#steps li.cur{color:#1d2733;font-weight:600}
+#steps li.done{color:#2c8a4b}
+#steps li.done::marker{content:"✓ "}
+#stepMsg{margin:5px 0 0;padding:5px 6px;border-radius:5px;background:#eef6ee;color:#1f5f32;display:none}
+#stepMsg.warn{background:#fdf1e6;color:#8a4a12}
+.sec{margin-bottom:6px}
+.lbl{font-weight:700;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:#5b6b7c;margin:2px 0}
+label{display:block;cursor:pointer;margin:1px 0}
+.row{display:flex;gap:5px;margin:4px 0 2px}
+.row button,#reset{flex:1;padding:5px 4px;font-size:12px;border:1px solid #c3cdd8;background:#f2f5f8;border-radius:5px;cursor:pointer;color:#1d2733}
+.row button:active,#reset:active{background:#dfe6ee}
+.hint{color:#6a7886;font-size:11.5px}
+table{width:100%;border-collapse:collapse;font-size:12px;margin:2px 0 6px}
+td{padding:1px 2px}td.v{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+tr.tot td{border-top:1px solid #d5dde6}
+.p{color:#c93c3c}.n{color:#2a5fcf}
+.foot{color:#6a7886;font-size:11px;margin-top:6px}
+.two{display:flex;gap:10px}.two>div{flex:1}
+</style><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@500;700&display=swap"><style id="holmes-embed">
+html,body{background:#fff!important}
+#app{box-shadow:none!important}
+#panel{font-family:"Space Grotesk",system-ui,sans-serif!important;background:#fff!important;border-left:3px solid #111!important}
+#panel button{border:2px solid #111!important;border-radius:0!important;background:#fff!important;color:#111!important;font-family:"Space Grotesk",system-ui,sans-serif!important}
+#panel button:hover{background:#ffe2d3!important}
+#panel button.on{background:#111!important;color:#fff!important}
+#panel .box,#panel #stages{border:2px solid #111!important;border-radius:0!important}
+#panel select{border:2px solid #111!important;border-radius:0!important}
+#panel input[type=range],#panel input[type=checkbox]{accent-color:#111}
+</style></head>
+<body>
+<div id="app">
+<canvas id="cv" width="800" height="650" aria-label="Electroscope simulation"></canvas>
+<div id="panel">
+  <h1>Charging &amp; the Electroscope</h1>
+  <div class="sec">
+    <div class="lbl">Rod</div>
+    <label><input type="radio" name="rod" value="rubber" checked> Rubber rod, rubbed with fur</label>
+    <label><input type="radio" name="rod" value="glass"> Glass rod, rubbed with silk</label>
+    <div class="row"><button id="rub">Rub rod</button><button id="neut">Discharge rod</button></div>
+    <div class="hint">Or drag the rod's tip back and forth across the cloth.</div>
+  </div>
+  <div class="two">
+    <div class="sec"><div class="lbl">Show</div>
+      <label><input type="radio" name="view" value="all" checked> All charges</label>
+      <label><input type="radio" name="view" value="excess"> Excess only</label>
+      <label><input type="checkbox" id="showNet" checked> Net tags</label>
+      <label><input type="checkbox" id="showLbl"> Part names</label>
+    </div>
+    <div class="sec"><div class="lbl">Add</div>
+      <label><input type="checkbox" id="objSphere"> Metal sphere</label>
+      <label><input type="checkbox" id="objBlock"> Plastic block</label>
+    </div>
+  </div>
+  <div class="lbl">Net charge</div>
+  <table id="tally"></table>
+  <button id="reset">Reset</button>
+  <div class="foot">Drag the rod, the hand, and any added objects. Each + or − stands for a large packet of charge (real objects have billions of extra electrons). Only electrons move — the + ions are locked in place.</div>
+</div>
+</div>
+<script>
+(function () {
+'use strict';
+var CW = 800, CH = 650, TABLE = 560;
+var cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+
+/* ---------------- geometry ---------------- */
+var KX = 300, KY = 188, KR = 32;                 // electroscope knob
+var STEM_TOP = KY + KR + 6, HINGE_Y = 414, STEM_R = 5;
+var LEAF_L = 92;
+var JAR = { x0: 212, x1: 388, y0: 296, y1: TABLE };
+var STOP = { x0: 274, x1: 326, y0: 282, y1: 302 };
+var OBST_JAR = { x0: 212, x1: 388, y0: 282, y1: TABLE }; // jar + stopper as one obstacle
+var SR = 36;
+/* self-term size of a node's patch (x spacing). Ball nodes get a bigger patch because each ring node stands for a
+   whole band of a 3-D sphere's surface, so the knob and sphere hold their fair share of the charge. */
+var SELF_BALL = 1.0, HND = 120; // sphere's insulating handle length                                      // metal sphere radius
+var ROD_LEN = 280, ROD_R = 9, CHG_LEN = 196, NSLOT = 20;      // rod; rubbed section at the tip
+var CLOTH = { x0: 622, x1: 782, y0: 520, y1: TABLE };
+var SHOULDER = { x: -90, y: 780 };
+var BLOCK_W = 132, BLOCK_H = 64;
+
+/* ---------------- state ---------------- */
+var S, conds, nodes, adj;
+var E_IDX = 0;
+
+function newState() {
+  S = {
+    mode: S ? S.mode : 'explore',
+    rodType: S ? S.rodType : 'rubber',
+    view: S ? S.view : 'all',
+    rod: { x: 495, y: 44, slots: [] },
+    cloth: { slots: [] },
+    hand: { x: 92, y: 250 },
+    sphere: { on: S ? S.sphere.on : false, x: 520, y: 300 },
+    block: { on: S ? S.block.on : false, x: 452, y: 446 },
+    theta: 0.05,
+    el: [], fly: [], earth: 0,
+    q: null, gOf: null, groups: [], gV: [],
+    cumPrev: {}, t: 0, coolRod: 0, coolGnd: 0, rubAcc: 0,
+    lastEv: { k: '', t: -9, who: '' },
+    cnt: { rodE: 0, rodAny: 0, gnd: 0 },
+    touch: { rod: -1, rodPt: null, hand: -1, es: false },
+    step: 0, stepMsg: '', stepWarn: false, stepBase: {}
+  };
+  for (var i = 0; i < NSLOT; i++) { S.rod.slots.push({ v: 0, pend: false }); S.cloth.slots.push({ v: 0, pend: false }); }
+  buildConductors();
+}
+
+/* conductor construction: nodes = surface charge sites, each with one fixed + ion and (when neutral) one free electron */
+function makeElectroscope() {
+  var c = { name: 'electroscope', nodes: [], edges: [], inner: [], ring: [], stem: [], leafL: [], leafR: [] };
+  var NR = 14, rr = 24, i;
+  for (i = 0; i < NR; i++) { var a = Math.PI / 2 + i * 2 * Math.PI / NR; c.ring.push(c.nodes.length); c.nodes.push({ x: KX + rr * Math.cos(a), y: KY + rr * Math.sin(a), sp: 2 * Math.PI * rr / NR, self: SELF_BALL, nx: Math.cos(a), ny: Math.sin(a) }); }
+  for (i = 0; i < NR; i++) c.edges.push([c.ring[i], c.ring[(i + 1) % NR]]);
+  var NS = 12, st = (HINGE_Y - STEM_TOP) / (NS - 1);
+  for (i = 0; i < NS; i++) { c.stem.push(c.nodes.length); c.nodes.push({ x: KX, y: STEM_TOP + i * st, sp: st, nx: 1, ny: 0 }); }
+  c.edges.push([c.ring[0], c.stem[0]]);
+  for (i = 0; i < NS - 1; i++) c.edges.push([c.stem[i], c.stem[i + 1]]);
+  var NL = 6;
+  for (i = 0; i < NL; i++) { // interleaved L/R so whole-charge rounding treats the two leaves alike
+    c.leafL.push(c.nodes.length); c.nodes.push({ x: 0, y: 0, sp: 15, nx: -1, ny: 0, leaf: -1, s: 15 * (i + 1) });
+    c.leafR.push(c.nodes.length); c.nodes.push({ x: 0, y: 0, sp: 15, nx: 1, ny: 0, leaf: 1, s: 15 * (i + 1) }); }
+  var hinge = c.stem[NS - 1];
+  c.edges.push([hinge, c.leafL[0]]); c.edges.push([hinge, c.leafR[0]]);
+  for (i = 0; i < NL - 1; i++) { c.edges.push([c.leafL[i], c.leafL[i + 1]]); c.edges.push([c.leafR[i], c.leafR[i + 1]]); }
+  c.innerRel = [[0, 0], [11, 0], [-11, 0], [0, 11], [0, -11], [8, -8], [-8, 8]];
+  return c;
+}
+function makeSphere() {
+  var c = { name: 'sphere', nodes: [], edges: [], ring: [] };
+  var NR = 16, rr = 28, i;
+  for (i = 0; i < NR; i++) { var a = Math.PI / 2 + i * 2 * Math.PI / NR; c.ring.push(i); c.nodes.push({ x: 0, y: 0, a: a, rr: rr, sp: 2 * Math.PI * rr / NR, self: SELF_BALL, nx: Math.cos(a), ny: Math.sin(a) }); }
+  for (i = 0; i < NR; i++) c.edges.push([i, (i + 1) % NR]);
+  c.innerRel = [[0, 0], [13, 0], [-13, 0], [0, 13], [0, -13], [9, 9], [-9, -9], [9, -9], [-9, 9]];
+  return c;
+}
+function buildConductors() {
+  var old = conds;
+  conds = [makeElectroscope()];
+  if (S.sphere.on) conds.push(makeSphere());
+  nodes = []; adj = [];
+  conds.forEach(function (c, ci) {
+    c.base = nodes.length;
+    c.nodes.forEach(function (n) { n.c = ci; nodes.push(n); adj.push([]); });
+    c.edges.forEach(function (e) { adj[c.base + e[0]].push(c.base + e[1]); adj[c.base + e[1]].push(c.base + e[0]); });
+  });
+  layout();
+  // keep electroscope electrons; (re)fill the sphere neutral
+  var keep = S.el.filter(function (e) { return e.g < conds[0].nodes.length; });
+  if (!old || keep.length === 0 && S.el.length === 0) keep = [];
+  S.el = keep;
+  if (S.el.length === 0) for (var g = 0; g < conds[0].nodes.length; g++) addElectronAt(g);
+  if (S.sphere.on) for (var k = 0; k < conds[1].nodes.length; k++) addElectronAt(conds[1].base + k);
+  S.q = new Float64Array(nodes.length);
+}
+function addElectronAt(g) { var n = nodes[g]; var e = { g: g, x: n.x + 4, y: n.y, path: [] }; S.el.push(e); return e; }
+
+function layout() {
+  var E = conds[0], th = S.theta, i;
+  var hx = KX, hy = HINGE_Y;
+  E.leafL.forEach(function (gi) { var n = E.nodes[gi]; n.x = hx - n.s * Math.sin(th); n.y = hy + n.s * Math.cos(th); n.nx = -Math.cos(th); n.ny = -Math.sin(th); });
+  E.leafR.forEach(function (gi) { var n = E.nodes[gi]; n.x = hx + n.s * Math.sin(th); n.y = hy + n.s * Math.cos(th); n.nx = Math.cos(th); n.ny = -Math.sin(th); });
+  if (S.sphere.on) { var C = conds[1]; for (i = 0; i < C.nodes.length; i++) { var m = C.nodes[i]; m.x = S.sphere.x + m.rr * Math.cos(m.a); m.y = S.sphere.y + m.rr * Math.sin(m.a); } }
+}
+
+/* shapes of each conductor for contact tests: {type:'c'|'s', ...} */
+function condShapes(ci) {
+  if (ci === 0) {
+    var th = S.theta;
+    return [{ ax: KX, ay: KY, bx: KX, by: KY, r: KR }, { ax: KX, ay: STEM_TOP - 6, bx: KX, by: HINGE_Y, r: STEM_R },
+            { ax: KX, ay: HINGE_Y, bx: KX - LEAF_L * Math.sin(th), by: HINGE_Y + LEAF_L * Math.cos(th), r: 4 },
+            { ax: KX, ay: HINGE_Y, bx: KX + LEAF_L * Math.sin(th), by: HINGE_Y + LEAF_L * Math.cos(th), r: 4 }];
+  }
+  return [{ ax: S.sphere.x, ay: S.sphere.y, bx: S.sphere.x, by: S.sphere.y, r: SR }];
+}
+
+/* ---------------- small geometry helpers ---------------- */
+function segPt(px, py, ax, ay, bx, by) {
+  var dx = bx - ax, dy = by - ay, L = dx * dx + dy * dy, t = L ? ((px - ax) * dx + (py - ay) * dy) / L : 0;
+  t = t < 0 ? 0 : t > 1 ? 1 : t; return [ax + t * dx, ay + t * dy];
+}
+function distPtShape(px, py, s) { var c = segPt(px, py, s.ax, s.ay, s.bx, s.by); return Math.hypot(px - c[0], py - c[1]) - s.r; }
+function rodAxisSamples(n) { var a = []; for (var i = 0; i <= n; i++) a.push([S.rod.x + ROD_LEN * i / n, S.rod.y]); return a; }
+/* minimum gap between rod surface and a conductor, with the rod point that is closest */
+function rodGap(ci) {
+  var best = 1e9, pt = null, sh = condShapes(ci), smp = rodAxisSamples(60);
+  for (var i = 0; i < smp.length; i++) for (var j = 0; j < sh.length; j++) {
+    var d = distPtShape(smp[i][0], smp[i][1], sh[j]) - ROD_R; if (d < best) { best = d; pt = smp[i]; }
+  }
+  return { d: best, pt: pt };
+}
+function rodDistKnob() { var smp = rodAxisSamples(60), b = 1e9; for (var i = 0; i < smp.length; i++) b = Math.min(b, Math.hypot(smp[i][0] - KX, smp[i][1] - KY) - KR - ROD_R); return b; }
+function handDir() { var dx = S.hand.x - SHOULDER.x, dy = S.hand.y - SHOULDER.y, L = Math.hypot(dx, dy); return [dx / L, dy / L]; }
+function handPts() { var u = handDir(), F = S.hand; return { F: [F.x, F.y], K: [F.x - u[0] * 26, F.y - u[1] * 26], P: [F.x - u[0] * 44, F.y - u[1] * 44] }; }
+
+/* ---------------- collisions (dragged objects can touch but not pass through) ---------------- */
+function obstacles(except) {
+  var o = [];
+  o.push({ k: 'r', x0: OBST_JAR.x0, x1: OBST_JAR.x1, y0: OBST_JAR.y0, y1: OBST_JAR.y1 });
+  condShapes(0).slice(0, 2).forEach(function (s) { o.push({ k: 's', s: s }); });
+  if (S.sphere.on && except !== 'sphere') { o.push({ k: 's', s: condShapes(1)[0] }); o.push({ k: 's', s: { ax: S.sphere.x + SR, ay: S.sphere.y, bx: S.sphere.x + SR + HND, by: S.sphere.y, r: 6 } }); }
+  if (except !== 'rod') o.push({ k: 's', s: { ax: S.rod.x, ay: S.rod.y, bx: S.rod.x + ROD_LEN, by: S.rod.y, r: ROD_R } });
+  if (S.block.on && except !== 'block') o.push({ k: 'r', x0: S.block.x, x1: S.block.x + BLOCK_W, y0: S.block.y, y1: S.block.y + BLOCK_H });
+  return o;
+}
+function circlesOf(what) {
+  var a = [], i;
+  if (what === 'rod') for (i = 0; i <= 18; i++) a.push([S.rod.x + ROD_LEN * i / 18, S.rod.y, ROD_R]);
+  else if (what === 'hand') { var h = handPts(); a.push([h.F[0], h.F[1], 6]); a.push([h.K[0], h.K[1], 7]); }
+  else if (what === 'sphere') { a.push([S.sphere.x, S.sphere.y, SR]); for (i = 1; i <= 8; i++) a.push([S.sphere.x + SR + HND * i / 8, S.sphere.y, 6]); }
+  else if (what === 'block') { for (i = 0; i <= 4; i++) { a.push([S.block.x + BLOCK_W * i / 4, S.block.y + 8, 8]); a.push([S.block.x + BLOCK_W * i / 4, S.block.y + BLOCK_H - 8, 8]); } }
+  return a;
+}
+function penetration(c, o) {
+  var x = c[0], y = c[1], r = c[2];
+  if (o.k === 's') {
+    var p = segPt(x, y, o.s.ax, o.s.ay, o.s.bx, o.s.by), dx = x - p[0], dy = y - p[1], d = Math.hypot(dx, dy), dep = r + o.s.r - d;
+    if (dep <= 0) return null; if (d < 1e-6) { dx = 0; dy = -1; d = 1; } return [dx / d * dep, dy / d * dep];
+  }
+  var cx = Math.max(o.x0, Math.min(x, o.x1)), cy = Math.max(o.y0, Math.min(y, o.y1));
+  var ddx = x - cx, ddy = y - cy, dd = Math.hypot(ddx, ddy);
+  if (dd > 0) { var dp = r - dd; return dp > 0 ? [ddx / dd * dp, ddy / dd * dp] : null; }
+  var opts = [[o.x0 - r - x, 0], [o.x1 + r - x, 0], [0, o.y0 - r - y], [0, o.y1 + r - y]];
+  opts.sort(function (a, b) { return Math.abs(a[0] + a[1]) - Math.abs(b[0] + b[1]); }); return opts[0];
+}
+function moveObj(what, x, y) {
+  var P = what === 'rod' ? S.rod : what === 'hand' ? S.hand : what === 'sphere' ? S.sphere : S.block;
+  // move in small sub-steps so fast drags can't tunnel through things
+  var n = Math.max(1, Math.ceil(Math.hypot(x - P.x, y - P.y) / 5)), ddx = (x - P.x) / n, ddy = (y - P.y) / n;
+  for (var s = 1; s <= n; s++) {
+    P.x += ddx; P.y += ddy;   // equal steps; if blocked, the object stays pressed against the obstacle
+    clampObj(what, P);
+    var obs = obstacles(what);
+    for (var it = 0; it < 6; it++) {
+      var cs = circlesOf(what), best = null, bm = 0;
+      for (var i = 0; i < cs.length; i++) {
+        if (cs[i][1] + cs[i][2] > TABLE) { var pt = [0, TABLE - cs[i][1] - cs[i][2]]; if (-pt[1] > bm) { bm = -pt[1]; best = pt; } }
+        for (var j = 0; j < obs.length; j++) { var pv = penetration(cs[i], obs[j]); if (pv) { var m = Math.hypot(pv[0], pv[1]); if (m > bm) { bm = m; best = pv; } } }
+      }
+      if (!best) break; P.x += best[0]; P.y += best[1]; clampObj(what, P);
+    }
+  }
+}
+function clampObj(what, P) {
+  if (what === 'rod') { P.x = Math.max(-ROD_LEN + 120, Math.min(CW - 60, P.x)); P.y = Math.max(14, Math.min(TABLE - ROD_R, P.y)); }
+  else if (what === 'hand') { P.x = Math.max(8, Math.min(CW - 8, P.x)); P.y = Math.max(8, Math.min(TABLE - 6, P.y)); }
+  else if (what === 'sphere') { P.x = Math.max(SR + 4, Math.min(CW - SR - HND, P.x)); P.y = Math.max(SR + 4, Math.min(TABLE - SR, P.y)); }
+  else { P.x = Math.max(0, Math.min(CW - BLOCK_W, P.x)); P.y = Math.max(20, Math.min(TABLE - BLOCK_H, P.y)); }
+}
+
+/* ---------------- charges outside the conductors ---------------- */
+function rodSlotPos(i) { return [S.rod.x + 12 + (i >> 1) * 19.6, S.rod.y + ((i & 1) ? 4.6 : -4.6)]; }
+function clothSlotPos(i) { return [CLOTH.x0 + 15 + (i >> 1) * 14.6, CLOTH.y0 + 12 + (i & 1) * 15]; }
+function rodQ() { var s = 0; S.rod.slots.forEach(function (o) { s += o.v; }); return s; }
+function clothQ() { var s = 0; S.cloth.slots.forEach(function (o) { s += o.v; }); return s; }
+function condQ(ci) { var c = conds[ci], s = c.nodes.length; S.el.forEach(function (e) { if (e.g >= c.base && e.g < c.base + c.nodes.length) s--; }); return s; }
+function flyQ() { var s = 0; S.fly.forEach(function (f) { s += f.q; }); return s; }
+function totalQ() { var s = rodQ() + clothQ() - S.earth + flyQ(); for (var i = 0; i < conds.length; i++) s += condQ(i); return s; }
+function pointCharges() {
+  var a = [];
+  S.rod.slots.forEach(function (o, i) { if (o.v) { var p = rodSlotPos(i); a.push([p[0], p[1], o.v]); } });
+  S.cloth.slots.forEach(function (o, i) { if (o.v) { var p = clothSlotPos(i); a.push([p[0], p[1], o.v]); } });
+  return a;
+}
+
+/* ---------------- electrostatics solve ---------------- */
+function gauss(A, b, n) {
+  for (var i = 0; i < n; i++) {
+    var p = i, m = Math.abs(A[i][i]);
+    for (var r = i + 1; r < n; r++) { var v = Math.abs(A[r][i]); if (v > m) { m = v; p = r; } }
+    if (p !== i) { var t = A[i]; A[i] = A[p]; A[p] = t; var tb = b[i]; b[i] = b[p]; b[p] = tb; }
+    var piv = A[i][i];
+    for (r = i + 1; r < n; r++) { var f = A[r][i] / piv; if (f !== 0) { var Ar = A[r], Ai = A[i]; for (var c = i; c < n; c++) Ar[c] -= f * Ai[c]; b[r] -= f * b[i]; } }
+  }
+  var x = new Float64Array(n);
+  for (i = n - 1; i >= 0; i--) { var s = b[i], Ai2 = A[i]; for (c = i + 1; c < n; c++) s -= Ai2[c] * x[c]; x[i] = s / Ai2[i]; }
+  return x;
+}
+function Pij(i, j) { if (i === j) return 1 / ((nodes[i].self || 0.45) * nodes[i].sp); var a = nodes[i], b = nodes[j]; return 1 / Math.max(2, Math.hypot(a.x - b.x, a.y - b.y)); }
+/* The rod's and cloth's charges act on the metal through a kernel that is Coulomb (1/r) up close but fades
+   faster with distance (screened, length LAM). This stands in for the much larger real distances between a rod
+   "put away" and the electroscope, so a rod across the bench doesn't still tug on the leaves. */
+var KAPPA = 2.2, LAM = 150;
+function kern(r2) { var r = Math.sqrt(r2); return KAPPA * Math.exp(-r / LAM) / r; }
+function vExt(g, members, pcs) {
+  var n = nodes[g], v = 0, i;
+  for (i = 0; i < pcs.length; i++) v += pcs[i][2] * kern((pcs[i][0] - n.x) * (pcs[i][0] - n.x) + (pcs[i][1] - n.y) * (pcs[i][1] - n.y) + 9);
+  for (i = 0; i < nodes.length; i++) if (!members[i] && S.q[i]) v += S.q[i] / Math.max(2, Math.hypot(nodes[i].x - n.x, nodes[i].y - n.y));
+  return v;
+}
+/* isolated: total charge Q fixed, unknown common potential V. grounded: V = 0, Q free. */
+function solve(gids, Q, grounded, pcs) {
+  var n = gids.length, N = grounded ? n : n + 1, A = [], b = new Float64Array(N), mem = {}, i, j;
+  gids.forEach(function (g) { mem[g] = 1; });
+  for (i = 0; i < N; i++) A.push(new Float64Array(N));
+  for (i = 0; i < n; i++) {
+    for (j = 0; j < n; j++) A[i][j] = Pij(gids[i], gids[j]);
+    if (!grounded) A[i][n] = -1;
+    b[i] = -vExt(gids[i], mem, pcs);
+  }
+  if (!grounded) { for (j = 0; j < n; j++) A[n][j] = 1; b[n] = Q; }
+  var x = gauss(A, b, N), Qc = 0;
+  for (i = 0; i < n; i++) Qc += x[i];
+  return { q: x, V: grounded ? 0 : x[n], Q: Qc };
+}
+
+/* ---------------- groups & contacts ---------------- */
+function computeContacts() {
+  var T = S.touch;
+  T.es = false; T.esEdge = null;
+  if (S.sphere.on) {
+    var sh = condShapes(0), d = 1e9;
+    for (var j = 0; j < 2; j++) d = Math.min(d, distPtShape(S.sphere.x, S.sphere.y, sh[j]) - SR);
+    if (d < 1.6) {
+      T.es = true; var bi = 0, bj = 0, bd = 1e9, E = conds[0], C = conds[1];
+      for (var a = 0; a < E.nodes.length; a++) for (var b = 0; b < C.nodes.length; b++) { var dd = Math.hypot(E.nodes[a].x - C.nodes[b].x, E.nodes[a].y - C.nodes[b].y); if (dd < bd) { bd = dd; bi = a; bj = C.base + b; } }
+      T.esEdge = [bi, bj];
+    }
+  }
+  T.rod = -1; T.rodPt = null;
+  for (var ci = 0; ci < conds.length; ci++) { var rg = rodGap(ci); if (rg.d < 1.6) { T.rod = ci; T.rodPt = rg.pt; break; } }
+  T.hand = -1;
+  var F = S.hand;
+  for (ci = 0; ci < conds.length; ci++) { var shs = condShapes(ci); for (var k = 0; k < shs.length; k++) if (distPtShape(F.x, F.y, shs[k]) - 6 < 2.2) { T.hand = ci; break; } if (T.hand >= 0) break; }
+  // groups
+  S.groups = [];
+  if (T.es) S.groups.push([0, 1]); else for (ci = 0; ci < conds.length; ci++) S.groups.push([ci]);
+  S.gOf = new Int32Array(nodes.length);
+  S.groups.forEach(function (gr, gi) { gr.forEach(function (ci) { var c = conds[ci]; for (var k = 0; k < c.nodes.length; k++) S.gOf[c.base + k] = gi; }); });
+}
+function groupNodes(gi) { var a = []; S.groups[gi].forEach(function (ci) { var c = conds[ci]; for (var k = 0; k < c.nodes.length; k++) a.push(c.base + k); }); return a; }
+function groupQ(gi) { var s = 0; S.groups[gi].forEach(function (ci) { s += condQ(ci); }); return s; }
+function groupOfCond(ci) { for (var i = 0; i < S.groups.length; i++) if (S.groups[i].indexOf(ci) >= 0) return i; return -1; }
+
+function neighbors(g) {
+  var a = adj[g].slice(), T = S.touch;
+  if (T.es && T.esEdge) { if (g === T.esEdge[0]) a.push(T.esEdge[1]); if (g === T.esEdge[1]) a.push(T.esEdge[0]); }
+  return a;
+}
+function bfs(from, to) {
+  if (from === to) return [to];
+  var prev = {}, q = [from]; prev[from] = -1;
+  while (q.length) { var u = q.shift(); var nb = neighbors(u); for (var i = 0; i < nb.length; i++) { var v = nb[i]; if (prev[v] === undefined) { prev[v] = u; if (v === to) { var p = [v]; while (prev[p[0]] !== -1) p.unshift(prev[p[0]]); return p; } q.push(v); } } }
+  return [to];
+}
+function nearestNode(x, y, gi) { var b = -1, bd = 1e9; for (var g = 0; g < nodes.length; g++) { if (gi !== undefined && S.gOf[g] !== gi) continue; var d = Math.hypot(nodes[g].x - x, nodes[g].y - y); if (d < bd) { bd = d; b = g; } } return b; }
+
+/* ---------------- events / transfers ---------------- */
+function ev(k, who) { S.lastEv = { k: k, t: S.t, who: who }; }
+function rubOnce() {
+  var sign = S.rodType === 'rubber' ? -1 : 1, ri = -1, ci = -1, i;
+  for (i = 0; i < NSLOT; i++) if (S.rod.slots[i].v === 0 && !S.rod.slots[i].pend) { ri = i; break; }
+  for (i = 0; i < NSLOT; i++) if (S.cloth.slots[i].v === 0 && !S.cloth.slots[i].pend) { ci = i; break; }
+  if (ri < 0 || ci < 0) return false;
+  var rs = S.rod.slots[ri], cs = S.cloth.slots[ci];
+  if (sign < 0) { // fur gives up an electron to the rubber
+    cs.v = 1; rs.pend = true; var p = clothSlotPos(ci);
+    S.fly.push({ x: p[0], y: p[1], q: -1, path: [function () { return rodSlotPos(ri); }], spd: 420, done: function () { rs.v = -1; rs.pend = false; } });
+  } else { // glass gives up an electron to the silk
+    rs.v = 1; cs.pend = true; var r = rodSlotPos(ri);
+    S.fly.push({ x: r[0], y: r[1], q: -1, path: [clothSlotPos(ci)], spd: 420, done: function () { cs.v = -1; cs.pend = false; } });
+  }
+  ev('rub'); return true;
+}
+function handPath(reverse) {
+  var h = handPts(), pts = [h.F.slice(), h.K.slice(), h.P.slice(), [SHOULDER.x + 40, SHOULDER.y - 60]];
+  return reverse ? pts.reverse() : pts;
+}
+function groundStep(dt) {
+  var T = S.touch; S.coolGnd -= dt;
+  if (T.hand < 0 || S.coolGnd > 0) return;
+  var gi = groupOfCond(T.hand), gids = groupNodes(gi), Q = groupQ(gi);
+  var r = solve(gids, 0, true, pointCharges());
+  var port = nearestNode(S.hand.x, S.hand.y, gi);
+  if (r.Q - Q > 0.55) {         // conductor should be more positive: an electron leaves to Earth
+    var e = pickElectron(port, gi); if (!e) return;
+    S.el.splice(S.el.indexOf(e), 1);
+    var pth = [[S.hand.x, S.hand.y]].concat(handPath(false).slice(1));
+    S.fly.push({ x: e.x, y: e.y, q: -1, path: pth, done: function () { S.earth++; }, spd: 300 });
+    S.cnt.gnd++; ev('gndOut', T.hand); S.coolGnd = 0.11;
+  } else if (r.Q - Q < -0.55) { // an electron comes up from Earth
+    var hp = handPath(true); S.earth--;
+    var ne = { g: port, x: hp[0][0], y: hp[0][1], path: hp.slice(1).concat([port]), spd: 300 };
+    S.el.push(ne); S.cnt.gnd++; ev('gndIn', T.hand); S.coolGnd = 0.11;
+  }
+}
+function pickElectron(g, gi) {
+  var best = null, bd = 1e9, n = nodes[g];
+  S.el.forEach(function (e) { if (S.gOf[e.g] !== gi) return; var d = Math.hypot(e.x - n.x, e.y - n.y) + (e.path.length ? 30 : 0); if (d < bd) { bd = d; best = e; } });
+  return best;
+}
+function rodContactStep(dt) {
+  var T = S.touch; S.coolRod -= dt;
+  if (T.rod < 0 || S.coolRod > 0) return;
+  var gi = groupOfCond(T.rod), gids = groupNodes(gi), pcs = pointCharges();
+  var iso = solve(gids, groupQ(gi), false, pcs);
+  var cp = T.rodPt, bi = -1, bd = 1e9;
+  S.rod.slots.forEach(function (o, i) { if (!o.v || o.pend) return; var p = rodSlotPos(i), d = Math.hypot(p[0] - cp[0], p[1] - cp[1]); if (d < bd) { bd = d; bi = i; } });
+  if (bi < 0 || bd > 36) return;
+  var sl = S.rod.slots[bi], sp = rodSlotPos(bi), vs = 0;
+  pcs.forEach(function (c) { if (Math.abs(c[0] - sp[0]) > 0.01 || Math.abs(c[1] - sp[1]) > 0.01) vs += c[2] / Math.sqrt((c[0] - sp[0]) * (c[0] - sp[0]) + (c[1] - sp[1]) * (c[1] - sp[1]) + 9); });
+  for (var k = 0; k < gids.length; k++) { var nd = nodes[gids[k]]; vs += (iso.q[k]) / Math.max(2, Math.hypot(nd.x - sp[0], nd.y - sp[1])); }
+  var port = nearestNode(cp[0], cp[1], gi);
+  if (sl.v < 0) {               // excess electron on the rod hops onto the metal (electrons move toward higher potential)
+    if (!(T.hand >= 0 && groupOfCond(T.hand) === gi) && iso.V < vs + 0.01) return;
+    sl.v = 0; var e = { g: port, x: sp[0], y: sp[1], path: [port] }; S.el.push(e);
+  } else {                      // the metal gives an electron to fill the rod's electron shortage
+    if (vs + 1 / 3 < iso.V) return;
+    var e2 = pickElectron(port, gi); if (!e2) return;
+    S.el.splice(S.el.indexOf(e2), 1); sl.pend = true;
+    S.fly.push({ x: e2.x, y: e2.y, q: -1, path: [function () { return rodSlotPos(bi); }], done: function () { sl.v = 0; sl.pend = false; } });
+  }
+  S.cnt.rodAny++; if (S.groups[gi].indexOf(0) >= 0) S.cnt.rodE++;
+  ev(sl.v < 0 || sl.pend ? 'rodPos' : 'rodNeg', T.rod); S.lastEv.sign = S.rodType === 'rubber' ? -1 : 1; S.coolRod = 0.13;
+}
+
+/* move whole electrons node-to-node so the counts follow the solved distribution.
+   The continuous charge is turned into whole charges by error diffusion along the conductor (so a region that
+   holds 1.5 units gets 1 or 2 symbols, not 0), with hysteresis so symbols don't flicker back and forth. */
+function rebalance(gi, q) {
+  var gids = groupNodes(gi), Q = groupQ(gi), cum = 0, Cl = 0, need = {}, cnt = {}, i, g;
+  for (i = 0; i < gids.length; i++) {
+    g = gids[i]; cum += q[i];
+    var prev = S.cumPrev[g], Ck = (prev === undefined || Math.abs(cum - prev) > 0.62) ? Math.round(cum) : prev;
+    if (i === gids.length - 1) Ck = Q;
+    if (Ck - Cl > 1) Ck = Cl + 1;               // a node can be at most one electron short
+    S.cumPrev[g] = Ck; need[g] = 1 - (Ck - Cl); Cl = Ck; cnt[g] = 0;
+  }
+  S.el.forEach(function (e) { if (cnt[e.g] !== undefined) cnt[e.g]++; });
+  for (var mv = 0; mv < 3; mv++) {
+    var src = -1, sd = 0;
+    for (i = 0; i < gids.length; i++) { g = gids[i]; if (cnt[g] - need[g] > sd) { sd = cnt[g] - need[g]; src = g; } }
+    if (src < 0) break;
+    // nearest node (through the metal) that is short of electrons
+    var prevN = {}, qq = [src], dst = -1; prevN[src] = -1;
+    while (qq.length && dst < 0) { var u = qq.shift(), nb = neighbors(u); for (var j = 0; j < nb.length; j++) { var v = nb[j]; if (prevN[v] !== undefined || need[v] === undefined) continue; prevN[v] = u; if (cnt[v] < need[v]) { dst = v; break; } qq.push(v); } }
+    if (dst < 0) break;
+    var path = [dst]; while (prevN[path[0]] !== src) path.unshift(prevN[path[0]]);
+    var cand = null;
+    S.el.forEach(function (e) { if (e.g === src && (!cand || (cand.path.length && !e.path.length))) cand = e; });
+    if (!cand) break;
+    cand.path = (cand.path.length ? [src] : []).concat(path); cand.g = dst;
+    cnt[src]--; cnt[dst]++;
+  }
+}
+function fixStranded() { // after a contact breaks, electrons heading across the gap stay on the side they are on
+  S.el.forEach(function (e) {
+    if (!e.path.length) return;
+    var here = nearestNode(e.x, e.y);
+    if (here >= 0 && S.gOf[here] !== S.gOf[e.g] && Math.hypot(nodes[here].x - e.x, nodes[here].y - e.y) < 30) { e.g = here; e.path = [here]; }
+  });
+}
+
+/* ---------------- main step ---------------- */
+var prevES = false;
+function step(dt) {
+  S.t += dt;
+  layout();
+  computeContacts();
+  if (prevES && !S.touch.es) fixStranded();
+  if (S.touch.es && !prevES) { var qe = condQ(0), qs = condQ(1); if (qe !== 0 || qs !== 0) ev('share'); }
+  prevES = S.touch.es;
+  var pcs = pointCharges();
+  S.gV = [];
+  for (var gi = 0; gi < S.groups.length; gi++) {
+    var gids = groupNodes(gi), r = solve(gids, groupQ(gi), false, pcs);
+    for (var k = 0; k < gids.length; k++) S.q[gids[k]] = r.q[k];
+    S.gV[gi] = r.V;
+    rebalance(gi, r.q);
+  }
+  groundStep(dt);
+  rodContactStep(dt);
+  // leaves: both leaves carry the same sign of charge and repel
+  var E = conds[0], ql = 0;
+  E.leafL.concat(E.leafR).forEach(function (k) { ql += S.q[k]; });
+  S.qLeaf = ql;
+  // repulsion ~ q^2 against gravity; a small dead zone like a real electroscope's
+  var qe2 = Math.max(0, Math.abs(ql) - 0.2), tt = 0.05 + 0.95 * qe2 * qe2 / (qe2 * qe2 + 1.44);
+  S.theta += (tt - S.theta) * Math.min(1, dt * 3.5);
+  // electrons
+  var occ = {};
+  S.el.forEach(function (e) {
+    var sp = (e.spd || 230) * dt;
+    while (e.path.length && sp > 0) {
+      var p = e.path[0], tx, ty;
+      if (typeof p === 'number') { tx = nodes[p].x + 4; ty = nodes[p].y; } else { tx = p[0]; ty = p[1]; }
+      var dx = tx - e.x, dy = ty - e.y, d = Math.hypot(dx, dy);
+      if (d <= sp) { e.x = tx; e.y = ty; sp -= d; e.path.shift(); } else { e.x += dx / d * sp; e.y += dy / d * sp; sp = 0; }
+    }
+    if (!e.path.length) { e.spd = 0; var m = occ[e.g] || 0; occ[e.g] = m + 1; var n = nodes[e.g]; var ox = n.x + 4 + n.nx * 8.5 * m, oy = n.y + n.ny * 8.5 * m; e.x += (ox - e.x) * Math.min(1, dt * 14); e.y += (oy - e.y) * Math.min(1, dt * 14); e.m = m; }
+  });
+  S.occ = occ;
+  // flights
+  for (var i = S.fly.length - 1; i >= 0; i--) {
+    var f = S.fly[i], spd = (f.spd || 200) * dt;
+    while (f.path.length && spd > 0) {
+      var pp = typeof f.path[0] === 'function' ? f.path[0]() : f.path[0];
+      var ddx = pp[0] - f.x, ddy = pp[1] - f.y, dd = Math.hypot(ddx, ddy);
+      if (dd <= spd) { f.x = pp[0]; f.y = pp[1]; spd -= dd; f.path.shift(); } else { f.x += ddx / dd * spd; f.y += ddy / dd * spd; spd = 0; }
+    }
+    if (!f.path.length) { S.fly.splice(i, 1); f.done && f.done(); }
+  }
+  guided();
+}
+
+/* ---------------- drawing ---------------- */
+var POS = '#d24343', NEG = '#2a5fd0';
+function sym(x, y, s, r, alpha) {
+  ctx.globalAlpha = alpha == null ? 1 : alpha;
+  ctx.fillStyle = s > 0 ? POS : NEG; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
+  ctx.strokeStyle = '#fff'; ctx.lineWidth = Math.max(1.2, r * 0.36); ctx.beginPath();
+  var w = r * 0.58; ctx.moveTo(x - w, y); ctx.lineTo(x + w, y); if (s > 0) { ctx.moveTo(x, y - w); ctx.lineTo(x, y + w); } ctx.stroke();
+  ctx.globalAlpha = 1;
+}
+function rr(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+function tag(x, y, text, val) {
+  ctx.font = '600 12px system-ui,Segoe UI,Arial'; var w = ctx.measureText(text).width + 12;
+  ctx.fillStyle = 'rgba(255,255,255,.92)'; ctx.strokeStyle = val > 0 ? POS : val < 0 ? NEG : '#8e9aa6'; ctx.lineWidth = 1.3;
+  rr(x - w / 2, y - 10, w, 20, 6); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = val > 0 ? '#b63434' : val < 0 ? '#2350b5' : '#56616c'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(text, x, y + 0.5);
+}
+function label(x, y, t, al) { ctx.font = '11.5px system-ui,Segoe UI,Arial'; ctx.fillStyle = '#4c5966'; ctx.textAlign = al || 'left'; ctx.textBaseline = 'middle'; ctx.fillText(t, x, y); }
+function fmt(q) { return q > 0 ? '+' + q : q < 0 ? '−' + (-q) : '0'; }
+
+function draw() {
+  var W = cv.width / CW; ctx.setTransform(W, 0, 0, W, 0, 0);
+  ctx.fillStyle = '#f6f8fa'; ctx.fillRect(0, 0, CW, CH);
+  // table
+  ctx.fillStyle = '#d9c3a1'; ctx.fillRect(0, TABLE, CW, CH - TABLE); ctx.fillStyle = '#c7ad86'; ctx.fillRect(0, TABLE, CW, 5);
+  // ground symbol / earth
+  var gx = 46, gy = 606;
+  ctx.strokeStyle = '#6b5a43'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(gx, gy - 14); ctx.lineTo(gx, gy);
+  ctx.moveTo(gx - 14, gy); ctx.lineTo(gx + 14, gy); ctx.moveTo(gx - 9, gy + 5); ctx.lineTo(gx + 9, gy + 5); ctx.moveTo(gx - 4, gy + 10); ctx.lineTo(gx + 4, gy + 10); ctx.stroke();
+  label(gx + 22, gy - 2, 'Earth (ground)');
+  drawCloth();
+  drawElectroscope();
+  if (S.sphere.on) drawSphere();
+  if (S.block.on) drawBlock();
+  drawHand();
+  drawRod();
+  S.fly.forEach(function (f) { sym(f.x, f.y, -1, 4.6); });
+  if (document.getElementById('showNet').checked) drawTags();
+}
+function drawCloth() {
+  var fur = S.rodType === 'rubber';
+  ctx.fillStyle = fur ? '#8b6a4a' : '#f1e6ef'; ctx.strokeStyle = fur ? '#6a4e33' : '#cdb7c8'; ctx.lineWidth = 1.5;
+  rr(CLOTH.x0, CLOTH.y0, CLOTH.x1 - CLOTH.x0, CLOTH.y1 - CLOTH.y0, 9); ctx.fill(); ctx.stroke();
+  ctx.strokeStyle = fur ? 'rgba(255,240,220,.22)' : 'rgba(170,130,160,.25)'; ctx.lineWidth = 1;
+  for (var i = 0; i < 26; i++) { var x = CLOTH.x0 + 8 + i * 6; ctx.beginPath(); if (fur) { ctx.moveTo(x, CLOTH.y0 + 4); ctx.lineTo(x + 4, CLOTH.y0 + 12); ctx.moveTo(x + 2, CLOTH.y1 - 14); ctx.lineTo(x + 5, CLOTH.y1 - 5); } else { ctx.moveTo(x, CLOTH.y0 + 3); ctx.quadraticCurveTo(x + 4, CLOTH.y0 + 20, x, CLOTH.y1 - 3); } ctx.stroke(); }
+  label(CLOTH.x0 + 4, CLOTH.y0 - 10, fur ? 'Fur' : 'Silk');
+  var ex = S.view === 'excess';
+  S.cloth.slots.forEach(function (o, i) { var p = clothSlotPos(i); if (o.v) sym(p[0], p[1], o.v, 5); else if (!ex) { sym(p[0] - 4.5, p[1], 1, 3.6, 0.4); sym(p[0] + 4.5, p[1], -1, 3.6, 0.4); } });
+}
+function metalGrad(x, y, r) { var g = ctx.createRadialGradient(x - r * 0.4, y - r * 0.45, r * 0.1, x, y, r); g.addColorStop(0, '#ffffff'); g.addColorStop(0.45, '#c9ced4'); g.addColorStop(1, '#8b939c'); return g; }
+function drawElectroscope() {
+  var E = conds[0], th = S.theta;
+  // jar back
+  ctx.fillStyle = 'rgba(205,228,240,.35)'; rr(JAR.x0, JAR.y0, JAR.x1 - JAR.x0, JAR.y1 - JAR.y0, 14); ctx.fill();
+  // stem
+  ctx.fillStyle = '#a9b0b8'; ctx.fillRect(KX - STEM_R, STEM_TOP - 8, STEM_R * 2, HINGE_Y - STEM_TOP + 8);
+  ctx.fillStyle = 'rgba(255,255,255,.5)'; ctx.fillRect(KX - STEM_R + 1.5, STEM_TOP - 8, 2, HINGE_Y - STEM_TOP + 8);
+  // leaves
+  [-1, 1].forEach(function (sd) {
+    var bx = KX + sd * LEAF_L * Math.sin(th), by = HINGE_Y + LEAF_L * Math.cos(th);
+    var nx = Math.cos(th) * 5, ny = sd * Math.sin(th) * -5;
+    ctx.fillStyle = '#e2b53b'; ctx.strokeStyle = '#b48918'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(KX - 3, HINGE_Y - 2); ctx.lineTo(KX + 3, HINGE_Y - 2);
+    ctx.lineTo(bx + nx * 0.8, by + ny * 0.8); ctx.lineTo(bx - nx * 0.8, by - ny * 0.8); ctx.closePath(); ctx.fill(); ctx.stroke();
+  });
+  ctx.fillStyle = '#8f969e'; ctx.beginPath(); ctx.arc(KX, HINGE_Y, 4.5, 0, 7); ctx.fill();
+  // jar front
+  ctx.strokeStyle = '#9fb9c8'; ctx.lineWidth = 2.2; rr(JAR.x0, JAR.y0, JAR.x1 - JAR.x0, JAR.y1 - JAR.y0, 14); ctx.stroke();
+  ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.fillRect(JAR.x0 + 10, JAR.y0 + 14, 7, JAR.y1 - JAR.y0 - 30);
+  // stopper (insulator)
+  ctx.fillStyle = '#5b4a3d'; rr(STOP.x0, STOP.y0, STOP.x1 - STOP.x0, STOP.y1 - STOP.y0, 4); ctx.fill();
+  ctx.fillStyle = '#a9b0b8'; ctx.fillRect(KX - STEM_R, STOP.y0 - 1, STEM_R * 2, STOP.y1 - STOP.y0 + 2);
+  // angle scale
+  ctx.strokeStyle = 'rgba(80,100,120,.35)'; ctx.lineWidth = 1;
+  for (var a = 0; a <= 50; a += 10) [-1, 1].forEach(function (sd) { var r0 = LEAF_L + 6, r1 = LEAF_L + (a % 20 === 0 ? 14 : 10), aa = a * Math.PI / 180; ctx.beginPath(); ctx.moveTo(KX + sd * r0 * Math.sin(aa), HINGE_Y + r0 * Math.cos(aa)); ctx.lineTo(KX + sd * r1 * Math.sin(aa), HINGE_Y + r1 * Math.cos(aa)); ctx.stroke(); });
+  // knob
+  ctx.fillStyle = metalGrad(KX, KY, KR); ctx.beginPath(); ctx.arc(KX, KY, KR, 0, 7); ctx.fill(); ctx.strokeStyle = '#7d858e'; ctx.lineWidth = 1.2; ctx.stroke();
+  drawCharges(0, E.innerRel.map(function (p) { return [KX + p[0], KY + p[1]]; }));
+  if (document.getElementById('showLbl').checked) {
+    label(KX - KR - 8, KY - 20, 'Metal knob', 'right'); label(KX + 12, 262, 'Metal stem'); label(KX + 12, 292, 'Insulating stopper');
+    label(JAR.x1 + 6, 470, 'Thin metal leaves'); label(JAR.x1 + 6, 486, '(inside glass jar)');
+  }
+}
+function drawSphere() {
+  var x = S.sphere.x, y = S.sphere.y;
+  ctx.fillStyle = '#e4dcc4'; ctx.strokeStyle = '#b8ae98'; ctx.lineWidth = 1; rr(x + SR - 4, y - 5, HND - 40, 10, 4); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#4f7a5a'; rr(x + SR + HND - 46, y - 8, 46, 16, 8); ctx.fill();
+  ctx.font = '600 10.5px system-ui,Arial'; ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('drag', x + SR + HND - 23, y + 0.5);
+  ctx.fillStyle = metalGrad(x, y, SR); ctx.beginPath(); ctx.arc(x, y, SR, 0, 7); ctx.fill(); ctx.strokeStyle = '#7d858e'; ctx.lineWidth = 1.2; ctx.stroke();
+  drawCharges(1, conds[1].innerRel.map(function (p) { return [x + p[0], y + p[1]]; }));
+  if (document.getElementById('showLbl').checked) { label(x + SR + 6, y - 18, 'Metal sphere'); label(x + SR + 4, y + 18, 'Insulating handle'); }
+}
+function drawCharges(ci, inner) {
+  var c = conds[ci], ex = S.view === 'excess', occ = S.occ || {};
+  if (!ex) inner.forEach(function (p) { sym(p[0] - 4.2, p[1], 1, 3.6, 0.32); sym(p[0] + 4.2, p[1], -1, 3.6, 0.32); });
+  for (var k = 0; k < c.nodes.length; k++) {
+    var g = c.base + k, n = nodes[g], o = occ[g] || 0;
+    if (!ex) sym(n.x - 4, n.y, 1, 4.3);
+    else if (o === 0) sym(n.x, n.y, 1, 4.6);
+  }
+  S.el.forEach(function (e) {
+    if (e.g < c.base || e.g >= c.base + c.nodes.length) return;
+    if (ex && !e.path.length && e.m === 0) return;
+    sym(ex && !e.path.length ? e.x - 4 - nodes[e.g].nx * 8.5 : e.x, ex && !e.path.length ? e.y - nodes[e.g].ny * 8.5 : e.y, -1, 4.3);
+  });
+}
+function drawRod() {
+  var x = S.rod.x, y = S.rod.y, glass = S.rodType === 'glass';
+  var g = ctx.createLinearGradient(0, y - ROD_R, 0, y + ROD_R);
+  if (glass) { g.addColorStop(0, 'rgba(225,245,255,.95)'); g.addColorStop(0.5, 'rgba(170,215,235,.75)'); g.addColorStop(1, 'rgba(120,175,200,.9)'); }
+  else { g.addColorStop(0, '#5d6268'); g.addColorStop(0.45, '#2f3338'); g.addColorStop(1, '#17191c'); }
+  ctx.fillStyle = g; rr(x, y - ROD_R, ROD_LEN, ROD_R * 2, ROD_R); ctx.fill();
+  ctx.strokeStyle = glass ? '#7fb0c8' : '#0e0f11'; ctx.lineWidth = 1; ctx.stroke();
+  // handle
+  ctx.fillStyle = '#b5552d'; rr(x + ROD_LEN - 74, y - ROD_R - 2, 74, ROD_R * 2 + 4, ROD_R + 2); ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,.22)'; ctx.fillRect(x + ROD_LEN - 68, y - ROD_R + 1, 60, 3);
+  ctx.font = '600 10.5px system-ui,Arial'; ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('drag', x + ROD_LEN - 37, y + 0.5);
+  S.rod.slots.forEach(function (o, i) { if (o.v) { var p = rodSlotPos(i); sym(p[0], p[1], o.v, 4.4); } });
+  if (document.getElementById('showLbl').checked) label(x + 4, y - 20, glass ? 'Glass rod (insulator)' : 'Rubber rod (insulator)');
+}
+function drawHand() {
+  var h = handPts(), u = handDir(), F = h.F, ang = Math.atan2(u[1], u[0]);
+  var SKIN = '#f0c39e', EDGE = '#c98f68';
+  // sleeve and forearm (world coordinates)
+  ctx.lineCap = 'round';
+  var wr = [F[0] - u[0] * 78, F[1] - u[1] * 78];
+  ctx.strokeStyle = EDGE; ctx.lineWidth = 30; ctx.beginPath(); ctx.moveTo(wr[0] - u[0] * 60, wr[1] - u[1] * 60); ctx.lineTo(wr[0], wr[1]); ctx.stroke();
+  ctx.strokeStyle = SKIN; ctx.lineWidth = 27.5; ctx.stroke();
+  ctx.strokeStyle = '#2f5d93'; ctx.lineWidth = 40; ctx.beginPath(); ctx.moveTo(SHOULDER.x, SHOULDER.y); ctx.lineTo(wr[0] - u[0] * 55, wr[1] - u[1] * 55); ctx.stroke();
+  ctx.strokeStyle = '#3d6fa8'; ctx.lineWidth = 34; ctx.stroke();
+  ctx.lineCap = 'butt';
+  // hand, in a frame where +x points along the index finger and the fingertip is at the origin
+  ctx.save(); ctx.translate(F[0], F[1]); ctx.rotate(ang);
+  ctx.fillStyle = SKIN; ctx.strokeStyle = EDGE; ctx.lineWidth = 1.4;
+  // curled fingers (under the fist)
+  [-34, -45, -56, -66].forEach(function (x, i) { ctx.beginPath(); ctx.ellipse(x, 19 + i * 0.6, 7.2, 7, 0, 0, 7); ctx.fill(); ctx.stroke(); });
+  // fist / back of the hand
+  rr(-82, -13, 54, 34, 13); ctx.fill(); ctx.stroke();
+  // index finger, pointing
+  rr(-36, -6, 36, 12, 6); ctx.fill(); ctx.stroke();
+  ctx.strokeStyle = 'rgba(160,100,70,.55)'; ctx.lineWidth = 1;
+  [-14, -25].forEach(function (x) { ctx.beginPath(); ctx.moveTo(x, -4); ctx.quadraticCurveTo(x - 1.5, 0, x, 4); ctx.stroke(); });
+  ctx.fillStyle = '#f8ddd0'; ctx.strokeStyle = 'rgba(170,110,90,.7)'; rr(-8.5, -5, 7, 5, 2); ctx.fill(); ctx.stroke();  // nail
+  // thumb resting along the finger
+  ctx.fillStyle = SKIN; ctx.strokeStyle = EDGE; ctx.lineWidth = 1.4;
+  ctx.beginPath(); ctx.ellipse(-46, -11, 15, 6.5, -0.12, 0, 7); ctx.fill(); ctx.stroke();
+  // knuckle hints
+  ctx.strokeStyle = 'rgba(160,100,70,.45)'; ctx.lineWidth = 1;
+  [-40, -51, -62].forEach(function (x) { ctx.beginPath(); ctx.arc(x, 8, 4, 0.2, Math.PI - 0.2); ctx.stroke(); });
+  ctx.restore();
+  if (S.touch.hand >= 0) { ctx.strokeStyle = 'rgba(60,160,90,.85)'; ctx.lineWidth = 2; ctx.setLineDash([4, 3]); ctx.beginPath(); ctx.arc(F[0], F[1], 11, 0, 7); ctx.stroke(); ctx.setLineDash([]); }
+  if (document.getElementById('showLbl').checked) label(h.P[0] - 10, h.P[1] + 40, 'Your hand (path to ground)');
+}
+function eField(x, y) {
+  var ex = 0, ey = 0, pcs = pointCharges(), i;
+  for (i = 0; i < pcs.length; i++) { var dx = x - pcs[i][0], dy = y - pcs[i][1], r2 = dx * dx + dy * dy + 25, r = Math.sqrt(r2), kk = kern(r2) / r2 * (1 + r / LAM); ex += pcs[i][2] * dx * kk; ey += pcs[i][2] * dy * kk; }
+  for (i = 0; i < nodes.length; i++) { var q = S.q[i]; if (!q) continue; var ddx = x - nodes[i].x, ddy = y - nodes[i].y, rr2 = ddx * ddx + ddy * ddy + 25, rq = Math.sqrt(rr2); ex += q * ddx / (rr2 * rq); ey += q * ddy / (rr2 * rq); }
+  return [ex, ey];
+}
+function drawBlock() {
+  var x = S.block.x, y = S.block.y;
+  ctx.fillStyle = 'rgba(250,236,170,.9)'; ctx.strokeStyle = '#c9b25a'; ctx.lineWidth = 1.4; rr(x, y, BLOCK_W, BLOCK_H, 6); ctx.fill(); ctx.stroke();
+  for (var i = 0; i < 6; i++) for (var j = 0; j < 3; j++) {
+    var ax = x + 13 + i * 21.2, ay = y + 13 + j * 19, E = eField(ax, ay);
+    var dx = -E[0] * 2600, dy = -E[1] * 2600, d = Math.hypot(dx, dy); if (d > 5) { dx *= 5 / d; dy *= 5 / d; }
+    ctx.fillStyle = 'rgba(42,95,208,.22)'; ctx.beginPath(); ctx.ellipse(ax + dx, ay + dy, 8.5, 7, 0, 0, 7); ctx.fill();
+    sym(ax + dx * 1.15, ay + dy * 1.15, -1, 3.4, 0.95); sym(ax - dx * 0.25, ay - dy * 0.25, 1, 3.4, 0.95);
+  }
+  if (document.getElementById('showLbl').checked) label(x, y - 10, 'Plastic block (insulator): each atom keeps its electrons');
+}
+function drawTags() {
+  var qe = condQ(0), crowd = S.sphere.on && Math.abs(S.sphere.x - KX) < 130 && Math.abs(S.sphere.y - KY) < 60, sd = S.sphere.x >= KX ? 1 : -1;
+  tag(KX - (crowd ? sd * 46 : 0), KY - KR - 18, 'Electroscope: ' + fmt(qe), qe);
+  if (S.sphere.on) { var qs = condQ(1); tag(S.sphere.x + (crowd ? sd * 30 : 0), S.sphere.y - SR - 16, 'Sphere: ' + fmt(qs), qs); }
+  var rq = rodQ(); tag(S.rod.x + ROD_LEN - 37, S.rod.y - ROD_R - 15, 'Rod: ' + fmt(rq), rq);
+  var cq = clothQ(); tag((CLOTH.x0 + CLOTH.x1) / 2 + 30, CLOTH.y0 - 12, (S.rodType === 'rubber' ? 'Fur: ' : 'Silk: ') + fmt(cq), cq);
+  var eq = -S.earth; tag(150, 620, 'Earth: ' + fmt(eq), eq);
+  ctx.font = '11.5px system-ui,Arial'; ctx.fillStyle = '#56616c'; ctx.textAlign = 'center';
+  ctx.fillText('Leaf angle: ' + Math.round(S.theta * 180 / Math.PI) + '°', KX, JAR.y1 + 16);
+}
+
+/* ---------------- panel ---------------- */
+var nowEl = null, tally = document.getElementById('tally');
+function sgnWord(q) { return q > 0 ? 'positive' : 'negative'; }
+function narrate() {
+  var T = S.touch, rq = rodQ(), qe = condQ(0), rec = S.t - S.lastEv.t < 2.2, k = S.lastEv.k;
+  var dK = rodDistKnob(), rodNear = rq !== 0 && dK < 120;
+  var who = function (ci) { return ci === 1 ? 'sphere' : 'electroscope'; };
+  var txt = '';
+  if (T.hand >= 0) {
+    var w = who(T.hand), gq = groupQ(groupOfCond(T.hand));
+    if (rec && k === 'gndOut') txt = 'Grounded. Electrons are flowing <b>out of the ' + w + ', through your body, into the Earth</b>' + (rodNear && rq < 0 ? ' — the negative rod is pushing them away.' : '.') + ' Protons (+) never move.';
+    else if (rec && k === 'gndIn') txt = 'Grounded. Electrons are flowing <b>up from the Earth, through your body, into the ' + w + '</b>' + (rodNear && rq > 0 ? ' — pulled in by the positive rod.' : ' to make up its shortage.');
+    else if (rodNear) txt = 'Grounded with the rod nearby. The ' + w + ' holds a net charge of <b>' + fmt(gq) + '</b>, kept there by the rod. <b>Lift your finger before you move the rod</b> and that charge is trapped. Move the rod first and it all flows back.';
+    else txt = 'Grounded. The Earth is huge, so it can take or give electrons until the ' + w + ' is neutral. Net charge: <b>' + fmt(gq) + '</b>.';
+  } else if (T.rod >= 0) {
+    var w2 = who(T.rod);
+    if (rec && (k === 'rodNeg' || k === 'rodPos')) txt = (rq <= 0 && S.rodType === 'rubber')
+      ? 'Contact! Extra <b>electrons hop from the rod onto the ' + w2 + '</b>, which becomes negative. The rod is an insulator, so only the charge right at the touching spot moves — slide the rod around to transfer more.'
+      : 'Contact! <b>Electrons jump from the ' + w2 + ' onto the rod</b> to fill its shortage of electrons. The ' + w2 + ' is left short of electrons, so it becomes <b>positive</b>. (Positive charge never moves — electrons do.)';
+    else txt = rq === 0 ? 'Touching, but the rod is neutral, so there is nothing to transfer. Rub it on the ' + (S.rodType === 'rubber' ? 'fur' : 'silk') + ' first.' : 'Touching. No charge is moving at this spot — the charge here is used up (or the metal already matches the rod). The rod is an insulator, so slide it so a different charged part touches.';
+  } else if (rodNear && qe === 0) {
+    txt = rq < 0
+      ? '<b>Polarization.</b> The negative rod repels the free electrons in the metal. They move away from the rod, down the stem into the leaves. The knob is left <b>positive</b>, the leaves <b>negative</b>. Both leaves have the same charge, so they repel and spread. Net charge is still <b>0</b>.'
+      : '<b>Polarization.</b> The positive rod attracts the free electrons in the metal up into the knob. The leaves are left short of electrons, so both are <b>positive</b>, and they repel and spread. Net charge is still <b>0</b>.';
+  } else if (rodNear && qe !== 0) {
+    txt = (rq > 0) === (qe > 0)
+      ? 'The electroscope is already ' + sgnWord(qe) + ' and the rod is too. The like-charged rod pushes <b>more</b> charge down to the leaves, so they spread <b>more</b>. (This is how you test the sign of a charge.)'
+      : 'The rod has the opposite sign. It pulls the electroscope\'s charge up into the knob, so the leaves <b>close</b>. Bring it very close and they can open again with the opposite charge.';
+  } else if (qe !== 0) {
+    txt = 'The electroscope has a net charge of <b>' + fmt(qe) + '</b> (' + Math.abs(qe) + (qe < 0 ? ' extra electrons' : ' electrons missing') + '). The charge spreads over all the metal, so both leaves get the same sign and repel.';
+  } else if (rq !== 0) {
+    txt = 'The rod is ' + sgnWord(rq) + ' (' + fmt(rq) + '): rubbing moved electrons ' + (S.rodType === 'rubber' ? 'from the fur onto the rubber' : 'from the glass onto the silk') + '. The ' + (S.rodType === 'rubber' ? 'fur' : 'silk') + ' has the opposite charge. Bring the rod near the electroscope.';
+  } else txt = 'Everything is neutral: each object has equal numbers of protons (+) and electrons (−), so the leaves hang down. Rub the rod on the ' + (S.rodType === 'rubber' ? 'fur' : 'silk') + ' to charge it.';
+  if (S.sphere.on && T.es) txt += ' <i>The sphere and electroscope are touching, so they act as one conductor and share charge.</i>';
+  if (S.block.on && rq !== 0) { var b = S.block, dx = Math.max(b.x - (S.rod.x + ROD_LEN), S.rod.x - (b.x + BLOCK_W), 0), dy = Math.max(b.y - S.rod.y, S.rod.y - (b.y + BLOCK_H), 0); if (Math.hypot(dx, dy) < 90) txt += ' <i>In the plastic block, electrons can\'t leave their atoms, but each electron cloud shifts a little — an insulator polarizes too.</i>'; }
+  if (nowEl && nowEl._t !== txt) { nowEl.innerHTML = txt; nowEl._t = txt; }
+  var rows = [['Electroscope', condQ(0)]];
+  if (S.sphere.on) rows.push(['Metal sphere', condQ(1)]);
+  rows.push(['Rod', rodQ()], [S.rodType === 'rubber' ? 'Fur' : 'Silk', clothQ()], ['Earth', -S.earth]);
+  var fq = flyQ(); if (fq) rows.push(['Electrons in motion', fq]);
+  var html = rows.map(function (r) { return '<tr><td>' + r[0] + '</td><td class="v ' + (r[1] > 0 ? 'p' : r[1] < 0 ? 'n' : '') + '">' + fmt(r[1]) + '</td></tr>'; }).join('');
+  html += '<tr class="tot"><td>Total (charge is conserved)</td><td class="v">' + fmt(totalQ()) + '</td></tr>';
+  if (tally._t !== html) { tally.innerHTML = html; tally._t = html; }
+}
+
+/* ---------------- guided activities ---------------- */
+var GUIDES = {
+  polar: { title: 'Polarization', steps: [
+    'Charge the rod: drag its tip across the cloth (or press Rub rod) until it has 10 or more charges.',
+    'Bring the rod close to the knob — but don\'t touch it. Watch the leaves and the charges.',
+    'Take the rod far away again.'],
+    end: 'The leaves fell back: nothing was added or removed, so the electroscope stayed neutral the whole time. The rod only <b>rearranged</b> the electrons (polarization). Try the other rod — the leaves spread either way, so polarization alone can\'t tell you the sign. Add the plastic block to see an insulator polarize.' },
+  cond: { title: 'Charging by conduction', steps: [
+    'Charge the rod (10 or more charges).',
+    'Touch the rod to the knob. Slide it around the knob to transfer more charge.',
+    'Pull the rod far away.',
+    'Bring the rod back near the knob, without touching.'],
+    end: 'Charging by conduction (contact) gives the electroscope the <b>same sign</b> as the rod. That\'s why the leaves spread even more when the like-charged rod came back. Total charge stayed the same — it just moved.' },
+  ind: { title: 'Charging by induction', steps: [
+    'Charge the rod (10 or more charges).',
+    'Bring the rod near the knob (don\'t touch) and hold it there.',
+    'Keep the rod there. Drag the hand so a finger touches the knob (grounding it).',
+    'Keep the rod still. Remove your finger first.',
+    'Now move the rod far away.'],
+    end: 'Charged by induction: the electroscope ends up with the <b>opposite sign</b> to the rod, and the rod never touched it and lost none of its charge. Electrons moved between the electroscope and the Earth through your body.' }
+};
+function rodFar() { return rodDistKnob() > 180; }
+function guided() {
+  if (S.mode === 'explore') return;
+  var st = S.step, rq = rodQ(), qe = condQ(0), dK = rodDistKnob(), T = S.touch, grounded = T.hand === 0 || (T.hand === 1 && T.es);
+  var touchE = T.rod === 0 || (T.rod === 1 && T.es);
+  var adv = false;
+  if (S.mode === 'polar') {
+    if (touchE && S.cnt.rodE > 0 && !S.stepWarn) warn('You touched the knob, so charge moved onto it — that\'s conduction, not polarization. Press Reset to try again.');
+    if (st === 0 && Math.abs(rq) >= 10) adv = true;
+    else if (st === 1 && dK < 70 && !touchE && S.theta > 0.26 && qe === 0) adv = true;
+    else if (st === 2 && rodFar() && qe === 0 && S.theta < 0.12) adv = true;
+  } else if (S.mode === 'cond') {
+    if (st === 0 && Math.abs(rq) >= 10) adv = true;
+    else if (st === 1 && S.cnt.rodE >= 2 && qe !== 0) adv = true;
+    else if (st === 2 && rodFar() && qe !== 0 && !touchE) { adv = true; S.stepBase.th = S.theta; }
+    if (st === 3 && rodFar()) S.stepBase.th = Math.min(S.stepBase.th, S.theta);
+    if (st === 3 && dK < 70 && !touchE && S.theta > S.stepBase.th + 0.06 && rq !== 0) adv = true;
+  } else if (S.mode === 'ind') {
+    if (touchE && S.cnt.rodE > 0 && !S.stepWarn) warn('The rod touched the knob, so charge was transferred by contact (conduction). Press Reset to try induction again.');
+    if (st === 0 && Math.abs(rq) >= 10) adv = true;
+    else if (st === 1 && dK < 70 && !touchE && qe === 0) adv = true;
+    else if (st === 2 && grounded && S.cnt.gnd > (S.stepBase.g || 0) && dK < 90) adv = true;
+    else if (st === 3 && !grounded && qe !== 0 && dK < 100) adv = true;
+    else if (st === 4 && rodFar() && qe !== 0) adv = true;
+    if ((st === 2 || st === 3) && dK > 140 && grounded) { S.step = 1; warn('The rod was moved away while you were still grounded, so electrons flowed back and the electroscope is neutral again. Bring the rod back, touch the knob, then lift your finger <b>before</b> moving the rod.'); renderSteps(); return; }
+    if (st === 3 && dK > 140 && !grounded && qe === 0) { S.step = 1; warn('Nothing stayed on the electroscope. Bring the rod near, then ground, then lift your finger while the rod is still near.'); renderSteps(); return; }
+  }
+  if (adv) {
+    S.step++; S.stepBase.g = S.cnt.gnd;
+    if (S.stepWarn) { S.stepWarn = false; S.stepMsg = ''; }
+    var G = GUIDES[S.mode];
+    if (S.step >= G.steps.length) S.stepMsg = G.end + (S.mode === 'ind' ? ' Final charge: <b>' + fmt(condQ(0)) + '</b>; rod: <b>' + fmt(rodQ()) + '</b>.' : S.mode === 'cond' ? ' Electroscope: <b>' + fmt(condQ(0)) + '</b>; rod: <b>' + fmt(rodQ()) + '</b>.' : '');
+    renderSteps();
+  }
+}
+function warn(m) { S.stepWarn = true; S.stepMsg = m; renderSteps(); }
+function renderSteps() {
+  var box = document.getElementById('steps');
+  if (!box || S.mode === 'explore') return;
+  box.style.display = '';
+  var G = GUIDES[S.mode];
+  document.getElementById('stepsTitle').textContent = G.title;
+  document.getElementById('stepList').innerHTML = G.steps.map(function (s, i) { return '<li class="' + (i < S.step ? 'done' : i === S.step ? 'cur' : '') + '">' + s + '</li>'; }).join('');
+  var m = document.getElementById('stepMsg');
+  m.style.display = S.stepMsg ? '' : 'none'; m.className = S.stepWarn ? 'warn' : ''; m.innerHTML = S.stepMsg;
+}
+
+/* ---------------- input ---------------- */
+var drag = null;
+function toLocal(ev) { var r = cv.getBoundingClientRect(); return [(ev.clientX - r.left) * CW / r.width, (ev.clientY - r.top) * CH / r.height]; }
+function hit(x, y) {
+  var h = handPts();
+  if (Math.hypot(x - h.F[0], y - h.F[1]) < 18 || Math.hypot(x - h.P[0], y - h.P[1]) < 26) return 'hand';
+  if (x > S.rod.x - 8 && x < S.rod.x + ROD_LEN + 8 && Math.abs(y - S.rod.y) < ROD_R + 9) return 'rod';
+  if (S.sphere.on && (Math.hypot(x - S.sphere.x, y - S.sphere.y) < SR + 4 || (x > S.sphere.x && x < S.sphere.x + SR + HND + 4 && Math.abs(y - S.sphere.y) < 12))) return 'sphere';
+  if (S.block.on && x > S.block.x && x < S.block.x + BLOCK_W && y > S.block.y && y < S.block.y + BLOCK_H) return 'block';
+  return null;
+}
+function objPos(w) { return w === 'rod' ? S.rod : w === 'hand' ? S.hand : w === 'sphere' ? S.sphere : S.block; }
+cv.addEventListener('pointerdown', function (e) {
+  var p = toLocal(e), w = hit(p[0], p[1]); if (!w) return;
+  var o = objPos(w); drag = { w: w, dx: o.x - p[0], dy: o.y - p[1], id: e.pointerId, lx: p[0], ly: p[1] };
+  try { cv.setPointerCapture(e.pointerId); } catch (er) {}
+  e.preventDefault();
+});
+cv.addEventListener('pointermove', function (e) {
+  var p = toLocal(e);
+  if (!drag) { cv.style.cursor = hit(p[0], p[1]) ? 'grab' : 'default'; return; }
+  if (e.pointerId !== drag.id) return;
+  var w = drag.w, o = objPos(w), ox = o.x, oy = o.y;
+  moveObj(w, p[0] + drag.dx, p[1] + drag.dy);
+  if (w === 'rod') { // rubbing: the rubbed end sliding over the cloth
+    var over = S.rod.y + ROD_R > CLOTH.y0 - 2 && S.rod.x < CLOTH.x1 && S.rod.x + CHG_LEN > CLOTH.x0;
+    if (over) { S.rubAcc += Math.hypot(S.rod.x - ox, S.rod.y - oy); while (S.rubAcc > 42) { S.rubAcc -= 42; rubOnce(); } }
+  }
+  cv.style.cursor = 'grabbing'; e.preventDefault();
+});
+function endDrag(e) { if (drag && e.pointerId === drag.id) { drag = null; cv.style.cursor = 'default'; } }
+cv.addEventListener('pointerup', endDrag); cv.addEventListener('pointercancel', endDrag);
+
+document.getElementById('rub').onclick = function () { for (var i = 0; i < 3; i++) rubOnce(); };
+document.getElementById('neut').onclick = function () { // touch the rod to ground: its charge goes to Earth
+  S.rod.slots.forEach(function (o) { if (o.v) { S.earth += o.v < 0 ? 1 : -1; o.v = 0; } });
+};
+document.querySelectorAll('input[name=rod]').forEach(function (r) { r.onchange = function () { S.rodType = this.value; resetAll(); }; });
+document.querySelectorAll('input[name=view]').forEach(function (r) { r.onchange = function () { S.view = this.value; }; });
+document.getElementById('objSphere').onchange = function () { S.sphere.on = this.checked; S.sphere.x = 520; S.sphere.y = 300; S.el = S.el.filter(function (e) { return e.g < conds[0].nodes.length; }); buildConductors(); moveObj('sphere', S.sphere.x, S.sphere.y); };
+document.getElementById('objBlock').onchange = function () { S.block.on = this.checked; };
+document.getElementById('reset').onclick = resetAll;
+
+function resetAll() {
+  var keep = { mode: S.mode, rodType: S.rodType, view: S.view };
+  conds = null; S.el = []; newState(); S.mode = keep.mode; S.rodType = keep.rodType; S.view = keep.view;
+  S.step = 0; S.stepMsg = ''; S.stepWarn = false; S.stepBase = {}; renderSteps(); prevES = false;
+}
+
+/* ---------------- fit to frame & loop ---------------- */
+var app = document.getElementById('app');
+function fit() {
+  var s = Math.min(window.innerWidth / 1100, window.innerHeight / 650);
+  app.style.transform = 'scale(' + s + ')';
+  var px = Math.max(1, Math.min(3, s * (window.devicePixelRatio || 1)));
+  var w = Math.round(CW * px), h = Math.round(CH * px);
+  if (cv.width !== w) { cv.width = w; cv.height = h; }
+}
+window.addEventListener('resize', fit);
+newState(); fit(); renderSteps();
+var last = performance.now(), nt = 0;
+function frame(now) {
+  var dt = Math.min(0.05, (now - last) / 1000); last = now;
+  step(dt);
+  nt -= dt; if (nt <= 0) { narrate(); nt = 0.15; }
+  draw();
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+window.SIM = { get S() { return S; }, solve: solve, groupNodes: groupNodes, pointCharges: pointCharges, step: step, condQ: condQ, rodQ: rodQ, totalQ: totalQ, moveObj: moveObj, rubOnce: rubOnce, rodDistKnob: rodDistKnob, nodes: function () { return nodes; } };
+})();
+</script>
+</body></html>
