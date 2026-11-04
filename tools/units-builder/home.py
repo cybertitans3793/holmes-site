@@ -2,19 +2,18 @@
 """Builds units/HOME.html, the "Pick your class" homepage (design option A, Big Type).
 Unit list and "has sims" flags come from units.py, so the homepage stays in step with the unit pages.
 Links go to the Site pages: each unit page's custom path is its lower-case code, inside its menu section's folder
-(…/holmes/ap-physics-1-ib/p1-04). If a menu section is renamed, its folder changes: update FOLDER."""
+(…/holmes/ap-physics-1-ib/p1-04). Addresses come from site_links.py."""
 import html, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from units import UNITS
 
-SITE = 'https://sites.google.com/fcps.org/holmes/'
+from site_links import SITE, COURSE_FOLDER as FOLDER
 COURSES = [  # (big label, course name, code prefix, line under the unit count)
     ('AB', 'Algebra-Based Physics', 'AB', '9th grade'),
     ('P1', 'AP Physics 1 / IB', 'P1', 'AP 1 + IB Physics'),
     ('P2', 'AP Physics 2 / IB', 'P2', 'AP 2 + IB Physics'),
 ]
 E = html.escape
-FOLDER = {'AB': 'algebra-based-physics', 'P1': 'ap-physics-1-ib', 'P2': 'ap-physics-2-ib'}  # menu-section folders on the Site
 
 def card(big, name, prefix, sub, hot):
     units = sorted((k, v) for k, v in UNITS.items() if k.startswith(prefix + '-'))

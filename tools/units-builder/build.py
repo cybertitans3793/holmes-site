@@ -8,6 +8,7 @@ Usage: python3 build.py [UNIT ...]   (no args = all)  -> out/<UNIT>.html
 """
 import json, os, re, sys, html
 from units import UNITS, SIMS
+import site_links as site
 
 D = os.path.dirname(os.path.abspath(__file__))
 SP = D  # sim paths in units.py are relative to this folder
@@ -105,8 +106,8 @@ PAGE = """<!doctype html>
   <p class="credits">{credits}</p>
 </div>
 <script>
-/* Set this once to your Review web app link; each unit page then links to its own unit. */
-const REVIEW_URL = 'https://script.google.com/a/macros/fcps.org/s/AKfycbzW6NpFGf5yjZ843WN0pDy-mzI0r1iCcBIuoJpMCEJeWwbUARiSnAC_lf2bWQeHWoGjHA/exec';
+/* Review web app link (from site.py); each AP unit page links to its own unit. */
+const REVIEW_URL = '{review_url}';
 const UNIT = {unit_json};
 const SIMS = {{
 {sims_js}
@@ -211,8 +212,8 @@ PRESENT_JS = """
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.body.classList.contains('present') && !document.fullscreenElement) setPresent(false); });
 """
 
-REVIEW = 'https://script.google.com/a/macros/fcps.org/s/AKfycbzW6NpFGf5yjZ843WN0pDy-mzI0r1iCcBIuoJpMCEJeWwbUARiSnAC_lf2bWQeHWoGjHA/exec'
-HOMEWORK = 'https://script.google.com/a/macros/fcps.org/s/AKfycbxm2XXzPq2s0JUlS2T0a2lQJ8Pm97_zyibH9rGrW4VUB3EAHWQy5SmQvxsOUYyUL08M/exec'
+REVIEW = site.REVIEW_APP
+HOMEWORK = site.HOMEWORK_APP
 
 def practice_url(uid, u):
     """AP units: the Review app for that unit. ABP units: the Homework-app review assignment named by units.py 'review' (e.g. '04-R')."""
@@ -270,7 +271,7 @@ def build(uid):
     pr = uid in PRESENT_UNITS
     out = PAGE.format(uid=uid, title=html.escape(u['title']), num=u['num'], course=u['course'], fonts=FONTS, css=css,
                       unit_json=js_str(unit), sims_js=sims_js, credits=credits or 'Original simulations.', guide=guide_html(u),
-                      present_css=PRESENT_CSS if pr else '', present_btns=PRESENT_BTNS if pr else '', present_js=PRESENT_JS if pr else '')
+                      review_url=site.REVIEW_APP, present_css=PRESENT_CSS if pr else '', present_btns=PRESENT_BTNS if pr else '', present_js=PRESENT_JS if pr else '')
     os.makedirs(os.path.join(D, 'out'), exist_ok=True)
     p = os.path.join(D, 'out', uid + '.html'); open(p, 'w', encoding='utf-8').write(out)
     print(uid, len(out) // 1024, 'KB')
