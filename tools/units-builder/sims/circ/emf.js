@@ -24,14 +24,18 @@ const SIM = {
     return [{ id: 'V', name: 'Terminal voltage', short: 'V', sym: 'V<sub>T</sub>', unit: 'V', f: d => d.V }, { id: 'I', name: 'Current', short: 'I', sym: 'I', unit: 'A', f: d => d.I }, { id: 'P', name: 'Power delivered to the load', short: 'P', sym: 'P', unit: 'W', f: d => d.P }];
   },
   work(v, d, mode){
-    if (mode === 'div') return '<h4>1 · Two resistors in series share the supply voltage</h4><div class="eq">V<sub>out</sub> = ε × R<sub>s</sub>/(R₁ + R<sub>s</sub>)</div>' +
-      '<h4>2 · The sensor’s resistance</h4><div class="eq">' + (d.kind === 'ldr' ? 'LDR: resistance <b>falls</b> as light increases. At ' + v.x + ' lux: ' : 'Thermistor (NTC): resistance <b>falls</b> as temperature rises. At ' + v.x + ' °C: ') + 'R<sub>s</sub> = ' + H.n(d.Rs / 1000, 'kΩ') + '</div>' +
-      '<div class="eq">V<sub>out</sub> = ' + H.iv('E') + ' × ' + fnum(d.Rs / 1000) + '/(' + v.R1 + ' + ' + fnum(d.Rs / 1000) + ') = <b>' + H.n(d.Vout, 'V') + '</b></div>' +
+    if (mode === 'div') return '<h4>1 · Two resistors in series share the supply voltage</h4>' + TEX`V_{\text{out}} = \varepsilon \times \frac{R_s}{R_1 + R_s}` +
+      '<h4>2 · The sensor’s resistance</h4><p class="st">' + (d.kind === 'ldr' ? 'LDR: resistance <b>falls</b> as light increases. At ' + v.x + ' lux:' : 'Thermistor (NTC): resistance <b>falls</b> as temperature rises. At ' + v.x + ' °C:') + '</p>' +
+      TEXA`R_s = ${M.n(d.Rs / 1000, 'kΩ')}` +
+      TEX`V_{\text{out}} = ${M.iv('E')} \times \frac{${M.n(d.Rs / 1000)}}{${M.n(v.R1)} + ${M.n(d.Rs / 1000)}}` + TEXA`V_{\text{out}} = ${M.n(d.Vout, 'V')}` +
       '<p class="note">' + (d.kind === 'ldr' ? 'Darker → bigger R<sub>s</sub> → bigger V<sub>out</sub>. That rising voltage can switch on a street light at dusk.' : 'Hotter → smaller R<sub>s</sub> → smaller V<sub>out</sub>. Swap the positions to make V<sub>out</sub> rise with temperature instead (a fire alarm).') + '</p>';
-    return '<h4>1 · Real batteries have internal resistance r</h4><div class="eq">I = ε/(R + r) = ' + H.iv('E') + '/(' + fnum(v.R) + ' + ' + fnum(v.r) + ') = <b>' + H.n(d.I, 'A') + '</b></div>' +
-      '<h4>2 · Terminal voltage (what a voltmeter across the battery reads)</h4><div class="eq">V<sub>T</sub> = ε − Ir = ' + v.E + ' − (' + fnum(d.I) + ')(' + fnum(v.r) + ') = <b>' + H.n(d.V, 'V') + '</b> (“lost volts” Ir = ' + H.n(d.lost, 'V') + ')</div>' +
-      '<h4>3 · Power to the load</h4><div class="eq">P = I²R = <b>' + H.n(d.P, 'W') + '</b>. Maximum (' + H.n(d.Pmax, 'W') + ') when R = r.</div>' +
-      '<p class="note">Lab: vary R, measure V and I, graph V vs I. Straight line: intercept = ε, gradient = −r. (CED 11.5 activity.) Short circuit: I = ε/r = ' + (isFinite(d.Isc) ? H.n(d.Isc, 'A') : '∞') + '.</p>';
+    return '<h4>1 · Real batteries have internal resistance r</h4>' + TEX`I = \frac{\varepsilon}{R + r}` + TEX`I = \frac{${M.iv('E')}}{${M.iv('R')} + ${M.iv('r')}}` + TEXA`I = ${M.n(d.I, 'A')}` +
+      '<h4>2 · Terminal voltage (what a voltmeter across the battery reads)</h4>' + TEX`V_T = \varepsilon - I\,r` + TEX`V_T = ${M.iv('E')} - (${M.n(d.I, 'A')})(${M.iv('r')})` + TEXA`V_T = ${M.n(d.V, 'V')}` +
+      '<p class="st">The “lost volts”:</p>' + TEX`I\,r = ${M.n(d.lost, 'V')}` +
+      '<h4>3 · Power to the load</h4>' + TEX`P = I^2 R` + TEX`P = (${M.n(d.I, 'A')})^2(${M.iv('R')})` + TEXA`P = ${M.n(d.P, 'W')}` +
+      '<p class="st">Maximum power, when R = r:</p>' + TEX`P_{\max} = ${M.n(d.Pmax, 'W')}` +
+      '<p class="note">Lab: vary R, measure V and I, graph V vs I. Straight line: intercept = ε, gradient = −r. (CED 11.5 activity.)</p>' +
+      '<p class="st">Short circuit:</p>' + TEX`I_{sc} = \frac{\varepsilon}{r}` + (isFinite(d.Isc) ? TEX`I_{sc} = \frac{${M.iv('E')}}{${M.iv('r')}}` + TEXA`I_{sc} = ${M.n(d.Isc, 'A')}` : TEXA`I_{sc} = \infty`);
   },
   draw(v, d, mode){
     if (mode === 'div'){

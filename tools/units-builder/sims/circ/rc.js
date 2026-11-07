@@ -26,20 +26,28 @@ const SIM = {
   },
   work(v, d, mode){
     if (mode === 'fork'){
-      if (d.zero) return '<h4>1 · Just after closing: the capacitor is uncharged, so V<sub>C</sub> = 0</h4><div class="eq">An uncharged capacitor acts like a <b>plain wire</b>. It shorts out R₂ (same 0 V across it), so no current goes through R₂.</div>' +
-        '<h4>2 · Only R₁ limits the current</h4><div class="eq">I₁ = ε/R₁ = ' + H.iv('E') + '/' + v.R1 + ' Ω = <b>' + H.n(d.I1, 'A') + '</b>, all of it flowing onto the capacitor. I₂ = 0.</div>' +
+      if (d.zero) return '<h4>1 · Just after closing: the capacitor is uncharged, so V<sub>C</sub> = 0</h4><p class="st">An uncharged capacitor acts like a <b>plain wire</b>. It shorts out R₂ (same 0 V across it), so no current goes through R₂.</p>' +
+        '<h4>2 · Only R₁ limits the current</h4>' + TEX`I_1 = \frac{\varepsilon}{R_1}` + TEX`I_1 = \frac{${M.iv('E')}}{${M.iv('R1')}}` + TEXA`I_1 = ${M.n(d.I1, 'A')}` +
+        '<p class="st">All of it flows onto the capacitor.</p>' + TEXA`I_2 = ${M.n(0, 'A')}` +
         '<p class="note">Switch to “a long time later” and predict before you look.</p>';
-      return '<h4>1 · A long time later: the capacitor is fully charged, no current through it</h4><div class="eq">A charged capacitor acts like a <b>break</b> in the wire. Current flows through R₁ and R₂ in series.</div>' +
-        '<div class="eq">I = ε/(R₁ + R₂) = ' + H.iv('E') + '/' + (v.R1 + v.R2) + ' Ω = <b>' + H.n(d.I1, 'A') + '</b></div>' +
-        '<h4>2 · The capacitor has the same voltage as R₂ (parallel)</h4><div class="eq">V<sub>C</sub> = IR₂ = <b>' + H.n(d.Vc, 'V') + '</b> → Q = CV = <b>' + H.n(d.Q, 'C') + '</b>, U = ½QV = ' + H.n(d.U, 'J') + '</div>' +
+      return '<h4>1 · A long time later: the capacitor is fully charged, no current through it</h4><p class="st">A charged capacitor acts like a <b>break</b> in the wire. Current flows through R₁ and R₂ in series.</p>' +
+        TEX`I = \frac{\varepsilon}{R_1 + R_2}` + TEX`I = \frac{${M.iv('E')}}{${M.iv('R1')} + ${M.iv('R2')}}` + TEXA`I = ${M.n(d.I1, 'A')}` +
+        '<h4>2 · The capacitor has the same voltage as R₂ (parallel)</h4>' + TEX`V_C = I\,R_2` + TEX`V_C = (${M.n(d.I1, 'A')})(${M.iv('R2')})` + TEXA`V_C = ${M.n(d.Vc, 'V')}` +
+        TEX`Q = C\,V_C` + TEX`Q = (${M.iv('C', 1e-6)}\,\text{F})(${M.n(d.Vc, 'V')})` + TEXA`Q = ${M.n(d.Q, 'C')}` +
+        TEX`U = \frac{1}{2} Q\,V_C` + TEX`U = \frac{1}{2}(${M.n(d.Q, 'C')})(${M.n(d.Vc, 'V')})` + TEXA`U = ${M.n(d.U, 'J')}` +
         '<p class="note">Classic FRQ ranking: which resistor has the larger current at t = 0? A long time later? (t = 0: R₁. Later: equal.)</p>';
     }
     const ch = mode === 'chg';
-    return '<h4>1 · Time constant</h4><div class="eq">τ = RC = (' + H.iv('R') + ')(' + H.iv('C') + ') = <b>' + H.n(d.tau, 's') + '</b>. Bigger τ → it charges and discharges more slowly.</div>' +
-      '<h4>2 · At t = 0</h4><div class="eq">' + (ch ? 'Uncharged C acts like a wire: I₀ = ε/R = ' + H.n(d.I0, 'A') + ', V<sub>C</sub> = 0' : 'Fully charged: V<sub>C</sub> = ε, I₀ = ε/R = ' + H.n(d.I0, 'A') + ' (now flowing the other way)') + '</div>' +
-      '<h4>3 · At t = ' + H.iv('t') + '</h4><div class="eq">Read off the graphs: Q = ' + H.n(d.Q, 'C') + ' · V<sub>C</sub> = <b>' + H.n(d.Vc, 'V') + '</b> · I = <b>' + H.n(d.I, 'A') + '</b></div>' +
-      '<div class="eq">' + (ch ? 'Loop: ε = V<sub>R</sub> + V<sub>C</sub> → ' + fnum(d.VR) + ' + ' + fnum(d.Vc) + ' = ' + v.E + ' V ✓' : 'V<sub>R</sub> = V<sub>C</sub> = ' + fnum(d.Vc) + ' V') + '</div>' +
-      '<h4>4 · Long time</h4><div class="eq">' + (ch ? 'Q → Cε = ' + H.n(d.Q0, 'C') + ', I → 0: the capacitor acts like a break.' : 'Q → 0, I → 0.') + '</div>' +
+    return '<h4>1 · Time constant</h4>' + TEX`\tau = RC` + TEX`\tau = (${M.iv('R', 1000)}\,\Omega)(${M.iv('C', 1e-6)}\,\text{F})` + TEXA`\tau = ${M.n(d.tau, 's')}` +
+      '<p class="st">Bigger τ → it charges and discharges more slowly.</p>' +
+      '<h4>2 · At t = 0</h4><p class="st">' + (ch ? 'Uncharged C acts like a wire:' : 'Fully charged:') + '</p>' +
+      TEX`I_0 = \frac{\varepsilon}{R}` + TEX`I_0 = \frac{${M.iv('E')}}{${M.iv('R', 1000)}\,\Omega}` + TEXA`I_0 = ${M.n(d.I0, 'A')}` +
+      (ch ? TEXA`V_C = 0` : TEXA`V_C = ${M.iv('E')}` + '<p class="st">The current is now flowing the other way.</p>') +
+      '<h4>3 · At t = ' + H.iv('t') + '</h4><p class="st">Read off the graphs:</p>' + TEX`Q = ${M.n(d.Q, 'C')}` + TEXA`V_C = ${M.n(d.Vc, 'V')}` + TEXA`I = ${M.n(d.I, 'A')}` +
+      (ch ? TEX`\varepsilon = V_R + V_C` + TEX`${M.iv('E')} = ${M.n(d.VR, 'V')} + ${M.n(d.Vc, 'V')}` + '<p class="st">The loop rule checks out ✓</p>'
+        : TEX`V_R = V_C` + TEX`V_R = ${M.n(d.Vc, 'V')}`) +
+      '<h4>4 · Long time</h4>' + (ch ? '<p class="st">The capacitor charges up to its limit, and the current dies away:</p>' + TEX`Q \to C\,\varepsilon` + TEXA`Q \to ${M.n(d.Q0, 'C')}` + TEXA`I \to 0` + '<p class="st">The capacitor acts like a break.</p>'
+        : TEXA`Q \to 0` + TEXA`I \to 0`) +
       '<p class="note">AP: know the shapes. Current always decays. Q and V<sub>C</sub> rise to a limit (charging) or decay (discharging). Bigger R or C → slower.</p>';
   },
   draw(v, d, mode, opt, t){

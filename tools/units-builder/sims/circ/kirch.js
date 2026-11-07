@@ -26,19 +26,26 @@ const SIM = {
   dvs(mode){ return mode === 'two' ? [{ id: 'I1', name: 'Current through the battery', short: 'I₁', sym: 'I<sub>1</sub>', unit: 'A', f: d => d.I1 }, { id: 'I2', name: 'Current in the middle branch', short: 'I₂', sym: 'I<sub>2</sub>', unit: 'A', f: d => d.I2 }, { id: 'I3', name: 'Current in the right branch', short: 'I₃', sym: 'I<sub>3</sub>', unit: 'A', f: d => d.I3 }]
     : [{ id: 'I', name: 'Current (+ = clockwise)', short: 'I', sym: 'I', unit: 'A', f: d => d.I }]; },
   work(v, d, mode){
-    const f = x => fnum(x);
-    if (mode === 'two') return '<h4>1 · Junction rule (top junction)</h4><div class="eq">Current in = current out: <b>I₁ = I₂ + I₃</b></div>' +
-      '<h4>2 · Loop rule, left loop (battery, R₁, R₂)</h4><div class="eq">+ε − I₁R₁ − I₂R₂ = 0 → ' + f(v.E) + ' − ' + v.R1 + 'I₁ − ' + v.R2 + 'I₂ = 0</div>' +
-      '<h4>3 · Loop rule, right loop (R₂ and R₃)</h4><div class="eq">+I₂R₂ − I₃R₃ = 0 → the two branches have the same ΔV</div>' +
-      '<h4>4 · Solve</h4><div class="eq">I₁ = <b>' + H.n(d.I1, 'A') + '</b> · I₂ = <b>' + H.n(d.I2, 'A') + '</b> · I₃ = <b>' + H.n(d.I3, 'A') + '</b><br>Check: I₂ + I₃ = ' + f(d.I2 + d.I3) + ' A = I₁ ✓</div>' +
-      '<h4>5 · Potentials (bottom wire = 0 V)</h4><div class="eq">After the battery: ' + f(v.E) + ' V → after R₁: ' + H.n(d.Vj, 'V') + ' (the top of both branches) → back to 0 V through either R₂ or R₃.</div>' +
+    if (mode === 'two') return '<h4>1 · Junction rule (top junction)</h4><p class="st">Current in = current out:</p>' + TEXA`I_1 = I_2 + I_3` +
+      '<h4>2 · Loop rule, left loop (battery, R₁, R₂)</h4>' + TEX`+\varepsilon - I_1 R_1 - I_2 R_2 = 0` + TEX`+${M.iv('E', 1)} - ${M.n(v.R1)}\,I_1 - ${M.n(v.R2)}\,I_2 = 0` +
+      '<h4>3 · Loop rule, right loop (R₂ and R₃)</h4>' + TEX`+I_2 R_2 - I_3 R_3 = 0` + '<p class="st">The two branches have the same ΔV.</p>' +
+      '<h4>4 · Solve</h4>' + TEXA`I_1 = ${M.n(d.I1, 'A')}` + TEXA`I_2 = ${M.n(d.I2, 'A')}` + TEXA`I_3 = ${M.n(d.I3, 'A')}` +
+      '<p class="st">Check:</p>' + TEX`I_2 + I_3 = ${M.n(d.I2 + d.I3, 'A')}` + '<p class="st">This equals I₁ ✓</p>' +
+      '<h4>5 · Potentials (bottom wire = 0 V)</h4>' + TEX`V_{\text{after battery}} = ${M.n(v.E, 'V')}` + TEX`V_{\text{after } R_1} = ${M.n(d.Vj, 'V')}` +
+      '<p class="st">That is the top of both branches. Then back to 0 V through either R₂ or R₃.</p>' +
       '<p class="note">Loop rule = conservation of energy. Junction rule = conservation of charge. The bigger branch current goes through the smaller resistor.</p>';
-    const cw = d.I >= 0, I = Math.abs(d.I), charged = d.I === 0 ? null : (d.P2 < 0 ? 2 : d.P1 < 0 ? 1 : null);
-    return '<h4>1 · Pick a direction and go around the loop</h4><div class="eq">Clockwise, starting at the bottom-left corner:<br>+ε₁ − IR₁ ' + (d.aid ? '+ ε₂' : '− ε₂') + ' − IR₂ = 0</div>' +
-      '<h4>2 · Solve for the current</h4><div class="eq">I = (ε₁ ' + (d.aid ? '+' : '−') + ' ε₂) ÷ (R₁ + R₂) = (' + f(v.E1) + ' ' + (d.aid ? '+' : '−') + ' ' + f(v.E2) + ') ÷ ' + f(v.R1 + v.R2) + ' = <b>' + H.n(d.I, 'A') + '</b></div>' +
-      (d.I < 0 ? '<div class="eq">Negative: the current really goes <b>counterclockwise</b>. The right battery wins.</div>' : d.I === 0 ? '<div class="eq">The batteries cancel: no current.</div>' : '') +
-      '<h4>3 · Which battery is being charged?</h4><div class="eq">' + (charged ? 'Current goes <b>into the + terminal</b> of battery ' + charged + ', against its push: battery ' + charged + ' is being <b>charged</b> (absorbing ' + H.n(Math.abs(charged === 2 ? d.P2 : d.P1), 'W') + ').' : d.I === 0 ? 'Neither: no current.' : 'Neither: both batteries push the current the same way, so both are supplying energy.') + '</div>' +
-      '<h4>4 · Potential around the loop</h4><div class="eq">Up ε₁ (+' + f(v.E1) + ' V), down IR₁ (−' + f(v.R1 * I) + ' V), ' + (d.aid ? 'up' : 'down') + ' ε₂ (' + (d.aid ? '+' : '−') + f(v.E2) + ' V), down IR₂ (−' + f(v.R2 * I) + ' V). Total change = 0 ✓ (see the graph)</div>' +
+    const cw = d.I >= 0, I = Math.abs(d.I), charged = d.I === 0 ? null : (d.P2 < 0 ? 2 : d.P1 < 0 ? 1 : null), e2 = d.aid ? '+' : '-';
+    return '<h4>1 · Pick a direction and go around the loop</h4><p class="st">Clockwise, starting at the bottom-left corner:</p>' +
+      (d.aid ? TEXA`+\varepsilon_1 - I\,R_1 + \varepsilon_2 - I\,R_2 = 0` : TEXA`+\varepsilon_1 - I\,R_1 - \varepsilon_2 - I\,R_2 = 0`) +
+      '<h4>2 · Solve for the current</h4>' + (d.aid ? TEX`I = \frac{\varepsilon_1 + \varepsilon_2}{R_1 + R_2}` + TEX`I = \frac{${M.iv('E1')} + ${M.iv('E2')}}{${M.n(v.R1 + v.R2, 'Ω')}}`
+        : TEX`I = \frac{\varepsilon_1 - \varepsilon_2}{R_1 + R_2}` + TEX`I = \frac{${M.iv('E1')} - ${M.iv('E2')}}{${M.n(v.R1 + v.R2, 'Ω')}}`) + TEXA`I = ${M.n(d.I, 'A')}` +
+      (d.I < 0 ? '<p class="st">Negative: the current really goes <b>counterclockwise</b>. The right battery wins.</p>' : d.I === 0 ? '<p class="st">The batteries cancel: no current.</p>' : '') +
+      '<h4>3 · Which battery is being charged?</h4>' + (charged ? '<p class="st">Current goes <b>into the + terminal</b> of battery ' + charged + ', against its push: battery ' + charged + ' is being <b>charged</b>, absorbing:</p>' + TEXA`P_{\text{absorbed}} = ${M.n(Math.abs(charged === 2 ? d.P2 : d.P1), 'W')}`
+        : '<p class="st">' + (d.I === 0 ? 'Neither: no current.' : 'Neither: both batteries push the current the same way, so both are supplying energy.') + '</p>') +
+      '<h4>4 · Potential around the loop</h4><p class="st">Going around the loop, one element at a time:</p>' +
+      TEX`\Delta V_{\varepsilon_1} = +${M.n(v.E1, 'V')}` + TEX`\Delta V_{R_1} = -${M.n(v.R1 * I, 'V')}` +
+      (d.aid ? TEX`\Delta V_{\varepsilon_2} = +${M.n(v.E2, 'V')}` : TEX`\Delta V_{\varepsilon_2} = -${M.n(v.E2, 'V')}`) + TEX`\Delta V_{R_2} = -${M.n(v.R2 * I, 'V')}` +
+      TEXA`\Sigma\,\Delta V = 0` + '<p class="st">Total change = 0 ✓ (see the graph)</p>' +
       '<p class="note">A battery adds energy when current leaves its + terminal; it takes energy (is charged) when current is forced in at its + terminal.</p>';
   },
   draw(v, d, mode, opt){

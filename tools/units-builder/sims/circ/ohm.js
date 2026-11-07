@@ -26,14 +26,19 @@ const SIM = {
   },
   work(v, d, mode){
     if (mode === 'iv'){
-      const head = '<h4>1 · Resistance at a point: R = V/I (not the slope of the graph)</h4><div class="eq">V = ' + H.iv('V') + ', I = ' + H.n(d.I, 'A') + ' → R = <b>' + (isFinite(d.R) ? H.n(d.R, 'Ω') : '∞ (no current)') + '</b></div>';
-      if (d.dev === 'lamp') return head + '<h4>2 · Filament lamp: non-ohmic</h4><div class="eq">More current → hotter filament → atoms vibrate more → more collisions → <b>higher resistance</b>. The I–V curve bends over.</div><p class="note">Cold resistance R₀ = ' + v.R0 + ' Ω. Compare R at 2 V and at 10 V.</p>';
-      if (d.dev === 'diode') return head + '<h4>2 · Diode: current one way only</h4><div class="eq">Below about 0.6 V almost no current; above it the current rises very steeply. Reverse voltage: essentially zero current.</div><p class="note">IB: I–V characteristics of non-ohmic devices. Why is a single “resistance” meaningless for a diode?</p>';
-      return head + '<h4>2 · Ohmic resistor</h4><div class="eq">Straight line through the origin: R is the same at every voltage, and reversing V just reverses I.</div><p class="note">Power P = IV = ' + H.n(d.P, 'W') + ' is turned into thermal energy.</p>';
+      const head = '<h4>1 · Resistance at a point: R = V/I (not the slope of the graph)</h4>' + TEX`R = \frac{V}{I}` + TEX`R = \frac{${M.iv('V')}}{${M.n(d.I, 'A')}}` +
+        (isFinite(d.R) ? TEXA`R = ${M.n(d.R, 'Ω')}` : TEXA`R = \infty\ \text{(no current)}`);
+      if (d.dev === 'lamp') return head + '<h4>2 · Filament lamp: non-ohmic</h4><p class="st">More current → hotter filament → atoms vibrate more → more collisions → <b>higher resistance</b>. The I–V curve bends over.</p><p class="note">Cold resistance R₀ = ' + v.R0 + ' Ω. Compare R at 2 V and at 10 V.</p>';
+      if (d.dev === 'diode') return head + '<h4>2 · Diode: current one way only</h4><p class="st">Below about 0.6 V almost no current; above it the current rises very steeply. Reverse voltage: essentially zero current.</p><p class="note">IB: I–V characteristics of non-ohmic devices. Why is a single “resistance” meaningless for a diode?</p>';
+      return head + '<h4>2 · Ohmic resistor</h4><p class="st">Straight line through the origin: R is the same at every voltage, and reversing V just reverses I.</p>' +
+        '<p class="st">Power:</p>' + TEX`P = IV` + TEX`P = (${M.n(d.I, 'A')})(${M.iv('V')})` + TEXA`P = ${M.n(d.P, 'W')}` +
+        '<p class="note">That power is turned into thermal energy.</p>';
     }
-    return '<h4>1 · Cross-sectional area</h4><div class="eq">A = πr² = π(' + fnum(v.dmm / 2000) + ' m)² = ' + H.n(d.A, 'm²') + '</div>' +
-      '<h4>2 · Resistance: R = ρL/A</h4><div class="eq">' + d.nm + ': ρ = ' + fnum(d.rho) + ' Ω·m → R = (' + fnum(d.rho) + ')(' + H.iv('L') + ')/(' + fnum(d.A) + ') = <b>' + H.n(d.R, 'Ω') + '</b></div>' +
-      '<h4>3 · Ohm’s law and power</h4><div class="eq">I = V/R = <b>' + H.n(d.I, 'A') + '</b> &nbsp; P = IV = ' + H.n(d.P, 'W') + '</div>' +
+    return '<h4>1 · Cross-sectional area</h4>' + TEX`A = \pi r^2` + TEX`A = \pi\left(${M.n(v.dmm / 2000, 'm')}\right)^2` + TEXA`A = ${M.n(d.A, 'm²')}` +
+      '<h4>2 · Resistance: R = ρL/A</h4><p class="st">' + d.nm + ':</p>' + TEX`\rho = ${M.n(d.rho, 'Ω·m')}` + TEX`R = \frac{\rho L}{A}` +
+      TEX`R = \frac{(${M.n(d.rho)})(${M.iv('L')})}{${M.n(d.A)}}` + TEXA`R = ${M.n(d.R, 'Ω')}` +
+      '<h4>3 · Ohm’s law and power</h4>' + TEX`I = \frac{V}{R}` + TEX`I = \frac{${M.iv('V')}}{${M.n(d.R, 'Ω')}}` + TEXA`I = ${M.n(d.I, 'A')}` +
+      TEX`P = IV` + TEX`P = (${M.n(d.I, 'A')})(${M.iv('V')})` + TEXA`P = ${M.n(d.P, 'W')}` +
       '<p class="note">Double L → double R. Double the <i>diameter</i> → 4× the area → ¼ R. Lab: graph R vs L; the slope is ρ/A.</p>';
   },
   draw(v, d, mode){

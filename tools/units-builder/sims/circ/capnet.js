@@ -17,14 +17,19 @@ const SIM = {
   },
   dvs(){ return [{ id: 'Ceq', name: 'Equivalent capacitance', short: 'C_eq', sym: 'C<sub>eq</sub>', unit: 'F', f: d => d.Ceq }, { id: 'Q', name: 'Charge from the battery', short: 'Q', sym: 'Q', unit: 'C', f: d => d.Q }, { id: 'V1', name: 'Voltage across C₁', short: 'ΔV₁', sym: 'ΔV<sub>1</sub>', unit: 'V', f: d => d.V1 }]; },
   work(v, d, mode){
-    const uC = x => H.n(x * 1e6, 'μC'), uF = x => H.n(x * 1e6, 'μF');
-    if (mode === 'par') return '<h4>1 · Parallel: same ΔV on each</h4><div class="eq">Both capacitors connect straight across the battery: ΔV₁ = ΔV₂ = <b>' + fnu(v.E) + ' V</b></div>' +
-      '<h4>2 · Charges add</h4><div class="eq">Q₁ = C₁ΔV = ' + uC(d.Q1) + ' · Q₂ = C₂ΔV = ' + uC(d.Q2) + '<br>Q = Q₁ + Q₂ = <b>' + uC(d.Q) + '</b></div>' +
-      '<h4>3 · Equivalent capacitance</h4><div class="eq">C_eq = Q/ΔV = C₁ + C₂ = <b>' + uF(d.Ceq) + '</b> (bigger than either one)</div>' +
+    const uC = x => M.n(x * 1e6, 'μC'), uF = x => M.n(x * 1e6, 'μF');
+    if (mode === 'par') return '<h4>1 · Parallel: same ΔV on each</h4><p class="st">Both capacitors connect straight across the battery:</p>' + TEXA`\Delta V_1 = ${M.n(v.E, 'V')}` + TEXA`\Delta V_2 = ${M.n(v.E, 'V')}` +
+      '<h4>2 · Charges add</h4>' + TEX`Q_1 = C_1\,\Delta V` + TEX`Q_1 = (${M.iv('C1', 1e-6)}\,\text{F})(${M.iv('E')})` + TEX`Q_1 = ${uC(d.Q1)}` +
+      TEX`Q_2 = C_2\,\Delta V` + TEX`Q_2 = (${M.iv('C2', 1e-6)}\,\text{F})(${M.iv('E')})` + TEX`Q_2 = ${uC(d.Q2)}` +
+      TEX`Q = Q_1 + Q_2` + TEX`Q = ${uC(d.Q1)} + ${uC(d.Q2)}` + TEXA`Q = ${uC(d.Q)}` +
+      '<h4>3 · Equivalent capacitance</h4>' + TEX`C_{eq} = \frac{Q}{\Delta V}` + TEX`C_{eq} = C_1 + C_2` + TEX`C_{eq} = ${M.iv('C1')} + ${M.iv('C2')}` + TEXA`C_{eq} = ${uF(d.Ceq)}` + '<p class="st">Bigger than either one.</p>' +
       '<p class="note">Parallel capacitors act like one capacitor with more plate area. The bigger capacitor stores more charge. (Opposite to resistors: parallel resistors make R smaller.)</p>';
-    return '<h4>1 · Series: same charge on each</h4><div class="eq">The middle plates are isolated, so charge only moves around: Q₁ = Q₂ = Q.</div>' +
-      '<h4>2 · Equivalent capacitance</h4><div class="eq">1/C_eq = 1/C₁ + 1/C₂ = 1/' + fnu(v.C1) + ' + 1/' + fnu(v.C2) + ' → C_eq = <b>' + uF(d.Ceq) + '</b> (smaller than either one)</div>' +
-      '<h4>3 · Charge and voltages</h4><div class="eq">Q = C_eq ΔV = <b>' + uC(d.Q) + '</b><br>ΔV₁ = Q/C₁ = <b>' + H.n(d.V1, 'V') + '</b> · ΔV₂ = Q/C₂ = <b>' + H.n(d.V2, 'V') + '</b><br>Check: ' + fnu(d.V1) + ' + ' + fnu(d.V2) + ' = ' + fnu(v.E) + ' V ✓ (loop rule)</div>' +
+    return '<h4>1 · Series: same charge on each</h4><p class="st">The middle plates are isolated, so charge only moves around:</p>' + TEX`Q_1 = Q` + TEX`Q_2 = Q` +
+      '<h4>2 · Equivalent capacitance</h4>' + TEX`\frac{1}{C_{eq}} = \frac{1}{C_1} + \frac{1}{C_2}` + TEX`\frac{1}{C_{eq}} = \frac{1}{${M.iv('C1')}} + \frac{1}{${M.iv('C2')}}` + TEXA`C_{eq} = ${uF(d.Ceq)}` + '<p class="st">Smaller than either one.</p>' +
+      '<h4>3 · Charge and voltages</h4>' + TEX`Q = C_{eq}\,\Delta V` + TEX`Q = (${uF(d.Ceq)})(${M.iv('E')})` + TEXA`Q = ${uC(d.Q)}` +
+      TEX`\Delta V_1 = \frac{Q}{C_1}` + TEX`\Delta V_1 = \frac{${uC(d.Q)}}{${M.iv('C1')}}` + TEXA`\Delta V_1 = ${M.n(d.V1, 'V')}` +
+      TEX`\Delta V_2 = \frac{Q}{C_2}` + TEX`\Delta V_2 = \frac{${uC(d.Q)}}{${M.iv('C2')}}` + TEXA`\Delta V_2 = ${M.n(d.V2, 'V')}` +
+      '<p class="st">Check (loop rule):</p>' + TEX`\Delta V_1 + \Delta V_2 = ${M.n(d.V1)} + ${M.n(d.V2)}` + TEXA`\Delta V_{\text{battery}} = ${M.n(v.E, 'V')}` + '<p class="st">The two voltages add up to the battery ✓</p>' +
       '<p class="note">In series the <b>smaller</b> capacitor gets the <b>bigger</b> voltage (same Q, ΔV = Q/C). Series capacitors act like one capacitor with a wider gap.</p>';
   },
   draw(v, d, mode){

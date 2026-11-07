@@ -22,12 +22,25 @@ const SIM = {
   dvs(){ return [{ id: 'P1', name: 'Power of bulb 1 (brightness)', short: 'P₁', sym: 'P<sub>1</sub>', unit: 'W', f: d => d.P[0] }, { id: 'P2', name: 'Power of bulb 2', short: 'P₂', sym: 'P<sub>2</sub>', unit: 'W', f: d => d.P[1] }, { id: 'P3', name: 'Power of bulb 3', short: 'P₃', sym: 'P<sub>3</sub>', unit: 'W', f: d => d.P[2] }, { id: 'It', name: 'Current from the battery', short: 'I', sym: 'I', unit: 'A', f: d => d.Itot }]; },
   work(v, d, mode){
     if (mode === 'ser' && d.out) return '<h4>Series circuit with a bulb removed</h4><div class="bad">There is only one path for charge. Break it anywhere and the current everywhere is zero: all the bulbs go out.</div><p class="note">This is why old holiday lights went dark when one bulb failed.</p>';
-    const rows = [0, 1, 2].map(k => '<div class="eq">Bulb ' + (k + 1) + ': I = ' + H.n(d.I[k], 'A') + ', V = ' + H.n(d.V[k], 'V') + ', P = IV = <b>' + H.n(d.P[k], 'W') + '</b>' + (k === 2 && d.out ? ' (removed)' : '') + '</div>').join('');
+    const out = d.out, Rp = out ? v.R2 : 1 / (1 / v.R2 + 1 / v.R3);
+    const rows = [0, 1, 2].map(k => { const s = '<mn>' + (k + 1) + '</mn>';
+      return '<p class="st"><b>Bulb ' + (k + 1) + '</b>' + (k === 2 && out ? ' (removed)' : '') + '</p>' +
+        TEX`I_${s} = ${M.n(d.I[k], 'A')}` + TEX`V_${s} = ${M.n(d.V[k], 'V')}` + TEX`P_${s} = I_${s} V_${s}` + TEX`P_${s} = (${M.n(d.I[k])})(${M.n(d.V[k])})` + TEXA`P_${s} = ${M.n(d.P[k], 'W')}`; }).join('');
     const rule = { ser: 'Series: same current through every bulb; the voltages add up to ε.', par: 'Parallel: same voltage (ε) across every branch; the currents add up.', combo: 'Bulb 1 carries all the current; it splits between bulbs 2 and 3, which share the same voltage.' }[mode];
-    return '<h4>1 · Equivalent resistance</h4><div class="eq">' + d.steps.join('<br>') + '</div>' +
-      '<h4>2 · Current from the battery</h4><div class="eq">I = ε/R<sub>eq</sub> = ' + H.iv('E') + '/' + fnum(d.Req) + ' Ω = <b>' + H.n(d.Itot, 'A') + '</b></div>' +
+    let eq;
+    if (mode === 'ser') eq = TEX`R_{eq} = R_1 + R_2 + R_3` + TEX`R_{eq} = ${M.iv('R1')} + ${M.iv('R2')} + ${M.iv('R3')}` + TEXA`R_{eq} = ${M.n(d.Req, 'Ω')}`;
+    else if (mode === 'par') eq = (out
+      ? TEX`\frac{1}{R_{eq}} = \frac{1}{R_1} + \frac{1}{R_2}` + TEX`\frac{1}{R_{eq}} = \frac{1}{${M.iv('R1')}} + \frac{1}{${M.iv('R2')}}`
+      : TEX`\frac{1}{R_{eq}} = \frac{1}{R_1} + \frac{1}{R_2} + \frac{1}{R_3}` + TEX`\frac{1}{R_{eq}} = \frac{1}{${M.iv('R1')}} + \frac{1}{${M.iv('R2')}} + \frac{1}{${M.iv('R3')}}`) + TEXA`R_{eq} = ${M.n(d.Req, 'Ω')}`;
+    else eq = (out
+      ? '<p class="st">Only R₂ in the branch:</p>' + TEXA`R_p = ${M.iv('R2')}`
+      : '<p class="st">R₂ ∥ R₃:</p>' + TEX`R_p = \left(\frac{1}{R_2} + \frac{1}{R_3}\right)^{-1}` + TEX`R_p = \left(\frac{1}{${M.iv('R2')}} + \frac{1}{${M.iv('R3')}}\right)^{-1}` + TEXA`R_p = ${M.n(Rp, 'Ω')}`) +
+      TEX`R_{eq} = R_1 + R_p` + TEX`R_{eq} = ${M.iv('R1')} + ${M.n(Rp, 'Ω')}` + TEXA`R_{eq} = ${M.n(d.Req, 'Ω')}`;
+    return '<h4>1 · Equivalent resistance</h4>' + eq +
+      '<h4>2 · Current from the battery</h4>' + TEX`I = \frac{\varepsilon}{R_{eq}}` + TEX`I = \frac{${M.iv('E')}}{${M.n(d.Req, 'Ω')}}` + TEXA`I = ${M.n(d.Itot, 'A')}` +
       '<h4>3 · Each bulb (brightness ∝ power)</h4>' + rows +
-      '<h4>4 · Checks (Kirchhoff)</h4><div class="eq">' + rule + ' Total power ' + fnum(d.P[0] + d.P[1] + d.P[2]) + ' W = εI = ' + fnum(d.Ptot) + ' W ✓</div>' +
+      '<h4>4 · Checks (Kirchhoff)</h4><p class="st">' + rule + ' The total power equals εI ✓</p>' +
+      TEX`P_1 + P_2 + P_3 = ${M.n(d.P[0] + d.P[1] + d.P[2], 'W')}` + TEXA`\varepsilon I = ${M.n(d.Ptot, 'W')}` +
       (mode === 'combo' ? '<p class="note">Remove bulb 3: R<sub>eq</sub> goes up, so less total current → bulb 1 dims. But bulb 2 gets more voltage → it brightens. A classic FRQ prediction.</p>' : mode === 'par' ? '<p class="note">Remove bulb 3: the others don’t change (each still has ε across it), but the battery supplies less current.</p>' : '<p class="note">In series the biggest resistance gets the biggest share of the voltage, so it’s the brightest.</p>');
   },
   draw(v, d, mode, opt, t){
