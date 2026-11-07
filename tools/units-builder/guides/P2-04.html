@@ -155,6 +155,12 @@ body.present .guide{display:none}
 <div class="gex">
   <div class="ex">
     <div class="kind">Refraction and TIR</div>
+    <svg width="150" height="110" viewBox="0 0 150 110" aria-label="Ray going from water into air, bending away from the normal">
+      <rect x="0" y="55" width="150" height="55" fill="#fde1d6"/><line x1="0" y1="55" x2="150" y2="55" stroke="#111" stroke-width="2"/>
+      <line x1="75" y1="4" x2="75" y2="108" stroke="#111" stroke-width="1" stroke-dasharray="4 3"/>
+      <line x1="46" y1="105" x2="75" y2="55" stroke="#ff6a2b" stroke-width="2.5"/><line x1="75" y1="55" x2="120" y2="5" stroke="#ff6a2b" stroke-width="2.5"/>
+      <text x="56" y="84" font-size="10" font-family="IBM Plex Mono,monospace">30°</text><text x="79" y="22" font-size="10" font-family="IBM Plex Mono,monospace">42°</text><text x="100" y="100" font-size="10" font-family="IBM Plex Mono,monospace">water</text><text x="110" y="48" font-size="10" font-family="IBM Plex Mono,monospace">air</text>
+    </svg>
     <h4>Light leaving water</h4>
     <p>Light travels from water (n = 1.33) into air. At 30° incidence, what is the angle in air? What is the critical angle?</p>
     <div class="work">
@@ -177,6 +183,15 @@ body.present .guide{display:none}
 
   <div class="ex">
     <div class="kind">Standing waves</div>
+    <svg width="210" height="100" viewBox="0 0 210 100" aria-label="First harmonic in an open pipe and in a pipe closed at one end">
+      <line x1="20" y1="10" x2="180" y2="10" stroke="#111" stroke-width="2"/><line x1="20" y1="34" x2="180" y2="34" stroke="#111" stroke-width="2"/>
+      <path d="M20 13 C 60 13, 70 22, 100 22 C 130 22, 140 31, 180 31" fill="none" stroke="#ff6a2b" stroke-width="2"/>
+      <path d="M20 31 C 60 31, 70 22, 100 22 C 130 22, 140 13, 180 13" fill="none" stroke="#ff6a2b" stroke-width="2"/>
+      <text x="12" y="46" font-size="10" font-family="IBM Plex Mono,monospace">A</text><text x="96" y="46" font-size="10" font-family="IBM Plex Mono,monospace">N</text><text x="178" y="46" font-size="10" font-family="IBM Plex Mono,monospace">A</text><text x="186" y="26" font-size="10" font-family="IBM Plex Mono,monospace">λ/2</text>
+      <line x1="20" y1="58" x2="180" y2="58" stroke="#111" stroke-width="2"/><line x1="20" y1="82" x2="180" y2="82" stroke="#111" stroke-width="2"/><line x1="20" y1="58" x2="20" y2="82" stroke="#111" stroke-width="4"/>
+      <path d="M22 70 C 90 70, 130 62, 180 61" fill="none" stroke="#ff6a2b" stroke-width="2"/><path d="M22 70 C 90 70, 130 78, 180 79" fill="none" stroke="#ff6a2b" stroke-width="2"/>
+      <text x="24" y="95" font-size="10" font-family="IBM Plex Mono,monospace">N</text><text x="178" y="95" font-size="10" font-family="IBM Plex Mono,monospace">A</text><text x="186" y="74" font-size="10" font-family="IBM Plex Mono,monospace">λ/4</text>
+    </svg>
     <h4>Open pipe vs closed pipe</h4>
     <p>A pipe is 0.85 m long and sound travels at 340 m/s. Find the first three harmonics if the pipe is open at both ends, and if it's closed at one end.</p>
     <div class="work">
@@ -190,6 +205,29 @@ body.present .guide{display:none}
     <div class="kind">Thin lens</div>
     <h4>One lens, two images</h4>
     <p>A converging lens has f = 10 cm. Find the image for an object (a) 15 cm and (b) 5.0 cm from the lens.</p>
+    <div><svg style="float:none;display:inline-block;margin:4px 8px 4px 0;max-width:100%;height:auto" width="240" height="122" viewBox="0 0 240 122" aria-label="Converging lens, object at 15 cm, real inverted image at 30 cm">
+      <line x1="4" y1="60" x2="236" y2="60" stroke="#111" stroke-width="1"/>
+      <ellipse cx="100" cy="60" rx="5" ry="45" fill="#fde1d6" stroke="#111" stroke-width="1.5"/>
+      <circle cx="60" cy="60" r="2.5" fill="#111"/><circle cx="140" cy="60" r="2.5" fill="#111"/><text x="56" y="74" font-size="10" font-family="IBM Plex Mono,monospace">F</text><text x="136" y="74" font-size="10" font-family="IBM Plex Mono,monospace">F</text>
+      <polyline points="40,40 100,40 236,108" fill="none" stroke="#111" stroke-width="1.5"/>
+      <line x1="40" y1="40" x2="236" y2="105.3" stroke="#111" stroke-width="1.5"/>
+      <line x1="40" y1="60" x2="40" y2="40" stroke="#111" stroke-width="3"/><polygon points="35,44 40,36 45,44" fill="#111"/>
+      <line x1="220" y1="60" x2="220" y2="100" stroke="#ff6a2b" stroke-width="3"/><polygon points="215,96 220,104 225,96" fill="#ff6a2b"/>
+      <text x="8" y="34" font-size="10" font-family="IBM Plex Mono,monospace">object</text><text x="150" y="118" font-size="10" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">real image</text>
+      <text x="200" y="14" font-size="11" font-family="IBM Plex Mono,monospace" font-weight="700">(a)</text>
+    </svg>
+    <svg style="float:none;display:inline-block;margin:4px 8px 4px 0;max-width:100%;height:auto" width="240" height="122" viewBox="0 0 240 122" aria-label="Converging lens, object inside the focal length, enlarged virtual upright image">
+      <line x1="4" y1="60" x2="236" y2="60" stroke="#111" stroke-width="1"/>
+      <ellipse cx="100" cy="60" rx="5" ry="45" fill="#fde1d6" stroke="#111" stroke-width="1.5"/>
+      <circle cx="60" cy="60" r="2.5" fill="#111"/><circle cx="140" cy="60" r="2.5" fill="#111"/><text x="56" y="74" font-size="10" font-family="IBM Plex Mono,monospace">F</text><text x="136" y="74" font-size="10" font-family="IBM Plex Mono,monospace">F</text>
+      <polyline points="80,40 100,40 236,108" fill="none" stroke="#111" stroke-width="1.5"/>
+      <line x1="80" y1="40" x2="160" y2="120" stroke="#111" stroke-width="1.5"/>
+      <line x1="100" y1="40" x2="60" y2="20" stroke="#111" stroke-width="1" stroke-dasharray="3 3"/><line x1="80" y1="40" x2="60" y2="20" stroke="#111" stroke-width="1" stroke-dasharray="3 3"/>
+      <line x1="80" y1="60" x2="80" y2="40" stroke="#111" stroke-width="3"/><polygon points="75,44 80,36 85,44" fill="#111"/>
+      <line x1="60" y1="60" x2="60" y2="20" stroke="#ff6a2b" stroke-width="3" stroke-dasharray="4 2"/><polygon points="55,24 60,16 65,24" fill="#ff6a2b"/>
+      <text x="8" y="12" font-size="10" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">virtual image</text>
+      <text x="200" y="14" font-size="11" font-family="IBM Plex Mono,monospace" font-weight="700">(b)</text>
+    </svg></div>
     <div class="work">
       (a) 1/s<sub>i</sub> = 1/10 − 1/15 = 1/30 → s<sub>i</sub> = <b>+30 cm</b>, M = −30/15 = <b>−2</b>: real, inverted, twice as big<br>
       (b) 1/s<sub>i</sub> = 1/10 − 1/5.0 = −1/10 → s<sub>i</sub> = <b>−10 cm</b>, M = +10/5.0 = <b>+2</b>: virtual, upright, twice as big
@@ -205,7 +243,7 @@ body.present .guide{display:none}
       Reflections: air→soap flips (higher n); soap→air doesn't. One flip, so bright when 2nt = (m + ½)λ<br>
       Thinnest (m = 0): t = λ/(4n) = 532/(4 × 1.33) = <b>100 nm</b>
     </div>
-    <p class="take">Different thicknesses reflect different colours, which is where the swirling colours on a soap bubble come from.</p>
+    <p class="take">Inside the film the wavelength is λ/n, which is why n appears in 2nt; the λ in the formula is the wavelength in air, the colour you actually see. Different thicknesses reflect different colours, which is where the swirling colours on a soap bubble come from.</p>
   </div>
 </div>
 </div>
