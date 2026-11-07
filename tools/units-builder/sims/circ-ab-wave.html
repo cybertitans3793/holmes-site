@@ -28,6 +28,10 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 #work .note{font-size:12.5px;color:#4a4a4a;margin:2px 0 0}
 #work .ok{background:#e5f4ea;border-left:4px solid #1e7d45;padding:3px 8px;margin-top:4px}
 #work .bad{background:#fde7df;border-left:4px solid #c43a00;padding:3px 8px;margin-top:4px}
+#work math{display:block;text-align:left;margin:4px 0;font-size:1em;overflow-x:auto;overflow-y:hidden;max-width:100%}
+#work math.ans{font-weight:700}
+#work math.ans mn,#work math.ans mi,#work math.ans mo,#work math.ans mtext{font-weight:700}
+#work p.st{margin:4px 0}
 .ivv{border-radius:2px;padding:0 2px;transition:background .25s}
 .ivv.gx{background:#ffe2d3}
 .ivv.hot{background:#ff6a2b;color:#fff}
@@ -87,6 +91,18 @@ const H = {
               return '<span class="ivv n' + (S.gx === id ? ' gx' : '') + (S.hot === id ? ' hot' : '') + '" data-iv="' + id + '">' + txt + '</span>'; },
   g: () => '<span class="n">10&nbsp;m/s²</span>',
   p: (x, u) => x < 0 ? '(' + H.n(x, u) + ')' : H.n(x, u)
+};
+
+// MathML builders for TEX`...` templates (converted at build time by tex.py)
+const M = {
+  num: x => { const r = fnum0(x); if (typeof r !== 'string') return '<mn>' + r + '</mn>'; const neg = r[0] === '-', b = neg ? r.slice(1) : r, m = b.match(/^(.*)×10<sup>(.*)<\/sup>$/);
+    const body = m ? '<mn>' + m[1] + '</mn><mo>×</mo><msup><mn>10</mn><mrow>' + (m[2][0] === '-' ? '<mo>−</mo><mn>' + m[2].slice(1) + '</mn>' : '<mn>' + m[2] + '</mn>') + '</mrow></msup>' : '<mn>' + b + '</mn>';
+    return neg ? '<mo>−</mo>' + body : body; },
+  u: u => u ? '<mspace width="0.167em"/><mtext>' + u + '</mtext>' : '',
+  n: (x, u) => '<mrow>' + M.num(x) + M.u(u) + '</mrow>',
+  p: (x, u) => x < 0 ? '<mrow><mo>(</mo>' + M.n(x, u) + '<mo>)</mo></mrow>' : M.n(x, u),
+  iv: (id, scale) => { const d = S.def[id], val = S.v[id] * (scale || 1);
+    return '<mrow class="ivv' + (S.gx === id ? ' gx' : '') + (S.hot === id ? ' hot' : '') + '" data-iv="' + id + '">' + (d.show && !scale ? '<mtext>' + d.show(S.v[id]) + '</mtext>' : M.num(val) + (scale ? '' : M.u(d.unit))) + '</mrow>'; }
 };
 
 const S = { mode: null, opt: {}, v: {}, store: {}, def: {}, ivs: [], gx: null, dv: null, hot: null, t: 0, anim: {} };

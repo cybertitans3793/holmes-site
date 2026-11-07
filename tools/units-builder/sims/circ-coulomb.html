@@ -28,6 +28,10 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 #work .note{font-size:12.5px;color:#4a4a4a;margin:2px 0 0}
 #work .ok{background:#e5f4ea;border-left:4px solid #1e7d45;padding:3px 8px;margin-top:4px}
 #work .bad{background:#fde7df;border-left:4px solid #c43a00;padding:3px 8px;margin-top:4px}
+#work math{display:block;text-align:left;margin:4px 0;font-size:1em;overflow-x:auto;overflow-y:hidden;max-width:100%}
+#work math.ans{font-weight:700}
+#work math.ans mn,#work math.ans mi,#work math.ans mo,#work math.ans mtext{font-weight:700}
+#work p.st{margin:4px 0}
 .ivv{border-radius:2px;padding:0 2px;transition:background .25s}
 .ivv.gx{background:#ffe2d3}
 .ivv.hot{background:#ff6a2b;color:#fff}
@@ -87,6 +91,18 @@ const H = {
               return '<span class="ivv n' + (S.gx === id ? ' gx' : '') + (S.hot === id ? ' hot' : '') + '" data-iv="' + id + '">' + txt + '</span>'; },
   g: () => '<span class="n">10&nbsp;m/s²</span>',
   p: (x, u) => x < 0 ? '(' + H.n(x, u) + ')' : H.n(x, u)
+};
+
+// MathML builders for TEX`...` templates (converted at build time by tex.py)
+const M = {
+  num: x => { const r = fnum0(x); if (typeof r !== 'string') return '<mn>' + r + '</mn>'; const neg = r[0] === '-', b = neg ? r.slice(1) : r, m = b.match(/^(.*)×10<sup>(.*)<\/sup>$/);
+    const body = m ? '<mn>' + m[1] + '</mn><mo>×</mo><msup><mn>10</mn><mrow>' + (m[2][0] === '-' ? '<mo>−</mo><mn>' + m[2].slice(1) + '</mn>' : '<mn>' + m[2] + '</mn>') + '</mrow></msup>' : '<mn>' + b + '</mn>';
+    return neg ? '<mo>−</mo>' + body : body; },
+  u: u => u ? '<mspace width="0.167em"/><mtext>' + u + '</mtext>' : '',
+  n: (x, u) => '<mrow>' + M.num(x) + M.u(u) + '</mrow>',
+  p: (x, u) => x < 0 ? '<mrow><mo>(</mo>' + M.n(x, u) + '<mo>)</mo></mrow>' : M.n(x, u),
+  iv: (id, scale) => { const d = S.def[id], val = S.v[id] * (scale || 1);
+    return '<mrow class="ivv' + (S.gx === id ? ' gx' : '') + (S.hot === id ? ' hot' : '') + '" data-iv="' + id + '">' + (d.show && !scale ? '<mtext>' + d.show(S.v[id]) + '</mtext>' : M.num(val) + (scale ? '' : M.u(d.unit))) + '</mrow>'; }
 };
 
 const S = { mode: null, opt: {}, v: {}, store: {}, def: {}, ivs: [], gx: null, dv: null, hot: null, t: 0, anim: {} };
@@ -263,18 +279,23 @@ const SIM = {
   work(v, d, mode){
     if (mode === 'line'){ const nm = ['q₁', 'q₂', 'q₃'], dir = F => (F >= 0 ? 'right' : 'left'), row = i => {
         const [a, b] = d.parts[i], o = [0, 1, 2].filter(j => j !== i);
-        return '<div class="eq"><b>On ' + nm[i] + ':</b> from ' + nm[o[0]] + ' ' + H.n(Math.abs(a), 'N') + ' ' + dir(a) + ', from ' + nm[o[1]] + ' ' + H.n(Math.abs(b), 'N') + ' ' + dir(b) + ' → net <b>' + H.n(Math.abs(d.net[i]), 'N') + ' ' + dir(d.net[i]) + '</b></div>'; };
-      return '<h4>1 · Each pair: F = k|q<sub>1</sub>q<sub>2</sub>|/r², direction from like/unlike signs</h4><div class="eq">Do each pair separately, then add as vectors (here + = right).</div>' + [0, 1, 2].map(row).join('') +
-        '<h4>2 · Check: forces inside the system cancel in pairs (Newton’s 3rd law)</h4><div class="eq">F₁ + F₂ + F₃ = ' + H.n(Math.abs(d.sum) < 1e-9 ? 0 : d.sum, 'N') + '</div>' +
+        return '<p class="st"><b>On ' + nm[i] + ':</b> from ' + nm[o[0]] + ' ' + H.n(Math.abs(a), 'N') + ' ' + dir(a) + ', from ' + nm[o[1]] + ' ' + H.n(Math.abs(b), 'N') + ' ' + dir(b) + '.</p>' +
+          ("<math class=\"ans\" display=\"block\"><mrow><msub><mi>F</mi>" + ('<mn>' + (i + 1) + '</mn>') + "</msub><mo>&#x0003D;</mo>" + (M.n(Math.abs(d.net[i]), 'N')) + "<mtext>&#x000A0;</mtext>" + ('<mtext>' + dir(d.net[i]) + '</mtext>') + "</mrow></math>"); };
+      return '<h4>1 · Each pair on its own</h4>' + ("<math display=\"block\"><mrow><mi>F</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>k</mi><mspace width=\"0.167em\" /><mo stretchy=\"false\" lspace=\"0\" rspace=\"0\">&#x0007C;</mo><msub><mi>q</mi><mn>1</mn></msub><msub><mi>q</mi><mn>2</mn></msub><mo stretchy=\"false\" lspace=\"0\" rspace=\"0\">&#x0007C;</mo></mrow><mrow><msup><mi>r</mi><mn>2</mn></msup></mrow></mfrac></mrow></math>") +
+        '<p class="st">The direction comes from the signs: like charges repel, unlike attract. Then add the two forces on each charge (+ = right).</p>' + [0, 1, 2].map(row).join('') +
+        '<h4>2 · Check with Newton’s 3rd law</h4><p class="st">Forces inside the system cancel in pairs, so the three net forces add to zero.</p>' + ("<math class=\"ans\" display=\"block\"><mrow><msub><mi>F</mi><mn>1</mn></msub><mo>&#x0002B;</mo><msub><mi>F</mi><mn>2</mn></msub><mo>&#x0002B;</mo><msub><mi>F</mi><mn>3</mn></msub><mo>&#x0003D;</mo>" + (M.n(Math.abs(d.sum) < 1e-9 ? 0 : d.sum, 'N')) + "</mrow></math>") +
         '<p class="note">Distances: q₁ to q₃ is ' + fnum(v.d1 + v.d2) + ' cm, not ' + v.d2 + ' cm. Using the wrong distance is the most common mistake.</p>'; }
-    if (mode === 'hang') return '<h4>1 · Free-body diagram for each sphere: weight, tension, electric force</h4><div class="eq">Vertical: T cos θ = mg &nbsp; Horizontal: T sin θ = F<sub>E</sub> → <b>tan θ = F<sub>E</sub>/(mg)</b></div>' +
-      '<h4>2 · The electric force is the same size on both (Newton’s 3rd law)</h4><div class="eq">r = L sin θ<sub>A</sub> + L sin θ<sub>B</sub> = ' + H.n(d.r * 100, 'cm') + ' → F<sub>E</sub> = kq<sub>A</sub>q<sub>B</sub>/r² = <b>' + H.n(d.F, 'N') + '</b></div>' +
-      '<div class="eq">θ<sub>A</sub> = tan⁻¹(F/m<sub>A</sub>g) = <b>' + H.n(d.t1 / DEG, '°') + '</b> &nbsp; θ<sub>B</sub> = <b>' + H.n(d.t2 / DEG, '°') + '</b></div>' +
-      '<h4>3 · Which hangs at the bigger angle?</h4><div class="eq">' + (Math.abs(v.m1 - v.m2) < 0.05 ? 'Equal masses → equal angles, even if the charges are different!' : 'The <b>lighter</b> sphere hangs at the bigger angle: same F<sub>E</sub>, less weight to balance it.') + '</div>' +
+    if (mode === 'hang') return '<h4>1 · Free-body diagram for each sphere</h4><p class="st">Weight, tension and the electric force. Vertical, then horizontal:</p>' +
+      ("<math display=\"block\"><mrow><mi>T</mi><mspace width=\"0.167em\" /><mi>cos</mi><mspace width=\"0.167em\"/><mi>&#x003B8;</mi><mo>&#x0003D;</mo><mi>m</mi><mi>g</mi></mrow></math>") + ("<math display=\"block\"><mrow><mi>T</mi><mspace width=\"0.167em\" /><mi>sin</mi><mspace width=\"0.167em\"/><mi>&#x003B8;</mi><mo>&#x0003D;</mo><msub><mi>F</mi><mi>E</mi></msub></mrow></math>") + '<p class="st">Divide the second by the first:</p>' + ("<math class=\"ans\" display=\"block\"><mrow><mi>tan</mi><mspace width=\"0.167em\"/><mi>&#x003B8;</mi><mo>&#x0003D;</mo><mfrac><mrow><msub><mi>F</mi><mi>E</mi></msub></mrow><mrow><mi>m</mi><mi>g</mi></mrow></mfrac></mrow></math>") +
+      '<h4>2 · The electric force (the same on both spheres)</h4>' + ("<math display=\"block\"><mrow><mi>r</mi><mo>&#x0003D;</mo><mi>L</mi><mspace width=\"0.167em\" /><mi>sin</mi><mspace width=\"0.167em\"/><msub><mi>&#x003B8;</mi><mi>A</mi></msub><mo>&#x0002B;</mo><mi>L</mi><mspace width=\"0.167em\" /><mi>sin</mi><mspace width=\"0.167em\"/><msub><mi>&#x003B8;</mi><mi>B</mi></msub><mo>&#x0003D;</mo>" + (M.n(d.r * 100, 'cm')) + "</mrow></math>") +
+      ("<math display=\"block\"><mrow><msub><mi>F</mi><mi>E</mi></msub><mo>&#x0003D;</mo><mfrac><mrow><mi>k</mi><mspace width=\"0.167em\" /><msub><mi>q</mi><mi>A</mi></msub><msub><mi>q</mi><mi>B</mi></msub></mrow><mrow><msup><mi>r</mi><mn>2</mn></msup></mrow></mfrac></mrow></math>") + ("<math class=\"ans\" display=\"block\"><mrow><msub><mi>F</mi><mi>E</mi></msub><mo>&#x0003D;</mo>" + (M.n(d.F, 'N')) + "</mrow></math>") +
+      '<h4>3 · The angles</h4>' + ("<math display=\"block\"><mrow><msub><mi>&#x003B8;</mi><mi>A</mi></msub><mo>&#x0003D;</mo><msup><mi>tan</mi><mspace width=\"0.167em\"/><mrow><mo>&#x02212;</mo><mn>1</mn></mrow></msup><mrow><mo stretchy=\"true\" fence=\"true\" form=\"prefix\">&#x00028;</mo><mfrac><mrow><msub><mi>F</mi><mi>E</mi></msub></mrow><mrow><msub><mi>m</mi><mi>A</mi></msub><mi>g</mi></mrow></mfrac><mo stretchy=\"true\" fence=\"true\" form=\"postfix\">&#x00029;</mo></mrow></mrow></math>") + ("<math class=\"ans\" display=\"block\"><mrow><msub><mi>&#x003B8;</mi><mi>A</mi></msub><mo>&#x0003D;</mo>" + (M.n(d.t1 / DEG, '°')) + "</mrow></math>") + ("<math class=\"ans\" display=\"block\"><mrow><msub><mi>&#x003B8;</mi><mi>B</mi></msub><mo>&#x0003D;</mo>" + (M.n(d.t2 / DEG, '°')) + "</mrow></math>") +
+      '<h4>4 · Which hangs at the bigger angle?</h4><p class="st">' + (Math.abs(v.m1 - v.m2) < 0.05 ? 'Equal masses → equal angles, even if the charges are different!' : 'The <b>lighter</b> sphere hangs at the bigger angle: same F<sub>E</sub>, less weight to balance it.') + '</p>' +
       '<p class="note">CED “conflicting contentions”: a bigger angle means less mass, not less (or more) charge. The force on each is the same.</p>';
-    return '<h4>1 · Coulomb’s law</h4><div class="eq">F = k|q<sub>1</sub>q<sub>2</sub>|/r² = (8.99×10⁹)(' + fnum(Math.abs(v.q1) * 1e-6) + ')(' + fnum(Math.abs(v.q2) * 1e-6) + ')/(' + fnum(d.r) + ')² = <b>' + H.n(d.F, 'N') + '</b></div>' +
-      '<h4>2 · Direction</h4><div class="eq">' + (d.zero ? 'One charge is zero: no force.' : d.attract ? 'Opposite signs → <b>attract</b>.' : 'Same signs → <b>repel</b>.') + '</div>' +
-      '<h4>3 · Newton’s third law</h4><div class="eq">Charge 1 pushes or pulls charge 2 exactly as hard as 2 does on 1, even if one charge is much bigger.</div>' +
+    return '<h4>1 · Coulomb’s law</h4>' + ("<math display=\"block\"><mrow><mi>F</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>k</mi><mspace width=\"0.167em\" /><mo stretchy=\"false\" lspace=\"0\" rspace=\"0\">&#x0007C;</mo><msub><mi>q</mi><mn>1</mn></msub><msub><mi>q</mi><mn>2</mn></msub><mo stretchy=\"false\" lspace=\"0\" rspace=\"0\">&#x0007C;</mo></mrow><mrow><msup><mi>r</mi><mn>2</mn></msup></mrow></mfrac></mrow></math>") +
+      ("<math display=\"block\"><mrow><mi>F</mi><mo>&#x0003D;</mo><mfrac><mrow><mo stretchy=\"false\">&#x00028;</mo><mn>8.99</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mn>9</mn></mrow></msup><mo stretchy=\"false\">&#x00029;</mo><mo stretchy=\"false\">&#x00028;</mo>" + (M.n(Math.abs(v.q1) * 1e-6)) + "<mo stretchy=\"false\">&#x00029;</mo><mo stretchy=\"false\">&#x00028;</mo>" + (M.n(Math.abs(v.q2) * 1e-6)) + "<mo stretchy=\"false\">&#x00029;</mo></mrow><mrow><mo stretchy=\"false\">&#x00028;</mo>" + (M.n(d.r)) + "<msup><mo stretchy=\"false\">&#x00029;</mo><mn>2</mn></msup></mrow></mfrac></mrow></math>") + ("<math class=\"ans\" display=\"block\"><mrow><mi>F</mi><mo>&#x0003D;</mo>" + (M.n(d.F, 'N')) + "</mrow></math>") +
+      '<h4>2 · Direction</h4><p class="st">' + (d.zero ? 'One charge is zero: no force.' : d.attract ? 'Opposite signs → <b>attract</b>.' : 'Same signs → <b>repel</b>.') + '</p>' +
+      '<h4>3 · Newton’s third law</h4><p class="st">Charge 1 pushes or pulls charge 2 exactly as hard as 2 does on 1, even if one charge is much bigger.</p>' +
       '<p class="note">Inverse square: double r → ¼ F. Triple r → 1/9 F. Double one charge → 2F.</p>';
   },
   draw(v, d, mode){

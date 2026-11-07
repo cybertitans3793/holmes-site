@@ -47,18 +47,23 @@ const SIM = {
   work(v, d, mode){
     if (mode === 'line'){ const nm = ['q₁', 'q₂', 'q₃'], dir = F => (F >= 0 ? 'right' : 'left'), row = i => {
         const [a, b] = d.parts[i], o = [0, 1, 2].filter(j => j !== i);
-        return '<div class="eq"><b>On ' + nm[i] + ':</b> from ' + nm[o[0]] + ' ' + H.n(Math.abs(a), 'N') + ' ' + dir(a) + ', from ' + nm[o[1]] + ' ' + H.n(Math.abs(b), 'N') + ' ' + dir(b) + ' → net <b>' + H.n(Math.abs(d.net[i]), 'N') + ' ' + dir(d.net[i]) + '</b></div>'; };
-      return '<h4>1 · Each pair: F = k|q<sub>1</sub>q<sub>2</sub>|/r², direction from like/unlike signs</h4><div class="eq">Do each pair separately, then add as vectors (here + = right).</div>' + [0, 1, 2].map(row).join('') +
-        '<h4>2 · Check: forces inside the system cancel in pairs (Newton’s 3rd law)</h4><div class="eq">F₁ + F₂ + F₃ = ' + H.n(Math.abs(d.sum) < 1e-9 ? 0 : d.sum, 'N') + '</div>' +
+        return '<p class="st"><b>On ' + nm[i] + ':</b> from ' + nm[o[0]] + ' ' + H.n(Math.abs(a), 'N') + ' ' + dir(a) + ', from ' + nm[o[1]] + ' ' + H.n(Math.abs(b), 'N') + ' ' + dir(b) + '.</p>' +
+          TEXA`F_${'<mn>' + (i + 1) + '</mn>'} = ${M.n(Math.abs(d.net[i]), 'N')}\ ${'<mtext>' + dir(d.net[i]) + '</mtext>'}`; };
+      return '<h4>1 · Each pair on its own</h4>' + TEX`F = \frac{k\,|q_1 q_2|}{r^2}` +
+        '<p class="st">The direction comes from the signs: like charges repel, unlike attract. Then add the two forces on each charge (+ = right).</p>' + [0, 1, 2].map(row).join('') +
+        '<h4>2 · Check with Newton’s 3rd law</h4><p class="st">Forces inside the system cancel in pairs, so the three net forces add to zero.</p>' + TEXA`F_1 + F_2 + F_3 = ${M.n(Math.abs(d.sum) < 1e-9 ? 0 : d.sum, 'N')}` +
         '<p class="note">Distances: q₁ to q₃ is ' + fnum(v.d1 + v.d2) + ' cm, not ' + v.d2 + ' cm. Using the wrong distance is the most common mistake.</p>'; }
-    if (mode === 'hang') return '<h4>1 · Free-body diagram for each sphere: weight, tension, electric force</h4><div class="eq">Vertical: T cos θ = mg &nbsp; Horizontal: T sin θ = F<sub>E</sub> → <b>tan θ = F<sub>E</sub>/(mg)</b></div>' +
-      '<h4>2 · The electric force is the same size on both (Newton’s 3rd law)</h4><div class="eq">r = L sin θ<sub>A</sub> + L sin θ<sub>B</sub> = ' + H.n(d.r * 100, 'cm') + ' → F<sub>E</sub> = kq<sub>A</sub>q<sub>B</sub>/r² = <b>' + H.n(d.F, 'N') + '</b></div>' +
-      '<div class="eq">θ<sub>A</sub> = tan⁻¹(F/m<sub>A</sub>g) = <b>' + H.n(d.t1 / DEG, '°') + '</b> &nbsp; θ<sub>B</sub> = <b>' + H.n(d.t2 / DEG, '°') + '</b></div>' +
-      '<h4>3 · Which hangs at the bigger angle?</h4><div class="eq">' + (Math.abs(v.m1 - v.m2) < 0.05 ? 'Equal masses → equal angles, even if the charges are different!' : 'The <b>lighter</b> sphere hangs at the bigger angle: same F<sub>E</sub>, less weight to balance it.') + '</div>' +
+    if (mode === 'hang') return '<h4>1 · Free-body diagram for each sphere</h4><p class="st">Weight, tension and the electric force. Vertical, then horizontal:</p>' +
+      TEX`T\,\cos\theta = mg` + TEX`T\,\sin\theta = F_E` + '<p class="st">Divide the second by the first:</p>' + TEXA`\tan\theta = \frac{F_E}{mg}` +
+      '<h4>2 · The electric force (the same on both spheres)</h4>' + TEX`r = L\,\sin\theta_A + L\,\sin\theta_B = ${M.n(d.r * 100, 'cm')}` +
+      TEX`F_E = \frac{k\,q_A q_B}{r^2}` + TEXA`F_E = ${M.n(d.F, 'N')}` +
+      '<h4>3 · The angles</h4>' + TEX`\theta_A = \tan^{-1}\left(\frac{F_E}{m_A g}\right)` + TEXA`\theta_A = ${M.n(d.t1 / DEG, '°')}` + TEXA`\theta_B = ${M.n(d.t2 / DEG, '°')}` +
+      '<h4>4 · Which hangs at the bigger angle?</h4><p class="st">' + (Math.abs(v.m1 - v.m2) < 0.05 ? 'Equal masses → equal angles, even if the charges are different!' : 'The <b>lighter</b> sphere hangs at the bigger angle: same F<sub>E</sub>, less weight to balance it.') + '</p>' +
       '<p class="note">CED “conflicting contentions”: a bigger angle means less mass, not less (or more) charge. The force on each is the same.</p>';
-    return '<h4>1 · Coulomb’s law</h4><div class="eq">F = k|q<sub>1</sub>q<sub>2</sub>|/r² = (8.99×10⁹)(' + fnum(Math.abs(v.q1) * 1e-6) + ')(' + fnum(Math.abs(v.q2) * 1e-6) + ')/(' + fnum(d.r) + ')² = <b>' + H.n(d.F, 'N') + '</b></div>' +
-      '<h4>2 · Direction</h4><div class="eq">' + (d.zero ? 'One charge is zero: no force.' : d.attract ? 'Opposite signs → <b>attract</b>.' : 'Same signs → <b>repel</b>.') + '</div>' +
-      '<h4>3 · Newton’s third law</h4><div class="eq">Charge 1 pushes or pulls charge 2 exactly as hard as 2 does on 1, even if one charge is much bigger.</div>' +
+    return '<h4>1 · Coulomb’s law</h4>' + TEX`F = \frac{k\,|q_1 q_2|}{r^2}` +
+      TEX`F = \frac{(8.99\times10^{9})(${M.n(Math.abs(v.q1) * 1e-6)})(${M.n(Math.abs(v.q2) * 1e-6)})}{(${M.n(d.r)})^2}` + TEXA`F = ${M.n(d.F, 'N')}` +
+      '<h4>2 · Direction</h4><p class="st">' + (d.zero ? 'One charge is zero: no force.' : d.attract ? 'Opposite signs → <b>attract</b>.' : 'Same signs → <b>repel</b>.') + '</p>' +
+      '<h4>3 · Newton’s third law</h4><p class="st">Charge 1 pushes or pulls charge 2 exactly as hard as 2 does on 1, even if one charge is much bigger.</p>' +
       '<p class="note">Inverse square: double r → ¼ F. Triple r → 1/9 F. Double one charge → 2F.</p>';
   },
   draw(v, d, mode){
