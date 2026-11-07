@@ -743,7 +743,7 @@ UNITS.update({
     {'code': '', 'name': 'Moving Man', 'sim': 'mman', 'tasks': ['Make the man walk to the right at a steady 2 m/s. What does the position–time graph look like?', 'Now make him walk to the left at the same speed. What changed on the graph? What stayed the same?', 'Start him at rest and speed him up. How is the position–time graph different from a steady walk?', 'Read his velocity from the velocity–time graph at two times. Use a = Δv/Δt to find his acceleration.']},
     {'code': '', 'name': 'Maze Game', 'sim': 'maze', 'tasks': ['Play with <b>position</b> control. Then switch to <b>velocity</b>. What does dragging the arrow control now?', 'Try <b>acceleration</b> control. Why is it so hard to stop on the goal?', 'With velocity control, how do you make the ball stop? With acceleration control?']},
 ]},
-'AB-02': {'course': AB, 'num': '02', 'title': 'Newton’s Laws', 'guide': 'guides/AB-02.html', 'tabs': [
+'AB-02': {'course': AB, 'num': '02', 'title': 'Newton’s Laws', 'guide': 'guides/AB-02.html', 'review': '02-R', 'tabs': [
     {'code': '', 'name': 'Puck in Space', 'sim': 'puck', 'tasks': ['Kick the puck once. Why does it keep going at a constant speed?', 'Kick it sideways while it is moving. Which way does it go now?', 'Use Newton’s first law to explain why astronauts don’t need engines to keep moving.']},
     {'code': '', 'name': 'Balanced Forces', 'sim': 'ab-balance', 'tasks': ['Push a crate at constant speed. How does the push compare with friction?', 'Skydiver: why does she stop speeding up even though gravity is still pulling?', 'Draw a free-body diagram at terminal speed. What is the net force?']},
     {'code': '', 'name': 'Inertia on a Cart', 'sim': 'ab-cartball', 'tasks': ['A ball sits on a cart. The cart speeds up. Which way does the ball roll? Why?', 'Watch from the cart, then from the ground. Is the ball really moving backward?', 'Explain why you lurch forward when a bus brakes.']},
@@ -758,7 +758,7 @@ UNITS.update({
 
     {'code': '', 'name': 'Lunar Lander', 'sim': 'lander', 'tasks': ['Find the thrust that makes the lander hover. How does it compare with the lander’s weight?', 'Turn on the force vectors. When the lander is slowing down on the way down, which force is bigger?', 'Land at under 2 m/s. Describe your plan using “net force up” and “net force down.”']},
 ]},
-'AB-03': {'course': AB, 'num': '03', 'title': 'Circular Motion & Gravity', 'guide': 'guides/AB-03.html', 'tabs': [
+'AB-03': {'course': AB, 'num': '03', 'title': 'Circular Motion & Gravity', 'guide': 'guides/AB-03.html', 'review': '03-R', 'tabs': [
     {'code': '', 'name': 'Cut the String', 'sim': 'release', 'tasks': [
         'Watch the arrows. Which way does the velocity point? Which way does the net force point?',
         'Set the release point to 3 o’clock. Predict the path after the string is cut, then watch. Try 12 o’clock and 9 o’clock.',
@@ -814,7 +814,7 @@ UNITS.update({
         'Set up a collision and record the momentum of each ball before and after. Is the total the same?',
         'Set elasticity to 100% so the balls rebound, then to 0% so they hit and stick. Is the total momentum the same both times?']},
 ]},
-'AB-06': {'course': AB, 'num': '06', 'title': 'Electrostatics', 'guide': 'guides/AB-06.html', 'tabs': [
+'AB-06': {'course': AB, 'num': '06', 'title': 'Electrostatics', 'guide': 'guides/AB-06.html', 'review': '06-R', 'tabs': [
     {'code': '', 'name': 'Rubbing & Polarization', 'sim': 'rub', 'tasks': [
         'Rub wool and a rubber balloon. Which way do the electrons move? What sign does each end up with?',
         'Use the series to predict the signs for glass rubbed with silk, then check.',
@@ -832,7 +832,7 @@ UNITS.update({
         '<b>Charges and Fields:</b> place a positive and a negative charge. Use the field sensor to see where the field is strongest.',
         '<b>Coulomb’s Law:</b> double the distance. Does the force halve or quarter?']},
 ]},
-'AB-07': {'course': AB, 'num': '07', 'title': 'Current Electricity & Magnetism', 'guide': 'guides/AB-07.html', 'tabs': [
+'AB-07': {'course': AB, 'num': '07', 'title': 'Current Electricity & Magnetism', 'guide': 'guides/AB-07.html', 'review': '07-R', 'tabs': [
     {'code': '', 'name': 'Ohm’s Law', 'sim': 'ab-ohm', 'tasks': ['Make the wire longer. What happens to the resistance? Make it thicker?', 'Copper or nichrome: which makes a better extension cord? A better toaster?', 'I–V graph: find R = V/I for the resistor at 2 V and at 10 V. Is it ohmic?', 'Why does a light bulb’s resistance change as it heats up?']},
     {'code': '', 'name': 'Series & Parallel', 'sim': 'ab-circuits', 'tasks': ['Three bulbs in series, then in parallel. Which are brighter?', 'Remove a bulb from each circuit. What happens to the others? Which is how your house is wired?', 'Find the total resistance and the current from the battery in each circuit.']},
     {'code': '', 'name': 'Circuit Construction Kit', 'sim': 'phetC', 'tasks': ['Build a battery with one bulb. Measure the voltage and current.', 'Add bulbs in series, then in parallel. Measure again. What patterns do you see?']},
@@ -853,7 +853,7 @@ UNITS.update({
     {'code': '', 'name': 'Magnetic Field of a Wire', 'sim': 'ab-bwire', 'tasks': ['Use the right-hand rule to predict which way the compasses point.', 'Reverse the current. What happens to the compasses?', 'Move farther from the wire. What happens to the field?']},
     {'code': '', 'name': 'PhET Magnetism', 'sim': 'phetMag', 'tasks': ['<b>Magnets and Electromagnets:</b> make the electromagnet stronger in three ways.', '<b>Faraday’s Lab:</b> push a magnet into the coil. When does the bulb light up?']},
 ]},
-'AB-08': {'course': AB, 'num': '08', 'title': 'Waves & Earth’s Interior', 'guide': 'guides/AB-08.html', 'tabs': [
+'AB-08': {'course': AB, 'num': '08', 'title': 'Waves & Earth’s Interior', 'guide': 'guides/AB-08.html', 'review': '08-R', 'tabs': [
     {'code': '', 'name': 'Wave Basics', 'sim': 'ab-wave', 'tasks': ['Double the frequency. What happens to the wavelength? Why?', 'Find a wavelength and a period from the two graphs.', 'Longitudinal: find a compression and a rarefaction. Which way do the particles move?', 'Does the wave carry the particles along with it? What does it carry?']},
     {'code': '', 'name': 'Standing Waves', 'sim': 'ab-standing', 'tasks': ['Draw the first three harmonics on a guitar string. Find each frequency.', 'Make the string shorter. Does the pitch go up or down?', '<b>Microwave oven:</b> use the melted spots to find the speed of light.']},
     {'code': '', 'name': 'Sound', 'sim': 'ab-sound', 'tasks': ['A ship’s sonar echo comes back after 2.0 s. How deep is the water?', 'Why do bats use high-pitched sound?', 'Listen to a flute and a clarinet playing the same note (click the picture). Why do they sound different?', 'Why do we hear best around 3000 Hz?']},

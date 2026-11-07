@@ -76,7 +76,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
     <div class="uid"><div class="big" aria-hidden="true">06</div><div><div class="mono">Algebra-Based Physics · AB-06</div><h1>Electrostatics</h1></div></div>
   </header>
   <nav class="views" id="views" aria-label="Choose a view">
-    <div class="vbtns"><button type="button" class="vbtn" data-view="explore" aria-pressed="false">Explore</button><button type="button" class="vbtn" data-view="study" aria-pressed="false">Study</button></div>
+    <div class="vbtns"><button type="button" class="vbtn" data-view="explore" aria-pressed="false">Explore</button><button type="button" class="vbtn" data-view="study" aria-pressed="false">Study</button><button type="button" class="vbtn" data-view="practice" aria-pressed="false">Practice</button></div>
     <a class="simsback mono" id="simsback" href="https://sites.google.com/fcps.org/holmes/algebra-based-physics/ab-06" target="_blank" rel="noopener" hidden>Sims for this unit ↗</a>
   </nav>
   <div class="view" id="v-explore">
@@ -90,7 +90,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
       <h2>Try this</h2>
       <ol id="tasks"></ol>
       <p class="note" id="note" hidden></p>
-      <a class="plink" id="plink" href="#practice" data-view="practice" hidden>Practice AB-06 questions →</a>
+      <a class="plink" id="plink" href="#practice" data-view="practice">Practice AB-06 questions →</a>
     </aside>
   </div>
   <p class="credits">Charging by Rubbing &amp; Polarization is original. Charging &amp; the Electroscope is original. Electric Field Hockey is an HTML5 port of the PhET sim. PhET Interactive Simulations, University of Colorado Boulder (phet.colorado.edu), CC BY 4.0 / GPL. Balloons and Static Electricity, Charges and Fields, Coulomb’s Law and Capacitor Lab: Basics: PhET Interactive Simulations, University of Colorado Boulder (phet.colorado.edu), CC BY 4.0 / GPL.</p>
@@ -439,7 +439,12 @@ body.present .guide{display:none}
 </script>
 </section>
   </div>
-
+  <div class="view" id="v-practice" hidden>
+  <section class="review" id="review">
+    <div class="simbar"><h2>Practice questions</h2><a id="ropen" class="mono" href="https://script.google.com/a/macros/fcps.org/s/AKfycbxm2XXzPq2s0JUlS2T0a2lQJ8Pm97_zyibH9rGrW4VUB3EAHWQy5SmQvxsOUYyUL08M/exec?a=06-R" target="_blank" rel="noopener">Open in a new tab ↗</a></div>
+    <div class="rframe" id="rframe" data-src="https://script.google.com/a/macros/fcps.org/s/AKfycbxm2XXzPq2s0JUlS2T0a2lQJ8Pm97_zyibH9rGrW4VUB3EAHWQy5SmQvxsOUYyUL08M/exec?a=06-R"><div class="loading">Loading questions…</div></div>
+  </section>
+  </div>
 </div>
 <script>
 /* Explore / Study / Practice: one view at a time, Explore on every open. */

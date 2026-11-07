@@ -76,7 +76,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
     <div class="uid"><div class="big" aria-hidden="true">03</div><div><div class="mono">Algebra-Based Physics · AB-03</div><h1>Circular Motion &amp; Gravity</h1></div></div>
   </header>
   <nav class="views" id="views" aria-label="Choose a view">
-    <div class="vbtns"><button type="button" class="vbtn" data-view="explore" aria-pressed="false">Explore</button><button type="button" class="vbtn" data-view="study" aria-pressed="false">Study</button></div>
+    <div class="vbtns"><button type="button" class="vbtn" data-view="explore" aria-pressed="false">Explore</button><button type="button" class="vbtn" data-view="study" aria-pressed="false">Study</button><button type="button" class="vbtn" data-view="practice" aria-pressed="false">Practice</button></div>
     <a class="simsback mono" id="simsback" href="https://sites.google.com/fcps.org/holmes/algebra-based-physics/ab-03" target="_blank" rel="noopener" hidden>Sims for this unit ↗</a>
   </nav>
   <div class="view" id="v-explore">
@@ -90,7 +90,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
       <h2>Try this</h2>
       <ol id="tasks"></ol>
       <p class="note" id="note" hidden></p>
-      <a class="plink" id="plink" href="#practice" data-view="practice" hidden>Practice AB-03 questions →</a>
+      <a class="plink" id="plink" href="#practice" data-view="practice">Practice AB-03 questions →</a>
     </aside>
   </div>
   <p class="credits">Cut the String is original. Newton’s Mountain is original. Kepler’s First Law: Drawing Ellipses is original, based on the string-and-pushpin ellipse lab. Kepler’s 2nd & 3rd Laws and Work are original. My Solar System is a single-file copy of the open-source sim (old PhET-style constants). PhET Interactive Simulations, University of Colorado Boulder (phet.colorado.edu), CC BY 4.0 / GPL.</p>
@@ -454,7 +454,12 @@ body.present .guide{display:none}
 </script>
 </section>
   </div>
-
+  <div class="view" id="v-practice" hidden>
+  <section class="review" id="review">
+    <div class="simbar"><h2>Practice questions</h2><a id="ropen" class="mono" href="https://script.google.com/a/macros/fcps.org/s/AKfycbxm2XXzPq2s0JUlS2T0a2lQJ8Pm97_zyibH9rGrW4VUB3EAHWQy5SmQvxsOUYyUL08M/exec?a=03-R" target="_blank" rel="noopener">Open in a new tab ↗</a></div>
+    <div class="rframe" id="rframe" data-src="https://script.google.com/a/macros/fcps.org/s/AKfycbxm2XXzPq2s0JUlS2T0a2lQJ8Pm97_zyibH9rGrW4VUB3EAHWQy5SmQvxsOUYyUL08M/exec?a=03-R"><div class="loading">Loading questions…</div></div>
+  </section>
+  </div>
 </div>
 <script>
 /* Explore / Study / Practice: one view at a time, Explore on every open. */
