@@ -63,6 +63,9 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
 .rframe{position:relative;height:900px;background:#fff}
 .rframe iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 #v-study>.guide{margin-top:0}
+/* Guides: an equations table never spills out of its card, whatever the window width */
+#v-study .guide .gcard{min-width:0;overflow-x:auto}
+@media (max-width:1000px){#v-study .guide td:first-child{white-space:normal}}
 
 
 </style>
@@ -73,7 +76,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
     <div class="uid"><div class="big" aria-hidden="true">07</div><div><div class="mono">AP Physics 1 / IB · P1-07</div><h1>Impulse and Momentum</h1></div></div>
   </header>
   <nav class="views" id="views" aria-label="Choose a view">
-    <div class="vbtns"><button type="button" class="vbtn" data-view="explore" aria-pressed="false">Explore</button><button type="button" class="vbtn" data-view="practice" aria-pressed="false">Practice</button></div>
+    <div class="vbtns"><button type="button" class="vbtn" data-view="explore" aria-pressed="false">Explore</button><button type="button" class="vbtn" data-view="study" aria-pressed="false">Study</button><button type="button" class="vbtn" data-view="practice" aria-pressed="false">Practice</button></div>
     <a class="simsback mono" id="simsback" href="https://sites.google.com/fcps.org/holmes/ap-physics-1-ib/p1-07" target="_blank" rel="noopener" hidden>Sims for this unit ↗</a>
   </nav>
   <div class="view" id="v-explore">
@@ -92,7 +95,247 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
   </div>
   <p class="credits">Crash Test, Collision Carts, Bouncing Ball, Ballistic Pendulum, 2D Collisions and Ball Stack are original. Gravity Assist is original. Collision Lab and Momentum Lab: PhET Interactive Simulations, University of Colorado Boulder (phet.colorado.edu), CC BY 4.0 / GPL.</p>
   </div>
+  <div class="view" id="v-study" hidden>
+<section class="guide" id="guide" aria-label="Study guide">
+<style>
+.guide{margin-top:28px}
+.guide .gtip{margin:0 0 16px;font-size:19px;line-height:1.45;max-width:1000px}
+.guide .ggrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-bottom:22px}
+.guide .gcard{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcard h3,.guide .gcheck h3,.guide .gsteps h3{margin:0 0 10px;font-size:20px;letter-spacing:-.01em}
+.guide .gcard ul{margin:0;padding-left:20px}
+.guide .gcard li{margin:0 0 7px}
+.guide .ib{display:inline-block;font-family:var(--f-mono);font-size:11px;font-weight:700;border:2px solid var(--ink);padding:0 5px;margin-left:4px;vertical-align:1px;background:var(--soft)}
+.guide table{border-collapse:collapse;width:100%;font-size:15px}
+.guide td{border-top:2px solid var(--ink);padding:6px 4px;vertical-align:top}
+.guide td:first-child{font-family:var(--f-mono);font-weight:700;white-space:nowrap;padding-right:12px}
+.guide td[colspan]{white-space:normal}
+.guide .gsub{font-family:var(--f-display);font-weight:400}
+.guide .gsteps{background:var(--soft);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px;margin-bottom:22px}
+.guide .gsteps ol{margin:0;padding-left:24px;columns:2 360px;column-gap:28px}
+.guide .gsteps li{margin:0 0 8px;break-inside:avoid}
+.guide h3.ghead{font-size:22px;margin:0 0 12px}
+.guide .gex{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:18px;margin-bottom:22px}
+.guide .ex{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .ex h4{margin:0 0 6px;font-size:18px}
+.guide .ex .kind{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--hot);text-transform:uppercase;letter-spacing:.04em}
+.guide .ex p{margin:0 0 8px}
+.guide .work{font-family:var(--f-mono);font-size:14px;line-height:1.6;border-left:4px solid var(--hot);background:#fff;padding:6px 12px;margin:8px 0}
+.guide .work b{font-family:var(--f-display)}
+.guide .ex .take{margin:8px 0 0;font-weight:500}
+.guide .ex svg{float:right;margin:0 0 6px 12px}
+.guide .gcheck{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcheck>p{margin:-4px 0 12px;color:var(--muted)}
+.guide ol.q{margin:0;padding-left:26px}
+.guide ol.q>li{margin:0 0 14px}
+.guide details{margin-top:6px}
+.guide summary{cursor:pointer;display:inline-block;font-weight:700;border:2px solid var(--ink);padding:2px 10px;background:#fff;list-style:none}
+.guide summary::-webkit-details-marker{display:none}
+.guide summary:hover{background:var(--soft)}
+.guide details[open] summary{background:var(--ink);color:#fff}
+.guide details>div{border-left:4px solid var(--hot);padding:8px 12px;margin-top:8px;background:#fff}
+.guide .gpanel>.ggrid,.guide .gpanel>.gsteps,.guide .gpanel>.gex{margin-bottom:0}
+.guide .gpanel>.gsteps+.ggrid{margin-top:22px}
+.guide .gtabs{margin-bottom:18px}
+.guide .gnext{margin:16px 0 0;font-weight:700}
+.guide .gnext a{color:var(--ink)}
+body.present .guide{display:none}
+@media (max-width:520px){.guide .gtip{font-size:17px}.guide td:first-child{white-space:normal}.guide .ggrid,.guide .gex{grid-template-columns:1fr}.guide .ex svg{float:none;display:block;margin:0 auto 8px}}
+</style>
+<div class="simbar"><h2>Study guide</h2><span class="mono">Unit 7 · Impulse and Momentum</span></div>
+<p class="gtip"><b>How to use this:</b> read the key ideas, then cover each worked example and try it yourself before reading the solution. Do the self-check questions on paper <i>before</i> you open the answers, mark the ones you miss, and come back to them in a day or two without looking. Rereading won't do much; answering questions will.</p>
+<div class="tabs gtabs" role="tablist" aria-label="Study guide sections">
+  <button class="tab" role="tab" type="button" aria-selected="true" aria-controls="g-ideas" id="gt-ideas">Key ideas</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-solve" id="gt-solve" tabindex="-1">How to solve</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-examples" id="gt-examples" tabindex="-1">Worked examples</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-check" id="gt-check" tabindex="-1">Self-check</button>
+</div>
+<div class="gpanel" role="tabpanel" id="g-ideas" aria-labelledby="gt-ideas">
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Key ideas</h3>
+    <ul>
+      <li><b>Momentum</b> p = mv is a vector: it points the way the object moves. A slow truck can have more momentum than a fast baseball.</li>
+      <li><b>Impulse</b> J = FΔt is what changes momentum: J = Δp. It's the area under a force–time graph.</li>
+      <li>The same change in momentum can come from a big force for a short time or a small force for a long time. Airbags, padding and bending your knees all work by making Δt longer, so the force is smaller.</li>
+      <li><b>Newton's 2nd law in momentum form:</b> ΣF = Δp/Δt. The net force is the rate at which momentum changes.</li>
+      <li><b>Bouncing beats sticking.</b> A ball that bounces back reverses its momentum, so its Δp (and the impulse on it) is bigger than if it had stopped dead.</li>
+      <li><b>Conservation of momentum:</b> if the net external force on a system is zero, its total momentum stays the same. In a collision the objects push each other with equal and opposite forces for the same time (3rd law), so their momentum changes cancel.</li>
+      <li>Collisions and explosions happen so fast that outside forces like friction and gravity barely matter during them, so momentum is conserved through the collision.</li>
+      <li><b>Elastic collision:</b> total kinetic energy is the same before and after. <b>Inelastic:</b> some kinetic energy turns into thermal energy, sound and bent metal. <b>Perfectly inelastic:</b> the objects stick together and move off with one velocity. Momentum is conserved in all three.</li>
+      <li><b>Explosions</b> (and recoil): starting from rest, the total momentum stays zero, so the pieces fly apart in opposite directions. Kinetic energy increases, from stored chemical or spring energy.</li>
+      <li><b>Center of mass:</b> v<sub>cm</sub> = total momentum ÷ total mass. With no external force, the center of mass keeps the same velocity, whatever happens inside the system.</li>
+      <li><b>In 2D,</b> conserve the x-momentum and the y-momentum separately.</li>
+      <li><b>Two-stage problems</b> (like a ballistic pendulum): use momentum for the collision, then energy for the swing afterward. Kinetic energy is not conserved through a sticky collision.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Equations</h3>
+    <table>
+      <tr><td>p = mv</td><td>momentum (kg·m/s)</td></tr>
+      <tr><td>J = FΔt = Δp</td><td>impulse (N·s), area under F–t</td></tr>
+      <tr><td>ΣF = Δp/Δt</td><td>Newton's 2nd law, momentum form</td></tr>
+      <tr><td>Σp<sub>before</sub> = Σp<sub>after</sub></td><td>no net external force</td></tr>
+      <tr><td>m₁v₁ + m₂v₂ = (m₁ + m₂)v<sub>f</sub></td><td>objects stick together</td></tr>
+      <tr><td>0 = m₁v₁ + m₂v₂</td><td>explosion from rest</td></tr>
+      <tr><td>v<sub>cm</sub> = (m₁v₁ + m₂v₂)/(m₁ + m₂)</td><td>velocity of the center of mass</td></tr>
+      <tr><td>K = ½mv² = p²/2m</td><td>kinetic energy and momentum</td></tr>
+    </table>
+  </div>
+  <div class="gcard">
+    <h3>Common mistakes</h3>
+    <ul>
+      <li>Dropping the minus sign for something moving the other way. Pick a + direction and stick to it.</li>
+      <li>Assuming kinetic energy is conserved in every collision. Only momentum is always conserved.</li>
+      <li>Using conservation of energy straight through a collision where things stick.</li>
+      <li>Thinking the bigger object gets the bigger change in momentum. In a collision the changes are equal and opposite; the lighter object gets the bigger change in <i>velocity</i>.</li>
+      <li>Adding momenta in 2D as plain numbers. They're vectors: split them into components.</li>
+      <li>Mixing up impulse (N·s) and force (N). Impulse is force × time.</li>
+    </ul>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-solve" aria-labelledby="gt-solve" hidden>
+<div class="gsteps">
+  <h3>How to solve a collision problem</h3>
+  <ol>
+    <li><b>Choose the system:</b> all the objects that collide or push apart.</li>
+    <li><b>Check that momentum is conserved:</b> no net outside force, or the collision is so short that outside forces don't matter.</li>
+    <li><b>Choose a + direction.</b> Sketch before and after, with every velocity and its sign.</li>
+    <li><b>Write Σp<sub>before</sub> = Σp<sub>after</sub></b> (in 2D, once for x and once for y).</li>
+    <li><b>Solve</b> for the unknown velocity. A negative answer means it moves in the − direction.</li>
+    <li><b>If asked about energy,</b> compare total K before and after: equal means elastic, less means inelastic.</li>
+  </ol>
+</div>
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Momentum or energy?</h3>
+    <ul>
+      <li><b>During a collision or explosion:</b> momentum, always.</li>
+      <li><b>Energy too</b> only if the collision is elastic (and the question says so).</li>
+      <li><b>Before or after the collision</b> (sliding, swinging, falling): energy, or forces and kinematics.</li>
+      <li>A problem with a collision in the middle has stages. Solve them in order, and never carry kinetic energy across the collision.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Force–time graphs</h3>
+    <ul>
+      <li>The area under the curve is the impulse, which equals Δp.</li>
+      <li>Average force = Δp ÷ contact time.</li>
+      <li>A longer, lower curve with the same area gives the same change in momentum with a smaller peak force.</li>
+    </ul>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-examples" aria-labelledby="gt-examples" hidden>
+<div class="gex">
+  <div class="ex">
+    <div class="kind">Impulse</div>
+    <h4>Hitting a baseball</h4>
+    <p>A 0.15 kg baseball arrives at the bat at 40 m/s and leaves at 50 m/s in the opposite direction. The bat touches it for 2.0 ms. Find the impulse on the ball and the average force from the bat.</p>
+    <div class="work">
+      + = the way the ball leaves: v<sub>i</sub> = −40 m/s, v<sub>f</sub> = +50 m/s<br>
+      Δp = m(v<sub>f</sub> − v<sub>i</sub>) = 0.15(50 − (−40)) = <b>13.5 N·s</b><br>
+      F<sub>avg</sub> = Δp/Δt = 13.5/0.0020 = <b>6.8 × 10³ N</b>
+    </div>
+    <p class="take">Reversing the ball's direction is why the change is 90 m/s, not 10 m/s. The ball pushes back on the bat with the same 6.8 kN.</p>
+  </div>
 
+  <div class="ex">
+    <div class="kind">Sticky collision</div>
+    <h4>A rear-end crash</h4>
+    <p>A 1200 kg car moving at 20 m/s rear-ends an 800 kg car moving the same way at 10 m/s. They lock together. How fast do they move just after? How much kinetic energy is lost?</p>
+    <div class="work">
+      Before: (1200)(20) + (800)(10) = 32 000 kg·m/s<br>
+      After: (2000)v<sub>f</sub> = 32 000 → v<sub>f</sub> = <b>16 m/s</b><br>
+      K before: ½(1200)(20)² + ½(800)(10)² = 280 kJ<br>
+      K after: ½(2000)(16)² = 256 kJ → lost <b>24 kJ</b>
+    </div>
+    <p class="take">Momentum is conserved exactly, but kinetic energy isn't: the 24 kJ went into crumpling metal, sound and heating.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Explosion</div>
+    <h4>Two carts pushed apart by a spring</h4>
+    <p>A 2.0 kg cart and a 0.50 kg cart are held together at rest with a squashed spring between them. When released, the light cart moves off at 4.0 m/s. How fast does the heavy cart move? How much energy did the spring store?</p>
+    <div class="work">
+      Total momentum stays 0: (0.50)(4.0) + (2.0)v = 0<br>
+      &nbsp;&nbsp;v = <b>−1.0 m/s</b> (the opposite way)<br>
+      Spring energy = total K = ½(0.50)(4.0)² + ½(2.0)(1.0)² = <b>5.0 J</b>
+    </div>
+    <p class="take">The momenta are equal and opposite (2.0 kg·m/s each), but the light cart gets 4 J of the 5 J. In an explosion the lighter piece always carries off most of the kinetic energy.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Two stages</div>
+    <h4>A ballistic pendulum</h4>
+    <p>A 0.050 kg clay ball hits a 0.95 kg block hanging on a string and sticks. The block and clay swing up 0.20 m. How fast was the clay moving?</p>
+    <div class="work">
+      Stage 2 (swing, energy): ½v² = gh → v = √(2 × 10 × 0.20) = 2.0 m/s<br>
+      Stage 1 (collision, momentum): (0.050)v<sub>clay</sub> = (1.0)(2.0)<br>
+      &nbsp;&nbsp;v<sub>clay</sub> = <b>40 m/s</b>
+    </div>
+    <p class="take">Work backward: the swing tells you the speed just after the hit. The clay starts with 40 J of kinetic energy and the swing only has 2 J, so 95% of it was lost in the sticky collision. That's why energy can't be used across it.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Collision in 2D</div>
+    <h4>Two cars at an intersection</h4>
+    <p>A 1000 kg car heading east at 20 m/s collides with a 1500 kg car heading north at 10 m/s. They stick together. Find their speed and direction just after.</p>
+    <div class="work">
+      x (east): p<sub>x</sub> = (1000)(20) = 20 000 kg·m/s<br>
+      y (north): p<sub>y</sub> = (1500)(10) = 15 000 kg·m/s<br>
+      p = √(20 000² + 15 000²) = 25 000 kg·m/s<br>
+      v = 25 000/2500 = <b>10 m/s</b> at tan⁻¹(15/20) = <b>37° north of east</b>
+    </div>
+    <p class="take">Each direction keeps its own momentum. The wreck heads mostly east because the east-moving car brought more momentum.</p>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
+<div class="gcheck">
+  <h3>Self-check</h3>
+  <p>Answer first, then open.</p>
+  <ol class="q">
+<li>A 7.0 kg bowling ball rolls at 2.0 m/s. A 0.060 kg tennis ball flies at 50 m/s. Which has more momentum?
+      <details><summary>Answer</summary><div>Bowling ball: 14 kg·m/s. Tennis ball: 3.0 kg·m/s. The bowling ball has more than four times as much, even though it's much slower.</div></details></li>
+    <li>An egg dropped onto a pillow survives; the same egg dropped onto the floor breaks. Both stop. Explain using impulse.
+      <details><summary>Answer</summary><div>Both eggs have the same change in momentum, so the same impulse FΔt. The pillow makes the stopping time much longer, so the force on the egg is much smaller.</div></details></li>
+    <li>Identical balls hit a wall at the same speed. One bounces straight back at the same speed; the other sticks to the wall. Which gets the bigger impulse from the wall?
+      <details><summary>Answer</summary><div>The one that bounces. Its momentum changes from +mv to −mv, a change of 2mv. The one that sticks only changes by mv.</div></details></li>
+    <li>A force on a 0.20 kg ball rises from 0 to 600 N and back to 0 over 0.010 s, in a triangle shape. If the ball started at rest, how fast is it moving afterward?
+      <details><summary>Answer</summary><div>Impulse = triangle area = ½(0.010)(600) = 3.0 N·s. Δp = 3.0 kg·m/s, so v = 3.0/0.20 = 15 m/s.</div></details></li>
+    <li>A cart moving at 3.0 m/s hits an identical cart at rest, and they stick. How fast do they move? What fraction of the kinetic energy is lost?
+      <details><summary>Answer</summary><div>Momentum: m(3.0) = 2m v<sub>f</sub>, so v<sub>f</sub> = 1.5 m/s. K before: ½m(9) = 4.5m; K after: ½(2m)(2.25) = 2.25m. Half the kinetic energy is lost.</div></details></li>
+    <li>A truck hits a fly. Which has the bigger change in momentum? The bigger acceleration?
+      <details><summary>Answer</summary><div>Same size change in momentum: the forces are equal and opposite and act for the same time. The fly has a hugely bigger acceleration (and change in velocity), because its mass is tiny.</div></details></li>
+    <li>A ball moving at 3.0 m/s hits an identical ball at rest head-on, and the collision is elastic. What happens?
+      <details><summary>Answer</summary><div>The first ball stops and the second moves off at 3.0 m/s. That's the only result that keeps both momentum (3.0m) and kinetic energy (4.5m) the same, as in a Newton's cradle.</div></details></li>
+    <li>An 80 kg astronaut floating in space throws a 2.0 kg wrench at 8.0 m/s. What happens to her?
+      <details><summary>Answer</summary><div>She recoils the opposite way: (80)v = −(2.0)(8.0), so v = −0.20 m/s. Total momentum stays zero.</div></details></li>
+    <li>A 3.0 kg cart moves at 4.0 m/s toward a 1.0 kg cart at rest on a frictionless track. What is the velocity of their center of mass before they collide? After?
+      <details><summary>Answer</summary><div>v<sub>cm</sub> = (3.0 × 4.0 + 0)/(4.0) = 3.0 m/s, and it's still 3.0 m/s after the collision, whatever kind of collision it is. Only an outside force could change it.</div></details></li>
+    <li>In a ballistic pendulum, why can't you set the bullet's kinetic energy equal to mgh of the swing?
+      <details><summary>Answer</summary><div>The bullet sticks in the block: that collision is perfectly inelastic, and most of the kinetic energy turns into thermal energy and deforming the block. Momentum is conserved during the hit; energy is only conserved during the swing afterward.</div></details></li>
+    <li>How can a rocket speed up in space, where there's nothing to push against?
+      <details><summary>Answer</summary><div>It pushes its exhaust gas backward, and the gas pushes the rocket forward (3rd law). The backward momentum of the exhaust equals the forward momentum the rocket gains, so total momentum stays the same.</div></details></li>
+  </ol>
+</div>
+</div>
+<p class="gnext"><a href="#practice" data-view="practice">Practice questions for this unit →</a></p>
+<script>
+(function(){
+  var root=document.currentScript?document.currentScript.parentNode:document;
+  var tabs=[].slice.call(root.querySelectorAll('.gtabs .tab'));
+  function show(t){tabs.forEach(function(b){var on=b===t;b.setAttribute('aria-selected',on?'true':'false');b.tabIndex=on?0:-1;document.getElementById(b.getAttribute('aria-controls')).hidden=!on;});}
+  tabs.forEach(function(b,i){
+    b.addEventListener('click',function(){show(b);});
+    b.addEventListener('keydown',function(e){var k=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(k){var n=tabs[(i+k+tabs.length)%tabs.length];show(n);n.focus();e.preventDefault();}});
+  });
+})();
+</script>
+</section>
+  </div>
   <div class="view" id="v-practice" hidden>
   <section class="review" id="review">
     <div class="simbar"><h2>Practice questions</h2><a id="ropen" class="mono" href="https://script.google.com/a/macros/fcps.org/s/AKfycbzW6NpFGf5yjZ843WN0pDy-mzI0r1iCcBIuoJpMCEJeWwbUARiSnAC_lf2bWQeHWoGjHA/exec?unit=P1-07" target="_blank" rel="noopener">Open in a new tab ↗</a></div>

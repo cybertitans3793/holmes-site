@@ -63,6 +63,9 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
 .rframe{position:relative;height:900px;background:#fff}
 .rframe iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 #v-study>.guide{margin-top:0}
+/* Guides: an equations table never spills out of its card, whatever the window width */
+#v-study .guide .gcard{min-width:0;overflow-x:auto}
+@media (max-width:1000px){#v-study .guide td:first-child{white-space:normal}}
 
 
 </style>
@@ -211,6 +214,7 @@ body.present .guide{display:none}
       <li>List the five quantities: Δx, v<sub>0</sub>, v, a, t. Mark the three you know and the one you want.</li>
       <li>Use the equation that leaves out the fifth one (see the Equations table).</li>
       <li>Watch for hidden values: “from rest” means v<sub>0</sub> = 0, “stops” means v = 0, “dropped” means v<sub>0</sub> = 0 and a = g.</li>
+      <li><b>Signs:</b> call the direction of the starting motion +. Then a positive a means speeding up and a negative a means slowing down, and a ball thrown upward gets a = −g.</li>
     </ul>
   </div>
   <div class="gcard">

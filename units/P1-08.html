@@ -63,6 +63,9 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
 .rframe{position:relative;height:900px;background:#fff}
 .rframe iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 #v-study>.guide{margin-top:0}
+/* Guides: an equations table never spills out of its card, whatever the window width */
+#v-study .guide .gcard{min-width:0;overflow-x:auto}
+@media (max-width:1000px){#v-study .guide td:first-child{white-space:normal}}
 
 
 </style>
@@ -73,7 +76,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
     <div class="uid"><div class="big" aria-hidden="true">08</div><div><div class="mono">AP Physics 1 / IB · P1-08</div><h1>Rotation</h1></div></div>
   </header>
   <nav class="views" id="views" aria-label="Choose a view">
-    <div class="vbtns"><button type="button" class="vbtn" data-view="explore" aria-pressed="false">Explore</button><button type="button" class="vbtn" data-view="practice" aria-pressed="false">Practice</button></div>
+    <div class="vbtns"><button type="button" class="vbtn" data-view="explore" aria-pressed="false">Explore</button><button type="button" class="vbtn" data-view="study" aria-pressed="false">Study</button><button type="button" class="vbtn" data-view="practice" aria-pressed="false">Practice</button></div>
     <a class="simsback mono" id="simsback" href="https://sites.google.com/fcps.org/holmes/ap-physics-1-ib/p1-08" target="_blank" rel="noopener" hidden>Sims for this unit ↗</a>
   </nav>
   <div class="view" id="v-explore">
@@ -92,7 +95,265 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
   </div>
   <p class="credits">Spinning Wheel, Torque, Rotational Inertia, Massive Pulley, Rolling Race and Angular Momentum are original.</p>
   </div>
+  <div class="view" id="v-study" hidden>
+<section class="guide" id="guide" aria-label="Study guide">
+<style>
+.guide{margin-top:28px}
+.guide .gtip{margin:0 0 16px;font-size:19px;line-height:1.45;max-width:1000px}
+.guide .ggrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-bottom:22px}
+.guide .gcard{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcard h3,.guide .gcheck h3,.guide .gsteps h3{margin:0 0 10px;font-size:20px;letter-spacing:-.01em}
+.guide .gcard ul{margin:0;padding-left:20px}
+.guide .gcard li{margin:0 0 7px}
+.guide .ib{display:inline-block;font-family:var(--f-mono);font-size:11px;font-weight:700;border:2px solid var(--ink);padding:0 5px;margin-left:4px;vertical-align:1px;background:var(--soft)}
+.guide table{border-collapse:collapse;width:100%;font-size:15px}
+.guide td{border-top:2px solid var(--ink);padding:6px 4px;vertical-align:top}
+.guide td:first-child{font-family:var(--f-mono);font-weight:700;white-space:nowrap;padding-right:12px}
+.guide td[colspan]{white-space:normal}
+.guide .gsub{font-family:var(--f-display);font-weight:400}
+.guide .gsteps{background:var(--soft);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px;margin-bottom:22px}
+.guide .gsteps ol{margin:0;padding-left:24px;columns:2 360px;column-gap:28px}
+.guide .gsteps li{margin:0 0 8px;break-inside:avoid}
+.guide h3.ghead{font-size:22px;margin:0 0 12px}
+.guide .gex{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:18px;margin-bottom:22px}
+.guide .ex{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .ex h4{margin:0 0 6px;font-size:18px}
+.guide .ex .kind{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--hot);text-transform:uppercase;letter-spacing:.04em}
+.guide .ex p{margin:0 0 8px}
+.guide .work{font-family:var(--f-mono);font-size:14px;line-height:1.6;border-left:4px solid var(--hot);background:#fff;padding:6px 12px;margin:8px 0}
+.guide .work b{font-family:var(--f-display)}
+.guide .ex .take{margin:8px 0 0;font-weight:500}
+.guide .ex svg{float:right;margin:0 0 6px 12px}
+.guide .gcheck{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcheck>p{margin:-4px 0 12px;color:var(--muted)}
+.guide ol.q{margin:0;padding-left:26px}
+.guide ol.q>li{margin:0 0 14px}
+.guide details{margin-top:6px}
+.guide summary{cursor:pointer;display:inline-block;font-weight:700;border:2px solid var(--ink);padding:2px 10px;background:#fff;list-style:none}
+.guide summary::-webkit-details-marker{display:none}
+.guide summary:hover{background:var(--soft)}
+.guide details[open] summary{background:var(--ink);color:#fff}
+.guide details>div{border-left:4px solid var(--hot);padding:8px 12px;margin-top:8px;background:#fff}
+.guide .gpanel>.ggrid,.guide .gpanel>.gsteps,.guide .gpanel>.gex{margin-bottom:0}
+.guide .gpanel>.gsteps+.ggrid{margin-top:22px}
+.guide .gtabs{margin-bottom:18px}
+.guide .gnext{margin:16px 0 0;font-weight:700}
+.guide .gnext a{color:var(--ink)}
+body.present .guide{display:none}
+@media (max-width:520px){.guide .gtip{font-size:17px}.guide td:first-child{white-space:normal}.guide .ggrid,.guide .gex{grid-template-columns:1fr}.guide .ex svg{float:none;display:block;margin:0 auto 8px}}
+</style>
+<div class="simbar"><h2>Study guide</h2><span class="mono">Unit 8 · Rotation</span></div>
+<p class="gtip"><b>How to use this:</b> read the key ideas, then cover each worked example and try it yourself before reading the solution. Do the self-check questions on paper <i>before</i> you open the answers, mark the ones you miss, and come back to them in a day or two without looking. Rereading won't do much; answering questions will.</p>
+<div class="tabs gtabs" role="tablist" aria-label="Study guide sections">
+  <button class="tab" role="tab" type="button" aria-selected="true" aria-controls="g-ideas" id="gt-ideas">Key ideas</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-solve" id="gt-solve" tabindex="-1">How to solve</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-examples" id="gt-examples" tabindex="-1">Worked examples</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-check" id="gt-check" tabindex="-1">Self-check</button>
+</div>
+<div class="gpanel" role="tabpanel" id="g-ideas" aria-labelledby="gt-ideas">
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Key ideas</h3>
+    <ul>
+      <li><b>Angles are in radians</b>: one revolution = 2π rad. Every point on a spinning rigid object turns through the same angle θ, with the same angular velocity ω = Δθ/Δt and angular acceleration α = Δω/Δt.</li>
+      <li><b>Linking to straight-line motion:</b> a point at radius r moves a distance s = rθ, at speed v = rω, with tangential acceleration a<sub>t</sub> = rα. Points farther out move faster.</li>
+      <li><b>Rotational kinematics</b> works just like 1D kinematics with θ, ω and α in place of x, v and a (for constant α).</li>
+      <li><b>Torque</b> τ = rF sinθ measures how well a force turns something. It's biggest when you push far from the pivot and at 90° to the lever. A force aimed at the pivot gives no torque.</li>
+      <li><b>Equilibrium</b> needs both ΣF = 0 (no translation) and Στ = 0 (no rotation). Torques can be taken about any point, so pick one where an unknown force acts.</li>
+      <li><b>Rotational inertia</b> I = Σmr² is resistance to spinning up. It depends on the mass <i>and</i> how far it is from the axis: a hoop has more than a solid disk of the same mass and radius. Formulas for shapes are given to you.</li>
+      <li><b>Parallel axis theorem:</b> I = I<sub>cm</sub> + Md² for an axis a distance d from the center of mass.</li>
+      <li><b>Newton's 2nd law for rotation:</b> Στ = Iα. With a massive pulley, the string's tension is different on the two sides; that difference is what spins the pulley.</li>
+      <li><b>Rotational kinetic energy</b> K = ½Iω². Something rolling without slipping has both: K = ½mv² + ½Iω², with v = ωr.</li>
+      <li>In a race down a ramp, the shape with the smallest I compared with mr² wins: a solid sphere beats a solid cylinder, which beats a hoop. Mass and radius cancel out.</li>
+      <li><b>Work by a torque</b> W = τΔθ changes rotational kinetic energy; power P = τω.</li>
+      <li><b>Angular momentum</b> L = Iω for a spinning object, or L = mvr<sub>⊥</sub> for a point mass. Angular impulse τΔt changes it.</li>
+      <li><b>Conservation of angular momentum:</b> with no net external torque, L stays constant. A skater pulling her arms in lowers I, so ω goes up. Her kinetic energy increases (her muscles do work), even though L doesn't change.</li>
+      <li><b>Elliptical orbits:</b> gravity points at the Sun, so it exerts no torque about it, and the planet's angular momentum is conserved. At the closest and farthest points, mvr is the same, so it moves fastest when it's closest. Total energy K + U<sub>g</sub> (with U<sub>g</sub> = −GMm/r) is also conserved.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Equations</h3>
+    <table>
+      <tr><td>ω = Δθ/Δt, α = Δω/Δt</td><td>angular velocity, acceleration</td></tr>
+      <tr><td>ω = ω₀ + αt</td><td rowspan="3">rotational kinematics (constant α)</td></tr>
+      <tr><td>Δθ = ω₀t + ½αt²</td></tr>
+      <tr><td>ω² = ω₀² + 2αΔθ</td></tr>
+      <tr><td>s = rθ, v = rω, a<sub>t</sub> = rα</td><td>linking rotation and translation</td></tr>
+      <tr><td>τ = rF sinθ = r<sub>⊥</sub>F</td><td>torque</td></tr>
+      <tr><td>I = Σmr²</td><td>rotational inertia</td></tr>
+      <tr><td>I = I<sub>cm</sub> + Md²</td><td>parallel axis theorem</td></tr>
+      <tr><td>Στ = Iα</td><td>Newton's 2nd law for rotation</td></tr>
+      <tr><td>K = ½Iω²</td><td>rotational kinetic energy</td></tr>
+      <tr><td>W = τΔθ, P = τω</td><td>work and power by a torque</td></tr>
+      <tr><td>L = Iω, L = mvr<sub>⊥</sub></td><td>angular momentum</td></tr>
+      <tr><td>τΔt = ΔL</td><td>angular impulse</td></tr>
+    </table>
+  </div>
+  <div class="gcard">
+    <h3>Common mistakes</h3>
+    <ul>
+      <li>Putting degrees or revolutions into v = rω or a<sub>t</sub> = rα. Convert to radians first.</li>
+      <li>Using the distance to the force instead of the lever arm, or forgetting sinθ when the force isn't at 90°.</li>
+      <li>Forgetting that torques have a direction. Pick clockwise or counterclockwise as + and stick to it.</li>
+      <li>Saying a heavier ball rolls down a ramp faster. The mass cancels; only the shape matters.</li>
+      <li>Setting the two tensions on a massive pulley equal.</li>
+      <li>Saying kinetic energy is conserved when a skater pulls her arms in. Angular momentum is conserved; kinetic energy goes up.</li>
+      <li>Drawing all the forces at the center of an object. For torque, draw each force where it acts.</li>
+    </ul>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-solve" aria-labelledby="gt-solve" hidden>
+<div class="gsteps">
+  <h3>How to solve a torque problem</h3>
+  <ol>
+    <li><b>Draw the object</b> (a bar or a disk) with each force drawn where it acts. This is an extended free-body diagram.</li>
+    <li><b>Pick the pivot</b> (axis). For equilibrium, choose a point where an unknown force acts, so its torque is zero.</li>
+    <li><b>Choose + rotation</b> (clockwise or counterclockwise) and give each torque a sign.</li>
+    <li><b>Find each torque:</b> τ = r<sub>⊥</sub>F, with r<sub>⊥</sub> the perpendicular distance from the pivot to the force's line.</li>
+    <li><b>Write Στ = Iα</b> (or Στ = 0), and ΣF = ma (or ΣF = 0) if you need a second equation.</li>
+    <li><b>Link the motions:</b> a string coming off a wheel has a = αr. Then solve.</li>
+  </ol>
+</div>
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Which tool?</h3>
+    <ul>
+      <li><b>Forces and torques known, want α (or a):</b> Στ = Iα and ΣF = ma.</li>
+      <li><b>Rolling down a ramp, want a speed:</b> energy, with K = ½mv² + ½Iω² and v = ωr.</li>
+      <li><b>Something changes shape or grabs on</b> (a skater, a person jumping onto a merry-go-round) with no outside torque: conservation of angular momentum.</li>
+      <li><b>Orbits:</b> angular momentum for the speed at closest and farthest points; energy for speeds anywhere.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Linear and rotational, side by side</h3>
+    <table>
+      <tr><td>x, v, a</td><td>θ, ω, α</td></tr>
+      <tr><td>m</td><td>I</td></tr>
+      <tr><td>F, ΣF = ma</td><td>τ, Στ = Iα</td></tr>
+      <tr><td>K = ½mv²</td><td>K = ½Iω²</td></tr>
+      <tr><td>p = mv</td><td>L = Iω</td></tr>
+    </table>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-examples" aria-labelledby="gt-examples" hidden>
+<div class="gex">
+  <div class="ex">
+    <div class="kind">Static equilibrium</div>
+    <svg width="160" height="80" viewBox="0 0 160 80" aria-label="Plank on two supports with a person 2 m from the left end">
+      <rect x="8" y="34" width="144" height="8" fill="#fde1d6" stroke="#111" stroke-width="2"/>
+      <polygon points="8,42 2,56 14,56" fill="#111"/><polygon points="152,42 146,56 158,56" fill="#111"/>
+      <line x1="56" y1="10" x2="56" y2="30" stroke="#ff6a2b" stroke-width="3"/><polygon points="51,28 61,28 56,35" fill="#ff6a2b"/>
+      <text x="60" y="18" font-size="10" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">600 N</text>
+      <text x="4" y="72" font-size="10" font-family="IBM Plex Mono,monospace">L</text><text x="150" y="72" font-size="10" font-family="IBM Plex Mono,monospace">R</text>
+      <text x="14" y="30" font-size="10" font-family="IBM Plex Mono,monospace">2.0 m</text>
+    </svg>
+    <h4>A person on a plank</h4>
+    <p>A uniform 6.0 m plank weighing 300 N rests on supports at its two ends. A 600 N person stands 2.0 m from the left end. Find the force from each support.</p>
+    <div class="work">
+      Pivot at the left support (counterclockwise = +):<br>
+      &nbsp;&nbsp;R(6.0) − 300(3.0) − 600(2.0) = 0 → R = <b>350 N</b><br>
+      Forces: L + R = 300 + 600 → L = <b>550 N</b>
+    </div>
+    <p class="take">Putting the pivot at the left support makes that unknown force drop out of the torque equation. The left support takes more of the load because the person is closer to it.</p>
+  </div>
 
+  <div class="ex">
+    <div class="kind">Massive pulley</div>
+    <h4>A hanging mass spins a pulley</h4>
+    <p>A 2.0 kg mass hangs from a string wrapped around a solid-disk pulley of mass 4.0 kg (I = ½MR²) on a frictionless axle. Find the mass's acceleration and the string's tension.</p>
+    <div class="work">
+      Mass (down = +): mg − T = ma → 20 − T = 2.0a<br>
+      Pulley: TR = Iα = (½MR²)(a/R) → T = ½Ma = 2.0a<br>
+      Add them: 20 = 4.0a → a = <b>5.0 m/s²</b>, T = <b>10 N</b>
+    </div>
+    <p class="take">The radius cancels. The pulley's inertia acts like an extra ½M = 2.0 kg that has to be accelerated, which is why the mass falls at half of g.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Rolling energy</div>
+    <h4>A solid ball against a hoop</h4>
+    <p>A solid ball (I = ⅖mr²) and a hoop (I = mr²) roll without slipping from rest down a ramp 1.4 m high. Find each one's speed at the bottom.</p>
+    <div class="work">
+      mgh = ½mv² + ½Iω², with ω = v/r<br>
+      Ball: mgh = ½mv² + ½(⅖mr²)(v/r)² = <sup>7</sup>/<sub>10</sub>mv²<br>
+      &nbsp;&nbsp;v = √(10gh/7) = √(10 × 10 × 1.4/7) = <b>4.5 m/s</b><br>
+      Hoop: mgh = ½mv² + ½mv² = mv² → v = √(gh) = <b>3.7 m/s</b>
+    </div>
+    <p class="take">Both start with the same energy per kilogram. The hoop has to put half of it into spinning, the ball only <sup>2</sup>/<sub>7</sub>, so the ball wins. Mass and radius never appear in the answer.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Angular momentum</div>
+    <h4>A spinning skater pulls her arms in</h4>
+    <p>A skater spins at 2.0 rad/s with her arms out (I = 4.0 kg·m²). She pulls them in, and her rotational inertia drops to 1.6 kg·m². Find her new angular velocity and compare her kinetic energy before and after.</p>
+    <div class="work">
+      L conserved: (4.0)(2.0) = (1.6)ω → ω = <b>5.0 rad/s</b><br>
+      K before: ½(4.0)(2.0)² = 8.0 J<br>
+      K after: ½(1.6)(5.0)² = <b>20 J</b>
+    </div>
+    <p class="take">The ice exerts almost no torque, so L stays the same. Kinetic energy goes up because her arm muscles do work pulling her arms inward.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Torque → angular acceleration</div>
+    <h4>Spinning up a wheel</h4>
+    <p>A string wrapped around a solid disk (M = 2.0 kg, R = 0.10 m) on a frictionless axle is pulled with a steady 4.0 N. Find the angular acceleration, and the angular velocity after 2.0 s from rest.</p>
+    <div class="work">
+      I = ½MR² = ½(2.0)(0.10)² = 0.010 kg·m²<br>
+      τ = RF = (0.10)(4.0) = 0.40 N·m<br>
+      α = τ/I = 0.40/0.010 = <b>40 rad/s²</b><br>
+      ω = αt = (40)(2.0) = <b>80 rad/s</b> (about 13 rev/s)
+    </div>
+    <p class="take">The same 4.0 N on a hoop of the same mass and radius would give half the angular acceleration, because a hoop's I is twice as big.</p>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
+<div class="gcheck">
+  <h3>Self-check</h3>
+  <p>Answer first, then open.</p>
+  <ol class="q">
+<li>A turntable spins steadily. Compare the angular velocity and the speed of a point at the edge with one halfway to the center.
+      <details><summary>Answer</summary><div>Same angular velocity: every point turns through the same angle in the same time. The edge point is twice as far out, so with v = rω it moves twice as fast.</div></details></li>
+    <li>A wheel speeds up from rest to 12 rad/s in 4.0 s at a steady rate. Find its angular acceleration and how many revolutions it makes.
+      <details><summary>Answer</summary><div>α = 12/4.0 = 3.0 rad/s². Δθ = ½(0 + 12)(4.0) = 24 rad, which is 24/2π ≈ 3.8 revolutions.</div></details></li>
+    <li>You push a door at the handle, 0.90 m from the hinges. How hard would you have to push at 0.30 m from the hinges to get the same torque?
+      <details><summary>Answer</summary><div>Three times as hard. Torque = r<sub>⊥</sub>F, so one-third the lever arm needs three times the force.</div></details></li>
+    <li>You pull on a 0.25 m wrench with 40 N at 90° to it. What torque do you apply? What if you pull at 30° to the wrench instead?
+      <details><summary>Answer</summary><div>At 90°: τ = (0.25)(40) = 10 N·m. At 30°: τ = (0.25)(40) sin30° = 5.0 N·m. Only the part of the force perpendicular to the wrench turns it.</div></details></li>
+    <li>A 30 kg child sits 2.0 m from the pivot of a seesaw. Where should a 40 kg child sit on the other side to balance it?
+      <details><summary>Answer</summary><div>Torques must match: (30)(10)(2.0) = (40)(10)d, so d = 1.5 m. The heavier child sits closer to the pivot.</div></details></li>
+    <li>A hoop and a solid disk have the same mass and radius. Which is harder to spin up from rest with the same torque? Why?
+      <details><summary>Answer</summary><div>The hoop. All its mass is at the rim, far from the axis, so its rotational inertia (MR²) is twice the disk's (½MR²), and α = τ/I is half as big.</div></details></li>
+    <li>A solid ball and a hollow ball of the same mass and radius race down a ramp, rolling without slipping. Which wins?
+      <details><summary>Answer</summary><div>The solid ball. Its mass is closer to the center, so a smaller share of its energy goes into spinning, leaving more for moving down the ramp.</div></details></li>
+    <li>A diver in the air pulls into a tuck and halves her rotational inertia. What happens to her angular velocity?
+      <details><summary>Answer</summary><div>It doubles. In the air there's no torque about her center of mass, so L = Iω stays constant.</div></details></li>
+    <li>A child jumps onto the edge of a spinning merry-go-round. What happens to its angular velocity? Is kinetic energy conserved?
+      <details><summary>Answer</summary><div>It slows down: the child's mass at the rim increases the total I, and angular momentum is conserved. Kinetic energy is not conserved: this is like a sticky collision, so some is lost.</div></details></li>
+    <li>A comet's farthest point from the Sun is 4 times as far as its closest point. How does its speed at the closest point compare with its speed at the farthest point?
+      <details><summary>Answer</summary><div>At those two points the velocity is perpendicular to the line to the Sun, so mvr is the same at both. One-quarter the distance means 4 times the speed.</div></details></li>
+    <li>A thin rod 1.0 m long has mass 3.0 kg and I<sub>cm</sub> = <sup>1</sup>/<sub>12</sub>ML² about its center. Find its rotational inertia about one end.
+      <details><summary>Answer</summary><div>I<sub>cm</sub> = (3.0)(1.0)²/12 = 0.25 kg·m². The end is d = 0.50 m from the center: I = 0.25 + (3.0)(0.50)² = 1.0 kg·m² (which matches ⅓ML²).</div></details></li>
+  </ol>
+</div>
+</div>
+<p class="gnext"><a href="#practice" data-view="practice">Practice questions for this unit →</a></p>
+<script>
+(function(){
+  var root=document.currentScript?document.currentScript.parentNode:document;
+  var tabs=[].slice.call(root.querySelectorAll('.gtabs .tab'));
+  function show(t){tabs.forEach(function(b){var on=b===t;b.setAttribute('aria-selected',on?'true':'false');b.tabIndex=on?0:-1;document.getElementById(b.getAttribute('aria-controls')).hidden=!on;});}
+  tabs.forEach(function(b,i){
+    b.addEventListener('click',function(){show(b);});
+    b.addEventListener('keydown',function(e){var k=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(k){var n=tabs[(i+k+tabs.length)%tabs.length];show(n);n.focus();e.preventDefault();}});
+  });
+})();
+</script>
+</section>
+  </div>
   <div class="view" id="v-practice" hidden>
   <section class="review" id="review">
     <div class="simbar"><h2>Practice questions</h2><a id="ropen" class="mono" href="https://script.google.com/a/macros/fcps.org/s/AKfycbzW6NpFGf5yjZ843WN0pDy-mzI0r1iCcBIuoJpMCEJeWwbUARiSnAC_lf2bWQeHWoGjHA/exec?unit=P1-08" target="_blank" rel="noopener">Open in a new tab ↗</a></div>

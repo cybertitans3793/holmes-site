@@ -63,6 +63,9 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
 .rframe{position:relative;height:900px;background:#fff}
 .rframe iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 #v-study>.guide{margin-top:0}
+/* Guides: an equations table never spills out of its card, whatever the window width */
+#v-study .guide .gcard{min-width:0;overflow-x:auto}
+@media (max-width:1000px){#v-study .guide td:first-child{white-space:normal}}
 
 
 </style>
@@ -73,7 +76,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
     <div class="uid"><div class="big" aria-hidden="true">10</div><div><div class="mono">AP Physics 1 / IB · P1-10</div><h1>Simple Harmonic Motion</h1></div></div>
   </header>
   <nav class="views" id="views" aria-label="Choose a view">
-    <div class="vbtns"><button type="button" class="vbtn" data-view="explore" aria-pressed="false">Explore</button><button type="button" class="vbtn" data-view="practice" aria-pressed="false">Practice</button></div>
+    <div class="vbtns"><button type="button" class="vbtn" data-view="explore" aria-pressed="false">Explore</button><button type="button" class="vbtn" data-view="study" aria-pressed="false">Study</button><button type="button" class="vbtn" data-view="practice" aria-pressed="false">Practice</button></div>
     <a class="simsback mono" id="simsback" href="https://sites.google.com/fcps.org/holmes/ap-physics-1-ib/p1-10" target="_blank" rel="noopener" hidden>Sims for this unit ↗</a>
   </nav>
   <div class="view" id="v-explore">
@@ -92,7 +95,250 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
   </div>
   <p class="credits">Mass on a Spring, Pendulum, SHM &amp; the Circle, Clay on a Block and Damping &amp; Resonance are original. Masses and Springs: Basics, Masses and Springs and Pendulum Lab: PhET Interactive Simulations, University of Colorado Boulder (phet.colorado.edu), CC BY 4.0 / GPL.</p>
   </div>
+  <div class="view" id="v-study" hidden>
+<section class="guide" id="guide" aria-label="Study guide">
+<style>
+.guide{margin-top:28px}
+.guide .gtip{margin:0 0 16px;font-size:19px;line-height:1.45;max-width:1000px}
+.guide .ggrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-bottom:22px}
+.guide .gcard{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcard h3,.guide .gcheck h3,.guide .gsteps h3{margin:0 0 10px;font-size:20px;letter-spacing:-.01em}
+.guide .gcard ul{margin:0;padding-left:20px}
+.guide .gcard li{margin:0 0 7px}
+.guide .ib{display:inline-block;font-family:var(--f-mono);font-size:11px;font-weight:700;border:2px solid var(--ink);padding:0 5px;margin-left:4px;vertical-align:1px;background:var(--soft)}
+.guide table{border-collapse:collapse;width:100%;font-size:15px}
+.guide td{border-top:2px solid var(--ink);padding:6px 4px;vertical-align:top}
+.guide td:first-child{font-family:var(--f-mono);font-weight:700;white-space:nowrap;padding-right:12px}
+.guide td[colspan]{white-space:normal}
+.guide .gsub{font-family:var(--f-display);font-weight:400}
+.guide .gsteps{background:var(--soft);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px;margin-bottom:22px}
+.guide .gsteps ol{margin:0;padding-left:24px;columns:2 360px;column-gap:28px}
+.guide .gsteps li{margin:0 0 8px;break-inside:avoid}
+.guide h3.ghead{font-size:22px;margin:0 0 12px}
+.guide .gex{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:18px;margin-bottom:22px}
+.guide .ex{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .ex h4{margin:0 0 6px;font-size:18px}
+.guide .ex .kind{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--hot);text-transform:uppercase;letter-spacing:.04em}
+.guide .ex p{margin:0 0 8px}
+.guide .work{font-family:var(--f-mono);font-size:14px;line-height:1.6;border-left:4px solid var(--hot);background:#fff;padding:6px 12px;margin:8px 0}
+.guide .work b{font-family:var(--f-display)}
+.guide .ex .take{margin:8px 0 0;font-weight:500}
+.guide .ex svg{float:right;margin:0 0 6px 12px}
+.guide .gcheck{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcheck>p{margin:-4px 0 12px;color:var(--muted)}
+.guide ol.q{margin:0;padding-left:26px}
+.guide ol.q>li{margin:0 0 14px}
+.guide details{margin-top:6px}
+.guide summary{cursor:pointer;display:inline-block;font-weight:700;border:2px solid var(--ink);padding:2px 10px;background:#fff;list-style:none}
+.guide summary::-webkit-details-marker{display:none}
+.guide summary:hover{background:var(--soft)}
+.guide details[open] summary{background:var(--ink);color:#fff}
+.guide details>div{border-left:4px solid var(--hot);padding:8px 12px;margin-top:8px;background:#fff}
+.guide .gpanel>.ggrid,.guide .gpanel>.gsteps,.guide .gpanel>.gex{margin-bottom:0}
+.guide .gpanel>.gsteps+.ggrid{margin-top:22px}
+.guide .gtabs{margin-bottom:18px}
+.guide .gnext{margin:16px 0 0;font-weight:700}
+.guide .gnext a{color:var(--ink)}
+body.present .guide{display:none}
+@media (max-width:520px){.guide .gtip{font-size:17px}.guide td:first-child{white-space:normal}.guide .ggrid,.guide .gex{grid-template-columns:1fr}.guide .ex svg{float:none;display:block;margin:0 auto 8px}}
+</style>
+<div class="simbar"><h2>Study guide</h2><span class="mono">Unit 10 · Simple Harmonic Motion</span></div>
+<p class="gtip"><b>How to use this:</b> read the key ideas, then cover each worked example and try it yourself before reading the solution. Do the self-check questions on paper <i>before</i> you open the answers, mark the ones you miss, and come back to them in a day or two without looking. Rereading won't do much; answering questions will.</p>
+<div class="tabs gtabs" role="tablist" aria-label="Study guide sections">
+  <button class="tab" role="tab" type="button" aria-selected="true" aria-controls="g-ideas" id="gt-ideas">Key ideas</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-solve" id="gt-solve" tabindex="-1">How to solve</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-examples" id="gt-examples" tabindex="-1">Worked examples</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-check" id="gt-check" tabindex="-1">Self-check</button>
+</div>
+<div class="gpanel" role="tabpanel" id="g-ideas" aria-labelledby="gt-ideas">
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Key ideas</h3>
+    <ul>
+      <li><b>An oscillation</b> is a back-and-forth motion about an <b>equilibrium position</b>, where the net force is zero. Pull it away and a <b>restoring force</b> pushes it back toward equilibrium.</li>
+      <li><b>Simple harmonic motion (SHM)</b> happens when the restoring force is proportional to the displacement: F = −kx. Then a = −(k/m)x: the acceleration always points back toward equilibrium and grows with distance from it.</li>
+      <li><b>Amplitude</b> A is the farthest distance from equilibrium (not end to end). <b>Period</b> T is the time for one full cycle; <b>frequency</b> f = 1/T is cycles per second (Hz). One full cycle covers 4A of distance.</li>
+      <li><b>Mass on a spring:</b> T = 2π√(m/k). More mass or a softer spring means a longer period. It doesn't depend on the amplitude or on g, so a vertical spring has the same period as a horizontal one.</li>
+      <li>A <b>vertical spring</b> oscillates about a new equilibrium, where kΔy = mg. Measure x from there and everything else works the same.</li>
+      <li><b>Pendulum</b> (small swings): T = 2π√(L/g). It doesn't depend on the mass or (for small angles) the amplitude, but it does depend on g.</li>
+      <li><b>At equilibrium:</b> speed is greatest, and the net force and acceleration are zero. <b>At the turning points (±A):</b> speed is zero, and the net force and acceleration are greatest.</li>
+      <li><b>Graphs:</b> position is a sine or cosine curve, x = A cos(2πft) if it starts at +A. The velocity is biggest where the position graph crosses zero, and the acceleration graph is the position graph flipped upside down.</li>
+      <li><b>Energy</b> swaps between elastic (or gravitational) potential and kinetic. For a spring, E = ½kA² = ½mv<sub>max</sub>², and at any point ½kx² + ½mv² = E.</li>
+      <li><b>Inertial and gravitational mass:</b> a spring's period measures inertial mass (it works even in orbit), while a scale measures gravitational mass. They're always equal, which is why a pendulum's period doesn't depend on its mass.</li>
+      <li><span class="ib">IB</span> <b>Damping</b> (friction or drag) makes the amplitude shrink over time. Pushing an oscillator at its own natural frequency makes the amplitude grow large: <b>resonance</b>. More damping means a smaller, broader resonance peak.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Equations</h3>
+    <table>
+      <tr><td>f = 1/T</td><td>frequency and period</td></tr>
+      <tr><td>F = −kx</td><td>restoring force (Hooke's law)</td></tr>
+      <tr><td>a = −(k/m)x</td><td>SHM acceleration</td></tr>
+      <tr><td>T = 2π√(m/k)</td><td>mass on a spring</td></tr>
+      <tr><td>T = 2π√(L/g)</td><td>simple pendulum (small angles)</td></tr>
+      <tr><td>x = A cos(2πft)</td><td>position, starting at +A</td></tr>
+      <tr><td>E = ½kA²</td><td>total energy of a spring oscillator</td></tr>
+      <tr><td>½kx² + ½mv² = ½kA²</td><td>energy at any point</td></tr>
+      <tr><td>v<sub>max</sub> = 2πfA</td><td>maximum speed (at equilibrium)</td></tr>
+    </table>
+  </div>
+  <div class="gcard">
+    <h3>Common mistakes</h3>
+    <ul>
+      <li>Thinking a bigger amplitude means a longer period. It goes farther, but faster, and the period stays the same.</li>
+      <li>Thinking a heavier pendulum bob swings with a different period. Mass doesn't appear in T = 2π√(L/g).</li>
+      <li>Putting the maximum speed at the ends. The ends are where it stops and turns around.</li>
+      <li>Saying the acceleration is zero at the ends because v = 0. That's where the acceleration is biggest.</li>
+      <li>Calling the end-to-end distance the amplitude. That's 2A.</li>
+      <li>Thinking a vertical spring has a different period from a horizontal one. Gravity only moves the equilibrium point.</li>
+    </ul>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-solve" aria-labelledby="gt-solve" hidden>
+<div class="gsteps">
+  <h3>How to solve an SHM problem</h3>
+  <ol>
+    <li><b>What is oscillating?</b> A spring (period depends on m and k) or a pendulum (period depends on L and g)?</li>
+    <li><b>Find the equilibrium position,</b> and measure x from there.</li>
+    <li><b>Read off A and T</b> (or f) from the words or the graph.</li>
+    <li><b>For timing questions,</b> use the period formula. A quarter period takes it from an end to equilibrium.</li>
+    <li><b>For speeds at a position,</b> use energy: ½kA² = ½kx² + ½mv².</li>
+    <li><b>Check with ratios:</b> 4 times the mass gives 2 times the period; 4 times the length gives 2 times the period.</li>
+  </ol>
+</div>
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Reading SHM graphs</h3>
+    <ul>
+      <li>The amplitude is the height of a peak above the center line; the period is the time from one peak to the next.</li>
+      <li>On a position graph, the slope is the velocity: steepest at the center line, flat at the peaks.</li>
+      <li>Where x is positive, a is negative, and the other way round.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Where is it greatest?</h3>
+    <table>
+      <tr><td>at ±A</td><td>|x|, |F|, |a| and U are biggest; v and K are zero</td></tr>
+      <tr><td>at x = 0</td><td>v and K are biggest; F, a and U are zero</td></tr>
+    </table>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-examples" aria-labelledby="gt-examples" hidden>
+<div class="gex">
+  <div class="ex">
+    <div class="kind">Mass on a spring</div>
+    <h4>Period, top speed and top acceleration</h4>
+    <p>A 0.50 kg cart on a spring with k = 200 N/m is pulled 0.10 m from equilibrium and released. Find the period, the maximum speed and the maximum acceleration.</p>
+    <div class="work">
+      T = 2π√(m/k) = 2π√(0.50/200) = 2π(0.050) = <b>0.31 s</b><br>
+      Energy: ½kA² = ½mv<sub>max</sub>² → v<sub>max</sub> = A√(k/m) = (0.10)(20) = <b>2.0 m/s</b><br>
+      a<sub>max</sub> = kA/m = (200)(0.10)/0.50 = <b>40 m/s²</b>
+    </div>
+    <p class="take">Pull it back 0.20 m instead and the period stays 0.31 s, but the top speed and acceleration both double.</p>
+  </div>
 
+  <div class="ex">
+    <div class="kind">Energy at a point</div>
+    <h4>How fast at x = 0.060 m?</h4>
+    <p>For the same cart (A = 0.10 m), how fast is it moving when it is 0.060 m from equilibrium?</p>
+    <div class="work">
+      E = ½kA² = ½(200)(0.10)² = 1.0 J<br>
+      U at x = 0.060 m: ½(200)(0.060)² = 0.36 J<br>
+      K = 1.0 − 0.36 = 0.64 J → v = √(2 × 0.64/0.50) = <b>1.6 m/s</b>
+    </div>
+    <p class="take">More than half the way out, it still has most of its top speed: 64% of the energy is still kinetic.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Pendulum</div>
+    <h4>A pendulum clock, here and on the Moon</h4>
+    <p>A clock's pendulum has a period of 2.0 s. How long is it? What would its period be on the Moon, where g is ⅙ of Earth's?</p>
+    <div class="work">
+      T = 2π√(L/g) → L = gT²/(4π²) = (10)(2.0)²/39.5 = <b>1.0 m</b><br>
+      Moon: T ∝ 1/√g, so T = 2.0 × √6 = <b>4.9 s</b>
+    </div>
+    <p class="take">The clock would run slow on the Moon. A mass on a spring would keep the same period there, because its period doesn't depend on g.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Reading a graph</div>
+    <svg width="178" height="96" viewBox="-8 0 178 96" aria-label="Position-time cosine graph with amplitude 0.040 m and period 0.80 s">
+      <line x1="20" y1="48" x2="166" y2="48" stroke="#111" stroke-width="1.5"/><line x1="20" y1="6" x2="20" y2="90" stroke="#111" stroke-width="2"/>
+      <path d="M20 14 C40 14 50 82 70 82 S100 14 120 14 S150 82 166 70" fill="none" stroke="#ff6a2b" stroke-width="3"/>
+      <text x="-4" y="18" font-size="9" font-family="IBM Plex Mono,monospace">.04</text><text x="-8" y="86" font-size="9" font-family="IBM Plex Mono,monospace">−.04</text>
+      <text x="108" y="60" font-size="9" font-family="IBM Plex Mono,monospace">0.8 s</text><text x="62" y="44" font-size="9" font-family="IBM Plex Mono,monospace">0.4</text>
+      <text x="24" y="10" font-size="9" font-family="IBM Plex Mono,monospace">x (m)</text>
+    </svg>
+    <h4>What does the graph tell you?</h4>
+    <p>An oscillator's position graph starts at its highest point, 0.040 m, and next reaches that peak at 0.80 s. Find its amplitude, period and frequency, where it is at t = 0.20 s, and its maximum speed.</p>
+    <div class="work">
+      A = <b>0.040 m</b>; T = <b>0.80 s</b>; f = 1/0.80 = <b>1.25 Hz</b><br>
+      t = 0.20 s is a quarter period: it's at <b>equilibrium</b>, moving fastest, heading toward −x<br>
+      v<sub>max</sub> = 2πfA = 2π(1.25)(0.040) = <b>0.31 m/s</b>
+    </div>
+    <p class="take">A quarter period always takes an oscillator from an end to the middle. At 0.40 s it is at the other end, x = −0.040 m.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Collision + SHM</div>
+    <h4>Clay lands on an oscillating block</h4>
+    <p>A 0.90 kg block oscillates on a spring (k = 90 N/m) and passes equilibrium at 1.0 m/s. At that moment a 0.10 kg lump of clay dropped from above lands on it and sticks. Find the new speed at equilibrium, the new amplitude, and what happens to the period.</p>
+    <div class="work">
+      Horizontal momentum: (0.90)(1.0) = (1.0)v → v = <b>0.90 m/s</b><br>
+      Old A: ½kA² = ½mv² → A = v√(m/k) = (1.0)√(0.90/90) = 0.10 m<br>
+      New A = (0.90)√(1.0/90) = <b>0.095 m</b><br>
+      New T = 2π√(1.0/90) = 0.66 s, up from 0.63 s: <b>longer</b>
+    </div>
+    <p class="take">The sticky collision loses kinetic energy, so the amplitude shrinks; the extra mass makes the period longer. Try the same thing with clay landing at an end, where v = 0: the amplitude wouldn't change at all.</p>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
+<div class="gcheck">
+  <h3>Self-check</h3>
+  <p>Answer first, then open.</p>
+  <ol class="q">
+<li>You double the amplitude of a mass on a spring. What happens to the period, the total energy and the maximum speed?
+      <details><summary>Answer</summary><div>The period stays the same. The energy (½kA²) becomes 4 times as big, and the maximum speed doubles.</div></details></li>
+    <li>You replace the mass on a spring with one 4 times as heavy. What happens to the period?
+      <details><summary>Answer</summary><div>T ∝ √m, so the period doubles.</div></details></li>
+    <li>A pendulum's string is made 4 times as long, and its bob is replaced with one twice as heavy. What happens to the period?
+      <details><summary>Answer</summary><div>T ∝ √L, so the longer string doubles the period. The heavier bob changes nothing.</div></details></li>
+    <li>A mass on a spring makes 20 full oscillations in 10 s. What are its period and frequency?
+      <details><summary>Answer</summary><div>T = 10/20 = 0.50 s; f = 1/T = 2.0 Hz.</div></details></li>
+    <li>A 0.20 kg mass hung on a spring stretches it 0.050 m. What is k, and what is the period when it bounces?
+      <details><summary>Answer</summary><div>kΔy = mg: k = 2.0/0.050 = 40 N/m. T = 2π√(0.20/40) = 2π(0.071) = 0.44 s.</div></details></li>
+    <li>Where in its motion does an oscillating mass on a spring have its greatest speed? Its greatest acceleration?
+      <details><summary>Answer</summary><div>Greatest speed at equilibrium (all the energy is kinetic). Greatest acceleration at the two ends, where the spring force is biggest.</div></details></li>
+    <li>A spring with k = 200 N/m oscillates with A = 0.10 m. Where are its kinetic and potential energies equal?
+      <details><summary>Answer</summary><div>E = 1.0 J. Equal halves means ½kx² = 0.50 J, so x = √(1.0/200) ≈ 0.071 m from equilibrium (that's A/√2), on either side.</div></details></li>
+    <li>Astronauts on the space station measure their mass by bouncing on a spring-mounted chair. Why does that work in orbit when a bathroom scale doesn't?
+      <details><summary>Answer</summary><div>The chair's period depends on inertial mass (T = 2π√(m/k)), and inertia doesn't need gravity. A scale reads the normal force, which is zero when everything is in free fall together.</div></details></li>
+    <li>A pendulum hangs in an elevator. What happens to its period while the elevator accelerates upward?
+      <details><summary>Answer</summary><div>The period gets shorter. Accelerating upward acts like a stronger gravity (g + a), and T = 2π√(L/g) decreases as g increases.</div></details></li>
+    <li>On a position–time graph of SHM, x is at its most positive value. What is the sign of the acceleration there?
+      <details><summary>Answer</summary><div>Negative. The restoring force, and so the acceleration, always points back toward equilibrium: a = −(k/m)x.</div></details></li>
+    <li><span class="ib">IB</span> A child on a swing is pushed once per swing, at just the right moment. Why does the amplitude build up? What would friction (damping) do?
+      <details><summary>Answer</summary><div>The pushes come at the swing's natural frequency (resonance), so each one adds energy in step with the motion and the amplitude grows. Damping removes energy every cycle, so the amplitude levels off at a smaller value, and without pushes it would die away.</div></details></li>
+  </ol>
+</div>
+</div>
+<p class="gnext"><a href="#practice" data-view="practice">Practice questions for this unit →</a></p>
+<script>
+(function(){
+  var root=document.currentScript?document.currentScript.parentNode:document;
+  var tabs=[].slice.call(root.querySelectorAll('.gtabs .tab'));
+  function show(t){tabs.forEach(function(b){var on=b===t;b.setAttribute('aria-selected',on?'true':'false');b.tabIndex=on?0:-1;document.getElementById(b.getAttribute('aria-controls')).hidden=!on;});}
+  tabs.forEach(function(b,i){
+    b.addEventListener('click',function(){show(b);});
+    b.addEventListener('keydown',function(e){var k=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(k){var n=tabs[(i+k+tabs.length)%tabs.length];show(n);n.focus();e.preventDefault();}});
+  });
+})();
+</script>
+</section>
+  </div>
   <div class="view" id="v-practice" hidden>
   <section class="review" id="review">
     <div class="simbar"><h2>Practice questions</h2><a id="ropen" class="mono" href="https://script.google.com/a/macros/fcps.org/s/AKfycbzW6NpFGf5yjZ843WN0pDy-mzI0r1iCcBIuoJpMCEJeWwbUARiSnAC_lf2bWQeHWoGjHA/exec?unit=P1-10" target="_blank" rel="noopener">Open in a new tab ↗</a></div>

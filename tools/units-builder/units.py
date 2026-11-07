@@ -383,7 +383,7 @@ UNITS = {
         '<b>Masses and Springs</b> (Energy screen). Watch the energy bars as the mass bounces. When is the spring energy biggest?',
         '<b>Pendulum Lab</b> (Energy screen). Compare the speed at the bottom for two different release heights.']},
 ]},
-'P1-07': {'course': 'AP Physics 1 / IB', 'num': '07', 'title': 'Impulse and Momentum', 'tabs': [
+'P1-07': {'course': 'AP Physics 1 / IB', 'num': '07', 'title': 'Impulse and Momentum', 'guide': 'guides/P1-07.html', 'tabs': [
     {'code': '', 'name': 'Crash Test', 'sim': 'crash', 'tasks': [
         '<b>Predict, then check.</b> A crumple zone doubles the collision time. What happens to the impulse? To the average force? Use the ×2 line to check both.',
         '<b>Claim.</b> A student says the crumple zone reduces the car’s change in momentum. Use steps 1–2 to explain what it really changes.',
@@ -425,7 +425,7 @@ UNITS = {
         '<b>1D:</b> set elasticity to 0%. Turn on kinetic energy. What fraction is lost when equal masses stick?',
         '<b>2D:</b> turn on the momentum vectors and the total. Make a glancing collision. Is the total momentum vector the same before and after?']},
 ]},
-'P1-09': {'course': 'AP Physics 1 / IB', 'num': '09', 'title': 'Fluids', 'tabs': [
+'P1-09': {'course': 'AP Physics 1 / IB', 'num': '09', 'title': 'Fluids', 'guide': 'guides/P1-09.html', 'tabs': [
     {'code': '', 'name': 'Pressure & Depth', 'sim': 'pressure', 'tasks': [
         '<b>Predict, then check.</b> Find the absolute and gauge pressure 5.0 m under water. How deep must you go for the pressure to double?',
         'Compare the three containers at the same depth. Why doesn’t the shape matter?',
@@ -928,7 +928,7 @@ UNITS.update({
         '<b>System.</b> When the box doesn’t slip, find the road force with (M + m)a. Why does that shortcut fail once the box slides? Find the road force a different way.',
         '<b>Braking.</b> Which way does friction on the box point now? Which way does the box push on the truck bed? Name the third-law pair.']},
 ]},
-'P1-08': {'course': 'AP Physics 1 / IB', 'num': '08', 'title': 'Rotation', 'tabs': [
+'P1-08': {'course': 'AP Physics 1 / IB', 'num': '08', 'title': 'Rotation', 'guide': 'guides/P1-08.html', 'tabs': [
     {'code': '', 'name': 'Spinning Wheel', 'sim': 'spin', 'tasks': [
         '<b>Same equations, new letters.</b> A wheel starts at 2 rad/s and speeds up at 3 rad/s² for 4 s. Find ω and the number of revolutions, then check.',
         'Use “Turns around.” Sketch the ω–t graph and explain what the area means when part of it is below the axis.',
@@ -965,7 +965,7 @@ UNITS.update({
         '<b>Door.</b> Clay hits a door at 0.8 m from the hinge and sticks. Find ω. Then hit near the hinge: why does the door barely move?',
         'In all three, explain why there is no outside torque.']},
 ]},
-'P1-10': {'course': 'AP Physics 1 / IB', 'num': '10', 'title': 'Simple Harmonic Motion', 'tabs': [
+'P1-10': {'course': 'AP Physics 1 / IB', 'num': '10', 'title': 'Simple Harmonic Motion', 'guide': 'guides/P1-10.html', 'tabs': [
     {'code': '', 'name': 'Mass on a Spring', 'sim': 'shm', 'tasks': [
         '<b>Predict, then check.</b> What happens to the period if you double the amplitude? If you make the mass 4× bigger? Use the ×2 line.',
         'Where in the motion is the speed biggest? The acceleration? The force? Use the x, v and a graphs to justify each answer.',
