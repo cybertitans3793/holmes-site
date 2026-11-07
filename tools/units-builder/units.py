@@ -36,6 +36,7 @@ SIMS = {
     'puck':    {'file': 'sims/circ-puck.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Puck in Space, Balanced Forces, Inertia on a Cart, When Do They Meet? and Springs are original.'},
     'balance': {'file': 'sims/circ-balance.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'cartball':{'file': 'sims/circ-cartball.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'ab-cartball':{'file': 'sims/circ-ab-cartball.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},   # ABP: no t = 2u/g or ½at²
     'meet':    {'file': 'sims/circ-meet.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'chase':   {'file': 'sims/circ-chase.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Chase &amp; Collide, Up and Down, Brake or Go?, Force &amp; Motion Graphs and Elevator Scale are original.'},
     'updown':  {'file': 'sims/circ-updown.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
@@ -745,7 +746,7 @@ UNITS.update({
 'AB-02': {'course': AB, 'num': '02', 'title': 'Newton’s Laws', 'tabs': [
     {'code': '', 'name': 'Puck in Space', 'sim': 'puck', 'tasks': ['Kick the puck once. Why does it keep going at a constant speed?', 'Kick it sideways while it is moving. Which way does it go now?', 'Use Newton’s first law to explain why astronauts don’t need engines to keep moving.']},
     {'code': '', 'name': 'Balanced Forces', 'sim': 'ab-balance', 'tasks': ['Push a crate at constant speed. How does the push compare with friction?', 'Skydiver: why does she stop speeding up even though gravity is still pulling?', 'Draw a free-body diagram at terminal speed. What is the net force?']},
-    {'code': '', 'name': 'Inertia on a Cart', 'sim': 'cartball', 'tasks': ['A ball sits on a cart. The cart speeds up. Which way does the ball roll? Why?', 'Watch from the cart, then from the ground. Is the ball really moving backward?', 'Explain why you lurch forward when a bus brakes.']},
+    {'code': '', 'name': 'Inertia on a Cart', 'sim': 'ab-cartball', 'tasks': ['A ball sits on a cart. The cart speeds up. Which way does the ball roll? Why?', 'Watch from the cart, then from the ground. Is the ball really moving backward?', 'Explain why you lurch forward when a bus brakes.']},
     {'code': '', 'name': 'Push the Cart', 'sim': 'cart', 'tasks': ['Set both μ to 0 and push with 12 N. Predict the acceleration of a 2.0 kg cart with a = F/m, then run it.', 'Double the mass but keep the force the same. What happens to the acceleration?', 'Turn friction back on. Find the smallest push that gets a 4.0 kg cart moving when μ<sub>s</sub> = 0.30. Use F<sub>f</sub> = μF<sub>N</sub> to check.', 'While the cart is moving, set the push equal to the friction. What does the cart do? Which of Newton’s laws explains it?']},
     {'code': '', 'name': 'Force Pairs', 'sim': 'pairs', 'tasks': [
         'Leave Forces on <b>Predict first</b>. For each interaction, which push is bigger? Which object speeds up more? Write it down, then switch to Show them.',
