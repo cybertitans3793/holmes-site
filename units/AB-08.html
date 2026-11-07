@@ -66,6 +66,11 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
 /* Guides: an equations table never spills out of its card, whatever the window width */
 #v-study .guide .gcard{min-width:0;overflow-x:auto}
 @media (max-width:1000px){#v-study .guide td:first-child{white-space:normal}}
+/* Practice view: choose a question set when a unit has more than one */
+.rpick{display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px;border-bottom:3px solid var(--ink);background:var(--soft)}
+.rbtn{all:unset;cursor:pointer;font-weight:700;font-size:16px;padding:9px 14px;border:2px solid var(--ink);background:#fff}
+.rbtn[aria-pressed="true"]{background:var(--ink);color:var(--bg);box-shadow:inset 0 -4px 0 var(--hot)}
+.rbtn:focus-visible{outline:3px solid var(--hot);outline-offset:2px}
 
 
 </style>
@@ -127,6 +132,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
 .guide .work .wt{margin:6px 0 2px}
 .guide .ex .take{margin:8px 0 0;font-weight:500}
 .guide .ex svg{float:right;margin:0 0 6px 12px}
+.guide .ex svg.wide{float:none;display:block;max-width:100%;height:auto;margin:4px auto 10px}
 .guide .gcheck{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
 .guide .gcheck>p{margin:-4px 0 12px;color:var(--muted)}
 .guide ol.q{margin:0;padding-left:26px}
@@ -266,17 +272,72 @@ body.present .guide{display:none}
       <li><b>P waves</b> (primary) are push–pull (longitudinal). They are faster and arrive first. They go through solids and liquids.</li>
       <li><b>S waves</b> (secondary) are side to side (transverse). They are slower and arrive second. They can't go through liquids.</li>
       <li>On the far side of the Earth from an earthquake, there is an <b>S-wave shadow zone</b> where no S waves arrive. That shows the <b>outer core is liquid</b>. P waves bend (refract) at the core, which leaves a narrower P-wave shadow zone.</li>
-      <li>The farther a station is from the quake, the longer the gap between the P and S waves. In the lab, distance (km) = 8 × (S − P time in s). Circles from <b>three</b> stations cross at the epicenter.</li>
+      <li>Going deeper, the <b>temperature, pressure and density all increase</b>. The densest material, iron and nickel, sank to the center long ago.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Earthquakes</h3>
+    <ul>
+      <li>The <b>focus</b> is the spot underground where the rock breaks. The <b>epicenter</b> is the spot on the surface right above it.</li>
+      <li>P and S waves leave the focus at the same moment. P waves are faster, so they <b>arrive first</b>.</li>
+      <li>The farther away a station is, the more the S waves fall behind. So the <b>lag</b> (S arrival time − P arrival time) <b>grows with distance</b>.</li>
+      <li>A <b>travel-time graph</b> shows how long each wave takes to reach each distance. Find the distance where the S curve is exactly the lag above the P curve.</li>
+      <li>One station gives only a distance, not a direction: the quake could be anywhere on a circle around it. Two circles cross at two points. A <b>third station</b> picks the one spot where all three circles meet: the epicenter.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Why plates move: mantle convection</h3>
+    <svg class="gfig" width="340" height="224" viewBox="0 0 340 224" aria-label="Side view of a block of mantle: a mid-ocean ridge in the middle and a trench at each end. Hot rock rises under the ridge, flows outward under both ocean plates, and cooler rock sinks beside each plate where it dives under the land at a trench">
+    <rect x="14" y="66" width="304" height="122" fill="#fff4cc" stroke="#111" stroke-width="2"/>
+    <rect x="14" y="188" width="304" height="22" fill="#ff6a2b" stroke="#111" stroke-width="2"/>
+    <text x="166" y="203" font-size="10" font-family="IBM Plex Mono,monospace" text-anchor="middle" fill="#fff" font-weight="700">outer core: heat comes up from here</text>
+    <rect x="56" y="40" width="220" height="16" fill="#cfe3ff"/>
+    <polygon points="14,34 54,34 58,56 56,66 14,66" fill="#d6d6d6" stroke="#111" stroke-width="2"/>
+    <polygon points="318,34 278,34 274,56 276,66 318,66" fill="#d6d6d6" stroke="#111" stroke-width="2"/>
+    <text x="34" y="52" font-size="9" font-family="IBM Plex Mono,monospace" text-anchor="middle">land</text><text x="298" y="52" font-size="9" font-family="IBM Plex Mono,monospace" text-anchor="middle">land</text>
+    <polygon points="162,47 140,56 60,56 34,140 38,146 44,144 68,66 162,66" fill="#c9b8a6" stroke="#111" stroke-width="2" stroke-linejoin="round"/>
+    <polygon points="170,47 192,56 272,56 298,140 294,146 288,144 264,66 170,66" fill="#c9b8a6" stroke="#111" stroke-width="2" stroke-linejoin="round"/>
+    <rect x="162.5" y="48" width="7" height="18" fill="#ff6a2b"/>
+    <text x="166" y="14" font-size="11" font-family="IBM Plex Mono,monospace" text-anchor="middle" font-weight="700">mid-ocean ridge</text>
+    <text x="64" y="30" font-size="10" font-family="IBM Plex Mono,monospace" text-anchor="middle" font-weight="700">trench</text><text x="268" y="30" font-size="10" font-family="IBM Plex Mono,monospace" text-anchor="middle" font-weight="700">trench</text>
+    <line x1="148" y1="30" x2="110" y2="30" stroke="#111" stroke-width="2"/><polygon points="110,25 110,35 100,30" fill="#111"/>
+    <line x1="184" y1="30" x2="222" y2="30" stroke="#111" stroke-width="2"/><polygon points="222,25 222,35 232,30" fill="#111"/>
+    <path d="M140 154 L140 84 Q140 76 132 76" fill="none" stroke="#ff6a2b" stroke-width="4"/>
+    <path d="M192 154 L192 84 Q192 76 200 76" fill="none" stroke="#ff6a2b" stroke-width="4"/>
+    <path d="M132 76 L90 76 Q83 76 80 83" fill="none" stroke="#111" stroke-width="2" stroke-dasharray="5 3"/>
+    <path d="M200 76 L242 76 Q249 76 252 83" fill="none" stroke="#111" stroke-width="2" stroke-dasharray="5 3"/>
+    <path d="M80 83 L57 152 Q55 160 63 162" fill="none" stroke="#1546d6" stroke-width="4"/>
+    <path d="M252 83 L275 152 Q277 160 269 162" fill="none" stroke="#1546d6" stroke-width="4"/>
+    <path d="M63 162 L132 162 Q140 162 140 154" fill="none" stroke="#111" stroke-width="2" stroke-dasharray="5 3"/>
+    <path d="M269 162 L200 162 Q192 162 192 154" fill="none" stroke="#111" stroke-width="2" stroke-dasharray="5 3"/>
+    <polygon points="134,124 146,124 140,112" fill="#ff6a2b"/>
+    <polygon points="198,124 186,124 192,112" fill="#ff6a2b"/>
+    <polygon points="112,71 112,81 102,76" fill="#111"/>
+    <polygon points="220,71 220,81 230,76" fill="#111"/>
+    <polygon points="62,113 73,117 64,126" fill="#1546d6"/>
+    <polygon points="270,113 259,117 268,126" fill="#1546d6"/>
+    <polygon points="92,157 92,167 102,162" fill="#111"/>
+    <polygon points="240,157 240,167 230,162" fill="#111"/>
+    <text x="166" y="118" font-size="10" font-family="IBM Plex Mono,monospace" fill="#c43a00" font-weight="700" text-anchor="middle">hot</text><text x="166" y="130" font-size="10" font-family="IBM Plex Mono,monospace" fill="#c43a00" font-weight="700" text-anchor="middle">rock</text><text x="166" y="142" font-size="10" font-family="IBM Plex Mono,monospace" fill="#c43a00" font-weight="700" text-anchor="middle">rises</text>
+    <text x="80" y="122" font-size="10" font-family="IBM Plex Mono,monospace" fill="#1546d6" font-weight="700">cooler</text><text x="80" y="134" font-size="10" font-family="IBM Plex Mono,monospace" fill="#1546d6" font-weight="700">rock</text><text x="80" y="146" font-size="10" font-family="IBM Plex Mono,monospace" fill="#1546d6" font-weight="700">sinks</text>
+    <text x="252" y="122" font-size="10" font-family="IBM Plex Mono,monospace" fill="#1546d6" font-weight="700" text-anchor="end">cooler</text><text x="252" y="134" font-size="10" font-family="IBM Plex Mono,monospace" fill="#1546d6" font-weight="700" text-anchor="end">rock</text><text x="252" y="146" font-size="10" font-family="IBM Plex Mono,monospace" fill="#1546d6" font-weight="700" text-anchor="end">sinks</text>
+    <text x="166" y="182" font-size="9" font-family="IBM Plex Mono,monospace" text-anchor="middle">mantle</text>
+    </svg>
+    <ul>
+      <li>The <b>lithosphere</b> (crust + the stiff top of the mantle) is broken into <b>plates</b>. They ride on the <b>asthenosphere</b>, a soft layer of the upper mantle that can flow very slowly.</li>
+      <li>Heat from the core warms the bottom of the mantle. Hot rock is less dense, so it <b>rises</b>. Near the top it spreads sideways under the plates, cools, becomes denser and <b>sinks</b>. This loop is a <b>convection current</b>, like hot water rising in a pot.</li>
+      <li>Where hot rock rises, plates are pulled <b>apart</b>: a mid-ocean ridge.</li>
+      <li>Where cooler rock sinks, a plate dives back down: a <b>subduction zone</b> with a trench. The sinking edge also pulls the rest of the plate along.</li>
+      <li>The flow is slow: a few centimeters a year, about as fast as your fingernails grow.</li>
     </ul>
   </div>
   <div class="gcard">
     <h3>Plates and boundaries</h3>
     <ul>
-      <li>The crust and the top of the mantle form rigid <b>plates</b> that move a few centimeters a year, carried by slow, heat-driven flow (convection) in the mantle.</li>
       <li><b>Ocean crust</b> is thin and dense (basalt). <b>Continental crust</b> is thick and less dense, so it floats higher.</li>
-      <li><b>Divergent</b> boundary: plates move <b>apart</b>. Magma rises and makes new crust: mid-ocean ridges and rift valleys.</li>
-      <li><b>Convergent</b> boundary: plates move <b>together</b>. Dense ocean crust sinks under the other plate (<b>subduction</b>), making a deep trench, earthquakes and a chain of volcanoes. Two continents crumple into mountains.</li>
-      <li><b>Transform</b> boundary: plates <b>slide past</b> each other. Lots of earthquakes, few volcanoes.</li>
+      <li><b>Divergent</b> boundary: plates move <b>apart</b>. Magma rises and makes new crust. Examples: the <b>Mid-Atlantic Ridge</b> (Iceland sits on it) and the <b>East African Rift</b>.</li>
+      <li><b>Convergent</b> boundary: plates move <b>together</b>. Ocean crust meeting a continent sinks under it (<b>subduction</b>), making a deep trench, earthquakes and a chain of volcanoes: the <b>Andes</b> in South America. Two continents can't sink, so they crumple into mountains: India pushing into Asia made the <b>Himalayas</b>.</li>
+      <li><b>Transform</b> boundary: plates <b>slide past</b> each other. Lots of earthquakes, few volcanoes. Example: the <b>San Andreas Fault</b> in California.</li>
       <li>Most earthquakes and volcanoes happen along plate boundaries. That's why Japan has many and Maryland has very few.</li>
       <li><b>Magnetic stripes:</b> new sea floor at a ridge records Earth's magnetic field, which flips now and then. The stripes match on both sides, which shows the sea floor spreading.</li>
       <li><b>Hot spots</b> stay put in the mantle while the plate moves over them, making a chain of volcanoes that get older farther from the hot spot. Plate speed = distance ÷ age.</li>
@@ -311,8 +372,9 @@ body.present .guide{display:none}
   <h3>How to locate an earthquake</h3>
   <ol>
     <li><b>Read the seismogram</b> at one station: the time the P wave starts and the time the S wave starts.</li>
-    <li><b>Find the gap,</b> S − P, in seconds.</li>
-    <li><b>Find the distance:</b> 8 × (S − P) gives km (in the lab's simplified Earth).</li>
+    <li><b>Find the lag,</b> S − P. Change minutes to seconds if the graph is in seconds.</li>
+    <li><b>Mark the lag on a strip of paper:</b> hold its edge along the graph's time axis and make two marks the lag apart.</li>
+    <li><b>Slide the strip</b> to the right, keeping it straight up and down, until one mark sits on the P curve and the other on the S curve. Read the distance straight below.</li>
     <li><b>Draw a circle</b> with that radius around the station. The quake is somewhere on that circle.</li>
     <li><b>Repeat for two more stations.</b> The one spot where all three circles cross is the epicenter.</li>
   </ol>
@@ -445,27 +507,83 @@ body.present .guide{display:none}
 
   <div class="ex">
     <div class="kind">Earth's interior</div>
-    <svg width="210" height="92" viewBox="0 0 210 92" aria-label="Seismogram: small P-wave wiggles arrive first, bigger S-wave wiggles 45 s later">
-      <polyline points="10,40.0 11,40.0 12,40.0 13,40.0 14,40.0 15,40.0 16,40.0 17,40.0 18,40.0 19,40.0 20,40.0 21,40.0 22,40.0 23,40.0 24,40.0 25,40.0 26,40.0 27,40.0 28,40.0 29,40.0 30,40.0 31,40.0 32,40.0 33,40.0 34,40.0 35,40.0 36,40.0 37,40.0 38,40.0 39,40.0 40,40.0 41,34.3 42,37.0 43,43.9 44,45.0 45,38.8 46,34.6 47,38.3 48,44.3 49,43.9 50,37.9 51,35.1 52,39.5 53,44.5 54,42.9 55,37.2 56,35.7 57,40.5 58,44.4 59,41.8 60,36.7 61,36.5 62,41.3 63,44.1 64,40.9 65,36.5 66,37.3 67,42.0 68,43.6 69,40.0 70,36.5 71,38.2 72,42.4 73,43.1 74,39.3 75,36.7 76,39.0 77,42.7 78,42.4 79,38.7 80,37.0 81,39.7 82,42.8 83,41.8 84,38.3 85,37.4 86,40.3 87,42.7 88,41.1 89,38.0 90,37.8 91,40.8 92,42.5 93,40.5 94,37.8 95,38.4 96,41.2 97,42.2 98,40.0 99,37.8 100,38.9 101,41.5 102,41.9 103,39.5 104,37.9 105,39.4 106,41.7 107,41.5 108,39.2 109,38.1 110,39.8 111,41.7 112,41.1 113,38.9 114,38.4 115,40.2 116,41.7 117,40.7 118,38.8 119,38.7 120,40.0 121,24.7 122,21.4 123,32.0 124,48.1 125,57.5 126,53.5 127,39.7 128,26.7 129,24.1 130,33.4 131,47.2 132,55.0 133,51.4 134,39.5 135,28.5 136,26.5 137,34.6 138,46.3 139,52.9 140,49.6 141,39.4 142,30.0 143,28.5 144,35.5 145,45.6 146,51.1 147,48.1 148,39.3 149,31.4 150,30.2 151,36.3 152,44.9 153,49.5 154,46.8 155,39.2 156,32.5 157,31.6 158,37.0 159,44.3 160,48.2 161,45.8 162,39.2 163,33.5 164,32.9 165,37.5 166,43.8 167,47.0 168,44.9 169,39.2 170,34.4 171,33.9 172,38.0 173,43.4 174,46.0 175,44.1 176,39.2 177,35.2 178,34.8 179,38.4 180,42.9 181,45.1 182,43.4 183,39.3 184,35.8 185,35.6 186,38.7 187,42.6 188,44.4 189,42.9 190,39.3 191,36.4 192,36.3 193,38.9 194,42.3 195,43.8 196,42.4 197,39.3 198,36.9 199,36.8 200,39.1" fill="none" stroke="#111" stroke-width="1.6"/>
-      <line x1="40" y1="8" x2="40" y2="66" stroke="#1546d6" stroke-width="1.5" stroke-dasharray="3 2"/>
-      <text x="48" y="8" font-size="11" font-family="IBM Plex Mono,monospace" fill="#1546d6" text-anchor="middle">P</text>
-      <line x1="120" y1="8" x2="120" y2="66" stroke="#c43a00" stroke-width="1.5" stroke-dasharray="3 2"/>
-      <text x="128" y="8" font-size="11" font-family="IBM Plex Mono,monospace" fill="#c43a00" text-anchor="middle">S</text>
-      <line x1="40" y1="76" x2="120" y2="76" stroke="#111" stroke-width="1.5"/>
-      <text x="80" y="90" font-size="11" font-family="IBM Plex Mono,monospace" text-anchor="middle">S − P = 45 s</text>
+    <h4>From lag time to distance</h4>
+    <svg class="wide" width="340" height="300" viewBox="0 0 340 300" aria-label="Travel-time graph: P and S curves rising from zero; S rises faster. At 1500 km the P curve is at 200 s and the S curve at 350 s, a lag of 150 s">
+      <line x1="44.0" y1="22" x2="44.0" y2="262" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="67.3" y1="22" x2="67.3" y2="262" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="90.7" y1="22" x2="90.7" y2="262" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="114.0" y1="22" x2="114.0" y2="262" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="137.3" y1="22" x2="137.3" y2="262" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="160.7" y1="22" x2="160.7" y2="262" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="184.0" y1="22" x2="184.0" y2="262" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="207.3" y1="22" x2="207.3" y2="262" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="230.7" y1="22" x2="230.7" y2="262" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="254.0" y1="22" x2="254.0" y2="262" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="277.3" y1="22" x2="277.3" y2="262" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="300.7" y1="22" x2="300.7" y2="262" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="324.0" y1="22" x2="324.0" y2="262" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="44" y1="262.0" x2="324" y2="262.0" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="44" y1="250.0" x2="324" y2="250.0" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="44" y1="238.0" x2="324" y2="238.0" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="44" y1="226.0" x2="324" y2="226.0" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="44" y1="214.0" x2="324" y2="214.0" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="44" y1="202.0" x2="324" y2="202.0" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="44" y1="190.0" x2="324" y2="190.0" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="44" y1="178.0" x2="324" y2="178.0" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="44" y1="166.0" x2="324" y2="166.0" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="44" y1="154.0" x2="324" y2="154.0" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="44" y1="142.0" x2="324" y2="142.0" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="44" y1="130.0" x2="324" y2="130.0" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="44" y1="118.0" x2="324" y2="118.0" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="44" y1="106.0" x2="324" y2="106.0" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="44" y1="94.0" x2="324" y2="94.0" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="44" y1="82.0" x2="324" y2="82.0" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="44" y1="70.0" x2="324" y2="70.0" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="44" y1="58.0" x2="324" y2="58.0" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="44" y1="46.0" x2="324" y2="46.0" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="44" y1="34.0" x2="324" y2="34.0" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="44" y1="22.0" x2="324" y2="22.0" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="44" y1="22" x2="44" y2="262" stroke="#111" stroke-width="2"/><line x1="44" y1="262" x2="324" y2="262" stroke="#111" stroke-width="2"/>
+      <text x="40" y="265.5" font-size="10" font-family="IBM Plex Mono,monospace" text-anchor="end">0</text>
+      <text x="40" y="241.5" font-size="10" font-family="IBM Plex Mono,monospace" text-anchor="end">60</text>
+      <text x="40" y="217.5" font-size="10" font-family="IBM Plex Mono,monospace" text-anchor="end">120</text>
+      <text x="40" y="193.5" font-size="10" font-family="IBM Plex Mono,monospace" text-anchor="end">180</text>
+      <text x="40" y="169.5" font-size="10" font-family="IBM Plex Mono,monospace" text-anchor="end">240</text>
+      <text x="40" y="145.5" font-size="10" font-family="IBM Plex Mono,monospace" text-anchor="end">300</text>
+      <text x="40" y="121.5" font-size="10" font-family="IBM Plex Mono,monospace" text-anchor="end">360</text>
+      <text x="40" y="97.5" font-size="10" font-family="IBM Plex Mono,monospace" text-anchor="end">420</text>
+      <text x="40" y="73.5" font-size="10" font-family="IBM Plex Mono,monospace" text-anchor="end">480</text>
+      <text x="40" y="49.5" font-size="10" font-family="IBM Plex Mono,monospace" text-anchor="end">540</text>
+      <text x="40" y="25.5" font-size="10" font-family="IBM Plex Mono,monospace" text-anchor="end">600</text>
+      <text x="44.0" y="276" font-size="10" font-family="IBM Plex Mono,monospace" text-anchor="middle">0</text>
+      <text x="90.7" y="276" font-size="10" font-family="IBM Plex Mono,monospace" text-anchor="middle">500</text>
+      <text x="137.3" y="276" font-size="10" font-family="IBM Plex Mono,monospace" text-anchor="middle">1000</text>
+      <text x="184.0" y="276" font-size="10" font-family="IBM Plex Mono,monospace" text-anchor="middle">1500</text>
+      <text x="230.7" y="276" font-size="10" font-family="IBM Plex Mono,monospace" text-anchor="middle">2000</text>
+      <text x="277.3" y="276" font-size="10" font-family="IBM Plex Mono,monospace" text-anchor="middle">2500</text>
+      <text x="324.0" y="276" font-size="10" font-family="IBM Plex Mono,monospace" text-anchor="middle">3000</text>
+      <text x="184.0" y="292" font-size="11" font-family="IBM Plex Mono,monospace" text-anchor="middle">distance from the quake (km)</text>
+      <text x="12" y="142.0" font-size="11" font-family="IBM Plex Mono,monospace" text-anchor="middle" transform="rotate(-90 12 142.0)">travel time (s)</text>
+      <polyline points="44.0,262.0 53.3,250.4 62.7,239.2 72.0,228.3 81.3,217.9 90.7,207.7 100.0,197.9 109.3,188.4 118.7,179.2 128.0,170.3 137.3,161.6 146.7,153.2 156.0,145.1 165.3,137.2 174.7,129.5 184.0,122.0 193.3,114.7 202.7,107.7 212.0,100.8 221.3,94.1 230.7,87.5 240.0,81.2 249.3,75.0 258.7,69.0 268.0,63.1 277.3,57.3 286.7,51.7 296.0,46.2 305.3,40.9 314.7,35.7 324.0,30.6" fill="none" stroke="#c43a00" stroke-width="3"/>
+      <polyline points="44.0,262.0 53.3,255.4 62.7,249.1 72.0,243.0 81.3,237.0 90.7,231.2 100.0,225.6 109.3,220.2 118.7,214.9 128.0,209.8 137.3,204.9 146.7,200.0 156.0,195.3 165.3,190.8 174.7,186.3 184.0,182.0 193.3,177.8 202.7,173.7 212.0,169.7 221.3,165.8 230.7,162.0 240.0,158.3 249.3,154.7 258.7,151.2 268.0,147.7 277.3,144.4 286.7,141.1 296.0,137.9 305.3,134.7 314.7,131.7 324.0,128.7" fill="none" stroke="#1546d6" stroke-width="3"/>
+      <text x="250" y="54.0" font-size="13" font-weight="700" font-family="IBM Plex Mono,monospace" fill="#c43a00" text-anchor="end">S wave</text>
+      <text x="263.33333333333337" y="167.4" font-size="13" font-weight="700" font-family="IBM Plex Mono,monospace" fill="#1546d6">P wave</text>
+      <line x1="184.0" y1="182.0" x2="184.0" y2="122.0" stroke="#111" stroke-width="2.5"/>
+      <line x1="179.0" y1="182.0" x2="189.0" y2="182.0" stroke="#111" stroke-width="2.5"/><line x1="179.0" y1="122.0" x2="189.0" y2="122.0" stroke="#111" stroke-width="2.5"/>
+      <text x="192.0" y="155.0" font-size="11" font-weight="700" font-family="IBM Plex Mono,monospace">150 s</text>
       </svg>
-    <h4>How far away was the earthquake?</h4>
-    <p>A seismograph station records the P wave, and the S wave arrives 45 s later. Use the lab's speeds (P waves 8 km/s, S waves 4 km/s). (a) How far away was the earthquake? (b) How long did each wave take to arrive?</p>
+    <p>A seismograph station records the P wave, and the S wave arrives 2 min 30 s later. (a) Use the travel-time graph to find how far away the earthquake was. (b) A second station's lag is only 30 s. Which station is closer, and about how far is it? (c) Why can't these two stations alone tell where the quake was?</p>
     <div class="work">
-      <p class="wt">(a) Use the lab rule:</p>
-      <math class="eq" display="block"><mrow><mi>d</mi><mo>&#x0003D;</mo><mn>8</mn><mo>&#x000D7;</mo><mo stretchy="false">&#x00028;</mo><mi>S</mi><mo>&#x02212;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>8</mn><mo>&#x000D7;</mo><mn>45</mn></mrow></math>
-      <math class="eq ans" display="block"><mrow><mi>d</mi><mo>&#x0003D;</mo><mn>360</mn><mspace width="0.167em" /><mtext>km</mtext></mrow></math>
-      <p class="wt">(b) Time = distance ÷ speed:</p>
-      <math class="eq" display="block"><mrow><msub><mi>t</mi><mi>P</mi></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>360</mn></mrow><mrow><mn>8</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>45</mn><mspace width="0.167em" /><mtext>s</mtext></mrow></math>
-      <math class="eq" display="block"><mrow><msub><mi>t</mi><mi>S</mi></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>360</mn></mrow><mrow><mn>4</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>90</mn><mspace width="0.167em" /><mtext>s</mtext></mrow></math>
-      <p class="wt">Check: the gap is 90 − 45 = 45 s ✓</p>
+      <p class="wt">(a) Change the lag to seconds:</p>
+      <math class="eq" display="block"><mrow><mn>2</mn><mspace width="0.167em" /><mtext>min</mtext><mspace width="0.278em" /><mn>30</mn><mspace width="0.167em" /><mtext>s</mtext><mo>&#x0003D;</mo><mn>120</mn><mo>&#x0002B;</mo><mn>30</mn><mo>&#x0003D;</mo><mn>150</mn><mspace width="0.167em" /><mtext>s</mtext></mrow></math>
+      <p class="wt">Find where the S curve is 150 s above the P curve. That happens at 1500 km (the black bar on the graph). Check by reading both curves there:</p>
+      <math class="eq" display="block"><mrow><msub><mi>t</mi><mi>S</mi></msub><mo>&#x02212;</mo><msub><mi>t</mi><mi>P</mi></msub><mo>&#x0003D;</mo><mn>350</mn><mo>&#x02212;</mo><mn>200</mn><mo>&#x0003D;</mo><mn>150</mn><mspace width="0.167em" /><mtext>s</mtext><mspace width="0.278em" /><mo>&#x02713;</mo></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>d</mi><mo>&#x02248;</mo><mn>1500</mn><mspace width="0.167em" /><mtext>km</mtext></mrow></math>
+      <p class="wt">(b) A shorter lag means a shorter distance, so the second station is closer. The curves are 30 s apart at about 250 km:</p>
+      <math class="eq ans" display="block"><mrow><mi>d</mi><mo>&#x02248;</mo><mn>250</mn><mspace width="0.167em" /><mtext>km</mtext></mrow></math>
+      <p class="wt">(c) Each station gives a distance but not a direction. Draw a circle around each station with that radius: two circles cross at two points. A third station's circle crosses only one of them, which is the epicenter.</p>
     </div>
-    <p class="take">Where the 8 comes from: S waves are half as fast, so they take twice as long. The gap equals the P wave's travel time, d ÷ 8, so d = 8 × gap. One station gives a distance only, so you need three stations to find the spot.</p>
+    <p class="take">The gap between the curves keeps widening to the right: the farther the waves travel, the farther the slower S wave falls behind. That's why a bigger lag always means a more distant quake.</p>
   </div>
 </div>
 
@@ -495,10 +613,16 @@ body.present .guide{display:none}
       <details><summary>Answer</summary><div>Toward the normal: the oil has a bigger n, so light slows down. v = c/n = (3.0 × 10⁸)/1.47 = 2.0 × 10⁸ m/s.</div></details></li>
     <li>S waves from an earthquake never arrive at stations on the far side of the Earth. What does this tell scientists, and why?
       <details><summary>Answer</summary><div>Part of the core is liquid (the outer core). S waves are side-to-side waves and can't travel through a liquid, so the core blocks them and leaves an S-wave shadow zone.</div></details></li>
-    <li>Name the type of plate boundary: (a) the Mid-Atlantic Ridge, where new sea floor forms; (b) the west coast of South America, where ocean crust dives under the continent and the Andes volcanoes form; (c) the San Andreas Fault, where two plates slide past each other.
+    <li>Earth's radius is about 6400 km, and the crust under a continent is about 30 km thick. If Earth were an apple 4 cm in radius, how thick would its crust be? Is that thicker or thinner than apple skin?
+      <details><summary>Answer</summary><div>30 ÷ 6400 × 4 cm ≈ 0.019 cm ≈ <b>0.2 mm</b>, about as thin as apple skin. The crust is a very thin shell on a planet that is mostly mantle and core.</div></details></li>
+    <li>Sea-floor rock is youngest right at a mid-ocean ridge and gets older toward the trenches. Explain this using mantle convection.
+      <details><summary>Answer</summary><div>Hot, less dense mantle rock rises under the ridge and makes new crust there, so the youngest rock is at the ridge. The flow carries the sea floor sideways, away from the ridge, and it cools and gets older as it goes. At a trench the old, cold, dense plate sinks back into the mantle.</div></details></li>
+    <li>Name the type of plate boundary: (a) the Red Sea, which is slowly getting wider as Africa and Arabia pull apart; (b) Japan, with a deep ocean trench offshore and many volcanoes; (c) the Alpine Fault in New Zealand, where streams that cross it have been shifted sideways.
       <details><summary>Answer</summary><div>(a) Divergent. (b) Convergent (subduction). (c) Transform.</div></details></li>
     <li>A volcanic island is 300 km from the hot spot that made it, and its rock is 6 million years old. How fast is the plate moving, in km per million years and in cm per year?
       <details><summary>Answer</summary><div>300 km ÷ 6 million years = 50 km per million years. 50 km = 5,000,000 cm, so that's 5,000,000 cm ÷ 1,000,000 years = 5 cm/year.</div></details></li>
+    <li>Using the travel-time graph in the worked examples: a station's S wave arrives 3 min 6 s after its P wave. About how far away was the quake? Another station's lag is 1 min. Which station is closer?
+      <details><summary>Answer</summary><div>3 min 6 s = 180 + 6 = 186 s. The curves are 186 s apart at about <b>2000 km</b> (P at 250 s, S at about 436 s). A 1-min (60 s) lag is about 500 km, so the second station is much closer. A smaller lag always means a closer quake.</div></details></li>
   </ol>
 </div>
 </div>
@@ -518,6 +642,7 @@ body.present .guide{display:none}
   <div class="view" id="v-practice" hidden>
   <section class="review" id="review">
     <div class="simbar"><h2>Practice questions</h2><a id="ropen" class="mono" href="https://script.google.com/a/macros/fcps.org/s/AKfycbxm2XXzPq2s0JUlS2T0a2lQJ8Pm97_zyibH9rGrW4VUB3EAHWQy5SmQvxsOUYyUL08M/exec?a=08-R" target="_blank" rel="noopener">Open in a new tab ↗</a></div>
+    <div class="rpick" role="group" aria-label="Choose a question set"><button type="button" class="rbtn" data-src="https://script.google.com/a/macros/fcps.org/s/AKfycbxm2XXzPq2s0JUlS2T0a2lQJ8Pm97_zyibH9rGrW4VUB3EAHWQy5SmQvxsOUYyUL08M/exec?a=08-R" aria-pressed="true">Unit review</button><button type="button" class="rbtn" data-src="https://script.google.com/a/macros/fcps.org/s/AKfycbxm2XXzPq2s0JUlS2T0a2lQJ8Pm97_zyibH9rGrW4VUB3EAHWQy5SmQvxsOUYyUL08M/exec?a=08-E" aria-pressed="false">Earth’s interior benchmark review</button></div>
     <div class="rframe" id="rframe" data-src="https://script.google.com/a/macros/fcps.org/s/AKfycbxm2XXzPq2s0JUlS2T0a2lQJ8Pm97_zyibH9rGrW4VUB3EAHWQy5SmQvxsOUYyUL08M/exec?a=08-R"><div class="loading">Loading questions…</div></div>
   </section>
   </div>
@@ -530,12 +655,21 @@ function setView(v) {
   VIEWS.forEach(n => { const el = document.getElementById('v-' + n); if (el) el.hidden = n !== v; });
   document.querySelectorAll('.vbtn').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === v)));
   const back = document.getElementById('simsback'); if (back) back.hidden = v === 'explore';
-  if (v === 'practice') { const r = document.getElementById('rframe'); if (r && !r.querySelector('iframe')) r.innerHTML = '<iframe title="Practice questions" src="' + r.dataset.src + '"></iframe>'; }
+  if (v === 'practice') { const r = document.getElementById('rframe'); if (r && !r.querySelector('iframe')) r.innerHTML = '<iframe title="Practice questions" src="' + r.dataset.src + '" data-src="' + r.dataset.src + '"></iframe>'; }
   return v;
 }
 /* A link to a view this unit doesn't have (e.g. a guide's "Practice these ideas" on a unit with no review) is hidden. */
 document.querySelectorAll('a[data-view], .gnext [data-view]').forEach(a => { if (!document.getElementById('v-' + a.dataset.view)) (a.closest('.gnext') || a).hidden = true; });
 document.addEventListener('click', e => {
+  const rb = e.target.closest('.rbtn');
+  if (rb) {   /* switch question set: one frame per set, kept once loaded */
+    document.querySelectorAll('.rbtn').forEach(b => b.setAttribute('aria-pressed', String(b === rb)));
+    const r = document.getElementById('rframe'); r.dataset.src = rb.dataset.src; document.getElementById('ropen').href = rb.dataset.src;
+    let f = [...r.querySelectorAll('iframe')].find(x => x.dataset.src === rb.dataset.src);
+    r.querySelectorAll('iframe').forEach(x => { x.hidden = x !== f; });
+    if (!f) { f = document.createElement('iframe'); f.title = 'Practice questions'; f.src = f.dataset.src = rb.dataset.src; r.querySelectorAll('.loading').forEach(x => x.remove()); r.appendChild(f); }
+    return;
+  }
   const a = e.target.closest('[data-view]'); if (!a) return;
   e.preventDefault(); setView(a.dataset.view);
   const top = document.getElementById('views'); if (top && top.getBoundingClientRect().top < 0) top.scrollIntoView({ behavior: 'smooth' });

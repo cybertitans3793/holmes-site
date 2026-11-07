@@ -202,11 +202,23 @@ PRESENT_JS = """
 REVIEW = site.REVIEW_APP
 HOMEWORK = site.HOMEWORK_APP
 
+def practice_links(uid, u):
+    """[(label, url)] for the Practice view. AP units: the Review app for that unit. ABP units: the Homework-app
+    review assignment(s) in units.py 'review': one id ('04-R'), or a list of ids / (id, label) pairs when a unit
+    has more than one, e.g. [('04-R', 'Unit review'), ('04-S', 'Stars benchmark review')]."""
+    if uid.startswith(('P1-', 'P2-')): return [('Review questions', REVIEW + '?unit=' + uid)]
+    r = u.get('review')
+    if not r: return []
+    items = [r] if isinstance(r, str) else list(r)
+    out = []
+    for it in items:
+        rid, label = (it, '') if isinstance(it, str) else it
+        out.append((label or rid, HOMEWORK + '?a=' + rid))
+    return out
 def practice_url(uid, u):
-    """AP units: the Review app for that unit. ABP units: the Homework-app review assignment named by units.py 'review' (e.g. '04-R')."""
-    if uid.startswith(('P1-', 'P2-')): return REVIEW + '?unit=' + uid
-    if u.get('review'): return HOMEWORK + '?a=' + u['review']
-    return ''
+    """First Practice link ('' if none): decides whether the unit has a Practice view."""
+    links = practice_links(uid, u)
+    return links[0][1] if links else ''
 def guide_html(u):
     """Optional study guide, shown in the Study view: units.py 'guide' names an HTML fragment under tools/units-builder/ (e.g. 'guides/P1-05.html')."""
     g = u.get('guide')
@@ -225,9 +237,13 @@ STUDY_VIEW = '  <div class="view" id="v-study" hidden>\n{guide}\n  </div>'
 PRACTICE_VIEW = """  <div class="view" id="v-practice" hidden>
   <section class="review" id="review">
     <div class="simbar"><h2>Practice questions</h2><a id="ropen" class="mono" href="{url}" target="_blank" rel="noopener">Open in a new tab ↗</a></div>
-    <div class="rframe" id="rframe" data-src="{url}"><div class="loading">Loading questions…</div></div>
+{picker}    <div class="rframe" id="rframe" data-src="{url}"><div class="loading">Loading questions…</div></div>
   </section>
   </div>"""
+# A unit with more than one review set gets a row of buttons above the questions (one set at a time).
+RPICK = '    <div class="rpick" role="group" aria-label="Choose a question set">{btns}</div>\n'
+RPICK_BTN = '<button type="button" class="rbtn" data-src="{url}" aria-pressed="{on}">{label}</button>'
+
 VIEWS_JS = """<script>
 /* Explore / Study / Practice: one view at a time, Explore on every open. */
 const VIEWS = ['explore', 'study', 'practice'];
@@ -236,12 +252,21 @@ function setView(v) {
   VIEWS.forEach(n => { const el = document.getElementById('v-' + n); if (el) el.hidden = n !== v; });
   document.querySelectorAll('.vbtn').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === v)));
   const back = document.getElementById('simsback'); if (back) back.hidden = v === 'explore';
-  if (v === 'practice') { const r = document.getElementById('rframe'); if (r && !r.querySelector('iframe')) r.innerHTML = '<iframe title="Practice questions" src="' + r.dataset.src + '"></iframe>'; }
+  if (v === 'practice') { const r = document.getElementById('rframe'); if (r && !r.querySelector('iframe')) r.innerHTML = '<iframe title="Practice questions" src="' + r.dataset.src + '" data-src="' + r.dataset.src + '"></iframe>'; }
   return v;
 }
 /* A link to a view this unit doesn't have (e.g. a guide's "Practice these ideas" on a unit with no review) is hidden. */
 document.querySelectorAll('a[data-view], .gnext [data-view]').forEach(a => { if (!document.getElementById('v-' + a.dataset.view)) (a.closest('.gnext') || a).hidden = true; });
 document.addEventListener('click', e => {
+  const rb = e.target.closest('.rbtn');
+  if (rb) {   /* switch question set: one frame per set, kept once loaded */
+    document.querySelectorAll('.rbtn').forEach(b => b.setAttribute('aria-pressed', String(b === rb)));
+    const r = document.getElementById('rframe'); r.dataset.src = rb.dataset.src; document.getElementById('ropen').href = rb.dataset.src;
+    let f = [...r.querySelectorAll('iframe')].find(x => x.dataset.src === rb.dataset.src);
+    r.querySelectorAll('iframe').forEach(x => { x.hidden = x !== f; });
+    if (!f) { f = document.createElement('iframe'); f.title = 'Practice questions'; f.src = f.dataset.src = rb.dataset.src; r.querySelectorAll('.loading').forEach(x => x.remove()); r.appendChild(f); }
+    return;
+  }
   const a = e.target.closest('[data-view]'); if (!a) return;
   e.preventDefault(); setView(a.dataset.view);
   const top = document.getElementById('views'); if (top && top.getBoundingClientRect().top < 0) top.scrollIntoView({ behavior: 'smooth' });
@@ -254,14 +279,16 @@ def unit_page_url(uid):
     """This unit's page on the Site (…/holmes/ap-physics-1-ib/p1-05): the "Sims for this unit" link opens it on Explore."""
     return site.SITE + site.COURSE_FOLDER[uid.split('-')[0]] + '/' + uid.lower()
 
-def views(uid, u, practice):
+def views(uid, u, practice, links=()):
     """HTML pieces for the switch, the Study view and the Practice view."""
     g = guide_html(u)
     have = ['explore'] + (['study'] if g else []) + (['practice'] if practice else [])
     labels = {'explore': 'Explore', 'study': 'Study', 'practice': 'Practice'}
     nav = VIEWS_NAV.format(btns=''.join(VIEW_BTN.format(v=v, label=labels[v]) for v in have), unit_page=unit_page_url(uid)) if len(have) > 1 else ''
     return dict(views_nav=nav, study_view=STUDY_VIEW.format(guide=g) if g else '',
-                practice_view=PRACTICE_VIEW.format(url=html.escape(practice, quote=True)) if practice else '',
+                practice_view=PRACTICE_VIEW.format(url=html.escape(practice, quote=True),
+                    picker=RPICK.format(btns=''.join(RPICK_BTN.format(url=html.escape(lu, quote=True), label=html.escape(ll), on=str(i == 0).lower())
+                                                       for i, (ll, lu) in enumerate(links))) if len(links) > 1 else '') if practice else '',
                 views_js=VIEWS_JS if len(have) > 1 else '<script>const VIEWS = [];function setView(){return "explore";}</script>')
 
 COMING = """<!doctype html>
@@ -300,7 +327,7 @@ def build(uid):
         pu = practice_url(uid, u)
         out = COMING.format(uid=uid, title=html.escape(u['title']), num=u['num'], course=u['course'], fonts=FONTS, css=css,
                             note=u.get('note', 'Check back soon.' + (' The practice questions for this unit are under Practice.' if pu else '')),
-                            **views(uid, u, pu))
+                            **views(uid, u, pu, practice_links(uid, u)))
         os.makedirs(os.path.join(D, 'out'), exist_ok=True)
         open(os.path.join(D, 'out', uid + '.html'), 'w', encoding='utf-8').write(out); print(uid, 'coming soon'); return
     used = []
@@ -316,7 +343,7 @@ def build(uid):
                       unit_json=js_str(unit), sims_js=sims_js, credits=credits or 'Original simulations.',
                       plink_hidden='' if pu else ' hidden',
                       present_css=PRESENT_CSS if pr else '', present_btns=PRESENT_BTNS if pr else '', present_js=PRESENT_JS if pr else '',
-                      **views(uid, u, pu))
+                      **views(uid, u, pu, practice_links(uid, u)))
     os.makedirs(os.path.join(D, 'out'), exist_ok=True)
     p = os.path.join(D, 'out', uid + '.html'); open(p, 'w', encoding='utf-8').write(out)
     print(uid, len(out) // 1024, 'KB')
