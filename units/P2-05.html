@@ -22,15 +22,23 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
 .uid{display:flex;align-items:flex-end;gap:16px;min-width:0}
 .big{font-weight:700;font-size:clamp(64px,10vw,104px);line-height:.8;letter-spacing:-.04em}
 .uhead h1{margin:0;font-weight:700;font-size:clamp(28px,4vw,40px);line-height:1;letter-spacing:-.02em;text-wrap:balance}
-.cta{display:inline-block;font-weight:700;text-decoration:none;color:var(--ink);padding:11px 16px;border:3px solid var(--ink);background:var(--hot);box-shadow:4px 4px 0 var(--ink)}
-.cta:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--ink)}
+/* Explore / Study / Practice switch: one joined bar, bigger than the sim tabs so it reads as the page's main choice */
+.views{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 18px;margin:0 0 22px}
+.vbtns{display:flex;border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);background:#fff}
+.vbtn{all:unset;cursor:pointer;padding:14px 30px;font-weight:700;font-size:24px;letter-spacing:-.01em;line-height:1}
+.vbtn+.vbtn{border-left:3px solid var(--ink)}
+.vbtn[aria-pressed="true"]{background:var(--ink);color:var(--bg);box-shadow:inset 0 -6px 0 var(--hot)}
+.vbtn:hover:not([aria-pressed="true"]){background:var(--soft)}
+.vbtn:focus-visible{outline:3px solid var(--hot);outline-offset:-6px}
+.simsback{color:var(--ink);text-decoration:none;font-size:15px;padding:9px 14px;border:2px solid var(--ink);background:#fff}
+.simsback:hover{background:var(--soft)}
 .tabs{display:flex;gap:8px;overflow-x:auto;margin-bottom:16px;padding:0 6px 8px 0;scrollbar-width:thin}
 .tab{all:unset;cursor:pointer;white-space:nowrap;padding:10px 14px;border:2px solid var(--ink);background:#fff;font-weight:700;font-size:15px}
 .tab .code{font:700 12px var(--f-mono);margin-right:7px}
 .tab[aria-selected="true"]{background:var(--ink);color:var(--bg);box-shadow:4px 4px 0 var(--hot)}
 .tab:hover:not([aria-selected="true"]){background:var(--soft)}
 .tabs .gap{flex:none;width:2px;background:var(--ink);margin:4px 4px}
-.tab:focus-visible,.cta:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(--hot);outline-offset:3px}
+.tab:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(--hot);outline-offset:3px}
 .main{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start}
 .simcard{flex:999 1 680px;min-width:0;border:3px solid var(--ink);background:var(--card);box-shadow:6px 6px 0 var(--ink)}
 .simbar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;border-bottom:3px solid var(--ink)}
@@ -48,12 +56,13 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
 .try .plink{display:block;margin-top:16px;padding-top:12px;border-top:2px solid var(--ink);font-weight:700;text-decoration:none;color:var(--ink)}
 .try .plink:hover{text-decoration:underline}
 .credits{margin-top:22px;font:500 12px/1.5 var(--f-mono);color:var(--muted)}
-@media (max-width:640px){ .simbar h2{font-size:15px} .tab{font-size:14px;padding:9px 12px} }
+@media (max-width:640px){ .simbar h2{font-size:15px} .tab{font-size:14px;padding:9px 12px} .vbtn{font-size:19px;padding:12px 18px} }
 [hidden]{display:none!important}
-.review{margin-top:28px;border:3px solid var(--ink);background:var(--card);box-shadow:6px 6px 0 var(--ink)}
+.review{margin-top:0;border:3px solid var(--ink);background:var(--card);box-shadow:6px 6px 0 var(--ink)}
 .review .simbar a{color:var(--ink)}
 .rframe{position:relative;height:900px;background:#fff}
 .rframe iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+#v-study>.guide{margin-top:0}
 
 
 </style>
@@ -62,8 +71,12 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
 <div class="wrap">
   <header class="uhead">
     <div class="uid"><div class="big" aria-hidden="true">05</div><div><div class="mono">AP Physics 2 / IB · P2-05</div><h1>Modern Physics</h1></div></div>
-    <a class="cta" id="cta" href="#" target="_blank" rel="noopener">Practice this unit →</a>
   </header>
+  <nav class="views" id="views" aria-label="Choose a view">
+    <div class="vbtns"><button type="button" class="vbtn" data-view="explore" aria-pressed="false">Explore</button><button type="button" class="vbtn" data-view="practice" aria-pressed="false">Practice</button></div>
+    <a class="simsback mono" id="simsback" href="https://sites.google.com/fcps.org/holmes/ap-physics-2-ib/p2-05" target="_blank" rel="noopener" hidden>Sims for this unit ↗</a>
+  </nav>
+  <div class="view" id="v-explore">
   <nav class="tabs" role="tablist" aria-label="Sims in this unit" id="tabs"></nav>
   <div class="main">
     <section class="simcard" aria-live="polite">
@@ -74,19 +87,39 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
       <h2>Try this</h2>
       <ol id="tasks"></ol>
       <p class="note" id="note" hidden></p>
-      <a class="plink" id="plink" href="#" target="_blank" rel="noopener">Practice P2-05 questions →</a>
+      <a class="plink" id="plink" href="#practice" data-view="practice">Practice P2-05 questions →</a>
     </aside>
   </div>
-  
-  <section class="review" id="review" hidden>
-    <div class="simbar"><h2>Practice questions</h2><a id="ropen" class="mono" href="#" target="_blank" rel="noopener">Open in a new tab ↗</a></div>
-    <div class="rframe" id="rframe"><div class="loading">Loading questions…</div></div>
-  </section>
   <p class="credits">Models of the Hydrogen Atom, Build a Nucleus, Alpha Decay, Beta Decay and Photoelectric Effect: PhET Interactive Simulations, University of Colorado Boulder (phet.colorado.edu), CC BY 4.0 / GPL. Atomic Spectra, Photoelectric Effect, Matter Waves &amp; Compton Scattering, Radioactive Decay, Binding Energy &amp; Mass Defect, Rutherford Scattering and Stars: Distance &amp; the HR Diagram are original. Greenhouse tabs are original, with ideas from PhET “Greenhouse Effect” and “Blackbody Spectrum”. PhET Interactive Simulations, University of Colorado Boulder (phet.colorado.edu), CC BY 4.0 / GPL. Nuclear Fission is an HTML5 port of the PhET sim. PhET Interactive Simulations, University of Colorado Boulder (phet.colorado.edu), CC BY 4.0 / GPL. Luminosity &amp; Brightness is original. Star Life Cycle is original.</p>
+  </div>
+
+  <div class="view" id="v-practice" hidden>
+  <section class="review" id="review">
+    <div class="simbar"><h2>Practice questions</h2><a id="ropen" class="mono" href="https://script.google.com/a/macros/fcps.org/s/AKfycbzW6NpFGf5yjZ843WN0pDy-mzI0r1iCcBIuoJpMCEJeWwbUARiSnAC_lf2bWQeHWoGjHA/exec?unit=P2-05" target="_blank" rel="noopener">Open in a new tab ↗</a></div>
+    <div class="rframe" id="rframe" data-src="https://script.google.com/a/macros/fcps.org/s/AKfycbzW6NpFGf5yjZ843WN0pDy-mzI0r1iCcBIuoJpMCEJeWwbUARiSnAC_lf2bWQeHWoGjHA/exec?unit=P2-05"><div class="loading">Loading questions…</div></div>
+  </section>
+  </div>
 </div>
 <script>
-/* Review web app link (from site.py); each AP unit page links to its own unit. */
-const REVIEW_URL = 'https://script.google.com/a/macros/fcps.org/s/AKfycbzW6NpFGf5yjZ843WN0pDy-mzI0r1iCcBIuoJpMCEJeWwbUARiSnAC_lf2bWQeHWoGjHA/exec';
+/* Explore / Study / Practice: one view at a time, Explore on every open. */
+const VIEWS = ['explore', 'study', 'practice'];
+function setView(v) {
+  if (!document.getElementById('v-' + v)) v = 'explore';
+  VIEWS.forEach(n => { const el = document.getElementById('v-' + n); if (el) el.hidden = n !== v; });
+  document.querySelectorAll('.vbtn').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === v)));
+  const back = document.getElementById('simsback'); if (back) back.hidden = v === 'explore';
+  if (v === 'practice') { const r = document.getElementById('rframe'); if (r && !r.querySelector('iframe')) r.innerHTML = '<iframe title="Practice questions" src="' + r.dataset.src + '"></iframe>'; }
+  return v;
+}
+document.addEventListener('click', e => {
+  const a = e.target.closest('[data-view]'); if (!a) return;
+  e.preventDefault(); setView(a.dataset.view);
+  const top = document.getElementById('views'); if (top && top.getBoundingClientRect().top < 0) top.scrollIntoView({ behavior: 'smooth' });
+});
+(function () { const h = location.hash.slice(1); setView(VIEWS.includes(h) ? h : 'explore'); })();
+window.addEventListener('hashchange', () => { const h = location.hash.slice(1); if (VIEWS.includes(h)) setView(h); });
+</script>
+<script>
 const UNIT = {"id": "P2-05", "tabs": [{"code": "", "name": "PhET Modern Physics", "sim": "phetMod", "tasks": ["<b>Models of the Hydrogen Atom:<\/b> fire light at each model. Which ones match the experiment? What does the Bohr model get right?", "<b>Build a Nucleus:<\/b> build carbon-12, then add neutrons. When does it become unstable? What decay happens?", "<b>Alpha / Beta Decay:<\/b> watch many nuclei. Measure the half-life from the graph.", "<b>Photoelectric Effect:<\/b> pick a metal and find the lowest frequency that ejects electrons. Then find the stopping voltage for three frequencies and graph eV<sub>s<\/sub> against f. What are the slope and the intercept?"]}, {"code": "", "name": "Rutherford Scattering", "sim": "ruth", "tasks": ["Compare the plum-pudding model with the nuclear model. Which predicts alphas bouncing back?", "Aim the alpha closer and closer to the nucleus. How does the deflection change?", "<span style=\"color:#7a3fb0\">IB HL<\/span>: find the distance of closest approach for a 5.0 MeV alpha on gold using energy conservation.", "<span style=\"color:#7a3fb0\">IB HL<\/span>: fire very fast alphas at aluminium. When does the strong force start to matter? What does that tell you about the nuclear radius?"], "note": "IB E.1. SL: qualitative only. HL: closest approach and R = R₀A<sup>⅓<\/sup>."}, {"code": "", "name": "Atomic Spectra", "sim": "spectra", "tasks": ["Find the wavelength for n = 3 → 2 in hydrogen. What colour is it? Repeat for 4 → 2 and 5 → 2.", "Why is the 2 → 1 photon invisible? Which series lands in the infrared?", "<b>Absorption:<\/b> white light passes through cool hydrogen. Which colours go missing, and why the same ones as in emission?", "<b>Energy-level diagram:<\/b> list every photon the mystery atom can emit after reaching n = 4. Which has the longest wavelength?", "<span style=\"color:#8a8a8a;font-weight:700\">Extension<\/span> Send in a 6.0 eV photon, then a 6.0 eV electron. Why does only one of them excite the atom?"]}, {"code": "", "name": "Photoelectric Effect", "sim": "photo", "tasks": ["Shine bright red light on sodium. What happens? Now dim UV. Explain using photons.", "Find the threshold frequency for each metal. Which metals work with visible light?", "Graph K<sub>max<\/sub> vs f for zinc. What do the slope and the intercepts tell you?", "Find the stopping voltage for 9.0 × 10¹⁴ Hz light on sodium. Check by making the current just reach zero.", "Double the brightness. What happens to the current? To K<sub>max<\/sub>? Which result can a wave model not explain?"], "note": "AP Physics 2 topic 15.5. IB: E.2 is HL only."}, {"code": "", "name": "Binding Energy & Mass Defect", "sim": "binding", "tasks": ["Find the mass defect and binding energy of helium-4. Why is the nucleus lighter than its parts?", "Which nucleus has the highest binding energy per nucleon? Why does that make it the “end of the line” for stars?", "Use the curve to explain why both fusion and fission release energy.", "Calculate the energy from one U-235 fission. How many times more energy per kilogram than gasoline?", "Compare D–T fusion with U-235 fission per kilogram. Which releases more?", "<b>Beta-plus:<\/b> pick ¹⁸F → ¹⁸O + e⁺ + ν. Why does Q need an extra 2m<sub>e<\/sub>c² (1.022 MeV) subtracted when you use atomic masses?"]}, {"code": "", "name": "Radioactive Decay", "sim": "decay", "tasks": ["Watch the sample. Can you predict which nucleus decays next? How well does the sample follow the curve? Try N₀ = 100.", "After 3 half-lives, what fraction is left? What is the activity compared with the start?", "t½ = 6.0 h. Find λ in s⁻¹ and the activity of 10¹⁵ nuclei.", "<b>Decay types:<\/b> write the decay equation for each isotope. Check nucleon number and charge are conserved.", "Why is americium (alpha) used in smoke detectors but technetium (gamma) for medical imaging?", "<b>Dating:<\/b> a bone has 12.5% of its C-14 left. How old is it? Why can’t carbon dating be used for dinosaurs?", "<b>Penetration & background:<\/b> which source does paper stop? Aluminium? What gets through lead? Why is the most ionizing radiation the least penetrating?", "A Geiger counter reads 30 counts/min with no source. Correct your count rate."]}, {"code": "", "name": "Black Bodies", "sim": "green", "select": "Black Bodies", "tasks": ["Raise the temperature. Which way does the peak move? Check that λ<sub>max<\/sub>·T stays about 2.9 × 10⁻³ m·K.", "Double the temperature. By what factor does the power per square meter go up? Explain with σT⁴.", "Compare the Sun (about 5800 K) with Sirius. Which looks bluer? Which part of the spectrum does each give off most?", "Why do the hottest stars look blue-white and the coolest look red?"], "note": "AP Physics 2 topic 15.4 and IB B.1."}, {"code": "", "name": "Nuclear Fission", "sim": "fission", "tasks": ["<b>One nucleus:<\/b> fire a neutron at U-235. Count the neutrons that come out. Where does the energy come from?", "<b>Chain reaction:<\/b> mix U-235 and U-238. What percent of U-235 do you need for a chain reaction to keep going?", "Put the fuel in the containment vessel. Why does a smaller lump of fuel lose more neutrons?", "<b>Reactor:<\/b> move the control rods. What do they absorb? How do they keep the power steady?", "What does the moderator do? The control rods?"]}, {"code": "", "name": "Matter Waves & Compton", "sim": "quantum", "tasks": ["Find the de Broglie wavelength of an electron accelerated through 150 V. Why does a crystal diffract it?", "Raise the voltage. What happens to the rings? Explain with λ = h/p.", "Why does a 40 m/s baseball never diffract?", "<b>Compton:<\/b> at what angle is the wavelength shift biggest? How much energy does the electron get there?", "Draw the momentum vector triangle for a 90° scatter. Why does the electron move off below the axis?", "<b>Bohr orbits:<\/b> fit 1, 2, 3 de Broglie wavelengths around an orbit. Why are only some orbits allowed?"], "note": "AP Physics 2 topics 15.1 and 15.6. IB: E.2 is HL only."}, {"code": "IB", "name": "Luminosity & Brightness", "sim": "lum", "tasks": ["Double the surface temperature. By what factor does L change? Double the radius?", "Double the distance. What happens to the apparent brightness? Why doesn’t L change?", "<b>Paper 2 chain:<\/b> a star has λ<sub>max<\/sub> = 400 nm, b = 10⁻⁹ W/m² and d = 50 ly. Find T, then L, then R. Check with the sim.", "A red giant and the Sun look equally bright. Which one is farther away? Explain."], "note": "IB B.1: L = σAT⁴ and b = L/4πd².", "gapBefore": true}, {"code": "IB", "name": "Star Life Cycle", "sim": "star", "tasks": ["Follow the Sun through its life. At each stage, which wins: gravity inward or pressure outward?", "Compare a 1 solar-mass star with a 15 solar-mass star. Which lives longer? Why?", "Watch the H-R diagram. Where does a star go when it becomes a red giant? Use L = 4πR²σT⁴ to explain why it moves there.", "Which stars end as white dwarfs, neutron stars and black holes? Why can’t fusion go past iron?"], "note": "IB E.5 Stellar evolution."}, {"code": "IB", "name": "Parallax & HR Diagram", "sim": "stars", "tasks": ["Find the distance to Proxima Centauri (p = 0.768″) in pc, ly and AU.", "Why can parallax only be used for nearby stars?", "<b>HR diagram:<\/b> place the Sun, Betelgeuse and Sirius B. Find each radius from L and T.", "A star is 10 000 K and 10⁻² L☉. Where is it on the diagram? What type of star is it?", "<span style=\"color:#8a8a8a;font-weight:700\">Extension<\/span> A main-sequence star is 10 times the Sun’s mass. Find its luminosity and lifetime.", "Find the <b>instability strip<\/b>. Place a 6000 K star at 10³ L☉. Why does its brightness pulse? How do astronomers use these stars to measure distance?"]}, {"code": "IB", "name": "Nuclear Reactor", "sim": "reactor", "tasks": ["Name each part of the power station and say what it does: fuel rods, moderator, control rods, coolant, heat exchanger, turbine, generator, shielding.", "Find the control-rod setting that keeps the power steady. What is k there? What happens to k if you pull the rods out?", "Press SCRAM. How quickly does the chain reaction stop? Why?", "Switch the moderator off. Why does the chain reaction die even with the rods out?", "Use natural uranium (0.7% U-235). Why do most reactors need enriched fuel?", "Describe the energy changes from the fuel to the electrical grid."], "note": "IB E.4."}]};
 const SIMS = {
 "phetMod":{ar:"16 / 10",html:"<!DOCTYPE html>\n<html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>PhET modern physics sims<\/title>\n<link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@500;700&display=swap\">\n<style>\nhtml,body{margin:0;height:100%;background:#fff;font-family:\"Space Grotesk\",system-ui,sans-serif;color:#111}\n#wrap{display:flex;flex-direction:column;height:100%}\n#bar{display:flex;gap:0;align-items:center;padding:8px 10px;border-bottom:2px solid #111;flex-wrap:wrap}\n#bar .lab{font:700 12px \"IBM Plex Mono\",monospace;margin-right:10px}\n#bar button{font:700 14px \"Space Grotesk\",sans-serif;padding:6px 11px;border:2px solid #111;background:#fff;cursor:pointer}\n#bar button+button{margin-left:-2px}\n#bar button[aria-pressed=\"true\"]{background:#111;color:#fff}\n#bar button:focus-visible{outline:3px solid #ff6a2b;outline-offset:2px}\n#bar .src{margin-left:auto;font:500 11px \"IBM Plex Mono\",monospace;color:#4a4a4a}\niframe{flex:1;border:0;width:100%}\n<\/style><\/head><body>\n<div id=\"wrap\">\n  <div id=\"bar\" role=\"group\" aria-label=\"PhET simulation\"><span class=\"lab\">PHET<\/span><\/div>\n  <iframe id=\"f\" title=\"PhET simulation\" allowfullscreen><\/iframe>\n<\/div>\n<script>\n// PhET Interactive Simulations, University of Colorado Boulder, CC BY 4.0. Loaded from phet.colorado.edu.\nconst SIMS = [['models-of-the-hydrogen-atom', 'Models of the Hydrogen Atom'], ['build-a-nucleus', 'Build a Nucleus'], ['alpha-decay', 'Alpha Decay'], ['beta-decay', 'Beta Decay'], ['photoelectric', 'Photoelectric Effect', 'https://phet.colorado.edu/sims/cheerpj/photoelectric/latest/photoelectric.html?simulation=photoelectric']];\nconst bar = document.getElementById('bar'), f = document.getElementById('f');\nfunction pick(id){ const e = SIMS.find(x => x[0] === id); f.src = e[2] || ('https://phet.colorado.edu/sims/html/' + id + '/latest/' + id + '_all.html'); [...bar.querySelectorAll('button')].forEach(b => b.setAttribute('aria-pressed', String(b.dataset.id === id))); }\nSIMS.forEach(([id, name]) => { const b = document.createElement('button'); b.textContent = name; b.dataset.id = id; b.onclick = () => pick(id); bar.appendChild(b); });\nconst s = document.createElement('span'); s.className = 'src'; s.textContent = 'from phet.colorado.edu'; bar.appendChild(s);\npick(SIMS[0][0]);\n<\/script>\n<\/body><\/html>\n"},
@@ -108,17 +141,6 @@ const SIMS = {
   const tabsEl = $('tabs'), frame = $('frame');
   let cur = -1, ifr = null, ifrSim = null;
   const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-  /* AP units use the Review app; an ABP unit with a review (units.py 'review') uses its Homework-app assignment. */
-  const PRACTICE = UNIT.practice || ((REVIEW_URL && /^P[12]-/.test(UNIT.id)) ? REVIEW_URL + (REVIEW_URL.includes('?') ? '&' : '?') + 'unit=' + encodeURIComponent(UNIT.id) : '');
-  if (PRACTICE) {
-    const u = PRACTICE;
-    const rev = $('review'); rev.hidden = false; $('ropen').href = u;
-    let loaded = false; const load = () => { if (loaded) return; loaded = true; $('rframe').innerHTML = '<iframe title="Practice questions" src="' + u + '"></iframe>'; };
-    [$('cta'), $('plink')].forEach(a => { a.href = '#review'; a.removeAttribute('target'); a.addEventListener('click', e => { e.preventDefault(); load(); rev.scrollIntoView({ behavior: 'smooth' }); }); });
-    if ('IntersectionObserver' in window) new IntersectionObserver((es, o) => { if (es.some(x => x.isIntersecting)) { load(); o.disconnect(); } }, { rootMargin: '200px' }).observe(rev);
-    else load();
-  }
-  else { $('cta').hidden = true; $('plink').hidden = true; }
   UNIT.tabs.forEach((t, i) => {
     if (t.gapBefore) { const g = document.createElement('span'); g.className = 'gap'; g.setAttribute('aria-hidden','true'); tabsEl.appendChild(g); }
     const b = document.createElement('button');
@@ -154,9 +176,9 @@ const SIMS = {
   };
   if (!document.fullscreenEnabled) $('fs').hidden = true;
   document.addEventListener('fullscreenchange', () => { $('fs').textContent = document.fullscreenElement ? 'Exit full screen' : 'Full screen'; });
-  const h = location.hash.slice(1); let start = UNIT.tabs.findIndex(t => slug(t.name) === h);
+  const h = location.hash.slice(1); let start = VIEWS.includes(h) ? -1 : UNIT.tabs.findIndex(t => slug(t.name) === h);
   show(start < 0 ? 0 : start, false);
-  window.HOLMES = { show, unit: UNIT };
+  window.HOLMES = { show, unit: UNIT, view: setView };
 
 })();
 </script>

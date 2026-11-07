@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Build Holmes Sims unit pages (Big Type design).
-Each unit page = header + tab row + one framed sim + "Try this" panel.
+Each unit page = header + Explore/Study/Practice switch; Explore = tab row + one framed sim + "Try this" panel.
 Every sim is an existing single-file HTML app, stored as a JS string and loaded into an iframe (srcdoc) on demand,
 so sims never clash with each other or with the page. Multi-tab apps (Fluids, Greenhouse) are loaded once and
 switched with postMessage({select: name}).
@@ -83,8 +83,9 @@ PAGE = """<!doctype html>
 <div class="wrap">
   <header class="uhead">
     <div class="uid"><div class="big" aria-hidden="true">{num}</div><div><div class="mono">{course} · {uid}</div><h1>{title}</h1></div></div>
-    <a class="cta" id="cta" href="#" target="_blank" rel="noopener">Practice this unit →</a>
   </header>
+{views_nav}
+  <div class="view" id="v-explore">
   <nav class="tabs" role="tablist" aria-label="Sims in this unit" id="tabs"></nav>
   <div class="main">
     <section class="simcard" aria-live="polite">
@@ -95,19 +96,16 @@ PAGE = """<!doctype html>
       <h2>Try this</h2>
       <ol id="tasks"></ol>
       <p class="note" id="note" hidden></p>
-      <a class="plink" id="plink" href="#" target="_blank" rel="noopener">Practice {uid} questions →</a>
+      <a class="plink" id="plink" href="#practice" data-view="practice"{plink_hidden}>Practice {uid} questions →</a>
     </aside>
   </div>
-  {guide}
-  <section class="review" id="review" hidden>
-    <div class="simbar"><h2>Practice questions</h2><a id="ropen" class="mono" href="#" target="_blank" rel="noopener">Open in a new tab ↗</a></div>
-    <div class="rframe" id="rframe"><div class="loading">Loading questions…</div></div>
-  </section>
   <p class="credits">{credits}</p>
+  </div>
+{study_view}
+{practice_view}
 </div>
+{views_js}
 <script>
-/* Review web app link (from site.py); each AP unit page links to its own unit. */
-const REVIEW_URL = '{review_url}';
 const UNIT = {unit_json};
 const SIMS = {{
 {sims_js}
@@ -117,17 +115,6 @@ const SIMS = {{
   const tabsEl = $('tabs'), frame = $('frame');
   let cur = -1, ifr = null, ifrSim = null;
   const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-  /* AP units use the Review app; an ABP unit with a review (units.py 'review') uses its Homework-app assignment. */
-  const PRACTICE = UNIT.practice || ((REVIEW_URL && /^P[12]-/.test(UNIT.id)) ? REVIEW_URL + (REVIEW_URL.includes('?') ? '&' : '?') + 'unit=' + encodeURIComponent(UNIT.id) : '');
-  if (PRACTICE) {{
-    const u = PRACTICE;
-    const rev = $('review'); rev.hidden = false; $('ropen').href = u;
-    let loaded = false; const load = () => {{ if (loaded) return; loaded = true; $('rframe').innerHTML = '<iframe title="Practice questions" src="' + u + '"></iframe>'; }};
-    [$('cta'), $('plink')].forEach(a => {{ a.href = '#review'; a.removeAttribute('target'); a.addEventListener('click', e => {{ e.preventDefault(); load(); rev.scrollIntoView({{ behavior: 'smooth' }}); }}); }});
-    if ('IntersectionObserver' in window) new IntersectionObserver((es, o) => {{ if (es.some(x => x.isIntersecting)) {{ load(); o.disconnect(); }} }}, {{ rootMargin: '200px' }}).observe(rev);
-    else load();
-  }}
-  else {{ $('cta').hidden = true; $('plink').hidden = true; }}
   UNIT.tabs.forEach((t, i) => {{
     if (t.gapBefore) {{ const g = document.createElement('span'); g.className = 'gap'; g.setAttribute('aria-hidden','true'); tabsEl.appendChild(g); }}
     const b = document.createElement('button');
@@ -163,9 +150,9 @@ const SIMS = {{
   }};
   if (!document.fullscreenEnabled) $('fs').hidden = true;
   document.addEventListener('fullscreenchange', () => {{ $('fs').textContent = document.fullscreenElement ? 'Exit full screen' : 'Full screen'; }});
-  const h = location.hash.slice(1); let start = UNIT.tabs.findIndex(t => slug(t.name) === h);
+  const h = location.hash.slice(1); let start = VIEWS.includes(h) ? -1 : UNIT.tabs.findIndex(t => slug(t.name) === h);
   show(start < 0 ? 0 : start, false);
-  window.HOLMES = {{ show, unit: UNIT }};
+  window.HOLMES = {{ show, unit: UNIT, view: setView }};
 {present_js}
 }})();
 </script>
@@ -181,7 +168,7 @@ PRESENT_CSS = """
 .sbtns{display:flex;gap:8px}
 body.present{overflow:hidden}
 body.present .wrap{max-width:none;height:100vh;padding:10px 14px 12px;display:flex;flex-direction:column}
-body.present .uhead,body.present .review,body.present .credits{display:none}
+body.present .uhead,body.present .views,body.present .credits{display:none}
 body.present .tabs{margin-bottom:10px;flex:none}
 body.present .tab{font-size:19px;padding:12px 18px}
 body.present .main{flex:1;min-height:0;flex-wrap:nowrap;align-items:stretch}
@@ -203,7 +190,7 @@ PRESENT_JS = """
     pres.textContent = on ? 'Exit present' : 'Present'; ptasks.hidden = !on;
   };
   pres.onclick = () => {
-    const on = !document.body.classList.contains('present'); setPresent(on);
+    const on = !document.body.classList.contains('present'); if (on && window.HOLMES) HOLMES.view('explore'); setPresent(on);
     if (on && !document.fullscreenElement && document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {});
     if (!on && document.fullscreenElement === document.documentElement) document.exitFullscreen();
   };
@@ -221,9 +208,60 @@ def practice_url(uid, u):
     if u.get('review'): return HOMEWORK + '?a=' + u['review']
     return ''
 def guide_html(u):
-    """Optional study guide above the practice questions: units.py 'guide' names an HTML fragment under tools/units-builder/ (e.g. 'guides/P1-05.html')."""
+    """Optional study guide, shown in the Study view: units.py 'guide' names an HTML fragment under tools/units-builder/ (e.g. 'guides/P1-05.html')."""
     g = u.get('guide')
     return open(os.path.join(D, g), encoding='utf-8').read().strip() if g else ''
+
+# ---------- Explore / Study / Practice switch (decided 2026-11-07) ----------
+# One view at a time. Explore (sims) every time the page opens; a link or URL ending in #study / #practice / #explore
+# opens that view, and any link with data-view="study|practice|explore" switches to it. Study needs units.py 'guide',
+# Practice needs a practice link; a view without content has no button, and a unit with Explore only has no switch.
+VIEWS_NAV = """  <nav class="views" id="views" aria-label="Choose a view">
+    <div class="vbtns">{btns}</div>
+    <a class="simsback mono" id="simsback" href="{unit_page}" target="_blank" rel="noopener" hidden>Sims for this unit ↗</a>
+  </nav>"""
+VIEW_BTN = '<button type="button" class="vbtn" data-view="{v}" aria-pressed="false">{label}</button>'
+STUDY_VIEW = '  <div class="view" id="v-study" hidden>\n{guide}\n  </div>'
+PRACTICE_VIEW = """  <div class="view" id="v-practice" hidden>
+  <section class="review" id="review">
+    <div class="simbar"><h2>Practice questions</h2><a id="ropen" class="mono" href="{url}" target="_blank" rel="noopener">Open in a new tab ↗</a></div>
+    <div class="rframe" id="rframe" data-src="{url}"><div class="loading">Loading questions…</div></div>
+  </section>
+  </div>"""
+VIEWS_JS = """<script>
+/* Explore / Study / Practice: one view at a time, Explore on every open. */
+const VIEWS = ['explore', 'study', 'practice'];
+function setView(v) {
+  if (!document.getElementById('v-' + v)) v = 'explore';
+  VIEWS.forEach(n => { const el = document.getElementById('v-' + n); if (el) el.hidden = n !== v; });
+  document.querySelectorAll('.vbtn').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === v)));
+  const back = document.getElementById('simsback'); if (back) back.hidden = v === 'explore';
+  if (v === 'practice') { const r = document.getElementById('rframe'); if (r && !r.querySelector('iframe')) r.innerHTML = '<iframe title="Practice questions" src="' + r.dataset.src + '"></iframe>'; }
+  return v;
+}
+document.addEventListener('click', e => {
+  const a = e.target.closest('[data-view]'); if (!a) return;
+  e.preventDefault(); setView(a.dataset.view);
+  const top = document.getElementById('views'); if (top && top.getBoundingClientRect().top < 0) top.scrollIntoView({ behavior: 'smooth' });
+});
+(function () { const h = location.hash.slice(1); setView(VIEWS.includes(h) ? h : 'explore'); })();
+window.addEventListener('hashchange', () => { const h = location.hash.slice(1); if (VIEWS.includes(h)) setView(h); });
+</script>"""
+
+def unit_page_url(uid):
+    """This unit's page on the Site (…/holmes/ap-physics-1-ib/p1-05): the "Sims for this unit" link opens it on Explore."""
+    return site.SITE + site.COURSE_FOLDER[uid.split('-')[0]] + '/' + uid.lower()
+
+def views(uid, u, practice):
+    """HTML pieces for the switch, the Study view and the Practice view."""
+    g = guide_html(u)
+    have = ['explore'] + (['study'] if g else []) + (['practice'] if practice else [])
+    labels = {'explore': 'Explore', 'study': 'Study', 'practice': 'Practice'}
+    nav = VIEWS_NAV.format(btns=''.join(VIEW_BTN.format(v=v, label=labels[v]) for v in have), unit_page=unit_page_url(uid)) if len(have) > 1 else ''
+    return dict(views_nav=nav, study_view=STUDY_VIEW.format(guide=g) if g else '',
+                practice_view=PRACTICE_VIEW.format(url=html.escape(practice, quote=True)) if practice else '',
+                views_js=VIEWS_JS if len(have) > 1 else '<script>const VIEWS = [];function setView(){return "explore";}</script>')
+
 COMING = """<!doctype html>
 <html lang="en">
 <head>
@@ -243,10 +281,12 @@ COMING = """<!doctype html>
   <header class="uhead">
     <div class="uid"><div class="big" aria-hidden="true">{num}</div><div><div class="mono">{course} · {uid}</div><h1>{title}</h1></div></div>
   </header>
-  <section class="soon"><h2>Sims for this unit are on the way.</h2><p>{note}</p></section>
-  {guide}
-  {review}
+{views_nav}
+  <div class="view" id="v-explore"><section class="soon"><h2>Sims for this unit are on the way.</h2><p>{note}</p></section></div>
+{study_view}
+{practice_view}
 </div>
+{views_js}
 </body>
 </html>
 """
@@ -255,9 +295,10 @@ def build(uid):
     u = UNITS[uid]
     if not u.get('tabs'):
         css = open(os.path.join(D, 'shell.css'), encoding='utf-8').read()
+        pu = practice_url(uid, u)
         out = COMING.format(uid=uid, title=html.escape(u['title']), num=u['num'], course=u['course'], fonts=FONTS, css=css,
-                            note=u.get('note', 'Check back soon. The practice questions for this unit are below.' if uid.startswith('P1-') else 'Check back soon.'),
-                            guide=guide_html(u), review=('<section class="review"><div class="simbar"><h2>Practice questions</h2><a class="mono" href="%s" target="_blank" rel="noopener">Open in a new tab ↗</a></div><div class="rframe"><iframe title="Practice questions" src="%s"></iframe></div></section>' % (practice_url(uid, u), practice_url(uid, u))) if (uid.startswith('P1-') or u.get('review')) else '')
+                            note=u.get('note', 'Check back soon.' + (' The practice questions for this unit are under Practice.' if pu else '')),
+                            **views(uid, u, pu))
         os.makedirs(os.path.join(D, 'out'), exist_ok=True)
         open(os.path.join(D, 'out', uid + '.html'), 'w', encoding='utf-8').write(out); print(uid, 'coming soon'); return
     used = []
@@ -265,13 +306,15 @@ def build(uid):
         if t['sim'] not in used: used.append(t['sim'])
     css = open(os.path.join(D, 'shell.css'), encoding='utf-8').read()
     unit = {'id': uid, 'tabs': [{k: t.get(k) for k in ('code', 'name', 'sim', 'select', 'modes', 'tasks', 'note', 'gapBefore') if t.get(k) is not None} for t in u['tabs']]}
-    if u.get('review'): unit['practice'] = practice_url(uid, u)
     sims_js = ',\n'.join('%s:{ar:%s,html:%s}' % (json.dumps(k), json.dumps(SIMS[k]['ar']), js_str(prep_sim(k))) for k in used)
     credits = ' '.join(SIMS[k]['credit'] for k in used if SIMS[k].get('credit'))
     pr = uid in PRESENT_UNITS
+    pu = practice_url(uid, u)
     out = PAGE.format(uid=uid, title=html.escape(u['title']), num=u['num'], course=u['course'], fonts=FONTS, css=css,
-                      unit_json=js_str(unit), sims_js=sims_js, credits=credits or 'Original simulations.', guide=guide_html(u),
-                      review_url=site.REVIEW_APP, present_css=PRESENT_CSS if pr else '', present_btns=PRESENT_BTNS if pr else '', present_js=PRESENT_JS if pr else '')
+                      unit_json=js_str(unit), sims_js=sims_js, credits=credits or 'Original simulations.',
+                      plink_hidden='' if pu else ' hidden',
+                      present_css=PRESENT_CSS if pr else '', present_btns=PRESENT_BTNS if pr else '', present_js=PRESENT_JS if pr else '',
+                      **views(uid, u, pu))
     os.makedirs(os.path.join(D, 'out'), exist_ok=True)
     p = os.path.join(D, 'out', uid + '.html'); open(p, 'w', encoding='utf-8').write(out)
     print(uid, len(out) // 1024, 'KB')
