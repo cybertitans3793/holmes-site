@@ -28,19 +28,25 @@ const SIM = {
     return [{ id: 'y', name: 'Sideways deflection at the end of the plates', short: 'y', sym: 'y', unit: 'm', f: d => d.hit ? NaN : d.y }, { id: 'a', name: 'Acceleration', short: 'a', sym: 'a', unit: 'm/s²', f: d => d.a }, { id: 'ang', name: 'Exit angle', short: 'θ', sym: 'θ', unit: '°', f: d => d.hit ? NaN : d.ang }];
   },
   work(v, d, mode, opt){
-    if (mode === 'mill') return '<h4>1 · Weight of the drop</h4><div class="eq">m = ρ(4/3)πr³ = (900)(4/3)π(' + fnum(v.r * 1e-6) + ')³ = ' + H.n(d.m, 'kg') + ' → mg = ' + H.n(d.W, 'N') + '</div>' +
-      '<h4>2 · Electric force upward: F = qE = qV/d</h4><div class="eq">E = V/d = ' + H.iv('V') + '/' + fnum(v.d / 100) + ' m = ' + H.n(d.E, 'V/m') + '. Net force = ' + H.n(d.net, 'N') + ' → ' + (d.bal ? '<b>balanced: it hangs still</b>' : d.net > 0 ? 'drifts up' : 'falls') + '</div>' +
-      '<h4>3 · At balance: qV/d = mg → q = mgd/V</h4><div class="eq">If balanced at this V: q = ' + H.n(d.qCalc, 'C') + ' = <b>' + H.n(d.nCalc) + ' e</b></div>' +
-      (d.bal ? '<div class="eq">A whole number: drop ' + (opt.drop || 'A') + ' carries ' + Math.round(d.nCalc) + ' extra electrons. Millikan found every drop’s charge was a multiple of 1.6×10⁻¹⁹ C: <b>charge is quantized</b>.</div>' : '<p class="note">Adjust V until the drop stops. Then the value above is its charge.</p>') +
+    if (mode === 'mill') return '<h4>1 · Weight of the drop</h4>' + TEX`m = \rho\,\frac{4}{3}\pi r^3` + TEX`m = (900)\,\frac{4}{3}\pi\,(${M.n(v.r * 1e-6, 'm')})^3` + TEX`m = ${M.n(d.m, 'kg')}` + TEX`mg = (${M.n(d.m)})(10)` + TEXA`mg = ${M.n(d.W, 'N')}` +
+      '<h4>2 · Electric force upward: F = qE = qV/d</h4>' + TEX`E = \frac{V}{d}` + TEX`E = \frac{${M.iv('V')}}{${M.n(v.d / 100, 'm')}}` + TEXA`E = ${M.n(d.E, 'V/m')}` +
+      TEX`F_{\text{net}} = qE - mg` + TEXA`F_{\text{net}} = ${M.n(d.net, 'N')}` + '<p class="st">' + (d.bal ? '<b>Balanced: it hangs still.</b>' : d.net > 0 ? 'Drifts up.' : 'Falls.') + '</p>' +
+      '<h4>3 · At balance: qV/d = mg → q = mgd/V</h4>' + (v.V > 0 ? '<p class="st">If balanced at this V:</p>' + TEX`q = \frac{mg\,d}{V}` + TEX`q = \frac{(${M.n(d.W)})(${M.n(v.d / 100)})}{${M.iv('V')}}` + TEX`q = ${M.n(d.qCalc, 'C')}` + TEXA`\frac{q}{e} = ${M.n(d.nCalc)}` : '<p class="st">With no voltage there is no electric force, so nothing can balance the weight.</p>') +
+      (d.bal ? '<p class="st">A whole number: drop ' + (opt.drop || 'A') + ' carries ' + Math.round(d.nCalc) + ' extra electrons. Millikan found every drop’s charge was a multiple of 1.6×10⁻¹⁹ C: <b>charge is quantized</b>.</p>' : '<p class="note">Adjust V until the drop stops. Then the value above is its charge.</p>') +
       '<p class="note">Upper plate positive pulls a negatively charged drop up. Find the charge on drops A, B and C: what do they have in common?</p>';
-    if (mode === 'accel') return '<h4>1 · Work done by the field = gain in kinetic energy</h4><div class="eq">ΔK = |q|ΔV = (' + Math.abs(d.z) + ' × 1.6×10⁻¹⁹)(' + H.iv('V') + ') = <b>' + H.n(d.KJ, 'J') + '</b></div>' +
-      '<h4>2 · Final speed (from rest)</h4><div class="eq">v = √(2K/m) = √(2 × ' + fnum(d.KJ) + ' / ' + fnum(d.m) + ') = <b>' + H.n(d.v, 'm/s') + '</b> (' + H.n(100 * d.frac, '%') + ' of the speed of light)</div>' +
-      '<h4>3 · The plate separation doesn’t change the final speed</h4><div class="eq">E = V/d = ' + H.n(d.E, 'V/m') + ', a = ' + H.n(d.a, 'm/s²') + ', time t = ' + H.n(d.t, 's') + '. Closer plates: bigger force over a shorter distance, same work qV.</div>' +
+    if (mode === 'accel') return '<h4>1 · Work done by the field = gain in kinetic energy</h4>' + TEX`\Delta K = |q|\,\Delta V` + TEX`\Delta K = (${'<mn>' + Math.abs(d.z) + '</mn>'} \times 1.6\times10^{-19})(${M.iv('V')})` + TEXA`\Delta K = ${M.n(d.KJ, 'J')}` +
+      '<h4>2 · Final speed (from rest)</h4>' + TEX`v = \sqrt{\frac{2K}{m}}` + TEX`v = \sqrt{\frac{2 \times ${M.n(d.KJ)}}{${M.n(d.m)}}}` + TEXA`v = ${M.n(d.v, 'm/s')}` + '<p class="st">That is ' + H.n(100 * d.frac, '%') + ' of the speed of light.</p>' +
+      '<h4>3 · The plate separation doesn’t change the final speed</h4>' + TEX`E = \frac{V}{d}` + TEXA`E = ${M.n(d.E, 'V/m')}` + TEX`a = \frac{|q|E}{m}` + TEXA`a = ${M.n(d.a, 'm/s²')}` + TEX`t = \frac{v}{a}` + TEXA`t = ${M.n(d.t, 's')}` +
+      '<p class="st">Closer plates: bigger force over a shorter distance, same work qV.</p>' +
       '<p class="note">ΔK = |q|ΔV: an alpha (charge 2e) through the same ΔV gains twice the energy of an electron, but it is about 7300 times heavier, so it ends up much slower.</p>';
-    return '<h4>1 · Uniform field between the plates: E = V/d</h4><div class="eq">E = ' + H.iv('V') + '/' + fnum(v.d / 100) + ' m = ' + H.n(d.E, 'V/m') + ' → F = qE = ' + H.n(d.F, 'N') + ' (gravity ' + fnum(d.Wg) + ' N: ignore it)</div>' +
-      '<h4>2 · Like a projectile: constant v<sub>x</sub>, constant a<sub>y</sub></h4><div class="eq">a = qE/m = ' + H.n(d.a, 'm/s²') + ' &nbsp; time between plates t = L/v<sub>0</sub> = ' + H.n(d.t, 's') + '</div>' +
+    return '<h4>1 · Uniform field between the plates: E = V/d</h4>' + TEX`E = \frac{V}{d}` + TEX`E = \frac{${M.iv('V')}}{${M.n(v.d / 100, 'm')}}` + TEXA`E = ${M.n(d.E, 'V/m')}` +
+      TEX`F = qE` + TEXA`F = ${M.n(d.F, 'N')}` + '<p class="st">Gravity is ' + H.n(d.Wg, 'N') + ': ignore it.</p>' +
+      '<h4>2 · Like a projectile: constant v<sub>x</sub>, constant a<sub>y</sub></h4>' + TEX`a = \frac{qE}{m}` + TEXA`a = ${M.n(d.a, 'm/s²')}` +
+      TEX`t = \frac{L}{v_0}` + TEX`t = \frac{${M.n(v.L / 100, 'm')}}{${M.n(v.v0 * 1e6, 'm/s')}}` + TEXA`t = ${M.n(d.t, 's')}` +
       (d.hit ? '<div class="bad">½at² would be more than d/2: the ' + d.nm + ' hits the ' + (d.z < 0 ? 'positive' : 'negative') + ' plate after ' + H.n(d.xHit * 100, 'cm') + '.</div>' :
-        '<div class="eq">y = ½at² = <b>' + H.n(d.y * 100, 'cm') + '</b> &nbsp; v<sub>y</sub> = at = ' + H.n(d.vy, 'm/s') + ' → exits at <b>' + H.n(d.ang, '°') + '</b></div>') +
+        TEX`y = \frac{1}{2}\,a\,t^2` + TEX`y = \frac{1}{2}(${M.n(d.a)})(${M.n(d.t)})^2` + TEXA`y = ${M.n(d.y * 100, 'cm')}` +
+        TEX`v_y = a\,t` + TEX`v_y = (${M.n(d.a)})(${M.n(d.t)})` + TEXA`v_y = ${M.n(d.vy, 'm/s')}` +
+        TEX`\theta = \tan^{-1}\left(\frac{v_y}{v_0}\right)` + TEXA`\theta = ${M.n(d.ang, '°')}`) +
       '<p class="note">After leaving the plates there’s no force, so it moves in a straight line (that’s how an old CRT aimed its beam). Path between the plates: a parabola, ' + (d.z < 0 ? 'bending toward the + plate.' : 'bending toward the − plate.') + '</p>';
   },
   draw(v, d, mode, opt, t, dt, A){

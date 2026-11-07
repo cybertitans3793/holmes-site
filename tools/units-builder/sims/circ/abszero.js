@@ -35,14 +35,16 @@ const SIM = {
   },
   work(v, d, mode, opt){
     if (mode === 'boyle'){ const inv = (opt.plot || 'V') === 'inv';
-      return '<h4>1 · Constant T and n: P = (constant)/V</h4><div class="eq">PV values from the data: ' + d.PVs.map(x => fnum(x)).join(', ') + ' kPa·mL. Nearly constant.</div>' +
-        '<h4>2 · ' + (inv ? 'P vs 1/V is a straight line through the origin' : 'P vs V is a curve (a hyperbola)') + '</h4><div class="eq">' + (inv ? 'Gradient = PV = <b>' + H.n(d.m, 'kPa·mL') + '</b>, intercept = ' + H.n(d.b, 'kPa') : 'Hard to test by eye. Switch to 1/V to straighten it.') + '</div>' +
+      return '<h4>1 · Constant T and n: P = (constant)/V</h4>' + TEX`P = \frac{\text{constant}}{V}` + TEX`PV = \text{constant}` +
+        '<p class="st">PV values from the data: ' + d.PVs.map(x => fnum(x)).join(', ') + ' kPa·mL. Nearly constant.</p>' +
+        '<h4>2 · ' + (inv ? 'P vs 1/V is a straight line through the origin' : 'P vs V is a curve (a hyperbola)') + '</h4>' +
+        (inv ? TEX`P = (PV)\,\frac{1}{V} + 0` + '<p class="st">Gradient = PV, intercept should be 0:</p>' + TEXA`\text{gradient} = PV = ${M.n(d.m, 'kPa·mL')}` + TEX`\text{intercept} = ${M.n(d.b, 'kPa')}` : '<p class="st">Hard to test by eye. Switch to 1/V to straighten it.</p>') +
         (v.dead ? '<div class="bad">Gas hidden in the tubing isn’t counted in V. P vs 1/V curves and misses the origin: a systematic error.</div>' : '') +
-        '<p class="note">IB: gas laws are limited to constant P, V or T and the ideal gas law. AP: be ready to linearize and read PV from the gradient.</p>'; }
-    const isP = mode === 'press', q = isP ? 'P' : 'V', u = isP ? 'kPa' : 'mL';
-    return '<h4>1 · ' + (isP ? 'Sealed flask, fixed volume, in baths of different temperature' : 'Gas syringe at constant pressure in different baths') + '</h4><div class="eq">' + d.pts.map(p => p.T + ' °C → ' + fnum(p.y) + ' ' + u).join(' · ') + '</div>' +
-      '<h4>2 · Fit a straight line: ' + q + ' = m T + b</h4><div class="eq">m = ' + H.n(d.m, u + '/°C') + ', b = ' + H.n(d.b, u) + '</div>' +
-      '<h4>3 · Extrapolate to ' + q + ' = 0</h4><div class="eq">0 = mT₀ + b → T₀ = −b/m = <b>' + H.n(d.zero, '°C') + '</b> (accepted −273 °C)</div>' +
+        '<p class="note"><span style="color:#7a3fb0">IB:</span> gas laws are limited to constant P, V or T and the ideal gas law. <span style="color:#c43a00">AP:</span> be ready to linearize and read PV from the gradient.</p>'; }
+    const isP = mode === 'press', q = isP ? 'P' : 'V', u = isP ? 'kPa' : 'mL', qs = isP ? TEX`P = mT + b` : TEX`V = mT + b`;
+    return '<h4>1 · ' + (isP ? 'Sealed flask, fixed volume, in baths of different temperature' : 'Gas syringe at constant pressure in different baths') + '</h4><p class="st">' + d.pts.map(p => p.T + ' °C → ' + fnum(p.y) + ' ' + u).join(' · ') + '</p>' +
+      '<h4>2 · Fit a straight line: ' + q + ' = m T + b</h4>' + qs + TEX`m = ${M.n(d.m, u + '/°C')}` + TEX`b = ${M.n(d.b, u)}` +
+      '<h4>3 · Extrapolate to ' + q + ' = 0</h4>' + TEX`0 = mT_0 + b` + TEX`T_0 = -\frac{b}{m}` + TEX`T_0 = -\frac{${M.p(d.b, u)}}{${M.n(d.m, u + '/°C')}}` + TEXA`T_0 = ${M.n(d.zero, '°C')}` + '<p class="st">Accepted value: −273 °C.</p>' +
       (v.off ? '<div class="bad">A zero error shifts every reading by the same amount. The gradient barely changes, but the intercept moves, so T₀ is off by ' + fnum(d.err) + ' °C. This is a systematic error.</div>' : '') +
       '<p class="note">Every gas, any amount, extrapolates to the same −273 °C. That’s why we define the Kelvin scale from there: ' + q + ' ∝ T(K).</p>';
   },

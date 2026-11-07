@@ -47,28 +47,37 @@ const SIM = {
     return [{ id: 'y1', name: 'Distance to the first dark fringe', short: Y.ib ? 'y₁' : 'y_min', sym: Y.yd, unit: 'mm', f: d => d.y1 * 1e3 }, { id: 'th', name: 'Angle to the first minimum', short: 'θ', sym: 'θ', unit: '°', f: d => d.th1 }];
   },
   work(v, d, mode, opt){ const Y = SY(opt), m = Y.m, P = Y.ib ? 'path difference' : 'ΔD';
+    const mm = '<mi>' + Y.m + '</mi>', LL = '<mi>' + Y.L + '</mi>', aa = '<mi>' + Y.a + '</mi>', mmax = '<msub><mi>' + Y.m + '</mi><mtext>max</mtext></msub>',
+      PD = Y.ib ? '<mtext>path difference</mtext>' : '<mrow><mi mathvariant="normal">Δ</mi><mi>D</mi></mrow>',
+      ymax = Y.ib ? '<mi>s</mi>' : '<msub><mi>y</mi><mtext>max</mtext></msub>', y1 = Y.ib ? '<msub><mi>y</mi><mn>1</mn></msub>' : '<msub><mi>y</mi><mtext>min</mtext></msub>',
+      dg = M.n(d.dg * 1e6, 'μm');
     if (mode === 'two'){ const nr = Math.round(d.n * 2) / 2, kind = Math.abs(d.n - Math.round(d.n)) < 0.05 ? 'constructive: <b>loud</b>' : Math.abs(d.n - Math.round(d.n)) > 0.45 ? 'destructive: <b>quiet</b>' : 'in between';
-      return '<h4>1 · Wavelength</h4><div class="eq">λ = v/f = (343 m/s)/' + H.iv('f') + ' = <b>' + H.n(d.lam, 'm') + '</b></div>' +
-        '<h4>2 · Distance from each speaker</h4><div class="eq">r₁ = √(6² + (y − d/2)²) = ' + H.n(d.r1, 'm') + '; r₂ = ' + H.n(d.r2, 'm') + '</div>' +
-        '<h4>3 · Path length difference</h4><div class="eq">' + P + ' = |r₁ − r₂| = ' + H.n(d.pd, 'm') + ' = <b>' + fnum(d.n) + ' λ</b> → ' + kind + '</div>' +
-        '<h4>4 · Rules</h4><div class="eq">Constructive (loud): ' + P + ' = ' + m + 'λ<br>Destructive (quiet): ' + P + ' = (' + m + ' + ½)λ &nbsp;&nbsp; ' + m + ' = 0, 1, 2 …</div>' +
+      return '<h4>1 · Wavelength</h4>' + TEX`\lambda = \frac{v}{f}` + TEX`\lambda = \frac{343\,\text{m/s}}{${M.iv('f')}}` + TEXA`\lambda = ${M.n(d.lam, 'm')}` +
+        '<h4>2 · Distance from each speaker</h4>' + TEX`r_1 = \sqrt{6^2 + \left(y - \frac{d}{2}\right)^2}` + TEX`r_1 = \sqrt{6^2 + \left(${M.p(v.y, 'm')} - \frac{${M.iv('d')}}{2}\right)^2}` + TEXA`r_1 = ${M.n(d.r1, 'm')}` +
+        TEX`r_2 = \sqrt{6^2 + \left(y + \frac{d}{2}\right)^2}` + TEX`r_2 = \sqrt{6^2 + \left(${M.p(v.y, 'm')} + \frac{${M.iv('d')}}{2}\right)^2}` + TEXA`r_2 = ${M.n(d.r2, 'm')}` +
+        '<h4>3 · Path length difference</h4>' + TEX`${PD} = |r_1 - r_2|` + TEX`${PD} = |${M.n(d.r1)} - ${M.n(d.r2)}|` + TEX`${PD} = ${M.n(d.pd, 'm')}` +
+        '<p class="st">In wavelengths:</p>' + TEXA`${PD} = ${M.n(d.n)}\,\lambda` + '<p class="st">→ ' + kind + '</p>' +
+        '<h4>4 · Rules</h4><p class="st">Constructive (loud):</p>' + TEX`${PD} = ${mm}\,\lambda` + '<p class="st">Destructive (quiet):</p>' + TEX`${PD} = \left(${mm} + \frac{1}{2}\right)\lambda` + '<p class="st">' + m + ' = 0, 1, 2 …</p>' +
         '<p class="note">' + (Math.abs(nr - Math.round(nr)) > 0.1 ? 'Here ' + P + ' ≈ ' + nr + 'λ. ' : '') + 'Noise-cancelling headphones use the same idea with a wave half a cycle out of phase.</p>' + SYNOTE; }
-    if (mode === 'grating'){ if (d.white) return '<h4>1 · Line spacing</h4><div class="eq">d = 1/N = 1/(' + H.iv('N') + ') = <b>' + H.n(d.dg * 1e6, 'μm') + '</b></div>' +
-        '<h4>2 · Each colour at its own angle: ' + (Y.ib ? 'nλ = d sin θ' : 'd sin θ = mλ') + '</h4><div class="eq">1st order: violet (400 nm) at ' + fnum(Math.asin(400e-9 / d.dg) / DEG) + '°, red (700 nm) at ' + (700e-9 < d.dg ? fnum(Math.asin(700e-9 / d.dg) / DEG) + '°' : 'none') + '</div>' +
+    if (mode === 'grating'){ if (d.white) return '<h4>1 · Line spacing</h4>' + TEX`d = \frac{1}{N}` + TEX`d = \frac{1}{${M.iv('N')}}` + TEXA`d = ${dg}` +
+        '<h4>2 · Each colour at its own angle: ' + (Y.ib ? 'nλ = d sin θ' : 'd sin θ = mλ') + '</h4><p class="st">1st order:</p>' + TEX`\theta = \sin^{-1}\left(\frac{\lambda}{d}\right)` +
+        TEXA`\theta_{\text{violet}} = ${M.n(Math.asin(400e-9 / d.dg) / DEG, '°')}` + (700e-9 < d.dg ? TEXA`\theta_{\text{red}} = ${M.n(Math.asin(700e-9 / d.dg) / DEG, '°')}` : '<p class="st">Red (700 nm): no 1st-order maximum.</p>') +
         '<p class="note">The central maximum (' + m + ' = 0) is white: every colour has zero path difference there. In each order red is farthest out (longest λ). Full spectra visible up to order ' + d.nmaxW + '.</p>' + SYNOTE;
-      return '<h4>1 · Line spacing</h4><div class="eq">d = 1/N = 1/(' + H.iv('N') + ') = <b>' + H.n(d.dg * 1e6, 'μm') + '</b></div>' +
-        '<h4>2 · Maxima: ' + (Y.ib ? 'nλ = d sin θ' : 'd sin θ = mλ') + '</h4><div class="eq">' + (d.ords.length ? d.ords.map(([n, th]) => m + ' = ' + n + ': θ = <b>' + fnum(th) + '°</b>').join('<br>') : m + 'λ > d even for ' + m + ' = 1: no maxima except the centre.') + '</div>' +
-        '<h4>3 · Highest order</h4><div class="eq">sin θ ≤ 1 → ' + m + ' ≤ d/λ = ' + fnum(d.dg / (v.lam * 1e-9)) + ' → ' + m + '<sub>max</sub> = <b>' + d.nmax + '</b></div>' +
+      return '<h4>1 · Line spacing</h4>' + TEX`d = \frac{1}{N}` + TEX`d = \frac{1}{${M.iv('N')}}` + TEXA`d = ${dg}` +
+        '<h4>2 · Maxima: ' + (Y.ib ? 'nλ = d sin θ' : 'd sin θ = mλ') + '</h4>' + (d.ords.length ? TEX`\theta = \sin^{-1}\left(\frac{${mm}\lambda}{d}\right)` + d.ords.map(([n, th]) => TEXA`\theta_{${'<mn>' + n + '</mn>'}} = ${M.n(th, '°')}`).join('') : '<p class="st">' + m + 'λ > d even for ' + m + ' = 1: no maxima except the centre.</p>') +
+        '<h4>3 · Highest order</h4><p class="st">sin θ ≤ 1, so:</p>' + TEX`${mm} \leq \frac{d}{\lambda}` + TEX`${mm} \leq ${M.n(d.dg / (v.lam * 1e-9))}` + TEXA`${mmax} = ${M.n(d.nmax)}` +
         '<p class="note">Use sin θ, not the small-angle approximation — the angles are big.</p>' + SYNOTE; }
     if (mode === 'double'){
-      const eq = Y.ib ? '<h4>1 · Fringe spacing (Young)</h4><div class="eq">s = λD/d = (' + H.iv('lam') + ')(' + H.iv('D') + ')/(' + H.iv('dd') + ') = <b>' + H.n(d.s * 1e3, 'mm') + '</b></div>'
-        : '<h4>1 · Path length difference to a bright fringe</h4><div class="eq">ΔD = d sin θ = mλ</div><h4>2 · Small angles: sin θ ≈ tan θ = y<sub>max</sub>/L</h4><div class="eq">y<sub>max</sub> = mλL/d; for m = 1: (' + H.iv('lam') + ')(' + H.iv('D') + ')/(' + H.iv('dd') + ') = <b>' + H.n(d.s * 1e3, 'mm') + '</b></div>';
-      return eq + (Y.ib ? '<h4>2 · Why bright and dark?</h4><div class="eq">Bright where the path difference = nλ; dark where it is (n + ½)λ.</div>' : '<h4>3 · Dark fringes</h4><div class="eq">ΔD = (m + ½)λ: halfway between the bright ones.</div>') +
+      const eq = Y.ib ? '<h4>1 · Fringe spacing (Young)</h4>' + TEX`s = \frac{\lambda D}{d}` + TEX`s = \frac{(${M.iv('lam')})(${M.iv('D')})}{${M.iv('dd')}}` + TEXA`s = ${M.n(d.s * 1e3, 'mm')}`
+        : '<h4>1 · Path length difference to a bright fringe</h4>' + TEX`${PD} = d\,\sin\theta` + TEX`d\,\sin\theta = ${mm}\lambda` + '<h4>2 · Small angles: sin θ ≈ tan θ = y<sub>max</sub>/L</h4>' + TEX`${ymax} = \frac{${mm}\lambda ${LL}}{d}` +
+          '<p class="st">For m = 1:</p>' + TEX`${ymax} = \frac{(${M.iv('lam')})(${M.iv('D')})}{${M.iv('dd')}}` + TEXA`${ymax} = ${M.n(d.s * 1e3, 'mm')}`;
+      return eq + (Y.ib ? '<h4>2 · Why bright and dark?</h4><p class="st">Bright where the path difference = nλ; dark where it is (n + ½)λ:</p>' + TEX`${PD} = ${mm}\lambda \quad \text{(bright)}` + TEX`${PD} = \left(${mm} + \frac{1}{2}\right)\lambda \quad \text{(dark)}`
+        : '<h4>3 · Dark fringes</h4><p class="st">Halfway between the bright ones:</p>' + TEX`${PD} = \left(${mm} + \frac{1}{2}\right)\lambda`) +
         '<p class="note">Bigger λ or ' + Y.L + ' → wider fringes; bigger d → narrower. Lab: measure across 10 fringes and divide by 10.</p>' + SYNOTE; }
-    return (Y.ib ? '<h4>1 · First minimum</h4><div class="eq">θ = λ/b (small angles) = <b>' + H.n(d.th1, '°') + '</b></div><h4>2 · On the screen</h4><div class="eq">y₁ = Dθ = λD/b = (' + H.iv('lam') + ')(' + H.iv('D') + ')/(' + H.iv('b') + ') = <b>'
-        : '<h4>1 · Dark fringes</h4><div class="eq">ΔD = a sin θ = mλ (m = 1, 2 …) → 1st dark at θ = <b>' + H.n(d.th1, '°') + '</b></div><h4>2 · On the screen (small angles)</h4><div class="eq">y<sub>min</sub> = mλL/a; m = 1: (' + H.iv('lam') + ')(' + H.iv('D') + ')/(' + H.iv('b') + ') = <b>') +
-      H.n(d.y1 * 1e3, 'mm') + '</b>; central maximum is <b>' + H.n(d.wC * 1e3, 'mm') + '</b> wide (twice the others).</div>' +
-      (d.two ? '<h4>3 · Two slits of this width</h4><div class="eq">Double-slit fringes (' + (Y.ib ? 's = λD/d' : 'y<sub>max</sub> = λL/d') + ' = ' + H.n(d.sF * 1e3, 'mm') + ') sit inside the single-slit envelope. Where a single-slit minimum lands on a bright fringe, that fringe is missing.</div>' : '') +
+    return (Y.ib ? '<h4>1 · First minimum</h4><p class="st">Small angles:</p>' + TEX`\theta = \frac{\lambda}{b}` + TEXA`\theta = ${M.n(d.th1, '°')}` + '<h4>2 · On the screen</h4>' + TEX`${y1} = ${LL}\,\theta = \frac{\lambda ${LL}}{${aa}}` + TEX`${y1} = \frac{(${M.iv('lam')})(${M.iv('D')})}{${M.iv('b')}}`
+        : '<h4>1 · Dark fringes</h4>' + TEX`${PD} = ${aa}\,\sin\theta` + TEX`${aa}\,\sin\theta = ${mm}\lambda \quad (${mm} = 1, 2, \ldots)` + '<p class="st">1st dark fringe:</p>' + TEXA`\theta = ${M.n(d.th1, '°')}` + '<h4>2 · On the screen (small angles)</h4>' + TEX`${y1} = \frac{${mm}\lambda ${LL}}{${aa}}` + '<p class="st">For m = 1:</p>' + TEX`${y1} = \frac{(${M.iv('lam')})(${M.iv('D')})}{${M.iv('b')}}`) +
+      TEXA`${y1} = ${M.n(d.y1 * 1e3, 'mm')}` + '<p class="st">The central maximum is twice as wide as the others:</p>' + TEX`w = 2\,${y1}` + TEXA`w = ${M.n(d.wC * 1e3, 'mm')}` +
+      (d.two ? '<h4>3 · Two slits of this width</h4>' + TEX`${ymax} = \frac{\lambda ${LL}}{d}` + TEXA`${ymax} = ${M.n(d.sF * 1e3, 'mm')}` + '<p class="st">The double-slit fringes sit inside the single-slit envelope. Where a single-slit minimum lands on a bright fringe, that fringe is missing.</p>' : '') +
       '<p class="note">Careful: for one slit, ' + Y.a + ' sin θ = ' + m + 'λ gives <b>dark</b> fringes; for two slits, d sin θ = ' + m + 'λ gives <b>bright</b> ones. Narrower slit → wider pattern.</p>' + SYNOTE;
   },
   draw(v, d, mode, opt, t, dt, A){

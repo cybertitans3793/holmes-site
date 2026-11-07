@@ -40,10 +40,11 @@ const SIM = {
     const W = g => d.ib ? g.Wby : g.Won, td = 'style="padding:2px 6px;border-bottom:1px solid #ddd;text-align:right"';
     const rows = d.L.map(g => '<tr><td ' + td.replace('right', 'left') + '><b>' + g.from + '→' + g.to + '</b> ' + g.k + '</td><td ' + td + '>' + fnum(W(g)) + '</td><td ' + td + '>' + fnum(g.dU) + '</td><td ' + td + '><b>' + fnum(g.Q) + '</b></td></tr>').join('');
     return '<h4>1 · Each leg: W from the area, ΔU from (3/2)Δ(PV), then Q from the first law</h4>' +
-      '<div class="eq">' + (d.ib ? 'IB: W = work BY the gas = +area when V grows; Q = ΔU + W' : 'AP: W = work ON the gas = −area when V grows; ΔU = Q + W → Q = ΔU − W') + '</div>' +
+      (d.ib ? '<p class="st">IB: W = work BY the gas = +area when V grows.</p>' + TEX`Q = \Delta U + W` : '<p class="st">AP: W = work ON the gas = −area when V grows.</p>' + TEX`\Delta U = Q + W` + '<p class="st">So</p>' + TEX`Q = \Delta U - W`) +
       '<table style="border-collapse:collapse;font:500 13px \'IBM Plex Mono\',monospace;margin:6px 0"><tr><th style="text-align:left;padding:2px 6px">leg</th><th style="padding:2px 6px">W (J)</th><th style="padding:2px 6px">ΔU (J)</th><th style="padding:2px 6px">Q (J)</th></tr>' + rows + '</table>' +
-      '<h4>2 · Around the whole cycle</h4><div class="eq">ΣΔU = ' + fnum(Math.abs(d.sumU) < 1e-6 ? 0 : d.sumU) + ' J (back to the start, same T) → net Q = net work by the gas = enclosed area = <b>' + H.n(d.Wnet, 'J') + '</b></div>' +
-      ((opt.dir || 'cw') === 'cw' ? '<h4>3 · Clockwise: net work is done BY the gas</h4><div class="eq">Net heat in = net work by the gas = the area inside the loop.</div>' : '<h4>3 · Counter-clockwise: net work is done ON the gas</h4><div class="eq">Net work on the gas = the area inside the loop, and the gas gives out that much net heat.</div>') +
+      '<h4>2 · Around the whole cycle</h4><p class="st">Back to the start, same T, so the internal energy changes cancel:</p>' + TEX`\sum \Delta U = ${M.n(Math.abs(d.sumU) < 1e-6 ? 0 : d.sumU, 'J')}` +
+      '<p class="st">Net Q = net work by the gas = enclosed area:</p>' + TEX`Q_{\text{net}} = W_{\text{net,by}}` + TEXA`W_{\text{net,by}} = ${M.n(d.Wnet, 'J')}` +
+      ((opt.dir || 'cw') === 'cw' ? '<h4>3 · Clockwise: net work is done BY the gas</h4><p class="st">Net heat in = net work by the gas = the area inside the loop.</p>' : '<h4>3 · Counter-clockwise: net work is done ON the gas</h4><p class="st">Net work on the gas = the area inside the loop, and the gas gives out that much net heat.</p>') +
       '<p class="note">Find which legs take heat in: Q &gt; 0. On a P–V diagram, T rises as you move up and to the right (T ∝ PV).</p>';
   },
   draw(v, d, mode, opt, t, dt, A){

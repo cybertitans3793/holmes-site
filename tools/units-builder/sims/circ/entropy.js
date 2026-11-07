@@ -27,10 +27,10 @@ const SIM = {
       '<h4>2 · Why heat only flows hot → cold</h4><div class="eq">Energy spreading from the hot object into the cold one spreads it over more particles and more ways of sharing it, so entropy goes up. The reverse would need energy to gather itself back into the hot object, which an isolated system never does on its own.</div>' +
       '<h4>3 · Fridges</h4><div class="eq">A fridge does move heat from cold to hot, but only because work is done on it, and it dumps even more energy (and entropy) into the room.</div>' +
       '<p class="note">AP: describe it qualitatively. Energy spreads out; isolated systems move toward thermal equilibrium, where entropy is maximum.</p>';
-    return '<h4>1 · Remove the wall: the gas spreads into the empty side</h4><div class="eq">No energy is added and no work is done, yet it never goes back on its own. Why?</div>' +
-      '<h4>2 · Count the ways (microstates)</h4><div class="eq">Each molecule can be left or right: 2<sup>N</sup> = ' + H.n(d.total) + ' arrangements. All on the left: just 1.</div>' +
-      '<div class="eq">Chance they’re all back on the left at any moment = (½)<sup>N</sup> = <b>' + H.n(d.p) + '</b></div>' +
-      '<div class="eq">Even split: Ω = ' + H.n(d.Omega) + ' ways. The spread-out state wins by sheer numbers.</div>' +
+    return '<h4>1 · Remove the wall: the gas spreads into the empty side</h4><p class="st">No energy is added and no work is done, yet it never goes back on its own. Why?</p>' +
+      '<h4>2 · Count the ways (microstates)</h4><p class="st">Each molecule can be left or right:</p>' + TEX`\text{arrangements} = 2^{N}` + TEXA`2^{${M.n(d.N)}} = ${M.n(d.total)}` + '<p class="st">All on the left: just 1.</p>' +
+      '<p class="st">Chance they’re all back on the left at any moment:</p>' + TEX`\text{chance} = \left(\frac{1}{2}\right)^{N}` + TEXA`\text{chance} = ${M.n(d.p)}` +
+      '<p class="st">Even split:</p>' + TEXA`\Omega = ${M.n(d.Omega)}` + '<p class="st">The spread-out state wins by sheer numbers.</p>' +
       '<p class="note">With 10²³ molecules the chance of going back is effectively zero. That’s the second law: the entropy of an isolated system doesn’t decrease.</p>';
   },
   draw(v, d, mode, opt, t, dt, A){

@@ -27,12 +27,17 @@ const SIM = {
   },
   dvs(){ return [{ id: 'E', name: 'Field strength at P', short: 'E', sym: 'E<sub>P</sub>', unit: 'N/C', f: d => d.E }, { id: 'Ex', name: 'x-component at P', short: 'Ex', sym: 'E<sub>x</sub>', unit: 'N/C', f: d => d.Ex }, { id: 'Ey', name: 'y-component at P', short: 'Ey', sym: 'E<sub>y</sub>', unit: 'N/C', f: d => d.Ey }]; },
   work(v, d, mode){
-    const rows = d.parts.map((p, i) => '<div class="eq">From q<sub>' + (i + 1) + '</sub> (' + p.q + ' nC): r = ' + H.n(p.r * 100, 'cm') + ', E = kq/r² = ' + H.n(p.E, 'N/C') + ' ' + (p.q > 0 ? 'away from' : 'toward') + ' it → (' + fnum(p.ex) + ', ' + fnum(p.ey) + ')</div>').join('');
-    return '<h4>1 · Field from each charge: E = k|q|/r²</h4><div class="eq">Points <b>away</b> from + charges and <b>toward</b> − charges. It’s the force per coulomb on a small + test charge.</div>' + rows +
-      '<h4>2 · Add as vectors (components)</h4><div class="eq">E<sub>x</sub> = ' + H.n(d.Ex, 'N/C') + ', E<sub>y</sub> = ' + H.n(d.Ey, 'N/C') + '</div>' +
-      '<div class="eq">|E| = √(E<sub>x</sub>² + E<sub>y</sub>²) = <b>' + H.n(d.E, 'N/C') + '</b> at ' + H.n(d.ang, '°') + ' from +x</div>' +
-      '<h4>3 · Force on a charge placed at P: F = qE</h4><div class="eq">An electron at P: F = (1.6×10⁻¹⁹)(' + fnum(d.E) + ') = ' + H.n(1.6e-19 * d.E, 'N') + ', <b>opposite</b> to E</div>' +
-      (mode === 'two' ? '<h4>4 · Where is E = 0 on the axis?</h4><div class="eq">' + (d.nul === null ? 'Nowhere on the axis (other than infinitely far away).' : 'At x = <b>' + H.n(d.nul * 100, 'cm') + '</b>. ' + (v.q1 * v.q2 > 0 ? 'Like charges: between them, closer to the smaller one.' : 'Opposite charges: outside, beyond the smaller one.')) + '</div>' : '') +
+    const rows = d.parts.map((p, i) => { const k = '<mn>' + (i + 1) + '</mn>';
+      return '<p class="st"><b>From q<sub>' + (i + 1) + '</sub></b> (' + p.q + ' nC), pointing ' + (p.q > 0 ? 'away from' : 'toward') + ' it:</p>' +
+        TEX`r_${k} = ${M.n(p.r * 100, 'cm')}` + TEX`E_${k} = \frac{k\,|q_${k}|}{r_${k}^2}` +
+        TEX`E_${k} = \frac{(8.99\times10^{9})(${M.n(Math.abs(p.q))}\times10^{-9})}{(${M.n(p.r)})^2}` + TEXA`E_${k} = ${M.n(p.E, 'N/C')}` +
+        TEX`\left(E_{${k},x},\ E_{${k},y}\right) = \left(${M.n(p.ex)},\ ${M.n(p.ey)}\right)`; }).join('');
+    const eAng = '<mtext>from +x</mtext>';
+    return '<h4>1 · Field from each charge: E = k|q|/r²</h4><p class="st">Points <b>away</b> from + charges and <b>toward</b> − charges. It’s the force per coulomb on a small + test charge.</p>' + rows +
+      '<h4>2 · Add as vectors (components)</h4>' + TEX`E_x = \sum E_{i,x}` + TEXA`E_x = ${M.n(d.Ex, 'N/C')}` + TEX`E_y = \sum E_{i,y}` + TEXA`E_y = ${M.n(d.Ey, 'N/C')}` +
+      TEX`|E| = \sqrt{E_x^2 + E_y^2}` + TEX`|E| = \sqrt{(${M.n(d.Ex)})^2 + (${M.n(d.Ey)})^2}` + TEXA`|E| = ${M.n(d.E, 'N/C')}` + TEXA`\theta = ${M.n(d.ang, '°')}\ ${eAng}` +
+      '<h4>3 · Force on a charge placed at P: F = qE</h4><p class="st">An electron at P:</p>' + TEX`F = qE` + TEX`F = (1.6\times10^{-19})(${M.n(d.E)})` + TEXA`F = ${M.n(1.6e-19 * d.E, 'N')}` + '<p class="st"><b>Opposite</b> to E.</p>' +
+      (mode === 'two' ? '<h4>4 · Where is E = 0 on the axis?</h4>' + (d.nul === null ? '<p class="st">Nowhere on the axis (other than infinitely far away).</p>' : '<p class="st">' + (v.q1 * v.q2 > 0 ? 'Like charges: between them, closer to the smaller one.' : 'Opposite charges: outside, beyond the smaller one.') + '</p>' + TEXA`x = ${M.n(d.nul * 100, 'cm')}`) : '') +
       '<p class="note">Field lines: start on + and end on −, never cross, closer together = stronger field. Line count is proportional to charge.</p>';
   },
   draw(v, d, mode, opt, t, dt, A){

@@ -44,24 +44,33 @@ const SIM = {
     return [{ id: 'VB', name: 'Potential at B', short: 'V_B', sym: 'V<sub>B</sub>', unit: 'V', f: d => d.VB }, { id: 'dV', name: 'Potential difference V_B − V_A', short: 'ΔV', sym: 'ΔV', unit: 'V', f: d => d.dV }, { id: 'Wext', name: 'Work by you to move it A → B', short: 'W_ext', sym: 'W<sub>ext</sub>', unit: 'J', f: d => d.Wext }];
   },
   work(v, d, mode){
-    if (mode === 'energy') return '<h4>1 · Potential energy of a pair: U = kq<sub>1</sub>q<sub>2</sub>/r (sign included)</h4><div class="eq">U<sub>12</sub> = ' + H.n(d.U12, 'J') + ', U<sub>13</sub> = ' + H.n(d.U13, 'J') + ', U<sub>23</sub> = ' + H.n(d.U23, 'J') + '</div>' +
-      '<h4>2 · System energy = sum over every pair (it’s a scalar)</h4><div class="eq">U = <b>' + H.n(d.U, 'J') + '</b></div>' +
-      '<h4>3 · Meaning: work to assemble the charges from infinitely far apart</h4><div class="eq">Bring q₁: 0. Bring q₂: U<sub>12</sub>. Bring q₃: U<sub>13</sub> + U<sub>23</sub>. Total = U.</div>' +
-      '<div class="eq">' + (d.U > 0 ? 'U &gt; 0: you had to push them together; let go and they fly apart.' : d.U < 0 ? 'U &lt; 0: the system is bound; you’d have to do work to pull it apart.' : 'U = 0') + '</div>' +
+    if (mode === 'energy') return '<h4>1 · Potential energy of a pair: U = kq<sub>1</sub>q<sub>2</sub>/r (sign included)</h4>' + TEX`U_{12} = \frac{k\,q_1 q_2}{r}` +
+      TEX`U_{12} = \frac{(8.99\times10^{9})(${M.iv('q1', 1e-9)})(${M.iv('q2', 1e-9)})}{${M.iv('s', 0.01)}}` + TEXA`U_{12} = ${M.n(d.U12, 'J')}` +
+      TEX`U_{13} = \frac{(8.99\times10^{9})(${M.iv('q1', 1e-9)})(${M.iv('q3', 1e-9)})}{${M.iv('s', 0.01)}}` + TEXA`U_{13} = ${M.n(d.U13, 'J')}` +
+      TEX`U_{23} = \frac{(8.99\times10^{9})(${M.iv('q2', 1e-9)})(${M.iv('q3', 1e-9)})}{${M.iv('s', 0.01)}}` + TEXA`U_{23} = ${M.n(d.U23, 'J')}` +
+      '<h4>2 · System energy = sum over every pair (it’s a scalar)</h4>' + TEX`U = U_{12} + U_{13} + U_{23}` + TEX`U = ${M.n(d.U12)} + ${M.p(d.U13)} + ${M.p(d.U23)}` + TEXA`U = ${M.n(d.U, 'J')}` +
+      '<h4>3 · Meaning: work to assemble the charges from infinitely far apart</h4><p class="st">Bring q₁: 0. Bring q₂: U<sub>12</sub>. Bring q₃: U<sub>13</sub> + U<sub>23</sub>. Total = U.</p>' +
+      '<p class="st">' + (d.U > 0 ? 'U &gt; 0: you had to push them together; let go and they fly apart.' : d.U < 0 ? 'U &lt; 0: the system is bound; you’d have to do work to pull it apart.' : 'U = 0') + '</p>' +
       '<p class="note">Halve the side → each pair energy doubles (1/r, not 1/r²).</p>';
-    if (mode === 'release') return '<h4>1 · Only the electric force does work: energy is conserved</h4><div class="eq">K<sub>1</sub> + U<sub>1</sub> = K<sub>2</sub> + U<sub>2</sub>, with K<sub>1</sub> = 0 and U = kQq/r</div>' +
-      '<div class="eq">U<sub>1</sub> = kQq/r<sub>1</sub> = ' + H.n(d.U1, 'J') + ' &nbsp; U<sub>2</sub> = kQq/r<sub>2</sub> = ' + H.n(d.U2, 'J') + '</div>' +
-      (d.ok ? '<div class="eq">K<sub>2</sub> = U<sub>1</sub> − U<sub>2</sub> = ' + H.n(d.KE, 'J') + ' → v = √(2K/m) = <b>' + H.n(d.v, 'm/s') + '</b></div>' : '<div class="bad">U<sub>2</sub> &gt; U<sub>1</sub>: it would need negative KE. Released from rest, it never gets to r<sub>2</sub> (it moves the other way).</div>') +
-      '<h4>2 · Same thing with potential: ΔK = −qΔV</h4><div class="eq">V at r₁ = ' + H.n(d.Vf1, 'V') + ', at r₂ = ' + H.n(d.Vf2, 'V') + '. ' + (v.q > 0 ? 'Positive charges fall from high V to low V.' : 'Negative charges “fall” from low V to high V.') + '</div>' +
+    if (mode === 'release') return '<h4>1 · Only the electric force does work: energy is conserved</h4>' + TEX`K_1 + U_1 = K_2 + U_2` + '<p class="st">With K<sub>1</sub> = 0 and U = kQq/r:</p>' +
+      TEX`U_1 = \frac{k\,Q\,q}{r_1}` + TEX`U_1 = \frac{(8.99\times10^{9})(${M.iv('Q', 1e-9)})(${M.iv('q', 1e-9)})}{${M.iv('r1', 0.01)}}` + TEXA`U_1 = ${M.n(d.U1, 'J')}` +
+      TEX`U_2 = \frac{k\,Q\,q}{r_2}` + TEX`U_2 = \frac{(8.99\times10^{9})(${M.iv('Q', 1e-9)})(${M.iv('q', 1e-9)})}{${M.iv('r2', 0.01)}}` + TEXA`U_2 = ${M.n(d.U2, 'J')}` +
+      (d.ok ? TEX`K_2 = U_1 - U_2` + TEX`K_2 = ${M.n(d.U1)} - ${M.p(d.U2)}` + TEXA`K_2 = ${M.n(d.KE, 'J')}` +
+        TEX`v = \sqrt{\frac{2K}{m}}` + TEX`v = \sqrt{\frac{2 \times ${M.n(d.KE)}}{${M.iv('m', 1e-3)}}}` + TEXA`v = ${M.n(d.v, 'm/s')}` : '<div class="bad">U<sub>2</sub> &gt; U<sub>1</sub>: it would need negative KE. Released from rest, it never gets to r<sub>2</sub> (it moves the other way).</div>') +
+      '<h4>2 · Same thing with potential: ΔK = −qΔV</h4>' + TEX`\Delta K = -q\,\Delta V` + TEX`V_1 = \frac{k\,Q}{r_1} = ${M.n(d.Vf1, 'V')}`.replace('','') + TEX`V_2 = \frac{k\,Q}{r_2}` + TEXA`V_2 = ${M.n(d.Vf2, 'V')}` +
+      '<p class="st">' + (v.q > 0 ? 'Positive charges fall from high V to low V.' : 'Negative charges “fall” from low V to high V.') + '</p>' +
       '<p class="note">Use energy, not F = ma: the force changes with distance, so the acceleration isn’t constant.</p>';
-    if (mode === 'sphere') return '<h4>1 · Conductor in equilibrium: charge sits on the surface</h4><div class="eq">Inside (r &lt; R): <b>E = 0</b>, and V is the same everywhere: V = kQ/R = ' + H.n(d.Vsurf, 'V') + '</div>' +
-      '<h4>2 · Outside: acts like a point charge at the center</h4><div class="eq">E = kQ/r², V = kQ/r. At the surface: E = ' + H.n(d.Esurf, 'N/C') + '</div>' +
-      '<h4>3 · At r = ' + H.iv('r') + (d.inside ? ' (inside)' : ' (outside)') + '</h4><div class="eq">E = <b>' + H.n(d.E, 'N/C') + '</b>, V = <b>' + H.n(d.V, 'V') + '</b></div>' +
+    if (mode === 'sphere') return '<h4>1 · Conductor in equilibrium: charge sits on the surface</h4><p class="st">Inside (r &lt; R), V is the same everywhere:</p>' + TEXA`E = ${M.n(0, 'N/C')}` +
+      TEX`V = \frac{k\,Q}{R}` + TEX`V = \frac{(8.99\times10^{9})(${M.iv('Q', 1e-9)})}{${M.iv('R', 0.01)}}` + TEXA`V = ${M.n(d.Vsurf, 'V')}` +
+      '<h4>2 · Outside: acts like a point charge at the center</h4>' + TEX`E = \frac{k\,Q}{r^2}` + TEX`V = \frac{k\,Q}{r}` + '<p class="st">At the surface:</p>' + TEX`E = \frac{k\,Q}{R^2}` + TEXA`E = ${M.n(d.Esurf, 'N/C')}` +
+      '<h4>3 · At r = ' + H.iv('r') + (d.inside ? ' (inside)' : ' (outside)') + '</h4>' + TEXA`E = ${M.n(d.E, 'N/C')}` + TEXA`V = ${M.n(d.V, 'V')}` +
       '<p class="note">E = −ΔV/Δr: where V is flat (inside), E = 0. The surface is an equipotential, so E meets it at right angles. Hollow or solid, the answer is the same.</p>';
-    return '<h4>1 · Potential is a scalar: V = Σ kq/r (keep the signs)</h4><div class="eq">V<sub>A</sub> = ' + H.n(d.VA, 'V') + ' &nbsp; V<sub>B</sub> = ' + H.n(d.VB, 'V') + ' → ΔV = V<sub>B</sub> − V<sub>A</sub> = <b>' + H.n(d.dV, 'V') + '</b></div>' +
-      '<h4>2 · Work to move q = ' + H.iv('qt') + ' from A to B (slowly)</h4><div class="eq">W<sub>you</sub> = qΔV = <b>' + H.n(d.Wext, 'J') + '</b> &nbsp; W<sub>field</sub> = −qΔV = ' + H.n(d.Wf, 'J') + '</div>' +
-      '<div class="eq">ΔU = qΔV = ' + H.n(d.Wext, 'J') + '. The path doesn’t matter, only the start and end.</div>' +
-      '<h4>3 · Field from potential: E = −ΔV/Δx</h4><div class="eq">Average E<sub>x</sub> between A and B ≈ ' + H.n(d.Eavg, 'V/m') + '. E points from high V to low V, at right angles to the equipotentials.</div>' +
+    return '<h4>1 · Potential is a scalar: V = Σ kq/r (keep the signs)</h4>' + TEX`V = \sum \frac{k\,q}{r}` + TEXA`V_A = ${M.n(d.VA, 'V')}` + TEXA`V_B = ${M.n(d.VB, 'V')}` +
+      TEX`\Delta V = V_B - V_A` + TEX`\Delta V = ${M.n(d.VB)} - ${M.p(d.VA)}` + TEXA`\Delta V = ${M.n(d.dV, 'V')}` +
+      '<h4>2 · Work to move q = ' + H.iv('qt') + ' from A to B (slowly)</h4>' + TEX`W_{\text{you}} = q\,\Delta V` + TEX`W_{\text{you}} = (${M.iv('qt', 1e-9)})(${M.p(d.dV)})` + TEXA`W_{\text{you}} = ${M.n(d.Wext, 'J')}` +
+      TEX`W_{\text{field}} = -q\,\Delta V` + TEXA`W_{\text{field}} = ${M.n(d.Wf, 'J')}` + TEX`\Delta U = q\,\Delta V` + TEXA`\Delta U = ${M.n(d.Wext, 'J')}` + '<p class="st">The path doesn’t matter, only the start and end.</p>' +
+      '<h4>3 · Field from potential: E = −ΔV/Δx</h4>' + (isNaN(d.Eavg) ? '<p class="st">A and B are at the same x, so there is no Δx to average over.</p>' : TEX`E_x \approx -\frac{\Delta V}{\Delta x}` + TEXA`E_x \approx ${M.n(d.Eavg, 'V/m')}`) +
+      '<p class="st">E points from high V to low V, at right angles to the equipotentials.</p>' +
       '<p class="note">Moving along an equipotential takes no work. Close-together equipotentials = strong field.</p>';
   },
   draw(v, d, mode, opt, t, dt, A){

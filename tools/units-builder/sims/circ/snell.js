@@ -26,16 +26,17 @@ const SIM = {
     return [{ id: 'th2', name: 'Angle of refraction', short: 'θ₂', sym: 'θ<sub>2</sub>', unit: '°', f: d => d.th2 }, { id: 'lam2', name: 'Wavelength in medium 2', short: 'λ₂', sym: 'λ<sub>2</sub>', unit: 'nm', f: d => d.lam2 }];
   },
   work(v, d, mode){
-    if (mode === 'fiber') return '<h4>1 · Refraction into the end of the fiber</h4><div class="eq">(1.00) sin ' + H.iv('th') + ' = (' + fnum(v.nc) + ') sin θ<sub>r</sub> → θ<sub>r</sub> = <b>' + H.n(d.tr, '°') + '</b></div>' +
-      '<h4>2 · Angle at the wall</h4><div class="eq">The wall is parallel to the axis, so the ray hits it at 90° − θ<sub>r</sub> = <b>' + H.n(d.wall, '°') + '</b> from the normal.</div>' +
-      '<h4>3 · Critical angle at the wall</h4><div class="eq">' + (v.ncl < v.nc ? 'sin θ<sub>c</sub> = n<sub>clad</sub>/n<sub>core</sub> = ' + fnum(v.ncl) + '/' + fnum(v.nc) + ' → θ<sub>c</sub> = <b>' + H.n(d.crit, '°') + '</b>' : 'n<sub>clad</sub> ≥ n<sub>core</sub>: no total internal reflection possible.') + '</div>' +
-      (d.tir ? '<div class="eq">' + fnum(d.wall) + '° > ' + fnum(d.crit) + '° → <b>total internal reflection</b>: the light stays in the core.</div>' : '<div class="bad">' + fnum(d.wall) + '° < θ<sub>c</sub>: some light refracts into the cladding and leaks away every bounce.</div>') +
+    if (mode === 'fiber') return '<h4>1 · Refraction into the end of the fiber</h4>' + TEX`(1.00)\sin\theta = n_{\text{core}}\sin\theta_r` + TEX`(1.00)\sin ${M.iv('th')} = (${M.n(v.nc)})\sin\theta_r` + TEXA`\theta_r = ${M.n(d.tr, '°')}` +
+      '<h4>2 · Angle at the wall</h4><p class="st">The wall is parallel to the axis, so the ray hits it at 90° − θ<sub>r</sub> from the normal.</p>' + TEX`\theta_{\text{wall}} = 90^{\circ} - \theta_r` + TEX`\theta_{\text{wall}} = 90^{\circ} - ${M.n(d.tr, '°')}` + TEXA`\theta_{\text{wall}} = ${M.n(d.wall, '°')}` +
+      '<h4>3 · Critical angle at the wall</h4>' + (v.ncl < v.nc ? TEX`\sin\theta_c = \frac{n_{\text{clad}}}{n_{\text{core}}}` + TEX`\sin\theta_c = \frac{${M.n(v.ncl)}}{${M.n(v.nc)}}` + TEXA`\theta_c = ${M.n(d.crit, '°')}` : '<p class="st">n<sub>clad</sub> ≥ n<sub>core</sub>: no total internal reflection possible.</p>') +
+      (d.tir ? TEX`${M.n(d.wall, '°')} > ${M.n(d.crit, '°')}` + '<p class="st"><b>Total internal reflection</b>: the light stays in the core.</p>' : '<div class="bad">' + fnum(d.wall) + '° < θ<sub>c</sub>: some light refracts into the cladding and leaks away every bounce.</div>') +
       '<p class="note">Light entering at up to ' + fnum(d.acc) + '° is trapped. Uses: internet cables, endoscopes for seeing inside the body. Why have a cladding at all? It protects the core surface and keeps scratches and other fibers from letting light out.</p>';
-    let s = '<h4>1 · Snell’s law</h4><div class="eq">n₁ sin θ₁ = n₂ sin θ₂ → sin θ₂ = (' + fnum(v.n1) + ')(sin ' + H.iv('th1') + ')/' + fnum(v.n2) + ' = <b>' + fnum(d.s2) + '</b></div>';
+    let s = '<h4>1 · Snell’s law</h4>' + TEX`n_1 \sin\theta_1 = n_2 \sin\theta_2` + TEX`\sin\theta_2 = \frac{n_1 \sin\theta_1}{n_2}` + TEX`\sin\theta_2 = \frac{(${M.n(v.n1)})(\sin ${M.iv('th1')})}{${M.n(v.n2)}}` + TEXA`\sin\theta_2 = ${M.n(d.s2)}`;
     if (d.tir) s += '<div class="bad">sin θ₂ can’t be more than 1: no refracted ray. <b>Total internal reflection</b> — all the light reflects (θ₁ = ' + fnum(v.th1) + '° > θ<sub>c</sub> = ' + fnum(d.crit) + '°).</div>';
-    else s += '<div class="eq">θ₂ = <b>' + H.n(d.th2, '°') + '</b> — bends ' + (v.n2 > v.n1 ? '<b>toward</b> the normal (into a slower medium).' : v.n2 < v.n1 ? '<b>away from</b> the normal (into a faster medium).' : 'not at all.') + '</div>';
-    s += '<h4>2 · Critical angle</h4><div class="eq">' + (v.n1 > v.n2 ? 'sin θ<sub>c</sub> = n₂/n₁ → θ<sub>c</sub> = <b>' + H.n(d.crit, '°') + '</b>' : 'Only possible going from higher n to lower n. Here n₁ ≤ n₂, so no critical angle.') + '</div>' +
-      '<h4>3 · Speed and wavelength change; frequency doesn’t</h4><div class="eq">v₂ = c/n₂ = ' + H.n(d.v2, 'm/s') + '; λ₂ = λ₁n₁/n₂ = <b>' + H.n(d.lam2, 'nm') + '</b></div>' +
+    else s += TEXA`\theta_2 = ${M.n(d.th2, '°')}` + '<p class="st">Bends ' + (v.n2 > v.n1 ? '<b>toward</b> the normal (into a slower medium).' : v.n2 < v.n1 ? '<b>away from</b> the normal (into a faster medium).' : 'not at all.') + '</p>';
+    s += '<h4>2 · Critical angle</h4>' + (v.n1 > v.n2 ? TEX`\sin\theta_c = \frac{n_2}{n_1}` + TEX`\sin\theta_c = \frac{${M.n(v.n2)}}{${M.n(v.n1)}}` + TEXA`\theta_c = ${M.n(d.crit, '°')}` : '<p class="st">Only possible going from higher n to lower n. Here n₁ ≤ n₂, so no critical angle.</p>') +
+      '<h4>3 · Speed and wavelength change; frequency doesn’t</h4>' + TEX`v_2 = \frac{c}{n_2}` + TEX`v_2 = \frac{3.00\times10^{8}\,\text{m/s}}{${M.n(v.n2)}}` + TEX`v_2 = ${M.n(d.v2, 'm/s')}` +
+      TEX`\lambda_2 = \lambda_1\,\frac{n_1}{n_2}` + TEX`\lambda_2 = (${M.iv('lam')})\,\frac{${M.n(v.n1)}}{${M.n(v.n2)}}` + TEXA`\lambda_2 = ${M.n(d.lam2, 'nm')}` +
       '<p class="note">The wavefronts (thin lines) slow down on entering the bottom medium, so they get closer together and the ray turns. Some light always reflects at the surface too.</p>';
     return s;
   },

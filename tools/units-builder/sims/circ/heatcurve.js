@@ -26,17 +26,20 @@ const SIM = {
     return [{ id: 'total', name: 'Total time, ice to 120 °C steam', short: 't', sym: 't', unit: 's', f: d => d.total }, { id: 'tMelt', name: 'Length of the melting plateau', short: 't_melt', sym: 't<sub>melt</sub>', unit: 's', f: d => d.tMelt }, { id: 'tBoil', name: 'Length of the boiling plateau', short: 't_boil', sym: 't<sub>boil</sub>', unit: 's', f: d => d.tBoil }];
   },
   work(v, d, mode){
-    if (mode === 'kettle') return '<h4>1 · At 100 °C all the heater’s energy (minus losses) boils water</h4><div class="eq">(P − P<sub>loss</sub>) = L<sub>v</sub> × (mass boiled per second)</div>' +
-      '<div class="eq">Run 1: rate = (' + v.P1 + ' − ' + v.Pl + ')/2.26×10⁶ = ' + H.n(d.r1 * 1000, 'g/s') + ' &nbsp; Run 2: ' + H.n(d.r2 * 1000, 'g/s') + '</div>' +
-      '<h4>2 · Ignore the loss: L = P/rate</h4><div class="eq">L = ' + v.P1 + '/' + fnum(d.r1) + ' = <b>' + H.n(d.naive, 'J/kg') + '</b> (' + (v.Pl ? H.n(d.err, '%') + ' too high' : 'correct') + ')</div>' +
-      '<h4>3 · Two powers, same loss: subtract to cancel it</h4><div class="eq">L = (P<sub>1</sub> − P<sub>2</sub>)/(rate<sub>1</sub> − rate<sub>2</sub>) = <b>' + H.n(d.two, 'J/kg') + '</b> ✓</div>' +
+    if (mode === 'kettle') return '<h4>1 · At 100 °C all the heater’s energy (minus losses) boils water</h4>' + TEX`P - P_{\text{loss}} = L_v \times \text{rate}` +
+      '<p class="st">Run 1:</p>' + TEX`\text{rate}_1 = \frac{P_1 - P_{\text{loss}}}{L_v}` + TEX`\text{rate}_1 = \frac{${M.iv('P1')} - ${M.iv('Pl')}}{2.26\times10^{6}}` + TEXA`\text{rate}_1 = ${M.n(d.r1 * 1000, 'g/s')}` +
+      '<p class="st">Run 2:</p>' + TEX`\text{rate}_2 = \frac{P_2 - P_{\text{loss}}}{L_v}` + TEX`\text{rate}_2 = \frac{${M.iv('P2')} - ${M.iv('Pl')}}{2.26\times10^{6}}` + TEXA`\text{rate}_2 = ${M.n(d.r2 * 1000, 'g/s')}` +
+      '<h4>2 · Ignore the loss: L = P/rate</h4>' + TEX`L = \frac{P_1}{\text{rate}_1}` + TEX`L = \frac{${M.iv('P1')}}{${M.n(d.r1, 'kg/s')}}` + TEXA`L = ${M.n(d.naive, 'J/kg')}` +
+      '<p class="st">' + (v.Pl ? H.n(d.err, '%') + ' too high' : 'Correct') + '</p>' +
+      '<h4>3 · Two powers, same loss: subtract to cancel it</h4>' + TEX`L = \frac{P_1 - P_2}{\text{rate}_1 - \text{rate}_2}` + TEX`L = \frac{${M.iv('P1')} - ${M.iv('P2')}}{${M.n(d.r1, 'kg/s')} - ${M.n(d.r2, 'kg/s')}}` + TEXA`L = ${M.n(d.two, 'J/kg')}` +
       '<p class="note">Heat loss is a systematic error: it always makes L too big. Repeating the same run doesn’t fix it; changing the method does.</p>';
     const s = d.seg;
-    return '<h4>1 · Sloped parts: temperature rises, Q = mcΔT</h4><div class="eq">Ice: slope = P/(mc<sub>ice</sub>) = ' + H.n(d.slopeIce, '°C/s') + ' &nbsp; Water: P/(mc<sub>water</sub>) = ' + H.n(d.slopeW, '°C/s') + '</div>' +
-      '<div class="eq">Find c from a slope: c = P/(m × slope). Water’s slope is half of ice’s: c<sub>water</sub> ≈ 2c<sub>ice</sub>.</div>' +
-      '<h4>2 · Flat parts: phase change at constant temperature, Q = mL</h4><div class="eq">Melting lasts t = mL<sub>f</sub>/P = (' + H.iv('m') + ')(3.34×10⁵)/' + H.iv('P') + ' = <b>' + H.n(s[1][0], 's') + '</b></div>' +
-      '<div class="eq">Boiling lasts mL<sub>v</sub>/P = <b>' + H.n(s[3][0], 's') + '</b>: almost 7× longer than melting</div>' +
-      '<h4>3 · Where does the energy go on a plateau?</h4><div class="eq">Temperature (average KE) stays the same, so the energy goes into <b>potential energy</b>: pulling molecules apart against their attractions. Internal energy still increases.</div>' +
+    return '<h4>1 · Sloped parts: temperature rises, Q = mcΔT</h4><p class="st">Ice:</p>' + TEX`\text{slope} = \frac{P}{m\,c_{\text{ice}}}` + TEX`\text{slope} = \frac{${M.iv('P')}}{(${M.iv('m')})(2100)}` + TEXA`\text{slope} = ${M.n(d.slopeIce, '°C/s')}` +
+      '<p class="st">Water:</p>' + TEX`\text{slope} = \frac{P}{m\,c_{\text{water}}}` + TEX`\text{slope} = \frac{${M.iv('P')}}{(${M.iv('m')})(4200)}` + TEXA`\text{slope} = ${M.n(d.slopeW, '°C/s')}` +
+      '<p class="st">Find c from a slope:</p>' + TEX`c = \frac{P}{m \times \text{slope}}` + '<p class="st">Water’s slope is half of ice’s, so</p>' + TEX`c_{\text{water}} \approx 2\,c_{\text{ice}}` +
+      '<h4>2 · Flat parts: phase change at constant temperature, Q = mL</h4><p class="st">Melting lasts:</p>' + TEX`t = \frac{m L_f}{P}` + TEX`t = \frac{(${M.iv('m')})(3.34\times10^{5})}{${M.iv('P')}}` + TEXA`t = ${M.n(s[1][0], 's')}` +
+      '<p class="st">Boiling lasts:</p>' + TEX`t = \frac{m L_v}{P}` + TEX`t = \frac{(${M.iv('m')})(2.26\times10^{6})}{${M.iv('P')}}` + TEXA`t = ${M.n(s[3][0], 's')}` + '<p class="st">Almost 7× longer than melting.</p>' +
+      '<h4>3 · Where does the energy go on a plateau?</h4><p class="st">Temperature (average KE) stays the same, so the energy goes into <b>potential energy</b>: pulling molecules apart against their attractions. Internal energy still increases.</p>' +
       '<p class="note">Lab: read L from the plateau length, L = PΔt/m. Real heaters lose some energy, so the measured L comes out too large.</p>';
   },
   draw(v, d, mode, opt, t, dt, A){

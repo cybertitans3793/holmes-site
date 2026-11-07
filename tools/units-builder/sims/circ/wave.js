@@ -34,19 +34,23 @@ const SIM = {
   },
   work(v, d, mode){
     if (mode === 'polar'){
-      let s = '<h4>1 · First filter: unpolarized → polarized</h4><div class="eq">Unpolarized light vibrates in every direction. A filter lets through only one plane, so half the intensity gets through: I₁ = I₀/2 = <b>' + H.n(d.I1, 'W/m²') + '</b></div>' +
-        '<h4>2 · The second filter at θ to the first</h4><div class="eq">' + (v.th === 0 ? 'Lined up (0°): all of the polarized light gets through.' : v.th >= 90 ? 'Crossed (90°): <b>no light</b> gets through. The light’s vibration is completely across the second filter’s axis.' : 'At ' + H.iv('th') + ' only part of the light gets through: the bigger the angle, the dimmer it gets, down to nothing at 90°.') + '</div>';
-      if (d.three) s += '<h4>3 · Last filter at 90° to the first, so (90° − θ) to the middle one</h4><div class="eq">I₃ = I₂ cos²(90° − θ) = <b>' + H.n(d.I3, 'W/m²') + '</b></div><p class="note">With no middle filter, crossed filters pass nothing. Adding a filter <i>between</i> them lets light through: the middle filter re-polarizes the light at a new angle. Most light gets through at θ = 45°.</p>';
+      let s = '<h4>1 · First filter: unpolarized → polarized</h4><p class="st">Unpolarized light vibrates in every direction. A filter lets through only one plane, so half the intensity gets through:</p>' +
+        TEX`I_1 = \frac{I_0}{2}` + TEX`I_1 = \frac{${M.iv('I0')}}{2}` + TEXA`I_1 = ${M.n(d.I1, 'W/m²')}` +
+        '<h4>2 · The second filter at θ to the first</h4><p class="st">' + (v.th === 0 ? 'Lined up (0°): all of the polarized light gets through.' : v.th >= 90 ? 'Crossed (90°): <b>no light</b> gets through. The light’s vibration is completely across the second filter’s axis.' : 'At ' + H.iv('th') + ' only part of the light gets through: the bigger the angle, the dimmer it gets, down to nothing at 90°.') + '</p>';
+      if (d.three) s += '<h4>3 · Last filter at 90° to the first, so (90° − θ) to the middle one</h4>' + TEX`I_3 = I_2\,\cos^2(90^{\circ} - \theta)` + TEX`I_3 = ${M.n(d.I2)}\,\cos^2(90^{\circ} - ${M.iv('th')})` + TEXA`I_3 = ${M.n(d.I3, 'W/m²')}` + '<p class="note">With no middle filter, crossed filters pass nothing. Adding a filter <i>between</i> them lets light through: the middle filter re-polarizes the light at a new angle. Most light gets through at θ = 45°.</p>';
       else s += '<p class="note">Only <b>transverse</b> waves can be polarized; sound (longitudinal) can’t. Uses: polarized sunglasses block glare (light reflected off water or a road is partly polarized), LCD screens, 3-D movie glasses.</p>';
       return s;
     }
-    if (mode === 'medium') return '<h4>1 · Frequency stays the same</h4><div class="eq">The source sets f = ' + H.iv('f') + ' on both sides. Each crest that arrives at the boundary makes one crest on the other side.</div>' +
-      '<h4>2 · Speed is set by the medium</h4><div class="eq">λ₁ = v₁/f = ' + H.iv('v1') + '/' + H.iv('f') + ' = <b>' + H.n(d.l1, 'm') + '</b><br>λ₂ = v₂/f = ' + H.iv('v2') + '/' + H.iv('f') + ' = <b>' + H.n(d.l2, 'm') + '</b></div>' +
+    if (mode === 'medium') return '<h4>1 · Frequency stays the same</h4><p class="st">The source sets f = ' + H.iv('f') + ' on both sides. Each crest that arrives at the boundary makes one crest on the other side.</p>' +
+      '<h4>2 · Speed is set by the medium</h4>' + TEX`\lambda_1 = \frac{v_1}{f}` + TEX`\lambda_1 = \frac{${M.iv('v1')}}{${M.iv('f')}}` + TEXA`\lambda_1 = ${M.n(d.l1, 'm')}` +
+      TEX`\lambda_2 = \frac{v_2}{f}` + TEX`\lambda_2 = \frac{${M.iv('v2')}}{${M.iv('f')}}` + TEXA`\lambda_2 = ${M.n(d.l2, 'm')}` +
       '<p class="note">' + (v.v2 < v.v1 ? 'Slower medium → shorter wavelength (light entering glass, a wave on a string reaching a heavier string).' : v.v2 > v.v1 ? 'Faster medium → longer wavelength (sound going from air into water).' : 'Same speed: nothing changes.') + ' FRQ trap: the frequency never changes at a boundary.</p>';
     const deg = d.phm / DEG, inph = Math.abs(deg) < 0.5 || Math.abs(deg - 360) < 0.5, anti = Math.abs(deg - 180) < 0.5;
-    return '<h4>1 · Wavelength and period</h4><div class="eq">λ = v/f = ' + H.iv('v') + '/' + H.iv('f') + ' = <b>' + H.n(d.lam, 'm') + '</b> &nbsp; T = 1/f = <b>' + H.n(d.T, 's') + '</b></div>' +
-      '<h4>2 · Reading the two graphs</h4><div class="eq">Displacement–<b>distance</b> graph: peak to peak = λ. Displacement–<b>time</b> graph: peak to peak = T. Both have the same amplitude A = ' + H.iv('A') + '.</div>' +
-      '<h4>3 · Phase difference between P and Q</h4><div class="eq">Δφ = 2πΔx/λ = 2π(' + H.iv('dx') + ')/' + fnum(d.lam) + ' m = <b>' + H.n(d.ph, 'rad') + '</b> (' + Math.round(d.ph / DEG) + '°)' + (inph ? ' → <b>in phase</b>' : anti ? ' → <b>in antiphase</b>' : '') + '</div>' +
+    return '<h4>1 · Wavelength and period</h4>' + TEX`\lambda = \frac{v}{f}` + TEX`\lambda = \frac{${M.iv('v')}}{${M.iv('f')}}` + TEXA`\lambda = ${M.n(d.lam, 'm')}` +
+      TEX`T = \frac{1}{f}` + TEX`T = \frac{1}{${M.iv('f')}}` + TEXA`T = ${M.n(d.T, 's')}` +
+      '<h4>2 · Reading the two graphs</h4><p class="st">Displacement–<b>distance</b> graph: peak to peak = λ. Displacement–<b>time</b> graph: peak to peak = T. Both have the same amplitude A = ' + H.iv('A') + '.</p>' +
+      '<h4>3 · Phase difference between P and Q</h4>' + TEX`\Delta\varphi = \frac{2\pi\,\Delta x}{\lambda}` + TEX`\Delta\varphi = \frac{2\pi(${M.iv('dx')})}{${M.n(d.lam, 'm')}}` + TEXA`\Delta\varphi = ${M.n(d.ph, 'rad')}` +
+      '<p class="st">That is ' + Math.round(d.ph / DEG) + '°' + (inph ? ' → <b>in phase</b>' : anti ? ' → <b>in antiphase</b>' : '') + '.</p>' +
       '<p class="note">' + (mode === 'long' ? 'Longitudinal: particles move <b>along</b> the direction the wave travels. Compressions are where the particles bunch up; on the displacement graph they are where the curve crosses zero going down.' : 'Transverse: particles move <b>perpendicular</b> to the direction the wave travels. The particles never travel along with the wave; only energy moves.') + '</p>';
   },
   draw(v, d, mode, opt, t){

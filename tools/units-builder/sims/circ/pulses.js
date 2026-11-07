@@ -35,18 +35,20 @@ const SIM = {
     return [{ id: 'ym', name: 'Displacement at the midpoint (x = 3 m)', short: 'y_mid', sym: 'y<sub>mid</sub>', unit: 'cm', f: d => d.ymid }];
   },
   work(v, d, mode){
-    if (mode === 'beats') return '<h4>1 · Two close frequencies interfere</h4><div class="eq">The two waves drift in and out of step: in step → constructive (loud); half a cycle apart → destructive (quiet).</div>' +
-      '<h4>2 · Beat frequency</h4><div class="eq">f<sub>beat</sub> = |f₁ − f₂| = |' + H.iv('f1') + ' − ' + H.iv('f2') + '| = <b>' + H.n(d.fb, 'Hz') + '</b>' + (d.fb > 0 ? ' → one loud pulse every <b>' + H.n(d.Tb, 's') + '</b>' : ' → no beats: perfectly in tune') + '</div>' +
+    if (mode === 'beats') return '<h4>1 · Two close frequencies interfere</h4><p class="st">The two waves drift in and out of step: in step → constructive (loud); half a cycle apart → destructive (quiet).</p>' +
+      '<h4>2 · Beat frequency</h4>' + TEX`f_{\text{beat}} = |f_1 - f_2|` + TEX`f_{\text{beat}} = |${M.iv('f1')} - ${M.iv('f2')}|` + TEXA`f_{\text{beat}} = ${M.n(d.fb, 'Hz')}` +
+      '<p class="st">' + (d.fb > 0 ? 'One loud pulse every <b>' + H.n(d.Tb, 's') + '</b>.' : 'No beats: perfectly in tune.') + '</p>' +
       '<p class="note">You hear a pitch of about (f₁ + f₂)/2 = ' + fnum(d.fav) + ' Hz getting louder and softer. Tuning: tighten the string; if the beats slow down you are getting closer. The beats can’t tell you which one is higher — only how far apart they are.</p>';
     if (mode === 'bound'){
       const kind = { fixed: 'A fixed end can’t move. The string pulls down on the wall; the wall pulls back and sends the pulse back <b>inverted</b>.', free: 'A free end (ring on a pole) overshoots, so the pulse comes back <b>upright</b>.', join: d.v2 < d.v1 ? 'Into a heavier (slower) string: reflected pulse <b>inverted</b>, transmitted pulse upright and narrower.' : d.v2 > d.v1 ? 'Into a lighter (faster) string: reflected pulse <b>upright</b>, transmitted pulse upright and wider.' : 'Same strings: no boundary, nothing reflects.' }[d.end];
-      return '<h4>1 · What happens at the boundary</h4><div class="eq">' + kind + '</div>' +
-        (d.end === 'join' ? '<h4>2 · Speed in each string: v = √(F<sub>T</sub>/μ)</h4><div class="eq">Same tension, so v₂ = v₁/√(μ₂/μ₁) = 1/√' + fnum(v.mu) + ' = <b>' + H.n(d.v2, 'm/s') + '</b></div>' +
-          '<h4>3 · Reflected and transmitted heights</h4><div class="eq">reflected = A(v₂ − v₁)/(v₂ + v₁) = <b>' + H.n(d.Ar, 'cm') + '</b>; transmitted = A·2v₂/(v₁ + v₂) = <b>' + H.n(d.At, 'cm') + '</b></div><p class="note">You don’t need these formulas for the exam, just the signs: slower → inverted; faster → upright. The frequency is the same in both strings.</p>'
-          : '<h4>2 · Reflected pulse</h4><div class="eq">height = ' + (d.r < 0 ? '−' : '+') + H.iv('A') + '; it travels back at the same speed, so it reaches its start at t = 5 s.</div><p class="note">The energy all reflects; nothing is transmitted.</p>');
+      return '<h4>1 · What happens at the boundary</h4><p class="st">' + kind + '</p>' +
+        (d.end === 'join' ? '<h4>2 · Speed in each string: v = √(F<sub>T</sub>/μ)</h4><p class="st">Same tension, so the heavier string is slower:</p>' + TEX`v_2 = \frac{v_1}{\sqrt{\mu_2/\mu_1}}` + TEX`v_2 = \frac{1}{\sqrt{${M.n(v.mu)}}}` + TEXA`v_2 = ${M.n(d.v2, 'm/s')}` +
+          '<h4>3 · Reflected and transmitted heights</h4>' + TEX`A_r = A\,\frac{v_2 - v_1}{v_2 + v_1}` + TEXA`A_r = ${M.n(d.Ar, 'cm')}` + TEX`A_t = A\,\frac{2 v_2}{v_1 + v_2}` + TEXA`A_t = ${M.n(d.At, 'cm')}` + '<p class="note">You don’t need these formulas for the exam, just the signs: slower → inverted; faster → upright. The frequency is the same in both strings.</p>'
+          : '<h4>2 · Reflected pulse</h4><p class="st">The height is ' + (d.r < 0 ? 'the same size but flipped' : 'the same') + '; it travels back at the same speed, so it reaches its start at t = 5 s.</p>' + TEXA`A_r = ${d.r < 0 ? '<mo>−</mo>' : '<mo>+</mo>'}${M.iv('A')}` + '<p class="note">The energy all reflects; nothing is transmitted.</p>');
     }
-    return '<h4>1 · Where are the pulses?</h4><div class="eq">Both move at 1 m/s. Pulse 1 centre: 1 + t = ' + fnum(d.c1) + ' m. Pulse 2 centre: 5 − t = ' + fnum(d.c2) + ' m.</div>' +
-      '<h4>2 · Superposition</h4><div class="eq">At any point, y = y₁ + y₂. Midpoint (x = 3 m): y = <b>' + H.n(d.ymid, 'cm') + '</b>' + (Math.abs(d.c1 - 3) < 0.03 ? ' = A₁ + A₂ (fully overlapped)' : '') + '</div>' +
+    return '<h4>1 · Where are the pulses?</h4><p class="st">Both move at 1 m/s (positions in m, time in s).</p>' + TEX`x_1 = 1 + t` + TEX`x_1 = 1 + ${M.iv('t')}` + TEXA`x_1 = ${M.n(d.c1, 'm')}` +
+      TEX`x_2 = 5 - t` + TEX`x_2 = 5 - ${M.iv('t')}` + TEXA`x_2 = ${M.n(d.c2, 'm')}` +
+      '<h4>2 · Superposition</h4><p class="st">At any point the displacements add. At the midpoint (x = 3 m)' + (Math.abs(d.c1 - 3) < 0.03 ? ' (fully overlapped, y = A₁ + A₂)' : '') + ':</p>' + TEX`y = y_1 + y_2` + (Math.abs(d.c1 - 3) < 0.03 ? TEX`y_{\text{mid}} = ${M.iv('A1')} + ${M.p(v.A2, 'cm')}` : '') + TEXA`y_{\text{mid}} = ${M.n(d.ymid, 'cm')}` +
       '<p class="note">Pulses pass <b>through</b> each other and come out unchanged. ' + (v.A1 * v.A2 < 0 ? 'Equal and opposite pulses cancel for an instant — but the string is still moving, so the energy is kinetic, not gone.' : 'Same-side pulses add: constructive interference.') + '</p>';
   },
   draw(v, d, mode, opt, t){

@@ -35,16 +35,21 @@ const SIM = {
       { id: 'T2o', name: 'Final temperature', short: 'T₂', sym: 'T<sub>2</sub>', unit: 'K', f: d => d.T2 }]; },
   work(v, d, mode, opt){
     const ib = d.ib, law = ib ? 'Q = ΔU + W, W = work done <b>by</b> the gas = +PΔV' : 'ΔU = Q + W, W = work done <b>on</b> the gas = −PΔV';
-    const st = '<div class="eq">State 1: P = ' + H.n(d.P1, 'kPa') + ', V = ' + H.n(d.V1, 'L') + ', T = ' + H.n(d.T1, 'K') + ' &nbsp;→&nbsp; State 2: P = ' + H.n(d.P2, 'kPa') + ', V = ' + H.n(d.V2, 'L') + ', T = ' + H.n(d.T2, 'K') + '</div>';
-    const wLine = mode === 'vol' ? 'V doesn’t change, so <b>W = 0</b>' : mode === 'bar' ? 'W = ' + (ib ? '' : '−') + 'PΔV = ' + (ib ? '' : '−') + '(' + H.iv('P') + ')(' + fnum(d.V2 - d.V1) + ' L) = <b>' + H.n(d.W, 'J') + '</b>' :
-      'W = ' + (ib ? '+' : '−') + '(area under the curve) = <b>' + H.n(d.W, 'J') + '</b>' + (mode === 'iso' ? ' <span class="hint">(count squares; exact value uses nRT ln(V₂/V₁), not required)</span>' : '');
-    const qLine = mode === 'adi' ? 'Insulated or too fast for heat to flow: <b>Q = 0</b>' : ib ? 'Q = ΔU + W = ' + fnum(d.dU) + ' + ' + H.p(d.W) + ' = <b>' + H.n(d.Q, 'J') + '</b>' : 'Q = ΔU − W = ' + fnum(d.dU) + ' − ' + H.p(d.W) + ' = <b>' + H.n(d.Q, 'J') + '</b>';
+    const st = '<p class="st">State 1:</p>' + TEX`P_1 = ${M.n(d.P1, 'kPa')}` + TEX`V_1 = ${M.n(d.V1, 'L')}` + TEX`T_1 = ${M.n(d.T1, 'K')}` +
+      '<p class="st">State 2:</p>' + TEX`P_2 = ${M.n(d.P2, 'kPa')}` + TEX`V_2 = ${M.n(d.V2, 'L')}` + TEX`T_2 = ${M.n(d.T2, 'K')}`;
+    const dV = M.n(d.V2 - d.V1, 'L');
+    const wLine = mode === 'vol' ? '<p class="st">V doesn’t change, so</p>' + TEXA`W = ${M.n(0, 'J')}` :
+      mode === 'bar' ? (ib ? TEX`W = P\,\Delta V` + TEX`W = (${M.iv('P')})(${dV})` : TEX`W = -P\,\Delta V` + TEX`W = -(${M.iv('P')})(${dV})`) + TEXA`W = ${M.n(d.W, 'J')}` :
+      '<p class="st">' + (ib ? 'W = +(area under the curve)' : 'W = −(area under the curve)') + (mode === 'iso' ? ' <span class="hint">(count squares; exact value uses nRT ln(V₂/V₁), not required)</span>' : '') + '</p>' + TEXA`W = ${M.n(d.W, 'J')}`;
+    const qLine = mode === 'adi' ? '<p class="st">Insulated or too fast for heat to flow:</p>' + TEXA`Q = ${M.n(0, 'J')}` :
+      ib ? TEX`Q = \Delta U + W` + TEX`Q = ${M.n(d.dU)} + ${M.p(d.W)}` + TEXA`Q = ${M.n(d.Q, 'J')}` :
+      TEX`Q = \Delta U - W` + TEX`Q = ${M.n(d.dU)} - ${M.p(d.W)}` + TEXA`Q = ${M.n(d.Q, 'J')}`;
     const name = { bar: 'Isobaric (constant pressure)', vol: 'Isovolumetric / isochoric (constant volume)', iso: 'Isothermal (constant temperature)', adi: 'Adiabatic (Q = 0)' }[mode];
-    return '<h4>1 · ' + name + ': use PV = nRT for the missing state variables</h4>' + st +
-      '<h4>2 · Internal energy depends only on T: ΔU = (3/2)nRΔT</h4><div class="eq">ΔU = 1.5 × ' + H.iv('n') + ' × 8.31 × (' + fnum(d.T2) + ' − ' + fnum(d.T1) + ') = <b>' + H.n(d.dU, 'J') + '</b>' + (mode === 'iso' ? ' (T constant → ΔU = 0)' : '') + '</div>' +
-      '<h4>3 · Work: area under the P–V path</h4><div class="eq">' + wLine + '</div>' +
-      '<h4>4 · First law: ' + law + '</h4><div class="eq">' + qLine + '</div>' +
-      (mode === 'adi' ? '<div class="eq">So ΔU = ' + (ib ? '−W' : 'W') + ': compressing it heats it up (T₂ = ' + H.n(d.T2, 'K') + '), letting it expand cools it. PV<sup>5/3</sup> = constant <span class="hint">(IB HL)</span>.</div>' : '') +
+    return '<h4>1 · ' + name + ': use PV = nRT for the missing state variables</h4>' + TEX`PV = nRT` + st +
+      '<h4>2 · Internal energy depends only on T: ΔU = (3/2)nRΔT</h4>' + TEX`\Delta U = \frac{3}{2}\,nR\,\Delta T` + TEX`\Delta U = 1.5\,(${M.iv('n')})(8.31)(${M.n(d.T2)} - ${M.n(d.T1)})` + TEXA`\Delta U = ${M.n(d.dU, 'J')}` + (mode === 'iso' ? '<p class="st">T constant → ΔU = 0.</p>' : '') +
+      '<h4>3 · Work: area under the P–V path</h4>' + wLine +
+      '<h4>4 · First law: ' + law + '</h4>' + qLine +
+      (mode === 'adi' ? (ib ? TEX`\Delta U = -W` : TEX`\Delta U = W`) + '<p class="st">Compressing it heats it up (T₂ = ' + H.n(d.T2, 'K') + '), letting it expand cools it.</p>' + TEX`PV^{5/3} = \text{constant}` + '<p class="st"><span class="hint">(IB HL)</span></p>' : '') +
       '<p class="note">' + (ib ? 'IB counts work done BY the gas, so expanding gas has W &gt; 0.' : 'AP counts work done ON the gas, so expanding gas has W &lt; 0.') + ' Same physics, opposite sign for W. Switch the convention to compare.</p>';
   },
   draw(v, d, mode, opt, t, dt, A){
