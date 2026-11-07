@@ -73,7 +73,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
     <div class="uid"><div class="big" aria-hidden="true">02</div><div><div class="mono">AP Physics 1 / IB · P1-02</div><h1>Newton’s Second Law</h1></div></div>
   </header>
   <nav class="views" id="views" aria-label="Choose a view">
-    <div class="vbtns"><button type="button" class="vbtn" data-view="explore" aria-pressed="false">Explore</button><button type="button" class="vbtn" data-view="practice" aria-pressed="false">Practice</button></div>
+    <div class="vbtns"><button type="button" class="vbtn" data-view="explore" aria-pressed="false">Explore</button><button type="button" class="vbtn" data-view="study" aria-pressed="false">Study</button><button type="button" class="vbtn" data-view="practice" aria-pressed="false">Practice</button></div>
     <a class="simsback mono" id="simsback" href="https://sites.google.com/fcps.org/holmes/ap-physics-1-ib/p1-02" target="_blank" rel="noopener" hidden>Sims for this unit ↗</a>
   </nav>
   <div class="view" id="v-explore">
@@ -92,7 +92,255 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
   </div>
   <p class="credits">The Moving Man is an HTML5 port of the PhET sim. PhET Interactive Simulations, University of Colorado Boulder (phet.colorado.edu), CC BY 4.0 / GPL. Chase &amp; Collide, Up and Down, Brake or Go?, Force &amp; Motion Graphs and Elevator Scale are original. Push the Cart is original. Lunar Lander is an HTML5 port of the PhET sim. PhET Interactive Simulations, University of Colorado Boulder (phet.colorado.edu), CC BY 4.0 / GPL.</p>
   </div>
+  <div class="view" id="v-study" hidden>
+<section class="guide" id="guide" aria-label="Study guide">
+<style>
+.guide{margin-top:28px}
+.guide .gtip{margin:0 0 16px;font-size:19px;line-height:1.45;max-width:1000px}
+.guide .ggrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-bottom:22px}
+.guide .gcard{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcard h3,.guide .gcheck h3,.guide .gsteps h3{margin:0 0 10px;font-size:20px;letter-spacing:-.01em}
+.guide .gcard ul{margin:0;padding-left:20px}
+.guide .gcard li{margin:0 0 7px}
+.guide .ib{display:inline-block;font-family:var(--f-mono);font-size:11px;font-weight:700;border:2px solid var(--ink);padding:0 5px;margin-left:4px;vertical-align:1px;background:var(--soft)}
+.guide table{border-collapse:collapse;width:100%;font-size:15px}
+.guide td{border-top:2px solid var(--ink);padding:6px 4px;vertical-align:top}
+.guide td:first-child{font-family:var(--f-mono);font-weight:700;white-space:nowrap;padding-right:12px}
+.guide td[colspan]{white-space:normal}
+.guide .gsub{font-family:var(--f-display);font-weight:400}
+.guide .gsteps{background:var(--soft);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px;margin-bottom:22px}
+.guide .gsteps ol{margin:0;padding-left:24px;columns:2 360px;column-gap:28px}
+.guide .gsteps li{margin:0 0 8px;break-inside:avoid}
+.guide h3.ghead{font-size:22px;margin:0 0 12px}
+.guide .gex{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:18px;margin-bottom:22px}
+.guide .ex{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .ex h4{margin:0 0 6px;font-size:18px}
+.guide .ex .kind{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--hot);text-transform:uppercase;letter-spacing:.04em}
+.guide .ex p{margin:0 0 8px}
+.guide .work{font-family:var(--f-mono);font-size:14px;line-height:1.6;border-left:4px solid var(--hot);background:#fff;padding:6px 12px;margin:8px 0}
+.guide .work b{font-family:var(--f-display)}
+.guide .ex .take{margin:8px 0 0;font-weight:500}
+.guide .ex svg{float:right;margin:0 0 6px 12px}
+.guide .gcheck{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcheck>p{margin:-4px 0 12px;color:var(--muted)}
+.guide ol.q{margin:0;padding-left:26px}
+.guide ol.q>li{margin:0 0 14px}
+.guide details{margin-top:6px}
+.guide summary{cursor:pointer;display:inline-block;font-weight:700;border:2px solid var(--ink);padding:2px 10px;background:#fff;list-style:none}
+.guide summary::-webkit-details-marker{display:none}
+.guide summary:hover{background:var(--soft)}
+.guide details[open] summary{background:var(--ink);color:#fff}
+.guide details>div{border-left:4px solid var(--hot);padding:8px 12px;margin-top:8px;background:#fff}
+.guide .gpanel>.ggrid,.guide .gpanel>.gsteps,.guide .gpanel>.gex{margin-bottom:0}
+.guide .gpanel>.gsteps+.ggrid{margin-top:22px}
+.guide .gtabs{margin-bottom:18px}
+.guide .gnext{margin:16px 0 0;font-weight:700}
+.guide .gnext a{color:var(--ink)}
+body.present .guide{display:none}
+@media (max-width:520px){.guide .gtip{font-size:17px}.guide td:first-child{white-space:normal}.guide .ggrid,.guide .gex{grid-template-columns:1fr}.guide .ex svg{float:none;display:block;margin:0 auto 8px}}
+</style>
+<div class="simbar"><h2>Study guide</h2><span class="mono">Unit 2 · Newton’s Second Law</span></div>
+<p class="gtip"><b>How to use this:</b> read the key ideas, then cover each worked example and try it yourself before reading the solution. Do the self-check questions on paper <i>before</i> you open the answers, mark the ones you miss, and come back to them in a day or two without looking. Rereading won't do much; answering questions will.</p>
+<div class="tabs gtabs" role="tablist" aria-label="Study guide sections">
+  <button class="tab" role="tab" type="button" aria-selected="true" aria-controls="g-ideas" id="gt-ideas">Key ideas</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-solve" id="gt-solve" tabindex="-1">How to solve</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-examples" id="gt-examples" tabindex="-1">Worked examples</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-check" id="gt-check" tabindex="-1">Self-check</button>
+</div>
+<div class="gpanel" role="tabpanel" id="g-ideas" aria-labelledby="gt-ideas">
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Key ideas</h3>
+    <ul>
+      <li><b>Acceleration</b> is the rate of change of velocity, a = Δv/Δt. It's a vector: its direction is the direction of the <i>change</i> in velocity, not necessarily the direction of motion.</li>
+      <li><b>Speeding up or slowing down?</b> If a and v point the same way, the object speeds up. If they point opposite ways, it slows down. A negative acceleration doesn't automatically mean slowing down.</li>
+      <li><b>Graphs:</b> on a position–time graph, a curve means changing velocity. On a velocity–time graph, the <b>slope</b> is the acceleration and the <b>area</b> is the displacement. On an acceleration–time graph, the area is the change in velocity.</li>
+      <li><b>Constant acceleration</b> lets you use the kinematic equations. Each one leaves out one quantity, so pick the one without the quantity you don't know and don't need.</li>
+      <li><b>Free fall:</b> with air resistance ignored, everything falls with a = g = 10 m/s² downward, whatever its mass. At the top of a throw, v = 0 but a is still g downward.</li>
+      <li><b>Newton's 2nd law:</b> ΣF = ma. The acceleration is in the direction of the <b>net</b> force, and is bigger for a bigger net force or a smaller mass.</li>
+      <li>A net force changes the velocity. It doesn't set the velocity: an object can move left while the net force points right (it's slowing down).</li>
+      <li><b>Segmented motion:</b> when the acceleration changes, split the motion into parts. The velocity at the end of one part is the starting velocity of the next.</li>
+      <li><b>Apparent weight</b> is the normal force from a scale or floor. Accelerating upward, the scale reads more than mg; accelerating downward, less. At constant velocity it reads mg.</li>
+      <li><b>Friction:</b> static friction holds a resting object, up to f<sub>s,max</sub> = μ<sub>s</sub>F<sub>N</sub>. Once it slides, kinetic friction is f<sub>k</sub> = μ<sub>k</sub>F<sub>N</sub>. Usually μ<sub>s</sub> &gt; μ<sub>k</sub>, so it's harder to start a box sliding than to keep it going.</li>
+      <li><b>Terminal velocity:</b> air resistance grows as a falling object speeds up. When it equals the weight, the net force is zero and the speed stops increasing.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Equations</h3>
+    <table>
+      <tr><td>a = Δv/Δt</td><td>acceleration</td></tr>
+      <tr><td>v = v<sub>0</sub> + at</td><td>no Δx</td></tr>
+      <tr><td>Δx = v<sub>0</sub>t + ½at²</td><td>no final v</td></tr>
+      <tr><td>v² = v<sub>0</sub>² + 2aΔx</td><td>no t</td></tr>
+      <tr><td>Δx = ½(v<sub>0</sub> + v)t</td><td>no a</td></tr>
+      <tr><td>ΣF = ma</td><td>Newton's 2nd law (each direction)</td></tr>
+      <tr><td>F<sub>g</sub> = mg</td><td>weight</td></tr>
+      <tr><td>f<sub>s</sub> ≤ μ<sub>s</sub>F<sub>N</sub></td><td>static friction (as much as needed, up to the max)</td></tr>
+      <tr><td>f<sub>k</sub> = μ<sub>k</sub>F<sub>N</sub></td><td>kinetic friction</td></tr>
+    </table>
+  </div>
+  <div class="gcard">
+    <h3>Common mistakes</h3>
+    <ul>
+      <li>Saying a = 0 at the top of a throw. The velocity is zero there for an instant; the acceleration is still g downward.</li>
+      <li>Using one kinematic equation across two parts of a trip with different accelerations. Split it into segments.</li>
+      <li>Putting “ma” on a free-body diagram as if it were a force. ma is the result of the forces, not one of them.</li>
+      <li>Using only the biggest force in ΣF = ma. It's the <b>net</b> force: add all of them with signs.</li>
+      <li>Using μ<sub>s</sub> for something that's already sliding, or μ<sub>k</sub> for something that hasn't started.</li>
+      <li>Thinking heavier objects fall faster. Without air resistance, a bigger weight is pulling a bigger mass, and the acceleration comes out the same.</li>
+    </ul>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-solve" aria-labelledby="gt-solve" hidden>
+<div class="gsteps">
+  <h3>How to solve a Newton's 2nd law problem</h3>
+  <ol>
+    <li><b>Pick the object</b> and draw its free-body diagram, real forces only.</li>
+    <li><b>Choose + along the acceleration</b> (if you know it). Forces that way are +, forces the other way are −.</li>
+    <li><b>Write ΣF = ma for each direction.</b> If there's no acceleration in a direction, that direction's forces add to zero.</li>
+    <li><b>Fill in force rules:</b> F<sub>g</sub> = mg, f = μF<sub>N</sub>. Find F<sub>N</sub> from the direction with no acceleration.</li>
+    <li><b>Solve for a</b> (or the unknown force), in symbols first.</li>
+    <li><b>Link to motion:</b> use a in a kinematic equation if the question asks about speed, distance or time.</li>
+  </ol>
+</div>
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Picking a kinematic equation</h3>
+    <ul>
+      <li>List the five quantities: Δx, v<sub>0</sub>, v, a, t. Mark the three you know and the one you want.</li>
+      <li>Use the equation that leaves out the fifth one (see the Equations table).</li>
+      <li>Watch for hidden values: “from rest” means v<sub>0</sub> = 0, “stops” means v = 0, “dropped” means v<sub>0</sub> = 0 and a = g.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Segmented motion</h3>
+    <ul>
+      <li>Sketch a velocity–time graph of the whole trip first. Each straight piece is one segment.</li>
+      <li>Solve the segment you know the most about. Its final velocity starts the next one.</li>
+      <li>Total distance = the sum of the areas under each piece.</li>
+    </ul>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-examples" aria-labelledby="gt-examples" hidden>
+<div class="gex">
+  <div class="ex">
+    <div class="kind">Kinematics → force</div>
+    <h4>A car brakes to a stop</h4>
+    <p>A car moving at 25 m/s brakes steadily and stops in 5.0 s. Find its acceleration and stopping distance. If friction from the road is the only horizontal force, what coefficient of friction does that take?</p>
+    <div class="work">
+      a = Δv/Δt = (0 − 25)/5.0 = <b>−5.0 m/s²</b><br>
+      Δx = ½(v<sub>0</sub> + v)t = ½(25 + 0)(5.0) = <b>62.5 m</b><br>
+      Friction: μmg = m|a| → μ = |a|/g = 5.0/10 = <b>0.50</b>
+    </div>
+    <p class="take">The minus sign means the acceleration points backward while the car moves forward, so it slows down. The mass cancels in the last step.</p>
+  </div>
 
+  <div class="ex">
+    <div class="kind">Free fall</div>
+    <h4>A ball thrown straight up</h4>
+    <p>You throw a ball straight up at 15 m/s. How long does it take to reach the top, and how high does it go? What are its velocity and acceleration at the top?</p>
+    <div class="work">
+      Up = +, a = −10 m/s². At the top v = 0.<br>
+      t = (v − v<sub>0</sub>)/a = (0 − 15)/(−10) = <b>1.5 s</b><br>
+      v² = v<sub>0</sub>² + 2aΔx → 0 = 225 − 20Δx → Δx = <b>11 m</b> (11.25)<br>
+      At the top: v = <b>0</b>, a = <b>10 m/s² downward</b>
+    </div>
+    <p class="take">On the way down it takes another 1.5 s to fall back to your hand, and it arrives at 15 m/s. The acceleration is the same the whole time.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Apparent weight</div>
+    <h4>Standing on a scale in an elevator</h4>
+    <p>A 60 kg student stands on a scale in an elevator. What does the scale read when the elevator (a) speeds up going up at 2.0 m/s², (b) moves at constant speed, and (c) speeds up going down at 2.0 m/s²?</p>
+    <div class="work">
+      ΣF = ma, up = +: F<sub>N</sub> − mg = ma → F<sub>N</sub> = m(g + a)<br>
+      (a) a = +2.0: F<sub>N</sub> = 60(12) = <b>720 N</b><br>
+      (b) a = 0: F<sub>N</sub> = 60(10) = <b>600 N</b><br>
+      (c) a = −2.0: F<sub>N</sub> = 60(8.0) = <b>480 N</b>
+    </div>
+    <p class="take">The scale shows the normal force, not your weight. What matters is the direction of the acceleration: slowing down while going down also makes the scale read high.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Friction</div>
+    <h4>Pushing a box across the floor</h4>
+    <p>You push a 40 kg box with a horizontal 200 N force. The coefficient of kinetic friction is 0.30. Find the box's acceleration.</p>
+    <div class="work">
+      Vertical: F<sub>N</sub> = mg = 400 N<br>
+      Friction: f<sub>k</sub> = μ<sub>k</sub>F<sub>N</sub> = 0.30 × 400 = 120 N<br>
+      Horizontal: 200 − 120 = 40a → a = <b>2.0 m/s²</b>
+    </div>
+    <p class="take">Only the net force (80 N) accelerates the box. Push with exactly 120 N and it would slide at constant speed.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Segmented motion</div>
+    <svg width="160" height="100" viewBox="0 0 160 100" aria-label="Velocity-time graph: rising to 20 m/s by 10 s, flat until 30 s, falling to zero at 35 s">
+      <line x1="20" y1="85" x2="156" y2="85" stroke="#111" stroke-width="2"/><line x1="20" y1="85" x2="20" y2="6" stroke="#111" stroke-width="2"/>
+      <polygon points="20,85 52,25 116,25 132,85" fill="#fde1d6" stroke="none"/>
+      <polyline points="20,85 52,25 116,25 132,85" fill="none" stroke="#ff6a2b" stroke-width="3"/>
+      <text x="2" y="29" font-size="10" font-family="IBM Plex Mono,monospace">20</text>
+      <text x="46" y="97" font-size="10" font-family="IBM Plex Mono,monospace">10</text><text x="108" y="97" font-size="10" font-family="IBM Plex Mono,monospace">30</text><text x="128" y="97" font-size="10" font-family="IBM Plex Mono,monospace">35</text>
+      <text x="24" y="12" font-size="10" font-family="IBM Plex Mono,monospace">v (m/s)</text>
+    </svg>
+    <h4>Speed up, cruise, brake</h4>
+    <p>A car starts from rest and speeds up at 2.0 m/s² for 10 s, cruises at constant speed for 20 s, then brakes at 4.0 m/s² until it stops. How far does it go in total?</p>
+    <div class="work">
+      Part 1: v = 0 + (2.0)(10) = 20 m/s; Δx = ½(20)(10) = 100 m<br>
+      Part 2: Δx = (20)(20) = 400 m<br>
+      Part 3: t = 20/4.0 = 5.0 s; Δx = ½(20)(5.0) = 50 m<br>
+      Total = <b>550 m</b> (the area under the v–t graph)
+    </div>
+    <p class="take">The 20 m/s at the end of part 1 is the starting speed for parts 2 and 3. Each part gets its own acceleration.</p>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
+<div class="gcheck">
+  <h3>Self-check</h3>
+  <p>Answer first, then open.</p>
+  <ol class="q">
+<li>A car has a negative velocity and a negative acceleration. Is it speeding up or slowing down?
+      <details><summary>Answer</summary><div>Speeding up. The velocity and acceleration point the same way (both negative), so its speed increases in the negative direction.</div></details></li>
+    <li>A velocity–time graph goes in a straight line from 0 to 10 m/s over 5.0 s. What are the acceleration and the displacement?
+      <details><summary>Answer</summary><div>Slope: a = 10/5.0 = 2.0 m/s². Area: ½(5.0)(10) = 25 m.</div></details></li>
+    <li>A stone is dropped from rest off a bridge and hits the water 2.0 s later. How fast is it going, and how high is the bridge? (Ignore air resistance.)
+      <details><summary>Answer</summary><div>v = gt = (10)(2.0) = 20 m/s. Δx = ½gt² = ½(10)(2.0)² = 20 m.</div></details></li>
+    <li>A 1200 kg car speeds up at 3.0 m/s². What is the net force on it?
+      <details><summary>Answer</summary><div>ΣF = ma = (1200)(3.0) = 3600 N, forward.</div></details></li>
+    <li>The same net force acts on a cart, then on a cart with twice the mass. How do their accelerations compare?
+      <details><summary>Answer</summary><div>a = ΣF/m, so twice the mass gets half the acceleration.</div></details></li>
+    <li>In a moving elevator, your scale reads less than your weight. Which way is the elevator accelerating? Give two motions that would do this.
+      <details><summary>Answer</summary><div>Downward. The elevator could be moving down and speeding up, or moving up and slowing down. Either way the acceleration points down, so F<sub>N</sub> &lt; mg.</div></details></li>
+    <li>It takes 150 N of horizontal push to start a 25 kg crate moving, and 100 N to keep it sliding at constant speed. Find μ<sub>s</sub> and μ<sub>k</sub>.
+      <details><summary>Answer</summary><div>F<sub>N</sub> = mg = 250 N. μ<sub>s</sub> = 150/250 = 0.60. At constant speed the push equals kinetic friction: μ<sub>k</sub> = 100/250 = 0.40.</div></details></li>
+    <li>A car skids to a stop from 30 m/s with its wheels locked. The coefficient of kinetic friction is 0.75. How far does it slide?
+      <details><summary>Answer</summary><div>a = −μ<sub>k</sub>g = −7.5 m/s². v² = v<sub>0</sub>² + 2aΔx → 0 = 900 − 15Δx → Δx = 60 m.</div></details></li>
+    <li>A heavy ball and a light ball of the same size are dropped together from the same height. Ignoring air resistance, which lands first? Why?
+      <details><summary>Answer</summary><div>They land together. The heavy ball has a bigger weight but also a bigger mass, and a = F<sub>g</sub>/m = g for both.</div></details></li>
+    <li>A skydiver falls at a steady terminal speed. What is the net force on her? How does air resistance compare with her weight?
+      <details><summary>Answer</summary><div>The net force is zero (constant velocity), so air resistance is exactly equal to her weight.</div></details></li>
+    <li>A ball moves to the right while the net force on it points to the left. Is that possible? What is the ball doing?
+      <details><summary>Answer</summary><div>Yes. The net force sets the acceleration, not the velocity. The ball is moving right and slowing down (and will eventually turn around if the force keeps acting).</div></details></li>
+  </ol>
+</div>
+</div>
+<p class="gnext"><a href="#practice" data-view="practice">Practice questions for this unit →</a></p>
+<script>
+(function(){
+  var root=document.currentScript?document.currentScript.parentNode:document;
+  var tabs=[].slice.call(root.querySelectorAll('.gtabs .tab'));
+  function show(t){tabs.forEach(function(b){var on=b===t;b.setAttribute('aria-selected',on?'true':'false');b.tabIndex=on?0:-1;document.getElementById(b.getAttribute('aria-controls')).hidden=!on;});}
+  tabs.forEach(function(b,i){
+    b.addEventListener('click',function(){show(b);});
+    b.addEventListener('keydown',function(e){var k=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(k){var n=tabs[(i+k+tabs.length)%tabs.length];show(n);n.focus();e.preventDefault();}});
+  });
+})();
+</script>
+</section>
+  </div>
   <div class="view" id="v-practice" hidden>
   <section class="review" id="review">
     <div class="simbar"><h2>Practice questions</h2><a id="ropen" class="mono" href="https://script.google.com/a/macros/fcps.org/s/AKfycbzW6NpFGf5yjZ843WN0pDy-mzI0r1iCcBIuoJpMCEJeWwbUARiSnAC_lf2bWQeHWoGjHA/exec?unit=P1-02" target="_blank" rel="noopener">Open in a new tab ↗</a></div>

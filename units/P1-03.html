@@ -73,7 +73,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
     <div class="uid"><div class="big" aria-hidden="true">03</div><div><div class="mono">AP Physics 1 / IB · P1-03</div><h1>Newton’s Third Law</h1></div></div>
   </header>
   <nav class="views" id="views" aria-label="Choose a view">
-    <div class="vbtns"><button type="button" class="vbtn" data-view="explore" aria-pressed="false">Explore</button><button type="button" class="vbtn" data-view="practice" aria-pressed="false">Practice</button></div>
+    <div class="vbtns"><button type="button" class="vbtn" data-view="explore" aria-pressed="false">Explore</button><button type="button" class="vbtn" data-view="study" aria-pressed="false">Study</button><button type="button" class="vbtn" data-view="practice" aria-pressed="false">Practice</button></div>
     <a class="simsback mono" id="simsback" href="https://sites.google.com/fcps.org/holmes/ap-physics-1-ib/p1-03" target="_blank" rel="noopener" hidden>Sims for this unit ↗</a>
   </nav>
   <div class="view" id="v-explore">
@@ -92,7 +92,245 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
   </div>
   <p class="credits">Push Two Blocks is original. Pulleys and Box on a Truck are original.</p>
   </div>
+  <div class="view" id="v-study" hidden>
+<section class="guide" id="guide" aria-label="Study guide">
+<style>
+.guide{margin-top:28px}
+.guide .gtip{margin:0 0 16px;font-size:19px;line-height:1.45;max-width:1000px}
+.guide .ggrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-bottom:22px}
+.guide .gcard{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcard h3,.guide .gcheck h3,.guide .gsteps h3{margin:0 0 10px;font-size:20px;letter-spacing:-.01em}
+.guide .gcard ul{margin:0;padding-left:20px}
+.guide .gcard li{margin:0 0 7px}
+.guide .ib{display:inline-block;font-family:var(--f-mono);font-size:11px;font-weight:700;border:2px solid var(--ink);padding:0 5px;margin-left:4px;vertical-align:1px;background:var(--soft)}
+.guide table{border-collapse:collapse;width:100%;font-size:15px}
+.guide td{border-top:2px solid var(--ink);padding:6px 4px;vertical-align:top}
+.guide td:first-child{font-family:var(--f-mono);font-weight:700;white-space:nowrap;padding-right:12px}
+.guide td[colspan]{white-space:normal}
+.guide .gsub{font-family:var(--f-display);font-weight:400}
+.guide .gsteps{background:var(--soft);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px;margin-bottom:22px}
+.guide .gsteps ol{margin:0;padding-left:24px;columns:2 360px;column-gap:28px}
+.guide .gsteps li{margin:0 0 8px;break-inside:avoid}
+.guide h3.ghead{font-size:22px;margin:0 0 12px}
+.guide .gex{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:18px;margin-bottom:22px}
+.guide .ex{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .ex h4{margin:0 0 6px;font-size:18px}
+.guide .ex .kind{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--hot);text-transform:uppercase;letter-spacing:.04em}
+.guide .ex p{margin:0 0 8px}
+.guide .work{font-family:var(--f-mono);font-size:14px;line-height:1.6;border-left:4px solid var(--hot);background:#fff;padding:6px 12px;margin:8px 0}
+.guide .work b{font-family:var(--f-display)}
+.guide .ex .take{margin:8px 0 0;font-weight:500}
+.guide .ex svg{float:right;margin:0 0 6px 12px}
+.guide .gcheck{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcheck>p{margin:-4px 0 12px;color:var(--muted)}
+.guide ol.q{margin:0;padding-left:26px}
+.guide ol.q>li{margin:0 0 14px}
+.guide details{margin-top:6px}
+.guide summary{cursor:pointer;display:inline-block;font-weight:700;border:2px solid var(--ink);padding:2px 10px;background:#fff;list-style:none}
+.guide summary::-webkit-details-marker{display:none}
+.guide summary:hover{background:var(--soft)}
+.guide details[open] summary{background:var(--ink);color:#fff}
+.guide details>div{border-left:4px solid var(--hot);padding:8px 12px;margin-top:8px;background:#fff}
+.guide .gpanel>.ggrid,.guide .gpanel>.gsteps,.guide .gpanel>.gex{margin-bottom:0}
+.guide .gpanel>.gsteps+.ggrid{margin-top:22px}
+.guide .gtabs{margin-bottom:18px}
+.guide .gnext{margin:16px 0 0;font-weight:700}
+.guide .gnext a{color:var(--ink)}
+body.present .guide{display:none}
+@media (max-width:520px){.guide .gtip{font-size:17px}.guide td:first-child{white-space:normal}.guide .ggrid,.guide .gex{grid-template-columns:1fr}.guide .ex svg{float:none;display:block;margin:0 auto 8px}}
+</style>
+<div class="simbar"><h2>Study guide</h2><span class="mono">Unit 3 · Newton’s Third Law</span></div>
+<p class="gtip"><b>How to use this:</b> read the key ideas, then cover each worked example and try it yourself before reading the solution. Do the self-check questions on paper <i>before</i> you open the answers, mark the ones you miss, and come back to them in a day or two without looking. Rereading won't do much; answering questions will.</p>
+<div class="tabs gtabs" role="tablist" aria-label="Study guide sections">
+  <button class="tab" role="tab" type="button" aria-selected="true" aria-controls="g-ideas" id="gt-ideas">Key ideas</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-solve" id="gt-solve" tabindex="-1">How to solve</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-examples" id="gt-examples" tabindex="-1">Worked examples</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-check" id="gt-check" tabindex="-1">Self-check</button>
+</div>
+<div class="gpanel" role="tabpanel" id="g-ideas" aria-labelledby="gt-ideas">
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Key ideas</h3>
+    <ul>
+      <li><b>Forces come in pairs.</b> When A pushes or pulls on B, B pushes or pulls back on A. Every force is one half of an interaction.</li>
+      <li><b>A third-law pair</b> is the same type of force, equal in size, opposite in direction, and acting on <b>two different objects</b>. If you can say “A on B,” its partner is “B on A.”</li>
+      <li><b>Third-law pairs never cancel</b>, because they act on different objects. Only forces on the same object can add to zero.</li>
+      <li>A book's weight and the table's normal force on it are <b>not</b> a third-law pair: both act on the book, and they're different types. The partner of the book's weight is the book's gravitational pull on Earth.</li>
+      <li><b>Equal forces don't mean equal accelerations.</b> In a collision a truck and a car push each other equally hard, but a = F/m, so the smaller car gets the bigger acceleration.</li>
+      <li><b>A system</b> is whatever group of objects you choose. Forces between objects inside it are <b>internal</b>; they come in pairs and cancel for the system as a whole.</li>
+      <li>For objects moving together, treat them as one system: ΣF<sub>external</sub> = m<sub>total</sub>a. Then look at one object on its own to find an internal force (a contact force or a tension).</li>
+      <li><b>An ideal string</b> (no mass, doesn't stretch) has the same tension all along it, even over an ideal pulley. Everything tied to it moves with the same size of acceleration.</li>
+      <li>A string holding an accelerating hanging mass does <b>not</b> pull with mg. If the mass speeds up downward, the tension is less than its weight.</li>
+      <li><b>Center of mass:</b> the average position of a system's mass, x<sub>cm</sub> = Σmx/Σm. It sits closer to the heavier objects.</li>
+      <li>Only external forces can accelerate the center of mass. If two skaters push apart on frictionless ice, they fly off in opposite directions, but their center of mass stays put.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Equations</h3>
+    <table>
+      <tr><td>F<sub>A on B</sub> = −F<sub>B on A</sub></td><td>Newton's 3rd law</td></tr>
+      <tr><td>ΣF<sub>ext</sub> = m<sub>total</sub>a</td><td>a system moving together</td></tr>
+      <tr><td>a = (m<sub>2</sub> − m<sub>1</sub>)g/(m<sub>1</sub> + m<sub>2</sub>)</td><td>two masses hanging over a pulley (m<sub>2</sub> heavier)</td></tr>
+      <tr><td>x<sub>cm</sub> = (m<sub>1</sub>x<sub>1</sub> + m<sub>2</sub>x<sub>2</sub> + …)/(m<sub>1</sub> + m<sub>2</sub> + …)</td><td>center of mass</td></tr>
+      <tr><td>ΣF<sub>ext</sub> = m<sub>total</sub>a<sub>cm</sub></td><td>motion of the center of mass</td></tr>
+    </table>
+  </div>
+  <div class="gcard">
+    <h3>Common mistakes</h3>
+    <ul>
+      <li>Saying the bigger or faster object pushes harder in a collision. The forces are always equal; the effects aren't.</li>
+      <li>Pairing the normal force with the weight. They're both on the same object, so they can't be a third-law pair.</li>
+      <li>“The forces are equal and opposite, so nothing can move.” The pair acts on two different objects, so each object can still have a nonzero net force.</li>
+      <li>Setting a hanging mass's string tension equal to mg when the system is accelerating.</li>
+      <li>Using the system's total mass to find a force on just one object, or the other way round.</li>
+      <li>Including internal forces in the system's ΣF. They cancel.</li>
+    </ul>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-solve" aria-labelledby="gt-solve" hidden>
+<div class="gsteps">
+  <h3>How to solve a connected-objects problem</h3>
+  <ol>
+    <li><b>Do they move together?</b> Touching blocks, or objects joined by a tight string, share the same size of acceleration.</li>
+    <li><b>Treat them all as one system.</b> Draw only the external forces, and pick the direction of motion as + (around a pulley, + follows the string).</li>
+    <li><b>Find a:</b> ΣF<sub>ext</sub> = m<sub>total</sub>a.</li>
+    <li><b>Pick one object</b> and draw its own free-body diagram. Now the contact force or tension is an outside force on it.</li>
+    <li><b>Use ΣF = ma for that object</b> with the same a to find the internal force.</li>
+    <li><b>Check:</b> does it make sense? A string's tension should lie between zero and the hanging weight if the hanging mass is speeding up downward.</li>
+  </ol>
+</div>
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Finding a third-law pair</h3>
+    <ul>
+      <li>Name the force as “<i>type</i> of A on B”, for example “gravitational force of Earth on the ball.”</li>
+      <li>Swap the two objects: “gravitational force of the ball on Earth.” That's its partner.</li>
+      <li>Same type, same size, opposite direction, on the other object. If any of these fails, it isn't a pair.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Choosing the system</h3>
+    <ul>
+      <li>Want the acceleration? Make the system big, so the unknown internal forces drop out.</li>
+      <li>Want a force between two objects? Make the system one of those objects, so that force becomes external.</li>
+    </ul>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-examples" aria-labelledby="gt-examples" hidden>
+<div class="gex">
+  <div class="ex">
+    <div class="kind">System, then one object</div>
+    <svg width="150" height="70" viewBox="0 0 150 70" aria-label="A 12 N push on a 3.0 kg block that pushes a 1.0 kg block">
+      <line x1="4" y1="60" x2="146" y2="60" stroke="#111" stroke-width="2"/>
+      <rect x="44" y="20" width="44" height="40" fill="#fff" stroke="#111" stroke-width="2"/><rect x="88" y="34" width="26" height="26" fill="#fff" stroke="#111" stroke-width="2"/>
+      <text x="55" y="45" font-size="11" font-family="IBM Plex Mono,monospace">3 kg</text><text x="90" y="51" font-size="10" font-family="IBM Plex Mono,monospace">1 kg</text>
+      <line x1="8" y1="40" x2="38" y2="40" stroke="#ff6a2b" stroke-width="3"/><polygon points="36,35 36,45 44,40" fill="#ff6a2b"/>
+      <text x="8" y="32" font-size="11" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">12 N</text>
+    </svg>
+    <h4>Pushing two blocks</h4>
+    <p>On a frictionless floor, you push a 3.0 kg block with 12 N, and it pushes a 1.0 kg block in front of it. Find their acceleration and the force between the blocks. What if you pushed the 1.0 kg block from the other side instead?</p>
+    <div class="work">
+      System (both blocks): 12 = (4.0)a → a = <b>3.0 m/s²</b><br>
+      1.0 kg block alone: F<sub>contact</sub> = (1.0)(3.0) = <b>3.0 N</b><br>
+      Pushing from the other side: the 3.0 kg block is in front<br>
+      &nbsp;&nbsp;F<sub>contact</sub> = (3.0)(3.0) = <b>9.0 N</b>
+    </div>
+    <p class="take">The acceleration is the same either way, but the contact force isn't: it only has to accelerate the block in front. The 3.0 kg block feels the 3.0 N (or 9.0 N) push back on it, too.</p>
+  </div>
 
+  <div class="ex">
+    <div class="kind">Pulley</div>
+    <h4>A block on a table pulled by a hanging mass</h4>
+    <p>A 2.0 kg block on a frictionless table is tied to a string that runs over a pulley at the edge to a hanging 1.0 kg mass. Find the acceleration and the tension in the string.</p>
+    <div class="work">
+      System (both, + along the string): the only unbalanced external force is the hanging weight<br>
+      &nbsp;&nbsp;(1.0)(10) = (3.0)a → a = <b>3.3 m/s²</b><br>
+      Block on the table alone: T = (2.0)(3.33) = <b>6.7 N</b><br>
+      Check, hanging mass: 10 − 6.7 = (1.0)(3.3) ✓
+    </div>
+    <p class="take">The tension is less than the hanging mass's 10 N weight. If it were 10 N, the hanging mass would have no net force and wouldn't accelerate.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Third law</div>
+    <h4>A truck and a car collide</h4>
+    <p>A 2000 kg truck and a 1000 kg car collide head-on. At one instant the truck pushes on the car with 20 000 N. How hard does the car push on the truck? Compare their accelerations.</p>
+    <div class="work">
+      Third-law pair: car on truck = <b>20 000 N</b>, opposite direction<br>
+      a<sub>truck</sub> = 20 000/2000 = <b>10 m/s²</b><br>
+      a<sub>car</sub> = 20 000/1000 = <b>20 m/s²</b>
+    </div>
+    <p class="take">Same force, but the car has half the mass, so it gets twice the acceleration. That's why the people in the smaller car are in more danger.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Static friction</div>
+    <h4>A box on an accelerating truck</h4>
+    <p>A box sits in the bed of a pickup truck. The coefficient of static friction between them is 0.40. What is the greatest acceleration the truck can have without the box sliding?</p>
+    <div class="work">
+      Static friction is the only horizontal force on the box, and it points forward<br>
+      &nbsp;&nbsp;f<sub>s</sub> = ma, and f<sub>s</sub> ≤ μ<sub>s</sub>mg<br>
+      Largest: μ<sub>s</sub>mg = ma<sub>max</sub> → a<sub>max</sub> = μ<sub>s</sub>g = (0.40)(10) = <b>4.0 m/s²</b>
+    </div>
+    <p class="take">Friction pushes the box forward, the way the truck accelerates. If the truck accelerates harder, nothing pushes the box backward: friction just can't speed it up fast enough, so it slides back relative to the truck.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Center of mass</div>
+    <h4>Where's the balance point?</h4>
+    <p>A light rod 1.0 m long has a 2.0 kg mass on its left end (x = 0) and a 3.0 kg mass on its right end (x = 1.0 m). Where is the center of mass?</p>
+    <div class="work">
+      x<sub>cm</sub> = [(2.0)(0) + (3.0)(1.0)]/(2.0 + 3.0)<br>
+      &nbsp;&nbsp;= 3.0/5.0 = <b>0.60 m</b> from the left end
+    </div>
+    <p class="take">It's closer to the heavier mass. If the rod were thrown, it would spin, but the center of mass would follow a smooth path, as if all 5.0 kg were there.</p>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
+<div class="gcheck">
+  <h3>Self-check</h3>
+  <p>Answer first, then open.</p>
+  <ol class="q">
+<li>You push on a wall with 50 N. How hard does the wall push on you? Why don't the two forces cancel?
+      <details><summary>Answer</summary><div>50 N, back toward you. They act on different objects (one on the wall, one on you), so they can't cancel. Only forces on the same object can.</div></details></li>
+    <li>An apple sits on a table. Name the two forces on the apple and the third-law partner of each.
+      <details><summary>Answer</summary><div>Earth's gravity pulls the apple down; its partner is the apple's gravity pulling Earth up. The table pushes the apple up (normal force); its partner is the apple pushing down on the table. The apple's weight and the normal force balance, but they aren't a pair.</div></details></li>
+    <li>A horse pulls a cart. If the cart pulls back on the horse just as hard, how can they ever start moving?
+      <details><summary>Answer</summary><div>The two forces act on different objects. The cart moves because the horse's pull on it is bigger than the friction on the cart. The horse moves because the ground pushes it forward (friction on its hooves) harder than the cart pulls it back.</div></details></li>
+    <li>A 3.0 kg mass and a 2.0 kg mass hang on either side of a pulley. Find the acceleration and the string tension.
+      <details><summary>Answer</summary><div>a = (3.0 − 2.0)(10)/(5.0) = 2.0 m/s². For the 2.0 kg mass, accelerating upward: T − 20 = (2.0)(2.0), so T = 24 N, which lies between the two weights (20 N and 30 N).</div></details></li>
+    <li>An engine pulls two 1000 kg cars with a total force of 4000 N on a frictionless track. Find the acceleration and the tension in the coupling between the two cars.
+      <details><summary>Answer</summary><div>System of both cars: a = 4000/2000 = 2.0 m/s². The rear car alone: T = (1000)(2.0) = 2000 N. The front coupling carries 4000 N, because it pulls both cars.</div></details></li>
+    <li>A 60 kg skater and a 40 kg skater push off each other on ice. Compare the forces on them and their accelerations.
+      <details><summary>Answer</summary><div>The forces are equal (a third-law pair). a = F/m, so the 40 kg skater gets 1.5 times the acceleration of the 60 kg skater.</div></details></li>
+    <li>After the push in the last question, where is the center of mass of the two skaters?
+      <details><summary>Answer</summary><div>Exactly where it was before the push. The pushes are internal forces, and with no outside horizontal force the center of mass can't accelerate.</div></details></li>
+    <li>A book sits on top of a second book. You push the bottom book and both speed up together. What force makes the top book speed up?
+      <details><summary>Answer</summary><div>Static friction from the bottom book on the top book, pointing forward. Nothing else touches it horizontally.</div></details></li>
+    <li>In a tug-of-war, each team pulls on the rope with 300 N and nobody moves. What is the tension in the rope?
+      <details><summary>Answer</summary><div>300 N. A rope pulled with 300 N at each end has 300 N tension, not 600 N, just as a rope tied to a wall and pulled with 300 N would.</div></details></li>
+    <li>When you drop a ball, Earth pulls it down. Does the ball pull Earth up? Why don't we notice?
+      <details><summary>Answer</summary><div>Yes, with exactly the same force. Earth's mass is so enormous that its acceleration is far too tiny to notice.</div></details></li>
+  </ol>
+</div>
+</div>
+<p class="gnext"><a href="#practice" data-view="practice">Practice questions for this unit →</a></p>
+<script>
+(function(){
+  var root=document.currentScript?document.currentScript.parentNode:document;
+  var tabs=[].slice.call(root.querySelectorAll('.gtabs .tab'));
+  function show(t){tabs.forEach(function(b){var on=b===t;b.setAttribute('aria-selected',on?'true':'false');b.tabIndex=on?0:-1;document.getElementById(b.getAttribute('aria-controls')).hidden=!on;});}
+  tabs.forEach(function(b,i){
+    b.addEventListener('click',function(){show(b);});
+    b.addEventListener('keydown',function(e){var k=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(k){var n=tabs[(i+k+tabs.length)%tabs.length];show(n);n.focus();e.preventDefault();}});
+  });
+})();
+</script>
+</section>
+  </div>
   <div class="view" id="v-practice" hidden>
   <section class="review" id="review">
     <div class="simbar"><h2>Practice questions</h2><a id="ropen" class="mono" href="https://script.google.com/a/macros/fcps.org/s/AKfycbzW6NpFGf5yjZ843WN0pDy-mzI0r1iCcBIuoJpMCEJeWwbUARiSnAC_lf2bWQeHWoGjHA/exec?unit=P1-03" target="_blank" rel="noopener">Open in a new tab ↗</a></div>

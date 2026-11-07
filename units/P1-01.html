@@ -73,7 +73,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
     <div class="uid"><div class="big" aria-hidden="true">01</div><div><div class="mono">AP Physics 1 / IB · P1-01</div><h1>Newton’s First Law</h1></div></div>
   </header>
   <nav class="views" id="views" aria-label="Choose a view">
-    <div class="vbtns"><button type="button" class="vbtn" data-view="explore" aria-pressed="false">Explore</button><button type="button" class="vbtn" data-view="practice" aria-pressed="false">Practice</button></div>
+    <div class="vbtns"><button type="button" class="vbtn" data-view="explore" aria-pressed="false">Explore</button><button type="button" class="vbtn" data-view="study" aria-pressed="false">Study</button><button type="button" class="vbtn" data-view="practice" aria-pressed="false">Practice</button></div>
     <a class="simsback mono" id="simsback" href="https://sites.google.com/fcps.org/holmes/ap-physics-1-ib/p1-01" target="_blank" rel="noopener" hidden>Sims for this unit ↗</a>
   </nav>
   <div class="view" id="v-explore">
@@ -92,7 +92,252 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
   </div>
   <p class="credits">Puck in Space, Balanced Forces, Inertia on a Cart, When Do They Meet? and Springs are original.</p>
   </div>
+  <div class="view" id="v-study" hidden>
+<section class="guide" id="guide" aria-label="Study guide">
+<style>
+.guide{margin-top:28px}
+.guide .gtip{margin:0 0 16px;font-size:19px;line-height:1.45;max-width:1000px}
+.guide .ggrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-bottom:22px}
+.guide .gcard{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcard h3,.guide .gcheck h3,.guide .gsteps h3{margin:0 0 10px;font-size:20px;letter-spacing:-.01em}
+.guide .gcard ul{margin:0;padding-left:20px}
+.guide .gcard li{margin:0 0 7px}
+.guide .ib{display:inline-block;font-family:var(--f-mono);font-size:11px;font-weight:700;border:2px solid var(--ink);padding:0 5px;margin-left:4px;vertical-align:1px;background:var(--soft)}
+.guide table{border-collapse:collapse;width:100%;font-size:15px}
+.guide td{border-top:2px solid var(--ink);padding:6px 4px;vertical-align:top}
+.guide td:first-child{font-family:var(--f-mono);font-weight:700;white-space:nowrap;padding-right:12px}
+.guide td[colspan]{white-space:normal}
+.guide .gsub{font-family:var(--f-display);font-weight:400}
+.guide .gsteps{background:var(--soft);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px;margin-bottom:22px}
+.guide .gsteps ol{margin:0;padding-left:24px;columns:2 360px;column-gap:28px}
+.guide .gsteps li{margin:0 0 8px;break-inside:avoid}
+.guide h3.ghead{font-size:22px;margin:0 0 12px}
+.guide .gex{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:18px;margin-bottom:22px}
+.guide .ex{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .ex h4{margin:0 0 6px;font-size:18px}
+.guide .ex .kind{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--hot);text-transform:uppercase;letter-spacing:.04em}
+.guide .ex p{margin:0 0 8px}
+.guide .work{font-family:var(--f-mono);font-size:14px;line-height:1.6;border-left:4px solid var(--hot);background:#fff;padding:6px 12px;margin:8px 0}
+.guide .work b{font-family:var(--f-display)}
+.guide .ex .take{margin:8px 0 0;font-weight:500}
+.guide .ex svg{float:right;margin:0 0 6px 12px}
+.guide .gcheck{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcheck>p{margin:-4px 0 12px;color:var(--muted)}
+.guide ol.q{margin:0;padding-left:26px}
+.guide ol.q>li{margin:0 0 14px}
+.guide details{margin-top:6px}
+.guide summary{cursor:pointer;display:inline-block;font-weight:700;border:2px solid var(--ink);padding:2px 10px;background:#fff;list-style:none}
+.guide summary::-webkit-details-marker{display:none}
+.guide summary:hover{background:var(--soft)}
+.guide details[open] summary{background:var(--ink);color:#fff}
+.guide details>div{border-left:4px solid var(--hot);padding:8px 12px;margin-top:8px;background:#fff}
+.guide .gpanel>.ggrid,.guide .gpanel>.gsteps,.guide .gpanel>.gex{margin-bottom:0}
+.guide .gpanel>.gsteps+.ggrid{margin-top:22px}
+.guide .gtabs{margin-bottom:18px}
+.guide .gnext{margin:16px 0 0;font-weight:700}
+.guide .gnext a{color:var(--ink)}
+body.present .guide{display:none}
+@media (max-width:520px){.guide .gtip{font-size:17px}.guide td:first-child{white-space:normal}.guide .ggrid,.guide .gex{grid-template-columns:1fr}.guide .ex svg{float:none;display:block;margin:0 auto 8px}}
+</style>
+<div class="simbar"><h2>Study guide</h2><span class="mono">Unit 1 · Newton’s First Law</span></div>
+<p class="gtip"><b>How to use this:</b> read the key ideas, then cover each worked example and try it yourself before reading the solution. Do the self-check questions on paper <i>before</i> you open the answers, mark the ones you miss, and come back to them in a day or two without looking. Rereading won't do much; answering questions will.</p>
+<div class="tabs gtabs" role="tablist" aria-label="Study guide sections">
+  <button class="tab" role="tab" type="button" aria-selected="true" aria-controls="g-ideas" id="gt-ideas">Key ideas</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-solve" id="gt-solve" tabindex="-1">How to solve</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-examples" id="gt-examples" tabindex="-1">Worked examples</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-check" id="gt-check" tabindex="-1">Self-check</button>
+</div>
+<div class="gpanel" role="tabpanel" id="g-ideas" aria-labelledby="gt-ideas">
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Key ideas</h3>
+    <ul>
+      <li><b>Position</b> is where something is relative to a chosen origin. <b>Displacement</b> Δx = x<sub>f</sub> − x<sub>i</sub> is the change in position: it has a sign (direction). <b>Distance</b> is the total path length, and it's never negative.</li>
+      <li><b>Velocity</b> is the rate of change of position, v = Δx/Δt, and has a direction. <b>Speed</b> is how fast, with no direction. Average speed = distance ÷ time, which isn't always the size of the average velocity.</li>
+      <li><b>Position–time graph:</b> the slope is the velocity. A straight line means constant velocity; a steeper line means faster; a flat line means at rest; a downward slope means moving in the negative direction.</li>
+      <li><b>Velocity–time graph:</b> constant velocity is a horizontal line. The area between the line and the time axis is the displacement (area under the time axis, where v is negative, counts as negative).</li>
+      <li><b>Motion diagrams</b> show the object at equal time intervals. Evenly spaced dots mean constant velocity.</li>
+      <li><b>Frames of reference:</b> velocity depends on who is watching. In one dimension, add the velocities: your velocity relative to the ground = your velocity relative to the train + the train's velocity relative to the ground.</li>
+      <li><b>A force is a push or pull from one object on another.</b> Contact forces need touching (normal, tension, friction, spring); gravity acts at a distance.</li>
+      <li><b>Common forces:</b> weight F<sub>g</sub> = mg points down. A <b>normal force</b> pushes perpendicular to a surface, as hard as it needs to. <b>Tension</b> pulls along a rope or string. <b>Friction</b> acts along a surface, against sliding (or against the way it would slide). A <b>spring</b> pushes or pulls with F<sub>s</sub> = kx.</li>
+      <li><b>Free-body diagram:</b> one dot for the object, an arrow for each real force on it, each labelled by what exerts it.</li>
+      <li><b>Newton's 1st law:</b> if the net force on an object is zero, its velocity stays constant: at rest stays at rest, moving keeps moving in a straight line at the same speed. No force is needed to <i>keep</i> something moving.</li>
+      <li><b>Inertia</b> is an object's resistance to a change in its motion. Mass measures it. Mass (kg) is the same everywhere; weight (N) depends on g.</li>
+      <li><b>Equilibrium</b> means net force zero, so constant velocity, including at rest. The forces in each direction add to zero.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Equations</h3>
+    <table>
+      <tr><td>Δx = x<sub>f</sub> − x<sub>i</sub></td><td>displacement</td></tr>
+      <tr><td>v<sub>avg</sub> = Δx/Δt</td><td>average velocity</td></tr>
+      <tr><td>speed<sub>avg</sub> = d/Δt</td><td>average speed (d = distance)</td></tr>
+      <tr><td>x = x<sub>0</sub> + vt</td><td>position at constant velocity</td></tr>
+      <tr><td>v<sub>A,ground</sub> = v<sub>A,B</sub> + v<sub>B,ground</sub></td><td>relative velocity in 1D</td></tr>
+      <tr><td>F<sub>g</sub> = mg</td><td>weight (g = 10 N/kg near Earth)</td></tr>
+      <tr><td>F<sub>s</sub> = kx</td><td>spring force (x = stretch from natural length)</td></tr>
+      <tr><td>ΣF = 0</td><td>equilibrium: constant velocity</td></tr>
+    </table>
+  </div>
+  <div class="gcard">
+    <h3>Common mistakes</h3>
+    <ul>
+      <li>Reading a position–time graph as a picture of the path. A line going up means moving in the + direction, not climbing a hill.</li>
+      <li>Mixing up distance and displacement. A full lap of a track has a big distance and zero displacement.</li>
+      <li>Thinking something needs a force to keep moving. Moving things slow down because of friction or air resistance, not because a “force of motion” runs out.</li>
+      <li>Drawing a “force of motion” or “force of the throw” on a free-body diagram after the object has left your hand. Only draw forces from things touching it, plus gravity.</li>
+      <li>Assuming the normal force always equals mg. It equals mg only when nothing else pushes or pulls vertically and the object isn't accelerating up or down.</li>
+      <li>Calling mass and weight the same thing. A 2 kg book weighs 20 N.</li>
+    </ul>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-solve" aria-labelledby="gt-solve" hidden>
+<div class="gsteps">
+  <h3>How to solve an equilibrium problem</h3>
+  <ol>
+    <li><b>Pick the object</b> you care about. Draw it as a dot.</li>
+    <li><b>Find every force on it:</b> gravity, plus one force for each thing touching it. Ask “what exerts this force?” for each one.</li>
+    <li><b>Draw the free-body diagram</b> with arrows roughly to scale. Label each arrow (F<sub>g</sub>, F<sub>N</sub>, F<sub>T</sub>, f).</li>
+    <li><b>Check the motion:</b> at rest or constant velocity means ΣF = 0.</li>
+    <li><b>Write ΣF = 0 for each direction</b> (up = down, left = right).</li>
+    <li><b>Solve,</b> then check: is every force a real push or pull from something?</li>
+  </ol>
+</div>
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Reading motion graphs</h3>
+    <ul>
+      <li><b>Read the axes first.</b> The same shape means different things on a position graph and a velocity graph.</li>
+      <li><b>Position–time:</b> the value is where it is; the <b>slope</b> is the velocity.</li>
+      <li><b>Velocity–time:</b> the value is the velocity; the <b>area</b> is the displacement.</li>
+      <li>Where two position–time lines cross, the objects are at the same place at the same time.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>When do they meet?</h3>
+    <ul>
+      <li>Write x = x<sub>0</sub> + vt for each object, using the same origin and the same + direction.</li>
+      <li>Something moving in the − direction gets a negative v.</li>
+      <li>Set the two positions equal and solve for t. Put t back in to find where.</li>
+    </ul>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-examples" aria-labelledby="gt-examples" hidden>
+<div class="gex">
+  <div class="ex">
+    <div class="kind">Position–time graph</div>
+    <svg width="172" height="110" viewBox="0 0 172 110" aria-label="Position-time graph rising for 4 s, flat for 2 s, then falling to zero at 9 s">
+      <line x1="20" y1="95" x2="150" y2="95" stroke="#111" stroke-width="2"/><line x1="20" y1="95" x2="20" y2="6" stroke="#111" stroke-width="2"/>
+      <polyline points="20,95 70,23 95,23 133,95" fill="none" stroke="#ff6a2b" stroke-width="3"/>
+      <text x="2" y="27" font-size="10" font-family="IBM Plex Mono,monospace">12</text>
+      <text x="65" y="107" font-size="10" font-family="IBM Plex Mono,monospace">4</text><text x="91" y="107" font-size="10" font-family="IBM Plex Mono,monospace">6</text><text x="129" y="107" font-size="10" font-family="IBM Plex Mono,monospace">9</text>
+      <text x="24" y="12" font-size="10" font-family="IBM Plex Mono,monospace">x (m)</text><text x="140" y="88" font-size="10" font-family="IBM Plex Mono,monospace">t (s)</text>
+    </svg>
+    <h4>A walk there and back</h4>
+    <p>A student walks from x = 0 to x = 12 m in 4 s, stands still for 2 s, then walks back to x = 0 in 3 s. Find the velocity in each part, the displacement, the distance, the average velocity and the average speed.</p>
+    <div class="work">
+      0–4 s: v = 12/4 = <b>+3 m/s</b>; 4–6 s: <b>0</b>; 6–9 s: v = −12/3 = <b>−4 m/s</b><br>
+      Displacement: 0 − 0 = <b>0</b>; distance: 12 + 12 = <b>24 m</b><br>
+      Average velocity = 0/9 = <b>0</b><br>
+      Average speed = 24/9 = <b>2.7 m/s</b>
+    </div>
+    <p class="take">The slopes give the velocities. Average velocity only cares where you start and finish, so a round trip has zero average velocity even though you were moving most of the time.</p>
+  </div>
 
+  <div class="ex">
+    <div class="kind">When do they meet?</div>
+    <h4>Two cars heading toward each other</h4>
+    <p>Car A starts at x = 0 moving at +20 m/s. At the same moment, car B is at x = 300 m moving at −10 m/s. When and where do they meet?</p>
+    <div class="work">
+      x<sub>A</sub> = 0 + 20t &nbsp;&nbsp; x<sub>B</sub> = 300 − 10t<br>
+      Meet when x<sub>A</sub> = x<sub>B</sub>: 20t = 300 − 10t<br>
+      &nbsp;&nbsp;30t = 300 → t = <b>10 s</b><br>
+      x = 20(10) = <b>200 m</b>
+    </div>
+    <p class="take">The closing speed is 20 + 10 = 30 m/s, so they close the 300 m gap in 10 s. Car B's minus sign is what makes the two speeds add.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Frames of reference</div>
+    <h4>Walking on a moving walkway</h4>
+    <p>An airport walkway moves at 1.0 m/s. You walk along it at 1.5 m/s relative to the walkway. How fast are you moving relative to the floor? What if you turn around and walk the other way at 1.5 m/s?</p>
+    <div class="work">
+      Take the walkway's direction as +.<br>
+      Same way: v = 1.5 + 1.0 = <b>+2.5 m/s</b><br>
+      Turned around: v = −1.5 + 1.0 = <b>−0.5 m/s</b><br>
+      &nbsp;&nbsp;(0.5 m/s, backward relative to the floor)
+    </div>
+    <p class="take">Your speed depends on the frame. To someone riding the walkway you're always going 1.5 m/s; to someone on the floor you're going 2.5 m/s or 0.5 m/s.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Equilibrium</div>
+    <svg width="96" height="120" viewBox="0 0 96 120" aria-label="Free-body diagram of a book: normal force up, weight and hand push down">
+      <circle cx="48" cy="60" r="6" fill="#111"/>
+      <line x1="48" y1="54" x2="48" y2="12" stroke="#ff6a2b" stroke-width="3"/><polygon points="43,14 53,14 48,5" fill="#ff6a2b"/>
+      <text x="54" y="20" font-size="11" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">F<tspan baseline-shift="sub" font-size="8">N</tspan></text>
+      <line x1="44" y1="66" x2="44" y2="92" stroke="#111" stroke-width="3"/><polygon points="39,90 49,90 44,99" fill="#111"/>
+      <text x="8" y="96" font-size="11" font-family="IBM Plex Mono,monospace">mg</text>
+      <line x1="53" y1="66" x2="53" y2="80" stroke="#111" stroke-width="3"/><polygon points="48,78 58,78 53,87" fill="#111"/>
+      <text x="58" y="86" font-size="11" font-family="IBM Plex Mono,monospace">F<tspan baseline-shift="sub" font-size="8">hand</tspan></text>
+    </svg>
+    <h4>The normal force isn't always mg</h4>
+    <p>A 2.0 kg book sits on a table. You press down on it with your hand with 8.0 N. How big is the normal force from the table?</p>
+    <div class="work">
+      Forces: weight down, hand down, normal force up<br>
+      At rest: ΣF = 0, so up = down<br>
+      F<sub>N</sub> = mg + F<sub>hand</sub> = 20 + 8.0 = <b>28 N</b>
+    </div>
+    <p class="take">The table pushes as hard as it needs to so the book doesn't sink into it. Pull up on the book instead and the normal force gets smaller.</p>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
+<div class="gcheck">
+  <h3>Self-check</h3>
+  <p>Answer first, then open.</p>
+  <ol class="q">
+<li>A runner does one lap of a 400 m track in 80 s and finishes where she started. What are her average speed and her average velocity?
+      <details><summary>Answer</summary><div>Average speed = 400/80 = 5.0 m/s. Average velocity = 0, because her displacement is zero.</div></details></li>
+    <li>On a position–time graph, a straight line slopes downward. What is the object doing?
+      <details><summary>Answer</summary><div>Moving in the negative direction at a constant speed. The slope is the velocity, and a constant negative slope means constant negative velocity. It doesn't mean it's slowing down or going downhill.</div></details></li>
+    <li>A velocity–time graph is a horizontal line at 4.0 m/s from t = 0 to t = 6.0 s. What is the displacement?
+      <details><summary>Answer</summary><div>The area under the line: (4.0)(6.0) = 24 m in the positive direction.</div></details></li>
+    <li>A hockey puck slides across smooth ice at a steady speed. What force keeps it moving?
+      <details><summary>Answer</summary><div>None. With friction and air resistance negligible, the net force is zero, so by Newton's 1st law its velocity just stays the same. The forces on it are its weight and the ice's normal force, and they balance.</div></details></li>
+    <li>An elevator moves upward at constant speed. Compare the cable's tension with the elevator's weight.
+      <details><summary>Answer</summary><div>They're equal. Constant velocity means zero net force, whether it's moving up, moving down or at rest.</div></details></li>
+    <li>You hang a 0.50 kg mass from a spring and it stretches 0.10 m. What is the spring constant? How far would a 1.0 kg mass stretch it?
+      <details><summary>Answer</summary><div>At rest, kx = mg: k = 5.0/0.10 = 50 N/m. Twice the weight gives twice the stretch: 0.20 m.</div></details></li>
+    <li>You push on a heavy crate with 50 N, but it doesn't move. How big is the friction force on it?
+      <details><summary>Answer</summary><div>50 N, opposite your push. The crate is at rest, so the forces balance. Static friction only pushes as hard as it needs to, up to its maximum.</div></details></li>
+    <li>An astronaut's mass is 70 kg on Earth. What are her mass and weight on the Moon, where g = 1.6 N/kg?
+      <details><summary>Answer</summary><div>Her mass is still 70 kg: the amount of matter (and inertia) doesn't change. Her weight is mg = 70 × 1.6 = 112 N, about ⅙ of her 700 N weight on Earth.</div></details></li>
+    <li>Car A drives east at 25 m/s. Car B drives west at 20 m/s. How fast is car B moving as seen from car A?
+      <details><summary>Answer</summary><div>45 m/s, toward the west. Take east as +: v<sub>B,A</sub> = v<sub>B</sub> − v<sub>A</sub> = −20 − 25 = −45 m/s.</div></details></li>
+    <li>A passenger on a train moving at constant velocity tosses a ball straight up. Where does it land? What path does someone standing beside the track see?
+      <details><summary>Answer</summary><div>Back in the passenger's hand. The ball keeps the train's forward velocity, so it moves along with the train. Someone beside the track sees it follow a curved path (a parabola), moving forward the whole time.</div></details></li>
+    <li>A ball is thrown upward. Draw the free-body diagram while it's on its way up, ignoring air resistance.
+      <details><summary>Answer</summary><div>Just one arrow: its weight, straight down. The “force of the throw” ended when it left your hand. It keeps going up because of its velocity (inertia), not because of a force pushing it up.</div></details></li>
+  </ol>
+</div>
+</div>
+<p class="gnext"><a href="#practice" data-view="practice">Practice questions for this unit →</a></p>
+<script>
+(function(){
+  var root=document.currentScript?document.currentScript.parentNode:document;
+  var tabs=[].slice.call(root.querySelectorAll('.gtabs .tab'));
+  function show(t){tabs.forEach(function(b){var on=b===t;b.setAttribute('aria-selected',on?'true':'false');b.tabIndex=on?0:-1;document.getElementById(b.getAttribute('aria-controls')).hidden=!on;});}
+  tabs.forEach(function(b,i){
+    b.addEventListener('click',function(){show(b);});
+    b.addEventListener('keydown',function(e){var k=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(k){var n=tabs[(i+k+tabs.length)%tabs.length];show(n);n.focus();e.preventDefault();}});
+  });
+})();
+</script>
+</section>
+  </div>
   <div class="view" id="v-practice" hidden>
   <section class="review" id="review">
     <div class="simbar"><h2>Practice questions</h2><a id="ropen" class="mono" href="https://script.google.com/a/macros/fcps.org/s/AKfycbzW6NpFGf5yjZ843WN0pDy-mzI0r1iCcBIuoJpMCEJeWwbUARiSnAC_lf2bWQeHWoGjHA/exec?unit=P1-01" target="_blank" rel="noopener">Open in a new tab ↗</a></div>

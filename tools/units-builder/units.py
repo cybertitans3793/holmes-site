@@ -205,7 +205,7 @@ UNITS = {
         'Write the gradient and intercept with their uncertainties and units, then use the gradient to find your constant.',
         'Put the graph in your lab report: <b>Copy image</b> and paste into your Google Doc, or <b>Download PNG</b> and insert it.']},
 ]},
-'P1-02': {'course': 'AP Physics 1 / IB', 'num': '02', 'title': 'Newton’s Second Law', 'tabs': [
+'P1-02': {'course': 'AP Physics 1 / IB', 'num': '02', 'title': 'Newton’s Second Law', 'guide': 'guides/P1-02.html', 'tabs': [
     {'code': '', 'name': 'Moving Man', 'sim': 'mman', 'tasks': [
         'Start the man at −4 m with a constant velocity of +2 m/s. Sketch the x–t and v–t graphs before you press play, then compare.',
         'From rest, give him an acceleration of +1 m/s². What shape is the x–t graph? What does the area under the v–t graph tell you?',
@@ -252,7 +252,7 @@ UNITS = {
         'Turn on the force vectors. While the lander slows its fall, which way does the net force point?',
         'Land at under 2 m/s with as little fuel as you can. Describe your strategy using F<sub>net</sub> = ma.']},
 ]},
-'P1-04': {'course': 'AP Physics 1 / IB', 'num': '04', 'title': 'Motion and Forces in 2D', 'tabs': [
+'P1-04': {'course': 'AP Physics 1 / IB', 'num': '04', 'title': 'Motion and Forces in 2D', 'guide': 'guides/P1-04.html', 'tabs': [
     {'code': '', 'name': 'Maze Game', 'sim': 'maze', 'tasks': [
         'Steer the ball with <b>position</b> only. Easy? Now switch to <b>velocity</b>. What does the arrow you drag now control?',
         'Switch to <b>acceleration</b>. Why is it so much harder to stop at the goal?',
@@ -345,7 +345,7 @@ UNITS = {
         'Double the sun’s mass. Does the planet need more or less speed for a circular orbit at the same distance? About how many times more?',
         'Try the <b>sun, planet, moon</b> preset. What keeps the moon going around the planet while the planet goes around the sun?']},
 ]},
-'P1-06': {'course': 'AP Physics 1 / IB', 'num': '06', 'title': 'Work, Power, and Energy', 'tabs': [
+'P1-06': {'course': 'AP Physics 1 / IB', 'num': '06', 'title': 'Work, Power, and Energy', 'guide': 'guides/P1-06.html', 'tabs': [
     {'code': '', 'name': 'Pulling a Crate', 'sim': 'crate', 'tasks': [
         '<b>Predict, then check.</b> Will pulling at 30° or straight along the floor give the crate more speed after 5 m? Decide first, then graph v<sub>f</sub> vs θ and find the best angle.',
         'Explain the shape of that graph using steps 1–3: pulling up at an angle shrinks the useful part of F, but what does it do to friction?',
@@ -874,7 +874,7 @@ UNITS.update({
     {'code': '', 'name': 'Consequences', 'sim': 'plates', 'select': 'Consequences', 'tasks': ['<b>Hot spot islands:</b> run it. Why does the newest volcano always sit over the hot spot while older ones get carried away?', 'Turn on volcano ages. Use the distance and age of two volcanoes to find how fast the plate moves.', '<b>Earthquakes on a fault:</b> what builds up before each earthquake, and what happens when it lets go?', 'Why does Japan have so many earthquakes but Maryland very few? Use the Plate Map to explain.']},
 ]},
 # AP units that don't have sims yet
-'P1-01': {'course': 'AP Physics 1 / IB', 'num': '01', 'title': 'Newton’s First Law', 'tabs': [
+'P1-01': {'course': 'AP Physics 1 / IB', 'num': '01', 'title': 'Newton’s First Law', 'guide': 'guides/P1-01.html', 'tabs': [
     {'code': '', 'name': 'Puck in Space', 'sim': 'puck', 'tasks': [
         '<b>Predict, then check.</b> A puck slides at 3 m/s with no friction. What is it doing 5 s later? 50 s later? What would it take to change that?',
         'Look at the dots. How can you tell from the spacing alone that no net force acts between kicks?',
@@ -906,7 +906,7 @@ UNITS.update({
         '<b>Equilibrium.</b> Draw the free-body diagram of the hanging mass. Why is the spring force equal to mg?',
         '<b>Series and parallel.</b> Hang the same mass from two equal springs side by side, then one below the other. Predict the stretch each time before you check.']},
 ]},
-'P1-03': {'course': 'AP Physics 1 / IB', 'num': '03', 'title': 'Newton’s Third Law', 'tabs': [
+'P1-03': {'course': 'AP Physics 1 / IB', 'num': '03', 'title': 'Newton’s Third Law', 'guide': 'guides/P1-03.html', 'tabs': [
     {'code': '', 'name': 'Push Two Blocks', 'sim': 'blocks', 'tasks': [
         '<b>Classic FRQ.</b> A 30 N push acts on a 4 kg block that pushes a 2 kg block (frictionless). Find a, then the force between the blocks. Check with the sim.',
         'Now push from the other side with the same force. Does a change? Does the contact force? Explain why.',

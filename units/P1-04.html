@@ -73,7 +73,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
     <div class="uid"><div class="big" aria-hidden="true">04</div><div><div class="mono">AP Physics 1 / IB · P1-04</div><h1>Motion and Forces in 2D</h1></div></div>
   </header>
   <nav class="views" id="views" aria-label="Choose a view">
-    <div class="vbtns"><button type="button" class="vbtn" data-view="explore" aria-pressed="false">Explore</button><button type="button" class="vbtn" data-view="practice" aria-pressed="false">Practice</button></div>
+    <div class="vbtns"><button type="button" class="vbtn" data-view="explore" aria-pressed="false">Explore</button><button type="button" class="vbtn" data-view="study" aria-pressed="false">Study</button><button type="button" class="vbtn" data-view="practice" aria-pressed="false">Practice</button></div>
     <a class="simsback mono" id="simsback" href="https://sites.google.com/fcps.org/holmes/ap-physics-1-ib/p1-04" target="_blank" rel="noopener" hidden>Sims for this unit ↗</a>
   </nav>
   <div class="view" id="v-explore">
@@ -92,7 +92,265 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
   </div>
   <p class="credits">Maze Game is an HTML5 port of the PhET sim. PhET Interactive Simulations, University of Colorado Boulder (phet.colorado.edu), CC BY 4.0 / GPL. Adding Forces and Two Ropes are original. Pull at an Angle, Inclines, River Crossing and Projectiles are original.</p>
   </div>
+  <div class="view" id="v-study" hidden>
+<section class="guide" id="guide" aria-label="Study guide">
+<style>
+.guide{margin-top:28px}
+.guide .gtip{margin:0 0 16px;font-size:19px;line-height:1.45;max-width:1000px}
+.guide .ggrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-bottom:22px}
+.guide .gcard{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcard h3,.guide .gcheck h3,.guide .gsteps h3{margin:0 0 10px;font-size:20px;letter-spacing:-.01em}
+.guide .gcard ul{margin:0;padding-left:20px}
+.guide .gcard li{margin:0 0 7px}
+.guide .ib{display:inline-block;font-family:var(--f-mono);font-size:11px;font-weight:700;border:2px solid var(--ink);padding:0 5px;margin-left:4px;vertical-align:1px;background:var(--soft)}
+.guide table{border-collapse:collapse;width:100%;font-size:15px}
+.guide td{border-top:2px solid var(--ink);padding:6px 4px;vertical-align:top}
+.guide td:first-child{font-family:var(--f-mono);font-weight:700;white-space:nowrap;padding-right:12px}
+.guide td[colspan]{white-space:normal}
+.guide .gsub{font-family:var(--f-display);font-weight:400}
+.guide .gsteps{background:var(--soft);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px;margin-bottom:22px}
+.guide .gsteps ol{margin:0;padding-left:24px;columns:2 360px;column-gap:28px}
+.guide .gsteps li{margin:0 0 8px;break-inside:avoid}
+.guide h3.ghead{font-size:22px;margin:0 0 12px}
+.guide .gex{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:18px;margin-bottom:22px}
+.guide .ex{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .ex h4{margin:0 0 6px;font-size:18px}
+.guide .ex .kind{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--hot);text-transform:uppercase;letter-spacing:.04em}
+.guide .ex p{margin:0 0 8px}
+.guide .work{font-family:var(--f-mono);font-size:14px;line-height:1.6;border-left:4px solid var(--hot);background:#fff;padding:6px 12px;margin:8px 0}
+.guide .work b{font-family:var(--f-display)}
+.guide .ex .take{margin:8px 0 0;font-weight:500}
+.guide .ex svg{float:right;margin:0 0 6px 12px}
+.guide .gcheck{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcheck>p{margin:-4px 0 12px;color:var(--muted)}
+.guide ol.q{margin:0;padding-left:26px}
+.guide ol.q>li{margin:0 0 14px}
+.guide details{margin-top:6px}
+.guide summary{cursor:pointer;display:inline-block;font-weight:700;border:2px solid var(--ink);padding:2px 10px;background:#fff;list-style:none}
+.guide summary::-webkit-details-marker{display:none}
+.guide summary:hover{background:var(--soft)}
+.guide details[open] summary{background:var(--ink);color:#fff}
+.guide details>div{border-left:4px solid var(--hot);padding:8px 12px;margin-top:8px;background:#fff}
+.guide .gpanel>.ggrid,.guide .gpanel>.gsteps,.guide .gpanel>.gex{margin-bottom:0}
+.guide .gpanel>.gsteps+.ggrid{margin-top:22px}
+.guide .gtabs{margin-bottom:18px}
+.guide .gnext{margin:16px 0 0;font-weight:700}
+.guide .gnext a{color:var(--ink)}
+body.present .guide{display:none}
+@media (max-width:520px){.guide .gtip{font-size:17px}.guide td:first-child{white-space:normal}.guide .ggrid,.guide .gex{grid-template-columns:1fr}.guide .ex svg{float:none;display:block;margin:0 auto 8px}}
+</style>
+<div class="simbar"><h2>Study guide</h2><span class="mono">Unit 4 · Motion and Forces in 2D</span></div>
+<p class="gtip"><b>How to use this:</b> read the key ideas, then cover each worked example and try it yourself before reading the solution. Do the self-check questions on paper <i>before</i> you open the answers, mark the ones you miss, and come back to them in a day or two without looking. Rereading won't do much; answering questions will.</p>
+<div class="tabs gtabs" role="tablist" aria-label="Study guide sections">
+  <button class="tab" role="tab" type="button" aria-selected="true" aria-controls="g-ideas" id="gt-ideas">Key ideas</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-solve" id="gt-solve" tabindex="-1">How to solve</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-examples" id="gt-examples" tabindex="-1">Worked examples</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-check" id="gt-check" tabindex="-1">Self-check</button>
+</div>
+<div class="gpanel" role="tabpanel" id="g-ideas" aria-labelledby="gt-ideas">
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Key ideas</h3>
+    <ul>
+      <li><b>Vectors</b> have a size and a direction (displacement, velocity, acceleration, force). Scalars have only a size (distance, speed, mass, time).</li>
+      <li><b>Components:</b> split a vector into x and y parts. For a vector A at angle θ above the +x axis, A<sub>x</sub> = A cosθ and A<sub>y</sub> = A sinθ. If the angle is measured from the y axis, the sin and cos swap.</li>
+      <li><b>Adding vectors:</b> draw them tip to tail, or add the components separately: R<sub>x</sub> = A<sub>x</sub> + B<sub>x</sub>, R<sub>y</sub> = A<sub>y</sub> + B<sub>y</sub>. Then R = √(R<sub>x</sub>² + R<sub>y</sub>²).</li>
+      <li><b>Relative velocity in 2D:</b> a boat's velocity relative to the ground = its velocity relative to the water + the water's velocity, added as vectors. The time to cross a river depends only on the part of the boat's velocity straight across.</li>
+      <li><b>Projectiles:</b> once launched, the only force is gravity (ignoring air). Horizontal and vertical motion are independent: a<sub>x</sub> = 0, so v<sub>x</sub> stays constant; a<sub>y</sub> = g downward.</li>
+      <li>The <b>time in the air</b> is set by the vertical motion alone. A ball dropped and a ball launched sideways from the same height land at the same time.</li>
+      <li>At the top of the path, v<sub>y</sub> = 0, but the ball is still moving with v<sub>x</sub>, and its acceleration is still g downward.</li>
+      <li>On level ground, 45° gives the longest range. Angles that add to 90° (like 30° and 60°) give the same range.</li>
+      <li><span class="ib">IB</span> <b>With air resistance</b>, a projectile's horizontal speed drops, it doesn't go as high or as far, and it comes down more steeply than it went up.</li>
+      <li><b>Equilibrium in 2D:</b> ΣF<sub>x</sub> = 0 and ΣF<sub>y</sub> = 0 separately. The flatter the ropes holding up a weight, the bigger their tension.</li>
+      <li><b>Inclines:</b> tilt your axes so x runs along the slope. Gravity splits into mg sinθ down the slope and mg cosθ into the slope, so F<sub>N</sub> = mg cosθ (with no other forces perpendicular to the slope).</li>
+      <li>On a frictionless incline, a = g sinθ, whatever the mass. A block that slides at constant speed (or is just about to slip) has μ = tanθ.</li>
+      <li><b>Pulling at an angle</b> on a level floor: the force's vertical part lifts some of the weight, so F<sub>N</sub> = mg − F sinθ and friction gets smaller.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Equations</h3>
+    <table>
+      <tr><td>A<sub>x</sub> = A cosθ, A<sub>y</sub> = A sinθ</td><td>components (θ from the x axis)</td></tr>
+      <tr><td>A = √(A<sub>x</sub>² + A<sub>y</sub>²)</td><td>size from components</td></tr>
+      <tr><td>θ = tan⁻¹(A<sub>y</sub>/A<sub>x</sub>)</td><td>direction from components</td></tr>
+      <tr><td>x = v<sub>x</sub>t</td><td>projectile, horizontal</td></tr>
+      <tr><td>v<sub>y</sub> = v<sub>0y</sub> − gt</td><td>projectile, vertical (up = +)</td></tr>
+      <tr><td>y = v<sub>0y</sub>t − ½gt²</td><td>projectile, vertical (up = +)</td></tr>
+      <tr><td>mg sinθ</td><td>weight along an incline</td></tr>
+      <tr><td>F<sub>N</sub> = mg cosθ</td><td>normal force on an incline</td></tr>
+      <tr><td>ΣF<sub>x</sub> = ma<sub>x</sub>, ΣF<sub>y</sub> = ma<sub>y</sub></td><td>Newton's 2nd law in each direction</td></tr>
+    </table>
+  </div>
+  <div class="gcard">
+    <h3>Common mistakes</h3>
+    <ul>
+      <li>Using sin where you need cos. Check which axis the angle is measured from, and make sure the component next to the angle gets cos.</li>
+      <li>Mixing horizontal and vertical values, like putting v<sub>x</sub> into a vertical equation. Keep two separate lists.</li>
+      <li>Saying a projectile has zero velocity or zero acceleration at the top.</li>
+      <li>Giving a projectile a horizontal acceleration, or making v<sub>x</sub> change, when there's no air resistance.</li>
+      <li>Using F<sub>N</sub> = mg on a slope, or for an angled pull.</li>
+      <li>Adding the sizes of vectors that point different ways: 3 N east plus 4 N north is 5 N, not 7 N.</li>
+      <li>Aiming a boat straight across and expecting it to land straight across. The current carries it downstream.</li>
+    </ul>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-solve" aria-labelledby="gt-solve" hidden>
+<div class="gsteps">
+  <h3>How to solve a projectile problem</h3>
+  <ol>
+    <li><b>Split the launch velocity</b> into v<sub>x</sub> = v cosθ and v<sub>0y</sub> = v sinθ.</li>
+    <li><b>Make two lists,</b> one for x (a<sub>x</sub> = 0) and one for y (a<sub>y</sub> = −g, with up as +).</li>
+    <li><b>Find the time</b> from whichever list has enough information. Usually that's the vertical one.</li>
+    <li><b>Time is the link:</b> the same t goes in both lists.</li>
+    <li><b>Solve for what's asked</b> (range, height, landing speed).</li>
+    <li><b>For a final speed,</b> combine the parts: v = √(v<sub>x</sub>² + v<sub>y</sub>²).</li>
+  </ol>
+</div>
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Forces in 2D</h3>
+    <ul>
+      <li>Draw the free-body diagram first, then pick axes. On a slope, put x along the slope so the acceleration is along one axis.</li>
+      <li>Split any force that isn't along an axis into components. Mark which angle you used.</li>
+      <li>Write ΣF<sub>x</sub> and ΣF<sub>y</sub> separately. Get F<sub>N</sub> from the direction with no acceleration, then friction from μF<sub>N</sub>.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>River crossings</h3>
+    <ul>
+      <li>Crossing time = river width ÷ the boat's speed straight across.</li>
+      <li>Downstream drift = current speed × crossing time.</li>
+      <li>To land directly opposite, aim upstream so that part of the boat's velocity exactly cancels the current.</li>
+    </ul>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-examples" aria-labelledby="gt-examples" hidden>
+<div class="gex">
+  <div class="ex">
+    <div class="kind">Horizontal launch</div>
+    <svg width="140" height="100" viewBox="0 0 140 100" aria-label="Ball rolling off a table, curving down to the floor">
+      <rect x="4" y="30" width="40" height="66" fill="#fde1d6" stroke="#111" stroke-width="2"/>
+      <line x1="4" y1="96" x2="136" y2="96" stroke="#111" stroke-width="2"/>
+      <path d="M44 26 Q78 28 100 94" fill="none" stroke="#ff6a2b" stroke-width="3" stroke-dasharray="5 4"/>
+      <circle cx="44" cy="25" r="5" fill="#111"/>
+      <text x="50" y="18" font-size="10" font-family="IBM Plex Mono,monospace">3.0 m/s</text>
+      <text x="7" y="66" font-size="9" font-family="IBM Plex Mono,monospace">1.25 m</text>
+    </svg>
+    <h4>A ball rolls off a table</h4>
+    <p>A ball rolls off a table 1.25 m high at 3.0 m/s. How long is it in the air, how far from the table does it land, and how fast is it going when it lands?</p>
+    <div class="work">
+      Vertical (v<sub>0y</sub> = 0): 1.25 = ½(10)t² → t = <b>0.50 s</b><br>
+      Horizontal: x = v<sub>x</sub>t = (3.0)(0.50) = <b>1.5 m</b><br>
+      Landing: v<sub>x</sub> = 3.0, v<sub>y</sub> = gt = 5.0 m/s<br>
+      &nbsp;&nbsp;v = √(3.0² + 5.0²) = <b>5.8 m/s</b>
+    </div>
+    <p class="take">The 0.50 s comes only from the height. Roll it off twice as fast and it lands twice as far away, in the same 0.50 s.</p>
+  </div>
 
+  <div class="ex">
+    <div class="kind">Launch at an angle</div>
+    <h4>A kick at 30°</h4>
+    <p>A ball is kicked from level ground at 20 m/s, 30° above the horizontal. Find its time in the air, its range and its maximum height.</p>
+    <div class="work">
+      v<sub>x</sub> = 20 cos30° = 17.3 m/s; v<sub>0y</sub> = 20 sin30° = 10 m/s<br>
+      Time to the top: 10/10 = 1.0 s, so total t = <b>2.0 s</b><br>
+      Range: x = (17.3)(2.0) = <b>35 m</b><br>
+      Height: v<sub>y</sub>² = v<sub>0y</sub>² − 2gy → 0 = 100 − 20y → y = <b>5.0 m</b>
+    </div>
+    <p class="take">A kick at 60° with the same speed lands at the same 35 m, but goes three times as high and stays up longer.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Equilibrium in 2D</div>
+    <svg width="140" height="80" viewBox="0 0 140 80" aria-label="Sign hanging from two ropes, each 30 degrees above horizontal">
+      <line x1="4" y1="6" x2="136" y2="6" stroke="#111" stroke-width="3"/>
+      <line x1="12" y1="6" x2="70" y2="40" stroke="#ff6a2b" stroke-width="2"/><line x1="128" y1="6" x2="70" y2="40" stroke="#ff6a2b" stroke-width="2"/>
+      <rect x="50" y="40" width="40" height="26" fill="#fff" stroke="#111" stroke-width="2"/>
+      <text x="56" y="57" font-size="10" font-family="IBM Plex Mono,monospace">10 kg</text>
+      <text x="22" y="30" font-size="10" font-family="IBM Plex Mono,monospace">30°</text>
+    </svg>
+    <h4>A sign held up by two ropes</h4>
+    <p>A 10 kg sign hangs from two ropes, each making 30° with the horizontal. Find the tension in each rope.</p>
+    <div class="work">
+      Horizontal: T cos30° (left) = T cos30° (right), so the tensions are equal<br>
+      Vertical: 2T sin30° = mg<br>
+      &nbsp;&nbsp;2T(0.50) = 100 → T = <b>100 N</b>
+    </div>
+    <p class="take">Each rope pulls with 100 N, even though the sign only weighs 100 N in total. Only the vertical parts hold the sign up, so flatter ropes need more tension.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Incline with friction</div>
+    <h4>A block sliding down a ramp</h4>
+    <p>A 5.0 kg block slides down a 30° ramp. The coefficient of kinetic friction is 0.20. Find its acceleration.</p>
+    <div class="work">
+      Along the slope: mg sinθ = (50)(0.50) = 25 N down the slope<br>
+      Perpendicular: F<sub>N</sub> = mg cosθ = (50)(0.866) = 43.3 N<br>
+      Friction: f<sub>k</sub> = (0.20)(43.3) = 8.7 N up the slope<br>
+      ΣF = ma: 25 − 8.7 = 5.0a → a = <b>3.3 m/s²</b>
+    </div>
+    <p class="take">In symbols, a = g(sinθ − μ<sub>k</sub>cosθ). The mass cancels, so a heavier block slides down at the same rate.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Relative velocity</div>
+    <h4>Crossing a river</h4>
+    <p>A river is 60 m wide and flows at 1.5 m/s. A boat heads straight across at 2.0 m/s relative to the water. How long does it take to cross, how far downstream does it land, and what is its speed relative to the shore?</p>
+    <div class="work">
+      Across: t = 60/2.0 = <b>30 s</b><br>
+      Downstream: (1.5)(30) = <b>45 m</b><br>
+      Speed: √(2.0² + 1.5²) = <b>2.5 m/s</b>
+    </div>
+    <p class="take">The current doesn't change the crossing time, because it's perpendicular to the boat's heading. It only moves the landing point downstream.</p>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
+<div class="gcheck">
+  <h3>Self-check</h3>
+  <p>Answer first, then open.</p>
+  <ol class="q">
+<li>A 50 N force acts at 37° above the horizontal. Find its components. (cos37° = 0.80, sin37° = 0.60)
+      <details><summary>Answer</summary><div>Horizontal: 50 × 0.80 = 40 N. Vertical: 50 × 0.60 = 30 N.</div></details></li>
+    <li>Add a 3.0 N force east and a 4.0 N force north. What is the resultant?
+      <details><summary>Answer</summary><div>5.0 N (√(9 + 16)), at tan⁻¹(4/3) = 53° north of east.</div></details></li>
+    <li>One bullet is fired horizontally from a rifle, and at the same instant another is dropped from the same height. Ignoring air resistance, which hits the level ground first?
+      <details><summary>Answer</summary><div>They hit at the same time. Both start with zero vertical velocity and have the same vertical acceleration; the fired bullet's horizontal speed doesn't affect its fall.</div></details></li>
+    <li>At the highest point of a projectile's path, what are its velocity and acceleration?
+      <details><summary>Answer</summary><div>Its velocity is horizontal, equal to v<sub>x</sub> (not zero). Its acceleration is g, straight down, the same as everywhere else on the path.</div></details></li>
+    <li>On level ground, which launch angle gives the greatest range? Which angle gives the same range as 25°?
+      <details><summary>Answer</summary><div>45°. 65° gives the same range as 25°, because the two angles add to 90°.</div></details></li>
+    <li>A plane flying horizontally at 50 m/s, 80 m above the ground, drops a supply package. How long does it fall, and how far ahead of the drop point does it land? Where is the plane when it lands?
+      <details><summary>Answer</summary><div>80 = ½(10)t², so t = 4.0 s. It lands (50)(4.0) = 200 m ahead. Ignoring air resistance, the plane is directly above it, because both keep the same 50 m/s forward.</div></details></li>
+    <li>A boat that moves at 2.5 m/s relative to the water wants to land directly across a river flowing at 1.5 m/s. Which way should it aim, and what is its speed across?
+      <details><summary>Answer</summary><div>Aim upstream, at an angle θ where 2.5 sinθ = 1.5, so θ = 37° upstream of straight across. Its speed across is √(2.5² − 1.5²) = 2.0 m/s.</div></details></li>
+    <li>A block slides down a frictionless 30° incline. What is its acceleration? Would a heavier block go faster?
+      <details><summary>Answer</summary><div>a = g sinθ = 10 × 0.50 = 5.0 m/s². No: the mass cancels, so every block has the same acceleration.</div></details></li>
+    <li>A 4.0 kg block rests on a 30° incline without slipping. How big is the friction force, and which way does it point? Is the normal force more or less than mg?
+      <details><summary>Answer</summary><div>Friction balances the weight's component down the slope: mg sinθ = 40 × 0.50 = 20 N, pointing up the slope. F<sub>N</sub> = mg cosθ ≈ 35 N, less than mg = 40 N.</div></details></li>
+    <li>A heavy picture hangs from a wire. Why can't you pull the wire so tight that it's perfectly horizontal?
+      <details><summary>Answer</summary><div>A horizontal wire has no vertical component to hold up the weight. As the wire gets flatter, the tension needed grows without limit, so it would snap first.</div></details></li>
+    <li><span class="ib">IB</span> How does air resistance change a projectile's path compared with the no-air parabola?
+      <details><summary>Answer</summary><div>It doesn't go as high or as far. Its horizontal speed decreases during the flight, and the path is no longer symmetric: it comes down more steeply than it went up.</div></details></li>
+  </ol>
+</div>
+</div>
+<p class="gnext"><a href="#practice" data-view="practice">Practice questions for this unit →</a></p>
+<script>
+(function(){
+  var root=document.currentScript?document.currentScript.parentNode:document;
+  var tabs=[].slice.call(root.querySelectorAll('.gtabs .tab'));
+  function show(t){tabs.forEach(function(b){var on=b===t;b.setAttribute('aria-selected',on?'true':'false');b.tabIndex=on?0:-1;document.getElementById(b.getAttribute('aria-controls')).hidden=!on;});}
+  tabs.forEach(function(b,i){
+    b.addEventListener('click',function(){show(b);});
+    b.addEventListener('keydown',function(e){var k=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(k){var n=tabs[(i+k+tabs.length)%tabs.length];show(n);n.focus();e.preventDefault();}});
+  });
+})();
+</script>
+</section>
+  </div>
   <div class="view" id="v-practice" hidden>
   <section class="review" id="review">
     <div class="simbar"><h2>Practice questions</h2><a id="ropen" class="mono" href="https://script.google.com/a/macros/fcps.org/s/AKfycbzW6NpFGf5yjZ843WN0pDy-mzI0r1iCcBIuoJpMCEJeWwbUARiSnAC_lf2bWQeHWoGjHA/exec?unit=P1-04" target="_blank" rel="noopener">Open in a new tab ↗</a></div>
