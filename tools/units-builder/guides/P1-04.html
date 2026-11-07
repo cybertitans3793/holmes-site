@@ -22,8 +22,10 @@
 .guide .ex h4{margin:0 0 6px;font-size:18px}
 .guide .ex .kind{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--hot);text-transform:uppercase;letter-spacing:.04em}
 .guide .ex p{margin:0 0 8px}
-.guide .work{font-family:var(--f-mono);font-size:14px;line-height:1.6;border-left:4px solid var(--hot);background:#fff;padding:6px 12px;margin:8px 0}
-.guide .work b{font-family:var(--f-display)}
+.guide .work{font-size:16px;line-height:1.45;border-left:4px solid var(--hot);background:#fff;padding:6px 14px;margin:8px 0;overflow-x:auto}
+.guide .work math.eq{display:block;text-align:left;margin:8px 0;font-size:1.15em}
+.guide .work math.ans{font-weight:700}
+.guide .work .wt{margin:6px 0 2px}
 .guide .ex .take{margin:8px 0 0;font-weight:500}
 .guide .ex svg{float:right;margin:0 0 6px 12px}
 .guide .gcheck{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
@@ -146,10 +148,14 @@ body.present .guide{display:none}
     <h4>A ball rolls off a table</h4>
     <p>A ball rolls off a table 1.25 m high at 3.0 m/s. How long is it in the air, how far from the table does it land, and how fast is it going when it lands?</p>
     <div class="work">
-      Vertical (v<sub>0y</sub> = 0): 1.25 = ½(10)t² → t = <b>0.50 s</b><br>
-      Horizontal: x = v<sub>x</sub>t = (3.0)(0.50) = <b>1.5 m</b><br>
-      Landing: v<sub>x</sub> = 3.0, v<sub>y</sub> = gt = 5.0 m/s<br>
-      &nbsp;&nbsp;v = √(3.0² + 5.0²) = <b>5.8 m/s</b>
+      <p class="wt">Vertical (starts with v₀ᵧ = 0, falls 1.25 m):</p>
+      <math class="eq" display="block"><mrow><mi>&#x00394;</mi><mi>y</mi><mo>&#x0003D;</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac></mstyle><mi>g</mi><msup><mi>t</mi><mn>2</mn></msup><mspace width="0.278em" /><mo>&#x02192;</mo><mspace width="0.278em" /><mi>t</mi><mo>&#x0003D;</mo><msqrt><mrow><mfrac><mrow><mn>2</mn><mspace width="0.167em" /><mi>&#x00394;</mi><mi>y</mi></mrow><mrow><mi>g</mi></mrow></mfrac></mrow></msqrt><mo>&#x0003D;</mo><msqrt><mrow><mfrac><mrow><mn>2</mn><mo stretchy="false">&#x00028;</mo><mn>1.25</mn><mo stretchy="false">&#x00029;</mo></mrow><mrow><mn>10</mn></mrow></mfrac></mrow></msqrt></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>t</mi><mo>&#x0003D;</mo><mn>0.50</mn><mspace width="0.167em" /><mtext>s</mtext></mrow></math>
+      <p class="wt">Horizontal (constant speed):</p>
+      <math class="eq ans" display="block"><mrow><mi>x</mi><mo>&#x0003D;</mo><msub><mi>v</mi><mi>x</mi></msub><mi>t</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>3.0</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>0.50</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1.5</mn><mspace width="0.167em" /><mtext>m</mtext></mrow></math>
+      <p class="wt">Landing: vₓ = 3.0 m/s and vᵧ = gt = 5.0 m/s, combined:</p>
+      <math class="eq" display="block"><mrow><mi>v</mi><mo>&#x0003D;</mo><msqrt><mrow><msubsup><mi>v</mi><mi>x</mi><mn>2</mn></msubsup><mo>&#x0002B;</mo><msubsup><mi>v</mi><mi>y</mi><mn>2</mn></msubsup></mrow></msqrt><mo>&#x0003D;</mo><msqrt><mrow><msup><mn>3.0</mn><mn>2</mn></msup><mo>&#x0002B;</mo><msup><mn>5.0</mn><mn>2</mn></msup></mrow></msqrt></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>v</mi><mo>&#x0003D;</mo><mn>5.8</mn><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
     </div>
     <p class="take">The 0.50 s comes only from the height. Roll it off twice as fast and it lands twice as far away, in the same 0.50 s.</p>
   </div>
@@ -159,10 +165,14 @@ body.present .guide{display:none}
     <h4>A kick at 30°</h4>
     <p>A ball is kicked from level ground at 20 m/s, 30° above the horizontal. Find its time in the air, its range and its maximum height.</p>
     <div class="work">
-      v<sub>x</sub> = 20 cos30° = 17.3 m/s; v<sub>0y</sub> = 20 sin30° = 10 m/s<br>
-      Time to the top: 10/10 = 1.0 s, so total t = <b>2.0 s</b><br>
-      Range: x = (17.3)(2.0) = <b>35 m</b><br>
-      Height: v<sub>y</sub>² = v<sub>0y</sub>² − 2gy → 0 = 100 − 20y → y = <b>5.0 m</b>
+      <p class="wt">Split the launch velocity:</p>
+      <math class="eq" display="block"><mrow><msub><mi>v</mi><mi>x</mi></msub><mo>&#x0003D;</mo><mn>20</mn><mi>cos</mi><mspace width="0.167em" /><msup><mn>30</mn><mo>&#x02218;</mo></msup><mo>&#x0003D;</mo><mn>17.3</mn><mspace width="0.167em" /><mtext>m/s</mtext><mspace width="2em" /><msub><mi>v</mi><mrow><mn>0</mn><mi>y</mi></mrow></msub><mo>&#x0003D;</mo><mn>20</mn><mi>sin</mi><mspace width="0.167em" /><msup><mn>30</mn><mo>&#x02218;</mo></msup><mo>&#x0003D;</mo><mn>10</mn><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
+      <p class="wt">Time to the top (vᵧ = 0), then double it:</p>
+      <math class="eq" display="block"><mrow><msub><mi>t</mi><mrow><mtext>up</mtext></mrow></msub><mo>&#x0003D;</mo><mfrac><mrow><msub><mi>v</mi><mrow><mn>0</mn><mi>y</mi></mrow></msub></mrow><mrow><mi>g</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>10</mn></mrow><mrow><mn>10</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>1.0</mn><mspace width="0.167em" /><mtext>s</mtext></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>t</mi><mo>&#x0003D;</mo><mn>2.0</mn><mspace width="0.167em" /><mtext>s</mtext></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>x</mi><mo>&#x0003D;</mo><msub><mi>v</mi><mi>x</mi></msub><mi>t</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>17.3</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>2.0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>35</mn><mspace width="0.167em" /><mtext>m</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><msubsup><mi>v</mi><mi>y</mi><mn>2</mn></msubsup><mo>&#x0003D;</mo><msubsup><mi>v</mi><mrow><mn>0</mn><mi>y</mi></mrow><mn>2</mn></msubsup><mo>&#x02212;</mo><mn>2</mn><mi>g</mi><mi>y</mi><mspace width="0.278em" /><mo>&#x02192;</mo><mspace width="0.278em" /><mn>0</mn><mo>&#x0003D;</mo><msup><mn>10</mn><mn>2</mn></msup><mo>&#x02212;</mo><mn>2</mn><mo stretchy="false">&#x00028;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo><mspace width="0.167em" /><mi>y</mi></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>y</mi><mo>&#x0003D;</mo><mn>5.0</mn><mspace width="0.167em" /><mtext>m</mtext></mrow></math>
     </div>
     <p class="take">A kick at 60° with the same speed lands at the same 35 m, but goes three times as high and stays up longer.</p>
   </div>
@@ -179,9 +189,11 @@ body.present .guide{display:none}
     <h4>A sign held up by two ropes</h4>
     <p>A 10 kg sign hangs from two ropes, each making 30° with the horizontal. Find the tension in each rope.</p>
     <div class="work">
-      Horizontal: T cos30° (left) = T cos30° (right), so the tensions are equal<br>
-      Vertical: 2T sin30° = mg<br>
-      &nbsp;&nbsp;2T(0.50) = 100 → T = <b>100 N</b>
+      <p class="wt">Horizontal: the two horizontal parts, T cos 30°, balance, so the tensions are equal.</p>
+      <p class="wt">Vertical: the two vertical parts hold up the weight:</p>
+      <math class="eq" display="block"><mrow><mn>2</mn><mi>T</mi><mi>sin</mi><mspace width="0.167em" /><msup><mn>30</mn><mo>&#x02218;</mo></msup><mo>&#x0003D;</mo><mi>m</mi><mi>g</mi></mrow></math>
+      <math class="eq" display="block"><mrow><mi>T</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>m</mi><mi>g</mi></mrow><mrow><mn>2</mn><mi>sin</mi><mspace width="0.167em" /><msup><mn>30</mn><mo>&#x02218;</mo></msup></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mo stretchy="false">&#x00028;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo></mrow><mrow><mn>2</mn><mo stretchy="false">&#x00028;</mo><mn>0.50</mn><mo stretchy="false">&#x00029;</mo></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>T</mi><mo>&#x0003D;</mo><mn>100</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
     </div>
     <p class="take">Each rope pulls with 100 N, even though the sign only weighs 100 N in total. Only the vertical parts hold the sign up, so flatter ropes need more tension.</p>
   </div>
@@ -191,10 +203,13 @@ body.present .guide{display:none}
     <h4>A block sliding down a ramp</h4>
     <p>A 5.0 kg block slides down a 30° ramp. The coefficient of kinetic friction is 0.20. Find its acceleration.</p>
     <div class="work">
-      Along the slope: mg sinθ = (50)(0.50) = 25 N down the slope<br>
-      Perpendicular: F<sub>N</sub> = mg cosθ = (50)(0.866) = 43.3 N<br>
-      Friction: f<sub>k</sub> = (0.20)(43.3) = 8.7 N up the slope<br>
-      ΣF = ma: 25 − 8.7 = 5.0a → a = <b>3.3 m/s²</b>
+      <p class="wt">Tilt the axes along the slope. Weight components:</p>
+      <math class="eq" display="block"><mrow><mi>m</mi><mi>g</mi><mi>sin</mi><mspace width="0.167em" /><mi>&#x003B8;</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>50</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>0.50</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>25</mn><mspace width="0.167em" /><mtext>N</mtext><mtext>&#x000A0;(down&#x000A0;the&#x000A0;slope)</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>F</mi><mi>N</mi></msub><mo>&#x0003D;</mo><mi>m</mi><mi>g</mi><mi>cos</mi><mspace width="0.167em" /><mi>&#x003B8;</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>50</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>0.866</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>43.3</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>f</mi><mi>k</mi></msub><mo>&#x0003D;</mo><msub><mi>&#x003BC;</mi><mi>k</mi></msub><msub><mi>F</mi><mi>N</mi></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.20</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>43.3</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>8.7</mn><mspace width="0.167em" /><mtext>N</mtext><mtext>&#x000A0;(up&#x000A0;the&#x000A0;slope)</mtext></mrow></math>
+      <p class="wt">Along the slope:</p>
+      <math class="eq" display="block"><mrow><mi>a</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>m</mi><mi>g</mi><mi>sin</mi><mspace width="0.167em" /><mi>&#x003B8;</mi><mo>&#x02212;</mo><msub><mi>f</mi><mi>k</mi></msub></mrow><mrow><mi>m</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>25</mn><mo>&#x02212;</mo><mn>8.7</mn></mrow><mrow><mn>5.0</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>a</mi><mo>&#x0003D;</mo><mn>3.3</mn><mspace width="0.167em" /><msup><mtext>m/s</mtext><mn>2</mn></msup></mrow></math>
     </div>
     <p class="take">In symbols, a = g(sinθ − μ<sub>k</sub>cosθ). The mass cancels, so a heavier block slides down at the same rate.</p>
   </div>
@@ -204,9 +219,11 @@ body.present .guide{display:none}
     <h4>Crossing a river</h4>
     <p>A river is 60 m wide and flows at 1.5 m/s. A boat heads straight across at 2.0 m/s relative to the water. How long does it take to cross, how far downstream does it land, and what is its speed relative to the shore?</p>
     <div class="work">
-      Across: t = 60/2.0 = <b>30 s</b><br>
-      Downstream: (1.5)(30) = <b>45 m</b><br>
-      Speed: √(2.0² + 1.5²) = <b>2.5 m/s</b>
+      <p class="wt">Only the across part of the velocity gets the boat across:</p>
+      <math class="eq ans" display="block"><mrow><mi>t</mi><mo>&#x0003D;</mo><mfrac><mrow><mtext>width</mtext></mrow><mrow><msub><mi>v</mi><mrow><mtext>across</mtext></mrow></msub></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>60</mn></mrow><mrow><mn>2.0</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>30</mn><mspace width="0.167em" /><mtext>s</mtext></mrow></math>
+      <math class="eq ans" display="block"><mrow><mtext>drift</mtext><mo>&#x0003D;</mo><msub><mi>v</mi><mrow><mtext>current</mtext></mrow></msub><mspace width="0.167em" /><mi>t</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1.5</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>30</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>45</mn><mspace width="0.167em" /><mtext>m</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><mi>v</mi><mo>&#x0003D;</mo><msqrt><mrow><msubsup><mi>v</mi><mrow><mtext>across</mtext></mrow><mn>2</mn></msubsup><mo>&#x0002B;</mo><msubsup><mi>v</mi><mrow><mtext>current</mtext></mrow><mn>2</mn></msubsup></mrow></msqrt><mo>&#x0003D;</mo><msqrt><mrow><msup><mn>2.0</mn><mn>2</mn></msup><mo>&#x0002B;</mo><msup><mn>1.5</mn><mn>2</mn></msup></mrow></msqrt></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>v</mi><mo>&#x0003D;</mo><mn>2.5</mn><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
     </div>
     <p class="take">The current doesn't change the crossing time, because it's perpendicular to the boat's heading. It only moves the landing point downstream.</p>
   </div>

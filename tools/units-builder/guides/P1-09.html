@@ -22,8 +22,10 @@
 .guide .ex h4{margin:0 0 6px;font-size:18px}
 .guide .ex .kind{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--hot);text-transform:uppercase;letter-spacing:.04em}
 .guide .ex p{margin:0 0 8px}
-.guide .work{font-family:var(--f-mono);font-size:14px;line-height:1.6;border-left:4px solid var(--hot);background:#fff;padding:6px 12px;margin:8px 0}
-.guide .work b{font-family:var(--f-display)}
+.guide .work{font-size:16px;line-height:1.45;border-left:4px solid var(--hot);background:#fff;padding:6px 14px;margin:8px 0;overflow-x:auto}
+.guide .work math.eq{display:block;text-align:left;margin:8px 0;font-size:1.15em}
+.guide .work math.ans{font-weight:700}
+.guide .work .wt{margin:6px 0 2px}
 .guide .ex .take{margin:8px 0 0;font-weight:500}
 .guide .ex svg{float:right;margin:0 0 6px 12px}
 .guide .gcheck{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
@@ -150,9 +152,12 @@ body.present .guide{display:none}
     <h4>A diver 20 m down</h4>
     <p>A diver swims 20 m under the surface of a freshwater lake. Find the absolute pressure and the gauge pressure on her. What force does the water put on her 0.040 m² face mask?</p>
     <div class="work">
-      Gauge: ρgh = (1000)(10)(20) = <b>2.0 × 10⁵ Pa</b><br>
-      Absolute: P₀ + ρgh = 1.0 × 10⁵ + 2.0 × 10⁵ = <b>3.0 × 10⁵ Pa</b> (about 3 atm)<br>
-      Force on the mask: F = PA = (3.0 × 10⁵)(0.040) = <b>1.2 × 10⁴ N</b>
+      <math class="eq" display="block"><mrow><msub><mi>P</mi><mrow><mtext>gauge</mtext></mrow></msub><mo>&#x0003D;</mo><mi>&#x003C1;</mi><mi>g</mi><mi>h</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1000</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>20</mn><mo stretchy="false">&#x00029;</mo></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>P</mi><mrow><mtext>gauge</mtext></mrow></msub><mo>&#x0003D;</mo><mn>2.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mn>5</mn></mrow></msup><mspace width="0.167em" /><mtext>Pa</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><mi>P</mi><mo>&#x0003D;</mo><msub><mi>P</mi><mn>0</mn></msub><mo>&#x0002B;</mo><mi>&#x003C1;</mi><mi>g</mi><mi>h</mi><mo>&#x0003D;</mo><mn>1.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mn>5</mn></mrow></msup><mo>&#x0002B;</mo><mn>2.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mn>5</mn></mrow></msup></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>P</mi><mo>&#x0003D;</mo><mn>3.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mn>5</mn></mrow></msup><mspace width="0.167em" /><mtext>Pa</mtext><mspace width="0.278em" /><mo stretchy="false">&#x00028;</mo><mtext>about&#x000A0;3&#x000A0;atm</mtext><mo stretchy="false">&#x00029;</mo></mrow></math>
+      <math class="eq" display="block"><mrow><mi>F</mi><mo>&#x0003D;</mo><mi>P</mi><mi>A</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>3.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mn>5</mn></mrow></msup><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>0.040</mn><mo stretchy="false">&#x00029;</mo></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>F</mi><mo>&#x0003D;</mo><mn>1.2</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mn>4</mn></mrow></msup><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
     </div>
     <p class="take">Every 10 m of water adds about one atmosphere. The air inside her mask pushes back out with nearly the same pressure, which is why it doesn't cave in.</p>
   </div>
@@ -162,10 +167,12 @@ body.present .guide{display:none}
     <h4>A hydraulic car lift</h4>
     <p>A hydraulic lift has a small piston of area 0.010 m² and a large piston of area 0.50 m². What force on the small piston holds up a 10 000 N car? How far must the small piston move to raise the car 0.10 m?</p>
     <div class="work">
-      Same pressure: F₁/A₁ = F₂/A₂<br>
-      &nbsp;&nbsp;F₁ = (10 000)(0.010/0.50) = <b>200 N</b><br>
-      Same volume moved: A₁d₁ = A₂d₂<br>
-      &nbsp;&nbsp;d₁ = (0.10)(0.50/0.010) = <b>5.0 m</b>
+      <p class="wt">Same pressure on both pistons:</p>
+      <math class="eq" display="block"><mrow><mfrac><mrow><msub><mi>F</mi><mn>1</mn></msub></mrow><mrow><msub><mi>A</mi><mn>1</mn></msub></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><msub><mi>F</mi><mn>2</mn></msub></mrow><mrow><msub><mi>A</mi><mn>2</mn></msub></mrow></mfrac><mspace width="0.278em" /><mo>&#x02192;</mo><mspace width="0.278em" /><msub><mi>F</mi><mn>1</mn></msub><mo>&#x0003D;</mo><msub><mi>F</mi><mn>2</mn></msub><mspace width="0.167em" /><mfrac><mrow><msub><mi>A</mi><mn>1</mn></msub></mrow><mrow><msub><mi>A</mi><mn>2</mn></msub></mrow></mfrac><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>10</mn><mspace width="0.167em" /><mn>000</mn><mo stretchy="false">&#x00029;</mo><mspace width="0.167em" /><mfrac><mrow><mn>0.010</mn></mrow><mrow><mn>0.50</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>F</mi><mn>1</mn></msub><mo>&#x0003D;</mo><mn>200</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+      <p class="wt">Same volume of fluid moves at each end:</p>
+      <math class="eq" display="block"><mrow><msub><mi>A</mi><mn>1</mn></msub><msub><mi>d</mi><mn>1</mn></msub><mo>&#x0003D;</mo><msub><mi>A</mi><mn>2</mn></msub><msub><mi>d</mi><mn>2</mn></msub><mspace width="0.278em" /><mo>&#x02192;</mo><mspace width="0.278em" /><msub><mi>d</mi><mn>1</mn></msub><mo>&#x0003D;</mo><msub><mi>d</mi><mn>2</mn></msub><mspace width="0.167em" /><mfrac><mrow><msub><mi>A</mi><mn>2</mn></msub></mrow><mrow><msub><mi>A</mi><mn>1</mn></msub></mrow></mfrac><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.10</mn><mo stretchy="false">&#x00029;</mo><mspace width="0.167em" /><mfrac><mrow><mn>0.50</mn></mrow><mrow><mn>0.010</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>d</mi><mn>1</mn></msub><mo>&#x0003D;</mo><mn>5.0</mn><mspace width="0.167em" /><mtext>m</mtext></mrow></math>
     </div>
     <p class="take">The lift multiplies force by 50, but you push 50 times farther. The work in (200 N × 5.0 m) equals the work out (10 000 N × 0.10 m): no free energy.</p>
   </div>
@@ -183,9 +190,12 @@ body.present .guide{display:none}
     <h4>Weighing a block underwater</h4>
     <p>A 3.0 kg metal block with volume 1.0 × 10⁻³ m³ hangs from a spring scale, fully underwater. What does the scale read? What is the block's density?</p>
     <div class="work">
-      F<sub>b</sub> = ρ<sub>water</sub>Vg = (1000)(1.0 × 10⁻³)(10) = 10 N<br>
-      At rest: T + F<sub>b</sub> = mg → T = 30 − 10 = <b>20 N</b><br>
-      Density: ρ = m/V = 3.0/(1.0 × 10⁻³) = <b>3000 kg/m³</b>
+      <math class="eq" display="block"><mrow><msub><mi>F</mi><mi>b</mi></msub><mo>&#x0003D;</mo><msub><mi>&#x003C1;</mi><mrow><mtext>water</mtext></mrow></msub><mspace width="0.167em" /><mi>V</mi><mi>g</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1000</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>1.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>3</mn></mrow></msup><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>10</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+      <p class="wt">At rest, the forces up balance the weight:</p>
+      <math class="eq" display="block"><mrow><mi>T</mi><mo>&#x0002B;</mo><msub><mi>F</mi><mi>b</mi></msub><mo>&#x0003D;</mo><mi>m</mi><mi>g</mi><mspace width="0.278em" /><mo>&#x02192;</mo><mspace width="0.278em" /><mi>T</mi><mo>&#x0003D;</mo><mn>30</mn><mo>&#x02212;</mo><mn>10</mn></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>T</mi><mo>&#x0003D;</mo><mn>20</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><mi>&#x003C1;</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>m</mi></mrow><mrow><mi>V</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>3.0</mn></mrow><mrow><mn>1.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>3</mn></mrow></msup></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>&#x003C1;</mi><mo>&#x0003D;</mo><mn>3000</mn><mspace width="0.167em" /><msup><mtext>kg/m</mtext><mn>3</mn></msup></mrow></math>
     </div>
     <p class="take">The block “loses” 10 N underwater, exactly the weight of the 1 L of water it pushes aside. Weighing an object in air and in water is a way to measure its volume and density.</p>
   </div>
@@ -202,9 +212,13 @@ body.present .guide{display:none}
     <h4>Water through a narrowing pipe</h4>
     <p>Water flows at 2.0 m/s through a horizontal pipe that narrows to one-quarter of its cross-sectional area. Find the speed in the narrow part and how much the pressure drops there.</p>
     <div class="work">
-      Continuity: A v₁ = (A/4)v₂ → v₂ = 4(2.0) = <b>8.0 m/s</b><br>
-      Bernoulli (same height): P₁ + ½ρv₁² = P₂ + ½ρv₂²<br>
-      &nbsp;&nbsp;P₁ − P₂ = ½(1000)(8.0² − 2.0²) = <b>3.0 × 10⁴ Pa</b>
+      <p class="wt">Continuity:</p>
+      <math class="eq" display="block"><mrow><msub><mi>A</mi><mn>1</mn></msub><msub><mi>v</mi><mn>1</mn></msub><mo>&#x0003D;</mo><msub><mi>A</mi><mn>2</mn></msub><msub><mi>v</mi><mn>2</mn></msub><mspace width="0.278em" /><mo>&#x02192;</mo><mspace width="0.278em" /><msub><mi>v</mi><mn>2</mn></msub><mo>&#x0003D;</mo><msub><mi>v</mi><mn>1</mn></msub><mspace width="0.167em" /><mfrac><mrow><msub><mi>A</mi><mn>1</mn></msub></mrow><mrow><msub><mi>A</mi><mn>2</mn></msub></mrow></mfrac><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>2.0</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>4</mn><mo stretchy="false">&#x00029;</mo></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>v</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mn>8.0</mn><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
+      <p class="wt">Bernoulli at the same height:</p>
+      <math class="eq" display="block"><mrow><msub><mi>P</mi><mn>1</mn></msub><mo>&#x0002B;</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac></mstyle><mi>&#x003C1;</mi><msubsup><mi>v</mi><mn>1</mn><mn>2</mn></msubsup><mo>&#x0003D;</mo><msub><mi>P</mi><mn>2</mn></msub><mo>&#x0002B;</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac></mstyle><mi>&#x003C1;</mi><msubsup><mi>v</mi><mn>2</mn><mn>2</mn></msubsup></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>P</mi><mn>1</mn></msub><mo>&#x02212;</mo><msub><mi>P</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac></mstyle><mo stretchy="false">&#x00028;</mo><mn>1000</mn><mo stretchy="false">&#x00029;</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><msup><mn>8.0</mn><mn>2</mn></msup><mo>&#x02212;</mo><msup><mn>2.0</mn><mn>2</mn></msup><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>P</mi><mn>1</mn></msub><mo>&#x02212;</mo><msub><mi>P</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mn>3.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mn>4</mn></mrow></msup><mspace width="0.167em" /><mtext>Pa</mtext></mrow></math>
     </div>
     <p class="take">The water speeds up in the narrow part, so something must push it forward: the pressure behind it is higher than the pressure ahead. That's why the pressure is lower where it's faster.</p>
   </div>
@@ -214,8 +228,10 @@ body.present .guide{display:none}
     <h4>A leaky tank</h4>
     <p>A large open tank has a small hole in its side 0.80 m under the water's surface. How fast does the water come out?</p>
     <div class="work">
-      Bernoulli from the surface (v ≈ 0, P = P<sub>atm</sub>) to the hole (P = P<sub>atm</sub>):<br>
-      &nbsp;&nbsp;ρgh = ½ρv² → v = √(2gh) = √(2 × 10 × 0.80) = <b>4.0 m/s</b>
+      <p class="wt">Bernoulli from the surface (v ≈ 0, P = P_atm) to the hole (P = P_atm). The pressures cancel:</p>
+      <math class="eq" display="block"><mrow><mi>&#x003C1;</mi><mi>g</mi><mi>h</mi><mo>&#x0003D;</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac></mstyle><mi>&#x003C1;</mi><msup><mi>v</mi><mn>2</mn></msup><mspace width="0.278em" /><mo>&#x02192;</mo><mspace width="0.278em" /><mi>v</mi><mo>&#x0003D;</mo><msqrt><mrow><mn>2</mn><mi>g</mi><mi>h</mi></mrow></msqrt></mrow></math>
+      <math class="eq" display="block"><mrow><mi>v</mi><mo>&#x0003D;</mo><msqrt><mrow><mn>2</mn><mo stretchy="false">&#x00028;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>0.80</mn><mo stretchy="false">&#x00029;</mo></mrow></msqrt></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>v</mi><mo>&#x0003D;</mo><mn>4.0</mn><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
     </div>
     <p class="take">Both points are open to the air, so the pressures cancel. The water leaves as fast as if it had fallen 0.80 m. A hole deeper down squirts faster.</p>
   </div>
