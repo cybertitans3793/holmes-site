@@ -387,6 +387,8 @@ function setView(v) {
   if (v === 'practice') { const r = document.getElementById('rframe'); if (r && !r.querySelector('iframe')) r.innerHTML = '<iframe title="Practice questions" src="' + r.dataset.src + '"></iframe>'; }
   return v;
 }
+/* A link to a view this unit doesn't have (e.g. a guide's "Practice these ideas" on a unit with no review) is hidden. */
+document.querySelectorAll('a[data-view], .gnext [data-view]').forEach(a => { if (!document.getElementById('v-' + a.dataset.view)) (a.closest('.gnext') || a).hidden = true; });
 document.addEventListener('click', e => {
   const a = e.target.closest('[data-view]'); if (!a) return;
   e.preventDefault(); setView(a.dataset.view);
