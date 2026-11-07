@@ -116,12 +116,15 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
 .guide .gsteps li{margin:0 0 8px;break-inside:avoid}
 .guide h3.ghead{font-size:22px;margin:0 0 12px}
 .guide .gex{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:18px;margin-bottom:22px}
-.guide .ex{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .ex{min-width:0;background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
 .guide .ex h4{margin:0 0 6px;font-size:18px}
 .guide .ex .kind{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--hot);text-transform:uppercase;letter-spacing:.04em}
 .guide .ex p{margin:0 0 8px}
-.guide .work{font-family:var(--f-mono);font-size:14px;line-height:1.6;border-left:4px solid var(--hot);background:#fff;padding:6px 12px;margin:8px 0}
-.guide .work b{font-family:var(--f-display)}
+.guide .work{font-size:16px;line-height:1.45;border-left:4px solid var(--hot);background:#fff;padding:6px 14px;margin:8px 0;overflow-x:auto}
+.guide .work math.eq{display:block;text-align:left;margin:8px 0;font-size:1.15em}
+@media (max-width:520px){.guide .work math.eq{font-size:1em}}
+.guide .work math.ans{font-weight:700}
+.guide .work .wt{margin:6px 0 2px}
 .guide .ex .take{margin:8px 0 0;font-weight:500}
 .guide .ex svg{float:right;margin:0 0 6px 12px}
 .guide .gcheck{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
@@ -261,8 +264,10 @@ body.present .guide{display:none}
     <h4>Force between two charges</h4>
     <p>A +2.0 µC charge and a −3.0 µC charge are 0.30 m apart. Find the force between them.</p>
     <div class="work">
-      F = k|q₁q₂|/r² = (9.0 × 10⁹)(2.0 × 10⁻⁶)(3.0 × 10⁻⁶)/(0.30)²<br>
-      &nbsp;&nbsp;= <b>0.60 N</b>, attractive (opposite signs)
+      <math class="eq" display="block"><mrow><mi>F</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>k</mi><mspace width="0.167em" /><mo stretchy="false" lspace="0" rspace="0">&#x0007C;</mo><msub><mi>q</mi><mn>1</mn></msub><msub><mi>q</mi><mn>2</mn></msub><mo stretchy="false" lspace="0" rspace="0">&#x0007C;</mo></mrow><mrow><msup><mi>r</mi><mn>2</mn></msup></mrow></mfrac></mrow></math>
+      <math class="eq" display="block"><mrow><mi>F</mi><mo>&#x0003D;</mo><mfrac><mrow><mo stretchy="false">&#x00028;</mo><mn>9.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mn>9</mn></mrow></msup><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>2.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>6</mn></mrow></msup><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>3.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>6</mn></mrow></msup><mo stretchy="false">&#x00029;</mo></mrow><mrow><mo stretchy="false">&#x00028;</mo><mn>0.30</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>F</mi><mo>&#x0003D;</mo><mn>0.60</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+      <p class="wt">It's attractive, because the charges have opposite signs.</p>
     </div>
     <p class="take">Each charge pulls on the other with the same 0.60 N (Newton's 3rd law), even though one charge is bigger.</p>
   </div>
@@ -272,10 +277,12 @@ body.present .guide{display:none}
     <h4>Where is the field zero?</h4>
     <p>A +4.0 µC charge sits at x = 0 and a +1.0 µC charge at x = 0.30 m. Where between them is the electric field zero?</p>
     <div class="work">
-      Between them the two fields point opposite ways. Zero where they're equal:<br>
-      &nbsp;&nbsp;k(4.0)/x² = k(1.0)/(0.30 − x)²<br>
-      Square root: 2/x = 1/(0.30 − x) → 0.60 − 2x = x<br>
-      &nbsp;&nbsp;x = <b>0.20 m</b>
+      <p class="wt">Between the charges the two fields point opposite ways. The field is zero where they're equal:</p>
+      <math class="eq" display="block"><mrow><mfrac><mrow><mi>k</mi><mo stretchy="false">&#x00028;</mo><mn>4.0</mn><mspace width="0.167em" /><mi>&#x003BC;</mi><mtext>C</mtext><mo stretchy="false">&#x00029;</mo></mrow><mrow><msup><mi>x</mi><mn>2</mn></msup></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mi>k</mi><mo stretchy="false">&#x00028;</mo><mn>1.0</mn><mspace width="0.167em" /><mi>&#x003BC;</mi><mtext>C</mtext><mo stretchy="false">&#x00029;</mo></mrow><mrow><mo stretchy="false">&#x00028;</mo><mn>0.30</mn><mo>&#x02212;</mo><mi>x</mi><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup></mrow></mfrac></mrow></math>
+      <p class="wt">Take the square root of both sides:</p>
+      <math class="eq" display="block"><mrow><mfrac><mrow><mn>2</mn></mrow><mrow><mi>x</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>0.30</mn><mo>&#x02212;</mo><mi>x</mi></mrow></mfrac></mrow></math>
+      <math class="eq" display="block"><mrow><mo>&#x02192;</mo><mspace width="0.278em" /><mn>0.60</mn><mo>&#x02212;</mo><mn>2</mn><mi>x</mi><mo>&#x0003D;</mo><mi>x</mi></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>x</mi><mo>&#x0003D;</mo><mn>0.20</mn><mspace width="0.167em" /><mtext>m</mtext></mrow></math>
     </div>
     <p class="take">The zero point is closer to the smaller charge, which makes sense: being close makes up for having less charge.</p>
   </div>
@@ -285,10 +292,13 @@ body.present .guide{display:none}
     <h4>An electron accelerated across a gap</h4>
     <p>Two parallel plates 2.0 cm apart have a 400 V potential difference. An electron starts at rest at the negative plate. Find the field, the force on the electron, and its speed when it reaches the positive plate.</p>
     <div class="work">
-      E = ΔV/d = 400/0.020 = <b>2.0 × 10⁴ V/m</b><br>
-      F = eE = (1.6 × 10⁻¹⁹)(2.0 × 10⁴) = <b>3.2 × 10⁻¹⁵ N</b><br>
-      Energy: ½mv² = eΔV = 400 eV = 6.4 × 10⁻¹⁷ J<br>
-      &nbsp;&nbsp;v = √(2 × 6.4 × 10⁻¹⁷ / 9.11 × 10⁻³¹) = <b>1.2 × 10⁷ m/s</b>
+      <math class="eq" display="block"><mrow><mi>E</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>&#x00394;</mi><mi>V</mi></mrow><mrow><mi>d</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>400</mn></mrow><mrow><mn>0.020</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>E</mi><mo>&#x0003D;</mo><mn>2.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mn>4</mn></mrow></msup><mspace width="0.167em" /><mtext>V/m</mtext></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>F</mi><mo>&#x0003D;</mo><mi>e</mi><mi>E</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1.6</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>19</mn></mrow></msup><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>2.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mn>4</mn></mrow></msup><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>3.2</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>15</mn></mrow></msup><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+      <p class="wt">Energy: the electron gains eΔV = 400 eV:</p>
+      <math class="eq" display="block"><mrow><mstyle displaystyle="false" scriptlevel="0"><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac></mstyle><mi>m</mi><msup><mi>v</mi><mn>2</mn></msup><mo>&#x0003D;</mo><mi>e</mi><mspace width="0.167em" /><mi>&#x00394;</mi><mi>V</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1.6</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>19</mn></mrow></msup><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>400</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>6.4</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>17</mn></mrow></msup><mspace width="0.167em" /><mtext>J</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><mi>v</mi><mo>&#x0003D;</mo><msqrt><mrow><mfrac><mrow><mn>2</mn><mo stretchy="false">&#x00028;</mo><mn>6.4</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>17</mn></mrow></msup><mo stretchy="false">&#x00029;</mo></mrow><mrow><mn>9.11</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>31</mn></mrow></msup></mrow></mfrac></mrow></msqrt></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>v</mi><mo>&#x0003D;</mo><mn>1.2</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mn>7</mn></mrow></msup><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
     </div>
     <p class="take">The electron gains exactly 400 eV, whatever the gap. Energy is the fastest route; using a = F/m and kinematics gives the same speed.</p>
   </div>
@@ -298,9 +308,12 @@ body.present .guide{display:none}
     <h4>Halfway between a + and a − charge</h4>
     <p>A +2.0 µC and a −2.0 µC charge are 0.40 m apart. Find the electric potential and the electric field at the midpoint.</p>
     <div class="work">
-      V = k(+2.0 µC)/0.20 + k(−2.0 µC)/0.20 = <b>0</b><br>
-      E: both fields point toward the − charge, so they add:<br>
-      &nbsp;&nbsp;E = 2 × (9.0 × 10⁹)(2.0 × 10⁻⁶)/(0.20)² = <b>9.0 × 10⁵ N/C</b>, toward −
+      <p class="wt">Potential is a scalar, so add with signs:</p>
+      <math class="eq" display="block"><mrow><mi>V</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>k</mi><mo stretchy="false">&#x00028;</mo><mo>&#x0002B;</mo><mn>2.0</mn><mspace width="0.167em" /><mi>&#x003BC;</mi><mtext>C</mtext><mo stretchy="false">&#x00029;</mo></mrow><mrow><mn>0.20</mn></mrow></mfrac><mo>&#x0002B;</mo><mfrac><mrow><mi>k</mi><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>2.0</mn><mspace width="0.167em" /><mi>&#x003BC;</mi><mtext>C</mtext><mo stretchy="false">&#x00029;</mo></mrow><mrow><mn>0.20</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>V</mi><mo>&#x0003D;</mo><mn>0</mn></mrow></math>
+      <p class="wt">The fields both point toward the − charge, so they add:</p>
+      <math class="eq" display="block"><mrow><mi>E</mi><mo>&#x0003D;</mo><mn>2</mn><mspace width="0.167em" /><mfrac><mrow><mi>k</mi><mi>q</mi></mrow><mrow><msup><mi>r</mi><mn>2</mn></msup></mrow></mfrac><mo>&#x0003D;</mo><mn>2</mn><mspace width="0.167em" /><mfrac><mrow><mo stretchy="false">&#x00028;</mo><mn>9.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mn>9</mn></mrow></msup><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>2.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>6</mn></mrow></msup><mo stretchy="false">&#x00029;</mo></mrow><mrow><mo stretchy="false">&#x00028;</mo><mn>0.20</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>E</mi><mo>&#x0003D;</mo><mn>9.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mn>5</mn></mrow></msup><mspace width="0.167em" /><mtext>N/C</mtext><mtext>&#x000A0;toward&#x000A0;the&#x000A0;</mtext><mo>&#x02212;</mo><mtext>&#x000A0;charge</mtext></mrow></math>
     </div>
     <p class="take">Zero potential doesn't mean zero field. Potentials add as numbers and cancel; fields add as arrows and here they point the same way.</p>
   </div>
@@ -310,10 +323,11 @@ body.present .guide{display:none}
     <h4>A parallel-plate capacitor</h4>
     <p>Two plates of area 0.020 m² are 1.0 mm apart in air and connected to a 12 V battery. Find the capacitance, the charge and the stored energy. What changes if a dielectric with κ = 3.0 fills the gap while the battery stays connected?</p>
     <div class="work">
-      C = ε₀A/d = (8.85 × 10⁻¹²)(0.020)/(0.0010) = <b>1.8 × 10⁻¹⁰ F</b><br>
-      Q = CV = (1.77 × 10⁻¹⁰)(12) = <b>2.1 × 10⁻⁹ C</b><br>
-      U = ½CV² = ½(1.77 × 10⁻¹⁰)(12)² = <b>1.3 × 10⁻⁸ J</b><br>
-      With κ = 3.0 and V fixed: C, Q and U all <b>triple</b>
+      <math class="eq" display="block"><mrow><mi>C</mi><mo>&#x0003D;</mo><mfrac><mrow><msub><mi>&#x003B5;</mi><mn>0</mn></msub><mi>A</mi></mrow><mrow><mi>d</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mo stretchy="false">&#x00028;</mo><mn>8.85</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>12</mn></mrow></msup><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>0.020</mn><mo stretchy="false">&#x00029;</mo></mrow><mrow><mn>0.0010</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>C</mi><mo>&#x0003D;</mo><mn>1.8</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>10</mn></mrow></msup><mspace width="0.167em" /><mtext>F</mtext></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>Q</mi><mo>&#x0003D;</mo><mi>C</mi><mi>V</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1.77</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>10</mn></mrow></msup><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>12</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>2.1</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>9</mn></mrow></msup><mspace width="0.167em" /><mtext>C</mtext></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>U</mi><mo>&#x0003D;</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac></mstyle><mi>C</mi><msup><mi>V</mi><mn>2</mn></msup><mo>&#x0003D;</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac></mstyle><mo stretchy="false">&#x00028;</mo><mn>1.77</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>10</mn></mrow></msup><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>12</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup><mo>&#x0003D;</mo><mn>1.3</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>8</mn></mrow></msup><mspace width="0.167em" /><mtext>J</mtext></mrow></math>
+      <p class="wt">With κ = 3.0 and V fixed by the battery, C = κε₀A/d triples, so Q = CV and U = ½CV² triple too.</p>
     </div>
     <p class="take">With the battery connected, V can't change, so a bigger C pulls more charge onto the plates. If the battery had been disconnected first, Q would stay fixed and V would drop to a third.</p>
   </div>

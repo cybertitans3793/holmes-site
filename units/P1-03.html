@@ -116,12 +116,15 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
 .guide .gsteps li{margin:0 0 8px;break-inside:avoid}
 .guide h3.ghead{font-size:22px;margin:0 0 12px}
 .guide .gex{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:18px;margin-bottom:22px}
-.guide .ex{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .ex{min-width:0;background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
 .guide .ex h4{margin:0 0 6px;font-size:18px}
 .guide .ex .kind{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--hot);text-transform:uppercase;letter-spacing:.04em}
 .guide .ex p{margin:0 0 8px}
-.guide .work{font-family:var(--f-mono);font-size:14px;line-height:1.6;border-left:4px solid var(--hot);background:#fff;padding:6px 12px;margin:8px 0}
-.guide .work b{font-family:var(--f-display)}
+.guide .work{font-size:16px;line-height:1.45;border-left:4px solid var(--hot);background:#fff;padding:6px 14px;margin:8px 0;overflow-x:auto}
+.guide .work math.eq{display:block;text-align:left;margin:8px 0;font-size:1.15em}
+@media (max-width:520px){.guide .work math.eq{font-size:1em}}
+.guide .work math.ans{font-weight:700}
+.guide .work .wt{margin:6px 0 2px}
 .guide .ex .take{margin:8px 0 0;font-weight:500}
 .guide .ex svg{float:right;margin:0 0 6px 12px}
 .guide .gcheck{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
@@ -235,10 +238,13 @@ body.present .guide{display:none}
     <h4>Pushing two blocks</h4>
     <p>On a frictionless floor, you push a 3.0 kg block with 12 N, and it pushes a 1.0 kg block in front of it. Find their acceleration and the force between the blocks. What if you pushed the 1.0 kg block from the other side instead?</p>
     <div class="work">
-      System (both blocks): 12 = (4.0)a → a = <b>3.0 m/s²</b><br>
-      1.0 kg block alone: F<sub>contact</sub> = (1.0)(3.0) = <b>3.0 N</b><br>
-      Pushing from the other side: the 3.0 kg block is in front<br>
-      &nbsp;&nbsp;F<sub>contact</sub> = (3.0)(3.0) = <b>9.0 N</b>
+      <p class="wt">Both blocks as one system:</p>
+      <math class="eq" display="block"><mrow><mi>a</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>F</mi></mrow><mrow><msub><mi>m</mi><mrow><mtext>total</mtext></mrow></msub></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>12</mn></mrow><mrow><mn>3.0</mn><mo>&#x0002B;</mo><mn>1.0</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>a</mi><mo>&#x0003D;</mo><mn>3.0</mn><mspace width="0.167em" /><msup><mtext>m/s</mtext><mn>2</mn></msup></mrow></math>
+      <p class="wt">The 1.0 kg block alone (the contact force is the only push on it):</p>
+      <math class="eq ans" display="block"><mrow><msub><mi>F</mi><mrow><mtext>contact</mtext></mrow></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1.0</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>3.0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>3.0</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+      <p class="wt">Pushing from the other side, the 3.0 kg block is in front:</p>
+      <math class="eq ans" display="block"><mrow><msub><mi>F</mi><mrow><mtext>contact</mtext></mrow></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>3.0</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>3.0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>9.0</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
     </div>
     <p class="take">The acceleration is the same either way, but the contact force isn't: it only has to accelerate the block in front. The 3.0 kg block feels the 3.0 N (or 9.0 N) push back on it, too.</p>
   </div>
@@ -248,10 +254,12 @@ body.present .guide{display:none}
     <h4>A block on a table pulled by a hanging mass</h4>
     <p>A 2.0 kg block on a frictionless table is tied to a string that runs over a pulley at the edge to a hanging 1.0 kg mass. Find the acceleration and the tension in the string.</p>
     <div class="work">
-      System (both, + along the string): the only unbalanced external force is the hanging weight<br>
-      &nbsp;&nbsp;(1.0)(10) = (3.0)a → a = <b>3.3 m/s²</b><br>
-      Block on the table alone: T = (2.0)(3.33) = <b>6.7 N</b><br>
-      Check, hanging mass: 10 − 6.7 = (1.0)(3.3) ✓
+      <p class="wt">Both masses as one system, + along the string. The only unbalanced outside force is the hanging weight:</p>
+      <math class="eq" display="block"><mrow><mi>a</mi><mo>&#x0003D;</mo><mfrac><mrow><msub><mi>m</mi><mrow><mtext>hang</mtext></mrow></msub><mspace width="0.167em" /><mi>g</mi></mrow><mrow><msub><mi>m</mi><mrow><mtext>total</mtext></mrow></msub></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mo stretchy="false">&#x00028;</mo><mn>1.0</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo></mrow><mrow><mn>2.0</mn><mo>&#x0002B;</mo><mn>1.0</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>a</mi><mo>&#x0003D;</mo><mn>3.3</mn><mspace width="0.167em" /><msup><mtext>m/s</mtext><mn>2</mn></msup></mrow></math>
+      <p class="wt">The block on the table alone (tension is the only horizontal force):</p>
+      <math class="eq ans" display="block"><mrow><mi>T</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>2.0</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>3.33</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>6.7</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+      <p class="wt">Check with the hanging mass: 10 − 6.7 = (1.0)(3.3) ✓</p>
     </div>
     <p class="take">The tension is less than the hanging mass's 10 N weight. If it were 10 N, the hanging mass would have no net force and wouldn't accelerate.</p>
   </div>
@@ -261,9 +269,11 @@ body.present .guide{display:none}
     <h4>A truck and a car collide</h4>
     <p>A 2000 kg truck and a 1000 kg car collide head-on. At one instant the truck pushes on the car with 20 000 N. How hard does the car push on the truck? Compare their accelerations.</p>
     <div class="work">
-      Third-law pair: car on truck = <b>20 000 N</b>, opposite direction<br>
-      a<sub>truck</sub> = 20 000/2000 = <b>10 m/s²</b><br>
-      a<sub>car</sub> = 20 000/1000 = <b>20 m/s²</b>
+      <p class="wt">Third-law pair: the car pushes back on the truck with the same 20 000 N, the opposite way.</p>
+      <math class="eq" display="block"><mrow><msub><mi>a</mi><mrow><mtext>truck</mtext></mrow></msub><mo>&#x0003D;</mo><mfrac><mrow><mi>F</mi></mrow><mrow><msub><mi>m</mi><mrow><mtext>truck</mtext></mrow></msub></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>20</mn><mspace width="0.167em" /><mn>000</mn></mrow><mrow><mn>2000</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>a</mi><mrow><mtext>truck</mtext></mrow></msub><mo>&#x0003D;</mo><mn>10</mn><mspace width="0.167em" /><msup><mtext>m/s</mtext><mn>2</mn></msup></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>a</mi><mrow><mtext>car</mtext></mrow></msub><mo>&#x0003D;</mo><mfrac><mrow><mi>F</mi></mrow><mrow><msub><mi>m</mi><mrow><mtext>car</mtext></mrow></msub></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>20</mn><mspace width="0.167em" /><mn>000</mn></mrow><mrow><mn>1000</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>a</mi><mrow><mtext>car</mtext></mrow></msub><mo>&#x0003D;</mo><mn>20</mn><mspace width="0.167em" /><msup><mtext>m/s</mtext><mn>2</mn></msup></mrow></math>
     </div>
     <p class="take">Same force, but the car has half the mass, so it gets twice the acceleration. That's why the people in the smaller car are in more danger.</p>
   </div>
@@ -273,9 +283,13 @@ body.present .guide{display:none}
     <h4>A box on an accelerating truck</h4>
     <p>A box sits in the bed of a pickup truck. The coefficient of static friction between them is 0.40. What is the greatest acceleration the truck can have without the box sliding?</p>
     <div class="work">
-      Static friction is the only horizontal force on the box, and it points forward<br>
-      &nbsp;&nbsp;f<sub>s</sub> = ma, and f<sub>s</sub> ≤ μ<sub>s</sub>mg<br>
-      Largest: μ<sub>s</sub>mg = ma<sub>max</sub> → a<sub>max</sub> = μ<sub>s</sub>g = (0.40)(10) = <b>4.0 m/s²</b>
+      <p class="wt">Static friction is the only horizontal force on the box, and it points forward:</p>
+      <math class="eq" display="block"><mrow><msub><mi>f</mi><mi>s</mi></msub><mo>&#x0003D;</mo><mi>m</mi><mi>a</mi></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>f</mi><mi>s</mi></msub><mo>&#x02264;</mo><msub><mi>&#x003BC;</mi><mi>s</mi></msub><mi>m</mi><mi>g</mi></mrow></math>
+      <p class="wt">At the largest acceleration, friction is at its maximum:</p>
+      <math class="eq" display="block"><mrow><msub><mi>&#x003BC;</mi><mi>s</mi></msub><mi>m</mi><mi>g</mi><mo>&#x0003D;</mo><mi>m</mi><mspace width="0.167em" /><msub><mi>a</mi><mrow><mo>max</mo></mrow></msub></mrow></math>
+      <math class="eq" display="block"><mrow><mo>&#x02192;</mo><mspace width="0.278em" /><msub><mi>a</mi><mrow><mo>max</mo></mrow></msub><mo>&#x0003D;</mo><msub><mi>&#x003BC;</mi><mi>s</mi></msub><mi>g</mi></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>a</mi><mrow><mo>max</mo></mrow></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.40</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>4.0</mn><mspace width="0.167em" /><msup><mtext>m/s</mtext><mn>2</mn></msup></mrow></math>
     </div>
     <p class="take">Friction pushes the box forward, the way the truck accelerates. If the truck accelerates harder, nothing pushes the box backward: friction just can't speed it up fast enough, so it slides back relative to the truck.</p>
   </div>
@@ -285,8 +299,9 @@ body.present .guide{display:none}
     <h4>Where's the balance point?</h4>
     <p>A light rod 1.0 m long has a 2.0 kg mass on its left end (x = 0) and a 3.0 kg mass on its right end (x = 1.0 m). Where is the center of mass?</p>
     <div class="work">
-      x<sub>cm</sub> = [(2.0)(0) + (3.0)(1.0)]/(2.0 + 3.0)<br>
-      &nbsp;&nbsp;= 3.0/5.0 = <b>0.60 m</b> from the left end
+      <math class="eq" display="block"><mrow><msub><mi>x</mi><mrow><mi>c</mi><mi>m</mi></mrow></msub><mo>&#x0003D;</mo><mfrac><mrow><msub><mi>m</mi><mn>1</mn></msub><msub><mi>x</mi><mn>1</mn></msub><mo>&#x0002B;</mo><msub><mi>m</mi><mn>2</mn></msub><msub><mi>x</mi><mn>2</mn></msub></mrow><mrow><msub><mi>m</mi><mn>1</mn></msub><mo>&#x0002B;</mo><msub><mi>m</mi><mn>2</mn></msub></mrow></mfrac></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>x</mi><mrow><mi>c</mi><mi>m</mi></mrow></msub><mo>&#x0003D;</mo><mfrac><mrow><mo stretchy="false">&#x00028;</mo><mn>2.0</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mo stretchy="false">&#x00028;</mo><mn>3.0</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>1.0</mn><mo stretchy="false">&#x00029;</mo></mrow><mrow><mn>2.0</mn><mo>&#x0002B;</mo><mn>3.0</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>x</mi><mrow><mi>c</mi><mi>m</mi></mrow></msub><mo>&#x0003D;</mo><mn>0.60</mn><mspace width="0.167em" /><mtext>m</mtext><mtext>&#x000A0;from&#x000A0;the&#x000A0;left&#x000A0;end</mtext></mrow></math>
     </div>
     <p class="take">It's closer to the heavier mass. If the rod were thrown, it would spin, but the center of mass would follow a smooth path, as if all 5.0 kg were there.</p>
   </div>

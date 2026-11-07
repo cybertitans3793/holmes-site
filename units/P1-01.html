@@ -116,12 +116,15 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
 .guide .gsteps li{margin:0 0 8px;break-inside:avoid}
 .guide h3.ghead{font-size:22px;margin:0 0 12px}
 .guide .gex{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:18px;margin-bottom:22px}
-.guide .ex{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .ex{min-width:0;background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
 .guide .ex h4{margin:0 0 6px;font-size:18px}
 .guide .ex .kind{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--hot);text-transform:uppercase;letter-spacing:.04em}
 .guide .ex p{margin:0 0 8px}
-.guide .work{font-family:var(--f-mono);font-size:14px;line-height:1.6;border-left:4px solid var(--hot);background:#fff;padding:6px 12px;margin:8px 0}
-.guide .work b{font-family:var(--f-display)}
+.guide .work{font-size:16px;line-height:1.45;border-left:4px solid var(--hot);background:#fff;padding:6px 14px;margin:8px 0;overflow-x:auto}
+.guide .work math.eq{display:block;text-align:left;margin:8px 0;font-size:1.15em}
+@media (max-width:520px){.guide .work math.eq{font-size:1em}}
+.guide .work math.ans{font-weight:700}
+.guide .work .wt{margin:6px 0 2px}
 .guide .ex .take{margin:8px 0 0;font-weight:500}
 .guide .ex svg{float:right;margin:0 0 6px 12px}
 .guide .gcheck{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
@@ -241,10 +244,16 @@ body.present .guide{display:none}
     <h4>A walk there and back</h4>
     <p>A student walks from x = 0 to x = 12 m in 4 s, stands still for 2 s, then walks back to x = 0 in 3 s. Find the velocity in each part, the displacement, the distance, the average velocity and the average speed.</p>
     <div class="work">
-      0–4 s: v = 12/4 = <b>+3 m/s</b>; 4–6 s: <b>0</b>; 6–9 s: v = −12/3 = <b>−4 m/s</b><br>
-      Displacement: 0 − 0 = <b>0</b>; distance: 12 + 12 = <b>24 m</b><br>
-      Average velocity = 0/9 = <b>0</b><br>
-      Average speed = 24/9 = <b>2.7 m/s</b>
+      <p class="wt">Velocity is the slope of each straight piece:</p>
+      <math class="eq" display="block"><mrow><mi>v</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>&#x00394;</mi><mi>x</mi></mrow><mrow><mi>&#x00394;</mi><mi>t</mi></mrow></mfrac></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>v</mi><mrow><mn>0</mn><mtext>–</mtext><mn>4</mn></mrow></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>12</mn><mo>&#x02212;</mo><mn>0</mn></mrow><mrow><mn>4</mn></mrow></mfrac><mo>&#x0003D;</mo><mo>&#x0002B;</mo><mn>3</mn><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>v</mi><mrow><mn>4</mn><mtext>–</mtext><mn>6</mn></mrow></msub><mo>&#x0003D;</mo><mn>0</mn></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>v</mi><mrow><mn>6</mn><mtext>–</mtext><mn>9</mn></mrow></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>0</mn><mo>&#x02212;</mo><mn>12</mn></mrow><mrow><mn>3</mn></mrow></mfrac><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>4</mn><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
+      <p class="wt">Displacement and distance for the whole walk:</p>
+      <math class="eq" display="block"><mrow><mi>&#x00394;</mi><mi>x</mi><mo>&#x0003D;</mo><mn>0</mn><mo>&#x02212;</mo><mn>0</mn><mo>&#x0003D;</mo><mn>0</mn></mrow></math>
+      <math class="eq" display="block"><mrow><mi>d</mi><mo>&#x0003D;</mo><mn>12</mn><mo>&#x0002B;</mo><mn>12</mn><mo>&#x0003D;</mo><mn>24</mn><mspace width="0.167em" /><mtext>m</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>v</mi><mrow><mtext>avg</mtext></mrow></msub><mo>&#x0003D;</mo><mfrac><mrow><mi>&#x00394;</mi><mi>x</mi></mrow><mrow><mi>&#x00394;</mi><mi>t</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>0</mn></mrow><mrow><mn>9</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0</mn></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mtext>speed</mtext><mrow><mtext>avg</mtext></mrow></msub><mo>&#x0003D;</mo><mfrac><mrow><mi>d</mi></mrow><mrow><mi>&#x00394;</mi><mi>t</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>24</mn></mrow><mrow><mn>9</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>2.7</mn><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
     </div>
     <p class="take">The slopes give the velocities. Average velocity only cares where you start and finish, so a round trip has zero average velocity even though you were moving most of the time.</p>
   </div>
@@ -254,10 +263,14 @@ body.present .guide{display:none}
     <h4>Two cars heading toward each other</h4>
     <p>Car A starts at x = 0 moving at +20 m/s. At the same moment, car B is at x = 300 m moving at −10 m/s. When and where do they meet?</p>
     <div class="work">
-      x<sub>A</sub> = 0 + 20t &nbsp;&nbsp; x<sub>B</sub> = 300 − 10t<br>
-      Meet when x<sub>A</sub> = x<sub>B</sub>: 20t = 300 − 10t<br>
-      &nbsp;&nbsp;30t = 300 → t = <b>10 s</b><br>
-      x = 20(10) = <b>200 m</b>
+      <p class="wt">Write each car's position with the same origin and + direction:</p>
+      <math class="eq" display="block"><mrow><msub><mi>x</mi><mi>A</mi></msub><mo>&#x0003D;</mo><mn>0</mn><mo>&#x0002B;</mo><mn>20</mn><mi>t</mi></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>x</mi><mi>B</mi></msub><mo>&#x0003D;</mo><mn>300</mn><mo>&#x02212;</mo><mn>10</mn><mi>t</mi></mrow></math>
+      <p class="wt">They meet where the positions are equal:</p>
+      <math class="eq" display="block"><mrow><mn>20</mn><mi>t</mi><mo>&#x0003D;</mo><mn>300</mn><mo>&#x02212;</mo><mn>10</mn><mi>t</mi></mrow></math>
+      <math class="eq" display="block"><mrow><mo>&#x02192;</mo><mspace width="0.278em" /><mn>30</mn><mi>t</mi><mo>&#x0003D;</mo><mn>300</mn></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>t</mi><mo>&#x0003D;</mo><mn>10</mn><mspace width="0.167em" /><mtext>s</mtext></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>x</mi><mo>&#x0003D;</mo><mn>20</mn><mo stretchy="false">&#x00028;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>200</mn><mspace width="0.167em" /><mtext>m</mtext></mrow></math>
     </div>
     <p class="take">The closing speed is 20 + 10 = 30 m/s, so they close the 300 m gap in 10 s. Car B's minus sign is what makes the two speeds add.</p>
   </div>
@@ -267,10 +280,13 @@ body.present .guide{display:none}
     <h4>Walking on a moving walkway</h4>
     <p>An airport walkway moves at 1.0 m/s. You walk along it at 1.5 m/s relative to the walkway. How fast are you moving relative to the floor? What if you turn around and walk the other way at 1.5 m/s?</p>
     <div class="work">
-      Take the walkway's direction as +.<br>
-      Same way: v = 1.5 + 1.0 = <b>+2.5 m/s</b><br>
-      Turned around: v = −1.5 + 1.0 = <b>−0.5 m/s</b><br>
-      &nbsp;&nbsp;(0.5 m/s, backward relative to the floor)
+      <p class="wt">Take the walkway's direction as +, and add the velocities:</p>
+      <math class="eq" display="block"><mrow><msub><mi>v</mi><mrow><mtext>you,&#x000A0;floor</mtext></mrow></msub><mo>&#x0003D;</mo><msub><mi>v</mi><mrow><mtext>you,&#x000A0;walkway</mtext></mrow></msub><mo>&#x0002B;</mo><msub><mi>v</mi><mrow><mtext>walkway,&#x000A0;floor</mtext></mrow></msub></mrow></math>
+      <p class="wt">Walking the same way:</p>
+      <math class="eq ans" display="block"><mrow><mi>v</mi><mo>&#x0003D;</mo><mn>1.5</mn><mo>&#x0002B;</mo><mn>1.0</mn><mo>&#x0003D;</mo><mo>&#x0002B;</mo><mn>2.5</mn><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
+      <p class="wt">Turned around:</p>
+      <math class="eq ans" display="block"><mrow><mi>v</mi><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>1.5</mn><mo>&#x0002B;</mo><mn>1.0</mn><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>0.5</mn><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
+      <p class="wt">That's 0.5 m/s, backward relative to the floor.</p>
     </div>
     <p class="take">Your speed depends on the frame. To someone riding the walkway you're always going 1.5 m/s; to someone on the floor you're going 2.5 m/s or 0.5 m/s.</p>
   </div>
@@ -289,9 +305,10 @@ body.present .guide{display:none}
     <h4>The normal force isn't always mg</h4>
     <p>A 2.0 kg book sits on a table. You press down on it with your hand with 8.0 N. How big is the normal force from the table?</p>
     <div class="work">
-      Forces: weight down, hand down, normal force up<br>
-      At rest: ΣF = 0, so up = down<br>
-      F<sub>N</sub> = mg + F<sub>hand</sub> = 20 + 8.0 = <b>28 N</b>
+      <p class="wt">Forces on the book: weight down, your hand down, normal force up. At rest, so ΣF = 0:</p>
+      <math class="eq" display="block"><mrow><msub><mi>F</mi><mi>N</mi></msub><mo>&#x0003D;</mo><mi>m</mi><mi>g</mi><mo>&#x0002B;</mo><msub><mi>F</mi><mrow><mtext>hand</mtext></mrow></msub></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>F</mi><mi>N</mi></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>2.0</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mn>8.0</mn></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>F</mi><mi>N</mi></msub><mo>&#x0003D;</mo><mn>28</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
     </div>
     <p class="take">The table pushes as hard as it needs to so the book doesn't sink into it. Pull up on the book instead and the normal force gets smaller.</p>
   </div>

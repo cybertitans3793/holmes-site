@@ -116,12 +116,15 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
 .guide .gsteps li{margin:0 0 8px;break-inside:avoid}
 .guide h3.ghead{font-size:22px;margin:0 0 12px}
 .guide .gex{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:18px;margin-bottom:22px}
-.guide .ex{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .ex{min-width:0;background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
 .guide .ex h4{margin:0 0 6px;font-size:18px}
 .guide .ex .kind{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--hot);text-transform:uppercase;letter-spacing:.04em}
 .guide .ex p{margin:0 0 8px}
-.guide .work{font-family:var(--f-mono);font-size:14px;line-height:1.6;border-left:4px solid var(--hot);background:#fff;padding:6px 12px;margin:8px 0}
-.guide .work b{font-family:var(--f-display)}
+.guide .work{font-size:16px;line-height:1.45;border-left:4px solid var(--hot);background:#fff;padding:6px 14px;margin:8px 0;overflow-x:auto}
+.guide .work math.eq{display:block;text-align:left;margin:8px 0;font-size:1.15em}
+@media (max-width:520px){.guide .work math.eq{font-size:1em}}
+.guide .work math.ans{font-weight:700}
+.guide .work .wt{margin:6px 0 2px}
 .guide .ex .take{margin:8px 0 0;font-weight:500}
 .guide .ex svg{float:right;margin:0 0 6px 12px}
 .guide .gcheck{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
@@ -233,8 +236,11 @@ body.present .guide{display:none}
     <h4>The Sun's and Earth's peak wavelengths</h4>
     <p>Sunlight peaks at about 500 nm. Estimate the Sun's surface temperature. At what wavelength does Earth's surface (288 K) radiate most?</p>
     <div class="work">
-      Sun: T = 2.9 × 10⁻³ / 5.0 × 10⁻⁷ = <b>5800 K</b><br>
-      Earth: λ<sub>max</sub> = 2.9 × 10⁻³ / 288 = <b>1.0 × 10⁻⁵ m</b> (10 µm, infrared)
+      <p class="wt">Wien's law, with T in kelvin:</p>
+      <math class="eq" display="block"><mrow><msub><mi>T</mi><mrow><mtext>Sun</mtext></mrow></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>2.9</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>3</mn></mrow></msup></mrow><mrow><msub><mi>&#x003BB;</mi><mrow><mo>max</mo></mrow></msub></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>2.9</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>3</mn></mrow></msup></mrow><mrow><mn>5.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>7</mn></mrow></msup></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>T</mi><mrow><mtext>Sun</mtext></mrow></msub><mo>&#x0003D;</mo><mn>5800</mn><mspace width="0.167em" /><mtext>K</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>&#x003BB;</mi><mrow><mo>max</mo><mo>&#x0002C;</mo><mspace width="0.167em" /><mtext>Earth</mtext></mrow></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>2.9</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>3</mn></mrow></msup></mrow><mrow><mn>288</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>&#x003BB;</mi><mrow><mo>max</mo></mrow></msub><mo>&#x0003D;</mo><mn>1.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>5</mn></mrow></msup><mspace width="0.167em" /><mtext>m</mtext><mspace width="0.278em" /><mo stretchy="false">&#x00028;</mo><mn>10</mn><mspace width="0.167em" /><mi>&#x003BC;</mi><mtext>m,&#x000A0;infrared</mtext><mo stretchy="false">&#x00029;</mo></mrow></math>
     </div>
     <p class="take">Incoming sunlight is mostly visible, which the atmosphere lets through. Outgoing radiation is infrared, which greenhouse gases absorb. That mismatch is the whole greenhouse effect.</p>
   </div>
@@ -244,9 +250,12 @@ body.present .guide{display:none}
     <h4>Earth without an atmosphere</h4>
     <p>The solar constant is 1360 W/m² and Earth's albedo is 0.30. Treating Earth as a black body with no atmosphere, find its equilibrium temperature.</p>
     <div class="work">
-      Absorbed per m²: (1 − 0.30)(1360/4) = 238 W/m²<br>
-      Balance: σT⁴ = 238 → T⁴ = 238/(5.67 × 10⁻⁸) = 4.20 × 10⁹<br>
-      T = <b>255 K</b> (about −18 °C)
+      <p class="wt">Absorbed per square metre, averaged over the whole Earth:</p>
+      <math class="eq" display="block"><mrow><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><mi>&#x003B1;</mi><mo stretchy="false">&#x00029;</mo><mspace width="0.167em" /><mfrac><mrow><mi>S</mi></mrow><mrow><mn>4</mn></mrow></mfrac><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><mn>0.30</mn><mo stretchy="false">&#x00029;</mo><mspace width="0.167em" /><mfrac><mrow><mn>1360</mn></mrow><mrow><mn>4</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>238</mn><mspace width="0.167em" /><msup><mtext>W/m</mtext><mn>2</mn></msup></mrow></math>
+      <p class="wt">Balance it with what a black body emits:</p>
+      <math class="eq" display="block"><mrow><mi>&#x003C3;</mi><msup><mi>T</mi><mn>4</mn></msup><mo>&#x0003D;</mo><mn>238</mn></mrow></math>
+      <math class="eq" display="block"><mrow><mo>&#x02192;</mo><mspace width="0.278em" /><msup><mi>T</mi><mn>4</mn></msup><mo>&#x0003D;</mo><mfrac><mrow><mn>238</mn></mrow><mrow><mn>5.67</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>8</mn></mrow></msup></mrow></mfrac><mo>&#x0003D;</mo><mn>4.20</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mn>9</mn></mrow></msup></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>T</mi><mo>&#x0003D;</mo><mn>255</mn><mspace width="0.167em" /><mtext>K</mtext><mspace width="0.278em" /><mo stretchy="false">&#x00028;</mo><mtext>about&#x000A0;</mtext><mo>&#x02212;</mo><mn>18</mn><msup><mspace width="0.167em" /><mo>&#x02218;</mo></msup><mtext>C</mtext><mo stretchy="false">&#x00029;</mo></mrow></math>
     </div>
     <p class="take">The real average is about 288 K. The 33 K difference is what the natural greenhouse effect adds.</p>
   </div>
@@ -256,8 +265,9 @@ body.present .guide{display:none}
     <h4>Earth's effective emissivity</h4>
     <p>Earth's surface, at 288 K, radiates like a black body, but only 238 W/m² escapes to space on average. What effective emissivity does that give the Earth–atmosphere system?</p>
     <div class="work">
-      Surface emits: σT⁴ = (5.67 × 10⁻⁸)(288)⁴ = 390 W/m²<br>
-      e = 238/390 = <b>0.61</b>
+      <math class="eq" display="block"><mrow><mi>&#x003C3;</mi><msup><mi>T</mi><mn>4</mn></msup><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>5.67</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>8</mn></mrow></msup><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>288</mn><msup><mo stretchy="false">&#x00029;</mo><mn>4</mn></msup><mo>&#x0003D;</mo><mn>390</mn><mspace width="0.167em" /><msup><mtext>W/m</mtext><mn>2</mn></msup></mrow></math>
+      <math class="eq" display="block"><mrow><mi>e</mi><mo>&#x0003D;</mo><mfrac><mrow><msub><mi>P</mi><mrow><mtext>escaping</mtext></mrow></msub></mrow><mrow><mi>&#x003C3;</mi><msup><mi>T</mi><mn>4</mn></msup></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>238</mn></mrow><mrow><mn>390</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>e</mi><mo>&#x0003D;</mo><mn>0.61</mn></mrow></math>
     </div>
     <p class="take">Seen from space, Earth radiates as if it were a black body with emissivity about 0.6. Adding greenhouse gases lowers that number, so the surface has to get warmer to send the same 238 W/m² out.</p>
   </div>
@@ -267,8 +277,10 @@ body.present .guide{display:none}
     <h4>Back-radiation warms the surface</h4>
     <p>On average, Earth's surface absorbs 238 W/m² from the Sun and 150 W/m² of infrared from the atmosphere. If it radiates as a black body, what is its temperature?</p>
     <div class="work">
-      Absorbed: 238 + 150 = 388 W/m²<br>
-      σT⁴ = 388 → T⁴ = 6.84 × 10⁹ → T = <b>288 K</b>
+      <math class="eq" display="block"><mrow><msub><mi>P</mi><mrow><mtext>absorbed</mtext></mrow></msub><mo>&#x0003D;</mo><mn>238</mn><mo>&#x0002B;</mo><mn>150</mn><mo>&#x0003D;</mo><mn>388</mn><mspace width="0.167em" /><msup><mtext>W/m</mtext><mn>2</mn></msup></mrow></math>
+      <math class="eq" display="block"><mrow><mi>&#x003C3;</mi><msup><mi>T</mi><mn>4</mn></msup><mo>&#x0003D;</mo><mn>388</mn></mrow></math>
+      <math class="eq" display="block"><mrow><mo>&#x02192;</mo><mspace width="0.278em" /><msup><mi>T</mi><mn>4</mn></msup><mo>&#x0003D;</mo><mfrac><mrow><mn>388</mn></mrow><mrow><mn>5.67</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>8</mn></mrow></msup></mrow></mfrac><mo>&#x0003D;</mo><mn>6.84</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mn>9</mn></mrow></msup></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>T</mi><mo>&#x0003D;</mo><mn>288</mn><mspace width="0.167em" /><mtext>K</mtext></mrow></math>
     </div>
     <p class="take">Without the 150 W/m² coming back down from greenhouse gases, the surface would settle near 255 K. More greenhouse gas means more back-radiation and a warmer surface.</p>
   </div>
