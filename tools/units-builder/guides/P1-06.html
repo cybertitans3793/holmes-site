@@ -1,0 +1,273 @@
+<section class="guide" id="guide" aria-label="Study guide">
+<style>
+.guide{margin-top:28px}
+.guide .gtip{margin:0 0 16px;font-size:19px;line-height:1.45;max-width:1000px}
+.guide .ggrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-bottom:22px}
+.guide .gcard{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcard h3,.guide .gcheck h3,.guide .gsteps h3{margin:0 0 10px;font-size:20px;letter-spacing:-.01em}
+.guide .gcard ul{margin:0;padding-left:20px}
+.guide .gcard li{margin:0 0 7px}
+.guide .ib{display:inline-block;font-family:var(--f-mono);font-size:11px;font-weight:700;border:2px solid var(--ink);padding:0 5px;margin-left:4px;vertical-align:1px;background:var(--soft)}
+.guide table{border-collapse:collapse;width:100%;font-size:15px}
+.guide td{border-top:2px solid var(--ink);padding:6px 4px;vertical-align:top}
+.guide td:first-child{font-family:var(--f-mono);font-weight:700;white-space:nowrap;padding-right:12px}
+.guide td[colspan]{white-space:normal}
+.guide .gsub{font-family:var(--f-display);font-weight:400}
+.guide .gsteps{background:var(--soft);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px;margin-bottom:22px}
+.guide .gsteps ol{margin:0;padding-left:24px;columns:2 360px;column-gap:28px}
+.guide .gsteps li{margin:0 0 8px;break-inside:avoid}
+.guide h3.ghead{font-size:22px;margin:0 0 12px}
+.guide .gex{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:18px;margin-bottom:22px}
+.guide .ex{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .ex h4{margin:0 0 6px;font-size:18px}
+.guide .ex .kind{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--hot);text-transform:uppercase;letter-spacing:.04em}
+.guide .ex p{margin:0 0 8px}
+.guide .work{font-family:var(--f-mono);font-size:14px;line-height:1.6;border-left:4px solid var(--hot);background:#fff;padding:6px 12px;margin:8px 0}
+.guide .work b{font-family:var(--f-display)}
+.guide .ex .take{margin:8px 0 0;font-weight:500}
+.guide .ex svg{float:right;margin:0 0 6px 12px}
+.guide .gcheck{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcheck>p{margin:-4px 0 12px;color:var(--muted)}
+.guide ol.q{margin:0;padding-left:26px}
+.guide ol.q>li{margin:0 0 14px}
+.guide details{margin-top:6px}
+.guide summary{cursor:pointer;display:inline-block;font-weight:700;border:2px solid var(--ink);padding:2px 10px;background:#fff;list-style:none}
+.guide summary::-webkit-details-marker{display:none}
+.guide summary:hover{background:var(--soft)}
+.guide details[open] summary{background:var(--ink);color:#fff}
+.guide details>div{border-left:4px solid var(--hot);padding:8px 12px;margin-top:8px;background:#fff}
+.guide .gpanel>.ggrid,.guide .gpanel>.gsteps,.guide .gpanel>.gex{margin-bottom:0}
+.guide .gpanel>.gsteps+.ggrid{margin-top:22px}
+.guide .gtabs{margin-bottom:18px}
+.guide .gnext{margin:16px 0 0;font-weight:700}
+.guide .gnext a{color:var(--ink)}
+body.present .guide{display:none}
+@media (max-width:520px){.guide .gtip{font-size:17px}.guide td:first-child{white-space:normal}.guide .ggrid,.guide .gex{grid-template-columns:1fr}.guide .ex svg{float:none;display:block;margin:0 auto 8px}}
+</style>
+<div class="simbar"><h2>Study guide</h2><span class="mono">Unit 6 · Work, Power, and Energy</span></div>
+<p class="gtip"><b>How to use this:</b> read the key ideas, then cover each worked example and try it yourself before reading the solution. Do the self-check questions on paper <i>before</i> you open the answers, mark the ones you miss, and come back to them in a day or two without looking. Rereading won't do much; answering questions will.</p>
+<div class="tabs gtabs" role="tablist" aria-label="Study guide sections">
+  <button class="tab" role="tab" type="button" aria-selected="true" aria-controls="g-ideas" id="gt-ideas">Key ideas</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-solve" id="gt-solve" tabindex="-1">How to solve</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-examples" id="gt-examples" tabindex="-1">Worked examples</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-check" id="gt-check" tabindex="-1">Self-check</button>
+</div>
+<div class="gpanel" role="tabpanel" id="g-ideas" aria-labelledby="gt-ideas">
+
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Key ideas</h3>
+    <ul>
+      <li><b>Energy is a scalar.</b> It has no direction, so energies just add. A system can store it as kinetic energy (motion), gravitational potential energy (height, if Earth is in the system), elastic potential energy (a stretched or squashed spring) and thermal energy.</li>
+      <li><b>Pick the system first.</b> Everything else is the surroundings. Energy only enters or leaves the system as <b>work</b> done by an outside force.</li>
+      <li><b>Work</b> W = Fd cosθ uses only the part of the force along the displacement. A force along the motion does positive work, a force against it (like kinetic friction) does negative work, and a force at 90° (the normal force on a floor, the tension in a swinging pendulum) does none.</li>
+      <li><b>Work–energy theorem:</b> the net work done on an object equals its change in kinetic energy, W<sub>net</sub> = ΔK.</li>
+      <li>Work is the <b>area under a force–position graph</b>. That's how you handle a force that changes, like a spring's.</li>
+      <li><b>Gravity counts once.</b> With the object alone as the system, gravity is an outside force that does work. With object + Earth as the system, gravity is inside, so it shows up as U<sub>g</sub> = mgh instead. Never use both.</li>
+      <li><b>Conservation of energy:</b> if no outside work is done and there's no friction, the mechanical energy K + U stays constant. Only the change in height matters, not the path.</li>
+      <li><b>Friction</b> turns mechanical energy into thermal energy: ΔE<sub>th</sub> = f<sub>k</sub>d, where d is the distance slid.</li>
+      <li><b>Springs:</b> F<sub>s</sub> = kx and U<sub>s</sub> = ½kx², with x measured from the spring's natural length. Twice the stretch stores four times the energy.</li>
+      <li><b>Power</b> is how fast energy is transferred: P = ΔE/Δt = W/Δt. A force pushing along the velocity delivers P = Fv.</li>
+      <li><span class="ib">IB</span> <b>Efficiency</b> = useful energy (or power) out ÷ total energy (or power) in. It's always less than 100%.</li>
+      <li><b>Far from Earth</b>, gravitational potential energy is U<sub>g</sub> = −Gm₁m₂/r, with zero at infinite separation. It gets less negative (it increases) as the masses move apart. mgh is the shortcut for small height changes near the surface.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Equations</h3>
+    <table>
+      <tr><td>K = ½mv²</td><td>kinetic energy</td></tr>
+      <tr><td>ΔU<sub>g</sub> = mgΔh</td><td>gravitational PE near the surface</td></tr>
+      <tr><td>U<sub>g</sub> = −Gm₁m₂/r</td><td>gravitational PE at any distance</td></tr>
+      <tr><td>U<sub>s</sub> = ½kx²</td><td>elastic PE of a spring</td></tr>
+      <tr><td>F<sub>s</sub> = kx</td><td>spring force (Hooke's law)</td></tr>
+      <tr><td>W = Fd cosθ</td><td>work by a constant force</td></tr>
+      <tr><td>W<sub>net</sub> = ΔK</td><td>work–energy theorem</td></tr>
+      <tr><td>ΔE<sub>th</sub> = f<sub>k</sub>d</td><td>energy turned thermal by friction</td></tr>
+      <tr><td colspan="2">K<sub>i</sub> + U<sub>i</sub> + W<sub>ext</sub> = K<sub>f</sub> + U<sub>f</sub> + ΔE<sub>th</sub><br><span class="gsub">energy bookkeeping for a system</span></td></tr>
+      <tr><td>P = W/Δt = ΔE/Δt</td><td>average power</td></tr>
+      <tr><td>P = Fv</td><td>power from a force along the velocity</td></tr>
+      <tr><td>eff = E<sub>out</sub>/E<sub>in</sub></td><td><span class="ib">IB</span> efficiency (useful out ÷ total in; also works with powers)</td></tr>
+    </table>
+  </div>
+  <div class="gcard">
+    <h3>Common mistakes</h3>
+    <ul>
+      <li>Measuring h along a ramp. Gravitational PE uses the <b>vertical</b> height change.</li>
+      <li>Counting gravity twice: writing W<sub>g</sub> = −mgh <i>and</i> using mgh as potential energy.</li>
+      <li>Saying the normal force or a string's tension “must do work because it's big.” A force at 90° to the motion does no work, however big it is.</li>
+      <li>Forgetting that kinetic energy goes as v². Twice the speed means four times the kinetic energy, so a car needs four times the distance to brake.</li>
+      <li>Measuring a spring's x from the wrong place. It's the stretch or compression from natural length, not the spring's total length.</li>
+      <li>Using the applied force F when finding friction on an angled pull. Pulling up at an angle <b>reduces</b> the normal force, so N = mg − F sinθ.</li>
+      <li>Saying energy is “lost.” It's transferred out of the system or turned into thermal energy; the total is conserved.</li>
+    </ul>
+  </div>
+</div>
+
+</div>
+<div class="gpanel" role="tabpanel" id="g-solve" aria-labelledby="gt-solve" hidden>
+<div class="gsteps">
+  <h3>How to solve an energy problem</h3>
+  <ol>
+    <li><b>Choose the system</b> (for example, cart + Earth + track) and say so.</li>
+    <li><b>Pick two moments:</b> an initial state and a final state. Sketch both and mark h = 0 at the lowest point.</li>
+    <li><b>List the energies at each moment:</b> K, U<sub>g</sub>, U<sub>s</sub>. An energy bar chart works well here.</li>
+    <li><b>Add any energy that crosses the boundary:</b> work by an outside force (+ in, − out), and friction's ΔE<sub>th</sub>.</li>
+    <li><b>Write the bookkeeping equation:</b> K<sub>i</sub> + U<sub>i</sub> + W<sub>ext</sub> = K<sub>f</sub> + U<sub>f</sub> + ΔE<sub>th</sub>. Cross out every term that is zero.</li>
+    <li><b>Solve in symbols first,</b> then substitute numbers. Check the units, and whether mass cancels.</li>
+  </ol>
+</div>
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Energy, or forces?</h3>
+    <ul>
+      <li><b>Use energy</b> when the question links speeds, heights, stretches and distances, but not time. The path's shape doesn't matter.</li>
+      <li><b>Use forces and kinematics</b> when it asks for time, acceleration, or a force at one instant.</li>
+      <li><b>Use both</b> for loops and hills: energy gives the speed at a point, then ΣF<sub>toward center</sub> = mv²/r (unit 5) gives the force there.</li>
+      <li><b>Use the work–energy theorem</b> (W<sub>net</sub> = ΔK) when you know the forces on one object and the distance it moves.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Which forces do work?</h3>
+    <ul>
+      <li>Ask whether the force has a part along the motion. If not, its work is zero.</li>
+      <li>Static friction on a rolling wheel or a walking foot does no work: the contact point doesn't slide.</li>
+      <li>Gravity on a circular orbit does no work: the force stays at 90° to the velocity, so the speed stays constant.</li>
+    </ul>
+  </div>
+</div>
+
+</div>
+<div class="gpanel" role="tabpanel" id="g-examples" aria-labelledby="gt-examples" hidden>
+<div class="gex">
+  <div class="ex">
+    <div class="kind">Work–energy theorem</div>
+    <svg width="150" height="96" viewBox="0 0 150 96" aria-label="Crate pulled at 30 degrees with forces shown">
+      <line x1="4" y1="80" x2="146" y2="80" stroke="#111" stroke-width="2"/>
+      <rect x="45" y="46" width="40" height="34" fill="#fff" stroke="#111" stroke-width="2"/>
+      <line x1="85" y1="55" x2="128" y2="30" stroke="#ff6a2b" stroke-width="3"/><polygon points="130,29 120,30 125,38" fill="#ff6a2b"/>
+      <text x="118" y="22" font-size="11" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">F</text>
+      <text x="94" y="58" font-size="10" font-family="IBM Plex Mono,monospace">30°</text>
+      <line x1="45" y1="74" x2="16" y2="74" stroke="#111" stroke-width="3"/><polygon points="17,69 17,79 9,74" fill="#111"/>
+      <text x="10" y="66" font-size="11" font-family="IBM Plex Mono,monospace">f</text>
+      <line x1="65" y1="46" x2="65" y2="22" stroke="#111" stroke-width="3"/><polygon points="60,24 70,24 65,16" fill="#111"/>
+      <text x="69" y="22" font-size="11" font-family="IBM Plex Mono,monospace">N</text>
+      <line x1="58" y1="80" x2="58" y2="88" stroke="#111" stroke-width="3"/><polygon points="53,87 63,87 58,95" fill="#111"/>
+      <text x="28" y="94" font-size="11" font-family="IBM Plex Mono,monospace">mg</text>
+    </svg>
+    <h4>Pulling a crate at an angle</h4>
+    <p>You pull a 20 kg crate 5.0 m across a floor (μ<sub>k</sub> = 0.20), starting from rest. You pull with 100 N at 30° above horizontal. How fast is the crate moving at the end?</p>
+    <div class="work">
+      Vertical: N + F sin30° = mg → N = 200 − 50 = 150 N<br>
+      Friction: f = μ<sub>k</sub>N = 0.20 × 150 = 30 N<br>
+      W<sub>F</sub> = Fd cos30° = (100)(5.0)(0.866) = 433 J<br>
+      W<sub>f</sub> = −fd = −(30)(5.0) = −150 J<br>
+      W<sub>N</sub> = W<sub>g</sub> = 0 (both at 90° to the motion)<br>
+      W<sub>net</sub> = ΔK: 283 = ½(20)v² → v = <b>5.3 m/s</b>
+    </div>
+    <p class="take">Pulling upward at an angle wastes part of your force, but it also lifts some of the crate's weight off the floor, which cuts friction. That's why the best angle isn't 0°. Try it in the Pulling a Crate sim.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Energy + circular motion</div>
+    <svg width="120" height="120" viewBox="0 0 120 120" aria-label="Cart released from height h above a loop of radius R">
+      <path d="M6 10 Q10 104 60 110" fill="none" stroke="#111" stroke-width="2"/>
+      <circle cx="78" cy="80" r="30" fill="none" stroke="#111" stroke-width="2"/>
+      <line x1="60" y1="110" x2="116" y2="110" stroke="#111" stroke-width="2"/>
+      <circle cx="9" cy="12" r="5" fill="#ff6a2b"/>
+      <line x1="112" y1="110" x2="112" y2="12" stroke="#111" stroke-width="1" stroke-dasharray="3 3"/>
+      <text x="100" y="60" font-size="11" font-family="IBM Plex Mono,monospace">h</text>
+      <line x1="78" y1="80" x2="78" y2="50" stroke="#ff6a2b" stroke-width="2"/>
+      <text x="81" y="70" font-size="11" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">R</text>
+    </svg>
+    <h4>The lowest start height for a loop</h4>
+    <p>A cart rolls without friction from rest at height h into a loop of radius R = 3.0 m. What is the lowest h that lets it make it around the top of the loop?</p>
+    <div class="work">
+      At the top, the slowest it can go is when the track's push is zero:<br>
+      &nbsp;&nbsp;mg = mv²/R → v<sub>top</sub>² = gR<br>
+      Energy (cart + Earth), start → top of loop (height 2R):<br>
+      &nbsp;&nbsp;mgh = mg(2R) + ½m(gR)<br>
+      &nbsp;&nbsp;h = 2R + R/2 = 2.5R = <b>7.5 m</b>
+    </div>
+    <p class="take">Starting at 2R isn't enough: the cart would need to reach the top with zero speed, but it can't stay on the track that slowly, so it falls off before it gets there. The extra R/2 is what keeps it moving fast enough at the top.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Spring → height</div>
+    <h4>A spring launcher</h4>
+    <p>A spring with k = 400 N/m is squashed 0.10 m and launches a 0.050 kg ball straight up. Ignoring air resistance, how high above its starting point does the ball go?</p>
+    <div class="work">
+      System: ball + spring + Earth. Start squashed and at rest, end at the top at rest.<br>
+      U<sub>s</sub> = ½kx² = ½(400)(0.10)² = 2.0 J<br>
+      ½kx² = mgh → h = 2.0/(0.050 × 10) = <b>4.0 m</b>
+    </div>
+    <p class="take">Squash it twice as far and the spring stores four times the energy, so the ball goes four times as high. The launch speed only doubles, because K goes as v².</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Friction stops it</div>
+    <h4>Down a ramp onto a rough floor</h4>
+    <p>A block slides from rest down a frictionless ramp 1.8 m high, then across a rough floor with μ<sub>k</sub> = 0.30. How far along the floor does it slide before stopping?</p>
+    <div class="work">
+      System: block + Earth + floor. Start at the top at rest, end stopped on the floor.<br>
+      mgh = ΔE<sub>th</sub> = f<sub>k</sub>d = μ<sub>k</sub>mg·d<br>
+      d = h/μ<sub>k</sub> = 1.8/0.30 = <b>6.0 m</b>
+    </div>
+    <p class="take">Mass cancels, so a heavier block slides the same distance. The ramp's shape doesn't matter either, only its height: the block reaches the floor at √(2gh) = 6.0 m/s either way.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Power</div>
+    <h4>A car at highway speed</h4>
+    <p>A car cruises at a constant 25 m/s. Air resistance and rolling friction add up to 600 N. What power must the engine deliver to the wheels?</p>
+    <div class="work">
+      Constant speed → net force zero, so the driving force = 600 N<br>
+      P = Fv = (600)(25) = <b>1.5 × 10⁴ W</b> (15 kW)
+    </div>
+    <p class="take">At constant speed the kinetic energy isn't changing: all 15 kW goes into thermal energy in the air and tires. Air resistance grows with speed, so driving faster needs much more power.</p>
+  </div>
+</div>
+
+</div>
+<div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
+<div class="gcheck">
+  <h3>Self-check</h3>
+  <p>Answer first, then open.</p>
+  <ol class="q">
+    <li>You carry a box across a level room at constant velocity. How much work does your upward push do on the box? How much work do you do lifting it onto a shelf 1.2 m up, if it weighs 50 N?
+      <details><summary>Answer</summary><div>Walking across: zero. Your push is vertical and the box moves horizontally, so the force is at 90° to the motion. Lifting: W = Fd = (50)(1.2) = 60 J, which becomes gravitational PE of the box + Earth system. (Your body still burns energy while walking, but that isn't work done on the box.)</div></details></li>
+    <li>A car doubles its speed. By what factor does its kinetic energy change? With the same braking force, how much farther does it need to stop?
+      <details><summary>Answer</summary><div>K ∝ v², so it has 4 times the kinetic energy. The brakes remove energy at f·d, so with the same force it needs 4 times the stopping distance.</div></details></li>
+    <li>From the top of a cliff, one ball is thrown straight up and an identical ball is thrown horizontally, both at the same speed. Ignoring air resistance, which hits the ground below faster?
+      <details><summary>Answer</summary><div>Neither: they land at the same speed. Each starts with the same K and the same height, so each has the same total energy at the ground. Energy is a scalar, so the direction of the throw doesn't matter (it changes the time and where it lands, not the speed).</div></details></li>
+    <li>A force on a cart rises steadily from 0 to 30 N over the first 0.20 m, then stays at 30 N for the next 0.30 m. How much work does it do in total?
+      <details><summary>Answer</summary><div>Area under the F–x graph: triangle ½(0.20)(30) = 3 J, plus rectangle (0.30)(30) = 9 J. Total 12 J.</div></details></li>
+    <li>A pendulum bob is released from rest 0.45 m above its lowest point. Does the string's tension do any work on the bob? How fast is it moving at the bottom?
+      <details><summary>Answer</summary><div>No work: the tension always points along the string, at 90° to the bob's motion. Energy: mgh = ½mv², so v = √(2gh) = √(2 × 10 × 0.45) = 3.0 m/s.</div></details></li>
+    <li>A ball is dropped from rest. Describe what happens to its energy using (a) the ball alone as the system and (b) the ball + Earth as the system.
+      <details><summary>Answer</summary><div>(a) Gravity is an outside force doing positive work on the ball, and that work becomes the ball's kinetic energy (W<sub>g</sub> = ΔK). There's no potential energy, because Earth isn't in the system. (b) Nothing outside does work. The system's gravitational PE turns into kinetic energy (ΔU<sub>g</sub> + ΔK = 0). Both give the same speed.</div></details></li>
+    <li>The same spring launcher is squashed twice as far. What happens to the stored energy and to the launch speed?
+      <details><summary>Answer</summary><div>U<sub>s</sub> = ½kx², so 4 times the energy. All of it becomes K, and K ∝ v², so the launch speed doubles.</div></details></li>
+    <li>An elevator lifts an 800 kg load 20 m at constant speed in 10 s. What average power does the motor deliver to the load?
+      <details><summary>Answer</summary><div>Constant speed, so no change in K. W = mgh = (800)(10)(20) = 1.6 × 10⁵ J. P = W/Δt = 1.6 × 10⁴ W = 16 kW.</div></details></li>
+    <li><span class="ib">IB</span> A motor takes in 500 W of electrical power and lifts a 20 kg mass at a steady 1.5 m/s. What is its efficiency?
+      <details><summary>Answer</summary><div>Useful output power = Fv = mgv = (20)(10)(1.5) = 300 W. Efficiency = 300/500 = 0.60, or 60%. The other 200 W becomes thermal energy (and sound) in the motor.</div></details></li>
+    <li>A satellite moves in a circular orbit at constant speed. Does gravity do work on it? Another satellite moves on an ellipse and is heading toward Earth. Does gravity do work on that one?
+      <details><summary>Answer</summary><div>Circular orbit: no. Gravity points to the center, at 90° to the velocity, so the speed stays constant. Ellipse: yes. Heading inward, part of gravity points along the velocity, so gravity does positive work and the satellite speeds up (Kepler's 2nd law shows the same thing).</div></details></li>
+    <li>A spacecraft moves from 2 Earth radii to 4 Earth radii from Earth's center. Does the gravitational potential energy of the spacecraft–Earth system go up or down? Why is the energy negative at all?
+      <details><summary>Answer</summary><div>It goes up. U<sub>g</sub> = −GMm/r, and doubling r halves the size of a negative number, so it becomes less negative. It's negative because zero is defined at infinite separation, and the masses would need energy added to pull them that far apart.</div></details></li>
+  </ol>
+</div>
+</div>
+<p class="gnext"><a href="#practice" data-view="practice">Practice questions for this unit →</a></p>
+<script>
+(function(){
+  var root=document.currentScript?document.currentScript.parentNode:document;
+  var tabs=[].slice.call(root.querySelectorAll('.gtabs .tab'));
+  function show(t){tabs.forEach(function(b){var on=b===t;b.setAttribute('aria-selected',on?'true':'false');b.tabIndex=on?0:-1;document.getElementById(b.getAttribute('aria-controls')).hidden=!on;});}
+  tabs.forEach(function(b,i){
+    b.addEventListener('click',function(){show(b);});
+    b.addEventListener('keydown',function(e){var k=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(k){var n=tabs[(i+k+tabs.length)%tabs.length];show(n);n.focus();e.preventDefault();}});
+  });
+})();
+</script>
+</section>
