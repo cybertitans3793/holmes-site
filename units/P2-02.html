@@ -76,7 +76,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
     <div class="uid"><div class="big" aria-hidden="true">02</div><div><div class="mono">AP Physics 2 / IB · P2-02</div><h1>Electrostatics</h1></div></div>
   </header>
   <nav class="views" id="views" aria-label="Choose a view">
-    <div class="vbtns"><button type="button" class="vbtn" data-view="explore" aria-pressed="false">Explore</button><button type="button" class="vbtn" data-view="practice" aria-pressed="false">Practice</button></div>
+    <div class="vbtns"><button type="button" class="vbtn" data-view="explore" aria-pressed="false">Explore</button><button type="button" class="vbtn" data-view="study" aria-pressed="false">Study</button><button type="button" class="vbtn" data-view="practice" aria-pressed="false">Practice</button></div>
     <a class="simsback mono" id="simsback" href="https://sites.google.com/fcps.org/holmes/ap-physics-2-ib/p2-02" target="_blank" rel="noopener" hidden>Sims for this unit ↗</a>
   </nav>
   <div class="view" id="v-explore">
@@ -95,7 +95,274 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
   </div>
   <p class="credits">Charging &amp; the Electroscope is original. Coulomb’s Law, Electric Fields, Electric Potential, Charges Between Plates and Capacitors are original. Balloons and Static Electricity, Charges and Fields, Coulomb’s Law and Capacitor Lab: Basics: PhET Interactive Simulations, University of Colorado Boulder (phet.colorado.edu), CC BY 4.0 / GPL. Electric Field Hockey is an HTML5 port of the PhET sim. PhET Interactive Simulations, University of Colorado Boulder (phet.colorado.edu), CC BY 4.0 / GPL.</p>
   </div>
+  <div class="view" id="v-study" hidden>
+<section class="guide" id="guide" aria-label="Study guide">
+<style>
+.guide{margin-top:28px}
+.guide .gtip{margin:0 0 16px;font-size:19px;line-height:1.45;max-width:1000px}
+.guide .ggrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-bottom:22px}
+.guide .gcard{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcard h3,.guide .gcheck h3,.guide .gsteps h3{margin:0 0 10px;font-size:20px;letter-spacing:-.01em}
+.guide .gcard ul{margin:0;padding-left:20px}
+.guide .gcard li{margin:0 0 7px}
+.guide .ib{display:inline-block;font-family:var(--f-mono);font-size:11px;font-weight:700;border:2px solid var(--ink);padding:0 5px;margin-left:4px;vertical-align:1px;background:var(--soft)}
+.guide table{border-collapse:collapse;width:100%;font-size:15px}
+.guide td{border-top:2px solid var(--ink);padding:6px 4px;vertical-align:top}
+.guide td:first-child{font-family:var(--f-mono);font-weight:700;white-space:nowrap;padding-right:12px}
+.guide td[colspan]{white-space:normal}
+.guide .gsub{font-family:var(--f-display);font-weight:400}
+.guide .gsteps{background:var(--soft);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px;margin-bottom:22px}
+.guide .gsteps ol{margin:0;padding-left:24px;columns:2 360px;column-gap:28px}
+.guide .gsteps li{margin:0 0 8px;break-inside:avoid}
+.guide h3.ghead{font-size:22px;margin:0 0 12px}
+.guide .gex{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:18px;margin-bottom:22px}
+.guide .ex{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .ex h4{margin:0 0 6px;font-size:18px}
+.guide .ex .kind{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--hot);text-transform:uppercase;letter-spacing:.04em}
+.guide .ex p{margin:0 0 8px}
+.guide .work{font-family:var(--f-mono);font-size:14px;line-height:1.6;border-left:4px solid var(--hot);background:#fff;padding:6px 12px;margin:8px 0}
+.guide .work b{font-family:var(--f-display)}
+.guide .ex .take{margin:8px 0 0;font-weight:500}
+.guide .ex svg{float:right;margin:0 0 6px 12px}
+.guide .gcheck{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcheck>p{margin:-4px 0 12px;color:var(--muted)}
+.guide ol.q{margin:0;padding-left:26px}
+.guide ol.q>li{margin:0 0 14px}
+.guide details{margin-top:6px}
+.guide summary{cursor:pointer;display:inline-block;font-weight:700;border:2px solid var(--ink);padding:2px 10px;background:#fff;list-style:none}
+.guide summary::-webkit-details-marker{display:none}
+.guide summary:hover{background:var(--soft)}
+.guide details[open] summary{background:var(--ink);color:#fff}
+.guide details>div{border-left:4px solid var(--hot);padding:8px 12px;margin-top:8px;background:#fff}
+.guide .gpanel>.ggrid,.guide .gpanel>.gsteps,.guide .gpanel>.gex{margin-bottom:0}
+.guide .gpanel>.gsteps+.ggrid{margin-top:22px}
+.guide .gtabs{margin-bottom:18px}
+.guide .gnext{margin:16px 0 0;font-weight:700}
+.guide .gnext a{color:var(--ink)}
+body.present .guide{display:none}
+@media (max-width:520px){.guide .gtip{font-size:17px}.guide td:first-child{white-space:normal}.guide .ggrid,.guide .gex{grid-template-columns:1fr}.guide .ex svg{float:none;display:block;margin:0 auto 8px}}
+</style>
+<div class="simbar"><h2>Study guide</h2><span class="mono">Unit 2 · Electrostatics</span></div>
+<p class="gtip"><b>How to use this:</b> read the key ideas, then cover each worked example and try it yourself before reading the solution. Do the self-check questions on paper <i>before</i> you open the answers, mark the ones you miss, and come back to them in a day or two without looking. Rereading won't do much; answering questions will.</p>
+<div class="tabs gtabs" role="tablist" aria-label="Study guide sections">
+  <button class="tab" role="tab" type="button" aria-selected="true" aria-controls="g-ideas" id="gt-ideas">Key ideas</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-solve" id="gt-solve" tabindex="-1">How to solve</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-examples" id="gt-examples" tabindex="-1">Worked examples</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-check" id="gt-check" tabindex="-1">Self-check</button>
+</div>
+<div class="gpanel" role="tabpanel" id="g-ideas" aria-labelledby="gt-ideas">
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Key ideas</h3>
+    <ul>
+      <li><b>Charge</b> comes in two kinds. Like charges repel, opposites attract. Charge is <b>conserved</b> (never made or destroyed, only moved) and <b>quantized</b>: every charge is a whole number of e = 1.6 × 10⁻¹⁹ C.</li>
+      <li><b>Charging</b> moves electrons. By <b>friction</b>, electrons rub off one object onto another. By <b>contact</b>, a charged object shares charge with a neutral one (same sign). By <b>induction</b>, a nearby charge pushes electrons around, and grounding lets some escape, leaving the opposite sign.</li>
+      <li>A charged object attracts a neutral one by <b>polarizing</b> it: the near side gets the opposite charge, and it's closer, so attraction wins.</li>
+      <li><b>Coulomb's law:</b> F = k|q₁q₂|/r². It's an inverse-square law like gravity, but much stronger, and it can repel. Forces from several charges add as vectors.</li>
+      <li><b>Electric field</b> E = F/q is the force per coulomb on a small positive test charge. It points away from + and toward −. A point charge makes E = kQ/r².</li>
+      <li><b>Field lines</b> start on + and end on −, never cross, and are closer together where the field is stronger. Between two parallel plates the field is <b>uniform</b>: E = ΔV/d.</li>
+      <li>A charge in a uniform field feels a constant force, so it moves like a projectile in gravity: a straight-line acceleration along the field, or a parabola if it enters sideways.</li>
+      <li>Inside a conductor in equilibrium the field is zero, and any extra charge sits on the outer surface.</li>
+      <li><b>Electric potential energy</b> of two charges: U = kq₁q₂/r (negative for opposite charges). <b>Electric potential</b> V = U/q (volts = J/C) is a scalar: for point charges, add V = kQ/r with signs.</li>
+      <li><b>Equipotentials</b> are surfaces of equal V. They're always perpendicular to the field lines, and moving a charge along one takes no work. Field lines point from high V to low V.</li>
+      <li><b>Energy conservation in fields:</b> a charge moving through a potential difference ΔV changes its potential energy by qΔV, and its kinetic energy changes by the opposite amount. An electronvolt (1 eV = 1.6 × 10⁻¹⁹ J) is the energy one e gains across 1 V.</li>
+      <li><b>Capacitors</b> store charge and energy. For parallel plates, C = κε₀A/d. Q = CV and the stored energy is U = ½QV = ½CV². A dielectric (κ &gt; 1) between the plates increases C.</li>
+      <li><span class="ib">IB</span> <b>Millikan's oil-drop experiment</b> balanced charged drops between plates (qE = mg) and found every charge was a whole-number multiple of e, showing charge is quantized.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Equations</h3>
+    <table>
+      <tr><td>F = k|q₁q₂|/r²</td><td>Coulomb's law, k = 1/(4πε₀) = 9.0 × 10⁹ N·m²/C²</td></tr>
+      <tr><td>E = F/q</td><td>electric field</td></tr>
+      <tr><td>E = kQ/r²</td><td>field of a point charge</td></tr>
+      <tr><td>E = ΔV/d</td><td>uniform field between plates</td></tr>
+      <tr><td>U = kq₁q₂/r</td><td>electric potential energy</td></tr>
+      <tr><td>V = kQ/r</td><td>potential of a point charge</td></tr>
+      <tr><td>ΔU = qΔV</td><td>change in potential energy</td></tr>
+      <tr><td>ΔK = −qΔV</td><td>energy conservation, only electric forces</td></tr>
+      <tr><td>C = κε₀A/d</td><td>parallel-plate capacitor</td></tr>
+      <tr><td>Q = CV</td><td>charge on a capacitor</td></tr>
+      <tr><td>U = ½QV = ½CV²</td><td>energy stored in a capacitor</td></tr>
+      <tr><td>e, ε₀</td><td>1.6 × 10⁻¹⁹ C; 8.85 × 10⁻¹² C²/(N·m²)</td></tr>
+    </table>
+  </div>
+  <div class="gcard">
+    <h3>Field lines and equipotentials</h3>
+    <svg width="270" height="120" viewBox="0 0 270 120" aria-label="Field lines of a dipole, and the uniform field and equipotentials between parallel plates">
+      <circle cx="40" cy="60" r="8" fill="#ff6a2b"/><text x="36" y="64" font-size="12" font-family="IBM Plex Mono,monospace" fill="#fff">+</text>
+      <circle cx="110" cy="60" r="8" fill="#111"/><text x="106" y="64" font-size="12" font-family="IBM Plex Mono,monospace" fill="#fff">−</text>
+      <line x1="48" y1="60" x2="102" y2="60" stroke="#111" stroke-width="1.5"/><polygon points="71,56 79,60 71,64" fill="#111"/>
+      <path d="M45 54 Q75 22 105 54" fill="none" stroke="#111" stroke-width="1.5"/><polygon points="71,34 79,38 71,42" fill="#111"/>
+      <path d="M43 52 Q75 4 107 52" fill="none" stroke="#111" stroke-width="1.5"/><polygon points="71,24.5 79,28.5 71,32.5" fill="#111"/>
+      <path d="M45 66 Q75 98 105 66" fill="none" stroke="#111" stroke-width="1.5"/><polygon points="71,78 79,82 71,86" fill="#111"/>
+      <path d="M43 68 Q75 116 107 68" fill="none" stroke="#111" stroke-width="1.5"/><polygon points="71,87.5 79,91.5 71,95.5" fill="#111"/>
+      <line x1="32" y1="60" x2="6" y2="60" stroke="#111" stroke-width="1.5"/><polygon points="12,56 4,60 12,64" fill="#111"/>
+      <line x1="142" y1="60" x2="118" y2="60" stroke="#111" stroke-width="1.5"/><polygon points="124,56 116,60 124,64" fill="#111"/>
+      <line x1="170" y1="15" x2="170" y2="105" stroke="#ff6a2b" stroke-width="4"/><line x1="250" y1="15" x2="250" y2="105" stroke="#111" stroke-width="4"/>
+      <text x="160" y="12" font-size="10" font-family="IBM Plex Mono,monospace">+</text><text x="254" y="12" font-size="10" font-family="IBM Plex Mono,monospace">−</text>
+      <line x1="174" y1="35" x2="246" y2="35" stroke="#111" stroke-width="1.5"/><polygon points="236,31 244,35 236,39" fill="#111"/>
+      <line x1="174" y1="60" x2="246" y2="60" stroke="#111" stroke-width="1.5"/><polygon points="236,56 244,60 236,64" fill="#111"/>
+      <line x1="174" y1="85" x2="246" y2="85" stroke="#111" stroke-width="1.5"/><polygon points="236,81 244,85 236,89" fill="#111"/>
+      <line x1="197" y1="18" x2="197" y2="102" stroke="#ff6a2b" stroke-width="1.5" stroke-dasharray="4 3"/><line x1="223" y1="18" x2="223" y2="102" stroke="#ff6a2b" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <text x="176" y="117" font-size="10" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">equipotentials</text>
+    </svg>
+    <p>Left: a positive and a negative charge (a dipole). Lines leave +, enter −, and crowd together where the field is strong. Right: parallel plates make a uniform field, with evenly spaced lines. The dashed equipotentials cross every field line at 90°, and V drops in the direction the lines point.</p>
+  </div>
+  <div class="gcard">
+    <h3>Common mistakes</h3>
+    <ul>
+      <li>Thinking positive charge moves when objects are charged. In solids it's electrons that move.</li>
+      <li>Forgetting to square r: 3 times the distance gives <sup>1</sup>/<sub>9</sub> the force.</li>
+      <li>Adding field magnitudes from two charges without thinking about direction. Field is a vector; potential is a scalar.</li>
+      <li>Assuming zero field means zero potential (or the other way round). Halfway between equal and opposite charges, V = 0 but E isn't.</li>
+      <li>Treating force and field as the same thing. The field exists even with no charge there; the force is qE on whatever charge you put there.</li>
+      <li>Expecting an electron to accelerate along the field lines. Negative charges are pushed the opposite way, toward higher potential.</li>
+    </ul>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-solve" aria-labelledby="gt-solve" hidden>
+<div class="gsteps">
+  <h3>How to solve a field or force problem</h3>
+  <ol>
+    <li><b>Draw the charges</b> with their signs, and mark the point you care about.</li>
+    <li><b>Find each charge's contribution</b> at that point: its size (kQ/r² for E, kq₁q₂/r² for F) and its direction from the signs.</li>
+    <li><b>Add as vectors.</b> On a line, use + and − for direction; in 2D, split into components.</li>
+    <li><b>For potential, add scalars</b> instead: V = Σ kQ/r with the signs of the charges.</li>
+    <li><b>For motion,</b> use F = qE and Newton's 2nd law, or energy: ½mv² changes by −qΔV.</li>
+    <li><b>Check</b> the direction makes sense: like charges push apart, and E points away from +.</li>
+  </ol>
+</div>
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Gravity and electricity, side by side</h3>
+    <table>
+      <tr><td>F = Gm₁m₂/r²</td><td>F = kq₁q₂/r²</td></tr>
+      <tr><td>g = F/m</td><td>E = F/q</td></tr>
+      <tr><td>always attracts</td><td>attracts or repels</td></tr>
+      <tr><td>U = −Gm₁m₂/r</td><td>U = kq₁q₂/r</td></tr>
+    </table>
+  </div>
+  <div class="gcard">
+    <h3>Capacitor problems</h3>
+    <ul>
+      <li><b>Still connected to the battery:</b> V stays fixed. Change C and Q changes with it.</li>
+      <li><b>Disconnected first:</b> Q stays fixed (nowhere for it to go). Change C and V changes the other way.</li>
+      <li>Then use U = ½QV with whichever two values you know.</li>
+    </ul>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-examples" aria-labelledby="gt-examples" hidden>
+<div class="gex">
+  <div class="ex">
+    <div class="kind">Coulomb's law</div>
+    <h4>Force between two charges</h4>
+    <p>A +2.0 µC charge and a −3.0 µC charge are 0.30 m apart. Find the force between them.</p>
+    <div class="work">
+      F = k|q₁q₂|/r² = (9.0 × 10⁹)(2.0 × 10⁻⁶)(3.0 × 10⁻⁶)/(0.30)²<br>
+      &nbsp;&nbsp;= <b>0.60 N</b>, attractive (opposite signs)
+    </div>
+    <p class="take">Each charge pulls on the other with the same 0.60 N (Newton's 3rd law), even though one charge is bigger.</p>
+  </div>
 
+  <div class="ex">
+    <div class="kind">Adding fields</div>
+    <h4>Where is the field zero?</h4>
+    <p>A +4.0 µC charge sits at x = 0 and a +1.0 µC charge at x = 0.30 m. Where between them is the electric field zero?</p>
+    <div class="work">
+      Between them the two fields point opposite ways. Zero where they're equal:<br>
+      &nbsp;&nbsp;k(4.0)/x² = k(1.0)/(0.30 − x)²<br>
+      Square root: 2/x = 1/(0.30 − x) → 0.60 − 2x = x<br>
+      &nbsp;&nbsp;x = <b>0.20 m</b>
+    </div>
+    <p class="take">The zero point is closer to the smaller charge, which makes sense: being close makes up for having less charge.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Charge between plates</div>
+    <h4>An electron accelerated across a gap</h4>
+    <p>Two parallel plates 2.0 cm apart have a 400 V potential difference. An electron starts at rest at the negative plate. Find the field, the force on the electron, and its speed when it reaches the positive plate.</p>
+    <div class="work">
+      E = ΔV/d = 400/0.020 = <b>2.0 × 10⁴ V/m</b><br>
+      F = eE = (1.6 × 10⁻¹⁹)(2.0 × 10⁴) = <b>3.2 × 10⁻¹⁵ N</b><br>
+      Energy: ½mv² = eΔV = 400 eV = 6.4 × 10⁻¹⁷ J<br>
+      &nbsp;&nbsp;v = √(2 × 6.4 × 10⁻¹⁷ / 9.11 × 10⁻³¹) = <b>1.2 × 10⁷ m/s</b>
+    </div>
+    <p class="take">The electron gains exactly 400 eV, whatever the gap. Energy is the fastest route; using a = F/m and kinematics gives the same speed.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Potential vs field</div>
+    <h4>Halfway between a + and a − charge</h4>
+    <p>A +2.0 µC and a −2.0 µC charge are 0.40 m apart. Find the electric potential and the electric field at the midpoint.</p>
+    <div class="work">
+      V = k(+2.0 µC)/0.20 + k(−2.0 µC)/0.20 = <b>0</b><br>
+      E: both fields point toward the − charge, so they add:<br>
+      &nbsp;&nbsp;E = 2 × (9.0 × 10⁹)(2.0 × 10⁻⁶)/(0.20)² = <b>9.0 × 10⁵ N/C</b>, toward −
+    </div>
+    <p class="take">Zero potential doesn't mean zero field. Potentials add as numbers and cancel; fields add as arrows and here they point the same way.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Capacitor</div>
+    <h4>A parallel-plate capacitor</h4>
+    <p>Two plates of area 0.020 m² are 1.0 mm apart in air and connected to a 12 V battery. Find the capacitance, the charge and the stored energy. What changes if a dielectric with κ = 3.0 fills the gap while the battery stays connected?</p>
+    <div class="work">
+      C = ε₀A/d = (8.85 × 10⁻¹²)(0.020)/(0.0010) = <b>1.8 × 10⁻¹⁰ F</b><br>
+      Q = CV = (1.77 × 10⁻¹⁰)(12) = <b>2.1 × 10⁻⁹ C</b><br>
+      U = ½CV² = ½(1.77 × 10⁻¹⁰)(12)² = <b>1.3 × 10⁻⁸ J</b><br>
+      With κ = 3.0 and V fixed: C, Q and U all <b>triple</b>
+    </div>
+    <p class="take">With the battery connected, V can't change, so a bigger C pulls more charge onto the plates. If the battery had been disconnected first, Q would stay fixed and V would drop to a third.</p>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
+<div class="gcheck">
+  <h3>Self-check</h3>
+  <p>Answer first, then open.</p>
+  <ol class="q">
+<li>You rub a balloon on your hair and the balloon becomes negative. What moved, and what charge does your hair end up with?
+      <details><summary>Answer</summary><div>Electrons moved from your hair to the balloon. Your hair is left positive, with exactly as much charge as the balloon gained, since charge is conserved.</div></details></li>
+    <li>A negatively charged rod is brought near a neutral, empty soda can on a table. The can rolls toward the rod. Why?
+      <details><summary>Answer</summary><div>The rod pushes electrons in the can to the far side, so the near side is positive (the can is polarized). The positive side is closer, so its attraction beats the repulsion of the far side.</div></details></li>
+    <li>Describe how to give a metal sphere a positive charge using only a negatively charged rod, without touching the rod to the sphere.
+      <details><summary>Answer</summary><div>Bring the rod near the sphere, pushing its electrons to the far side. Touch the far side to ground so those electrons escape. Remove the ground, then the rod. The sphere is left positive, the opposite sign to the rod (charging by induction).</div></details></li>
+    <li>Two charges attract with force F. What is the force if the distance between them triples? What if instead both charges double?
+      <details><summary>Answer</summary><div>Tripling the distance gives F/9. Doubling both charges gives 4F.</div></details></li>
+    <li>A proton and an electron are released in the same uniform electric field. Compare the forces on them and their accelerations.
+      <details><summary>Answer</summary><div>The forces are equal in size and opposite in direction (same size of charge). The electron's mass is about 1836 times smaller, so its acceleration is about 1836 times bigger.</div></details></li>
+    <li>How much work does it take to move a charge along an equipotential surface? Why?
+      <details><summary>Answer</summary><div>None. The potential doesn't change, so qΔV = 0. Equivalently, the field is perpendicular to an equipotential, so the electric force is perpendicular to the motion.</div></details></li>
+    <li>A proton starts at rest and moves through a 1000 V potential difference. How much kinetic energy does it gain, in eV and in joules?
+      <details><summary>Answer</summary><div>1000 eV, which is (1000)(1.6 × 10⁻¹⁹) = 1.6 × 10⁻¹⁶ J.</div></details></li>
+    <li>You place extra charge on a hollow metal sphere. Where does the charge end up, and what is the field inside?
+      <details><summary>Answer</summary><div>On the outer surface. The charges push each other as far apart as they can. Inside the conductor (and in the hollow) the field is zero.</div></details></li>
+    <li>A capacitor is charged, disconnected from the battery, and then its plates are pulled farther apart. What happens to Q, C, V and the stored energy?
+      <details><summary>Answer</summary><div>Q stays the same (it can't go anywhere). C = ε₀A/d decreases, so V = Q/C increases. U = ½QV increases; the extra energy comes from the work you do pulling the attracting plates apart.</div></details></li>
+    <li><span class="ib">IB</span> In a Millikan-type experiment, an oil drop of mass 4.9 × 10⁻¹⁵ kg hangs still between plates with E = 1.5 × 10⁵ N/C. What is its charge? How many extra electrons is that?
+      <details><summary>Answer</summary><div>At rest, qE = mg: q = (4.9 × 10⁻¹⁵)(9.8)/(1.5 × 10⁵) = 3.2 × 10⁻¹⁹ C, which is exactly 2e, so two extra electrons.</div></details></li>
+    <li>Sketch the field lines between a positive point charge and a large negative plate. Where is the field strongest?
+      <details><summary>Answer</summary><div>Lines leave the positive charge, spread out, and end perpendicular to the plate. They're most crowded right next to the point charge, so the field is strongest there.</div></details></li>
+  </ol>
+</div>
+</div>
+<p class="gnext"><a href="#practice" data-view="practice">Practice questions for this unit →</a></p>
+<script>
+(function(){
+  var root=document.currentScript?document.currentScript.parentNode:document;
+  var tabs=[].slice.call(root.querySelectorAll('.gtabs .tab'));
+  function show(t){tabs.forEach(function(b){var on=b===t;b.setAttribute('aria-selected',on?'true':'false');b.tabIndex=on?0:-1;document.getElementById(b.getAttribute('aria-controls')).hidden=!on;});}
+  tabs.forEach(function(b,i){
+    b.addEventListener('click',function(){show(b);});
+    b.addEventListener('keydown',function(e){var k=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(k){var n=tabs[(i+k+tabs.length)%tabs.length];show(n);n.focus();e.preventDefault();}});
+  });
+})();
+</script>
+</section>
+  </div>
   <div class="view" id="v-practice" hidden>
   <section class="review" id="review">
     <div class="simbar"><h2>Practice questions</h2><a id="ropen" class="mono" href="https://script.google.com/a/macros/fcps.org/s/AKfycbzW6NpFGf5yjZ843WN0pDy-mzI0r1iCcBIuoJpMCEJeWwbUARiSnAC_lf2bWQeHWoGjHA/exec?unit=P2-02" target="_blank" rel="noopener">Open in a new tab ↗</a></div>

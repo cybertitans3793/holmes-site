@@ -497,7 +497,7 @@ UNITS = {
      'note': 'IB A.2 only. AP Physics 1 does not include viscosity.'},
 ]},
 # ------------------------------------------------------------------ AP PHYSICS 2 / IB
-'P2-00': {'course': 'AP Physics 2 / IB', 'num': '00', 'title': 'Greenhouse Effect (IB)', 'tabs': [
+'P2-00': {'course': 'AP Physics 2 / IB', 'num': '00', 'title': 'Greenhouse Effect (IB)', 'guide': 'guides/P2-00.html', 'tabs': [
     {'code': '', 'name': 'Black Bodies', 'sim': 'green', 'select': 'Black Bodies', 'tasks': [
         'Compare the Sun (about 5800 K) with the Earth (about 290 K). Which part of the spectrum does each one mostly give off?',
         'A stove burner glows red, but your body doesn’t glow. Both are black bodies. What’s different?']},
@@ -525,7 +525,7 @@ UNITS = {
         'N₂ and O₂ make up 99 % of the air. Why don’t they trap infrared?',
         'Name a natural and a human source for each greenhouse gas.']},
 ]},
-'P2-01': {'course': 'AP Physics 2 / IB', 'num': '01', 'title': 'Thermodynamics', 'tabs': [
+'P2-01': {'course': 'AP Physics 2 / IB', 'num': '01', 'title': 'Thermodynamics', 'guide': 'guides/P2-01.html', 'tabs': [
     {'code': '01-1', 'name': 'Particles & Pressure', 'sim': 'kinetic', 'tasks': [
         'Quadruple the absolute temperature. By what factor does the average KE change? The rms speed? Check with the ×2 test.',
         'At 2T, does every molecule move faster than every molecule at T? Use the speed distribution.',
@@ -588,7 +588,7 @@ UNITS = {
         '<b>Kettle.</b> Show that heat loss makes the measured L<sub>v</sub> too large. How does using two powers fix it?'],
      'note': 'IB B.1: specific latent heat. AP Physics 2 does not include latent heat.'},
 ]},
-'P2-02': {'course': 'AP Physics 2 / IB', 'num': '02', 'title': 'Electrostatics', 'tabs': [
+'P2-02': {'course': 'AP Physics 2 / IB', 'num': '02', 'title': 'Electrostatics', 'guide': 'guides/P2-02.html', 'tabs': [
     {'code': '02-1', 'name': 'Charging & the Electroscope', 'sim': 'scope', 'tasks': [
         'Bring a charged rod near the electroscope without touching. Why do the leaves spread if no charge moved onto it?',
         'Charge the electroscope by <b>conduction</b> (touching). What sign does it end up with? Same as the rod or opposite?',
@@ -637,7 +637,7 @@ UNITS = {
         'Turn on <b>Trace</b>. Is the puck’s path the same as a field line? Why not?',
         'Make the puck negative. What changes about every force on it?']},
 ]},
-'P2-05': {'course': 'AP Physics 2 / IB', 'num': '05', 'title': 'Modern Physics', 'tabs': [
+'P2-05': {'course': 'AP Physics 2 / IB', 'num': '05', 'title': 'Modern Physics', 'guide': 'guides/P2-05.html', 'tabs': [
     {'code': '', 'name': 'PhET Modern Physics', 'sim': 'phetMod', 'tasks': [
         '<b>Models of the Hydrogen Atom:</b> fire light at each model. Which ones match the experiment? What does the Bohr model get right?',
         '<b>Build a Nucleus:</b> build carbon-12, then add neutrons. When does it become unstable? What decay happens?',
@@ -1004,7 +1004,7 @@ UNITS.update({
         'Explain why London’s Millennium Bridge swayed, and how tuned mass dampers like Taipei 101’s stop buildings from doing the same.'],
      'note': 'IB C.4 only. AP Physics 1 does not include damping or resonance.'},
 ]},
-'P2-03': {'course': 'AP Physics 2 / IB', 'num': '03', 'title': 'Current Electricity and Magnetism', 'tabs': [
+'P2-03': {'course': 'AP Physics 2 / IB', 'num': '03', 'title': 'Current Electricity and Magnetism', 'guide': 'guides/P2-03.html', 'tabs': [
     {'code': '03-2', 'name': 'Resistance & Ohm’s Law', 'sim': 'ohm', 'tasks': [
         'Double the length of the wire, then double its diameter. Predict each change in R before you try it.',
         'Compare nichrome and copper wires of the same size. Why is nichrome used in toasters?',
@@ -1086,7 +1086,7 @@ UNITS.update({
         '<b>Faraday’s Electromagnetic Lab:</b> move a magnet through a coil. What makes the bulb brightest? What happens when the magnet stops?',
         '<span style="color:#8a8a8a;font-weight:700">Extension</span> Use the generator screen. How does turning faster change the light?']},
 ]},
-'P2-04': {'course': 'AP Physics 2 / IB', 'num': '04', 'title': 'Waves & Optics', 'tabs': [
+'P2-04': {'course': 'AP Physics 2 / IB', 'num': '04', 'title': 'Waves & Optics', 'guide': 'guides/P2-04.html', 'tabs': [
     {'code': '04-1', 'name': 'Wave Basics', 'sim': 'wave', 'modes': ['trans', 'long', 'medium'], 'select': 'Transverse', 'tasks': [
         'Double the frequency. What happens to λ and T? What stays the same? Why?',
         'Compare the two graphs. Which one lets you read off λ? Which one gives T?',
