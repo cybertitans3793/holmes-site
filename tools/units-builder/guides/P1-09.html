@@ -18,12 +18,13 @@
 .guide .gsteps li{margin:0 0 8px;break-inside:avoid}
 .guide h3.ghead{font-size:22px;margin:0 0 12px}
 .guide .gex{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:18px;margin-bottom:22px}
-.guide .ex{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .ex{min-width:0;background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
 .guide .ex h4{margin:0 0 6px;font-size:18px}
 .guide .ex .kind{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--hot);text-transform:uppercase;letter-spacing:.04em}
 .guide .ex p{margin:0 0 8px}
 .guide .work{font-size:16px;line-height:1.45;border-left:4px solid var(--hot);background:#fff;padding:6px 14px;margin:8px 0;overflow-x:auto}
 .guide .work math.eq{display:block;text-align:left;margin:8px 0;font-size:1.15em}
+@media (max-width:520px){.guide .work math.eq{font-size:1em}}
 .guide .work math.ans{font-weight:700}
 .guide .work .wt{margin:6px 0 2px}
 .guide .ex .take{margin:8px 0 0;font-weight:500}
@@ -168,10 +169,12 @@ body.present .guide{display:none}
     <p>A hydraulic lift has a small piston of area 0.010 m² and a large piston of area 0.50 m². What force on the small piston holds up a 10 000 N car? How far must the small piston move to raise the car 0.10 m?</p>
     <div class="work">
       <p class="wt">Same pressure on both pistons:</p>
-      <math class="eq" display="block"><mrow><mfrac><mrow><msub><mi>F</mi><mn>1</mn></msub></mrow><mrow><msub><mi>A</mi><mn>1</mn></msub></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><msub><mi>F</mi><mn>2</mn></msub></mrow><mrow><msub><mi>A</mi><mn>2</mn></msub></mrow></mfrac><mspace width="0.278em" /><mo>&#x02192;</mo><mspace width="0.278em" /><msub><mi>F</mi><mn>1</mn></msub><mo>&#x0003D;</mo><msub><mi>F</mi><mn>2</mn></msub><mspace width="0.167em" /><mfrac><mrow><msub><mi>A</mi><mn>1</mn></msub></mrow><mrow><msub><mi>A</mi><mn>2</mn></msub></mrow></mfrac><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>10</mn><mspace width="0.167em" /><mn>000</mn><mo stretchy="false">&#x00029;</mo><mspace width="0.167em" /><mfrac><mrow><mn>0.010</mn></mrow><mrow><mn>0.50</mn></mrow></mfrac></mrow></math>
+      <math class="eq" display="block"><mrow><mfrac><mrow><msub><mi>F</mi><mn>1</mn></msub></mrow><mrow><msub><mi>A</mi><mn>1</mn></msub></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><msub><mi>F</mi><mn>2</mn></msub></mrow><mrow><msub><mi>A</mi><mn>2</mn></msub></mrow></mfrac></mrow></math>
+      <math class="eq" display="block"><mrow><mo>&#x02192;</mo><mspace width="0.278em" /><msub><mi>F</mi><mn>1</mn></msub><mo>&#x0003D;</mo><msub><mi>F</mi><mn>2</mn></msub><mspace width="0.167em" /><mfrac><mrow><msub><mi>A</mi><mn>1</mn></msub></mrow><mrow><msub><mi>A</mi><mn>2</mn></msub></mrow></mfrac><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>10</mn><mspace width="0.167em" /><mn>000</mn><mo stretchy="false">&#x00029;</mo><mspace width="0.167em" /><mfrac><mrow><mn>0.010</mn></mrow><mrow><mn>0.50</mn></mrow></mfrac></mrow></math>
       <math class="eq ans" display="block"><mrow><msub><mi>F</mi><mn>1</mn></msub><mo>&#x0003D;</mo><mn>200</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
       <p class="wt">Same volume of fluid moves at each end:</p>
-      <math class="eq" display="block"><mrow><msub><mi>A</mi><mn>1</mn></msub><msub><mi>d</mi><mn>1</mn></msub><mo>&#x0003D;</mo><msub><mi>A</mi><mn>2</mn></msub><msub><mi>d</mi><mn>2</mn></msub><mspace width="0.278em" /><mo>&#x02192;</mo><mspace width="0.278em" /><msub><mi>d</mi><mn>1</mn></msub><mo>&#x0003D;</mo><msub><mi>d</mi><mn>2</mn></msub><mspace width="0.167em" /><mfrac><mrow><msub><mi>A</mi><mn>2</mn></msub></mrow><mrow><msub><mi>A</mi><mn>1</mn></msub></mrow></mfrac><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.10</mn><mo stretchy="false">&#x00029;</mo><mspace width="0.167em" /><mfrac><mrow><mn>0.50</mn></mrow><mrow><mn>0.010</mn></mrow></mfrac></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>A</mi><mn>1</mn></msub><msub><mi>d</mi><mn>1</mn></msub><mo>&#x0003D;</mo><msub><mi>A</mi><mn>2</mn></msub><msub><mi>d</mi><mn>2</mn></msub></mrow></math>
+      <math class="eq" display="block"><mrow><mo>&#x02192;</mo><mspace width="0.278em" /><msub><mi>d</mi><mn>1</mn></msub><mo>&#x0003D;</mo><msub><mi>d</mi><mn>2</mn></msub><mspace width="0.167em" /><mfrac><mrow><msub><mi>A</mi><mn>2</mn></msub></mrow><mrow><msub><mi>A</mi><mn>1</mn></msub></mrow></mfrac><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.10</mn><mo stretchy="false">&#x00029;</mo><mspace width="0.167em" /><mfrac><mrow><mn>0.50</mn></mrow><mrow><mn>0.010</mn></mrow></mfrac></mrow></math>
       <math class="eq ans" display="block"><mrow><msub><mi>d</mi><mn>1</mn></msub><mo>&#x0003D;</mo><mn>5.0</mn><mspace width="0.167em" /><mtext>m</mtext></mrow></math>
     </div>
     <p class="take">The lift multiplies force by 50, but you push 50 times farther. The work in (200 N × 5.0 m) equals the work out (10 000 N × 0.10 m): no free energy.</p>
@@ -192,7 +195,8 @@ body.present .guide{display:none}
     <div class="work">
       <math class="eq" display="block"><mrow><msub><mi>F</mi><mi>b</mi></msub><mo>&#x0003D;</mo><msub><mi>&#x003C1;</mi><mrow><mtext>water</mtext></mrow></msub><mspace width="0.167em" /><mi>V</mi><mi>g</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1000</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>1.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>3</mn></mrow></msup><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>10</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
       <p class="wt">At rest, the forces up balance the weight:</p>
-      <math class="eq" display="block"><mrow><mi>T</mi><mo>&#x0002B;</mo><msub><mi>F</mi><mi>b</mi></msub><mo>&#x0003D;</mo><mi>m</mi><mi>g</mi><mspace width="0.278em" /><mo>&#x02192;</mo><mspace width="0.278em" /><mi>T</mi><mo>&#x0003D;</mo><mn>30</mn><mo>&#x02212;</mo><mn>10</mn></mrow></math>
+      <math class="eq" display="block"><mrow><mi>T</mi><mo>&#x0002B;</mo><msub><mi>F</mi><mi>b</mi></msub><mo>&#x0003D;</mo><mi>m</mi><mi>g</mi></mrow></math>
+      <math class="eq" display="block"><mrow><mo>&#x02192;</mo><mspace width="0.278em" /><mi>T</mi><mo>&#x0003D;</mo><mn>30</mn><mo>&#x02212;</mo><mn>10</mn></mrow></math>
       <math class="eq ans" display="block"><mrow><mi>T</mi><mo>&#x0003D;</mo><mn>20</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
       <math class="eq" display="block"><mrow><mi>&#x003C1;</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>m</mi></mrow><mrow><mi>V</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>3.0</mn></mrow><mrow><mn>1.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>3</mn></mrow></msup></mrow></mfrac></mrow></math>
       <math class="eq ans" display="block"><mrow><mi>&#x003C1;</mi><mo>&#x0003D;</mo><mn>3000</mn><mspace width="0.167em" /><msup><mtext>kg/m</mtext><mn>3</mn></msup></mrow></math>
@@ -213,7 +217,8 @@ body.present .guide{display:none}
     <p>Water flows at 2.0 m/s through a horizontal pipe that narrows to one-quarter of its cross-sectional area. Find the speed in the narrow part and how much the pressure drops there.</p>
     <div class="work">
       <p class="wt">Continuity:</p>
-      <math class="eq" display="block"><mrow><msub><mi>A</mi><mn>1</mn></msub><msub><mi>v</mi><mn>1</mn></msub><mo>&#x0003D;</mo><msub><mi>A</mi><mn>2</mn></msub><msub><mi>v</mi><mn>2</mn></msub><mspace width="0.278em" /><mo>&#x02192;</mo><mspace width="0.278em" /><msub><mi>v</mi><mn>2</mn></msub><mo>&#x0003D;</mo><msub><mi>v</mi><mn>1</mn></msub><mspace width="0.167em" /><mfrac><mrow><msub><mi>A</mi><mn>1</mn></msub></mrow><mrow><msub><mi>A</mi><mn>2</mn></msub></mrow></mfrac><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>2.0</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>4</mn><mo stretchy="false">&#x00029;</mo></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>A</mi><mn>1</mn></msub><msub><mi>v</mi><mn>1</mn></msub><mo>&#x0003D;</mo><msub><mi>A</mi><mn>2</mn></msub><msub><mi>v</mi><mn>2</mn></msub></mrow></math>
+      <math class="eq" display="block"><mrow><mo>&#x02192;</mo><mspace width="0.278em" /><msub><mi>v</mi><mn>2</mn></msub><mo>&#x0003D;</mo><msub><mi>v</mi><mn>1</mn></msub><mspace width="0.167em" /><mfrac><mrow><msub><mi>A</mi><mn>1</mn></msub></mrow><mrow><msub><mi>A</mi><mn>2</mn></msub></mrow></mfrac><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>2.0</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>4</mn><mo stretchy="false">&#x00029;</mo></mrow></math>
       <math class="eq ans" display="block"><mrow><msub><mi>v</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mn>8.0</mn><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
       <p class="wt">Bernoulli at the same height:</p>
       <math class="eq" display="block"><mrow><msub><mi>P</mi><mn>1</mn></msub><mo>&#x0002B;</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac></mstyle><mi>&#x003C1;</mi><msubsup><mi>v</mi><mn>1</mn><mn>2</mn></msubsup><mo>&#x0003D;</mo><msub><mi>P</mi><mn>2</mn></msub><mo>&#x0002B;</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac></mstyle><mi>&#x003C1;</mi><msubsup><mi>v</mi><mn>2</mn><mn>2</mn></msubsup></mrow></math>
@@ -228,8 +233,9 @@ body.present .guide{display:none}
     <h4>A leaky tank</h4>
     <p>A large open tank has a small hole in its side 0.80 m under the water's surface. How fast does the water come out?</p>
     <div class="work">
-      <p class="wt">Bernoulli from the surface (v ≈ 0, P = P_atm) to the hole (P = P_atm). The pressures cancel:</p>
-      <math class="eq" display="block"><mrow><mi>&#x003C1;</mi><mi>g</mi><mi>h</mi><mo>&#x0003D;</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac></mstyle><mi>&#x003C1;</mi><msup><mi>v</mi><mn>2</mn></msup><mspace width="0.278em" /><mo>&#x02192;</mo><mspace width="0.278em" /><mi>v</mi><mo>&#x0003D;</mo><msqrt><mrow><mn>2</mn><mi>g</mi><mi>h</mi></mrow></msqrt></mrow></math>
+      <p class="wt">Bernoulli from the surface (v ≈ 0, P = P<sub>atm</sub>) to the hole (P = P<sub>atm</sub>). The pressures cancel:</p>
+      <math class="eq" display="block"><mrow><mi>&#x003C1;</mi><mi>g</mi><mi>h</mi><mo>&#x0003D;</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac></mstyle><mi>&#x003C1;</mi><msup><mi>v</mi><mn>2</mn></msup></mrow></math>
+      <math class="eq" display="block"><mrow><mo>&#x02192;</mo><mspace width="0.278em" /><mi>v</mi><mo>&#x0003D;</mo><msqrt><mrow><mn>2</mn><mi>g</mi><mi>h</mi></mrow></msqrt></mrow></math>
       <math class="eq" display="block"><mrow><mi>v</mi><mo>&#x0003D;</mo><msqrt><mrow><mn>2</mn><mo stretchy="false">&#x00028;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>0.80</mn><mo stretchy="false">&#x00029;</mo></mrow></msqrt></mrow></math>
       <math class="eq ans" display="block"><mrow><mi>v</mi><mo>&#x0003D;</mo><mn>4.0</mn><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
     </div>

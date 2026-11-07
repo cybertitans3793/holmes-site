@@ -18,12 +18,13 @@
 .guide .gsteps li{margin:0 0 8px;break-inside:avoid}
 .guide h3.ghead{font-size:22px;margin:0 0 12px}
 .guide .gex{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:18px;margin-bottom:22px}
-.guide .ex{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .ex{min-width:0;background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
 .guide .ex h4{margin:0 0 6px;font-size:18px}
 .guide .ex .kind{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--hot);text-transform:uppercase;letter-spacing:.04em}
 .guide .ex p{margin:0 0 8px}
 .guide .work{font-size:16px;line-height:1.45;border-left:4px solid var(--hot);background:#fff;padding:6px 14px;margin:8px 0;overflow-x:auto}
 .guide .work math.eq{display:block;text-align:left;margin:8px 0;font-size:1.15em}
+@media (max-width:520px){.guide .work math.eq{font-size:1em}}
 .guide .work math.ans{font-weight:700}
 .guide .work .wt{margin:6px 0 2px}
 .guide .ex .take{margin:8px 0 0;font-weight:500}
@@ -185,9 +186,11 @@ body.present .guide{display:none}
     <p>A box sits in the bed of a pickup truck. The coefficient of static friction between them is 0.40. What is the greatest acceleration the truck can have without the box sliding?</p>
     <div class="work">
       <p class="wt">Static friction is the only horizontal force on the box, and it points forward:</p>
-      <math class="eq" display="block"><mrow><msub><mi>f</mi><mi>s</mi></msub><mo>&#x0003D;</mo><mi>m</mi><mi>a</mi><mspace width="2em" /><msub><mi>f</mi><mi>s</mi></msub><mo>&#x02264;</mo><msub><mi>&#x003BC;</mi><mi>s</mi></msub><mi>m</mi><mi>g</mi></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>f</mi><mi>s</mi></msub><mo>&#x0003D;</mo><mi>m</mi><mi>a</mi></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>f</mi><mi>s</mi></msub><mo>&#x02264;</mo><msub><mi>&#x003BC;</mi><mi>s</mi></msub><mi>m</mi><mi>g</mi></mrow></math>
       <p class="wt">At the largest acceleration, friction is at its maximum:</p>
-      <math class="eq" display="block"><mrow><msub><mi>&#x003BC;</mi><mi>s</mi></msub><mi>m</mi><mi>g</mi><mo>&#x0003D;</mo><mi>m</mi><mspace width="0.167em" /><msub><mi>a</mi><mrow><mo>max</mo></mrow></msub><mspace width="0.278em" /><mo>&#x02192;</mo><mspace width="0.278em" /><msub><mi>a</mi><mrow><mo>max</mo></mrow></msub><mo>&#x0003D;</mo><msub><mi>&#x003BC;</mi><mi>s</mi></msub><mi>g</mi></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>&#x003BC;</mi><mi>s</mi></msub><mi>m</mi><mi>g</mi><mo>&#x0003D;</mo><mi>m</mi><mspace width="0.167em" /><msub><mi>a</mi><mrow><mo>max</mo></mrow></msub></mrow></math>
+      <math class="eq" display="block"><mrow><mo>&#x02192;</mo><mspace width="0.278em" /><msub><mi>a</mi><mrow><mo>max</mo></mrow></msub><mo>&#x0003D;</mo><msub><mi>&#x003BC;</mi><mi>s</mi></msub><mi>g</mi></mrow></math>
       <math class="eq ans" display="block"><mrow><msub><mi>a</mi><mrow><mo>max</mo></mrow></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.40</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>4.0</mn><mspace width="0.167em" /><msup><mtext>m/s</mtext><mn>2</mn></msup></mrow></math>
     </div>
     <p class="take">Friction pushes the box forward, the way the truck accelerates. If the truck accelerates harder, nothing pushes the box backward: friction just can't speed it up fast enough, so it slides back relative to the truck.</p>

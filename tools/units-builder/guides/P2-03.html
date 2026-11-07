@@ -18,12 +18,15 @@
 .guide .gsteps li{margin:0 0 8px;break-inside:avoid}
 .guide h3.ghead{font-size:22px;margin:0 0 12px}
 .guide .gex{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:18px;margin-bottom:22px}
-.guide .ex{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .ex{min-width:0;background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
 .guide .ex h4{margin:0 0 6px;font-size:18px}
 .guide .ex .kind{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--hot);text-transform:uppercase;letter-spacing:.04em}
 .guide .ex p{margin:0 0 8px}
-.guide .work{font-family:var(--f-mono);font-size:14px;line-height:1.6;border-left:4px solid var(--hot);background:#fff;padding:6px 12px;margin:8px 0}
-.guide .work b{font-family:var(--f-display)}
+.guide .work{font-size:16px;line-height:1.45;border-left:4px solid var(--hot);background:#fff;padding:6px 14px;margin:8px 0;overflow-x:auto}
+.guide .work math.eq{display:block;text-align:left;margin:8px 0;font-size:1.15em}
+@media (max-width:520px){.guide .work math.eq{font-size:1em}}
+.guide .work math.ans{font-weight:700}
+.guide .work .wt{margin:6px 0 2px}
 .guide .ex .take{margin:8px 0 0;font-weight:500}
 .guide .ex svg{float:right;margin:0 0 6px 12px}
 .guide .gcheck{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
@@ -174,11 +177,15 @@ body.present .guide{display:none}
     <h4>A combined circuit</h4>
     <p>A 12 V battery (no internal resistance) is connected to a 4.0 Ω resistor in series with a 6.0 Ω and a 3.0 Ω resistor that are in parallel with each other. Find the total current, the current in each parallel resistor, and the power in the 4.0 Ω resistor.</p>
     <div class="work">
-      Parallel pair: 1/R = 1/6.0 + 1/3.0 → R = 2.0 Ω<br>
-      Total: 4.0 + 2.0 = 6.0 Ω → I = 12/6.0 = <b>2.0 A</b><br>
-      Voltage across the pair: (2.0)(2.0) = 4.0 V<br>
-      &nbsp;&nbsp;I₆ = 4.0/6.0 = <b>0.67 A</b>, I₃ = 4.0/3.0 = <b>1.33 A</b><br>
-      P₄ = I²R = (2.0)²(4.0) = <b>16 W</b>
+      <p class="wt">The parallel pair:</p>
+      <math class="eq" display="block"><mrow><mfrac><mrow><mn>1</mn></mrow><mrow><msub><mi>R</mi><mi>p</mi></msub></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>6.0</mn></mrow></mfrac><mo>&#x0002B;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>3.0</mn></mrow></mfrac></mrow></math>
+      <math class="eq" display="block"><mrow><mo>&#x02192;</mo><mspace width="0.278em" /><msub><mi>R</mi><mi>p</mi></msub><mo>&#x0003D;</mo><mn>2.0</mn><mspace width="0.167em" /><mi>&#x003A9;</mi></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>R</mi><mrow><mtext>total</mtext></mrow></msub><mo>&#x0003D;</mo><mn>4.0</mn><mo>&#x0002B;</mo><mn>2.0</mn><mo>&#x0003D;</mo><mn>6.0</mn><mspace width="0.167em" /><mi>&#x003A9;</mi></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>I</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>&#x003B5;</mi></mrow><mrow><msub><mi>R</mi><mrow><mtext>total</mtext></mrow></msub></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>12</mn></mrow><mrow><mn>6.0</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>2.0</mn><mspace width="0.167em" /><mtext>A</mtext></mrow></math>
+      <p class="wt">Voltage across the pair: (2.0 A)(2.0 Ω) = 4.0 V, so:</p>
+      <math class="eq ans" display="block"><mrow><msub><mi>I</mi><mn>6</mn></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>4.0</mn></mrow><mrow><mn>6.0</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0.67</mn><mspace width="0.167em" /><mtext>A</mtext></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>I</mi><mn>3</mn></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>4.0</mn></mrow><mrow><mn>3.0</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>1.33</mn><mspace width="0.167em" /><mtext>A</mtext></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>P</mi><mn>4</mn></msub><mo>&#x0003D;</mo><msup><mi>I</mi><mn>2</mn></msup><mi>R</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>2.0</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup><mo stretchy="false">&#x00028;</mo><mn>4.0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>16</mn><mspace width="0.167em" /><mtext>W</mtext></mrow></math>
     </div>
     <p class="take">The branch currents add back to 2.0 A. More current takes the easier (lower-resistance) path.</p>
   </div>
@@ -188,8 +195,10 @@ body.present .guide{display:none}
     <h4>A real battery under load</h4>
     <p>A battery with emf 9.0 V and internal resistance 0.50 Ω drives a 4.0 Ω resistor. Find the current and the voltage across the battery's terminals.</p>
     <div class="work">
-      I = ε/(R + r) = 9.0/4.5 = <b>2.0 A</b><br>
-      Terminal voltage = ε − Ir = 9.0 − (2.0)(0.50) = <b>8.0 V</b>
+      <math class="eq" display="block"><mrow><mi>I</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>&#x003B5;</mi></mrow><mrow><mi>R</mi><mo>&#x0002B;</mo><mi>r</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>9.0</mn></mrow><mrow><mn>4.0</mn><mo>&#x0002B;</mo><mn>0.50</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>I</mi><mo>&#x0003D;</mo><mn>2.0</mn><mspace width="0.167em" /><mtext>A</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>V</mi><mrow><mtext>terminal</mtext></mrow></msub><mo>&#x0003D;</mo><mi>&#x003B5;</mi><mo>&#x02212;</mo><mi>I</mi><mi>r</mi><mo>&#x0003D;</mo><mn>9.0</mn><mo>&#x02212;</mo><mo stretchy="false">&#x00028;</mo><mn>2.0</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>0.50</mn><mo stretchy="false">&#x00029;</mo></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>V</mi><mrow><mtext>terminal</mtext></mrow></msub><mo>&#x0003D;</mo><mn>8.0</mn><mspace width="0.167em" /><mtext>V</mtext></mrow></math>
     </div>
     <p class="take">1.0 V is “lost” inside the battery, turning into heat there. The more current you draw, the more the terminal voltage drops.</p>
   </div>
@@ -199,8 +208,10 @@ body.present .guide{display:none}
     <h4>A heating wire</h4>
     <p>A nichrome wire (ρ = 1.1 × 10⁻⁶ Ω·m) is 2.0 m long with a diameter of 0.50 mm. Find its resistance.</p>
     <div class="work">
-      A = πr² = π(0.25 × 10⁻³)² = 1.96 × 10⁻⁷ m²<br>
-      R = ρL/A = (1.1 × 10⁻⁶)(2.0)/(1.96 × 10⁻⁷) = <b>11 Ω</b>
+      <p class="wt">The radius is half the diameter:</p>
+      <math class="eq" display="block"><mrow><mi>A</mi><mo>&#x0003D;</mo><mi>&#x003C0;</mi><msup><mi>r</mi><mn>2</mn></msup><mo>&#x0003D;</mo><mi>&#x003C0;</mi><mo stretchy="false">&#x00028;</mo><mn>0.25</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>3</mn></mrow></msup><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup><mo>&#x0003D;</mo><mn>1.96</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>7</mn></mrow></msup><mspace width="0.167em" /><msup><mtext>m</mtext><mn>2</mn></msup></mrow></math>
+      <math class="eq" display="block"><mrow><mi>R</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>&#x003C1;</mi><mi>L</mi></mrow><mrow><mi>A</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mo stretchy="false">&#x00028;</mo><mn>1.1</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>6</mn></mrow></msup><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>2.0</mn><mo stretchy="false">&#x00029;</mo></mrow><mrow><mn>1.96</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>7</mn></mrow></msup></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>R</mi><mo>&#x0003D;</mo><mn>11</mn><mspace width="0.167em" /><mi>&#x003A9;</mi></mrow></math>
     </div>
     <p class="take">Use the radius, not the diameter, in the area. Half the diameter would give a quarter of the area and four times the resistance.</p>
   </div>
@@ -210,9 +221,11 @@ body.present .guide{display:none}
     <h4>Charging a capacitor</h4>
     <p>A 12 V battery charges a 100 µF capacitor through a 10 kΩ resistor. Find the time constant, the current at the moment the switch closes, and the charge on the capacitor after a long time.</p>
     <div class="work">
-      τ = RC = (1.0 × 10⁴)(1.0 × 10⁻⁴) = <b>1.0 s</b><br>
-      At t = 0 the capacitor is empty, so all 12 V is across R: I = 12/10 000 = <b>1.2 mA</b><br>
-      Long time: current stops, V<sub>C</sub> = 12 V, Q = CV = <b>1.2 × 10⁻³ C</b>
+      <math class="eq ans" display="block"><mrow><mi>&#x003C4;</mi><mo>&#x0003D;</mo><mi>R</mi><mi>C</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mn>4</mn></mrow></msup><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>1.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>4</mn></mrow></msup><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1.0</mn><mspace width="0.167em" /><mtext>s</mtext></mrow></math>
+      <p class="wt">At t = 0 the capacitor is empty, so all 12 V is across the resistor:</p>
+      <math class="eq ans" display="block"><mrow><msub><mi>I</mi><mn>0</mn></msub><mo>&#x0003D;</mo><mfrac><mrow><mi>&#x003B5;</mi></mrow><mrow><mi>R</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>12</mn></mrow><mrow><mn>10</mn><mspace width="0.167em" /><mn>000</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>1.2</mn><mspace width="0.167em" /><mtext>mA</mtext></mrow></math>
+      <p class="wt">After a long time the current stops and V<sub>C</sub> = 12 V:</p>
+      <math class="eq ans" display="block"><mrow><mi>Q</mi><mo>&#x0003D;</mo><mi>C</mi><mi>V</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>4</mn></mrow></msup><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>12</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1.2</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>3</mn></mrow></msup><mspace width="0.167em" /><mtext>C</mtext></mrow></math>
     </div>
     <p class="take">The current starts at its maximum and dies away as the capacitor fills. After about 5τ (5 s) the capacitor is essentially full.</p>
   </div>
@@ -230,10 +243,14 @@ body.present .guide{display:none}
     <h4>A proton through plates and into a magnetic field</h4>
     <p>A proton starts at rest, is accelerated across a 2000 V gap between two plates, then passes through a hole into a 0.20 T magnetic field pointing into the page. Find its speed, which way it curves, and the radius of its path.</p>
     <div class="work">
-      Stage 1 (energy): ½mv² = qΔV<br>
-      &nbsp;&nbsp;v = √(2qΔV/m) = √[2(1.6 × 10⁻¹⁹)(2000)/(1.67 × 10⁻²⁷)] = <b>6.2 × 10⁵ m/s</b><br>
-      Stage 2 (force): right-hand rule with v to the right, B into the page: F points <b>up</b><br>
-      &nbsp;&nbsp;qvB = mv²/r → r = mv/(qB) = (1.67 × 10⁻²⁷)(6.2 × 10⁵)/[(1.6 × 10⁻¹⁹)(0.20)] = <b>3.2 cm</b>
+      <p class="wt">Stage 1 (energy across the plates):</p>
+      <math class="eq" display="block"><mrow><mstyle displaystyle="false" scriptlevel="0"><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac></mstyle><mi>m</mi><msup><mi>v</mi><mn>2</mn></msup><mo>&#x0003D;</mo><mi>q</mi><mspace width="0.167em" /><mi>&#x00394;</mi><mi>V</mi></mrow></math>
+      <math class="eq" display="block"><mrow><mo>&#x02192;</mo><mspace width="0.278em" /><mi>v</mi><mo>&#x0003D;</mo><msqrt><mrow><mfrac><mrow><mn>2</mn><mi>q</mi><mspace width="0.167em" /><mi>&#x00394;</mi><mi>V</mi></mrow><mrow><mi>m</mi></mrow></mfrac></mrow></msqrt><mo>&#x0003D;</mo><msqrt><mrow><mfrac><mrow><mn>2</mn><mo stretchy="false">&#x00028;</mo><mn>1.6</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>19</mn></mrow></msup><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>2000</mn><mo stretchy="false">&#x00029;</mo></mrow><mrow><mn>1.67</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>27</mn></mrow></msup></mrow></mfrac></mrow></msqrt></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>v</mi><mo>&#x0003D;</mo><mn>6.2</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mn>5</mn></mrow></msup><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
+      <p class="wt">Stage 2 (force in the field): right-hand rule with v to the right and B into the page, so F points up.</p>
+      <math class="eq" display="block"><mrow><mi>q</mi><mi>v</mi><mi>B</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>m</mi><msup><mi>v</mi><mn>2</mn></msup></mrow><mrow><mi>r</mi></mrow></mfrac></mrow></math>
+      <math class="eq" display="block"><mrow><mo>&#x02192;</mo><mspace width="0.278em" /><mi>r</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>m</mi><mi>v</mi></mrow><mrow><mi>q</mi><mi>B</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mo stretchy="false">&#x00028;</mo><mn>1.67</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>27</mn></mrow></msup><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>6.2</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mn>5</mn></mrow></msup><mo stretchy="false">&#x00029;</mo></mrow><mrow><mo stretchy="false">&#x00028;</mo><mn>1.6</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>19</mn></mrow></msup><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>0.20</mn><mo stretchy="false">&#x00029;</mo></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>r</mi><mo>&#x0003D;</mo><mn>3.2</mn><mspace width="0.167em" /><mtext>cm</mtext></mrow></math>
     </div>
     <p class="take">This is a mass spectrometer: the same ΔV and B send heavier ions around bigger circles. The magnetic force does no work, so the proton keeps its 2000 eV the whole way round.</p>
   </div>
@@ -251,9 +268,10 @@ body.present .guide{display:none}
     <h4>The field halfway between two wires</h4>
     <p>Two long parallel wires 10 cm apart carry 10 A each, in opposite directions. Find the magnetic field at the point halfway between them.</p>
     <div class="work">
-      Each wire, at r = 0.050 m: B = μ₀I/(2πr) = (2 × 10⁻⁷)(10)/(0.050) = 4.0 × 10⁻⁵ T<br>
-      Right-hand rule: with opposite currents, both fields point the <b>same way</b> at the midpoint<br>
-      B<sub>total</sub> = 4.0 × 10⁻⁵ + 4.0 × 10⁻⁵ = <b>8.0 × 10⁻⁵ T</b>
+      <p class="wt">Each wire, 0.050 m from the midpoint:</p>
+      <math class="eq" display="block"><mrow><mi>B</mi><mo>&#x0003D;</mo><mfrac><mrow><msub><mi>&#x003BC;</mi><mn>0</mn></msub><mi>I</mi></mrow><mrow><mn>2</mn><mi>&#x003C0;</mi><mi>r</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mo stretchy="false">&#x00028;</mo><mn>4</mn><mi>&#x003C0;</mi><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>7</mn></mrow></msup><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo></mrow><mrow><mn>2</mn><mi>&#x003C0;</mi><mo stretchy="false">&#x00028;</mo><mn>0.050</mn><mo stretchy="false">&#x00029;</mo></mrow></mfrac><mo>&#x0003D;</mo><mn>4.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>5</mn></mrow></msup><mspace width="0.167em" /><mtext>T</mtext></mrow></math>
+      <p class="wt">Right-hand rule: with opposite currents, both fields point the same way at the midpoint.</p>
+      <math class="eq ans" display="block"><mrow><msub><mi>B</mi><mrow><mtext>total</mtext></mrow></msub><mo>&#x0003D;</mo><mn>4.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>5</mn></mrow></msup><mo>&#x0002B;</mo><mn>4.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>5</mn></mrow></msup><mo>&#x0003D;</mo><mn>8.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>5</mn></mrow></msup><mspace width="0.167em" /><mtext>T</mtext></mrow></math>
     </div>
     <p class="take">If the currents flowed the same way, the two fields would point opposite ways at the midpoint and cancel to zero. Fields from several wires add as vectors.</p>
   </div>
@@ -263,9 +281,10 @@ body.present .guide{display:none}
     <h4>A coil in a growing field</h4>
     <p>A 50-turn coil of area 0.010 m² sits at right angles to a magnetic field that rises steadily from 0 to 0.40 T in 0.20 s. Find the induced emf. Which way does the induced field point?</p>
     <div class="work">
-      ΔΦ = ΔB × A = (0.40)(0.010) = 4.0 × 10⁻³ Wb<br>
-      ε = NΔΦ/Δt = (50)(4.0 × 10⁻³)/(0.20) = <b>1.0 V</b><br>
-      Lenz: the flux is growing, so the induced field points <b>opposite</b> the applied field
+      <math class="eq" display="block"><mrow><mi>&#x00394;</mi><mi>&#x003A6;</mi><mo>&#x0003D;</mo><mi>&#x00394;</mi><mi>B</mi><mspace width="0.167em" /><mi>A</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.40</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>0.010</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>4.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>3</mn></mrow></msup><mspace width="0.167em" /><mtext>Wb</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><mi>&#x003B5;</mi><mo>&#x0003D;</mo><mi>N</mi><mspace width="0.167em" /><mfrac><mrow><mi>&#x00394;</mi><mi>&#x003A6;</mi></mrow><mrow><mi>&#x00394;</mi><mi>t</mi></mrow></mfrac><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>50</mn><mo stretchy="false">&#x00029;</mo><mspace width="0.167em" /><mfrac><mrow><mn>4.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>3</mn></mrow></msup></mrow><mrow><mn>0.20</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>&#x003B5;</mi><mo>&#x0003D;</mo><mn>1.0</mn><mspace width="0.167em" /><mtext>V</mtext></mrow></math>
+      <p class="wt">Lenz's law: the flux is growing, so the induced field points opposite the applied field.</p>
     </div>
     <p class="take">Once the field stops changing at 0.40 T, the emf drops to zero, however strong the field is.</p>
   </div>

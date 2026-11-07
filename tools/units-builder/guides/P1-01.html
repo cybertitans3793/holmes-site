@@ -18,12 +18,13 @@
 .guide .gsteps li{margin:0 0 8px;break-inside:avoid}
 .guide h3.ghead{font-size:22px;margin:0 0 12px}
 .guide .gex{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:18px;margin-bottom:22px}
-.guide .ex{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .ex{min-width:0;background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
 .guide .ex h4{margin:0 0 6px;font-size:18px}
 .guide .ex .kind{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--hot);text-transform:uppercase;letter-spacing:.04em}
 .guide .ex p{margin:0 0 8px}
 .guide .work{font-size:16px;line-height:1.45;border-left:4px solid var(--hot);background:#fff;padding:6px 14px;margin:8px 0;overflow-x:auto}
 .guide .work math.eq{display:block;text-align:left;margin:8px 0;font-size:1.15em}
+@media (max-width:520px){.guide .work math.eq{font-size:1em}}
 .guide .work math.ans{font-weight:700}
 .guide .work .wt{margin:6px 0 2px}
 .guide .ex .take{margin:8px 0 0;font-weight:500}
@@ -147,9 +148,12 @@ body.present .guide{display:none}
     <div class="work">
       <p class="wt">Velocity is the slope of each straight piece:</p>
       <math class="eq" display="block"><mrow><mi>v</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>&#x00394;</mi><mi>x</mi></mrow><mrow><mi>&#x00394;</mi><mi>t</mi></mrow></mfrac></mrow></math>
-      <math class="eq" display="block"><mrow><msub><mi>v</mi><mrow><mn>0</mn><mtext>–</mtext><mn>4</mn></mrow></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>12</mn><mo>&#x02212;</mo><mn>0</mn></mrow><mrow><mn>4</mn></mrow></mfrac><mo>&#x0003D;</mo><mo>&#x0002B;</mo><mn>3</mn><mspace width="0.167em" /><mtext>m/s</mtext><mspace width="2em" /><msub><mi>v</mi><mrow><mn>4</mn><mtext>–</mtext><mn>6</mn></mrow></msub><mo>&#x0003D;</mo><mn>0</mn><mspace width="2em" /><msub><mi>v</mi><mrow><mn>6</mn><mtext>–</mtext><mn>9</mn></mrow></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>0</mn><mo>&#x02212;</mo><mn>12</mn></mrow><mrow><mn>3</mn></mrow></mfrac><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>4</mn><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>v</mi><mrow><mn>0</mn><mtext>–</mtext><mn>4</mn></mrow></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>12</mn><mo>&#x02212;</mo><mn>0</mn></mrow><mrow><mn>4</mn></mrow></mfrac><mo>&#x0003D;</mo><mo>&#x0002B;</mo><mn>3</mn><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>v</mi><mrow><mn>4</mn><mtext>–</mtext><mn>6</mn></mrow></msub><mo>&#x0003D;</mo><mn>0</mn></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>v</mi><mrow><mn>6</mn><mtext>–</mtext><mn>9</mn></mrow></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>0</mn><mo>&#x02212;</mo><mn>12</mn></mrow><mrow><mn>3</mn></mrow></mfrac><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>4</mn><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
       <p class="wt">Displacement and distance for the whole walk:</p>
-      <math class="eq" display="block"><mrow><mi>&#x00394;</mi><mi>x</mi><mo>&#x0003D;</mo><mn>0</mn><mo>&#x02212;</mo><mn>0</mn><mo>&#x0003D;</mo><mn>0</mn><mspace width="2em" /><mi>d</mi><mo>&#x0003D;</mo><mn>12</mn><mo>&#x0002B;</mo><mn>12</mn><mo>&#x0003D;</mo><mn>24</mn><mspace width="0.167em" /><mtext>m</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><mi>&#x00394;</mi><mi>x</mi><mo>&#x0003D;</mo><mn>0</mn><mo>&#x02212;</mo><mn>0</mn><mo>&#x0003D;</mo><mn>0</mn></mrow></math>
+      <math class="eq" display="block"><mrow><mi>d</mi><mo>&#x0003D;</mo><mn>12</mn><mo>&#x0002B;</mo><mn>12</mn><mo>&#x0003D;</mo><mn>24</mn><mspace width="0.167em" /><mtext>m</mtext></mrow></math>
       <math class="eq" display="block"><mrow><msub><mi>v</mi><mrow><mtext>avg</mtext></mrow></msub><mo>&#x0003D;</mo><mfrac><mrow><mi>&#x00394;</mi><mi>x</mi></mrow><mrow><mi>&#x00394;</mi><mi>t</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>0</mn></mrow><mrow><mn>9</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0</mn></mrow></math>
       <math class="eq ans" display="block"><mrow><msub><mtext>speed</mtext><mrow><mtext>avg</mtext></mrow></msub><mo>&#x0003D;</mo><mfrac><mrow><mi>d</mi></mrow><mrow><mi>&#x00394;</mi><mi>t</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>24</mn></mrow><mrow><mn>9</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>2.7</mn><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
     </div>
@@ -162,9 +166,11 @@ body.present .guide{display:none}
     <p>Car A starts at x = 0 moving at +20 m/s. At the same moment, car B is at x = 300 m moving at −10 m/s. When and where do they meet?</p>
     <div class="work">
       <p class="wt">Write each car's position with the same origin and + direction:</p>
-      <math class="eq" display="block"><mrow><msub><mi>x</mi><mi>A</mi></msub><mo>&#x0003D;</mo><mn>0</mn><mo>&#x0002B;</mo><mn>20</mn><mi>t</mi><mspace width="2em" /><msub><mi>x</mi><mi>B</mi></msub><mo>&#x0003D;</mo><mn>300</mn><mo>&#x02212;</mo><mn>10</mn><mi>t</mi></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>x</mi><mi>A</mi></msub><mo>&#x0003D;</mo><mn>0</mn><mo>&#x0002B;</mo><mn>20</mn><mi>t</mi></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>x</mi><mi>B</mi></msub><mo>&#x0003D;</mo><mn>300</mn><mo>&#x02212;</mo><mn>10</mn><mi>t</mi></mrow></math>
       <p class="wt">They meet where the positions are equal:</p>
-      <math class="eq" display="block"><mrow><mn>20</mn><mi>t</mi><mo>&#x0003D;</mo><mn>300</mn><mo>&#x02212;</mo><mn>10</mn><mi>t</mi><mspace width="0.278em" /><mo>&#x02192;</mo><mspace width="0.278em" /><mn>30</mn><mi>t</mi><mo>&#x0003D;</mo><mn>300</mn></mrow></math>
+      <math class="eq" display="block"><mrow><mn>20</mn><mi>t</mi><mo>&#x0003D;</mo><mn>300</mn><mo>&#x02212;</mo><mn>10</mn><mi>t</mi></mrow></math>
+      <math class="eq" display="block"><mrow><mo>&#x02192;</mo><mspace width="0.278em" /><mn>30</mn><mi>t</mi><mo>&#x0003D;</mo><mn>300</mn></mrow></math>
       <math class="eq ans" display="block"><mrow><mi>t</mi><mo>&#x0003D;</mo><mn>10</mn><mspace width="0.167em" /><mtext>s</mtext></mrow></math>
       <math class="eq ans" display="block"><mrow><mi>x</mi><mo>&#x0003D;</mo><mn>20</mn><mo stretchy="false">&#x00028;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>200</mn><mspace width="0.167em" /><mtext>m</mtext></mrow></math>
     </div>

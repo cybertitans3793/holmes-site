@@ -18,12 +18,15 @@
 .guide .gsteps li{margin:0 0 8px;break-inside:avoid}
 .guide h3.ghead{font-size:22px;margin:0 0 12px}
 .guide .gex{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:18px;margin-bottom:22px}
-.guide .ex{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .ex{min-width:0;background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
 .guide .ex h4{margin:0 0 6px;font-size:18px}
 .guide .ex .kind{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--hot);text-transform:uppercase;letter-spacing:.04em}
 .guide .ex p{margin:0 0 8px}
-.guide .work{font-family:var(--f-mono);font-size:14px;line-height:1.6;border-left:4px solid var(--hot);background:#fff;padding:6px 12px;margin:8px 0}
-.guide .work b{font-family:var(--f-display)}
+.guide .work{font-size:16px;line-height:1.45;border-left:4px solid var(--hot);background:#fff;padding:6px 14px;margin:8px 0;overflow-x:auto}
+.guide .work math.eq{display:block;text-align:left;margin:8px 0;font-size:1.15em}
+@media (max-width:520px){.guide .work math.eq{font-size:1em}}
+.guide .work math.ans{font-weight:700}
+.guide .work .wt{margin:6px 0 2px}
 .guide .ex .take{margin:8px 0 0;font-weight:500}
 .guide .ex svg{float:right;margin:0 0 6px 12px}
 .guide .gcheck{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
@@ -160,9 +163,13 @@ body.present .guide{display:none}
     <h4>Ultraviolet light on a metal</h4>
     <p>Light of wavelength 250 nm shines on a metal with work function 2.3 eV. Find the photon energy, the maximum kinetic energy of the electrons, and the longest wavelength that will release any electrons.</p>
     <div class="work">
-      E = 1240/250 = <b>4.96 eV</b><br>
-      K<sub>max</sub> = 4.96 − 2.3 = <b>2.7 eV</b> (a stopping voltage of 2.7 V)<br>
-      Threshold: E = φ → λ = 1240/2.3 = <b>540 nm</b>
+      <math class="eq" display="block"><mrow><mi>E</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>h</mi><mi>c</mi></mrow><mrow><mi>&#x003BB;</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>1240</mn><mspace width="0.167em" /><mtext>eV·nm</mtext></mrow><mrow><mn>250</mn><mspace width="0.167em" /><mtext>nm</mtext></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>E</mi><mo>&#x0003D;</mo><mn>4.96</mn><mspace width="0.167em" /><mtext>eV</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>K</mi><mrow><mo>max</mo></mrow></msub><mo>&#x0003D;</mo><mi>E</mi><mo>&#x02212;</mo><mi>&#x003D5;</mi><mo>&#x0003D;</mo><mn>4.96</mn><mo>&#x02212;</mo><mn>2.3</mn></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>K</mi><mrow><mo>max</mo></mrow></msub><mo>&#x0003D;</mo><mn>2.7</mn><mspace width="0.167em" /><mtext>eV</mtext><mtext>&#x000A0;(a&#x000A0;stopping&#x000A0;voltage&#x000A0;of&#x000A0;2.7&#x000A0;V)</mtext></mrow></math>
+      <p class="wt">At the threshold, the photon energy just equals φ:</p>
+      <math class="eq" display="block"><mrow><mi>&#x003BB;</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>h</mi><mi>c</mi></mrow><mrow><mi>&#x003D5;</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>1240</mn></mrow><mrow><mn>2.3</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>&#x003BB;</mi><mo>&#x0003D;</mo><mn>540</mn><mspace width="0.167em" /><mtext>nm</mtext></mrow></math>
     </div>
     <p class="take">Any light redder than 540 nm releases nothing, however bright it is, because each photon has too little energy.</p>
   </div>
@@ -181,8 +188,10 @@ body.present .guide{display:none}
     <h4>Hydrogen's red line</h4>
     <p>A hydrogen electron drops from the n = 3 level (−1.51 eV) to the n = 2 level (−3.40 eV). Find the photon's energy and wavelength.</p>
     <div class="work">
-      ΔE = −1.51 − (−3.40) = <b>1.89 eV</b><br>
-      λ = 1240/1.89 = <b>656 nm</b> (red)
+      <math class="eq" display="block"><mrow><mi>&#x00394;</mi><mi>E</mi><mo>&#x0003D;</mo><msub><mi>E</mi><mn>3</mn></msub><mo>&#x02212;</mo><msub><mi>E</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>1.51</mn><mo>&#x02212;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>3.40</mn><mo stretchy="false">&#x00029;</mo></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>&#x00394;</mi><mi>E</mi><mo>&#x0003D;</mo><mn>1.89</mn><mspace width="0.167em" /><mtext>eV</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><mi>&#x003BB;</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>h</mi><mi>c</mi></mrow><mrow><mi>&#x00394;</mi><mi>E</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>1240</mn><mspace width="0.167em" /><mtext>eV·nm</mtext></mrow><mrow><mn>1.89</mn><mspace width="0.167em" /><mtext>eV</mtext></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>&#x003BB;</mi><mo>&#x0003D;</mo><mn>656</mn><mspace width="0.167em" /><mtext>nm</mtext><mtext>&#x000A0;(red)</mtext></mrow></math>
     </div>
     <p class="take">This is the bright red line in hydrogen's spectrum. A cool hydrogen gas absorbs exactly the same 656 nm light, making a dark line in an absorption spectrum.</p>
   </div>
@@ -192,8 +201,8 @@ body.present .guide{display:none}
     <h4>An electron as a wave</h4>
     <p>Find the de Broglie wavelength of an electron moving at 1.0 × 10⁶ m/s. Why does a crystal diffract it?</p>
     <div class="work">
-      λ = h/(mv) = (6.63 × 10⁻³⁴)/[(9.11 × 10⁻³¹)(1.0 × 10⁶)]<br>
-      &nbsp;&nbsp;= <b>7.3 × 10⁻¹⁰ m</b>
+      <math class="eq" display="block"><mrow><mi>&#x003BB;</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>h</mi></mrow><mrow><mi>p</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mi>h</mi></mrow><mrow><mi>m</mi><mi>v</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>6.63</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>34</mn></mrow></msup></mrow><mrow><mo stretchy="false">&#x00028;</mo><mn>9.11</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>31</mn></mrow></msup><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>1.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mn>6</mn></mrow></msup><mo stretchy="false">&#x00029;</mo></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>&#x003BB;</mi><mo>&#x0003D;</mo><mn>7.3</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>10</mn></mrow></msup><mspace width="0.167em" /><mtext>m</mtext></mrow></math>
     </div>
     <p class="take">That's about the spacing between atoms in a crystal, so the crystal acts like a diffraction grating. A thrown ball's wavelength is far too tiny to ever notice.</p>
   </div>
@@ -210,8 +219,10 @@ body.present .guide{display:none}
     <h4>A medical isotope</h4>
     <p>A sample contains 80 mg of iodine-131, which has a half-life of 8.0 days. How much is left after 24 days?</p>
     <div class="work">
-      n = 24/8.0 = 3 half-lives<br>
-      80 → 40 → 20 → <b>10 mg</b> (that's (½)³ = ⅛ of it)
+      <math class="eq" display="block"><mrow><mi>n</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>t</mi></mrow><mrow><msub><mi>t</mi><mrow><mn>1</mn><mo>&#x0002F;</mo><mn>2</mn></mrow></msub></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>24</mn></mrow><mrow><mn>8.0</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>3</mn><mtext>&#x000A0;half-lives</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><mi>N</mi><mo>&#x0003D;</mo><msub><mi>N</mi><mn>0</mn></msub><mspace width="0.167em" /><mo stretchy="false">&#x00028;</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac></mstyle><msup><mo stretchy="false">&#x00029;</mo><mrow><mi>n</mi></mrow></msup><mo>&#x0003D;</mo><mn>80</mn><mspace width="0.167em" /><mo stretchy="false">&#x00028;</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac></mstyle><msup><mo stretchy="false">&#x00029;</mo><mrow><mn>3</mn></mrow></msup></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>N</mi><mo>&#x0003D;</mo><mn>10</mn><mspace width="0.167em" /><mtext>mg</mtext></mrow></math>
+      <p class="wt">That's 80 → 40 → 20 → 10 mg, or ⅛ of the sample.</p>
     </div>
     <p class="take">The other 70 mg hasn't vanished; it has decayed into a different element (xenon). The activity has also dropped to ⅛.</p>
   </div>
@@ -221,8 +232,10 @@ body.present .guide{display:none}
     <h4>Balancing alpha and beta decay</h4>
     <p>Write the decay equations for uranium-238 (alpha decay) and carbon-14 (beta-minus decay).</p>
     <div class="work">
-      <sup>238</sup><sub>92</sub>U → <sup>234</sup><sub>90</sub>Th + <sup>4</sup><sub>2</sub>He<br>
-      <sup>14</sup><sub>6</sub>C → <sup>14</sup><sub>7</sub>N + <sup>0</sup><sub>−1</sub>e + antineutrino
+      <p class="wt">Alpha decay: A drops by 4 and Z by 2.</p>
+      <math class="eq" display="block"><mrow><msubsup><mrow /><mrow><mspace width="0.278em" /><mn>92</mn></mrow><mrow><mn>238</mn></mrow></msubsup><mtext>U</mtext><mspace width="0.278em" /><mo>&#x02192;</mo><mspace width="0.278em" /><msubsup><mrow /><mrow><mspace width="0.278em" /><mn>90</mn></mrow><mrow><mn>234</mn></mrow></msubsup><mtext>Th</mtext><mo>&#x0002B;</mo><msubsup><mrow /><mrow><mn>2</mn></mrow><mrow><mn>4</mn></mrow></msubsup><mtext>He</mtext></mrow></math>
+      <p class="wt">Beta-minus decay: a neutron becomes a proton, so Z goes up by 1.</p>
+      <math class="eq" display="block"><mrow><msubsup><mrow /><mrow><mspace width="0.278em" /><mn>6</mn></mrow><mrow><mn>14</mn></mrow></msubsup><mtext>C</mtext><mspace width="0.278em" /><mo>&#x02192;</mo><mspace width="0.278em" /><msubsup><mrow /><mrow><mspace width="0.278em" /><mn>7</mn></mrow><mrow><mn>14</mn></mrow></msubsup><mtext>N</mtext><mo>&#x0002B;</mo><msubsup><mrow /><mrow><mo>&#x02212;</mo><mn>1</mn></mrow><mrow><mspace width="0.278em" /><mspace width="0.278em" /><mn>0</mn></mrow></msubsup><mtext>e</mtext><mo>&#x0002B;</mo><mover><mrow><mi>&#x003BD;</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover></mrow></math>
     </div>
     <p class="take">Check the top and bottom numbers: 238 = 234 + 4 and 92 = 90 + 2; 14 = 14 + 0 and 6 = 7 − 1. Losing Z changes the element.</p>
   </div>
@@ -239,9 +252,11 @@ body.present .guide{display:none}
     <h4>The mass defect of helium-4</h4>
     <p>Two protons (1.007276 u each) and two neutrons (1.008665 u each) make a helium-4 nucleus of mass 4.001506 u. Find the binding energy and the binding energy per nucleon.</p>
     <div class="work">
-      Separate nucleons: 2(1.007276) + 2(1.008665) = 4.031882 u<br>
-      Δm = 4.031882 − 4.001506 = 0.030376 u<br>
-      Binding energy = (0.030376)(931.5) = <b>28.3 MeV</b>; per nucleon: <b>7.07 MeV</b>
+      <math class="eq" display="block"><mrow><msub><mi>m</mi><mrow><mtext>nucleons</mtext></mrow></msub><mo>&#x0003D;</mo><mn>2</mn><mo stretchy="false">&#x00028;</mo><mn>1.007276</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mn>2</mn><mo stretchy="false">&#x00028;</mo><mn>1.008665</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>4.031882</mn><mspace width="0.167em" /><mtext>u</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><mi>&#x00394;</mi><mi>m</mi><mo>&#x0003D;</mo><mn>4.031882</mn><mo>&#x02212;</mo><mn>4.001506</mn><mo>&#x0003D;</mo><mn>0.030376</mn><mspace width="0.167em" /><mtext>u</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>E</mi><mi>B</mi></msub><mo>&#x0003D;</mo><mi>&#x00394;</mi><mi>m</mi><mspace width="0.167em" /><mo stretchy="false">&#x00028;</mo><mn>931.5</mn><mspace width="0.167em" /><mtext>MeV/u</mtext><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.030376</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>931.5</mn><mo stretchy="false">&#x00029;</mo></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>E</mi><mi>B</mi></msub><mo>&#x0003D;</mo><mn>28.3</mn><mspace width="0.167em" /><mtext>MeV</mtext></mrow></math>
+      <math class="eq ans" display="block"><mrow><mfrac><mrow><msub><mi>E</mi><mi>B</mi></msub></mrow><mrow><mi>A</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>28.3</mn></mrow><mrow><mn>4</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>7.07</mn><mspace width="0.167em" /><mtext>MeV&#x000A0;per&#x000A0;nucleon</mtext></mrow></math>
     </div>
     <p class="take">About 0.75% of the mass disappears when the nucleus forms. That same energy is what's released when hydrogen fuses into helium in stars.</p>
   </div>
