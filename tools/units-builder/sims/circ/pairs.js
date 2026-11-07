@@ -15,9 +15,10 @@ const SIM = {
   dvs(){ return [{ id: 'aB', name: 'Acceleration of the lighter object', short: 'a', sym: 'a', unit: 'm/s²', f: d => d.aB }, { id: 'aA', name: 'Acceleration of the heavier object', short: 'a', sym: 'a', unit: 'm/s²', f: d => d.aA }]; },
   work(v, d, mode, opt){
     const P = d.P;
-    if ((opt.sh || 'hide') === 'hide') return '<h4>Predict first</h4><div class="eq">Which force is bigger: ' + P.onB + ', or ' + P.onA + '? Which object speeds up more? Write your answers, then switch Forces to <b>Show them</b>.</div>';
-    return '<h4>1 · Newton’s 3rd law</h4><div class="eq">' + cap1(P.onB) + ' with ' + H.iv('F') + '. ' + cap1(P.onA) + ' with <b>the same ' + H.n(v.F, 'N') + '</b>, in the opposite direction. Always equal, always opposite, always on <b>different</b> objects.</div>' +
-      '<h4>2 · Same force, different effects</h4><div class="eq">' + P.B[0] + ': a = F/m = ' + fnum(v.F) + '/' + fnum(P.B[1]) + ' = <b>' + H.n(d.aB, 'm/s²') + '</b><br>' + P.A[0] + ': a = F/m = ' + fnum(v.F) + '/' + fnum(P.A[1]) + ' = <b>' + H.n(d.aA, 'm/s²') + '</b></div>' +
+    if ((opt.sh || 'hide') === 'hide') return '<h4>Predict first</h4><p class="st">Which force is bigger: ' + P.onB + ', or ' + P.onA + '? Which object speeds up more? Write your answers, then switch Forces to <b>Show them</b>.</p>';
+    return '<h4>1 · Newton’s 3rd law</h4><p class="st">' + cap1(P.onB) + ' with ' + H.iv('F') + '. ' + cap1(P.onA) + ' with <b>the same ' + H.n(v.F, 'N') + '</b>, in the opposite direction. Always equal, always opposite, always on <b>different</b> objects.</p>' +
+      '<h4>2 · Same force, different effects</h4><p class="st"><b>' + P.B[0] + ':</b></p>' + TEX`a = \frac{F}{m}` + TEX`a = \frac{${M.iv('F')}}{${M.n(P.B[1], 'kg')}}` + TEXA`a = ${M.n(d.aB, 'm/s²')}` +
+      '<p class="st"><b>' + P.A[0] + ':</b></p>' + TEX`a = \frac{F}{m}` + TEX`a = \frac{${M.iv('F')}}{${M.n(P.A[1], 'kg')}}` + TEXA`a = ${M.n(d.aA, 'm/s²')}` +
       '<p class="note">The forces don’t cancel because they act on different objects. To see if something speeds up, add up only the forces acting <b>on it</b>.' + (mode === 'rocket' ? ' A rocket needs no air to push on: it pushes on its own exhaust.' : mode === 'wall' ? ' You roll backward because the wall pushes you; the wall is attached to the whole Earth, so its acceleration is far too small to notice.' : '') + '</p>';
   },
   draw(v, d, mode, opt){

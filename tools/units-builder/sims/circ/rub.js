@@ -25,15 +25,15 @@ const SIM = {
   },
   work(v, d, mode){
     if (mode === 'pol'){ const near = d.neg ? 'positive' : 'negative', far = d.neg ? 'negative' : 'positive';
-      return '<h4>1 · The object is neutral</h4><div class="eq">Equal numbers of + and − charges. Rubbing or touching is not needed.</div>' +
-        '<h4>2 · The charges shift</h4><div class="eq">' + (d.cond ? 'In a <b>conductor</b>, free electrons ' + (d.neg ? 'are pushed away to the far side' : 'are pulled to the near side') + '. The near side ends up ' + near + ', the far side ' + far + '.' : 'In an <b>insulator</b>, electrons can’t travel, but each molecule’s electrons shift a tiny bit. Every molecule lines up with its ' + near + ' end toward the rod.') + '</div>' +
-        '<h4>3 · Why it is attracted</h4><div class="eq">The ' + near + ' side is <b>closer</b> to the rod than the ' + far + ' side. Closer charges push or pull harder, so the attraction beats the repulsion: <b>net pull toward the rod</b>.</div>' +
+      return '<h4>1 · The object is neutral</h4><p class="st">Equal numbers of + and − charges. Rubbing or touching is not needed.</p>' +
+        '<h4>2 · The charges shift</h4><p class="st">' + (d.cond ? 'In a <b>conductor</b>, free electrons ' + (d.neg ? 'are pushed away to the far side' : 'are pulled to the near side') + '. The near side ends up ' + near + ', the far side ' + far + '.' : 'In an <b>insulator</b>, electrons can’t travel, but each molecule’s electrons shift a tiny bit. Every molecule lines up with its ' + near + ' end toward the rod.') + '</p>' +
+        '<h4>3 · Why it is attracted</h4><p class="st">The ' + near + ' side is <b>closer</b> to the rod than the ' + far + ' side. Closer charges push or pull harder, so the attraction beats the repulsion: <b>net pull toward the rod</b>.</p>' +
         '<p class="note">That is why a charged balloon sticks to a neutral wall, and a charged comb picks up bits of paper. A charged object attracts a neutral one whatever its sign.</p>'; }
     if (!d.lose) return '<h4>Same material</h4><div class="bad">Rubbing two pieces of the same material moves no electrons on average. Pick two different materials.</div>';
     const giver = d.lose === 'A' ? TRIBO[v.a] : TRIBO[v.b], taker = d.lose === 'A' ? TRIBO[v.b] : TRIBO[v.a];
-    return '<h4>1 · Which way do electrons go?</h4><div class="eq">' + taker + ' is lower on the series, so it grabs electrons. Electrons move from the <b>' + giver.toLowerCase() + '</b> to the <b>' + taker.toLowerCase() + '</b>.</div>' +
-      '<h4>2 · The signs</h4><div class="eq">' + giver + ' loses electrons → <b>positive</b>. ' + taker + ' gains electrons → <b>negative</b>. Protons never move.</div>' +
-      '<h4>3 · How much charge</h4><div class="eq">Q = ne = (' + fnum(d.ne) + ')(1.6 × 10⁻¹⁹ C) = <b>' + H.n(d.Q, 'C') + '</b> on each, +Q and −Q.</div>' +
+    return '<h4>1 · Which way do electrons go?</h4><p class="st">' + taker + ' is lower on the series, so it grabs electrons. Electrons move from the <b>' + giver.toLowerCase() + '</b> to the <b>' + taker.toLowerCase() + '</b>.</p>' +
+      '<h4>2 · The signs</h4><p class="st">' + giver + ' loses electrons → <b>positive</b>. ' + taker + ' gains electrons → <b>negative</b>. Protons never move.</p>' +
+      '<h4>3 · How much charge</h4>' + TEX`Q = ne` + TEX`Q = (${M.n(d.ne)})(1.6\times10^{-19}\,\text{C})` + TEXA`Q = ${M.n(d.Q, 'C')}` + '<p class="st">That is +Q on the ' + giver.toLowerCase() + ' and −Q on the ' + taker.toLowerCase() + ': the same size on each.</p>' +
       '<p class="note">Charge is conserved: the total is still zero, it has just been separated. Materials farther apart on the series trade more electrons. (Real series vary a little from list to list.)</p>';
   },
   draw(v, d, mode, opt, t){

@@ -15,11 +15,12 @@ const SIM = {
   calc(v){ const a = v.v * v.v / v.r; return { a, F: v.m * a }; },
   dvs(){ return [{ id: 'F', name: 'Net force (inward)', short: 'F_net', sym: 'F<sub>net</sub>', unit: 'N', f: d => d.F }, { id: 'a', name: 'Acceleration (inward)', short: 'a', sym: 'a', unit: 'm/s²', f: d => d.a }]; },
   work(v, d, mode){
-    const calc = '<h4>2 · How big is the inward force?</h4><div class="eq">a = v²/r = (' + H.iv('v') + ')²/' + H.iv('r') + ' = <b>' + H.n(d.a, 'm/s²') + '</b><br>F<sub>net</sub> = ma = (' + H.iv('m') + ')(' + fnum(d.a) + ') = <b>' + H.n(d.F, 'N') + '</b> toward the centre</div>';
-    if (mode === 'car') return '<h4>1 · What really happens</h4><div class="eq">Your body wants to keep going in a straight line (inertia). The car turns; the <b>door pushes you inward</b> to make you turn with it. You feel “thrown outward”, but nothing pushes you out: the car is turning under you.</div>' + calc.replace('inward force', 'door’s push') +
+    const calc = '<h4>2 · How big is the inward force?</h4>' + TEX`a = \frac{v^2}{r}` + TEX`a = \frac{(${M.iv('v')})^2}{${M.iv('r')}}` + TEXA`a = ${M.n(d.a, 'm/s²')}` +
+      TEX`F_{\text{net}} = ma` + TEX`F_{\text{net}} = (${M.iv('m')})(${M.n(d.a)})` + TEXA`F_{\text{net}} = ${M.n(d.F, 'N')}` + '<p class="st">The net force points toward the centre.</p>';
+    if (mode === 'car') return '<h4>1 · What really happens</h4><p class="st">Your body wants to keep going in a straight line (inertia). The car turns; the <b>door pushes you inward</b> to make you turn with it. You feel “thrown outward”, but nothing pushes you out: the car is turning under you.</p>' + calc.replace('inward force', 'door’s push') +
       '<p class="note">' + ((v.door || 'shut') === 'open' ? 'Door open: no inward force, so you go off in a straight line along the tangent, not straight out sideways.' : 'There is no “centrifugal force”. Look at it from the ground: the only horizontal force on you points to the centre.') + '</p>';
-    return '<h4>1 · While it is on the string</h4><div class="eq">The velocity is always <b>tangent</b> to the circle. The string pulls <b>toward the centre</b>, so the net force (and the acceleration) point inward. The speed stays the same; only the direction changes.</div>' + calc +
-      '<h4>3 · Cut the string</h4><div class="eq">No more inward force → no acceleration → the ball goes in a <b>straight line along the tangent</b>, in the direction it was moving at that instant. It does not fly straight outward.</div>' +
+    return '<h4>1 · While it is on the string</h4><p class="st">The velocity is always <b>tangent</b> to the circle. The string pulls <b>toward the centre</b>, so the net force (and the acceleration) point inward. The speed stays the same; only the direction changes.</p>' + calc +
+      '<h4>3 · Cut the string</h4><p class="st">No more inward force → no acceleration → the ball goes in a <b>straight line along the tangent</b>, in the direction it was moving at that instant. It does not fly straight outward.</p>' +
       '<p class="note">Seen from above (ignore gravity). Release at 3 o’clock while going counter-clockwise and the ball flies straight up the page.</p>';
   },
   draw(v, d, mode, opt, t, dt, A){

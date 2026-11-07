@@ -28,26 +28,27 @@ const SIM = {
   },
   dvs(mode){ if (mode === 'stop') return [{ id: 'dist', name: 'Stopping distance', short: 'd', sym: 'd', unit: 'm', noTag: true, f: d => d.dist }]; return mode === 'lift' ? [{ id: 'work', name: 'Work you do', short: 'W', sym: 'W', unit: 'J', noTag: true, f: d => d.work }] : [{ id: 'Wn', name: 'Net work', short: 'W net', sym: 'W', unit: 'J', noTag: true, f: d => d.Wn }]; },
   work(v, d, mode, opt){
-    if (mode === 'stop') return '<h4>1 · Kinetic energy before braking</h4><div class="eq">KE<sub>i</sub> = ½mv² = ½(' + fint(v.m) + ')(' + fint(v.v) + ')² = <b>' + fint(d.KE) + ' J</b></div>' +
-      '<h4>2 · Work done by friction</h4><div class="eq">The car stops, so KE<sub>f</sub> = 0. Friction takes all of the KE away:<br>W = KE<sub>f</sub> − KE<sub>i</sub> = <b>−' + fint(d.KE) + ' J</b></div>' +
-      '<h4>3 · Stopping distance</h4><div class="eq">W = F × d → d = ' + fint(d.KE) + ' J ÷ ' + fint(v.Ff) + ' N = <b>' + fint(d.dist) + ' m</b></div>' +
-      '<h4>4 · Coefficient of friction</h4><div class="eq">F<sub>f</sub> = μF<sub>N</sub> → μ = ' + fint(v.Ff) + ' ÷ (' + fint(v.m) + ' × 10) = <b>' + fint(d.mu) + '</b>' + (d.mu > 1 ? ' — higher than real tires on dry road (about 0.7–0.9)' : '') + '</div>' +
+    if (mode === 'stop') return '<h4>1 · Kinetic energy before braking</h4>' + TEX`\text{KE}_i = \tfrac{1}{2}mv^2` + TEX`\text{KE}_i = \tfrac{1}{2}(${M.iv('m', 1)})(${M.iv('v', 1)})^2` + TEXA`\text{KE}_i = ${M.n(d.KE, 'J')}` +
+      '<h4>2 · Work done by friction</h4><p class="st">The car stops, so KE<sub>f</sub> = 0. Friction takes all of the KE away:</p>' + TEX`\text{KE}_i + W = \text{KE}_f` + TEX`${M.n(d.KE)} + W = 0` + TEXA`W = ${M.n(-d.KE, 'J')}` +
+      '<h4>3 · Stopping distance</h4><p class="st">Friction’s work has size F × d, so:</p>' + TEX`d = \frac{|W|}{F_f}` + TEX`d = \frac{${M.n(d.KE)}}{${M.iv('Ff', 1)}}` + TEXA`d = ${M.n(d.dist, 'm')}` +
+      '<h4>4 · Coefficient of friction</h4>' + TEX`\mu = \frac{F_f}{F_N} = \frac{F_f}{mg}` + TEX`\mu = \frac{${M.iv('Ff', 1)}}{(${M.iv('m', 1)})(10)}` + TEXA`\mu = ${M.n(d.mu)}` + (d.mu > 1 ? '<p class="st">That is higher than real tires on a dry road (about 0.7–0.9).</p>' : '') +
       '<p class="note">KE depends on v², so <b>twice the speed means 4 times the KE</b>, and with the same brakes, 4 times the stopping distance. That’s why speeding is so dangerous. The KE turns into heat in the brakes and tires.</p>';
     if (mode === 'lift'){
-      if (d.carry) return '<h4>1 · Force and motion</h4><div class="eq">You hold the box up with ' + fint(d.W) + ' N (its weight). The box moves sideways ' + fint(v.h) + ' m.</div>' +
-        '<h4>2 · Work = 0</h4><div class="eq">Your force is <b>up</b>, the motion is <b>sideways</b>. A force only does work if the object moves along the force.<br>W = <b>0 J</b></div>' +
+      if (d.carry) return '<h4>1 · Force and motion</h4><p class="st">You hold the box up with a force equal to its weight. The box moves sideways ' + H.n(v.h, 'm') + '.</p>' + TEX`F = mg` + TEX`F = (${M.iv('m', 1)})(10)` + TEXA`F = ${M.n(d.W, 'N')}` +
+        '<h4>2 · Work = 0</h4><p class="st">Your force is <b>up</b>, the motion is <b>sideways</b>. A force only does work if the object moves along the force.</p>' + TEXA`W = 0\,\text{J}` +
         '<p class="note">Your arms get tired, but in physics you did no work on the box: its energy didn’t change. (A tiny push to start and stop doesn’t count here.)</p>';
-      return '<h4>1 · Force needed</h4><div class="eq">To lift at a steady speed, push up with a force equal to the weight:<br>F = mg = ' + fint(v.m) + ' × 10 = <b>' + fint(d.W) + ' N</b></div>' +
-        '<h4>2 · Work = force × distance</h4><div class="eq">W = F × d = ' + fint(d.W) + ' N × ' + fint(v.h) + ' m = <b>' + fint(d.work) + ' J</b></div>' +
-        '<h4>3 · Where did the energy go?</h4><div class="eq">Into potential energy: PE = mgh = ' + fint(v.m) + ' × 10 × ' + fint(v.h) + ' = <b>' + fint(d.PE) + ' J</b></div>' +
-        '<p class="note">Lowering the box back down, the box pushes back on you: gravity gives back the ' + fint(d.PE) + ' J.</p>';
+      return '<h4>1 · Force needed</h4><p class="st">To lift at a steady speed, push up with a force equal to the weight:</p>' + TEX`F = mg` + TEX`F = (${M.iv('m', 1)})(10)` + TEXA`F = ${M.n(d.W, 'N')}` +
+        '<h4>2 · Work = force × distance</h4>' + TEX`W = F\,d` + TEX`W = (${M.n(d.W, 'N')})(${M.iv('h')})` + TEXA`W = ${M.n(d.work, 'J')}` +
+        '<h4>3 · Where did the energy go?</h4><p class="st">Into potential energy:</p>' + TEX`\text{PE} = mgh` + TEX`\text{PE} = (${M.iv('m', 1)})(10)(${M.iv('h', 1)})` + TEXA`\text{PE} = ${M.n(d.PE, 'J')}` +
+        '<p class="note">Lowering the box back down, the box pushes back on you: gravity gives back the ' + H.n(d.PE, 'J') + '.</p>';
     }
     if (d.stuck) return '<h4>1 · Does it move?</h4><div class="bad">Your push (' + fint(v.F) + ' N) is less than friction (' + fint(d.Ff) + ' N): the box doesn’t move, so d = 0 and <b>no work is done</b>.</div>';
-    let s = '<h4>1 · Work done by you</h4><div class="eq">W = F × d = ' + fint(v.F) + ' N × ' + fint(v.d) + ' m = <b>' + fint(d.Wa) + ' J</b></div>';
-    if (d.Ff) s += '<h4>2 · Work done by friction</h4><div class="eq">Friction pushes backward, against the motion, so its work is negative:<br>W = −' + fint(d.Ff) + ' N × ' + fint(v.d) + ' m = <b>' + fint(d.Wf) + ' J</b></div>';
-    s += '<h4>' + (d.Ff ? 3 : 2) + ' · Gravity and the normal force</h4><div class="eq">They point up and down; the box moves sideways. Work = <b>0 J</b> each.</div>';
-    s += '<h4>' + (d.Ff ? 4 : 3) + ' · Net work = change in kinetic energy</h4><div class="eq">W<sub>net</sub> = ' + fint(d.Wa) + (d.Ff ? ' + (' + fint(d.Wf) + ')' : '') + ' = <b>' + fint(d.Wn) + ' J</b> → the box ends with KE = ' + fint(d.KE) + ' J (starting from rest)</div>';
-    s += d.Wn > 0 ? '<h4>' + (d.Ff ? 5 : 4) + ' · Final speed</h4><div class="eq">KE = ½mv² → ' + fint(d.KE) + ' = ½ × ' + fint(v.m) + ' × v² → v² = ' + fint(2 * d.KE / v.m) + ' → v = <b>' + fint(d.vel) + ' m/s</b></div>' : '<p class="note">Push = friction: the net work is zero, so the kinetic energy doesn’t change. Give it a shove to start and it slides at a <b>constant speed</b>; all your work turns into heat.</p>';
+    let s = '<h4>1 · Work done by you</h4>' + TEX`W = F\,d` + TEX`W = (${M.iv('F')})(${M.iv('d')})` + TEXA`W_{\text{you}} = ${M.n(d.Wa, 'J')}`;
+    if (d.Ff) s += '<h4>2 · Work done by friction</h4><p class="st">Friction pushes backward, against the motion, so its work is negative:</p>' + TEX`W = -F_f\,d` + TEX`W = -(${M.iv('Ff')})(${M.iv('d')})` + TEXA`W_{\text{friction}} = ${M.n(d.Wf, 'J')}`;
+    s += '<h4>' + (d.Ff ? 3 : 2) + ' · Gravity and the normal force</h4><p class="st">They point up and down; the box moves sideways. Each does zero work:</p>' + TEXA`W = 0\,\text{J}`;
+    s += '<h4>' + (d.Ff ? 4 : 3) + ' · Net work = change in kinetic energy</h4>' + (d.Ff ? TEX`W_{\text{net}} = W_{\text{you}} + W_{\text{friction}}` + TEX`W_{\text{net}} = ${M.n(d.Wa)} + ${M.p(d.Wf)}` : TEX`W_{\text{net}} = W_{\text{you}}`) + TEXA`W_{\text{net}} = ${M.n(d.Wn, 'J')}` +
+      '<p class="st">The box starts from rest:</p>' + TEX`\text{KE}_i + W_{\text{net}} = \text{KE}_f` + TEX`0 + ${M.n(d.Wn)} = \text{KE}_f` + TEXA`\text{KE}_f = ${M.n(d.KE, 'J')}`;
+    s += d.Wn > 0 ? '<h4>' + (d.Ff ? 5 : 4) + ' · Final speed</h4>' + TEX`\text{KE} = \tfrac{1}{2}mv^2` + TEX`v = \sqrt{\frac{2\,\text{KE}}{m}}` + TEX`v = \sqrt{\frac{2(${M.n(d.KE)})}{${M.iv('m', 1)}}}` + TEXA`v = ${M.n(d.vel, 'm/s')}` : '<p class="note">Push = friction: the net work is zero, so the kinetic energy doesn’t change. Give it a shove to start and it slides at a <b>constant speed</b>; all your work turns into heat.</p>';
     return s;
   },
   draw(v, d, mode, opt, t){

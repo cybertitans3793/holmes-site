@@ -45,28 +45,29 @@ const SIM = {
   },
   dvs(){ return [{ id: 'x', name: '—', short: '', sym: '', unit: '', noTag: true, f: () => 0 }]; },
   work(v, d, mode, opt){
+    const n1 = x => '<mn>' + x.toFixed(1) + '</mn>';
     if (mode === 'red'){ const chk = opt.chk === 'yes', G = d.G;
-      return '<h4>1 · Find the red hydrogen line</h4><div class="eq">In the lab, hydrogen’s red line is at <b>656 nm</b>. Read where it lands in Galaxy ' + v.g + '’s light (use the zoom).' + (chk ? ' It is at <b>' + G.ha.toFixed(1) + ' nm</b>.' : '') + '</div>' +
-        '<h4>2 · How far did it shift?</h4><div class="eq">Δλ = (galaxy) − 656 nm' + (chk ? ' = <b>' + d.dl.toFixed(1) + ' nm</b> toward red → moving <b>away</b>' : '') + '</div>' +
-        '<h4>3 · Speed of the galaxy</h4><div class="eq">speed = 300,000 km/s × Δλ ÷ 656' + (chk ? ' = <b>' + Math.round(G.v).toLocaleString('en-US') + ' km/s</b>' : '') + '</div>' +
-        '<h4>4 · Plot speed vs. distance for all 8 galaxies</h4><div class="eq">Distance (from how bright it looks): <b>' + G.d + ' million light-years</b>.' + (chk ? '<br>The points make a straight line through zero: <b>the farther away a galaxy is, the faster it moves away</b> (Hubble’s law, about 22 km/s for every million light-years).' : '') + '</div>' +
-        (chk ? '<h4>5 · Run it backward</h4><div class="eq">If every galaxy moved apart at a steady rate, they were all together about distance ÷ speed ≈ <b>' + d.age.toFixed(1) + ' billion years</b> ago — the Big Bang.</div>' : '<p class="note">Fill in a table: galaxy, distance, red line (nm), Δλ, speed. Then turn on <b>Show</b> to check.</p>');
+      return '<h4>1 · Find the red hydrogen line</h4><p class="st">In the lab, hydrogen’s red line is at <b>656 nm</b>. Read where it lands in Galaxy ' + v.g + '’s light (use the zoom).' + (chk ? ' It is at <b>' + G.ha.toFixed(1) + ' nm</b>.' : '') + '</p>' +
+        '<h4>2 · How far did it shift?</h4>' + TEX`\Delta\lambda = \lambda_{\text{galaxy}} - 656\,\text{nm}` + (chk ? TEX`\Delta\lambda = ${n1(G.ha)}\,\text{nm} - 656\,\text{nm}` + TEXA`\Delta\lambda = ${n1(d.dl)}\,\text{nm}` + '<p class="st">Shifted toward red → the galaxy is moving <b>away</b>.</p>' : '') +
+        '<h4>3 · Speed of the galaxy</h4>' + TEX`\text{speed} = (300\,000\,\text{km/s})\,\frac{\Delta\lambda}{656\,\text{nm}}` + (chk ? TEX`\text{speed} = (300\,000\,\text{km/s})\,\frac{${n1(d.dl)}\,\text{nm}}{656\,\text{nm}}` + TEXA`\text{speed} = ${'<mn>' + Math.round(G.v).toLocaleString('en-US') + '</mn>'}\,\text{km/s}` : '') +
+        '<h4>4 · Plot speed vs. distance for all 8 galaxies</h4><p class="st">Distance (from how bright it looks): <b>' + G.d + ' million light-years</b>.' + (chk ? '<br>The points make a straight line through zero: <b>the farther away a galaxy is, the faster it moves away</b> (Hubble’s law, about 22 km/s for every million light-years).' : '') + '</p>' +
+        (chk ? '<h4>5 · Run it backward</h4><p class="st">If every galaxy moved apart at a steady rate, they were all together a time ago of about:</p>' + TEX`\text{time} = \frac{\text{distance}}{\text{speed}}` + TEXA`\text{time} \approx ${n1(d.age)}\,\text{billion years}` + '<p class="st">That is the Big Bang.</p>' : '<p class="note">Fill in a table: galaxy, distance, red line (nm), Δλ, speed. Then turn on <b>Show</b> to check.</p>');
     }
     if (mode === 'spec'){ const S = d.S, has = d.el !== 'none' && S[2].includes(d.el);
-      return '<h4>1 · Every element has its own fingerprint</h4><div class="eq">Each element absorbs or gives off light at its own exact colors. A star’s spectrum shows dark lines where its gases absorb.</div>' +
-        '<h4>2 · ' + S[0] + '</h4><div class="eq">' + (d.el === 'none' ? 'Pick an element to compare.' : ELS[d.el][0] + ': ' + (has ? '<b>lines match — it’s there</b>.' : 'no match.')) + '</div>' +
-        '<h4>3 · What the whole universe is made of</h4><div class="eq">Add up all the stars and gas clouds: about <b>¾ hydrogen and ¼ helium</b> (by mass), with only about 2% everything else. That is exactly what the Big Bang theory predicts the first 3 minutes made.</div>' +
+      return '<h4>1 · Every element has its own fingerprint</h4><p class="st">Each element absorbs or gives off light at its own exact colors. A star’s spectrum shows dark lines where its gases absorb.</p>' +
+        '<h4>2 · ' + S[0] + '</h4><p class="st">' + (d.el === 'none' ? 'Pick an element to compare.' : ELS[d.el][0] + ': ' + (has ? '<b>lines match — it’s there</b>.' : 'no match.')) + '</p>' +
+        '<h4>3 · What the whole universe is made of</h4><p class="st">Add up all the stars and gas clouds: about <b>¾ hydrogen and ¼ helium</b> (by mass), with only about 2% everything else. That is exactly what the Big Bang theory predicts the first 3 minutes made.</p>' +
         '<p class="note">' + (v.src === 1 ? 'The Sun has lots of helium, but its surface is too cool to show helium lines. Helium was actually discovered in the Sun’s light during an eclipse in 1868, before it was found on Earth! ' : '') + 'Everything heavier than helium — the carbon in you, the iron in Earth — was made later inside stars (see the Star Life Cycle tab).</p>';
     }
-    if (mode === 'cmb') return '<h4>1 · 380,000 years: light is set free</h4><div class="eq">Atoms form, the fog clears, and the light flies off in every direction. The universe glows at about <b>3000 K</b> — an orange-red glow, like a hot stove coil.</div>' +
-      '<h4>2 · Space stretches the light</h4><div class="eq">Now: ' + tfmt(v.lt) + '. That light has been stretched <b>' + big(3000 / d.T) + '×</b> longer. Temperature: <b>' + big(d.T) + ' K</b>. Its peak is in <b>' + d.band + '</b>.</div>' +
-      '<h4>3 · Today</h4><div class="eq">Stretched about 1100× since then: the glow is now <b>2.7 K microwaves</b>, coming from every direction in the sky.</div>' +
+    if (mode === 'cmb') return '<h4>1 · 380,000 years: light is set free</h4><p class="st">Atoms form, the fog clears, and the light flies off in every direction. The universe glows at about <b>3000 K</b> — an orange-red glow, like a hot stove coil.</p>' +
+      '<h4>2 · Space stretches the light</h4><p class="st">Now: ' + tfmt(v.lt) + '. Its temperature is <b>' + big(d.T) + ' K</b>, so the light has been stretched:</p>' + TEX`\text{stretch} = \frac{3000\,\text{K}}{T}` + TEX`\text{stretch} = \frac{3000\,\text{K}}{${M.n(d.T, 'K')}}` + TEXA`\text{stretch} = ${M.n(3000 / d.T)}\times` + '<p class="st">longer. Its peak is in <b>' + d.band + '</b>.</p>' +
+      '<h4>3 · Today</h4><p class="st">Stretched about 1100× since then: the glow is now <b>2.7 K microwaves</b>, coming from every direction in the sky.</p>' +
       '<p class="note">Found by accident in 1965 by Penzias and Wilson as a hiss in their radio antenna they couldn’t get rid of. A little of the static on an old TV between channels was this leftover glow of the Big Bang.</p>';
     const E = EPOCHS[d.ep];
-    return '<h4>1 · ' + tfmt(v.lt) + ' after the Big Bang</h4><div class="eq"><b>' + E[1] + '.</b> ' + E[2] + '</div>' +
-      '<h4>2 · Temperature</h4><div class="eq"><b>' + big(d.T) + ' K</b>' + (d.T > 5800 ? ' — hotter than the surface of the Sun (5800 K)' : d.T > 300 ? '' : ' — colder than anything on Earth') + '</div>' +
-      '<h4>3 · The light it gives off</h4><div class="eq">Mostly <b>' + d.band + '</b>. Each bit of light carries about <b>' + efmt(d.E) + '</b> the energy of visible light.</div>' +
-      '<h4>4 · Expansion</h4><div class="eq">This patch of space was <b>' + big(d.shrink) + '×</b> smaller than today.' + (d.shrink < 1.01 ? ' (It’s today!)' : '') + '</div>' +
+    return '<h4>1 · ' + tfmt(v.lt) + ' after the Big Bang</h4><p class="st"><b>' + E[1] + '.</b> ' + E[2] + '</p>' +
+      '<h4>2 · Temperature</h4><p class="st"><b>' + big(d.T) + ' K</b>' + (d.T > 5800 ? ' — hotter than the surface of the Sun (5800 K)' : d.T > 300 ? '' : ' — colder than anything on Earth') + '</p>' +
+      '<h4>3 · The light it gives off</h4><p class="st">Mostly <b>' + d.band + '</b>. Compared with visible light (about 5000 K):</p>' + TEX`\text{energy of each bit of light} \approx \frac{T}{5000\,\text{K}}` + TEX`\text{energy} \approx \frac{${M.n(d.T, 'K')}}{5000\,\text{K}}` + TEXA`\text{energy} \approx ${M.n(d.E)}\times\ \text{visible light}` +
+      '<h4>4 · Expansion</h4><p class="st">Compared with today (2.725 K), this patch of space was smaller by:</p>' + TEX`\text{shrink} = \frac{T}{2.725\,\text{K}}` + TEX`\text{shrink} = \frac{${M.n(d.T, 'K')}}{2.725\,\text{K}}` + TEXA`\text{shrink} = ${M.n(d.shrink)}\times` + (d.shrink < 1.01 ? '<p class="st">(It’s today!)</p>' : '') +
       '<p class="note">As space expands, light gets stretched to longer wavelengths and the same energy spreads out over more space, so the universe cools. The Big Bang wasn’t an explosion <i>into</i> space — space itself is stretching everywhere at once, so there is no center.</p>';
   },
   draw(v, d, mode, opt, t, dt, A){

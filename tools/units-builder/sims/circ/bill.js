@@ -23,14 +23,16 @@ const SIM = {
     return [{ id: 'cost', name: 'Cost per month', short: 'cost', sym: 'cost', unit: '$', f: d => d.cost }, { id: 'kWhMonth', name: 'Energy per month', short: 'E', sym: 'E', unit: 'kWh', f: d => d.kWhMonth }];
   },
   work(v, d, mode){
-    if (mode === 'ckt') return '<h4>1 · Outlets are in parallel</h4><div class="eq">Every appliance gets the full 120 V, and the currents add up in the wire to the breaker.</div>' +
-      '<h4>2 · Current for each</h4><div class="eq">' + d.list.filter(x => x[1]).map(x => x[0] + ': I = P/V = ' + x[1] + '/120 = ' + fnum(x[1] / 120) + ' A').join('<br>') + '</div>' +
-      '<h4>3 · Total</h4><div class="eq">I = ' + H.n(d.I, 'A') + ' → ' + (d.trip ? '<b>more than 15 A: the breaker trips!</b>' : 'under 15 A: OK') + '</div>' +
-      '<p class="note">The breaker protects the wires in the wall: too much current heats them up and could start a fire. High-power heaters (toasters, hair dryers, space heaters) use the most current.</p>';
-    return '<h4>1 · Current</h4><div class="eq">P = IV → I = P/V = ' + d.P + ' W / 120 V = <b>' + H.n(d.I, 'A') + '</b></div>' +
-      '<h4>2 · Energy per day</h4><div class="eq">E = Pt = (' + d.P / 1000 + ' kW)(' + H.iv('h') + ') = <b>' + H.n(d.kWhDay, 'kWh') + '</b></div>' +
-      '<h4>3 · Per month (30 days)</h4><div class="eq">' + fnum(d.kWhDay) + ' × 30 = <b>' + H.n(d.kWhMonth, 'kWh') + '</b></div>' +
-      '<h4>4 · Cost</h4><div class="eq">' + fnum(d.kWhMonth) + ' kWh × $' + (v.r / 100).toFixed(2) + '/kWh = <b>$' + d.cost.toFixed(2) + '</b> per month</div>' +
+    if (mode === 'ckt'){ const on = d.list.filter(x => x[1]), n = on.length, cur = on.map((x, i) => '<p class="st"><b>' + x[0] + ':</b></p>' + TEX`I = \frac{P}{V}` + TEX`I = \frac{${M.n(x[1], 'W')}}{${M.n(120, 'V')}}` + TEXA`I_${'<mn>' + (i + 1) + '</mn>'} = ${M.n(x[1] / 120, 'A')}`).join('');
+      const sym = [TEX`I_{\text{total}} = I_1`, TEX`I_{\text{total}} = I_1 + I_2`, TEX`I_{\text{total}} = I_1 + I_2 + I_3`][Math.max(1, n) - 1], num = on.map(x => M.n(x[1] / 120)).join('<mo>+</mo>');
+      return '<h4>1 · Outlets are in parallel</h4><p class="st">Every appliance gets the full 120 V, and the currents add up in the wire to the breaker.</p>' +
+        '<h4>2 · Current for each</h4>' + (n ? cur : '<p class="st">Nothing is plugged in.</p>') +
+        '<h4>3 · Total</h4>' + (n ? sym + TEX`I_{\text{total}} = ${num}` : '') + TEXA`I_{\text{total}} = ${M.n(d.I, 'A')}` + '<p class="st">' + (d.trip ? '<b>More than 15 A: the breaker trips!</b>' : 'Under 15 A: OK.') + '</p>' +
+        '<p class="note">The breaker protects the wires in the wall: too much current heats them up and could start a fire. High-power heaters (toasters, hair dryers, space heaters) use the most current.</p>'; }
+    return '<h4>1 · Current</h4>' + TEX`P = IV` + TEX`I = \frac{P}{V}` + TEX`I = \frac{${M.n(d.P, 'W')}}{${M.n(120, 'V')}}` + TEXA`I = ${M.n(d.I, 'A')}` +
+      '<h4>2 · Energy per day</h4>' + TEX`E = Pt` + TEX`E = (${M.n(d.P / 1000, 'kW')})(${M.iv('h')})` + TEXA`E_{\text{day}} = ${M.n(d.kWhDay, 'kWh')}` +
+      '<h4>3 · Per month (30 days)</h4>' + TEX`E_{\text{month}} = E_{\text{day}} \times 30` + TEX`E_{\text{month}} = (${M.n(d.kWhDay)})(30)` + TEXA`E_{\text{month}} = ${M.n(d.kWhMonth, 'kWh')}` +
+      '<h4>4 · Cost</h4>' + TEX`\text{cost} = E_{\text{month}} \times \text{price}` + TEX`\text{cost} = (${M.n(d.kWhMonth, 'kWh')})(${'<mtext>$</mtext>' + M.num(v.r / 100) + M.u('/kWh')})` + TEXA`\text{cost} = ${'<mtext>$' + d.cost.toFixed(2) + '</mtext>'}\,\text{per month}` +
       '<p class="note">The power company charges for energy (kWh), not power. A kilowatt-hour is 1000 W for 1 hour = 3.6 × 10⁶ J.</p>';
   },
   draw(v, d, mode){

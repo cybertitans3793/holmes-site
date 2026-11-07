@@ -28,19 +28,20 @@ const SIM = {
   },
   dvs(mode){ return [{ id: 'x', name: '—', short: '', sym: '', unit: '', noTag: true, f: () => 0 }]; },
   work(v, d, mode, opt){
-    if (mode === 'how') return '<h4>1 · Two kinds of waves leave at the same moment</h4><div class="eq">P waves (push–pull) travel about <b>8 km/s</b>. S waves (side to side) travel about <b>4 km/s</b>. The P wave always arrives first.</div>' +
-      '<h4>2 · Travel times for ' + fint(v.d) + ' km</h4><div class="eq">P: time = distance ÷ speed = ' + fint(v.d) + ' ÷ 8 = <b>' + fint(d.tP) + ' s</b><br>S: ' + fint(v.d) + ' ÷ 4 = <b>' + fint(d.tS) + ' s</b></div>' +
-      '<h4>3 · The time lag (S − P)</h4><div class="eq">' + fint(d.tS) + ' − ' + fint(d.tP) + ' = <b>' + fint(d.lag) + ' s</b></div>' +
-      '<h4>4 · Work backwards</h4><div class="eq">Every 1 s of lag means 8 km of distance:<br><b>distance = 8 × (S − P)</b> = 8 × ' + fint(d.lag) + ' = ' + fint(v.d) + ' km</div>' +
+    if (mode === 'how') return '<h4>1 · Two kinds of waves leave at the same moment</h4><p class="st">P waves (push–pull) travel about <b>8 km/s</b>. S waves (side to side) travel about <b>4 km/s</b>. The P wave always arrives first.</p>' +
+      '<h4>2 · Travel times for ' + fint(v.d) + ' km</h4><p class="st"><b>P wave:</b> time = distance ÷ speed</p>' + TEX`t_P = \frac{d}{v_P}` + TEX`t_P = \frac{${M.iv('d', 1)}}{8}` + TEXA`t_P = ${M.n(d.tP, 's')}` +
+      '<p class="st"><b>S wave:</b></p>' + TEX`t_S = \frac{d}{v_S}` + TEX`t_S = \frac{${M.iv('d', 1)}}{4}` + TEXA`t_S = ${M.n(d.tS, 's')}` +
+      '<h4>3 · The time lag (S − P)</h4>' + TEX`\text{lag} = t_S - t_P` + TEX`\text{lag} = ${M.n(d.tS)} - ${M.n(d.tP)}` + TEXA`\text{lag} = ${M.n(d.lag, 's')}` +
+      '<h4>4 · Work backwards</h4><p class="st">Every 1 s of lag means 8 km of distance:</p>' + TEX`\text{distance} = 8\,(t_S - t_P)` + TEX`\text{distance} = 8\,(${M.n(d.lag)})` + TEXA`\text{distance} = ${M.n(v.d, 'km')}` +
       '<p class="note">The farther away the station, the bigger the gap between the P and S waves — like seeing lightning before you hear thunder. (Real speeds vary with the rock; we use 8 and 4 km/s to keep the numbers simple.)</p>';
     const chk = opt.chk === 'yes';
     const rows = d.st.map(s => { const r = s.r, ok = r && Math.abs(r - s.D) <= 25;
       return '<tr><td style="color:' + s.c + '"><b>' + s.n + '</b></td>' + (chk ? '<td>' + clk(s.tP) + '</td><td>' + clk(s.tS) + '</td><td>' + fint(Math.round(s.lag)) + ' s</td><td>' + fint(Math.round(8 * Math.round(s.lag))) + ' km</td>' : '<td>?</td><td>?</td><td>?</td><td>?</td>') + '<td>' + (r ? fint(r) + ' km' + (chk ? (ok ? ' ✓' : ' ✗') : '') : '—') + '</td></tr>'; }).join('');
-    return '<h4>1 · Read each seismogram</h4><div class="eq">Find the time the <b>P wave</b> starts (first small wiggles) and the <b>S wave</b> starts (big wiggles). Subtract: S − P.</div>' +
-      '<h4>2 · Distance to each station</h4><div class="eq">distance = 8 km/s × (S − P)</div>' +
-      '<h4>3 · Draw the circles</h4><div class="eq">Set each circle’s radius to that station’s distance. The quake is somewhere on each circle. Where all <b>three</b> circles cross is the <b>epicenter</b>. Name its grid square (like C4).</div>' +
+    return '<h4>1 · Read each seismogram</h4><p class="st">Find the time the <b>P wave</b> starts (first small wiggles) and the <b>S wave</b> starts (big wiggles). Subtract: S − P.</p>' + TEX`\text{lag} = t_S - t_P` +
+      '<h4>2 · Distance to each station</h4>' + TEX`\text{distance} = (8\,\text{km/s})\,(\text{lag})` +
+      '<h4>3 · Draw the circles</h4><p class="st">Set each circle’s radius to that station’s distance. The quake is somewhere on each circle. Where all <b>three</b> circles cross is the <b>epicenter</b>. Name its grid square (like C4).</p>' +
       '<table style="width:100%;font:12px \'IBM Plex Mono\',monospace;border-collapse:collapse;margin:6px 0" border="1" cellpadding="3"><tr><th>Stn</th><th>P</th><th>S</th><th>S−P</th><th>dist.</th><th>your circle</th></tr>' + rows + '</table>' +
-      (chk ? '<div class="eq">Epicenter of quake #' + v.q + ': grid square <b>' + d.col + d.row + '</b> (the star).</div>' : '<p class="note">Copy the table onto your lab sheet and fill in the ? boxes from the seismograms. Turn on <b>Check my answer</b> when you are done.</p>');
+      (chk ? '<p class="st">Epicenter of quake #' + v.q + ': grid square <b>' + d.col + d.row + '</b> (the star).</p>' : '<p class="note">Copy the table onto your lab sheet and fill in the ? boxes from the seismograms. Turn on <b>Check my answer</b> when you are done.</p>');
   },
   draw(v, d, mode, opt, t){
     const mono = '"IBM Plex Mono",monospace', sg = '"Space Grotesk",sans-serif';
