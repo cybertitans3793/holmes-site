@@ -29,6 +29,8 @@
 .guide .work .wt{margin:6px 0 2px}
 .guide .ex .take{margin:8px 0 0;font-weight:500}
 .guide .ex svg{float:right;margin:0 0 6px 12px}
+.guide .gcard table+ul{margin-top:10px}
+.guide .ex svg.wide{float:none;display:block;max-width:100%;height:auto;margin:4px auto 10px}
 .guide .gcheck{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
 .guide .gcheck>p{margin:-4px 0 12px;color:var(--muted)}
 .guide ol.q{margin:0;padding-left:26px}
@@ -84,14 +86,53 @@ body.present .guide{display:none}
     </ul>
   </div>
   <div class="gcard">
-    <h3>Stars and the universe</h3>
+    <h3>The Sun</h3>
     <ul>
-      <li>A star forms when gravity pulls a cloud of gas and dust (a nebula) together. The core gets hot enough to <b>fuse hydrogen into helium</b>.</li>
+      <li>The Sun is a star: a huge ball of hot gas held together by its own gravity.</li>
+      <li>Layers from the inside out: the <b>core</b> (about 15 million K, where fusion happens), the <b>radiative zone</b> (energy creeps outward as light, bouncing from particle to particle), the <b>convective zone</b> (hot gas rises, cools and sinks, like boiling soup).</li>
+      <li>The <b>photosphere</b> is the surface we see, about 5800 K. Above it are the thin, reddish <b>chromosphere</b> and the <b>corona</b>, the faint outer atmosphere (over 1 million K) that shows during a total solar eclipse.</li>
+      <li><b>Sunspots</b> are dark patches on the photosphere. They are <b>cooler</b> (about 4000 K) than the gas around them, so they look dark by comparison. Strong <b>magnetic fields</b> there block hot gas from rising.</li>
+      <li>The number of sunspots rises and falls in the <b>solar cycle</b>, about <b>11 years</b> long. At solar maximum there are many spots, and more flares (sudden bursts of energy) and prominences (huge loops of gas).</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Fusion in the Sun</h3>
+    <ul>
+      <li>In the core, hydrogen nuclei (single protons, <sup>1</sup>H) fuse into helium. It takes huge temperature and pressure to push them together.</li>
+      <li>The <b>proton–proton chain</b> does it in three steps:</li>
+    </ul>
+    <table>
+      <tr><td>Step 1</td><td><sup>1</sup>H + <sup>1</sup>H → <sup>2</sup>H + e<sup>+</sup> + ν<br><span class="gsub">Two protons make deuterium (<sup>2</sup>H: 1 proton, 1 neutron). One proton turns into a neutron, giving off a positron (e<sup>+</sup>) and a neutrino (ν).</span></td></tr>
+      <tr><td>Step 2</td><td><sup>2</sup>H + <sup>1</sup>H → <sup>3</sup>He + γ<br><span class="gsub">Deuterium and a proton make helium-3 (2 protons, 1 neutron) and a gamma ray (γ).</span></td></tr>
+      <tr><td>Step 3</td><td><sup>3</sup>He + <sup>3</sup>He → <sup>4</sup>He + <sup>1</sup>H + <sup>1</sup>H<br><span class="gsub">Two helium-3 make helium-4 (2 protons, 2 neutrons) and give two protons back.</span></td></tr>
+    </table>
+    <ul>
+      <li>Steps 1 and 2 happen <b>twice</b> to make the two helium-3 that step 3 needs.</li>
+      <li><b>Net:</b> 4 <sup>1</sup>H → <sup>4</sup>He + energy.</li>
+      <li><b>Positron:</b> like an electron, but positive. <b>Neutrino:</b> tiny, no charge, passes through almost anything. <b>Gamma ray:</b> very high-energy light.</li>
+      <li>The helium-4 has about <b>0.7% less mass</b> than the four hydrogen that made it. That lost mass became energy: <b>E = mc²</b>. Since c² is enormous, a tiny bit of mass gives a huge amount of energy.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Star properties</h3>
+    <ul>
+      <li><b>Color shows temperature.</b> Hotter means brighter and bluer (the peak of the glow moves to shorter wavelengths). Cool stars look red; hot stars look blue-white.</li>
+      <li><b>Spectral classes</b> sort stars by temperature, hottest to coolest: <b>O B A F G K M</b>. O stars are blue; M stars are red. The Sun is a G star.</li>
+      <li><b>Luminosity</b> is how much light a star really gives off. <b>Apparent brightness</b> is how bright it looks from Earth, which also depends on distance. A dim star nearby can look brighter than a powerful star far away.</li>
+      <li><b>HR diagram:</b> luminosity up the side, temperature along the bottom with <b>hot on the left</b>. Main-sequence stars make a band from upper left to lower right. Giants and supergiants sit at the upper right (cool but huge); white dwarfs at the lower left (hot but tiny).</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>The life of a star</h3>
+    <ul>
+      <li>A star forms when gravity pulls a cloud of gas and dust (a <b>nebula</b>) together into a protostar. When the core is hot enough, it starts fusing hydrogen.</li>
       <li><b>Main sequence:</b> most of a star's life. Gravity pulls in, pressure from the hot core pushes out, and they balance.</li>
-      <li>A Sun-like star becomes a red giant, then a planetary nebula, and ends as a <b>white dwarf</b>. A very massive star becomes a red supergiant, explodes as a <b>supernova</b>, and leaves a neutron star or a black hole.</li>
-      <li>Massive stars burn their fuel much faster, so they live <b>shorter</b> lives.</li>
-      <li><b>Glowing objects:</b> hotter means brighter and bluer (the peak moves to shorter wavelengths). Cool stars look red; hot stars look blue-white.</li>
-      <li><b>HR diagram:</b> brightness up the side, temperature along the bottom with <b>hot on the left</b>. Giants sit at the upper right (cool but huge); white dwarfs at the lower left (hot but tiny).</li>
+      <li>As it fuses, the core's <b>hydrogen fraction falls</b> and its <b>helium fraction rises</b>. The Sun's core started about 70% hydrogen; now it's about a third. When the core's hydrogen runs out, the main sequence ends.</li>
+      <li><b>Sun-like star:</b> red giant → planetary nebula → <b>white dwarf</b>.</li>
+      <li><b>Massive star:</b> red supergiant → <b>supernova</b> → neutron star or black hole.</li>
+      <li><b>Mass decides the path.</b> More mass means stronger gravity, so the core is squeezed hotter and denser. Only a massive star's core gets hot enough to keep fusing heavier and heavier elements, all the way up to iron, and its collapse at the end is violent enough to explode.</li>
+      <li><b>Massive stars live shorter lives.</b> They have more fuel, but they burn it far faster. A star 10 times the Sun's mass shines thousands of times brighter and lasts about 30 million years; the Sun lasts about 10 billion.</li>
+      <li><b>Models have limits.</b> The HR diagram and life-cycle charts are models. No one can watch one star live for billions of years, so they are built from snapshots of many stars at different stages. They simplify: they don't show how long each stage takes, and they can be wrong where data is thin.</li>
       <li><b>Big Bang evidence:</b> light from galaxies is red-shifted, and farther galaxies move away faster, so the universe is expanding. A leftover glow, now stretched to microwaves, comes from every direction. The universe is mostly hydrogen and helium.</li>
     </ul>
   </div>
@@ -106,6 +147,8 @@ body.present .guide{display:none}
       <tr><td>PE = m·g·h</td><td>potential energy (J). h = height (m), g = 10 m/s/s (9.8 is also fine)</td></tr>
       <tr><td>TME = KE + PE</td><td>total mechanical energy</td></tr>
       <tr><td colspan="2">KE<sub>i</sub> + PE<sub>i</sub> + W = KE<sub>f</sub> + PE<sub>f</sub><br><span class="gsub">Work changes mechanical energy. W = work by forces other than gravity. W = 0 means TME is conserved.</span></td></tr>
+      <tr><td>4 <sup>1</sup>H → <sup>4</sup>He + energy</td><td>net fusion in the Sun (proton–proton chain)</td></tr>
+      <tr><td>E = mc²</td><td>lost mass m (kg) becomes energy E (J); c = 3.0 × 10⁸ m/s. Use it as an idea: a little mass makes a lot of energy</td></tr>
       <tr><td colspan="2">v = 300,000 × Δλ ÷ 656<br><span class="gsub">Speed of a galaxy (km/s) from how far hydrogen's red line (656 nm) has shifted (Δλ, in nm).</span></td></tr>
     </table>
   </div>
@@ -119,6 +162,10 @@ body.present .guide{display:none}
       <li>Saying TME stays the same when friction, air resistance or a push is doing work.</li>
       <li>Counting gravity's work as W. Gravity is already in the PE terms.</li>
       <li>Not cancelling terms: “starts from rest” means KE<sub>i</sub> = 0; “at the bottom” means PE = 0.</li>
+      <li>Thinking sunspots are hotter than the rest of the Sun, or holes in it. They are cooler, magnetic regions of the photosphere.</li>
+      <li>Forgetting that steps 1 and 2 of the proton–proton chain happen twice.</li>
+      <li>Mixing up luminosity (light the star gives off) with apparent brightness (how bright it looks from here).</li>
+      <li>Thinking massive stars live longer because they have more fuel. They burn it much faster.</li>
       <li>Reading the HR diagram's temperature axis the wrong way. Hot is on the left.</li>
       <li>Thinking a red-shifted galaxy looks red. Its spectrum lines are shifted toward longer wavelengths.</li>
     </ul>
@@ -163,6 +210,25 @@ body.present .guide{display:none}
       <li>Bright but cool (upper right)? The star must be huge: a giant or supergiant.</li>
       <li>Hot but dim (lower left)? The star must be tiny: a white dwarf.</li>
       <li>On the main sequence, the bright hot stars are the massive, short-lived ones.</li>
+      <li>Spectral class gives the left–right spot: O and B on the left, M on the right.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Reading a sunspot graph</h3>
+    <ul>
+      <li>Find the low points (solar minimum) or the high points (solar maximum). Read their years off the bottom axis.</li>
+      <li>One cycle goes from one low point to the next (or one peak to the next).</li>
+      <li>Count the <b>gaps</b> between low points, not the low points themselves: 3 low points make 2 cycles.</li>
+      <li>Cycle length = (last year − first year) ÷ number of cycles.</li>
+      <li>Peaks don't all reach the same height. The timing repeats; the size doesn't.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Keeping track in the p-p chain</h3>
+    <ul>
+      <li>The number on the upper left is the number of protons + neutrons. <sup>1</sup>H = 1 proton; <sup>2</sup>H = 1 p + 1 n; <sup>3</sup>He = 2 p + 1 n; <sup>4</sup>He = 2 p + 2 n.</li>
+      <li>Check each step: the top numbers add to the same total on both sides.</li>
+      <li>Check charge: in step 1, two + charges go in, and <sup>2</sup>H has only one. The positron carries the other + away.</li>
     </ul>
   </div>
 </div>
@@ -293,6 +359,121 @@ body.present .guide{display:none}
   </div>
 
   <div class="ex">
+    <div class="kind">The solar cycle</div>
+    <h4>Reading a sunspot graph</h4>
+    <svg class="wide" width="300" height="186" viewBox="0 0 300 186" aria-label="Made-up yearly sunspot counts from 1900 to 1946: four rises and falls, with low points in 1901, 1912, 1923, 1934 and 1945">
+      <line x1="40.0" y1="20" x2="40.0" y2="150" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="67.2" y1="20" x2="67.2" y2="150" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="94.3" y1="20" x2="94.3" y2="150" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="121.5" y1="20" x2="121.5" y2="150" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="148.7" y1="20" x2="148.7" y2="150" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="175.9" y1="20" x2="175.9" y2="150" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="203.0" y1="20" x2="203.0" y2="150" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="230.2" y1="20" x2="230.2" y2="150" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="257.4" y1="20" x2="257.4" y2="150" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="284.6" y1="20" x2="284.6" y2="150" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="40" y1="150.0" x2="290" y2="150.0" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="40" y1="130.0" x2="290" y2="130.0" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="40" y1="110.0" x2="290" y2="110.0" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="40" y1="90.0" x2="290" y2="90.0" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="40" y1="70.0" x2="290" y2="70.0" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="40" y1="50.0" x2="290" y2="50.0" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="40" y1="30.0" x2="290" y2="30.0" stroke="#d9d9d9" stroke-width="1"/>
+      <line x1="40" y1="20" x2="40" y2="150" stroke="#111" stroke-width="2"/><line x1="40" y1="150" x2="290" y2="150" stroke="#111" stroke-width="2"/>
+      <text x="36" y="153.5" font-size="10" font-family="IBM Plex Mono,monospace" text-anchor="end">0</text>
+      <text x="36" y="113.5" font-size="10" font-family="IBM Plex Mono,monospace" text-anchor="end">40</text>
+      <text x="36" y="73.5" font-size="10" font-family="IBM Plex Mono,monospace" text-anchor="end">80</text>
+      <text x="36" y="33.5" font-size="10" font-family="IBM Plex Mono,monospace" text-anchor="end">120</text>
+      <text x="40.0" y="164" font-size="10" font-family="IBM Plex Mono,monospace" text-anchor="middle">1900</text>
+      <text x="94.3" y="164" font-size="10" font-family="IBM Plex Mono,monospace" text-anchor="middle">1910</text>
+      <text x="148.7" y="164" font-size="10" font-family="IBM Plex Mono,monospace" text-anchor="middle">1920</text>
+      <text x="203.0" y="164" font-size="10" font-family="IBM Plex Mono,monospace" text-anchor="middle">1930</text>
+      <text x="257.4" y="164" font-size="10" font-family="IBM Plex Mono,monospace" text-anchor="middle">1940</text>
+      <text x="165.0" y="180" font-size="11" font-family="IBM Plex Mono,monospace" text-anchor="middle">year</text>
+      <text x="12" y="85.0" font-size="11" font-family="IBM Plex Mono,monospace" text-anchor="middle" transform="rotate(-90 12 85.0)">sunspots</text>
+      <polyline points="45.4,145.0 50.9,134.7 56.3,110.0 61.7,85.3 67.2,75.0 72.6,78.5 78.0,88.2 83.5,102.2 88.9,117.8 94.3,131.8 99.8,141.5 105.2,145.0 110.7,131.1 116.1,97.5 121.5,63.9 127.0,50.0 132.4,54.7 137.8,67.9 143.3,86.9 148.7,108.1 154.1,127.1 159.6,140.3 165.0,145.0 170.4,133.3 175.9,105.0 181.3,76.7 186.7,65.0 192.2,69.0 197.6,80.1 203.0,96.1 208.5,113.9 213.9,129.9 219.3,141.0 224.8,145.0 230.2,128.2 235.7,87.5 241.1,46.8 246.5,30.0 252.0,35.7 257.4,51.6 262.8,74.7 268.3,100.3 273.7,123.4 279.1,139.3 284.6,145.0" fill="none" stroke="#111" stroke-width="2"/>
+      <circle cx="45.4" cy="145.0" r="2.3" fill="#ff6a2b"/>
+      <circle cx="50.9" cy="134.7" r="2.3" fill="#ff6a2b"/>
+      <circle cx="56.3" cy="110.0" r="2.3" fill="#ff6a2b"/>
+      <circle cx="61.7" cy="85.3" r="2.3" fill="#ff6a2b"/>
+      <circle cx="67.2" cy="75.0" r="2.3" fill="#ff6a2b"/>
+      <circle cx="72.6" cy="78.5" r="2.3" fill="#ff6a2b"/>
+      <circle cx="78.0" cy="88.2" r="2.3" fill="#ff6a2b"/>
+      <circle cx="83.5" cy="102.2" r="2.3" fill="#ff6a2b"/>
+      <circle cx="88.9" cy="117.8" r="2.3" fill="#ff6a2b"/>
+      <circle cx="94.3" cy="131.8" r="2.3" fill="#ff6a2b"/>
+      <circle cx="99.8" cy="141.5" r="2.3" fill="#ff6a2b"/>
+      <circle cx="105.2" cy="145.0" r="2.3" fill="#ff6a2b"/>
+      <circle cx="110.7" cy="131.1" r="2.3" fill="#ff6a2b"/>
+      <circle cx="116.1" cy="97.5" r="2.3" fill="#ff6a2b"/>
+      <circle cx="121.5" cy="63.9" r="2.3" fill="#ff6a2b"/>
+      <circle cx="127.0" cy="50.0" r="2.3" fill="#ff6a2b"/>
+      <circle cx="132.4" cy="54.7" r="2.3" fill="#ff6a2b"/>
+      <circle cx="137.8" cy="67.9" r="2.3" fill="#ff6a2b"/>
+      <circle cx="143.3" cy="86.9" r="2.3" fill="#ff6a2b"/>
+      <circle cx="148.7" cy="108.1" r="2.3" fill="#ff6a2b"/>
+      <circle cx="154.1" cy="127.1" r="2.3" fill="#ff6a2b"/>
+      <circle cx="159.6" cy="140.3" r="2.3" fill="#ff6a2b"/>
+      <circle cx="165.0" cy="145.0" r="2.3" fill="#ff6a2b"/>
+      <circle cx="170.4" cy="133.3" r="2.3" fill="#ff6a2b"/>
+      <circle cx="175.9" cy="105.0" r="2.3" fill="#ff6a2b"/>
+      <circle cx="181.3" cy="76.7" r="2.3" fill="#ff6a2b"/>
+      <circle cx="186.7" cy="65.0" r="2.3" fill="#ff6a2b"/>
+      <circle cx="192.2" cy="69.0" r="2.3" fill="#ff6a2b"/>
+      <circle cx="197.6" cy="80.1" r="2.3" fill="#ff6a2b"/>
+      <circle cx="203.0" cy="96.1" r="2.3" fill="#ff6a2b"/>
+      <circle cx="208.5" cy="113.9" r="2.3" fill="#ff6a2b"/>
+      <circle cx="213.9" cy="129.9" r="2.3" fill="#ff6a2b"/>
+      <circle cx="219.3" cy="141.0" r="2.3" fill="#ff6a2b"/>
+      <circle cx="224.8" cy="145.0" r="2.3" fill="#ff6a2b"/>
+      <circle cx="230.2" cy="128.2" r="2.3" fill="#ff6a2b"/>
+      <circle cx="235.7" cy="87.5" r="2.3" fill="#ff6a2b"/>
+      <circle cx="241.1" cy="46.8" r="2.3" fill="#ff6a2b"/>
+      <circle cx="246.5" cy="30.0" r="2.3" fill="#ff6a2b"/>
+      <circle cx="252.0" cy="35.7" r="2.3" fill="#ff6a2b"/>
+      <circle cx="257.4" cy="51.6" r="2.3" fill="#ff6a2b"/>
+      <circle cx="262.8" cy="74.7" r="2.3" fill="#ff6a2b"/>
+      <circle cx="268.3" cy="100.3" r="2.3" fill="#ff6a2b"/>
+      <circle cx="273.7" cy="123.4" r="2.3" fill="#ff6a2b"/>
+      <circle cx="279.1" cy="139.3" r="2.3" fill="#ff6a2b"/>
+      <circle cx="284.6" cy="145.0" r="2.3" fill="#ff6a2b"/>
+      </svg>
+    <p>The graph shows yearly sunspot counts for a stretch of years (simplified data). (a) How long is one solar cycle? (b) In which years was the Sun most active? (c) Why do sunspots look dark?</p>
+    <div class="work">
+      <p class="wt">(a) The low points are at 1901, 1912, 1923, 1934 and 1945. Five low points make 4 gaps, so 4 cycles:</p>
+      <math class="eq" display="block"><mrow><mn>1945</mn><mo>&#x02212;</mo><mn>1901</mn><mo>&#x0003D;</mo><mn>44</mn><mspace width="0.167em" /><mtext>years</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><mtext>cycle</mtext><mo>&#x0003D;</mo><mfrac><mrow><mn>44</mn></mrow><mrow><mn>4</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mtext>cycle</mtext><mo>&#x0003D;</mo><mn>11</mn><mspace width="0.167em" /><mtext>years</mtext></mrow></math>
+      <p class="wt">(b) The peaks: 1905, 1916, 1927 and 1938. Check: 1938 − 1905 = 33 years for 3 cycles, 11 years each ✓</p>
+      <p class="wt">(c) A sunspot is a cooler spot on the photosphere, where a strong magnetic field blocks hot gas from rising. It still glows, but less than the hotter gas around it, so it looks dark by comparison.</p>
+    </div>
+    <p class="take">Use as many cycles as the graph shows: one long span divided by the number of cycles is more accurate than one short gap. Notice the peaks are different heights, but the timing stays close to 11 years.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Fusion</div>
+    <h4>Balancing the proton–proton chain</h4>
+    <p>(a) Step 2 is written <sup>2</sup>H + <sup>1</sup>H → ? + γ. Use the top numbers and the charges to name the missing nucleus. (b) In step 1, show that the top numbers and the charges both balance. (c) Four hydrogen atoms have a total mass of 4 × 1.00783 u, and one helium-4 atom has 4.00260 u (u is a tiny unit of mass). What fraction of the mass turns into energy?</p>
+    <div class="work">
+      <p class="wt">(a) Add the top numbers and the charges on the left. The γ ray has no top number and no charge, so the missing nucleus gets all of both:</p>
+      <math class="eq" display="block"><mrow><mtext>top:</mtext><mspace width="0.278em" /><mn>2</mn><mo>&#x0002B;</mo><mn>1</mn><mo>&#x0003D;</mo><mn>3</mn></mrow></math>
+      <math class="eq" display="block"><mrow><mtext>charge:</mtext><mspace width="0.278em" /><mo>&#x0002B;</mo><mn>1</mn><mo>&#x0002B;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x0002B;</mo><mn>2</mn></mrow></math>
+      <p class="wt">Charge +2 means 2 protons, so it is helium; 3 particles means 2 protons + 1 neutron:</p>
+      <math class="eq ans" display="block"><mrow><mmultiscripts><mi mathvariant="normal">H</mi><mprescripts/><none/><mn>2</mn></mmultiscripts><mo>&#x0002B;</mo><mmultiscripts><mi mathvariant="normal">H</mi><mprescripts/><none/><mn>1</mn></mmultiscripts><mo>&#x02192;</mo><mmultiscripts><mi mathvariant="normal">He</mi><mprescripts/><none/><mn>3</mn></mmultiscripts><mo>&#x0002B;</mo><mi>&#x003B3;</mi></mrow></math>
+      <p class="wt">(b) Step 1: <sup>1</sup>H + <sup>1</sup>H → <sup>2</sup>H + e<sup>+</sup> + ν. The positron and the neutrino have top number 0.</p>
+      <math class="eq" display="block"><mrow><mtext>top:</mtext><mspace width="0.278em" /><mn>1</mn><mo>&#x0002B;</mo><mn>1</mn><mo>&#x0003D;</mo><mn>2</mn><mo>&#x0003D;</mo><mn>2</mn><mo>&#x0002B;</mo><mn>0</mn><mo>&#x0002B;</mo><mn>0</mn><mspace width="0.278em" /><mtext>&#x02713;</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><mtext>charge:</mtext><mspace width="0.278em" /><mo>&#x0002B;</mo><mn>1</mn><mo>&#x0002B;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x0002B;</mo><mn>1</mn><mo>&#x0002B;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mn>0</mn><mspace width="0.278em" /><mtext>&#x02713;</mtext></mrow></math>
+      <p class="wt"><sup>2</sup>H has only one + charge, so the positron is what carries the other one away.</p>
+      <p class="wt">(c) Mass before and after:</p>
+      <math class="eq" display="block"><mrow><mn>4</mn><mo>&#x000D7;</mo><mn>1.00783</mn><mo>&#x0003D;</mo><mn>4.03132</mn><mspace width="0.167em" /><mtext>u</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><mn>4.03132</mn><mo>&#x02212;</mo><mn>4.00260</mn><mo>&#x0003D;</mo><mn>0.02872</mn><mspace width="0.167em" /><mtext>u lost</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><mfrac><mrow><mn>0.02872</mn></mrow><mrow><mn>4.03132</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0.0071</mn></mrow></math>
+      <math class="eq ans" display="block"><mrow><mtext>about</mtext><mspace width="0.167em" /><mn>0.7</mn><mo>%</mo><mspace width="0.167em" /><mtext>of the mass</mtext></mrow></math>
+    </div>
+    <p class="take">The missing 0.7% became energy (E = mc²): the gamma rays, and the energy of the particles flying apart. For every kilogram of hydrogen the Sun fuses, about 7 grams of mass turns into energy. The positrons and neutrinos are made in step 1; the neutrinos fly straight out of the Sun.</p>
+  </div>
+
+  <div class="ex">
     <div class="kind">Stars</div>
     <svg width="252" height="206" viewBox="0 0 210 172" aria-label="HR diagram: brightness up, temperature with hot on the left. Main sequence diagonal; star A at the upper right; star B at the lower left; the Sun in the middle of the main sequence">
       <line x1="26" y1="6" x2="26" y2="146" stroke="#111" stroke-width="2"/><line x1="26" y1="146" x2="204" y2="146" stroke="#111" stroke-width="2"/>
@@ -339,10 +520,16 @@ body.present .guide{display:none}
       <details><summary>Answer</summary><div>Steady speed, so her forward force equals 25 N. P = F·v = (25)(8.0) = 200 W.</div></details></li>
     <li>A cart coasts on a frictionless track from rest at 3 m high. Can it get over a hill 4 m high? What about a hill exactly 3 m high?
       <details><summary>Answer</summary><div>Not the 4 m hill: its TME is only enough for PE at 3 m, so it can never get higher than its start. A 3 m hill is the most it could just reach, arriving with zero speed at the top.</div></details></li>
-    <li>Star X looks red and star Y looks blue-white. Which is hotter? As a star gets hotter, which way does the peak of its glow move?
-      <details><summary>Answer</summary><div>Star Y is hotter. As a glowing object gets hotter, its peak moves to shorter wavelengths (toward blue) and it gives off more light overall.</div></details></li>
-    <li>One star has 10 times the Sun's mass; another has half the Sun's mass. Which lives longer? How does each one end?
-      <details><summary>Answer</summary><div>The half-Sun-mass star lives much longer, because small stars burn their fuel slowly. It will end as a white dwarf (it lives so long that none has died yet). The 10-Sun-mass star burns out fast, becomes a red supergiant, explodes as a supernova and leaves a neutron star or a black hole.</div></details></li>
+    <li>A photo of the Sun shows dark sunspots. Are sunspots colder than the rest of the photosphere? Are they cold? What makes them different?
+      <details><summary>Answer</summary><div>They are cooler than the photosphere around them (about 4000 K instead of about 5800 K), so they look dark next to it. But they are not cold: on their own they would glow brightly. Strong magnetic fields there block hot gas from rising up from the convective zone.</div></details></li>
+    <li>(a) In which step of the proton–proton chain is a neutrino made, and what happens to it? (b) Why does it take such a hot, dense core to fuse hydrogen at all?
+      <details><summary>Answer</summary><div>(a) Step 1, when a proton turns into a neutron (along with a positron). Neutrinos barely interact with anything, so they fly straight out of the Sun. (b) Protons are all positive, so they repel each other. Only at a huge temperature (fast-moving protons) and pressure (protons crowded together) do they get close enough to fuse.</div></details></li>
+    <li>Stars Q and R look equally bright in the night sky, but Q is 10 times farther away. Which has the greater luminosity? Q is class B and R is class M: which is hotter, and what color is each?
+      <details><summary>Answer</summary><div>Q. It looks as bright from much farther away, so it must give off much more light (light spreads out with an inverse-square rule, so 10 times farther means 100 times the luminosity). Q is hotter: B is near the hot end of O B A F G K M. Q looks blue-white and R looks red.</div></details></li>
+    <li>All the stars in a cluster formed from the same cloud at the same time. Today the cluster has plenty of main-sequence stars between 1 and 3 times the Sun's mass, but no main-sequence stars heavier than that. Why are the heavier ones missing, and what did they leave behind?
+      <details><summary>Answer</summary><div>Heavier stars have stronger gravity and hotter cores, so they burn through their fuel much faster. They ran out of core hydrogen first and left the main sequence, while the lighter stars are still fusing hydrogen. The heaviest ones (more than about 8 times the Sun's mass) became red supergiants, exploded as supernovae and left neutron stars or black holes. The ones in between swelled into red giants and ended as white dwarfs. It also tells you the cluster is old: at least a few hundred million years.</div></details></li>
+    <li>An HR diagram is a snapshot: thousands of stars plotted as dots at one moment. How can astronomers use it to work out how one star changes over billions of years? Why are most of the dots on the main sequence?
+      <details><summary>Answer</summary><div>Each dot is a star at a different stage of its life, like a photo of a crowd of people of all ages: no one watched one person grow up, but the photo still shows every age. Most dots are on the main sequence because a star spends most of its shining life there (about 90%), fusing hydrogen in its core. The giant stages are short, so at any moment only a few stars are caught in them.</div></details></li>
     <li>In the lab, hydrogen's red line is at 656 nm. In a distant galaxy's light it is at 666 nm. Is the galaxy moving toward us or away? How fast? What does it mean that farther galaxies have bigger shifts?
       <details><summary>Answer</summary><div>Δλ = 666 − 656 = 10 nm toward red, so it is moving away. Speed = 300,000 × 10 ÷ 656 ≈ 4600 km/s. Farther galaxies moving away faster means the whole universe is expanding, which is evidence for the Big Bang.</div></details></li>
   </ol>
