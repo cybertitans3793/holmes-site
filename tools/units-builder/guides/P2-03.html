@@ -1,0 +1,279 @@
+<section class="guide" id="guide" aria-label="Study guide">
+<style>
+.guide{margin-top:28px}
+.guide .gtip{margin:0 0 16px;font-size:19px;line-height:1.45;max-width:1000px}
+.guide .ggrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-bottom:22px}
+.guide .gcard{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcard h3,.guide .gcheck h3,.guide .gsteps h3{margin:0 0 10px;font-size:20px;letter-spacing:-.01em}
+.guide .gcard ul{margin:0;padding-left:20px}
+.guide .gcard li{margin:0 0 7px}
+.guide .ib{display:inline-block;font-family:var(--f-mono);font-size:11px;font-weight:700;border:2px solid var(--ink);padding:0 5px;margin-left:4px;vertical-align:1px;background:var(--soft)}
+.guide table{border-collapse:collapse;width:100%;font-size:15px}
+.guide td{border-top:2px solid var(--ink);padding:6px 4px;vertical-align:top}
+.guide td:first-child{font-family:var(--f-mono);font-weight:700;white-space:nowrap;padding-right:12px}
+.guide td[colspan]{white-space:normal}
+.guide .gsub{font-family:var(--f-display);font-weight:400}
+.guide .gsteps{background:var(--soft);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px;margin-bottom:22px}
+.guide .gsteps ol{margin:0;padding-left:24px;columns:2 360px;column-gap:28px}
+.guide .gsteps li{margin:0 0 8px;break-inside:avoid}
+.guide h3.ghead{font-size:22px;margin:0 0 12px}
+.guide .gex{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:18px;margin-bottom:22px}
+.guide .ex{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .ex h4{margin:0 0 6px;font-size:18px}
+.guide .ex .kind{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--hot);text-transform:uppercase;letter-spacing:.04em}
+.guide .ex p{margin:0 0 8px}
+.guide .work{font-family:var(--f-mono);font-size:14px;line-height:1.6;border-left:4px solid var(--hot);background:#fff;padding:6px 12px;margin:8px 0}
+.guide .work b{font-family:var(--f-display)}
+.guide .ex .take{margin:8px 0 0;font-weight:500}
+.guide .ex svg{float:right;margin:0 0 6px 12px}
+.guide .gcheck{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcheck>p{margin:-4px 0 12px;color:var(--muted)}
+.guide ol.q{margin:0;padding-left:26px}
+.guide ol.q>li{margin:0 0 14px}
+.guide details{margin-top:6px}
+.guide summary{cursor:pointer;display:inline-block;font-weight:700;border:2px solid var(--ink);padding:2px 10px;background:#fff;list-style:none}
+.guide summary::-webkit-details-marker{display:none}
+.guide summary:hover{background:var(--soft)}
+.guide details[open] summary{background:var(--ink);color:#fff}
+.guide details>div{border-left:4px solid var(--hot);padding:8px 12px;margin-top:8px;background:#fff}
+.guide .gpanel>.ggrid,.guide .gpanel>.gsteps,.guide .gpanel>.gex{margin-bottom:0}
+.guide .gpanel>.gsteps+.ggrid{margin-top:22px}
+.guide .gtabs{margin-bottom:18px}
+.guide .gnext{margin:16px 0 0;font-weight:700}
+.guide .gnext a{color:var(--ink)}
+body.present .guide{display:none}
+@media (max-width:520px){.guide .gtip{font-size:17px}.guide td:first-child{white-space:normal}.guide .ggrid,.guide .gex{grid-template-columns:1fr}.guide .ex svg{float:none;display:block;margin:0 auto 8px}}
+</style>
+<div class="simbar"><h2>Study guide</h2><span class="mono">Unit 3 · Current Electricity and Magnetism</span></div>
+<p class="gtip"><b>How to use this:</b> read the key ideas, then cover each worked example and try it yourself before reading the solution. Do the self-check questions on paper <i>before</i> you open the answers, mark the ones you miss, and come back to them in a day or two without looking. Rereading won't do much; answering questions will.</p>
+<div class="tabs gtabs" role="tablist" aria-label="Study guide sections">
+  <button class="tab" role="tab" type="button" aria-selected="true" aria-controls="g-ideas" id="gt-ideas">Key ideas</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-solve" id="gt-solve" tabindex="-1">How to solve</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-examples" id="gt-examples" tabindex="-1">Worked examples</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-check" id="gt-check" tabindex="-1">Self-check</button>
+</div>
+<div class="gpanel" role="tabpanel" id="g-ideas" aria-labelledby="gt-ideas">
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Key ideas: circuits</h3>
+    <ul>
+      <li><b>Current</b> I = ΔQ/Δt is the rate charge flows (amps = C/s). By convention it flows from + to − outside the battery; in metals, electrons actually drift the other way.</li>
+      <li><b>Potential difference</b> ΔV is the energy given to or taken from each coulomb (volts = J/C). A battery's <b>emf</b> ε is the energy it gives each coulomb.</li>
+      <li><b>Resistance</b> R = ΔV/I. A wire's resistance is R = ρL/A: longer or thinner means more resistance; ρ (resistivity) depends on the material.</li>
+      <li><b>Ohmic</b> resistors keep a constant R, so their I–V graph is a straight line through the origin. A filament lamp is non-ohmic: as it heats up, its R increases and the graph curves.</li>
+      <li><b>Power</b> P = IΔV = I²R = ΔV²/R is the rate energy is transferred, appearing as heat and light in a resistor.</li>
+      <li><b>Series:</b> same current through each, voltages add, R<sub>total</sub> = R₁ + R₂ + … <b>Parallel:</b> same voltage across each, currents add, 1/R<sub>total</sub> = 1/R₁ + 1/R₂ + … Adding a branch in parallel <i>lowers</i> the total resistance.</li>
+      <li><b>Kirchhoff's rules:</b> the current into a junction equals the current out (conservation of charge); the potential changes around any closed loop add to zero (conservation of energy).</li>
+      <li><b>Internal resistance:</b> a real battery has resistance r inside, so ε = I(R + r). The terminal voltage ε − Ir drops when it delivers more current.</li>
+      <li><b>Meters:</b> an ammeter goes in series and ideally has zero resistance; a voltmeter goes in parallel and ideally has infinite resistance.</li>
+      <li><b>Potential dividers</b> split a voltage between two resistors in series, in proportion to their resistances.</li>
+      <li><span class="ib">IB</span> <b>Sensors in dividers:</b> a thermistor's resistance falls as it gets hotter; a light-dependent resistor's (LDR's) resistance falls in brighter light.</li>
+      <li><b>Capacitors in circuits:</b> in parallel, C<sub>total</sub> = C₁ + C₂; in series, 1/C<sub>total</sub> = 1/C₁ + 1/C₂. An uncharged capacitor first acts like a plain wire; once fully charged, no current flows through it.</li>
+      <li><b>RC circuits</b> charge and discharge gradually. The <b>time constant</b> τ = RC sets the pace: after one τ, a charging capacitor is about 63% full.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Key ideas: magnetism</h3>
+    <ul>
+      <li><b>Magnetic field lines</b> leave north poles, enter south poles, and form closed loops. There are no single magnetic poles.</li>
+      <li><b>Currents make magnetic fields.</b> Around a long straight wire the field circles the wire (right-hand rule: thumb along I, fingers curl with B), with B = μ₀I/(2πr).</li>
+      <li><span class="ib">IB</span> A current loop and a <b>solenoid</b> make fields like a bar magnet's; inside a long solenoid the field is strong and nearly uniform.</li>
+      <li><b>Force on a moving charge:</b> F = qvB sinθ, perpendicular to both v and B (right-hand rule; reverse it for negative charges). A charge moving along the field feels nothing.</li>
+      <li>The magnetic force is always perpendicular to the velocity, so it does <b>no work</b>: it changes direction, not speed. A charge moving across a uniform field goes in a circle, r = mv/(qB).</li>
+      <li><b>Force on a current-carrying wire:</b> F = BIL sinθ. Two parallel wires attract if their currents flow the same way and repel if opposite.</li>
+      <li><span class="ib">IB</span> In <b>crossed electric and magnetic fields</b>, a charge passes straight through only if qE = qvB, so v = E/B (a velocity selector).</li>
+      <li><b>Magnetic flux</b> Φ = BA cosθ measures how much field passes through a loop.</li>
+      <li><b>Faraday's law:</b> a changing flux induces an emf, ε = −NΔΦ/Δt. The flux can change because B, the area, or the angle changes. A rod moving across a field has ε = BLv.</li>
+      <li><b>Lenz's law:</b> the induced current flows so its own field opposes the change in flux. That's energy conservation: you have to do work to make the change.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Equations</h3>
+    <table>
+      <tr><td>I = ΔQ/Δt</td><td>current</td></tr>
+      <tr><td>ΔV = IR</td><td>Ohm's law</td></tr>
+      <tr><td>R = ρL/A</td><td>resistance of a wire</td></tr>
+      <tr><td>P = IΔV = I²R = ΔV²/R</td><td>power</td></tr>
+      <tr><td>R<sub>s</sub> = R₁ + R₂</td><td>series resistors</td></tr>
+      <tr><td>1/R<sub>p</sub> = 1/R₁ + 1/R₂</td><td>parallel resistors</td></tr>
+      <tr><td>ε = I(R + r)</td><td>emf and internal resistance</td></tr>
+      <tr><td>C<sub>p</sub> = C₁ + C₂; 1/C<sub>s</sub> = 1/C₁ + 1/C₂</td><td>capacitors in parallel and series</td></tr>
+      <tr><td>τ = RC</td><td>time constant</td></tr>
+      <tr><td>B = μ₀I/(2πr)</td><td>field of a long straight wire</td></tr>
+      <tr><td>F = qvB sinθ</td><td>force on a moving charge</td></tr>
+      <tr><td>r = mv/(qB)</td><td>radius of the circular path</td></tr>
+      <tr><td>F = BIL sinθ</td><td>force on a wire</td></tr>
+      <tr><td>F/L = μ₀I₁I₂/(2πr)</td><td>force between parallel wires</td></tr>
+      <tr><td>Φ = BA cosθ</td><td>magnetic flux</td></tr>
+      <tr><td>ε = −NΔΦ/Δt</td><td>Faraday's law</td></tr>
+      <tr><td>ε = BLv</td><td>emf of a moving rod</td></tr>
+      <tr><td>μ₀</td><td>4π × 10⁻⁷ T·m/A</td></tr>
+    </table>
+  </div>
+  <div class="gcard">
+    <h3>Common mistakes</h3>
+    <ul>
+      <li>Thinking current gets “used up” as it goes around. Current is the same all along a series path; it's energy that gets transferred.</li>
+      <li>Thinking parallel resistors add up. Adding a parallel branch always lowers the total resistance.</li>
+      <li>Putting a voltmeter in series or an ammeter in parallel.</li>
+      <li>Forgetting the battery's internal resistance when the terminal voltage is less than the emf.</li>
+      <li>Using the right hand for an electron. For negative charges, the force is opposite to the right-hand-rule direction.</li>
+      <li>Saying a magnetic field speeds charges up. It only turns them.</li>
+      <li>Thinking a steady, strong field induces an emf. Only a <i>changing</i> flux does.</li>
+    </ul>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-solve" aria-labelledby="gt-solve" hidden>
+<div class="gsteps">
+  <h3>How to solve a circuit problem</h3>
+  <ol>
+    <li><b>Redraw the circuit</b> neatly. Spot which resistors are in series (one path, nothing branching off between them) and which are in parallel (connected across the same two points).</li>
+    <li><b>Combine resistors step by step</b> into one equivalent resistance.</li>
+    <li><b>Find the total current</b> from the battery: I = ε/(R<sub>eq</sub> + r).</li>
+    <li><b>Work back out:</b> the same current flows through series parts; the same voltage is across parallel parts. Use ΔV = IR on each piece.</li>
+    <li><b>If it won't simplify,</b> use Kirchhoff's rules: one junction equation and enough loop equations.</li>
+    <li><b>Check:</b> voltages around each loop should add to the emf, and currents at each junction should balance.</li>
+  </ol>
+</div>
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Right-hand rules</h3>
+    <ul>
+      <li><b>Field of a wire:</b> thumb along the current, fingers curl the way B circles.</li>
+      <li><b>Force on a charge or a wire:</b> fingers along v (or I), bend them toward B; your thumb points along F for a positive charge.</li>
+      <li>Reverse the answer for an electron.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Induction problems</h3>
+    <ul>
+      <li>Ask what's changing: B, the area, or the angle. If nothing changes, there's no emf.</li>
+      <li>Size: ε = NΔΦ/Δt, then I = ε/R.</li>
+      <li>Direction (Lenz): if the flux is growing, the induced field points against it; if it's shrinking, the induced field points with it. Then use the right-hand rule to get the current.</li>
+    </ul>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-examples" aria-labelledby="gt-examples" hidden>
+<div class="gex">
+  <div class="ex">
+    <div class="kind">Series and parallel</div>
+    <h4>A combined circuit</h4>
+    <p>A 12 V battery (no internal resistance) is connected to a 4.0 Ω resistor in series with a 6.0 Ω and a 3.0 Ω resistor that are in parallel with each other. Find the total current, the current in each parallel resistor, and the power in the 4.0 Ω resistor.</p>
+    <div class="work">
+      Parallel pair: 1/R = 1/6.0 + 1/3.0 → R = 2.0 Ω<br>
+      Total: 4.0 + 2.0 = 6.0 Ω → I = 12/6.0 = <b>2.0 A</b><br>
+      Voltage across the pair: (2.0)(2.0) = 4.0 V<br>
+      &nbsp;&nbsp;I₆ = 4.0/6.0 = <b>0.67 A</b>, I₃ = 4.0/3.0 = <b>1.33 A</b><br>
+      P₄ = I²R = (2.0)²(4.0) = <b>16 W</b>
+    </div>
+    <p class="take">The branch currents add back to 2.0 A. More current takes the easier (lower-resistance) path.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Internal resistance</div>
+    <h4>A real battery under load</h4>
+    <p>A battery with emf 9.0 V and internal resistance 0.50 Ω drives a 4.0 Ω resistor. Find the current and the voltage across the battery's terminals.</p>
+    <div class="work">
+      I = ε/(R + r) = 9.0/4.5 = <b>2.0 A</b><br>
+      Terminal voltage = ε − Ir = 9.0 − (2.0)(0.50) = <b>8.0 V</b>
+    </div>
+    <p class="take">1.0 V is “lost” inside the battery, turning into heat there. The more current you draw, the more the terminal voltage drops.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Resistivity</div>
+    <h4>A heating wire</h4>
+    <p>A nichrome wire (ρ = 1.1 × 10⁻⁶ Ω·m) is 2.0 m long with a diameter of 0.50 mm. Find its resistance.</p>
+    <div class="work">
+      A = πr² = π(0.25 × 10⁻³)² = 1.96 × 10⁻⁷ m²<br>
+      R = ρL/A = (1.1 × 10⁻⁶)(2.0)/(1.96 × 10⁻⁷) = <b>11 Ω</b>
+    </div>
+    <p class="take">Use the radius, not the diameter, in the area. Half the diameter would give a quarter of the area and four times the resistance.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">RC circuit</div>
+    <h4>Charging a capacitor</h4>
+    <p>A 12 V battery charges a 100 µF capacitor through a 10 kΩ resistor. Find the time constant, the current at the moment the switch closes, and the charge on the capacitor after a long time.</p>
+    <div class="work">
+      τ = RC = (1.0 × 10⁴)(1.0 × 10⁻⁴) = <b>1.0 s</b><br>
+      At t = 0 the capacitor is empty, so all 12 V is across R: I = 12/10 000 = <b>1.2 mA</b><br>
+      Long time: current stops, V<sub>C</sub> = 12 V, Q = CV = <b>1.2 × 10⁻³ C</b>
+    </div>
+    <p class="take">The current starts at its maximum and dies away as the capacitor fills. After about 5τ (5 s) the capacitor is essentially full.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Charge in a magnetic field</div>
+    <h4>A proton's circular path</h4>
+    <p>A proton moving at 2.0 × 10⁶ m/s enters a 0.50 T magnetic field at right angles to it. Find the force on it and the radius of its path.</p>
+    <div class="work">
+      F = qvB = (1.6 × 10⁻¹⁹)(2.0 × 10⁶)(0.50) = <b>1.6 × 10⁻¹³ N</b><br>
+      qvB = mv²/r → r = mv/(qB) = (1.67 × 10⁻²⁷)(2.0 × 10⁶)/[(1.6 × 10⁻¹⁹)(0.50)]<br>
+      &nbsp;&nbsp;r = <b>4.2 cm</b>
+    </div>
+    <p class="take">The magnetic force is the centripetal force. A faster or heavier particle makes a bigger circle, which is how a mass spectrometer sorts particles.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Faraday's law</div>
+    <h4>A coil in a growing field</h4>
+    <p>A 50-turn coil of area 0.010 m² sits at right angles to a magnetic field that rises steadily from 0 to 0.40 T in 0.20 s. Find the induced emf. Which way does the induced field point?</p>
+    <div class="work">
+      ΔΦ = ΔB × A = (0.40)(0.010) = 4.0 × 10⁻³ Wb<br>
+      ε = NΔΦ/Δt = (50)(4.0 × 10⁻³)/(0.20) = <b>1.0 V</b><br>
+      Lenz: the flux is growing, so the induced field points <b>opposite</b> the applied field
+    </div>
+    <p class="take">Once the field stops changing at 0.40 T, the emf drops to zero, however strong the field is.</p>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
+<div class="gcheck">
+  <h3>Self-check</h3>
+  <p>Answer first, then open.</p>
+  <ol class="q">
+<li>Three bulbs are in series. One burns out. What happens to the others? What if they were in parallel?
+      <details><summary>Answer</summary><div>In series, they all go out: the single path is broken. In parallel, the others stay lit, each still connected across the battery.</div></details></li>
+    <li>You add another resistor in parallel with two already there. What happens to the total resistance and to the current from the battery?
+      <details><summary>Answer</summary><div>The total resistance goes down (there's a new path), so the battery delivers more current.</div></details></li>
+    <li>A 60 W bulb runs on 120 V. Find its current and resistance.
+      <details><summary>Answer</summary><div>I = P/V = 60/120 = 0.50 A. R = V/I = 120/0.50 = 240 Ω.</div></details></li>
+    <li>A wire is replaced by one of the same material that is twice as long and has twice the diameter. How does its resistance compare?
+      <details><summary>Answer</summary><div>Twice the length doubles R; twice the diameter gives 4 times the area, which divides R by 4. Overall, half the resistance.</div></details></li>
+    <li>Why does a filament lamp's I–V graph curve instead of being a straight line?
+      <details><summary>Answer</summary><div>As the current rises, the filament gets hotter, and its resistance increases. So each extra volt adds less current than before.</div></details></li>
+    <li>What do Kirchhoff's two rules say, and which conservation law is behind each?
+      <details><summary>Answer</summary><div>Junction rule: current in = current out (conservation of charge). Loop rule: the potential changes around any closed loop add to zero (conservation of energy).</div></details></li>
+    <li>A capacitor and a resistor are in series with a battery. What is the current just after the switch closes, and a long time later?
+      <details><summary>Answer</summary><div>Just after: the empty capacitor acts like a wire, so I = ε/R (the biggest it gets). Long after: the capacitor is full and acts like a break in the circuit, so I = 0.</div></details></li>
+    <li>A long straight wire carries 10 A. Find the magnetic field 2.0 cm from it.
+      <details><summary>Answer</summary><div>B = μ₀I/(2πr) = (4π × 10⁻⁷)(10)/(2π × 0.020) = 1.0 × 10⁻⁴ T.</div></details></li>
+    <li>Two parallel wires carry currents in the same direction. Do they attract or repel?
+      <details><summary>Answer</summary><div>They attract. Each wire sits in the other's field, and the right-hand rule gives a force toward the other wire. (Opposite currents repel.)</div></details></li>
+    <li>An electron moves parallel to a magnetic field. What force does the field exert on it? Can a magnetic field ever change a charge's speed?
+      <details><summary>Answer</summary><div>No force: sin 0° = 0. A magnetic field can never change a charge's speed, because its force is always perpendicular to the velocity, so it does no work.</div></details></li>
+    <li>A strong magnet dropped down a copper pipe falls very slowly, even though copper isn't magnetic. Why?
+      <details><summary>Answer</summary><div>The falling magnet changes the flux through the pipe, inducing currents in the copper. By Lenz's law, their fields oppose the magnet's motion, slowing it down.</div></details></li>
+    <li><span class="ib">IB</span> Crossed fields have E = 3.0 × 10⁴ V/m and B = 0.15 T. At what speed does a charged particle pass straight through? Does it depend on the charge?
+      <details><summary>Answer</summary><div>v = E/B = (3.0 × 10⁴)/0.15 = 2.0 × 10⁵ m/s. It doesn't depend on the charge or the mass, because q cancels in qE = qvB.</div></details></li>
+    <li><span class="ib">IB</span> A thermistor (whose resistance falls as it warms) is in series with a fixed resistor across a battery. As the room warms, what happens to the voltage across the fixed resistor?
+      <details><summary>Answer</summary><div>The thermistor's resistance falls, so it takes a smaller share of the battery voltage, and the fixed resistor's share rises. The circuit can switch on a fan when it gets hot.</div></details></li>
+  </ol>
+</div>
+</div>
+<p class="gnext"><a href="#practice" data-view="practice">Practice questions for this unit →</a></p>
+<script>
+(function(){
+  var root=document.currentScript?document.currentScript.parentNode:document;
+  var tabs=[].slice.call(root.querySelectorAll('.gtabs .tab'));
+  function show(t){tabs.forEach(function(b){var on=b===t;b.setAttribute('aria-selected',on?'true':'false');b.tabIndex=on?0:-1;document.getElementById(b.getAttribute('aria-controls')).hidden=!on;});}
+  tabs.forEach(function(b,i){
+    b.addEventListener('click',function(){show(b);});
+    b.addEventListener('keydown',function(e){var k=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(k){var n=tabs[(i+k+tabs.length)%tabs.length];show(n);n.focus();e.preventDefault();}});
+  });
+})();
+</script>
+</section>

@@ -1,0 +1,219 @@
+<section class="guide" id="guide" aria-label="Study guide">
+<style>
+.guide{margin-top:28px}
+.guide .gtip{margin:0 0 16px;font-size:19px;line-height:1.45;max-width:1000px}
+.guide .ggrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-bottom:22px}
+.guide .gcard{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcard h3,.guide .gcheck h3,.guide .gsteps h3{margin:0 0 10px;font-size:20px;letter-spacing:-.01em}
+.guide .gcard ul{margin:0;padding-left:20px}
+.guide .gcard li{margin:0 0 7px}
+.guide .ib{display:inline-block;font-family:var(--f-mono);font-size:11px;font-weight:700;border:2px solid var(--ink);padding:0 5px;margin-left:4px;vertical-align:1px;background:var(--soft)}
+.guide table{border-collapse:collapse;width:100%;font-size:15px}
+.guide td{border-top:2px solid var(--ink);padding:6px 4px;vertical-align:top}
+.guide td:first-child{font-family:var(--f-mono);font-weight:700;white-space:nowrap;padding-right:12px}
+.guide td[colspan]{white-space:normal}
+.guide .gsub{font-family:var(--f-display);font-weight:400}
+.guide .gsteps{background:var(--soft);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px;margin-bottom:22px}
+.guide .gsteps ol{margin:0;padding-left:24px;columns:2 360px;column-gap:28px}
+.guide .gsteps li{margin:0 0 8px;break-inside:avoid}
+.guide h3.ghead{font-size:22px;margin:0 0 12px}
+.guide .gex{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:18px;margin-bottom:22px}
+.guide .ex{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .ex h4{margin:0 0 6px;font-size:18px}
+.guide .ex .kind{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--hot);text-transform:uppercase;letter-spacing:.04em}
+.guide .ex p{margin:0 0 8px}
+.guide .work{font-family:var(--f-mono);font-size:14px;line-height:1.6;border-left:4px solid var(--hot);background:#fff;padding:6px 12px;margin:8px 0}
+.guide .work b{font-family:var(--f-display)}
+.guide .ex .take{margin:8px 0 0;font-weight:500}
+.guide .ex svg{float:right;margin:0 0 6px 12px}
+.guide .gcheck{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcheck>p{margin:-4px 0 12px;color:var(--muted)}
+.guide ol.q{margin:0;padding-left:26px}
+.guide ol.q>li{margin:0 0 14px}
+.guide details{margin-top:6px}
+.guide summary{cursor:pointer;display:inline-block;font-weight:700;border:2px solid var(--ink);padding:2px 10px;background:#fff;list-style:none}
+.guide summary::-webkit-details-marker{display:none}
+.guide summary:hover{background:var(--soft)}
+.guide details[open] summary{background:var(--ink);color:#fff}
+.guide details>div{border-left:4px solid var(--hot);padding:8px 12px;margin-top:8px;background:#fff}
+.guide .gpanel>.ggrid,.guide .gpanel>.gsteps,.guide .gpanel>.gex{margin-bottom:0}
+.guide .gpanel>.gsteps+.ggrid{margin-top:22px}
+.guide .gtabs{margin-bottom:18px}
+.guide .gnext{margin:16px 0 0;font-weight:700}
+.guide .gnext a{color:var(--ink)}
+body.present .guide{display:none}
+@media (max-width:520px){.guide .gtip{font-size:17px}.guide td:first-child{white-space:normal}.guide .ggrid,.guide .gex{grid-template-columns:1fr}.guide .ex svg{float:none;display:block;margin:0 auto 8px}}
+</style>
+<div class="simbar"><h2>Study guide</h2><span class="mono">Unit 0 · Greenhouse Effect (IB)</span></div>
+<p class="gtip"><b>How to use this:</b> read the key ideas, then cover each worked example and try it yourself before reading the solution. Do the self-check questions on paper <i>before</i> you open the answers, mark the ones you miss, and come back to them in a day or two without looking. Rereading won't do much; answering questions will.</p>
+<div class="tabs gtabs" role="tablist" aria-label="Study guide sections">
+  <button class="tab" role="tab" type="button" aria-selected="true" aria-controls="g-ideas" id="gt-ideas">Key ideas</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-solve" id="gt-solve" tabindex="-1">How to solve</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-examples" id="gt-examples" tabindex="-1">Worked examples</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-check" id="gt-check" tabindex="-1">Self-check</button>
+</div>
+<div class="gpanel" role="tabpanel" id="g-ideas" aria-labelledby="gt-ideas">
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Key ideas</h3>
+    <ul>
+      <li>This whole unit is IB content. AP Physics 2 doesn't test the greenhouse effect, though it does use black-body radiation in modern physics.</li>
+      <li><b>Every warm object radiates.</b> A perfect emitter (a <b>black body</b>) radiates power P = σAT⁴, with T in kelvin. Twice the temperature means 16 times the power.</li>
+      <li><b>Wien's law:</b> hotter objects peak at shorter wavelengths, λ<sub>max</sub>T = 2.9 × 10⁻³ m·K. The Sun (about 5800 K) peaks in visible light; Earth (about 288 K) peaks in the infrared, near 10 µm.</li>
+      <li><b>Emissivity</b> e compares a real surface with a black body at the same temperature: P = eσAT⁴, with e between 0 and 1.</li>
+      <li><b>Albedo</b> α is the fraction of incoming radiation that is reflected or scattered back. Earth's is about 0.3, and it varies daily with clouds, and with ice, snow and latitude.</li>
+      <li><b>The solar constant</b> S ≈ 1360 W/m² is the intensity of sunlight arriving at Earth. Earth intercepts it over a disk (πR²) but spreads it over a sphere (4πR²), so the <b>mean incoming intensity is S/4</b>.</li>
+      <li><b>Energy balance:</b> at a steady temperature, power absorbed = power emitted: (1 − α)S/4 = eσT⁴.</li>
+      <li>With no atmosphere, that balance gives about 255 K (−18 °C). Earth's real average is about 288 K (15 °C). The difference is the <b>greenhouse effect</b>.</li>
+      <li><b>Greenhouse gases</b>: water vapour (H₂O), carbon dioxide (CO₂), methane (CH₄) and nitrous oxide (N₂O). Each has natural and human sources.</li>
+      <li>They let most visible sunlight through, but <b>absorb infrared</b> from the surface, because IR matches the energy levels (resonant frequencies) of their molecular vibrations. They then re-emit IR <b>in all directions</b>, so some goes back down and warms the surface.</li>
+      <li>The <b>enhanced greenhouse effect</b> is the extra warming from human activity, mainly burning fossil fuels, which raises CO₂ levels.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Equations</h3>
+    <table>
+      <tr><td>P = σAT⁴</td><td>black-body power (Stefan–Boltzmann)</td></tr>
+      <tr><td>P = eσAT⁴</td><td>real surface, emissivity e</td></tr>
+      <tr><td>e = P/(σAT⁴)</td><td>emissivity</td></tr>
+      <tr><td>λ<sub>max</sub>T = 2.9 × 10⁻³ m·K</td><td>Wien's displacement law</td></tr>
+      <tr><td>α = P<sub>scattered</sub>/P<sub>incident</sub></td><td>albedo</td></tr>
+      <tr><td>I = P/A</td><td>intensity (W/m²)</td></tr>
+      <tr><td>S/4</td><td>mean incoming intensity at Earth</td></tr>
+      <tr><td>(1 − α)S/4 = eσT⁴</td><td>energy balance per square metre</td></tr>
+      <tr><td>σ</td><td>5.67 × 10⁻⁸ W/(m²·K⁴)</td></tr>
+    </table>
+  </div>
+  <div class="gcard">
+    <h3>Common mistakes</h3>
+    <ul>
+      <li>Using S instead of S/4 for the average sunlight on each square metre of Earth.</li>
+      <li>Putting °C into σT⁴ or Wien's law. Always use kelvin.</li>
+      <li>Forgetting the fourth power: 10% hotter means about 46% more power, not 10%.</li>
+      <li>Mixing up albedo (reflects incoming sunlight) and emissivity (how well a surface radiates).</li>
+      <li>Saying greenhouse gases “reflect heat” or “trap heat like a blanket.” They absorb infrared and re-emit it in all directions.</li>
+      <li>Blaming the ozone hole. Ozone loss lets in more ultraviolet; it isn't what causes the enhanced greenhouse effect.</li>
+    </ul>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-solve" aria-labelledby="gt-solve" hidden>
+<div class="gsteps">
+  <h3>How to solve an energy-balance problem</h3>
+  <ol>
+    <li><b>Find the incoming intensity:</b> S/4 for a whole planet averaged over day and night.</li>
+    <li><b>Remove what's reflected:</b> absorbed = (1 − α) × incoming.</li>
+    <li><b>Write the outgoing power:</b> eσT⁴ per square metre (e = 1 for a black body).</li>
+    <li><b>Set absorbed = emitted</b> for whatever you're balancing: the planet, the surface, or the atmosphere.</li>
+    <li><b>Solve for T:</b> T = (absorbed/eσ)<sup>1/4</sup>. Take the square root twice.</li>
+    <li><b>Check:</b> Earth-like answers should be a few hundred kelvin.</li>
+  </ol>
+</div>
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Surface and atmosphere</h3>
+    <ul>
+      <li>The surface gains sunlight <i>and</i> infrared sent back down from the atmosphere, and loses its own σT⁴.</li>
+      <li>The atmosphere gains infrared from the surface and radiates both up (to space) and down (to the surface).</li>
+      <li>Write one balance for each, and solve them together.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Ratio shortcuts</h3>
+    <ul>
+      <li>P ∝ AT⁴: compare by multiplying the area factor by the temperature factor to the fourth.</li>
+      <li>λ<sub>max</sub> ∝ 1/T: twice as hot peaks at half the wavelength.</li>
+      <li>T ∝ (absorbed)<sup>1/4</sup>: absorbing 16 times as much only doubles the temperature.</li>
+    </ul>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-examples" aria-labelledby="gt-examples" hidden>
+<div class="gex">
+  <div class="ex">
+    <div class="kind">Wien's law</div>
+    <h4>The Sun's and Earth's peak wavelengths</h4>
+    <p>Sunlight peaks at about 500 nm. Estimate the Sun's surface temperature. At what wavelength does Earth's surface (288 K) radiate most?</p>
+    <div class="work">
+      Sun: T = 2.9 × 10⁻³ / 5.0 × 10⁻⁷ = <b>5800 K</b><br>
+      Earth: λ<sub>max</sub> = 2.9 × 10⁻³ / 288 = <b>1.0 × 10⁻⁵ m</b> (10 µm, infrared)
+    </div>
+    <p class="take">Incoming sunlight is mostly visible, which the atmosphere lets through. Outgoing radiation is infrared, which greenhouse gases absorb. That mismatch is the whole greenhouse effect.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Energy balance</div>
+    <h4>Earth without an atmosphere</h4>
+    <p>The solar constant is 1360 W/m² and Earth's albedo is 0.30. Treating Earth as a black body with no atmosphere, find its equilibrium temperature.</p>
+    <div class="work">
+      Absorbed per m²: (1 − 0.30)(1360/4) = 238 W/m²<br>
+      Balance: σT⁴ = 238 → T⁴ = 238/(5.67 × 10⁻⁸) = 4.20 × 10⁹<br>
+      T = <b>255 K</b> (about −18 °C)
+    </div>
+    <p class="take">The real average is about 288 K. The 33 K difference is what the natural greenhouse effect adds.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Emissivity</div>
+    <h4>Earth's effective emissivity</h4>
+    <p>Earth's surface, at 288 K, radiates like a black body, but only 238 W/m² escapes to space on average. What effective emissivity does that give the Earth–atmosphere system?</p>
+    <div class="work">
+      Surface emits: σT⁴ = (5.67 × 10⁻⁸)(288)⁴ = 390 W/m²<br>
+      e = 238/390 = <b>0.61</b>
+    </div>
+    <p class="take">Seen from space, Earth radiates as if it were a black body with emissivity about 0.6. Adding greenhouse gases lowers that number, so the surface has to get warmer to send the same 238 W/m² out.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Surface balance</div>
+    <h4>Back-radiation warms the surface</h4>
+    <p>On average, Earth's surface absorbs 238 W/m² from the Sun and 150 W/m² of infrared from the atmosphere. If it radiates as a black body, what is its temperature?</p>
+    <div class="work">
+      Absorbed: 238 + 150 = 388 W/m²<br>
+      σT⁴ = 388 → T⁴ = 6.84 × 10⁹ → T = <b>288 K</b>
+    </div>
+    <p class="take">Without the 150 W/m² coming back down from greenhouse gases, the surface would settle near 255 K. More greenhouse gas means more back-radiation and a warmer surface.</p>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
+<div class="gcheck">
+  <h3>Self-check</h3>
+  <p>Answer first, then open.</p>
+  <ol class="q">
+<li>A black body's absolute temperature doubles. By what factor does the power it radiates change?
+      <details><summary>Answer</summary><div>P ∝ T⁴, so 2⁴ = 16 times as much.</div></details></li>
+    <li>Two stars have the same surface temperature, but one has twice the radius. Compare their power outputs.
+      <details><summary>Answer</summary><div>P = σAT⁴, and A = 4πr² ∝ r². Twice the radius gives 4 times the area, so 4 times the power.</div></details></li>
+    <li>Why is the average incoming sunlight on Earth S/4 and not S?
+      <details><summary>Answer</summary><div>Earth catches sunlight over a disk of area πR², but that energy is spread over the whole spinning sphere, area 4πR². 4πR²/πR² = 4.</div></details></li>
+    <li>Arctic sea ice melts and is replaced by dark ocean. How does that change Earth's albedo, and what happens next?
+      <details><summary>Answer</summary><div>The albedo drops, because dark water reflects less than ice. More sunlight is absorbed, which warms the region and melts more ice: a positive feedback.</div></details></li>
+    <li>Nitrogen and oxygen make up 99% of the air. Why aren't they greenhouse gases?
+      <details><summary>Answer</summary><div>Their molecules don't absorb infrared: they have no vibrations at infrared energies that can absorb and re-emit it. Greenhouse gases like CO₂ and H₂O do.</div></details></li>
+    <li>A light-bulb filament runs at 3000 K. At what wavelength does it emit most? What does that say about old filament bulbs?
+      <details><summary>Answer</summary><div>λ<sub>max</sub> = 2.9 × 10⁻³/3000 = 9.7 × 10⁻⁷ m, which is infrared. Most of a filament bulb's output is infrared, not visible light, which is why they waste so much energy as heat.</div></details></li>
+    <li>A surface at 300 K has emissivity 0.90. How much power does each square metre radiate?
+      <details><summary>Answer</summary><div>P/A = eσT⁴ = (0.90)(5.67 × 10⁻⁸)(300)⁴ = 413 W/m².</div></details></li>
+    <li>Mars receives sunlight of about 590 W/m² and has an albedo of 0.25. Estimate its equilibrium temperature as a black body with no greenhouse effect.
+      <details><summary>Answer</summary><div>Absorbed: (0.75)(590/4) = 111 W/m². T⁴ = 111/(5.67 × 10⁻⁸) = 1.95 × 10⁹, so T ≈ 210 K.</div></details></li>
+    <li>Explain, step by step, how adding CO₂ to the atmosphere warms the surface.
+      <details><summary>Answer</summary><div>More CO₂ absorbs more of the surface's outgoing infrared. It re-emits that energy in all directions, so more comes back down to the surface. The surface now absorbs more than it emits and warms up until its own σT⁴ grows enough to restore the balance.</div></details></li>
+    <li>What do the terms <i>greenhouse effect</i> and <i>enhanced greenhouse effect</i> each mean?
+      <details><summary>Answer</summary><div>The greenhouse effect is the natural warming of the surface by gases that absorb and re-emit infrared; without it Earth would be about 33 K colder. The enhanced greenhouse effect is the extra warming caused by human activity adding more of those gases, mainly by burning fossil fuels.</div></details></li>
+  </ol>
+</div>
+</div>
+<p class="gnext"><a href="#practice" data-view="practice">Practice questions for this unit →</a></p>
+<script>
+(function(){
+  var root=document.currentScript?document.currentScript.parentNode:document;
+  var tabs=[].slice.call(root.querySelectorAll('.gtabs .tab'));
+  function show(t){tabs.forEach(function(b){var on=b===t;b.setAttribute('aria-selected',on?'true':'false');b.tabIndex=on?0:-1;document.getElementById(b.getAttribute('aria-controls')).hidden=!on;});}
+  tabs.forEach(function(b,i){
+    b.addEventListener('click',function(){show(b);});
+    b.addEventListener('keydown',function(e){var k=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(k){var n=tabs[(i+k+tabs.length)%tabs.length];show(n);n.focus();e.preventDefault();}});
+  });
+})();
+</script>
+</section>
