@@ -25,18 +25,18 @@ const SIM = {
       { id: 'vmax', name: 'Speed at the bottom', short: 'v_max', sym: 'v<sub>max</sub>', unit: 'm/s', f: d => d.vmax }, { id: 'Tb', name: 'String tension at the bottom', short: 'T_str', sym: 'F<sub>T,bottom</sub>', unit: 'N', f: d => d.Tb, vs: 'W' }, { id: 'W', name: 'Weight', short: 'mg', sym: 'mg', unit: 'N', f: d => d.W }];
   },
   work(v, d, mode, opt){
-    const gS = H.n(d.g, 'm/s²') + ' (' + d.pl[0] + ')';
-    if (mode === 'lab') return '<h4>1 · Square the period formula</h4><div class="eq">T = 2π√(L/g) → <b>T² = (4π²/g)·L</b>: a straight line through the origin if you graph T² against L</div>' +
-      '<h4>2 · The slope gives g</h4><div class="eq">slope = 4π²/g = ' + H.n(d.slope, 's²/m') + ' → g = 4π²/slope = ' + gS + '</div>' +
-      '<div class="eq">At L = ' + H.iv('L') + ': T = ' + H.n(d.T0, 's') + ', T² = ' + H.n(d.T2, 's²') + '</div>' +
+    const gS = ' (' + d.pl[0] + ')';
+    if (mode === 'lab') return '<h4>1 · Square the period formula</h4><p class="st">A straight line through the origin if you graph T² against L:</p>' + TEX`T = 2\pi\sqrt{\frac{L}{g}}` + TEXA`T^2 = \frac{4\pi^2}{g}\,L` +
+      '<h4>2 · The slope gives g</h4>' + TEX`\text{slope} = \frac{4\pi^2}{g}` + TEX`\text{slope} = ${M.n(d.slope, 's²/m')}` + TEX`g = \frac{4\pi^2}{\text{slope}}` + TEXA`g = ${M.n(d.g, 'm/s²')}` + '<p class="st">That is the g of ' + d.pl[0] + '.</p>' +
+      '<p class="st">At L = ' + H.iv('L') + ':</p>' + TEX`T = ${M.n(d.T0, 's')}` + TEX`T^2 = ${M.n(d.T2, 's²')}` +
       '<p class="note">Lab tips: time 10 or 20 swings and divide (reaction time matters less), keep the angle small, and measure L to the center of the bob.</p>' +
       '<p class="note">Why T² and not T? Graphing T vs L gives a curve; T² vs L gives a line, and a line’s slope is easy to read.</p>';
-    let h = '<h4>1 · Restoring force: the part of gravity along the arc, mg sinθ ≈ mgθ for small angles</h4><div class="eq">That makes it (nearly) simple harmonic: T = 2π√(L/g) = 2π√(' + H.iv('L') + ' / ' + H.n(d.g) + ') = <b>' + H.n(d.T0, 's') + '</b>, g = ' + gS + '</div>' +
+    let h = '<h4>1 · Restoring force: the part of gravity along the arc, mg sinθ ≈ mgθ for small angles</h4><p class="st">That makes it (nearly) simple harmonic:</p>' + TEX`T = 2\pi\sqrt{\frac{L}{g}}` + TEX`T = 2\pi\sqrt{\frac{${M.iv('L')}}{${M.n(d.g)}}}` + TEXA`T = ${M.n(d.T0, 's')}` + '<p class="st">Here g = ' + H.n(d.g, 'm/s²') + gS + '.</p>' +
       '<p class="note">Not in the formula: the mass (heavier bob, more force, but more inertia too) and the amplitude (for small swings).</p>' +
-      '<h4>2 · How good is “small angle”?</h4><div class="eq">At ' + H.iv('th') + ' the true period is ' + H.n(d.T, 's') + ', ' + H.n(d.err, '%') + ' longer' + (d.err < 1 ? ': close enough.' : ': the formula starts to fail.') + '</div>' +
-      '<h4>3 · Speed at the bottom (energy)</h4><div class="eq">mgh = ½mv² with h = L(1 − cosθ<sub>0</sub>) = ' + H.n(d.h, 'm') + ' → v = √(2gh) = <b>' + H.n(d.vmax, 'm/s') + '</b></div>' +
-      '<h4>4 · String tension</h4><div class="eq">Bottom (moving in a circle): F<sub>T</sub> − mg = mv²/L → F<sub>T</sub> = ' + H.n(d.W) + ' + ' + H.n(d.Tb - d.W) + ' = <b>' + H.n(d.Tb, 'N') + '</b> (more than mg)</div>' +
-      '<div class="eq">At the ends (v = 0): F<sub>T</sub> = mg cosθ<sub>0</sub> = ' + H.n(d.Te, 'N') + ' (less than mg)</div>';
+      '<h4>2 · How good is “small angle”?</h4><p class="st">At ' + H.iv('th') + ' the true period is ' + H.n(d.T, 's') + ', ' + H.n(d.err, '%') + ' longer' + (d.err < 1 ? ': close enough.' : ': the formula starts to fail.') + '</p>' +
+      '<h4>3 · Speed at the bottom (energy)</h4>' + TEX`m g h = \frac{1}{2} m v^2` + TEX`h = L\,(1 - \cos\theta_0)` + TEX`h = ${M.n(d.h, 'm')}` + TEX`v = \sqrt{2 g h}` + TEX`v = \sqrt{2(${M.n(d.g)})(${M.n(d.h)})}` + TEXA`v = ${M.n(d.vmax, 'm/s')}` +
+      '<h4>4 · String tension</h4><p class="st">Bottom (moving in a circle):</p>' + TEX`F_T - m g = \frac{m v^2}{L}` + TEX`F_T = m g + \frac{m v^2}{L}` + TEX`F_T = ${M.n(d.W, 'N')} + ${M.n(d.Tb - d.W, 'N')}` + TEXA`F_T = ${M.n(d.Tb, 'N')}` + '<p class="st">More than mg.</p>' +
+      '<p class="st">At the ends (v = 0):</p>' + TEX`F_T = m g\,\cos\theta_0` + TEX`F_T = ${M.n(d.Te, 'N')}` + '<p class="st">Less than mg.</p>';
     if (opt.place === 'up' || opt.place === 'down') h += '<p class="note">In an accelerating elevator the pendulum acts as if g were g ± a: up → faster swings, down → slower.</p>';
     return h;
   },

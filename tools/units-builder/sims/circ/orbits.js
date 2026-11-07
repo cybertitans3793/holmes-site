@@ -24,14 +24,14 @@ const SIM = {
     { id: 'K', name: 'T²/r³ (Kepler’s 3rd law)', short: 'T²/r³', sym: 'T²/r³', unit: 's²/m³', f: d => d.K },
     { id: 'gs', name: 'g at the planet’s surface', short: 'g_surface', sym: 'g<sub>surface</sub>', unit: 'm/s²', f: d => d.gs }]; },
   work(v, d){
-    return '<h4>1 · Distance from the planet’s <i>center</i></h4><div class="eq">r = R + h = ' + H.n(d.R, 'm') + ' + (' + H.iv('h') + ' = ' + H.n(v.h * 1000, 'm') + ') = <b>' + H.n(d.r, 'm') + '</b></div>' +
-      '<h4>2 · Gravity force (Newton’s law)</h4><div class="eq">F<sub>g</sub> = GMm/r² = (6.67×10<sup>−11</sup>)(' + H.n(d.M, 'kg') + ')(' + H.iv('m') + ') / (' + H.n(d.r, 'm') + ')² = <b>' + H.n(d.F, 'N') + '</b></div>' +
-      '<h4>3 · Gravitational field out here</h4><div class="eq">g = F<sub>g</sub>/m = GM/r² = <b>' + H.n(d.gr, 'm/s²') + '</b> vs. ' + H.n(d.gs, 'm/s²') + ' at the surface (' + H.n(d.pct) + '%)</div>' +
+    return '<h4>1 · Distance from the planet’s <i>center</i></h4><p class="st">The orbit is h = ' + H.iv('h') + ' = ' + H.n(v.h * 1000, 'm') + ' above the surface.</p>' + TEX`r = R + h` + TEX`r = ${M.n(d.R, 'm')} + ${M.n(v.h * 1000, 'm')}` + TEXA`r = ${M.n(d.r, 'm')}` +
+      '<h4>2 · Gravity force (Newton’s law)</h4>' + TEX`F_g = \frac{GMm}{r^2}` + TEX`F_g = \frac{(6.67\times10^{-11})(${M.n(d.M, 'kg')})(${M.iv('m')})}{(${M.n(d.r, 'm')})^2}` + TEXA`F_g = ${M.n(d.F, 'N')}` +
+      '<h4>3 · Gravitational field out here</h4>' + TEX`g = \frac{F_g}{m}` + TEX`g = \frac{GM}{r^2}` + TEXA`g = ${M.n(d.gr, 'm/s²')}` + '<p class="st">That is ' + H.n(d.pct) + '% of ' + H.n(d.gs, 'm/s²') + ' at the surface.</p>' +
       '<p class="note">Gravity hasn’t switched off. Astronauts feel weightless because they and the station are both in free fall.</p>' +
-      '<h4>4 · Gravity is the centripetal force</h4><div class="eq">GMm/r² = mv²/r → v = √(GM/r) = <b>' + H.n(d.sp, 'm/s') + '</b></div>' +
+      '<h4>4 · Gravity is the centripetal force</h4>' + TEX`\frac{GMm}{r^2} = \frac{m v^2}{r}` + TEX`v = \sqrt{\frac{GM}{r}}` + TEXA`v = ${M.n(d.sp, 'm/s')}` +
       '<p class="note">The satellite’s mass m cancels: a wrench and the station orbit together.</p>' +
-      '<h4>5 · Period</h4><div class="eq">T = 2πr/v = <b>' + H.n(d.P, 's') + '</b> = ' + H.n(d.Pmin, 'min') + ' = ' + H.n(d.Ph, 'h') + '</div>' +
-      '<h4>6 · Kepler’s 3rd law</h4><div class="eq">T²/r³ = 4π²/(GM) = <b>' + H.n(d.K, 's²/m³') + '</b></div>' +
+      '<h4>5 · Period</h4>' + TEX`T = \frac{2\pi r}{v}` + TEX`T = \frac{2\pi (${M.n(d.r, 'm')})}{${M.n(d.sp, 'm/s')}}` + TEXA`T = ${M.n(d.P, 's')}` + TEX`T = ${M.n(d.Pmin, 'min')}` + TEX`T = ${M.n(d.Ph, 'h')}` +
+      '<h4>6 · Kepler’s 3rd law</h4>' + TEX`\frac{T^2}{r^3} = \frac{4\pi^2}{GM}` + TEXA`\frac{T^2}{r^3} = ${M.n(d.K, 's²/m³')}` +
       '<p class="note">Same value for every orbit around this planet. It only changes when M changes.</p>';
   },
   draw(v, d, mode, opt, t, dt, A){

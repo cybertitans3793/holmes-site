@@ -37,30 +37,27 @@ const SIM = {
     return list;
   },
   work(v, d, mode){
-    const s = mode === 'string' ? 'T' : 'N', who = mode === 'string' ? 'the string' : mode === 'loop' ? 'the track' : 'the road';
-    let h = '<h4>1 · Net force needed toward the center</h4><div class="eq">ΣF<sub>c</sub> = mv²/r = (' + H.iv('m') + ')(' + H.iv('v') + ')² / ' + H.iv('r') + ' = <b>' + H.n(d.Fc, 'N') + '</b></div>' +
+    const s = mode === 'string' ? 'T' : 'N', who = mode === 'string' ? 'the string' : mode === 'loop' ? 'the track' : 'the road', S = '<mi>' + s + '</mi>', g = M.n(10, 'm/s²');
+    let h = '<h4>1 · Net force needed toward the center</h4>' + TEX`\Sigma F_c = \frac{m v^2}{r}` + TEX`\Sigma F_c = \frac{(${M.iv('m')})(${M.iv('v')})^2}{${M.iv('r')}}` + TEXA`\Sigma F_c = ${M.n(d.Fc, 'N')}` +
       '<p class="note">This is not a new force. It is what the real forces (' + s + ' and mg) have to add up to, pointing toward the center.</p>' +
-      '<h4>2 · Weight</h4><div class="eq">mg = (' + H.iv('m') + ')(' + H.g() + ') = ' + H.n(d.W, 'N') + '</div>';
+      '<h4>2 · Weight</h4>' + TEX`m g = (${M.iv('m')})(${g})` + TEX`m g = ${M.n(d.W, 'N')}`;
     if (mode === 'hill'){
-      h += '<h4>3 · Newton’s 2nd law at the top (toward center = down)</h4><div class="eq">mg − N = mv²/r → N = mg − mv²/r = ' + H.n(d.W) + ' − ' + H.n(d.Fc) + ' = <b>' + H.n(d.F, 'N') + '</b></div>' +
+      h += '<h4>3 · Newton’s 2nd law at the top (toward center = down)</h4>' + TEX`m g - N = \frac{m v^2}{r}` + TEX`N = m g - \frac{m v^2}{r}` + TEX`N = ${M.n(d.W, 'N')} - ${M.n(d.Fc, 'N')}` + TEXA`N = ${M.n(d.F, 'N')}` +
         (d.lost ? '<div class="bad">N can’t be negative: the road can only push. The car leaves the road at the top.</div>'
                 : '<div class="ok">The car feels ' + H.n(d.ratio) + ' of its normal weight (N/mg). Faster → lighter.</div>') +
-        '<h4>4 · Speed where N = 0 (car goes airborne)</h4><div class="eq">mg = mv²/r → v<sub>max</sub> = √(gr) = √((' + H.g() + ')(' + H.iv('r') + ')) = <b>' + H.n(d.vcrit, 'm/s') + '</b></div><p class="note">Mass cancels.</p>';
+        '<h4>4 · Speed where N = 0 (car goes airborne)</h4>' + TEX`m g = \frac{m v_{\max}^2}{r}` + TEX`v_{\max} = \sqrt{g r}` + TEX`v_{\max} = \sqrt{(${g})(${M.iv('r')})}` + TEXA`v_{\max} = ${M.n(d.vcrit, 'm/s')}` + '<p class="note">Mass cancels.</p>';
       return h;
     }
     if (d.pos === 'top'){
-      h += '<h4>3 · At the top, toward center = down</h4><div class="eq">' + s + ' and mg both point down: ' + s + ' + mg = mv²/r</div>' +
-        '<div class="eq">' + s + ' = mv²/r − mg = ' + H.n(d.Fc) + ' − ' + H.n(d.W) + ' = <b>' + H.n(d.F, 'N') + '</b></div>' +
+      h += '<h4>3 · At the top, toward center = down</h4><p class="st">' + s + ' and mg both point down:</p>' + TEX`${S} + m g = \frac{m v^2}{r}` + TEX`${S} = \frac{m v^2}{r} - m g` + TEX`${S} = ${M.n(d.Fc, 'N')} - ${M.n(d.W, 'N')}` + TEXA`${S} = ${M.n(d.F, 'N')}` +
         (d.lost ? '<div class="bad">' + s + ' can’t be negative: ' + who + ' can only ' + (mode === 'string' ? 'pull' : 'push') + '. Gravity alone is more than the needed force, so it ' + (mode === 'string' ? 'falls inside the circle and the string goes slack.' : 'falls off the track.') + '</div>'
                 : (mode === 'loop' ? '<div class="ok">Riders feel ' + H.n(d.ratio) + ' g’s (N/mg) at the top.</div>' : '<div class="ok">The string stays tight.</div>')) +
-        '<h4>4 · Slowest speed at the top (' + s + ' = 0)</h4><div class="eq">mg = mv<sub>min</sub>²/r → v<sub>min</sub> = √(gr) = √((' + H.g() + ')(' + H.iv('r') + ')) = <b>' + H.n(d.vcrit, 'm/s') + '</b></div><p class="note">Mass cancels: any mass needs the same minimum speed.</p>';
+        '<h4>4 · Slowest speed at the top (' + s + ' = 0)</h4>' + TEX`m g = \frac{m v_{\min}^2}{r}` + TEX`v_{\min} = \sqrt{g r}` + TEX`v_{\min} = \sqrt{(${g})(${M.iv('r')})}` + TEXA`v_{\min} = ${M.n(d.vcrit, 'm/s')}` + '<p class="note">Mass cancels: any mass needs the same minimum speed.</p>';
     } else if (d.pos === 'bottom'){
-      h += '<h4>3 · At the bottom, toward center = up</h4><div class="eq">' + s + ' points up, mg points down: ' + s + ' − mg = mv²/r</div>' +
-        '<div class="eq">' + s + ' = mv²/r + mg = ' + H.n(d.Fc) + ' + ' + H.n(d.W) + ' = <b>' + H.n(d.F, 'N') + '</b></div>' +
+      h += '<h4>3 · At the bottom, toward center = up</h4><p class="st">' + s + ' points up, mg points down:</p>' + TEX`${S} - m g = \frac{m v^2}{r}` + TEX`${S} = \frac{m v^2}{r} + m g` + TEX`${S} = ${M.n(d.Fc, 'N')} + ${M.n(d.W, 'N')}` + TEXA`${S} = ${M.n(d.F, 'N')}` +
         '<div class="ok">' + (mode === 'loop' ? 'Riders feel ' + H.n(d.ratio) + ' g’s.' : s + ' is ' + H.n(d.ratio) + ' times the weight.') + ' The bottom always needs more than mg, because ' + s + ' must hold up the weight <i>and</i> supply mv²/r.</div>';
     } else {
-      h += '<h4>3 · At the side, toward center = sideways</h4><div class="eq">mg points down, along the motion: it changes the speed, not the direction. Only ' + s + ' points toward the center:</div>' +
-        '<div class="eq">' + s + ' = mv²/r = <b>' + H.n(d.F, 'N') + '</b></div>' +
+      h += '<h4>3 · At the side, toward center = sideways</h4><p class="st">mg points down, along the motion: it changes the speed, not the direction. Only ' + s + ' points toward the center:</p>' + TEX`${S} = \frac{m v^2}{r}` + TEXA`${S} = ${M.n(d.F, 'N')}` +
         '<p class="note">The total force isn’t toward the center here, because gravity is also slowing the ' + (mode === 'string' ? 'ball' : 'car') + ' down (going up) or speeding it up (going down).</p>';
     }
     return h;

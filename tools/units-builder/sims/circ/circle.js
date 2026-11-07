@@ -15,13 +15,14 @@ const SIM = {
     { id: 'vmax', name: 'Maximum speed Aω', short: 'v_max', sym: 'v<sub>max</sub>', unit: 'cm/s', f: d => d.vmax }]; },
   work(v, d, mode, opt){
     const s = STARTS[opt.start || 'pA'];
-    return '<h4>1 · Period, frequency, angular frequency</h4><div class="eq">T = 1/f = ' + H.n(d.T, 's') + ' &nbsp; ω = 2πf = 2π(' + H.iv('f') + ') = ' + H.n(d.w, 'rad/s') + '</div>' +
-      '<h4>2 · Position: the shadow of a point going around a circle of radius A</h4><div class="eq">Starting at ' + s[0] + ': <b>x = ' + d.form + '</b></div>' +
-      '<div class="eq">At t = ' + H.iv('t') + ': x = <b>' + H.n(d.x, 'cm') + '</b></div>' +
-      '<h4>3 · Velocity and acceleration</h4><div class="eq">v = ' + H.n(d.vv, 'cm/s') + ' (max Aω = ' + H.n(d.vmax, 'cm/s') + ' at x = 0)</div>' +
-      '<div class="eq"><b>a = −ω²x</b> = −(' + H.n(d.w) + ')²(' + H.n(d.x) + ') = <b>' + H.n(d.a, 'cm/s²') + '</b> (max Aω² = ' + H.n(d.amax, 'cm/s²') + ' at the ends)</div>' +
+    const form = { pA: TEXA`x = A\,\cos(\omega t)`, zp: TEXA`x = A\,\sin(\omega t)`, mA: TEXA`x = -A\,\cos(\omega t)`, zm: TEXA`x = -A\,\sin(\omega t)` }[opt.start || 'pA'];
+    return '<h4>1 · Period, frequency, angular frequency</h4>' + TEX`T = \frac{1}{f}` + TEX`T = ${M.n(d.T, 's')}` + TEX`\omega = 2\pi f` + TEX`\omega = 2\pi (${M.iv('f')})` + TEX`\omega = ${M.n(d.w, 'rad/s')}` +
+      '<h4>2 · Position: the shadow of a point going around a circle of radius A</h4><p class="st">Starting at ' + s[0] + ':</p>' + form +
+      '<p class="st">At t = ' + H.iv('t') + ':</p>' + TEXA`x = ${M.n(d.x, 'cm')}` +
+      '<h4>3 · Velocity and acceleration</h4>' + TEX`v = ${M.n(d.vv, 'cm/s')}` + TEX`v_{\max} = A\,\omega` + TEX`v_{\max} = ${M.n(d.vmax, 'cm/s')}` + '<p class="st">The max speed is at x = 0.</p>' +
+      TEX`a = -\omega^2 x` + TEX`a = -(${M.n(d.w)})^2(${M.n(d.x)})` + TEXA`a = ${M.n(d.a, 'cm/s²')}` + TEX`a_{\max} = A\,\omega^2` + TEX`a_{\max} = ${M.n(d.amax, 'cm/s²')}` + '<p class="st">The max acceleration is at the ends.</p>' +
       '<p class="note">a = −ω²x is the definition of SHM: acceleration proportional to displacement and pointing the other way. Its graph (bottom right) is a straight line with slope −ω².</p>' +
-      '<h4>4 · IB HL: speed at any position</h4><div class="eq">v = ±ω√(A² − x²) = ±(' + H.n(d.w) + ')√(' + H.n(v.A) + '² − ' + H.n(d.x) + '²) = ±' + H.n(Math.abs(d.vv), 'cm/s') + ' ✓</div>' +
+      '<h4>4 · IB HL: speed at any position</h4>' + TEX`v = \pm\omega\sqrt{A^2 - x^2}` + TEX`v = \pm(${M.n(d.w)})\sqrt{(${M.n(v.A)})^2 - (${M.n(d.x)})^2}` + TEX`v = \pm ${M.n(Math.abs(d.vv), 'cm/s')}` +
       '<p class="note">Reading graphs: v is biggest where the x–t graph is steepest; a has the opposite sign of x. Velocity leads position by a quarter cycle.</p>';
   },
   draw(v, d, mode, opt, t, dt, A){

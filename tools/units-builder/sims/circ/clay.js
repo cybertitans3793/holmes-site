@@ -20,15 +20,17 @@ const SIM = {
     { id: 'E2', name: 'Energy after', short: 'E2', sym: 'E<sub>2</sub>', unit: 'J', f: d => d.E2, vs: 'E1' },
     { id: 'E1', name: 'Energy before', short: 'E1', sym: 'E<sub>1</sub>', unit: 'J', f: d => d.E1 }]; },
   work(v, d, mode){
-    let h = '<h4>1 · Before: T<sub>1</sub> = 2π√(M/k) = ' + H.n(d.T1, 's') + ', v<sub>max</sub> = Aω<sub>1</sub> = ' + H.n(d.v1, 'm/s') + ', E<sub>1</sub> = ½kA² = ' + H.n(d.E1, 'J') + '</h4>' +
-      '<h4>2 · After: more mass on the same spring → longer period, whatever the timing</h4><div class="eq">T<sub>2</sub> = 2π√((M + m)/k) = <b>' + H.n(d.T2, 's') + '</b> (' + H.n(d.Tr) + '× longer)</div>';
-    if (mode === 'eq') return h + '<h4>3 · At equilibrium the block is moving fastest: a perfectly inelastic collision</h4><div class="eq">Horizontal momentum is conserved (the clay falls straight down, bringing none): Mv<sub>max</sub> = (M + m)v′ → v′ = ' + H.n(d.vp, 'm/s') + '</div>' +
-      '<div class="eq">KE is lost in the collision: E<sub>2</sub> = ½(M + m)v′² = <b>' + H.n(d.E2, 'J') + '</b> (' + H.n(d.lost, 'J') + ' lost)</div>' +
-      '<div class="eq">½kA<sub>2</sub>² = E<sub>2</sub> → A<sub>2</sub> = A√(M/(M + m)) = <b>' + H.n(d.A2, 'm') + '</b> (smaller)</div>' +
+    const w1 = 2 * PI / d.T1, w2 = 2 * PI / d.T2;
+    let h = '<h4>1 · Before: period, top speed and energy</h4>' + TEX`T_1 = 2\pi\sqrt{\frac{M}{k}}` + TEX`T_1 = 2\pi\sqrt{\frac{${M.iv('M')}}{${M.iv('k')}}}` + TEX`T_1 = ${M.n(d.T1, 's')}` +
+      TEX`v_{\max,1} = A\,\omega_1` + TEX`v_{\max,1} = (${M.iv('A')})(${M.n(w1, 'rad/s')})` + TEX`v_{\max,1} = ${M.n(d.v1, 'm/s')}` +
+      TEX`E_1 = \frac{1}{2} k A^2` + TEX`E_1 = \frac{1}{2}(${M.iv('k')})(${M.iv('A')})^2` + TEX`E_1 = ${M.n(d.E1, 'J')}` +
+      '<h4>2 · After: more mass on the same spring → longer period, whatever the timing</h4>' + TEX`T_2 = 2\pi\sqrt{\frac{M + m}{k}}` + TEX`T_2 = 2\pi\sqrt{\frac{${M.n(v.M + v.m)}}{${M.iv('k')}}}` + TEXA`T_2 = ${M.n(d.T2, 's')}` + '<p class="st">That is ' + H.n(d.Tr) + '× longer.</p>';
+    if (mode === 'eq') return h + '<h4>3 · At equilibrium the block is moving fastest: a perfectly inelastic collision</h4><p class="st">Horizontal momentum is conserved (the clay falls straight down, bringing none):</p>' + TEX`M v_{\max} = (M + m)\,v'` + TEX`v' = \frac{M v_{\max}}{M + m}` + TEX`v' = \frac{(${M.iv('M')})(${M.n(d.v1, 'm/s')})}{${M.n(v.M + v.m, 'kg')}}` + TEX`v' = ${M.n(d.vp, 'm/s')}` +
+      '<p class="st">KE is lost in the collision:</p>' + TEX`E_2 = \frac{1}{2}(M + m)\,v'^2` + TEX`E_2 = \frac{1}{2}(${M.n(v.M + v.m, 'kg')})(${M.n(d.vp, 'm/s')})^2` + TEXA`E_2 = ${M.n(d.E2, 'J')}` + '<p class="st">That is ' + H.n(d.lost, 'J') + ' lost.</p>' +
+      TEX`\frac{1}{2} k A_2^2 = E_2` + TEX`A_2 = A\sqrt{\frac{M}{M + m}}` + TEX`A_2 = (${M.iv('A')})\sqrt{\frac{${M.iv('M')}}{${M.n(v.M + v.m, 'kg')}}}` + TEXA`A_2 = ${M.n(d.A2, 'm')}` + '<p class="st">Smaller.</p>' +
       '<p class="note">Summary: T up, A down, E down, v<sub>max</sub> down.</p>';
-    return h + '<h4>3 · At the end the block is momentarily at rest</h4><div class="eq">Nothing is moving horizontally, so no KE is lost when the clay sticks. All the energy is still ½kA² stored in the spring.</div>' +
-      '<div class="eq">It still turns around at the same spot: A<sub>2</sub> = A = <b>' + H.n(d.A2, 'm') + '</b>, E<sub>2</sub> = E<sub>1</sub> = ' + H.n(d.E2, 'J') + '</div>' +
-      '<div class="eq">Same energy, more mass: v<sub>max,2</sub> = Aω<sub>2</sub> = <b>' + H.n(d.v2, 'm/s') + '</b> (slower)</div>' +
+    return h + '<h4>3 · At the end the block is momentarily at rest</h4><p class="st">Nothing is moving horizontally, so no KE is lost when the clay sticks. All the energy is still ½kA² stored in the spring. It still turns around at the same spot:</p>' + TEXA`A_2 = A = ${M.n(d.A2, 'm')}` + TEX`E_2 = E_1 = ${M.n(d.E2, 'J')}` +
+      '<p class="st">Same energy, more mass:</p>' + TEX`v_{\max,2} = A\,\omega_2` + TEX`v_{\max,2} = (${M.iv('A')})(${M.n(w2, 'rad/s')})` + TEXA`v_{\max,2} = ${M.n(d.v2, 'm/s')}` + '<p class="st">Slower.</p>' +
       '<p class="note">Summary: T up, A same, E same, v<sub>max</sub> down. Compare with landing at equilibrium.</p>';
   },
   draw(v, d, mode, opt, t, dt, A){

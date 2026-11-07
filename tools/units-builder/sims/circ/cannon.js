@@ -39,10 +39,10 @@ const SIM = {
       circle: '<div class="ok">Circular orbit: it falls around Earth forever, always at the same height.</div>',
       ellipse: '<div class="ok">Between v<sub>circ</sub> and v<sub>esc</sub>: an elliptical orbit. It swings out to ' + H.n(d.top, 'km') + ' and comes back to the mountain every ' + H.n(d.Tmin, 'min') + '.</div>',
       escape: '<div class="bad">At or above escape speed: it never comes back.</div>' }[d.kind];
-    return '<h4>1 · Distance from Earth’s center</h4><div class="eq">r = R<sub>E</sub> + h = 6.37×10<sup>6</sup> m + (' + H.iv('h') + ') = ' + H.n(d.r, 'm') + '</div>' +
-      '<h4>2 · Gravity up there</h4><div class="eq">g = GM/r² = <b>' + H.n(d.g, 'm/s²') + '</b> (not zero, and it points at Earth’s center)</div>' +
-      '<h4>3 · Speed for a circular orbit: gravity supplies exactly mv²/r</h4><div class="eq">GMm/r² = mv²/r → v<sub>circ</sub> = √(GM/r) = <b>' + H.n(d.vc, 'm/s') + '</b></div>' +
-      '<h4>4 · Escape speed</h4><div class="eq">v<sub>esc</sub> = √(2GM/r) = √2 × v<sub>circ</sub> = ' + H.n(d.ve, 'm/s') + '</div>' +
+    return '<h4>1 · Distance from Earth’s center</h4><p class="st">The mountain is h = ' + H.iv('h') + ' = ' + H.n(v.h * 1000, 'm') + ' high.</p>' + TEX`r = R_E + h` + TEX`r = 6.37\times10^{6}\,\text{m} + ${M.n(v.h * 1000, 'm')}` + TEXA`r = ${M.n(d.r, 'm')}` +
+      '<h4>2 · Gravity up there</h4>' + TEX`g = \frac{GM}{r^2}` + TEXA`g = ${M.n(d.g, 'm/s²')}` + '<p class="st">Not zero, and it points at Earth’s center.</p>' +
+      '<h4>3 · Speed for a circular orbit: gravity supplies exactly mv²/r</h4>' + TEX`\frac{GMm}{r^2} = \frac{m v^2}{r}` + TEX`v_{\text{circ}} = \sqrt{\frac{GM}{r}}` + TEXA`v_{\text{circ}} = ${M.n(d.vc, 'm/s')}` +
+      '<h4>4 · Escape speed</h4>' + TEX`v_{\text{esc}} = \sqrt{\frac{2GM}{r}}` + TEX`v_{\text{esc}} = \sqrt{2}\,v_{\text{circ}}` + TEX`v_{\text{esc}} = ${M.n(d.ve, 'm/s')}` +
       '<h4>5 · This launch: v = ' + H.iv('v') + '</h4>' + verdict +
       '<p class="note">Every launch is a projectile falling toward the center. Faster ones travel far enough sideways that Earth curves away under them as fast as they fall. ' +
       (d.kind === 'lands' ? 'If Earth were flat with g = ' + H.n(d.g, 'm/s²') + ' everywhere, it would land only ' + H.n(d.flat, 'km') + ' away.' : '') + '</p>';

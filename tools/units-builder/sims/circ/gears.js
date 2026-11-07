@@ -28,15 +28,15 @@ const SIM = {
     if (mode === 'idler') l.push({ id: 'rpmi', name: 'Idler gear rpm', short: 'rpm_i', sym: 'rpm<sub>i</sub>', unit: 'rpm', f: d => d.rpmi });
     return l; },
   work(v, d, mode){
-    let h = '<h4>1 · Angular speed of the ' + (mode === 'chain' ? 'pedals / chainring' : 'driving gear') + '</h4><div class="eq">ω<sub>1</sub> = 2π × rpm/60 = 2π(' + H.iv('rpm') + ')/60 = ' + H.n(d.w1, 'rad/s') + '</div>' +
-      '<h4>2 · The teeth (or chain) make the rims move at the same speed</h4><div class="eq">v<sub>rim</sub> = ω<sub>1</sub>r<sub>1</sub> = ω<sub>2</sub>r<sub>2</sub> = (' + H.n(d.w1) + ')(' + H.n(d.R1, 'm') + ') = <b>' + H.n(d.vr, 'm/s') + '</b></div>' +
+    let h = '<h4>1 · Angular speed of the ' + (mode === 'chain' ? 'pedals / chainring' : 'driving gear') + '</h4>' + TEX`\omega_1 = \frac{2\pi \times \text{rpm}}{60}` + TEX`\omega_1 = \frac{2\pi (${M.iv('rpm')})}{60}` + TEX`\omega_1 = ${M.n(d.w1, 'rad/s')}` +
+      '<h4>2 · The teeth (or chain) make the rims move at the same speed</h4>' + TEX`v_{\text{rim}} = \omega_1 r_1` + TEX`v_{\text{rim}} = \omega_2 r_2` + TEX`v_{\text{rim}} = (${M.n(d.w1)})(${M.n(d.R1, 'm')})` + TEXA`v_{\text{rim}} = ${M.n(d.vr, 'm/s')}` +
       '<p class="note">Teeth are the same size on both gears, so r is proportional to the number of teeth N.</p>' +
-      '<h4>3 · So the angular speeds are in the inverse ratio of the sizes</h4><div class="eq">ω<sub>2</sub> = ω<sub>1</sub>r<sub>1</sub>/r<sub>2</sub> = ω<sub>1</sub>N<sub>1</sub>/N<sub>2</sub> → rpm<sub>2</sub> = ' + H.iv('rpm') + ' × ' + H.iv('N1') + '/' + H.iv('N2') + ' = <b>' + H.n(d.rpm2, 'rpm') + '</b></div>' +
-      '<div class="eq">Gear ratio N<sub>2</sub>/N<sub>1</sub> = ' + H.n(d.ratio) + ': the ' + (d.ratio > 1 ? 'bigger driven gear turns slower' : d.ratio < 1 ? 'smaller driven gear turns faster' : 'gears turn at the same rate') + '.</div>';
-    if (mode === 'mesh') h += '<h4>4 · Direction</h4><div class="eq">Meshed gears turn in <b>opposite</b> directions.</div>';
-    if (mode === 'idler') h += '<h4>4 · The idler in the middle</h4><div class="eq">It turns at ' + H.n(d.rpmi, 'rpm') + ', but it doesn’t change the final speed: ω<sub>1</sub>N<sub>1</sub> = ω<sub>i</sub>N<sub>i</sub> = ω<sub>2</sub>N<sub>2</sub>. It only flips the direction, so gears 1 and 2 turn the <b>same</b> way.</div>';
-    if (mode === 'chain') h += '<h4>4 · A chain doesn’t reverse the direction</h4><div class="eq">Front and rear turn the same way.</div>' +
-      '<h4>5 · Bike speed (the rear cog and wheel share ω<sub>2</sub>)</h4><div class="eq">v = ω<sub>2</sub>R = (' + H.n(d.w2, 'rad/s') + ')(' + H.iv('R') + ') = <b>' + H.n(d.bike, 'm/s') + '</b> = ' + H.n(d.kmh, 'km/h') + ' = ' + H.n(d.mph, 'mph') + '</div>' +
+      '<h4>3 · So the angular speeds are in the inverse ratio of the sizes</h4>' + TEX`\omega_2 = \frac{\omega_1 r_1}{r_2}` + TEX`\omega_2 = \frac{\omega_1 N_1}{N_2}` + TEX`\text{rpm}_2 = \text{rpm}_1 \times \frac{N_1}{N_2}` + TEX`\text{rpm}_2 = ${M.iv('rpm')} \times \frac{${M.iv('N1')}}{${M.iv('N2')}}` + TEXA`\text{rpm}_2 = ${M.n(d.rpm2, 'rpm')}` +
+      TEX`\frac{N_2}{N_1} = ${M.n(d.ratio)}` + '<p class="st">Gear ratio N<sub>2</sub>/N<sub>1</sub>: the ' + (d.ratio > 1 ? 'bigger driven gear turns slower' : d.ratio < 1 ? 'smaller driven gear turns faster' : 'gears turn at the same rate') + '.</p>';
+    if (mode === 'mesh') h += '<h4>4 · Direction</h4><p class="st">Meshed gears turn in <b>opposite</b> directions.</p>';
+    if (mode === 'idler') h += '<h4>4 · The idler in the middle</h4><p class="st">It turns at ' + H.n(d.rpmi, 'rpm') + ', but it doesn’t change the final speed:</p>' + TEX`\omega_1 N_1 = \omega_i N_i = \omega_2 N_2` + '<p class="st">It only flips the direction, so gears 1 and 2 turn the <b>same</b> way.</p>';
+    if (mode === 'chain') h += '<h4>4 · A chain doesn’t reverse the direction</h4><p class="st">Front and rear turn the same way.</p>' +
+      '<h4>5 · Bike speed (the rear cog and wheel share ω<sub>2</sub>)</h4>' + TEX`v = \omega_2 R` + TEX`v = (${M.n(d.w2, 'rad/s')})(${M.iv('R')})` + TEXA`v = ${M.n(d.bike, 'm/s')}` + TEX`v = ${M.n(d.kmh, 'km/h')}` + TEX`v = ${M.n(d.mph, 'mph')}` +
       '<p class="note">Low gear (small chainring, big cog) = slow but easy to pedal up a hill. The trade-off is torque, which comes in the rotation unit.</p>';
     return h;
   },

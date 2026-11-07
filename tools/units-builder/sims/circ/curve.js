@@ -32,25 +32,26 @@ const SIM = {
     ];
   },
   work(v, d, mode){
-    let h = '<h4>1 · Centripetal acceleration</h4><div class="eq">a<sub>c</sub> = v²/r = (' + H.iv('v') + ')² / ' + H.iv('r') + ' = <b>' + H.n(d.ac, 'm/s²') + '</b></div>' +
-      '<h4>2 · Net force needed toward the center</h4><div class="eq">ΣF<sub>c</sub> = m a<sub>c</sub> = (' + H.iv('m') + ')(' + H.n(d.ac, 'm/s²') + ') = <b>' + H.n(d.Fc, 'N') + '</b></div>';
+    const g = M.n(10, 'm/s²');
+    let h = '<h4>1 · Centripetal acceleration</h4>' + TEX`a_c = \frac{v^2}{r}` + TEX`a_c = \frac{(${M.iv('v')})^2}{${M.iv('r')}}` + TEXA`a_c = ${M.n(d.ac, 'm/s²')}` +
+      '<h4>2 · Net force needed toward the center</h4>' + TEX`\Sigma F_c = m\,a_c` + TEX`\Sigma F_c = (${M.iv('m')})(${M.n(d.ac, 'm/s²')})` + TEXA`\Sigma F_c = ${M.n(d.Fc, 'N')}`;
     if (mode === 'flat'){
       h += '<p class="note">On a flat road the only sideways force is <b>static friction</b>, so friction has to supply all of it.</p>' +
-        '<h4>3 · Most friction the tires can get</h4><div class="eq">f<sub>s,max</sub> = μ<sub>s</sub>N = μ<sub>s</sub>mg = (' + H.iv('mu') + ')(' + H.iv('m') + ')(' + H.g() + ') = <b>' + H.n(d.fmax, 'N') + '</b></div>' +
+        '<h4>3 · Most friction the tires can get</h4>' + TEX`f_{s,\max} = \mu_s N = \mu_s\,m g` + TEX`f_{s,\max} = (${M.iv('mu')})(${M.iv('m')})(${g})` + TEXA`f_{s,\max} = ${M.n(d.fmax, 'N')}` +
         '<h4>4 · Compare</h4>' + (d.ok
           ? '<div class="ok">Needed ' + H.n(d.Fc, 'N') + ' ≤ available ' + H.n(d.fmax, 'N') + ' → friction can do it. The car makes the turn.</div>'
           : '<div class="bad">Needed ' + H.n(d.Fc, 'N') + ' &gt; available ' + H.n(d.fmax, 'N') + ' → not enough friction. The car skids toward the <b>outside</b> of the curve (closer to a straight line).</div>') +
-        '<h4>5 · Fastest speed that works</h4><div class="eq">μ<sub>s</sub>mg = m v<sub>max</sub>²/r → v<sub>max</sub> = √(μ<sub>s</sub>gr) = √((' + H.iv('mu') + ')(' + H.g() + ')(' + H.iv('r') + ')) = <b>' + H.n(d.vmax, 'm/s') + '</b></div>' +
+        '<h4>5 · Fastest speed that works</h4>' + TEX`\mu_s\,m g = \frac{m\,v_{\max}^2}{r}` + TEX`v_{\max} = \sqrt{\mu_s\,g\,r}` + TEX`v_{\max} = \sqrt{(${M.iv('mu')})(${g})(${M.iv('r')})}` + TEXA`v_{\max} = ${M.n(d.vmax, 'm/s')}` +
         '<p class="note">m is on both sides and cancels: a heavier car needs more force but also gets more friction.</p>';
     } else {
-      h += '<h4>3 · Vertical: no up/down acceleration</h4><div class="eq">N cosθ = mg → N = mg/cosθ = (' + H.iv('m') + ')(' + H.g() + ') / cos ' + H.iv('th') + ' = <b>' + H.n(d.N, 'N') + '</b></div>' +
-        '<h4>4 · Sideways force the bank gives</h4><div class="eq">N sinθ = mg tanθ = (' + H.iv('m') + ')(' + H.g() + ') tan ' + H.iv('th') + ' = <b>' + H.n(d.Fprov, 'N') + '</b></div>' +
+      h += '<h4>3 · Vertical: no up/down acceleration</h4>' + TEX`N\,\cos\theta = m g` + TEX`N = \frac{m g}{\cos\theta}` + TEX`N = \frac{(${M.iv('m')})(${g})}{\cos ${M.iv('th')}}` + TEXA`N = ${M.n(d.N, 'N')}` +
+        '<h4>4 · Sideways force the bank gives</h4>' + TEX`N\,\sin\theta = m g\,\tan\theta` + TEX`N\,\sin\theta = (${M.iv('m')})(${g})\,\tan ${M.iv('th')}` + TEXA`N\,\sin\theta = ${M.n(d.Fprov, 'N')}` +
         '<h4>5 · Compare</h4>' + (Math.abs(d.diff) <= 0.01 * d.Fc
           ? '<div class="ok">Needed ≈ given. This is the design speed: no friction is needed at all.</div>'
           : d.diff > 0
             ? '<div class="bad">Needed ' + H.n(d.Fc, 'N') + ' &gt; given ' + H.n(d.Fprov, 'N') + '. Too fast: the car slides <b>up the bank</b> (outward). Friction would have to point down the slope to help.</div>'
             : '<div class="bad">Needed ' + H.n(d.Fc, 'N') + ' &lt; given ' + H.n(d.Fprov, 'N') + '. Too slow: the car slides <b>down the bank</b> (inward). Friction would have to point up the slope to help.</div>') +
-        '<h4>6 · Design speed (no friction needed)</h4><div class="eq">N sinθ = m v<sub>0</sub>²/r and N cosθ = mg → tanθ = v<sub>0</sub>²/(gr) → v<sub>0</sub> = √(g r tanθ) = √((' + H.g() + ')(' + H.iv('r') + ') tan ' + H.iv('th') + ') = <b>' + H.n(d.v0, 'm/s') + '</b></div>' +
+        '<h4>6 · Design speed (no friction needed)</h4><p class="st">Sideways and vertical together:</p>' + TEX`N\,\sin\theta = \frac{m\,v_0^2}{r}` + TEX`N\,\cos\theta = m g` + TEX`\tan\theta = \frac{v_0^2}{g\,r}` + TEX`v_0 = \sqrt{g\,r\,\tan\theta}` + TEX`v_0 = \sqrt{(${g})(${M.iv('r')})\,\tan ${M.iv('th')}}` + TEXA`v_0 = ${M.n(d.v0, 'm/s')}` +
         '<p class="note">Mass cancels again: every car has the same design speed.</p>';
     }
     return h;

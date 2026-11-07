@@ -20,16 +20,17 @@ const SIM = {
     { id: 'rpmmax', name: 'Fastest safe rpm at this r', short: 'rpm_max', sym: 'rpm<sub>max</sub>', unit: 'rpm', f: d => d.rpmmax },
     { id: 'fmax', name: 'Max static friction μmg', short: 'f_s,max', sym: 'f<sub>s,max</sub>', unit: 'N', f: d => d.fmax }]; },
   work(v, d){
-    return '<h4>1 · Angular speed</h4><div class="eq">ω = 2π × rpm / 60 = 2π(' + H.iv('rpm') + ')/60 = <b>' + H.n(d.w, 'rad/s') + '</b></div>' +
+    const g = M.n(10, 'm/s²');
+    return '<h4>1 · Angular speed</h4>' + TEX`\omega = \frac{2\pi \times \text{rpm}}{60}` + TEX`\omega = \frac{2\pi (${M.iv('rpm')})}{60}` + TEXA`\omega = ${M.n(d.w, 'rad/s')}` +
       '<p class="note">Every point on the record has the same ω. Change units: r = ' + H.iv('r') + ' = ' + H.n(d.r, 'm') + ', m = ' + H.iv('m') + ' = ' + H.n(d.m, 'kg') + '.</p>' +
-      '<h4>2 · Speed of the coin</h4><div class="eq">v = ωr = (' + H.n(d.w, 'rad/s') + ')(' + H.n(d.r, 'm') + ') = <b>' + H.n(d.sp, 'm/s') + '</b></div>' +
-      '<h4>3 · Centripetal acceleration, two ways</h4><div class="eq">a<sub>c</sub> = ω²r = (' + H.n(d.w) + ')²(' + H.n(d.r) + ') = <b>' + H.n(d.ac, 'm/s²') + '</b></div>' +
-      '<div class="eq">a<sub>c</sub> = v²/r = (' + H.n(d.sp) + ')²/(' + H.n(d.r) + ') = ' + H.n(d.ac, 'm/s²') + ' ✓</div>' +
+      '<h4>2 · Speed of the coin</h4>' + TEX`v = \omega r` + TEX`v = (${M.n(d.w, 'rad/s')})(${M.n(d.r, 'm')})` + TEXA`v = ${M.n(d.sp, 'm/s')}` +
+      '<h4>3 · Centripetal acceleration, two ways</h4>' + TEX`a_c = \omega^2 r` + TEX`a_c = (${M.n(d.w)})^2(${M.n(d.r)})` + TEXA`a_c = ${M.n(d.ac, 'm/s²')}` +
+      '<p class="st">Check the other way:</p>' + TEX`a_c = \frac{v^2}{r}` + TEX`a_c = \frac{(${M.n(d.sp)})^2}{${M.n(d.r)}}` + TEX`a_c = ${M.n(d.ac, 'm/s²')}` +
       '<p class="note">At a fixed ω, farther out means <b>more</b> a<sub>c</sub> (v grows with r too).</p>' +
-      '<h4>4 · Force needed (static friction supplies it)</h4><div class="eq">F = m a<sub>c</sub> = (' + H.n(d.m, 'kg') + ')(' + H.n(d.ac, 'm/s²') + ') = <b>' + H.n(d.Fc, 'N') + '</b></div>' +
-      '<h4>5 · Most friction available</h4><div class="eq">f<sub>s,max</sub> = μ<sub>s</sub>mg = (' + H.iv('mu') + ')(' + H.n(d.m, 'kg') + ')(' + H.g() + ') = <b>' + H.n(d.fmax, 'N') + '</b></div>' +
+      '<h4>4 · Force needed (static friction supplies it)</h4>' + TEX`F = m\,a_c` + TEX`F = (${M.n(d.m, 'kg')})(${M.n(d.ac, 'm/s²')})` + TEXA`F = ${M.n(d.Fc, 'N')}` +
+      '<h4>5 · Most friction available</h4>' + TEX`f_{s,\max} = \mu_s\,m g` + TEX`f_{s,\max} = (${M.iv('mu')})(${M.n(d.m, 'kg')})(${g})` + TEXA`f_{s,\max} = ${M.n(d.fmax, 'N')}` +
       (d.slip ? '<div class="bad">Needed &gt; available → the coin slides off (along the tangent, not straight out).</div>' : '<div class="ok">Needed ≤ available → the coin rides along.</div>') +
-      '<h4>6 · Farthest spot a coin can sit</h4><div class="eq">μ<sub>s</sub>mg = mω²r<sub>max</sub> → r<sub>max</sub> = μ<sub>s</sub>g/ω² = (' + H.iv('mu') + ')(' + H.g() + ')/(' + H.n(d.w) + ')² = <b>' + H.n(d.rmax, 'm') + '</b></div>' +
+      '<h4>6 · Farthest spot a coin can sit</h4>' + TEX`\mu_s\,m g = m\,\omega^2 r_{\max}` + TEX`r_{\max} = \frac{\mu_s\,g}{\omega^2}` + TEX`r_{\max} = \frac{(${M.iv('mu')})(${g})}{(${M.n(d.w)})^2}` + TEXA`r_{\max} = ${M.n(d.rmax, 'm')}` +
       '<p class="note">Mass cancels. The dashed ring on the record marks r<sub>max</sub>.</p>';
   },
   draw(v, d, mode, opt, t, dt, A){

@@ -18,12 +18,13 @@ const SIM = {
     { id: 'r', name: 'Circle radius r', short: 'r', sym: 'r', unit: 'm', f: d => d.r },
     { id: 'W', name: 'Weight mg', short: 'mg', sym: 'mg', unit: 'N', f: d => d.W }]; },
   work(v, d){
-    return '<h4>1 · Radius of the circle (not the string length!)</h4><div class="eq">r = L sinθ = (' + H.iv('L') + ') sin ' + H.iv('th') + ' = <b>' + H.n(d.r, 'm') + '</b></div>' +
-      '<h4>2 · Vertical: the bob stays at one height, so a<sub>y</sub> = 0</h4><div class="eq">T cosθ = mg → T = mg/cosθ = (' + H.iv('m') + ')(' + H.g() + ') / cos ' + H.iv('th') + ' = <b>' + H.n(d.T, 'N') + '</b></div>' +
+    const g = M.n(10, 'm/s²');
+    return '<h4>1 · Radius of the circle (not the string length!)</h4>' + TEX`r = L\,\sin\theta` + TEX`r = (${M.iv('L')})\,\sin ${M.iv('th')}` + TEXA`r = ${M.n(d.r, 'm')}` +
+      '<h4>2 · Vertical: the bob stays at one height, so a<sub>y</sub> = 0</h4>' + TEX`T\,\cos\theta = m g` + TEX`T = \frac{m g}{\cos\theta}` + TEX`T = \frac{(${M.iv('m')})(${g})}{\cos ${M.iv('th')}}` + TEXA`T = ${M.n(d.T, 'N')}` +
       '<p class="note">T is always more than mg: only part of it (T cosθ) holds the bob up.</p>' +
-      '<h4>3 · Horizontal: T sinθ is the centripetal force</h4><div class="eq">T sinθ = mv²/r → ' + H.n(d.T, 'N') + ' × sin ' + H.iv('th') + ' = <b>' + H.n(d.Fc, 'N') + '</b></div>' +
-      '<h4>4 · Divide the two equations to get the speed</h4><div class="eq">tanθ = v²/(gr) → v = √(g r tanθ) = √((' + H.g() + ')(' + H.n(d.r, 'm') + ') tan ' + H.iv('th') + ') = <b>' + H.n(d.sp, 'm/s') + '</b></div>' +
-      '<h4>5 · Period (one trip around)</h4><div class="eq">period = 2πr/v = 2π(' + H.n(d.r, 'm') + ')/(' + H.n(d.sp, 'm/s') + ') = <b>' + H.n(d.P, 's') + '</b></div>' +
+      '<h4>3 · Horizontal: T sinθ is the centripetal force</h4>' + TEX`T\,\sin\theta = \frac{m v^2}{r}` + TEX`F_c = T\,\sin\theta` + TEX`F_c = ${M.n(d.T, 'N')} \times \sin ${M.iv('th')}` + TEXA`F_c = ${M.n(d.Fc, 'N')}` +
+      '<h4>4 · Divide the two equations to get the speed</h4>' + TEX`\tan\theta = \frac{v^2}{g r}` + TEX`v = \sqrt{g\,r\,\tan\theta}` + TEX`v = \sqrt{(${g})(${M.n(d.r, 'm')})\,\tan ${M.iv('th')}}` + TEXA`v = ${M.n(d.sp, 'm/s')}` +
+      '<h4>5 · Period (one trip around)</h4>' + TEX`\text{period} = \frac{2\pi r}{v}` + TEX`\text{period} = \frac{2\pi (${M.n(d.r, 'm')})}{${M.n(d.sp, 'm/s')}}` + TEXA`\text{period} = ${M.n(d.P, 's')}` +
       '<p class="note">Same as 2π√(L cosθ / g). The mass cancels in steps 4 and 5. Compare a simple pendulum of the same length: 2π√(L/g) = ' + H.n(d.Psimple, 's') + '.</p>';
   },
   draw(v, d, mode, opt, t, dt, A){

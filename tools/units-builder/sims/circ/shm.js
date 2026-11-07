@@ -27,17 +27,18 @@ const SIM = {
     if (mode === 'vert') l.push({ id: 'x0', name: 'Stretch at equilibrium mg/k', short: 'x_eq', sym: 'x<sub>eq</sub>', unit: 'm', f: d => d.x0 });
     return l; },
   work(v, d, mode){
-    if (mode === 'space') return '<h4>1 · On the ISS a bathroom scale reads zero, but mass still resists acceleration</h4><div class="eq">NASA’s body-mass device: the astronaut rides a spring-mounted chair and the period is timed.</div>' +
-      '<h4>2 · The period depends on the total mass on the spring</h4><div class="eq">T = 2π√((m + m<sub>chair</sub>)/k) = 2π√(' + H.n(d.M) + ' / ' + H.iv('k') + ') = <b>' + H.n(d.T, 's') + '</b></div>' +
-      '<h4>3 · Work backward from the measured T</h4><div class="eq">m = kT²/4π² − m<sub>chair</sub> = (' + H.iv('k') + ')(' + H.n(d.T) + ')² / 4π² − ' + H.iv('mc') + ' = <b>' + H.n(d.mBack, 'kg') + '</b> ✓</div>' +
+    if (mode === 'space') return '<h4>1 · On the ISS a bathroom scale reads zero, but mass still resists acceleration</h4><p class="st">NASA’s body-mass device: the astronaut rides a spring-mounted chair and the period is timed.</p>' +
+      '<h4>2 · The period depends on the total mass on the spring</h4>' + TEX`T = 2\pi\sqrt{\frac{m + m_{\text{chair}}}{k}}` + TEX`T = 2\pi\sqrt{\frac{${M.n(d.M)}}{${M.iv('k')}}}` + TEXA`T = ${M.n(d.T, 's')}` +
+      '<h4>3 · Work backward from the measured T</h4>' + TEX`m = \frac{k T^2}{4\pi^2} - m_{\text{chair}}` + TEX`m = \frac{(${M.iv('k')})(${M.n(d.T)})^2}{4\pi^2} - ${M.iv('mc')}` + TEXA`m = ${M.n(d.mBack, 'kg')}` + '<p class="st">That matches the mass we started with ✓</p>' +
       '<p class="note">No gravity needed: the spring force alone gives a = −(k/m)x. That’s also why a vertical spring has the same period as a horizontal one.</p>';
-    let h = '<h4>1 · Restoring force: F = −kx (always toward equilibrium) → a = −(k/m)x</h4><div class="eq">ω = √(k/m) = √(' + H.iv('k') + ' / ' + H.iv('m') + ') = ' + H.n(d.w, 'rad/s') + '</div>' +
-      '<h4>2 · Period and frequency</h4><div class="eq">T = 2π√(m/k) = <b>' + H.n(d.T, 's') + '</b> &nbsp; f = 1/T = ' + H.n(d.f, 'Hz') + '</div>' +
+    let h = '<h4>1 · Restoring force: F = −kx (always toward equilibrium) → a = −(k/m)x</h4>' + TEX`\omega = \sqrt{\frac{k}{m}}` + TEX`\omega = \sqrt{\frac{${M.iv('k')}}{${M.iv('m')}}}` + TEX`\omega = ${M.n(d.w, 'rad/s')}` +
+      '<h4>2 · Period and frequency</h4>' + TEX`T = 2\pi\sqrt{\frac{m}{k}}` + TEXA`T = ${M.n(d.T, 's')}` + TEX`f = \frac{1}{T}` + TEX`f = ${M.n(d.f, 'Hz')}` +
       '<p class="note">Amplitude isn’t in the formula: a bigger swing goes farther but faster, in the same time. 4× the mass → 2× the period.</p>' +
-      '<h4>3 · Where things are biggest</h4><div class="eq">At the ends (x = ±A): v = 0, |a| = a<sub>max</sub> = Aω² = <b>' + H.n(d.amax, 'm/s²') + '</b>, |F| = kA = ' + H.n(d.Fmax, 'N') + '</div>' +
-      '<div class="eq">At equilibrium (x = 0): a = 0, speed is max: v<sub>max</sub> = Aω = <b>' + H.n(d.vmax, 'm/s') + '</b></div>' +
-      '<h4>4 · Energy</h4><div class="eq">E = ½kA² = ' + H.n(d.E, 'J') + ' = ½mv<sub>max</sub>². It trades between spring energy (ends) and kinetic energy (middle).</div>';
-    if (mode === 'vert') h += '<h4>5 · Vertical: gravity only moves the center</h4><div class="eq">New equilibrium where kx = mg: stretch x<sub>eq</sub> = mg/k = ' + H.n(d.x0, 'm') + '. It oscillates about that point with the same T = 2π√(m/k).</div>';
+      '<h4>3 · Where things are biggest</h4><p class="st">At the ends (x = ±A): v = 0.</p>' + TEX`a_{\max} = A\,\omega^2` + TEX`a_{\max} = (${M.iv('A')})(${M.n(d.w)})^2` + TEXA`a_{\max} = ${M.n(d.amax, 'm/s²')}` +
+      TEX`|F| = k A` + TEX`|F| = (${M.iv('k')})(${M.iv('A')})` + TEX`|F| = ${M.n(d.Fmax, 'N')}` +
+      '<p class="st">At equilibrium (x = 0): a = 0, speed is max.</p>' + TEX`v_{\max} = A\,\omega` + TEX`v_{\max} = (${M.iv('A')})(${M.n(d.w)})` + TEXA`v_{\max} = ${M.n(d.vmax, 'm/s')}` +
+      '<h4>4 · Energy</h4>' + TEX`E = \frac{1}{2} k A^2` + TEX`E = ${M.n(d.E, 'J')}` + TEX`E = \frac{1}{2} m\,v_{\max}^2` + '<p class="st">It trades between spring energy (ends) and kinetic energy (middle).</p>';
+    if (mode === 'vert') h += '<h4>5 · Vertical: gravity only moves the center</h4><p class="st">New equilibrium where kx = mg:</p>' + TEX`x_{\text{eq}} = \frac{m g}{k}` + TEX`x_{\text{eq}} = ${M.n(d.x0, 'm')}` + '<p class="st">It oscillates about that point with the same T = 2π√(m/k).</p>';
     return h;
   },
   draw(v, d, mode, opt, t, dt, A){

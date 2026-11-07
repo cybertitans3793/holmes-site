@@ -26,14 +26,15 @@ const SIM = {
   },
   work(v, d, mode){
     if (mode === 'damp') return '<h4>1 · Damping: a resistive force (like air or oil drag) takes energy out each cycle</h4>' +
-      '<div class="eq">' + ({ none: 'ζ = 0: <b>no damping</b>, the amplitude stays the same forever.', under: 'ζ < 1: <b>light (under-) damping</b>: it still oscillates at about f<sub>0</sub>, but the amplitude shrinks.', critical: 'ζ = 1: <b>critical damping</b>: back to equilibrium as fast as possible <i>without</i> overshooting.', over: 'ζ > 1: <b>heavy (over-) damping</b>: no oscillation, and it creeps back more slowly than critical.' })[d.kind] + '</div>' +
-      (d.kind === 'under' ? '<div class="eq">The amplitude halves every ' + H.n(d.tHalf, 's') + ' (about ' + H.n(d.cycles) + ' oscillations).</div>' : '') +
-      '<h4>2 · Energy</h4><div class="eq">E = ½kA², so when A halves, the energy drops to a quarter. The lost energy becomes thermal energy in the surroundings.</div>' +
+      '<p class="st">' + ({ none: 'ζ = 0: <b>no damping</b>, the amplitude stays the same forever.', under: 'ζ < 1: <b>light (under-) damping</b>: it still oscillates at about f<sub>0</sub>, but the amplitude shrinks.', critical: 'ζ = 1: <b>critical damping</b>: back to equilibrium as fast as possible <i>without</i> overshooting.', over: 'ζ > 1: <b>heavy (over-) damping</b>: no oscillation, and it creeps back more slowly than critical.' })[d.kind] + '</p>' +
+      (d.kind === 'under' ? '<p class="st">The amplitude halves every ' + H.n(d.tHalf, 's') + ' (about ' + H.n(d.cycles) + ' oscillations).</p>' : '') +
+      '<h4>2 · Energy</h4>' + TEX`E = \frac{1}{2} k A^2` + '<p class="st">So when A halves, the energy drops to a quarter. The lost energy becomes thermal energy in the surroundings.</p>' +
       '<p class="note">Applications: car shock absorbers and door closers are close to critical damping; a bell or a tuning fork is very lightly damped so it rings for a long time.</p>';
-    return '<h4>1 · Forced oscillation: a periodic push at the driving frequency f<sub>d</sub></h4><div class="eq">After the start-up wobble dies away, the system oscillates at f<sub>d</sub>, not at its natural frequency f<sub>0</sub>.</div>' +
-      '<h4>2 · The amplitude depends on how close f<sub>d</sub> is to f<sub>0</sub></h4><div class="eq">At f<sub>d</sub>/f<sub>0</sub> = ' + H.n(d.r) + ': amplitude = <b>' + H.n(d.Ar) + '×</b> the stretch the same force would give if held steady</div>' +
-      '<div class="eq"><b>Resonance</b>: when f<sub>d</sub> ≈ f<sub>0</sub>, each push adds energy in step with the motion, so the amplitude is largest (about ' + H.n(d.Apk) + '× here).</div>' +
-      '<h4>3 · Damping shapes the peak</h4><div class="eq">Less damping → taller, sharper peak. More damping → lower, wider peak, shifted slightly below f<sub>0</sub>.</div>' +
+    return '<h4>1 · Forced oscillation: a periodic push at the driving frequency f<sub>d</sub></h4><p class="st">After the start-up wobble dies away, the system oscillates at f<sub>d</sub>, not at its natural frequency f<sub>0</sub>.</p>' +
+      '<h4>2 · The amplitude depends on how close f<sub>d</sub> is to f<sub>0</sub></h4>' + TEX`\frac{f_d}{f_0} = ${M.n(d.r)}` + TEXA`\frac{A}{A_{\text{static}}} = ${M.n(d.Ar)}` +
+      '<p class="st">That is the stretch the same force would give if held steady, times this factor.</p>' +
+      '<p class="st"><b>Resonance</b>: when f<sub>d</sub> ≈ f<sub>0</sub>, each push adds energy in step with the motion, so the amplitude is largest.</p>' + TEX`\left(\frac{A}{A_{\text{static}}}\right)_{\text{peak}} \approx ${M.n(d.Apk)}` +
+      '<h4>3 · Damping shapes the peak</h4><p class="st">Less damping → taller, sharper peak. More damping → lower, wider peak, shifted slightly below f<sub>0</sub>.</p>' +
       '<p class="note">Useful resonance: pushing a swing, tuning a radio, MRI. Harmful resonance: London’s Millennium Bridge swaying under footsteps (fixed by adding dampers); tall buildings use tuned mass dampers (Taipei 101’s 660-tonne pendulum) to stop wind and earthquakes from building up oscillations.</p>';
   },
   draw(v, d, mode, opt, t, dt, A){
