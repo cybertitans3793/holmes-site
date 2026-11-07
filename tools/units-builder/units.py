@@ -716,7 +716,7 @@ SIMS['plates'] = {'file': 'sims/plate-tectonics.html', 'kind': 'xl', 'ar': '1008
 
 AB = 'Algebra-Based Physics'
 UNITS.update({
-'AB-01': {'course': AB, 'num': '01', 'title': 'Kinematics', 'review': '01-R', 'tabs': [
+'AB-01': {'course': AB, 'num': '01', 'title': 'Kinematics', 'review': '01-R', 'guide': 'guides/AB-01.html', 'tabs': [
     {'code': '', 'name': 'Distance & Displacement', 'sim': 'abmove', 'modes': ['walk'], 'select': 'Walk east & west', 'tasks': ['Rhee Verse walks 6 m east, then 4 m west. Predict the distance and the displacement, then check.', 'Kent Decide walks 2 m east, 8 m west and 4 m east. Find the distance and the displacement.', 'Make a walk where the distance and the displacement are the same. What has to be true?', 'Make a round trip. What is the displacement? Why?']},
     {'code': '', 'name': 'Speed & Velocity', 'sim': 'abmove', 'modes': ['coach', 'trip'], 'select': 'Coach on the sideline', 'tasks': ['Coach Ulcer goes from the 10 to the 40, back to the 0, then to the 30 in 100 s. Find his average speed and average velocity.', 'Your turn: 30 → 10 → 50 → 20 in 200 s. Work it out first, then check.', '<b>Round trip:</b> you run 3 mi to a friend’s house in 30 min and walk home in 1 hr. Why is your average velocity zero?', 'Can an object move fast for 10 s and have an average velocity of zero? Make one.']},
     {'code': '', 'name': 'Acceleration', 'sim': 'abaccel', 'modes': ['car'], 'select': 'Car speeding up / slowing down', 'tasks': ['A car speeds up from rest to +16 m/s in 4 s. Set it up and find the acceleration from the table.', 'A car slows down from +32 m/s to +8 m/s. Which way does the acceleration point?', 'Make the car move left (−) and speed up. Is the acceleration + or −?', 'Use the rule: speeding up → a in the same direction it moves; slowing down → a opposite. Check four different cases.']},
@@ -743,7 +743,7 @@ UNITS.update({
     {'code': '', 'name': 'Moving Man', 'sim': 'mman', 'tasks': ['Make the man walk to the right at a steady 2 m/s. What does the position–time graph look like?', 'Now make him walk to the left at the same speed. What changed on the graph? What stayed the same?', 'Start him at rest and speed him up. How is the position–time graph different from a steady walk?', 'Read his velocity from the velocity–time graph at two times. Use a = Δv/Δt to find his acceleration.']},
     {'code': '', 'name': 'Maze Game', 'sim': 'maze', 'tasks': ['Play with <b>position</b> control. Then switch to <b>velocity</b>. What does dragging the arrow control now?', 'Try <b>acceleration</b> control. Why is it so hard to stop on the goal?', 'With velocity control, how do you make the ball stop? With acceleration control?']},
 ]},
-'AB-02': {'course': AB, 'num': '02', 'title': 'Newton’s Laws', 'tabs': [
+'AB-02': {'course': AB, 'num': '02', 'title': 'Newton’s Laws', 'guide': 'guides/AB-02.html', 'tabs': [
     {'code': '', 'name': 'Puck in Space', 'sim': 'puck', 'tasks': ['Kick the puck once. Why does it keep going at a constant speed?', 'Kick it sideways while it is moving. Which way does it go now?', 'Use Newton’s first law to explain why astronauts don’t need engines to keep moving.']},
     {'code': '', 'name': 'Balanced Forces', 'sim': 'ab-balance', 'tasks': ['Push a crate at constant speed. How does the push compare with friction?', 'Skydiver: why does she stop speeding up even though gravity is still pulling?', 'Draw a free-body diagram at terminal speed. What is the net force?']},
     {'code': '', 'name': 'Inertia on a Cart', 'sim': 'ab-cartball', 'tasks': ['A ball sits on a cart. The cart speeds up. Which way does the ball roll? Why?', 'Watch from the cart, then from the ground. Is the ball really moving backward?', 'Explain why you lurch forward when a bus brakes.']},
@@ -758,7 +758,7 @@ UNITS.update({
 
     {'code': '', 'name': 'Lunar Lander', 'sim': 'lander', 'tasks': ['Find the thrust that makes the lander hover. How does it compare with the lander’s weight?', 'Turn on the force vectors. When the lander is slowing down on the way down, which force is bigger?', 'Land at under 2 m/s. Describe your plan using “net force up” and “net force down.”']},
 ]},
-'AB-03': {'course': AB, 'num': '03', 'title': 'Circular Motion & Gravity', 'tabs': [
+'AB-03': {'course': AB, 'num': '03', 'title': 'Circular Motion & Gravity', 'guide': 'guides/AB-03.html', 'tabs': [
     {'code': '', 'name': 'Cut the String', 'sim': 'release', 'tasks': [
         'Watch the arrows. Which way does the velocity point? Which way does the net force point?',
         'Set the release point to 3 o’clock. Predict the path after the string is cut, then watch. Try 12 o’clock and 9 o’clock.',
@@ -774,7 +774,7 @@ UNITS.update({
     {'code': '', 'name': 'Kepler’s 2nd & 3rd Laws', 'sim': 'abkepler', 'tasks': ['2nd law: the two shaded slices take the same time. Compare their areas. Compare how far the planet travels in each.', 'Where is the planet moving fastest: close to the Sun or far away? Watch it go around to check.', 'Set the eccentricity to 0. What happens to the speed? Why?', '3rd law: use T² = a³ to find how long a year is on a planet 4 AU from the Sun. Check with the sim.', 'Fill in T²/a³ for each planet in the table. What do you notice?']},
     {'code': '', 'name': 'My Solar System', 'sim': 'solar', 'tasks': ['Pick the <b>sun and planet</b> preset and turn on Show Traces. Is the orbit a circle?', 'Give the planet a little less speed. Where on its orbit does it move fastest?', 'Make the sun heavier. Does the planet need more or less speed to keep the same orbit? Why?', 'What would happen to the planet if the sun’s gravity suddenly turned off? Predict, then think about which way it would go.']},
 ]},
-'AB-04': {'course': AB, 'num': '04', 'title': 'Work & Energy & Stars', 'review': '04-R', 'tabs': [
+'AB-04': {'course': AB, 'num': '04', 'title': 'Work & Energy & Stars', 'review': '04-R', 'guide': 'guides/AB-04.html', 'tabs': [
     {'code': '', 'name': 'Work', 'sim': 'abwork', 'tasks': ['Push a 10 kg box 4 m with 50 N on ice. Find the work you do, then the final speed using W = ΔKE.', 'Turn friction on (20 N). Find the work done by friction. Why is it negative? What is the net work now?', 'Make your push equal to friction. What is the net work? What does the box do?', 'Lift a 10 kg box up 2 m. How much work? Where does that energy go? Then carry it across the room. How much work now?', '<b>Stopping a car:</b> a 1200 kg car at 15 m/s brakes with 5400 N of friction. Find its KE, the work done by friction, and the stopping distance.', 'Double the speed to 30 m/s. Predict the new stopping distance before you check. Why isn’t it just twice as far?']},
     {'code': '', 'name': 'Energy Track', 'sim': 'ab-track', 'tasks': [
         'Where is the cart fastest? Where is it slowest? Explain with energy.',
@@ -802,7 +802,7 @@ UNITS.update({
         '<b>Star spectra:</b> which elements are in the Sun? In the glowing gas cloud? Which element shows up in every source? How does that match the Big Bang?',
         '<b>Leftover glow:</b> what color did the universe glow at 380,000 years? Why can’t we see that glow with our eyes today?']},
 ]},
-'AB-05': {'course': AB, 'num': '05', 'title': 'Momentum', 'review': '05-R', 'tabs': [
+'AB-05': {'course': AB, 'num': '05', 'title': 'Momentum', 'review': '05-R', 'guide': 'guides/AB-05.html', 'tabs': [
     {'code': '', 'name': 'Crash Test', 'sim': 'crash', 'tasks': ['A car hits a wall. Find the change in momentum and the impulse.', 'Make the crash last longer (an airbag or crumple zone). What happens to the force?', 'Car bounces back: why is the impulse bigger than when it stops dead?']},
     {'code': '', 'name': 'Collision Carts', 'sim': 'ab-carts', 'tasks': [
         '<b>Hit and stick:</b> two carts stick together. Find their speed after the collision.',
@@ -814,7 +814,7 @@ UNITS.update({
         'Set up a collision and record the momentum of each ball before and after. Is the total the same?',
         'Set elasticity to 100% so the balls rebound, then to 0% so they hit and stick. Is the total momentum the same both times?']},
 ]},
-'AB-06': {'course': AB, 'num': '06', 'title': 'Electrostatics', 'tabs': [
+'AB-06': {'course': AB, 'num': '06', 'title': 'Electrostatics', 'guide': 'guides/AB-06.html', 'tabs': [
     {'code': '', 'name': 'Rubbing & Polarization', 'sim': 'rub', 'tasks': [
         'Rub wool and a rubber balloon. Which way do the electrons move? What sign does each end up with?',
         'Use the series to predict the signs for glass rubbed with silk, then check.',
@@ -832,7 +832,7 @@ UNITS.update({
         '<b>Charges and Fields:</b> place a positive and a negative charge. Use the field sensor to see where the field is strongest.',
         '<b>Coulomb’s Law:</b> double the distance. Does the force halve or quarter?']},
 ]},
-'AB-07': {'course': AB, 'num': '07', 'title': 'Current Electricity & Magnetism', 'tabs': [
+'AB-07': {'course': AB, 'num': '07', 'title': 'Current Electricity & Magnetism', 'guide': 'guides/AB-07.html', 'tabs': [
     {'code': '', 'name': 'Ohm’s Law', 'sim': 'ab-ohm', 'tasks': ['Make the wire longer. What happens to the resistance? Make it thicker?', 'Copper or nichrome: which makes a better extension cord? A better toaster?', 'I–V graph: find R = V/I for the resistor at 2 V and at 10 V. Is it ohmic?', 'Why does a light bulb’s resistance change as it heats up?']},
     {'code': '', 'name': 'Series & Parallel', 'sim': 'ab-circuits', 'tasks': ['Three bulbs in series, then in parallel. Which are brighter?', 'Remove a bulb from each circuit. What happens to the others? Which is how your house is wired?', 'Find the total resistance and the current from the battery in each circuit.']},
     {'code': '', 'name': 'Circuit Construction Kit', 'sim': 'phetC', 'tasks': ['Build a battery with one bulb. Measure the voltage and current.', 'Add bulbs in series, then in parallel. Measure again. What patterns do you see?']},
@@ -853,7 +853,7 @@ UNITS.update({
     {'code': '', 'name': 'Magnetic Field of a Wire', 'sim': 'ab-bwire', 'tasks': ['Use the right-hand rule to predict which way the compasses point.', 'Reverse the current. What happens to the compasses?', 'Move farther from the wire. What happens to the field?']},
     {'code': '', 'name': 'PhET Magnetism', 'sim': 'phetMag', 'tasks': ['<b>Magnets and Electromagnets:</b> make the electromagnet stronger in three ways.', '<b>Faraday’s Lab:</b> push a magnet into the coil. When does the bulb light up?']},
 ]},
-'AB-08': {'course': AB, 'num': '08', 'title': 'Waves & Earth’s Interior', 'tabs': [
+'AB-08': {'course': AB, 'num': '08', 'title': 'Waves & Earth’s Interior', 'guide': 'guides/AB-08.html', 'tabs': [
     {'code': '', 'name': 'Wave Basics', 'sim': 'ab-wave', 'tasks': ['Double the frequency. What happens to the wavelength? Why?', 'Find a wavelength and a period from the two graphs.', 'Longitudinal: find a compression and a rarefaction. Which way do the particles move?', 'Does the wave carry the particles along with it? What does it carry?']},
     {'code': '', 'name': 'Standing Waves', 'sim': 'ab-standing', 'tasks': ['Draw the first three harmonics on a guitar string. Find each frequency.', 'Make the string shorter. Does the pitch go up or down?', '<b>Microwave oven:</b> use the melted spots to find the speed of light.']},
     {'code': '', 'name': 'Sound', 'sim': 'ab-sound', 'tasks': ['A ship’s sonar echo comes back after 2.0 s. How deep is the water?', 'Why do bats use high-pitched sound?', 'Listen to a flute and a clarinet playing the same note (click the picture). Why do they sound different?', 'Why do we hear best around 3000 Hz?']},

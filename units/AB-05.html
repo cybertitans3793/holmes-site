@@ -76,7 +76,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
     <div class="uid"><div class="big" aria-hidden="true">05</div><div><div class="mono">Algebra-Based Physics · AB-05</div><h1>Momentum</h1></div></div>
   </header>
   <nav class="views" id="views" aria-label="Choose a view">
-    <div class="vbtns"><button type="button" class="vbtn" data-view="explore" aria-pressed="false">Explore</button><button type="button" class="vbtn" data-view="practice" aria-pressed="false">Practice</button></div>
+    <div class="vbtns"><button type="button" class="vbtn" data-view="explore" aria-pressed="false">Explore</button><button type="button" class="vbtn" data-view="study" aria-pressed="false">Study</button><button type="button" class="vbtn" data-view="practice" aria-pressed="false">Practice</button></div>
     <a class="simsback mono" id="simsback" href="https://sites.google.com/fcps.org/holmes/algebra-based-physics/ab-05" target="_blank" rel="noopener" hidden>Sims for this unit ↗</a>
   </nav>
   <div class="view" id="v-explore">
@@ -95,7 +95,309 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
   </div>
   <p class="credits">Crash Test, Collision Carts, Bouncing Ball, Ballistic Pendulum, 2D Collisions and Ball Stack are original. Collision Lab and Momentum Lab: PhET Interactive Simulations, University of Colorado Boulder (phet.colorado.edu), CC BY 4.0 / GPL.</p>
   </div>
+  <div class="view" id="v-study" hidden>
+<section class="guide" id="guide" aria-label="Study guide">
+<style>
+.guide{margin-top:28px}
+.guide .gtip{margin:0 0 10px;font-size:19px;line-height:1.45;max-width:1000px}
+.guide .gbelow{display:inline-block;margin:0 0 16px;font-size:19px;font-weight:700;border:3px solid var(--ink);background:var(--soft);padding:6px 14px;box-shadow:4px 4px 0 var(--ink);color:var(--ink);text-decoration:none}
+.guide .gbelow:hover{background:var(--hot)}
+.guide .ggrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-bottom:22px}
+.guide .gcard{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcard h3,.guide .gcheck h3,.guide .gsteps h3{margin:0 0 10px;font-size:20px;letter-spacing:-.01em}
+.guide .gcard ul{margin:0;padding-left:20px}
+.guide .gcard li{margin:0 0 7px}
+.guide .ib{display:inline-block;font-family:var(--f-mono);font-size:11px;font-weight:700;border:2px solid var(--ink);padding:0 5px;margin-left:4px;vertical-align:1px;background:var(--soft)}
+.guide table{border-collapse:collapse;width:100%;font-size:15px}
+.guide td{border-top:2px solid var(--ink);padding:6px 4px;vertical-align:top}
+.guide td:first-child{font-family:var(--f-mono);font-weight:700;white-space:nowrap;padding-right:12px}
+.guide .gsteps{background:var(--soft);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px;margin-bottom:22px}
+.guide .gsteps ol{margin:0;padding-left:24px;columns:2 360px;column-gap:28px}
+.guide .gsteps li{margin:0 0 8px;break-inside:avoid}
+.guide h3.ghead{font-size:22px;margin:0 0 12px}
+.guide .gex{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:18px;margin-bottom:22px}
+.guide .ex{min-width:0;background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .ex h4{margin:0 0 6px;font-size:18px}
+.guide .ex .kind{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--hot);text-transform:uppercase;letter-spacing:.04em}
+.guide .ex p{margin:0 0 8px}
+.guide .work{font-size:16px;line-height:1.45;border-left:4px solid var(--hot);background:#fff;padding:6px 14px;margin:8px 0;overflow-x:auto}
+.guide .work math.eq{display:block;text-align:left;margin:8px 0;font-size:1.15em}
+@media (max-width:520px){.guide .work math.eq{font-size:1em}}
+.guide .work math.ans{font-weight:700}
+.guide .work .wt{margin:6px 0 2px}
+.guide .ex .take{margin:8px 0 0;font-weight:500}
+.guide .ex svg{float:right;margin:0 0 6px 12px}
+.guide .gcheck{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcheck>p{margin:-4px 0 12px;color:var(--muted)}
+.guide ol.q{margin:0;padding-left:26px}
+.guide ol.q>li{margin:0 0 14px}
+.guide details{margin-top:6px}
+.guide summary{cursor:pointer;display:inline-block;font-weight:700;border:2px solid var(--ink);padding:2px 10px;background:#fff;list-style:none}
+.guide summary::-webkit-details-marker{display:none}
+.guide summary:hover{background:var(--soft)}
+.guide details[open] summary{background:var(--ink);color:#fff}
+.guide details>div{border-left:4px solid var(--hot);padding:8px 12px;margin-top:8px;background:#fff}
+.guide .gpanel>.ggrid,.guide .gpanel>.gsteps,.guide .gpanel>.gex{margin-bottom:0}
+.guide .gpanel>.gsteps+.gsteps{margin-top:22px}
+.guide .gtabs{margin-bottom:18px}
+.guide .gnext{margin:16px 0 0;font-weight:700}
+.guide .gnext a{color:var(--ink)}
+body.present .guide{display:none}
+@media (max-width:520px){.guide .gtip,.guide .gbelow{font-size:17px}.guide td:first-child{white-space:normal}.guide .ggrid,.guide .gex{grid-template-columns:1fr}.guide .ex svg{float:none;display:block;margin:0 auto 8px}}
+</style>
+<div class="simbar"><h2>Study guide</h2><span class="mono">Unit 5 · Momentum</span></div>
+<p class="gtip"><b>How to use this:</b> read the key ideas, then cover each worked example and try it yourself before reading the solution. Do the self-check questions on paper <i>before</i> you open the answers, mark the ones you miss, and come back to them in a day or two without looking. Rereading won't do much; answering questions will.</p>
+<div class="tabs gtabs" role="tablist" aria-label="Study guide sections">
+  <button class="tab" role="tab" type="button" aria-selected="true" aria-controls="g-ideas" id="gt-ideas">Key ideas</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-solve" id="gt-solve" tabindex="-1">How to solve</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-examples" id="gt-examples" tabindex="-1">Worked examples</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-check" id="gt-check" tabindex="-1">Self-check</button>
+</div>
+<div class="gpanel" role="tabpanel" id="g-ideas" aria-labelledby="gt-ideas">
 
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Key ideas</h3>
+    <ul>
+      <li><b>Momentum</b> is mass in motion. It depends on how much mass is moving and how fast: p = m·v.</li>
+      <li>Momentum has a <b>direction</b>. It points the way the object is moving. Pick one direction as + (often right or east). The other direction is −.</li>
+      <li>An object at rest has zero momentum. Speed up and its momentum goes up. Slow down and it goes down.</li>
+      <li>A <b>collision force</b> acts for a short time. Force × time is called the <b>impulse</b> (F·Δt). Its unit is the newton-second (N·s).</li>
+      <li><b>Impulse = momentum change.</b> F·Δt = m·Δv. An impulse adds momentum to an object or takes it away.</li>
+      <li>The same momentum change can come from a big force for a short time or a small force for a long time. Airbags, padded mats and bending your knees all <b>stretch out the time</b>, so the force is smaller.</li>
+      <li>Momentum change = final momentum − initial momentum. An object that <b>bounces back</b> has a bigger change than one that just stops, so it needs a bigger impulse.</li>
+      <li><b>Newton's 3rd law in a collision:</b> the two objects push on each other with equal and opposite forces, for the same time. So they get equal and opposite impulses and momentum changes.</li>
+      <li>Equal forces do <i>not</i> mean equal effects. The object with less mass gets the bigger change in velocity and the bigger acceleration.</li>
+      <li><b>Momentum is conserved:</b> when no outside force acts, the total momentum before a collision or explosion equals the total after. What one object loses, the other gains.</li>
+      <li><b>Hit-and-stick:</b> the objects move off together with the same velocity. <b>Explosion</b> (push apart from rest): the total is zero before, so it is zero after. The pieces move in opposite directions, and the lighter one moves faster.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Equations</h3>
+    <table>
+      <tr><td>p = m·v</td><td>momentum in kg·m/s (m = mass in kg, v = velocity in m/s)</td></tr>
+      <tr><td>Impulse = F·Δt</td><td>force (N) × time (s). Unit: N·s, the same as kg·m/s</td></tr>
+      <tr><td>F·Δt = m·Δv</td><td>impulse = momentum change</td></tr>
+      <tr><td>Δv = v<sub>f</sub> − v<sub>i</sub></td><td>final velocity − initial velocity (watch the signs)</td></tr>
+      <tr><td>m<sub>1</sub>v<sub>1</sub> + m<sub>2</sub>v<sub>2</sub><br>= m<sub>1</sub>v<sub>1</sub>′ + m<sub>2</sub>v<sub>2</sub>′</td><td>total before = total after. The ′ (prime) means “after”</td></tr>
+      <tr><td>m<sub>1</sub>v<sub>1</sub> + m<sub>2</sub>v<sub>2</sub><br>= (m<sub>1</sub> + m<sub>2</sub>)v′</td><td>hit-and-stick: one shared velocity after</td></tr>
+      <tr><td>m<sub>1</sub>·Δv<sub>1</sub> = −m<sub>2</sub>·Δv<sub>2</sub></td><td>momentum lost by one = momentum gained by the other</td></tr>
+    </table>
+  </div>
+  <div class="gcard">
+    <h3>Common mistakes</h3>
+    <ul>
+      <li>Dropping the signs. A ball that hits at 9 m/s and bounces back at 5 m/s has Δv = −5 − 9 = −14 m/s, not 4 m/s.</li>
+      <li>Thinking the bigger object pushes harder in a collision. The forces are always equal in size.</li>
+      <li>Thinking an airbag makes the impulse smaller. The momentum change is the same. The time is longer, so the <i>force</i> is smaller.</li>
+      <li>Forgetting that both masses move together after a hit-and-stick collision. Divide by m<sub>1</sub> + m<sub>2</sub>.</li>
+      <li>Saying momentum “disappears” in an explosion. It was zero before and the two pieces still add to zero.</li>
+      <li>Leaving the sign off the answer. Say the direction in words: “0.25 m/s, left.”</li>
+    </ul>
+  </div>
+</div>
+
+</div>
+<div class="gpanel" role="tabpanel" id="g-solve" aria-labelledby="gt-solve" hidden>
+<div class="gsteps">
+  <h3>How to solve an impulse problem</h3>
+  <ol>
+    <li><b>Pick a + direction.</b> Write the initial and final velocities with signs.</li>
+    <li><b>Find Δv</b> = v<sub>f</sub> − v<sub>i</sub>. If the object bounces back, the two velocities have opposite signs, so Δv is big.</li>
+    <li><b>Find the momentum change:</b> Δp = m·Δv.</li>
+    <li><b>Impulse = Δp.</b> They are the same number (N·s = kg·m/s).</li>
+    <li><b>Need the force?</b> Divide by the time: F = Δp ÷ Δt. Need the time? Δt = Δp ÷ F.</li>
+    <li><b>Check it.</b> A longer time should give a smaller force.</li>
+  </ol>
+</div>
+<div class="gsteps">
+  <h3>How to solve a collision or explosion problem</h3>
+  <ol>
+    <li><b>Draw before and after.</b> Label each mass and velocity. Put a ? on the one you want.</li>
+    <li><b>Pick a + direction.</b> Velocities the other way get a − sign.</li>
+    <li><b>Make a momentum table</b> (or write the equation): one row per object, columns for p before and p after.</li>
+    <li><b>Add up the “before” column.</b> That total is the same as the “after” total.</li>
+    <li><b>Fill in the “after” column</b> with v for the unknown. Hit-and-stick: both objects share the same v. Explosion from rest: the total is 0.</li>
+    <li><b>Solve for v.</b> Give the speed and the direction in words.</li>
+  </ol>
+</div>
+
+</div>
+<div class="gpanel" role="tabpanel" id="g-examples" aria-labelledby="gt-examples" hidden>
+<div class="gex">
+  <div class="ex">
+    <div class="kind">Impulse and force</div>
+    <h4>Stopping a runaway shopping cart</h4>
+    <p>A loaded 30-kg shopping cart rolls across a parking lot at 2.0 m/s. You grab it and stop it in 0.50 s. Find its momentum change, the impulse, and the average force you apply. What force would it take to stop it in only 0.10 s?</p>
+    <div class="work">
+      <p class="wt">Call the cart's direction +. Momentum before and after:</p>
+      <math class="eq" display="block"><mrow><msub><mi>p</mi><mi>i</mi></msub><mo>&#x0003D;</mo><mi>m</mi><mo>&#x000B7;</mo><msub><mi>v</mi><mi>i</mi></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>30</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>2.0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>60</mn><mspace width="0.167em" /><mtext>kg·m/s</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>p</mi><mi>f</mi></msub><mo>&#x0003D;</mo><mn>0</mn></mrow></math>
+      <p class="wt">Momentum change:</p>
+      <math class="eq" display="block"><mrow><mi>&#x00394;</mi><mi>p</mi><mo>&#x0003D;</mo><msub><mi>p</mi><mi>f</mi></msub><mo>&#x02212;</mo><msub><mi>p</mi><mi>i</mi></msub><mo>&#x0003D;</mo><mn>0</mn><mo>&#x02212;</mo><mn>60</mn></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>&#x00394;</mi><mi>p</mi><mo>&#x0003D;</mo><mrow><mo>&#x02212;</mo><mn>60</mn></mrow><mspace width="0.167em" /><mtext>kg·m/s</mtext></mrow></math>
+      <p class="wt">Impulse = momentum change:</p>
+      <math class="eq ans" display="block"><mrow><mtext>Impulse</mtext><mo>&#x0003D;</mo><mrow><mo>&#x02212;</mo><mn>60</mn></mrow><mspace width="0.167em" /><mtext>N·s</mtext></mrow></math>
+      <p class="wt">Force from F·Δt = Δp:</p>
+      <math class="eq" display="block"><mrow><mi>F</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>&#x00394;</mi><mi>p</mi></mrow><mrow><mi>&#x00394;</mi><mi>t</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mo>&#x02212;</mo><mn>60</mn></mrow><mrow><mn>0.50</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>F</mi><mo>&#x0003D;</mo><mrow><mo>&#x02212;</mo><mn>120</mn></mrow><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+      <p class="wt">Stopping it in 0.10 s instead:</p>
+      <math class="eq" display="block"><mrow><mi>F</mi><mo>&#x0003D;</mo><mfrac><mrow><mo>&#x02212;</mo><mn>60</mn></mrow><mrow><mn>0.10</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>F</mi><mo>&#x0003D;</mo><mrow><mo>&#x02212;</mo><mn>600</mn></mrow><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+    </div>
+    <p class="take">The minus sign means you push backward, against the motion. The impulse is the same both times. Stopping it 5 times faster takes 5 times the force.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Hit-and-stick vs. rebound</div>
+    <svg width="150" height="130" viewBox="0 0 150 130" aria-label="A clay ball hits the floor and stops; a rubber ball hits the floor and bounces up">
+      <line x1="5" y1="112" x2="145" y2="112" stroke="#111" stroke-width="3"/>
+      <circle cx="40" cy="103" r="8" fill="#111"/>
+      <line x1="40" y1="30" x2="40" y2="82" stroke="#111" stroke-width="3"/><polygon points="34,80 46,80 40,92" fill="#111"/>
+      <text x="45" y="52" font-size="11" font-family="IBM Plex Mono,monospace">6.0</text>
+      <text x="22" y="18" font-size="11" font-family="IBM Plex Mono,monospace">clay</text>
+      <circle cx="110" cy="103" r="8" fill="#111"/>
+      <line x1="100" y1="30" x2="100" y2="82" stroke="#111" stroke-width="3"/><polygon points="94,80 106,80 100,92" fill="#111"/>
+      <line x1="122" y1="90" x2="122" y2="50" stroke="#ff6a2b" stroke-width="3"/><polygon points="116,52 128,52 122,40" fill="#ff6a2b"/>
+      <text x="74" y="52" font-size="11" font-family="IBM Plex Mono,monospace">6.0</text>
+      <text x="126" y="72" font-size="11" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">3.0</text>
+      <text x="88" y="18" font-size="11" font-family="IBM Plex Mono,monospace">rubber</text>
+    </svg>
+    <h4>Clay ball vs. rubber ball</h4>
+    <p>Two 0.20-kg balls hit the floor at 6.0 m/s. The clay ball stops dead. The rubber ball bounces straight up at 3.0 m/s. Each is touching the floor for 0.010 s. Find each ball's momentum change and the average force from the floor. (Ignore gravity during the short bounce.)</p>
+    <div class="work">
+      <p class="wt">Call up +. Both balls come in at −6.0 m/s.</p>
+      <p class="wt">Clay ball:</p>
+      <math class="eq" display="block"><mrow><mi>&#x00394;</mi><mi>v</mi><mo>&#x0003D;</mo><mn>0</mn><mo>&#x02212;</mo><mo stretchy="false">&#x00028;</mo><mrow><mo>&#x02212;</mo><mn>6.0</mn></mrow><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mrow><mo>&#x0002B;</mo><mn>6.0</mn></mrow><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>&#x00394;</mi><mi>p</mi><mo>&#x0003D;</mo><mi>m</mi><mo>&#x000B7;</mo><mi>&#x00394;</mi><mi>v</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.20</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>6.0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1.2</mn><mspace width="0.167em" /><mtext>kg·m/s</mtext></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>F</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>&#x00394;</mi><mi>p</mi></mrow><mrow><mi>&#x00394;</mi><mi>t</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>1.2</mn></mrow><mrow><mn>0.010</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>120</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+      <p class="wt">Rubber ball:</p>
+      <math class="eq" display="block"><mrow><mi>&#x00394;</mi><mi>v</mi><mo>&#x0003D;</mo><mrow><mo>&#x0002B;</mo><mn>3.0</mn></mrow><mo>&#x02212;</mo><mo stretchy="false">&#x00028;</mo><mrow><mo>&#x02212;</mo><mn>6.0</mn></mrow><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mrow><mo>&#x0002B;</mo><mn>9.0</mn></mrow><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>&#x00394;</mi><mi>p</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.20</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>9.0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1.8</mn><mspace width="0.167em" /><mtext>kg·m/s</mtext></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>F</mi><mo>&#x0003D;</mo><mfrac><mrow><mn>1.8</mn></mrow><mrow><mn>0.010</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>180</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+    </div>
+    <p class="take">Both forces point up. The floor has to stop the rubber ball <i>and</i> throw it back up, so the bounce takes 1.5 times the impulse.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Hit-and-stick collision</div>
+    <h4>Two railroad cars couple together</h4>
+    <p>A 12 000-kg railroad car rolls east at 3.0 m/s. It catches up with an 8 000-kg car rolling east at 1.0 m/s. They lock together. How fast do they move after?</p>
+    <div class="work">
+      <p class="wt">East is +. Total momentum before:</p>
+      <math class="eq" display="block"><mrow><msub><mi>m</mi><mn>1</mn></msub><msub><mi>v</mi><mn>1</mn></msub><mo>&#x0002B;</mo><msub><mi>m</mi><mn>2</mn></msub><msub><mi>v</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>12</mn><mspace width="0.167em" /><mn>000</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>3.0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mo stretchy="false">&#x00028;</mo><mn>8</mn><mspace width="0.167em" /><mn>000</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>1.0</mn><mo stretchy="false">&#x00029;</mo></mrow></math>
+      <math class="eq" display="block"><mrow><mo>&#x0003D;</mo><mn>36</mn><mspace width="0.167em" /><mn>000</mn><mo>&#x0002B;</mo><mn>8</mn><mspace width="0.167em" /><mn>000</mn></mrow></math>
+      <math class="eq" display="block"><mrow><mo>&#x0003D;</mo><mn>44</mn><mspace width="0.167em" /><mn>000</mn><mspace width="0.167em" /><mtext>kg·m/s</mtext></mrow></math>
+      <p class="wt">After, both cars share one velocity v′:</p>
+      <math class="eq" display="block"><mrow><mo stretchy="false">&#x00028;</mo><msub><mi>m</mi><mn>1</mn></msub><mo>&#x0002B;</mo><msub><mi>m</mi><mn>2</mn></msub><mo stretchy="false">&#x00029;</mo><msup><mi>v</mi><mrow><mi>&#x02032;</mi></mrow></msup><mo>&#x0003D;</mo><mn>44</mn><mspace width="0.167em" /><mn>000</mn></mrow></math>
+      <math class="eq" display="block"><mrow><mo stretchy="false">&#x00028;</mo><mn>20</mn><mspace width="0.167em" /><mn>000</mn><mo stretchy="false">&#x00029;</mo><msup><mi>v</mi><mrow><mi>&#x02032;</mi></mrow></msup><mo>&#x0003D;</mo><mn>44</mn><mspace width="0.167em" /><mn>000</mn></mrow></math>
+      <math class="eq" display="block"><mrow><msup><mi>v</mi><mrow><mi>&#x02032;</mi></mrow></msup><mo>&#x0003D;</mo><mfrac><mrow><mn>44</mn><mspace width="0.167em" /><mn>000</mn></mrow><mrow><mn>20</mn><mspace width="0.167em" /><mn>000</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><msup><mi>v</mi><mrow><mi>&#x02032;</mi></mrow></msup><mo>&#x0003D;</mo><mn>2.2</mn><mspace width="0.167em" /><mtext>m/s,&#x000A0;east</mtext></mrow></math>
+      <p class="wt">Check with the momentum changes:</p>
+      <math class="eq" display="block"><mrow><mi>&#x00394;</mi><msub><mi>p</mi><mn>1</mn></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>12</mn><mspace width="0.167em" /><mn>000</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>2.2</mn><mo>&#x02212;</mo><mn>3.0</mn><mo stretchy="false">&#x00029;</mo></mrow></math>
+      <math class="eq" display="block"><mrow><mi>&#x00394;</mi><msub><mi>p</mi><mn>1</mn></msub><mo>&#x0003D;</mo><mrow><mo>&#x02212;</mo><mn>9</mn></mrow><mspace width="0.167em" /><mn>600</mn><mspace width="0.167em" /><mtext>kg·m/s</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><mi>&#x00394;</mi><msub><mi>p</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>8</mn><mspace width="0.167em" /><mn>000</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>2.2</mn><mo>&#x02212;</mo><mn>1.0</mn><mo stretchy="false">&#x00029;</mo></mrow></math>
+      <math class="eq" display="block"><mrow><mi>&#x00394;</mi><msub><mi>p</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mrow><mo>&#x0002B;</mo><mn>9</mn></mrow><mspace width="0.167em" /><mn>600</mn><mspace width="0.167em" /><mtext>kg·m/s</mtext></mrow></math>
+    </div>
+    <p class="take">The speed after is between the two speeds before. The front car's gain equals the back car's loss, just as Newton's 3rd law says.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Collision with directions</div>
+    <svg width="200" height="122" viewBox="0 0 200 122" aria-label="Before: glider A moves right at 0.50 m/s, glider B moves left at 0.30 m/s. After: B moves right at 0.20 m/s, A unknown">
+      <text x="2" y="12" font-size="10" font-family="IBM Plex Mono,monospace">before</text>
+      <line x1="0" y1="46" x2="200" y2="46" stroke="#111" stroke-width="2"/>
+      <rect x="14" y="24" width="38" height="22" fill="#ffe2d3" stroke="#111" stroke-width="2"/><text x="28" y="39" font-size="11" font-family="IBM Plex Mono,monospace" font-weight="700">A</text>
+      <line x1="55" y1="35" x2="80" y2="35" stroke="#ff6a2b" stroke-width="3"/><polygon points="78,30 78,40 88,35" fill="#ff6a2b"/>
+      <text x="56" y="22" font-size="10" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">0.50</text>
+      <rect x="146" y="24" width="38" height="22" fill="#fff" stroke="#111" stroke-width="2"/><text x="160" y="39" font-size="11" font-family="IBM Plex Mono,monospace" font-weight="700">B</text>
+      <line x1="143" y1="35" x2="118" y2="35" stroke="#111" stroke-width="3"/><polygon points="120,30 120,40 110,35" fill="#111"/>
+      <text x="114" y="22" font-size="10" font-family="IBM Plex Mono,monospace">0.30</text>
+      <text x="2" y="72" font-size="10" font-family="IBM Plex Mono,monospace">after</text>
+      <line x1="0" y1="110" x2="200" y2="110" stroke="#111" stroke-width="2"/>
+      <rect x="50" y="88" width="38" height="22" fill="#ffe2d3" stroke="#111" stroke-width="2"/><text x="64" y="103" font-size="11" font-family="IBM Plex Mono,monospace" font-weight="700">A</text>
+      <text x="30" y="103" font-size="13" font-family="IBM Plex Mono,monospace" font-weight="700">?</text>
+      <rect x="100" y="88" width="38" height="22" fill="#fff" stroke="#111" stroke-width="2"/><text x="114" y="103" font-size="11" font-family="IBM Plex Mono,monospace" font-weight="700">B</text>
+      <line x1="141" y1="99" x2="166" y2="99" stroke="#111" stroke-width="3"/><polygon points="164,94 164,104 174,99" fill="#111"/>
+      <text x="142" y="86" font-size="10" font-family="IBM Plex Mono,monospace">0.20</text>
+    </svg>
+    <h4>Two gliders bump and bounce</h4>
+    <p>On an air track, glider A (0.40 kg) moves right at 0.50 m/s. Glider B (0.60 kg) moves left at 0.30 m/s. They collide head-on. After, glider B moves right at 0.20 m/s. Find glider A's velocity after.</p>
+    <div class="work">
+      <p class="wt">Right is +. Momentum table (kg·m/s):</p>
+      <table>
+        <tr><td></td><td><b>Before</b></td><td><b>After</b></td></tr>
+        <tr><td>A</td><td>0.40 × (+0.50) = +0.20</td><td>0.40 × v</td></tr>
+        <tr><td>B</td><td>0.60 × (−0.30) = −0.18</td><td>0.60 × (+0.20) = +0.12</td></tr>
+        <tr><td>Total</td><td>+0.02</td><td>+0.02</td></tr>
+      </table>
+      <p class="wt">The “after” column must also add to +0.02:</p>
+      <math class="eq" display="block"><mrow><mn>0.40</mn><mi>v</mi><mo>&#x0002B;</mo><mn>0.12</mn><mo>&#x0003D;</mo><mn>0.02</mn></mrow></math>
+      <math class="eq" display="block"><mrow><mn>0.40</mn><mi>v</mi><mo>&#x0003D;</mo><mrow><mo>&#x02212;</mo><mn>0.10</mn></mrow></mrow></math>
+      <math class="eq" display="block"><mrow><mi>v</mi><mo>&#x0003D;</mo><mfrac><mrow><mo>&#x02212;</mo><mn>0.10</mn></mrow><mrow><mn>0.40</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>v</mi><mo>&#x0003D;</mo><mrow><mo>&#x02212;</mo><mn>0.25</mn></mrow><mspace width="0.167em" /><mtext>m/s</mtext><mo>&#x02192;</mo><mspace width="0.278em" /><mn>0.25</mn><mspace width="0.167em" /><mtext>m/s,&#x000A0;left</mtext></mrow></math>
+    </div>
+    <p class="take">Before the crash, the two momenta almost cancel. Without signs you would get the wrong total (0.38 instead of 0.02) and a wrong answer.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Explosion (push apart)</div>
+    <h4>A worker jumps off a railroad flatcar</h4>
+    <p>A 60-kg worker stands at rest on a 900-kg railroad flatcar on a level track. Ignore friction in the wheels. She jumps off the left end at 1.5 m/s. What does the flatcar do?</p>
+    <div class="work">
+      <p class="wt">Right is +. Everything starts at rest, so the total momentum is 0 before and after:</p>
+      <math class="eq" display="block"><mrow><mn>0</mn><mo>&#x0003D;</mo><msub><mi>m</mi><mi>w</mi></msub><msubsup><mi>v</mi><mi>w</mi><mrow><mi>&#x02032;</mi></mrow></msubsup><mo>&#x0002B;</mo><msub><mi>m</mi><mi>c</mi></msub><msubsup><mi>v</mi><mi>c</mi><mrow><mi>&#x02032;</mi></mrow></msubsup></mrow></math>
+      <math class="eq" display="block"><mrow><mn>0</mn><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>60</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mrow><mo>&#x02212;</mo><mn>1.5</mn></mrow><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mo stretchy="false">&#x00028;</mo><mn>900</mn><mo stretchy="false">&#x00029;</mo><msubsup><mi>v</mi><mi>c</mi><mrow><mi>&#x02032;</mi></mrow></msubsup></mrow></math>
+      <math class="eq" display="block"><mrow><mn>0</mn><mo>&#x0003D;</mo><mrow><mo>&#x02212;</mo><mn>90</mn></mrow><mo>&#x0002B;</mo><mn>900</mn><msubsup><mi>v</mi><mi>c</mi><mrow><mi>&#x02032;</mi></mrow></msubsup></mrow></math>
+      <math class="eq" display="block"><mrow><msubsup><mi>v</mi><mi>c</mi><mrow><mi>&#x02032;</mi></mrow></msubsup><mo>&#x0003D;</mo><mfrac><mrow><mn>90</mn></mrow><mrow><mn>900</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><msubsup><mi>v</mi><mi>c</mi><mrow><mi>&#x02032;</mi></mrow></msubsup><mo>&#x0003D;</mo><mrow><mo>&#x0002B;</mo><mn>0.10</mn></mrow><mspace width="0.167em" /><mtext>m/s,&#x000A0;right</mtext></mrow></math>
+    </div>
+    <p class="take">They push on each other with equal forces for the same time, so they get equal and opposite momentum (90 kg·m/s each way). The flatcar has 15 times the mass, so it moves at <sup>1</sup>/<sub>15</sub> the speed.</p>
+  </div>
+</div>
+
+</div>
+<div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
+<div class="gcheck">
+  <h3>Self-check</h3>
+  <p>Answer first, then open.</p>
+  <ol class="q">
+    <li>Which has more momentum: a 1500-kg car creeping forward at 2.0 m/s, or a 75-kg sprinter running at 10 m/s? How many times more?
+      <details><summary>Answer</summary><div>Car: p = 1500 × 2.0 = 3000 kg·m/s. Sprinter: p = 75 × 10 = 750 kg·m/s. The car has 4 times as much momentum, even though it is moving slower.</div></details></li>
+    <li>A 0.40-kg hockey puck has 8.0 kg·m/s of momentum. How fast is it moving?
+      <details><summary>Answer</summary><div>v = p ÷ m = 8.0 ÷ 0.40 = 20 m/s.</div></details></li>
+    <li>A gymnast lands on a thick, soft mat instead of a hard floor. Does the mat change her momentum change? Does it change the impulse? Why does it hurt less?
+      <details><summary>Answer</summary><div>No and no. She goes from the same speed to zero either way, so Δp and the impulse are the same. The soft mat makes the stop take longer. Since F·Δt is the same, a longer Δt means a smaller force.</div></details></li>
+    <li>A 10-kg sled is sliding forward at 1.0 m/s. A friend pushes it forward with a net force of 20 N for 2.0 s. Find the impulse and the sled's final speed.
+      <details><summary>Answer</summary><div>Impulse = F·Δt = 20 × 2.0 = 40 N·s. That is the momentum change, so Δv = 40 ÷ 10 = 4.0 m/s. Final speed = 1.0 + 4.0 = 5.0 m/s.</div></details></li>
+    <li>A 0.060-kg tennis ball comes toward a racket at 20 m/s. It leaves in the opposite direction at 30 m/s. The racket touches it for 0.0050 s. Find the size of the ball's momentum change and the average force from the racket.
+      <details><summary>Answer</summary><div>Call the outgoing direction +. Δv = +30 − (−20) = 50 m/s. Δp = 0.060 × 50 = 3.0 kg·m/s. F = 3.0 ÷ 0.0050 = 600 N. (Using 30 − 20 = 10 m/s would be the sign mistake.)</div></details></li>
+    <li>A loaded wheelbarrow rolls into a plastic traffic cone. Compare the wheelbarrow and the cone: which feels the bigger force? The bigger momentum change? The bigger acceleration?
+      <details><summary>Answer</summary><div>Force: the same (Newton's 3rd law). Momentum change: the same size, opposite directions (same force for the same time). Acceleration: the cone, because it has much less mass.</div></details></li>
+    <li>A 0.20-kg lump of clay flies at 10 m/s, hits a 1.8-kg cart at rest and sticks to it. How fast does the cart move after?
+      <details><summary>Answer</summary><div>Before: 0.20 × 10 + 1.8 × 0 = 2.0 kg·m/s. After: (0.20 + 1.8)v = 2.0v. So 2.0v = 2.0 and v = 1.0 m/s, in the clay's direction.</div></details></li>
+    <li>In a collision, cart X loses 18 kg·m/s of rightward momentum. No outside forces act. What happened to cart Y's momentum?
+      <details><summary>Answer</summary><div>Cart Y gained 18 kg·m/s of rightward momentum. The total doesn't change, so whatever X loses, Y gains.</div></details></li>
+    <li>A 50-kg archer stands at rest on frictionless ice and shoots a 0.10-kg arrow forward at 60 m/s. What happens to the archer?
+      <details><summary>Answer</summary><div>The total stays 0. Arrow: 0.10 × 60 = 6.0 kg·m/s forward. So the archer gets 6.0 kg·m/s backward: v = 6.0 ÷ 50 = 0.12 m/s backward.</div></details></li>
+    <li>Two robots in a robot-sumo match lock together in a head-on crash. Robot 1 (30 kg) was going east at 2.0 m/s. Robot 2 (20 kg) was going west at 4.0 m/s. Which way do they move after, and how fast?
+      <details><summary>Answer</summary><div>East is +. Before: 30 × 2.0 + 20 × (−4.0) = 60 − 80 = −20 kg·m/s. After: 50v = −20, so v = −0.40 m/s. They move <b>west</b> at 0.40 m/s: robot 2 had more momentum before the crash.</div></details></li>
+  </ol>
+</div>
+</div>
+<p class="gnext"><a href="#practice" data-view="practice">Practice these ideas →</a></p>
+<script>
+(function(){
+  var tabs=[].slice.call(document.querySelectorAll('.gtabs .tab'));
+  function show(t){tabs.forEach(function(b){var on=b===t;b.setAttribute('aria-selected',on?'true':'false');b.tabIndex=on?0:-1;document.getElementById(b.getAttribute('aria-controls')).hidden=!on;});}
+  tabs.forEach(function(b,i){
+    b.addEventListener('click',function(){show(b);});
+    b.addEventListener('keydown',function(e){var k=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(k){var n=tabs[(i+k+tabs.length)%tabs.length];show(n);n.focus();e.preventDefault();}});
+  });
+})();
+</script>
+</section>
+  </div>
   <div class="view" id="v-practice" hidden>
   <section class="review" id="review">
     <div class="simbar"><h2>Practice questions</h2><a id="ropen" class="mono" href="https://script.google.com/a/macros/fcps.org/s/AKfycbxm2XXzPq2s0JUlS2T0a2lQJ8Pm97_zyibH9rGrW4VUB3EAHWQy5SmQvxsOUYyUL08M/exec?a=05-R" target="_blank" rel="noopener">Open in a new tab ↗</a></div>

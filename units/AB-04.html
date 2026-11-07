@@ -76,7 +76,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
     <div class="uid"><div class="big" aria-hidden="true">04</div><div><div class="mono">Algebra-Based Physics · AB-04</div><h1>Work &amp; Energy &amp; Stars</h1></div></div>
   </header>
   <nav class="views" id="views" aria-label="Choose a view">
-    <div class="vbtns"><button type="button" class="vbtn" data-view="explore" aria-pressed="false">Explore</button><button type="button" class="vbtn" data-view="practice" aria-pressed="false">Practice</button></div>
+    <div class="vbtns"><button type="button" class="vbtn" data-view="explore" aria-pressed="false">Explore</button><button type="button" class="vbtn" data-view="study" aria-pressed="false">Study</button><button type="button" class="vbtn" data-view="practice" aria-pressed="false">Practice</button></div>
     <a class="simsback mono" id="simsback" href="https://sites.google.com/fcps.org/holmes/algebra-based-physics/ab-04" target="_blank" rel="noopener" hidden>Sims for this unit ↗</a>
   </nav>
   <div class="view" id="v-explore">
@@ -95,7 +95,371 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
   </div>
   <p class="credits">Energy Skate Park: Basics, Masses and Springs and Pendulum Lab: PhET Interactive Simulations, University of Colorado Boulder (phet.colorado.edu), CC BY 4.0 / GPL. Star Life Cycle is original. Blackbody Spectrum: PhET Interactive Simulations, University of Colorado Boulder (phet.colorado.edu), CC BY 4.0 / GPL. Big Bang Evidence is original (HS-ESS1-2).</p>
   </div>
+  <div class="view" id="v-study" hidden>
+<section class="guide" id="guide" aria-label="Study guide">
+<style>
+.guide{margin-top:28px}
+.guide .gtip{margin:0 0 16px;font-size:19px;line-height:1.45;max-width:1000px}
+.guide .ggrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-bottom:22px}
+.guide .gcard{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcard h3,.guide .gcheck h3,.guide .gsteps h3{margin:0 0 10px;font-size:20px;letter-spacing:-.01em}
+.guide .gcard ul{margin:0;padding-left:20px}
+.guide .gcard li{margin:0 0 7px}
+.guide .ib{display:inline-block;font-family:var(--f-mono);font-size:11px;font-weight:700;border:2px solid var(--ink);padding:0 5px;margin-left:4px;vertical-align:1px;background:var(--soft)}
+.guide table{border-collapse:collapse;width:100%;font-size:15px}
+.guide td{border-top:2px solid var(--ink);padding:6px 4px;vertical-align:top}
+.guide td:first-child{font-family:var(--f-mono);font-weight:700;white-space:nowrap;padding-right:12px}
+.guide td[colspan]{white-space:normal}
+.guide .gsub{font-family:var(--f-display);font-weight:400}
+.guide .gsteps{background:var(--soft);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px;margin-bottom:22px}
+.guide .gsteps ol{margin:0;padding-left:24px;columns:2 360px;column-gap:28px}
+.guide .gsteps li{margin:0 0 8px;break-inside:avoid}
+.guide h3.ghead{font-size:22px;margin:0 0 12px}
+.guide .gex{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:18px;margin-bottom:22px}
+.guide .ex{min-width:0;background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .ex h4{margin:0 0 6px;font-size:18px}
+.guide .ex .kind{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--hot);text-transform:uppercase;letter-spacing:.04em}
+.guide .ex p{margin:0 0 8px}
+.guide .work{font-size:16px;line-height:1.45;border-left:4px solid var(--hot);background:#fff;padding:6px 14px;margin:8px 0;overflow-x:auto}
+.guide .work math.eq{display:block;text-align:left;margin:8px 0;font-size:1.15em}
+@media (max-width:520px){.guide .work math.eq{font-size:1em}}
+.guide .work math.ans{font-weight:700}
+.guide .work .wt{margin:6px 0 2px}
+.guide .ex .take{margin:8px 0 0;font-weight:500}
+.guide .ex svg{float:right;margin:0 0 6px 12px}
+.guide .gcheck{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcheck>p{margin:-4px 0 12px;color:var(--muted)}
+.guide ol.q{margin:0;padding-left:26px}
+.guide ol.q>li{margin:0 0 14px}
+.guide details{margin-top:6px}
+.guide summary{cursor:pointer;display:inline-block;font-weight:700;border:2px solid var(--ink);padding:2px 10px;background:#fff;list-style:none}
+.guide summary::-webkit-details-marker{display:none}
+.guide summary:hover{background:var(--soft)}
+.guide details[open] summary{background:var(--ink);color:#fff}
+.guide details>div{border-left:4px solid var(--hot);padding:8px 12px;margin-top:8px;background:#fff}
+.guide .gpanel>.ggrid,.guide .gpanel>.gsteps,.guide .gpanel>.gex{margin-bottom:0}
+.guide .gpanel>.gsteps+.ggrid{margin-top:22px}
+.guide .gtabs{margin-bottom:18px}
+.guide .gnext{margin:16px 0 0;font-weight:700}
+.guide .gnext a{color:var(--ink)}
+body.present .guide{display:none}
+@media (max-width:520px){.guide .gtip{font-size:17px}.guide td:first-child{white-space:normal}.guide .ggrid,.guide .gex{grid-template-columns:1fr}.guide .ex svg{float:none;display:block;margin:0 auto 8px}}
+</style>
+<div class="simbar"><h2>Study guide</h2><span class="mono">Unit 4 · Work, Energy and Stars</span></div>
+<p class="gtip"><b>How to use this:</b> read the key ideas, then cover each worked example and try it yourself before reading the solution. Do the self-check questions on paper <i>before</i> you open the answers, mark the ones you miss, and come back to them in a day or two without looking. Rereading won't do much; answering questions will.</p>
+<div class="tabs gtabs" role="tablist" aria-label="Study guide sections">
+  <button class="tab" role="tab" type="button" aria-selected="true" aria-controls="g-ideas" id="gt-ideas">Key ideas</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-solve" id="gt-solve" tabindex="-1">How to solve</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-examples" id="gt-examples" tabindex="-1">Worked examples</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-check" id="gt-check" tabindex="-1">Self-check</button>
+</div>
+<div class="gpanel" role="tabpanel" id="g-ideas" aria-labelledby="gt-ideas">
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Work and power</h3>
+    <ul>
+      <li><b>Work</b> is done when a force moves an object through a distance. W = F·d, measured in <b>joules</b> (1 J = 1 N·m).</li>
+      <li>You need a force <i>and</i> motion. Pushing on a wall that doesn't move does no work, however tired you get.</li>
+      <li><b>Positive work:</b> the force points with the motion. It adds energy (a push that speeds up a cart).</li>
+      <li><b>Negative work:</b> the force points against the motion. It takes energy away (friction, brakes, air resistance).</li>
+      <li><b>Zero work:</b> the force is at 90° to the motion. Carrying a box across a level room: your upward force does no work on it.</li>
+      <li><b>Power</b> is how fast work is done: P = W/t, in <b>watts</b> (1 W = 1 J/s). Same job in less time means more power, not more work.</li>
+      <li>For something moving at a steady speed, P = F·v.</li>
+      <li>Careful: W stands for work (in J), and W is also the unit watt.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Energy</h3>
+    <ul>
+      <li><b>Kinetic energy</b> (KE) is energy of motion: KE = ½·m·v². Anything moving has KE. Twice the speed gives 4 times the KE.</li>
+      <li><b>Potential energy</b> (PE) is stored energy of height: PE = m·g·h. You choose where h = 0, usually the lowest point.</li>
+      <li><b>Total mechanical energy:</b> TME = KE + PE.</li>
+      <li><b>Only gravity doing work</b> (no friction, air resistance, push or pull): TME stays the same. KE and PE just trade back and forth.</li>
+      <li>The normal force from a track or slope does no work, because it is at 90° to the motion. A smooth track still conserves TME.</li>
+      <li><b>Other forces doing work</b> change TME: KE<sub>i</sub> + PE<sub>i</sub> + W = KE<sub>f</sub> + PE<sub>f</sub>. Positive W adds energy; negative W takes it away, mostly as heat.</li>
+      <li>A coasting cart with no friction can't climb higher than where it started. It would need more energy than it has.</li>
+      <li><b>Work–energy bar charts</b> show the same equation as bars: the initial bars plus the W bar equal the final bars.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Stars and the universe</h3>
+    <ul>
+      <li>A star forms when gravity pulls a cloud of gas and dust (a nebula) together. The core gets hot enough to <b>fuse hydrogen into helium</b>.</li>
+      <li><b>Main sequence:</b> most of a star's life. Gravity pulls in, pressure from the hot core pushes out, and they balance.</li>
+      <li>A Sun-like star becomes a red giant, then a planetary nebula, and ends as a <b>white dwarf</b>. A very massive star becomes a red supergiant, explodes as a <b>supernova</b>, and leaves a neutron star or a black hole.</li>
+      <li>Massive stars burn their fuel much faster, so they live <b>shorter</b> lives.</li>
+      <li><b>Glowing objects:</b> hotter means brighter and bluer (the peak moves to shorter wavelengths). Cool stars look red; hot stars look blue-white.</li>
+      <li><b>HR diagram:</b> brightness up the side, temperature along the bottom with <b>hot on the left</b>. Giants sit at the upper right (cool but huge); white dwarfs at the lower left (hot but tiny).</li>
+      <li><b>Big Bang evidence:</b> light from galaxies is red-shifted, and farther galaxies move away faster, so the universe is expanding. A leftover glow, now stretched to microwaves, comes from every direction. The universe is mostly hydrogen and helium.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Equations</h3>
+    <table>
+      <tr><td>W = F·d</td><td>work (J). F = force along the motion (N), d = distance (m). Negative if F is against the motion</td></tr>
+      <tr><td>P = W/t</td><td>power (W). t in seconds</td></tr>
+      <tr><td>P = F·v</td><td>power at a steady speed v (m/s)</td></tr>
+      <tr><td>1 hp = 746 W</td><td>horsepower</td></tr>
+      <tr><td>KE = ½·m·v²</td><td>kinetic energy (J). m = mass (kg), v = speed (m/s)</td></tr>
+      <tr><td>PE = m·g·h</td><td>potential energy (J). h = height (m), g = 10 m/s/s (9.8 is also fine)</td></tr>
+      <tr><td>TME = KE + PE</td><td>total mechanical energy</td></tr>
+      <tr><td colspan="2">KE<sub>i</sub> + PE<sub>i</sub> + W = KE<sub>f</sub> + PE<sub>f</sub><br><span class="gsub">Work changes mechanical energy. W = work by forces other than gravity. W = 0 means TME is conserved.</span></td></tr>
+      <tr><td colspan="2">v = 300,000 × Δλ ÷ 656<br><span class="gsub">Speed of a galaxy (km/s) from how far hydrogen's red line (656 nm) has shifted (Δλ, in nm).</span></td></tr>
+    </table>
+  </div>
+  <div class="gcard">
+    <h3>Common mistakes</h3>
+    <ul>
+      <li>Saying work is done when nothing moves, or when the force is at 90° to the motion.</li>
+      <li>Forgetting that friction's work is negative.</li>
+      <li>KE: forgetting to square v, or thinking twice the speed means twice the KE. It's 4 times.</li>
+      <li>Putting minutes into P = W/t. Change to seconds first.</li>
+      <li>Saying TME stays the same when friction, air resistance or a push is doing work.</li>
+      <li>Counting gravity's work as W. Gravity is already in the PE terms.</li>
+      <li>Not cancelling terms: “starts from rest” means KE<sub>i</sub> = 0; “at the bottom” means PE = 0.</li>
+      <li>Reading the HR diagram's temperature axis the wrong way. Hot is on the left.</li>
+      <li>Thinking a red-shifted galaxy looks red. Its spectrum lines are shifted toward longer wavelengths.</li>
+    </ul>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-solve" aria-labelledby="gt-solve" hidden>
+<div class="gsteps">
+  <h3>How to solve a work–energy problem</h3>
+  <ol>
+    <li><b>Pick the start (i) and the end (f).</b> Sketch them.</li>
+    <li><b>Choose where h = 0</b>, usually the lowest point.</li>
+    <li><b>Find W.</b> Is friction, air resistance, a push or a pull doing work? If not, W = 0. Gravity and the normal force don't count.</li>
+    <li><b>Cancel the zero terms.</b> “Starts from rest”: KE<sub>i</sub> = 0. “Comes to a stop”: KE<sub>f</sub> = 0. “On the ground” or “at the bottom”: PE = 0. “Level road”: the PEs are equal and cancel.</li>
+    <li><b>Write what's left</b> of KE<sub>i</sub> + PE<sub>i</sub> + W = KE<sub>f</sub> + PE<sub>f</sub>, and put in ½·m·v², m·g·h and F·d.</li>
+    <li><b>Solve.</b> Check the answer makes sense: an object that coasts downhill should speed up.</li>
+  </ol>
+</div>
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Work and power problems</h3>
+    <ul>
+      <li>List every force. For each one, ask: with the motion (+), against it (−) or at 90° (0)?</li>
+      <li>W = F·d for each force, then add them for the total work.</li>
+      <li>Lifting at a steady speed: the force you need equals the weight, m·g.</li>
+      <li>Power: P = W/t with t in seconds, or P = F·v at a steady speed.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Work–energy bar charts</h3>
+    <ul>
+      <li>Draw a bar for KE<sub>i</sub> and PE<sub>i</sub> (no bar if it's zero).</li>
+      <li>Draw the W bar: up for positive work, down for negative work.</li>
+      <li>Draw KE<sub>f</sub> and PE<sub>f</sub>.</li>
+      <li>Check: the initial bars plus W add up to the final bars.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Reading the HR diagram</h3>
+    <ul>
+      <li>Up = brighter. Left = hotter.</li>
+      <li>Bright but cool (upper right)? The star must be huge: a giant or supergiant.</li>
+      <li>Hot but dim (lower left)? The star must be tiny: a white dwarf.</li>
+      <li>On the main sequence, the bright hot stars are the massive, short-lived ones.</li>
+    </ul>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-examples" aria-labelledby="gt-examples" hidden>
+<div class="gex">
+  <div class="ex">
+    <div class="kind">Work by each force</div>
+    <svg width="150" height="140" viewBox="0 0 150 140" aria-label="Free-body diagram of the crate: applied force right, friction left, normal force up, gravity down">
+      <rect x="55" y="55" width="30" height="30" fill="#ffe2d3" stroke="#111" stroke-width="2"/>
+      <line x1="85" y1="70" x2="132" y2="70" stroke="#ff6a2b" stroke-width="3"/><polygon points="130,65 130,75 142,70" fill="#ff6a2b"/>
+      <text x="96" y="60" font-size="13" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">F</text><text x="104" y="64" font-size="10" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">app</text>
+      <line x1="55" y1="70" x2="26" y2="70" stroke="#111" stroke-width="3"/><polygon points="28,65 28,75 16,70" fill="#111"/>
+      <text x="2" y="92" font-size="13" font-family="IBM Plex Mono,monospace">F</text><text x="10" y="96" font-size="10" font-family="IBM Plex Mono,monospace">frict</text>
+      <line x1="70" y1="55" x2="70" y2="18" stroke="#111" stroke-width="3"/><polygon points="65,20 75,20 70,8" fill="#111"/>
+      <text x="78" y="22" font-size="13" font-family="IBM Plex Mono,monospace">F</text><text x="86" y="26" font-size="10" font-family="IBM Plex Mono,monospace">norm</text>
+      <line x1="70" y1="85" x2="70" y2="122" stroke="#111" stroke-width="3"/><polygon points="65,120 75,120 70,132" fill="#111"/>
+      <text x="78" y="126" font-size="13" font-family="IBM Plex Mono,monospace">F</text><text x="86" y="130" font-size="10" font-family="IBM Plex Mono,monospace">grav</text>
+    </svg>
+    <h4>Pushing a crate across the floor</h4>
+    <p>A worker pushes a 40 kg crate 6.0 m across a level warehouse floor with a 150 N horizontal force. Friction on the crate is 90 N. The crate starts at rest. Find the work done by each force, the total work and the crate's final speed.</p>
+    <div class="work">
+      <p class="wt">Push (with the motion):</p>
+      <math class="eq" display="block"><mrow><msub><mi>W</mi><mrow><mtext>app</mtext></mrow></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>150</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>6.0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>+900</mn><mspace width="0.167em" /><mtext>J</mtext></mrow></math>
+      <p class="wt">Friction (against the motion):</p>
+      <math class="eq" display="block"><mrow><msub><mi>W</mi><mrow><mtext>frict</mtext></mrow></msub><mo>&#x0003D;</mo><mo form="prefix" lspace="0" rspace="0">&#x02212;</mo><mo stretchy="false">&#x00028;</mo><mn>90</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>6.0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>&#x02212;540</mn><mspace width="0.167em" /><mtext>J</mtext></mrow></math>
+      <p class="wt">F<sub>norm</sub> and F<sub>grav</sub> are at 90° to the motion:</p>
+      <math class="eq" display="block"><mrow><msub><mi>W</mi><mrow><mtext>norm</mtext></mrow></msub><mo>&#x0003D;</mo><msub><mi>W</mi><mrow><mtext>grav</mtext></mrow></msub><mo>&#x0003D;</mo><mn>0</mn><mspace width="0.167em" /><mtext>J</mtext></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>W</mi><mrow><mtext>total</mtext></mrow></msub><mo>&#x0003D;</mo><mn>900</mn><mo>&#x02212;</mo><mn>540</mn><mo>&#x0003D;</mo><mn>360</mn><mspace width="0.167em" /><mtext>J</mtext></mrow></math>
+      <p class="wt">Level floor and starts at rest, so KE<sub>i</sub>, PE<sub>i</sub> and PE<sub>f</sub> are all zero:</p>
+      <math class="eq" display="block"><mrow><mi>W</mi><mo>&#x0003D;</mo><msub><mi>KE</mi><mi>f</mi></msub><mo>&#x02192;</mo><mspace width="0.278em" /><mn>360</mn><mo>&#x0003D;</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo stretchy="false">&#x00028;</mo><mn>40</mn><mo stretchy="false">&#x00029;</mo><msup><mi>v</mi><mn>2</mn></msup></mrow></math>
+      <math class="eq" display="block"><mrow><msup><mi>v</mi><mn>2</mn></msup><mo>&#x0003D;</mo><mfrac><mrow><mn>2</mn><mo stretchy="false">&#x00028;</mo><mn>360</mn><mo stretchy="false">&#x00029;</mo></mrow><mrow><mn>40</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>18</mn></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>v</mi><mo>&#x0003D;</mo><mn>4.2</mn><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
+    </div>
+    <p class="take">Only forces along the motion do work. The push adds 900 J, friction takes 540 J back out as heat, and the 360 J left over becomes the crate's kinetic energy.</p>
+  </div>
 
+  <div class="ex">
+    <div class="kind">Power two ways</div>
+    <h4>A tractor dragging a log</h4>
+    <p>A tractor drags a log 30 m across a field at a steady speed in 20 s. Friction on the log is 2400 N. Find the work the tractor does on the log and its power, in watts and in horsepower. Then check the power with P = F·v.</p>
+    <div class="work">
+      <p class="wt">Steady speed, so the tractor's pull equals friction: F<sub>app</sub> = 2400 N.</p>
+      <math class="eq" display="block"><mrow><mi>W</mi><mo>&#x0003D;</mo><mi>F</mi><mi>d</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>2400</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>30</mn><mo stretchy="false">&#x00029;</mo></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>W</mi><mo>&#x0003D;</mo><mn>72,000</mn><mspace width="0.167em" /><mtext>J</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><mi>P</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>W</mi></mrow><mrow><mi>t</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>72,000</mn></mrow><mrow><mn>20</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>P</mi><mo>&#x0003D;</mo><mn>3600</mn><mspace width="0.167em" /><mtext>W</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><mfrac><mrow><mn>3600</mn></mrow><mrow><mn>746</mn></mrow></mfrac><mo>&#x02248;</mo><mn>4.8</mn><mspace width="0.167em" /><mtext>hp</mtext></mrow></math>
+      <p class="wt">Check with P = F·v. The speed is 30 m ÷ 20 s:</p>
+      <math class="eq" display="block"><mrow><mi>v</mi><mo>&#x0003D;</mo><mfrac><mrow><mn>30</mn></mrow><mrow><mn>20</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>1.5</mn><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><mi>P</mi><mo>&#x0003D;</mo><mi>F</mi><mi>v</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>2400</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>1.5</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>3600</mn><mspace width="0.167em" /><mtext>W</mtext></mrow></math>
+    </div>
+    <p class="take">Both power equations give the same answer. If the tractor dragged the log twice as fast, it would do the same work in half the time: twice the power.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Energy is conserved</div>
+    <svg width="204" height="134" viewBox="0 0 170 112" aria-label="Track: start A at 1.8 m, bottom B at 0 m, hump C at 0.55 m">
+      <line x1="0" y1="95" x2="170" y2="95" stroke="#111" stroke-width="1" stroke-dasharray="3 3"/>
+      <path d="M10 23 C 40 23, 45 95, 70 95 S 112 73, 128 73 S 152 95, 168 95" fill="none" stroke="#111" stroke-width="2.5"/>
+      <circle cx="12" cy="17" r="5" fill="#ff6a2b"/>
+      <text x="22" y="16" font-size="13" font-family="IBM Plex Mono,monospace" font-weight="700">A</text><text x="38" y="16" font-size="10" font-family="IBM Plex Mono,monospace">1.8 m</text>
+      <text x="64" y="110" font-size="13" font-family="IBM Plex Mono,monospace" font-weight="700">B</text>
+      <text x="108" y="62" font-size="13" font-family="IBM Plex Mono,monospace" font-weight="700">C</text><text x="121" y="62" font-size="10" font-family="IBM Plex Mono,monospace">0.55 m</text>
+    </svg>
+    <h4>A toy car on a smooth track</h4>
+    <p>A 2.0 kg toy car is let go from rest at A, 1.8 m above the floor. The track is smooth, so ignore friction. Find its speed at the bottom (B) and at the top of the hump (C), 0.55 m high.</p>
+    <div class="work">
+      <p class="wt">Only gravity does work, so W = 0 and TME stays the same:</p>
+      <math class="eq" display="block"><mrow><mi>TME</mi><mo>&#x0003D;</mo><msub><mi>PE</mi><mi>A</mi></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>2.0</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>1.8</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>36</mn><mspace width="0.167em" /><mtext>J</mtext></mrow></math>
+      <p class="wt">At B (h = 0), all 36 J is KE:</p>
+      <math class="eq" display="block"><mrow><mn>36</mn><mo>&#x0003D;</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo stretchy="false">&#x00028;</mo><mn>2.0</mn><mo stretchy="false">&#x00029;</mo><msup><mi>v</mi><mn>2</mn></msup><mo>&#x02192;</mo><mspace width="0.278em" /><msup><mi>v</mi><mn>2</mn></msup><mo>&#x0003D;</mo><mn>36</mn></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>v</mi><mi>B</mi></msub><mo>&#x0003D;</mo><mn>6.0</mn><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
+      <p class="wt">At C, some of the energy is PE again:</p>
+      <math class="eq" display="block"><mrow><msub><mi>PE</mi><mi>C</mi></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>2.0</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>0.55</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>11</mn><mspace width="0.167em" /><mtext>J</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>KE</mi><mi>C</mi></msub><mo>&#x0003D;</mo><mn>36</mn><mo>&#x02212;</mo><mn>11</mn><mo>&#x0003D;</mo><mn>25</mn><mspace width="0.167em" /><mtext>J</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><mn>25</mn><mo>&#x0003D;</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo stretchy="false">&#x00028;</mo><mn>2.0</mn><mo stretchy="false">&#x00029;</mo><msup><mi>v</mi><mn>2</mn></msup><mo>&#x02192;</mo><mspace width="0.278em" /><msup><mi>v</mi><mn>2</mn></msup><mo>&#x0003D;</mo><mn>25</mn></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>v</mi><mi>C</mi></msub><mo>&#x0003D;</mo><mn>5.0</mn><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
+    </div>
+    <p class="take">The car is fastest at the lowest point. It could not get over a hump taller than 1.8 m: that would need more than the 36 J it has.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Friction takes energy</div>
+    <svg width="207" height="173" viewBox="0 0 180 150" aria-label="Bar chart: small KE initial, tall PE initial, W bar below zero, tall KE final, no PE final">
+      <line x1="6" y1="100" x2="176" y2="100" stroke="#111" stroke-width="2"/>
+      <line x1="104" y1="6" x2="104" y2="128" stroke="#111" stroke-width="1" stroke-dasharray="3 3"/>
+      <rect x="10" y="97" width="22" height="3" fill="#111"/>
+      <rect x="40" y="16" width="22" height="84" fill="#111"/>
+      <rect x="72" y="100" width="22" height="19" fill="#ff6a2b"/>
+      <rect x="114" y="31" width="22" height="69" fill="#111"/>
+      <text x="8" y="140" font-size="11" font-family="IBM Plex Mono,monospace">KEi</text><text x="38" y="140" font-size="11" font-family="IBM Plex Mono,monospace">PEi</text><text x="78" y="140" font-size="11" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">W</text>
+      <text x="112" y="140" font-size="11" font-family="IBM Plex Mono,monospace">KEf</text><text x="144" y="140" font-size="11" font-family="IBM Plex Mono,monospace">PEf</text>
+      <text x="40" y="12" font-size="10" font-family="IBM Plex Mono,monospace">8400</text><text x="112" y="27" font-size="10" font-family="IBM Plex Mono,monospace">6860</text>
+    </svg>
+    <h4>A mountain biker coasting downhill</h4>
+    <p>A mountain biker and bike (70 kg together) roll over the top of a 12 m tall hill at 3.0 m/s. She coasts to the bottom without pedaling and arrives at 14 m/s. How much work did friction and air resistance do? If the trail down is 60 m long, what was the average resistance force?</p>
+    <div class="work">
+      <p class="wt">Energies, with h = 0 at the bottom:</p>
+      <math class="eq" display="block"><mrow><msub><mi>KE</mi><mi>i</mi></msub><mo>&#x0003D;</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo stretchy="false">&#x00028;</mo><mn>70</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>3.0</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup><mo>&#x0003D;</mo><mn>315</mn><mspace width="0.167em" /><mtext>J</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>PE</mi><mi>i</mi></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>70</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>12</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>8400</mn><mspace width="0.167em" /><mtext>J</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>KE</mi><mi>f</mi></msub><mo>&#x0003D;</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo stretchy="false">&#x00028;</mo><mn>70</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>14</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup><mo>&#x0003D;</mo><mn>6860</mn><mspace width="0.167em" /><mtext>J</mtext></mrow></math>
+      <p class="wt">PE<sub>f</sub> = 0. Solve the work–energy equation for W:</p>
+      <math class="eq" display="block"><mrow><mn>315</mn><mo>&#x0002B;</mo><mn>8400</mn><mo>&#x0002B;</mo><mi>W</mi><mo>&#x0003D;</mo><mn>6860</mn></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>W</mi><mo>&#x0003D;</mo><mn>&#x02212;1855</mn><mspace width="0.167em" /><mtext>J</mtext></mrow></math>
+      <p class="wt">That work happened over 60 m, against the motion:</p>
+      <math class="eq" display="block"><mrow><mi>F</mi><mo>&#x0003D;</mo><mfrac><mrow><mn>1855</mn></mrow><mrow><mn>60</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>F</mi><mo>&#x02248;</mo><mn>31</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+    </div>
+    <p class="take">The negative W bar shows the mechanical energy that was lost: about 1855 J turned into heat in the tires, brakes and air. Without friction she would have arrived even faster.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Work adds energy</div>
+    <h4>Pedaling up a hill</h4>
+    <p>A cyclist and bike (80 kg together) start up a hill at 4.0 m/s and reach the top, 15 m higher, at 6.0 m/s. Ignore friction and air resistance. How much work did the cyclist do? The climb took 100 s. What was her average power?</p>
+    <div class="work">
+      <p class="wt">Set h = 0 at the bottom, so PE<sub>i</sub> = 0:</p>
+      <math class="eq" display="block"><mrow><msub><mi>KE</mi><mi>i</mi></msub><mo>&#x0003D;</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo stretchy="false">&#x00028;</mo><mn>80</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>4.0</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup><mo>&#x0003D;</mo><mn>640</mn><mspace width="0.167em" /><mtext>J</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>KE</mi><mi>f</mi></msub><mo>&#x0003D;</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo stretchy="false">&#x00028;</mo><mn>80</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>6.0</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup><mo>&#x0003D;</mo><mn>1440</mn><mspace width="0.167em" /><mtext>J</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>PE</mi><mi>f</mi></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>80</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>15</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>12,000</mn><mspace width="0.167em" /><mtext>J</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><mn>640</mn><mo>&#x0002B;</mo><mi>W</mi><mo>&#x0003D;</mo><mn>1440</mn><mo>&#x0002B;</mo><mn>12,000</mn></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>W</mi><mo>&#x0003D;</mo><mn>12,800</mn><mspace width="0.167em" /><mtext>J</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><mi>P</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>W</mi></mrow><mrow><mi>t</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>12,800</mn></mrow><mrow><mn>100</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>P</mi><mo>&#x0003D;</mo><mn>128</mn><mspace width="0.167em" /><mtext>W</mtext></mrow></math>
+    </div>
+    <p class="take">Her positive work raised both her KE and her PE. Most of it went into height: 12,000 J of the 12,800 J.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Stars</div>
+    <svg width="252" height="206" viewBox="0 0 210 172" aria-label="HR diagram: brightness up, temperature with hot on the left. Main sequence diagonal; star A at the upper right; star B at the lower left; the Sun in the middle of the main sequence">
+      <line x1="26" y1="6" x2="26" y2="146" stroke="#111" stroke-width="2"/><line x1="26" y1="146" x2="204" y2="146" stroke="#111" stroke-width="2"/>
+      <polyline points="32,23 103,64 137,88 176,121" fill="none" stroke="#ffe2d3" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="36" y="50" font-size="10" font-family="IBM Plex Mono,monospace" transform="rotate(30 36 50)">main sequence</text>
+      <circle cx="137" cy="88" r="5" fill="#ff6a2b"/><text x="146" y="86" font-size="11" font-family="IBM Plex Mono,monospace">Sun</text>
+      <circle cx="169" cy="23" r="7" fill="#111"/><text x="156" y="14" font-size="12" font-family="IBM Plex Mono,monospace" font-weight="700">A</text>
+      <circle cx="103" cy="114" r="3" fill="#111"/><text x="110" y="118" font-size="12" font-family="IBM Plex Mono,monospace" font-weight="700">B</text>
+      <text x="40" y="136" font-size="9" font-family="IBM Plex Mono,monospace">white dwarfs</text>
+      <text x="138" y="44" font-size="9" font-family="IBM Plex Mono,monospace">giants</text>
+      <text x="12" y="100" font-size="10" font-family="IBM Plex Mono,monospace" transform="rotate(-90 12 100)">brighter →</text>
+      <text x="28" y="162" font-size="10" font-family="IBM Plex Mono,monospace">← hotter</text><text x="148" y="162" font-size="10" font-family="IBM Plex Mono,monospace">cooler →</text>
+    </svg>
+    <h4>Reading the HR diagram</h4>
+    <p>Star A has a surface temperature of 3500 K and gives off 100,000 times as much light as the Sun. Star B is 10,000 K and gives off 0.01 times as much light as the Sun. (The Sun is about 5800 K.) What kind of star is each one? What color does each look, and why is each one as bright as it is?</p>
+    <div class="work">
+      <p class="wt"><b>Star A:</b> cooler than the Sun, so it is to the <b>right</b> of the Sun; much brighter, so it is near the <b>top</b>. Upper right: a <b>red supergiant</b>. It looks red because it is cool. It is still very bright because it is enormous: a huge surface gives off a lot of light even though each square meter is cool.</p>
+      <p class="wt"><b>Star B:</b> hotter than the Sun, so it is to the <b>left</b>; much dimmer, so it is near the <b>bottom</b>. Lower left: a <b>white dwarf</b>. It looks blue-white because it is hot. It is dim because it is tiny, about the size of Earth.</p>
+    </div>
+    <p class="take">Brightness depends on temperature <i>and</i> size. Star A is what a very massive star becomes near the end of its life, before it explodes as a supernova. Star B is what is left after a Sun-like star sheds its outer layers.</p>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
+<div class="gcheck">
+  <h3>Self-check</h3>
+  <p>Answer first, then open.</p>
+  <ol class="q">
+    <li>Is the work done by the named force positive, negative or zero? (a) A crossing guard holds a stop sign still for two minutes (her force on the sign). (b) A goalie's hands stop a fast shot (hands on ball). (c) Gravity on a falling acorn. (d) A student walks down a level hallway at a steady speed carrying a backpack (his upward force on the backpack).
+      <details><summary>Answer</summary><div>(a) Zero: the sign doesn't move. (b) Negative: the force points against the ball's motion and takes away its energy. (c) Positive: gravity points down and the acorn moves down. (d) Zero: the force is up but the motion is sideways, at 90°.</div></details></li>
+    <li>A delivery drone lifts a 2.0 kg package 15 m straight up at a steady speed in 6.0 s. How much work does it do on the package? What is its power?
+      <details><summary>Answer</summary><div>Steady speed, so the lifting force equals the weight: F = m·g = (2.0)(10) = 20 N. W = F·d = (20)(15) = 300 J. P = W/t = 300/6.0 = 50 W.</div></details></li>
+    <li>A 250-W winch and a 750-W winch each drag the same log 12 m across flat ground with a steady 500 N pull. Which does more work? How long does each one take?
+      <details><summary>Answer</summary><div>Same work: W = F·d = (500)(12) = 6000 J each. t = W ÷ P: 6000 ÷ 250 = 24 s and 6000 ÷ 750 = 8.0 s. Three times the power does the same job in a third of the time.</div></details></li>
+    <li>A 0.40 kg soccer ball is kicked at 20 m/s. Find its KE. What would it be if it were kicked at 40 m/s?
+      <details><summary>Answer</summary><div>KE = ½(0.40)(20)² = 80 J. At twice the speed, KE is 2² = 4 times as much: 320 J.</div></details></li>
+    <li>A 0.020 kg acorn falls 5.0 m from a branch to the ground. Ignore air resistance. How much PE does it lose? How fast is it going when it lands?
+      <details><summary>Answer</summary><div>PE = m·g·h = (0.020)(10)(5.0) = 1.0 J. All of it becomes KE: 1.0 = ½(0.020)v², so v² = 100 and v = 10 m/s.</div></details></li>
+    <li>A box slides across a level carpet and comes to a stop. What happens to its KE, its PE and its TME? Where does the energy go?
+      <details><summary>Answer</summary><div>KE decreases to zero. PE stays the same (the height doesn't change). TME decreases, because friction does negative work. The energy becomes heat in the box and the carpet.</div></details></li>
+    <li>Friends push a 1200 kg stalled car from rest along a level road. After subtracting the work done by friction, their pushes do 2400 J of work. Which terms of KE<sub>i</sub> + PE<sub>i</sub> + W = KE<sub>f</sub> + PE<sub>f</sub> cancel? How fast is the car going?
+      <details><summary>Answer</summary><div>KE<sub>i</sub> = 0 (starts at rest), and PE<sub>i</sub> and PE<sub>f</sub> cancel (level road). That leaves W = KE<sub>f</sub>: 2400 = ½(1200)v², so v² = 4 and v = 2.0 m/s.</div></details></li>
+    <li>A cyclist rides at a steady 8.0 m/s on level ground. Friction and air resistance together push back on her with 25 N. What is her power?
+      <details><summary>Answer</summary><div>Steady speed, so her forward force equals 25 N. P = F·v = (25)(8.0) = 200 W.</div></details></li>
+    <li>A cart coasts on a frictionless track from rest at 3 m high. Can it get over a hill 4 m high? What about a hill exactly 3 m high?
+      <details><summary>Answer</summary><div>Not the 4 m hill: its TME is only enough for PE at 3 m, so it can never get higher than its start. A 3 m hill is the most it could just reach, arriving with zero speed at the top.</div></details></li>
+    <li>Star X looks red and star Y looks blue-white. Which is hotter? As a star gets hotter, which way does the peak of its glow move?
+      <details><summary>Answer</summary><div>Star Y is hotter. As a glowing object gets hotter, its peak moves to shorter wavelengths (toward blue) and it gives off more light overall.</div></details></li>
+    <li>One star has 10 times the Sun's mass; another has half the Sun's mass. Which lives longer? How does each one end?
+      <details><summary>Answer</summary><div>The half-Sun-mass star lives much longer, because small stars burn their fuel slowly. It will end as a white dwarf (it lives so long that none has died yet). The 10-Sun-mass star burns out fast, becomes a red supergiant, explodes as a supernova and leaves a neutron star or a black hole.</div></details></li>
+    <li>In the lab, hydrogen's red line is at 656 nm. In a distant galaxy's light it is at 666 nm. Is the galaxy moving toward us or away? How fast? What does it mean that farther galaxies have bigger shifts?
+      <details><summary>Answer</summary><div>Δλ = 666 − 656 = 10 nm toward red, so it is moving away. Speed = 300,000 × 10 ÷ 656 ≈ 4600 km/s. Farther galaxies moving away faster means the whole universe is expanding, which is evidence for the Big Bang.</div></details></li>
+  </ol>
+</div>
+</div>
+<p class="gnext"><a href="#practice" data-view="practice">Practice these ideas →</a></p>
+<script>
+(function(){
+  var root=document.currentScript?document.currentScript.parentNode:document;
+  var tabs=[].slice.call(root.querySelectorAll('.gtabs .tab'));
+  function show(t){tabs.forEach(function(b){var on=b===t;b.setAttribute('aria-selected',on?'true':'false');b.tabIndex=on?0:-1;document.getElementById(b.getAttribute('aria-controls')).hidden=!on;});}
+  tabs.forEach(function(b,i){
+    b.addEventListener('click',function(){show(b);});
+    b.addEventListener('keydown',function(e){var k=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(k){var n=tabs[(i+k+tabs.length)%tabs.length];show(n);n.focus();e.preventDefault();}});
+  });
+})();
+</script>
+</section>
+  </div>
   <div class="view" id="v-practice" hidden>
   <section class="review" id="review">
     <div class="simbar"><h2>Practice questions</h2><a id="ropen" class="mono" href="https://script.google.com/a/macros/fcps.org/s/AKfycbxm2XXzPq2s0JUlS2T0a2lQJ8Pm97_zyibH9rGrW4VUB3EAHWQy5SmQvxsOUYyUL08M/exec?a=04-R" target="_blank" rel="noopener">Open in a new tab ↗</a></div>

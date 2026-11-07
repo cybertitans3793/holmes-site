@@ -75,7 +75,10 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
   <header class="uhead">
     <div class="uid"><div class="big" aria-hidden="true">07</div><div><div class="mono">Algebra-Based Physics · AB-07</div><h1>Current Electricity &amp; Magnetism</h1></div></div>
   </header>
-
+  <nav class="views" id="views" aria-label="Choose a view">
+    <div class="vbtns"><button type="button" class="vbtn" data-view="explore" aria-pressed="false">Explore</button><button type="button" class="vbtn" data-view="study" aria-pressed="false">Study</button></div>
+    <a class="simsback mono" id="simsback" href="https://sites.google.com/fcps.org/holmes/algebra-based-physics/ab-07" target="_blank" rel="noopener" hidden>Sims for this unit ↗</a>
+  </nav>
   <div class="view" id="v-explore">
   <nav class="tabs" role="tablist" aria-label="Sims in this unit" id="tabs"></nav>
   <div class="main">
@@ -92,10 +95,409 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
   </div>
   <p class="credits">Circuit Construction Kit: DC and DC Virtual Lab: PhET Interactive Simulations, University of Colorado Boulder (phet.colorado.edu), CC BY 4.0 / GPL. Electric Power &amp; the Electric Bill is original. Magnets &amp; Domains is original. Magnets and Electromagnets and Faraday’s Electromagnetic Lab: PhET Interactive Simulations, University of Colorado Boulder (phet.colorado.edu), CC BY 4.0 / GPL.</p>
   </div>
+  <div class="view" id="v-study" hidden>
+<section class="guide" id="guide" aria-label="Study guide">
+<style>
+.guide{margin-top:28px}
+.guide .gtip{margin:0 0 10px;font-size:19px;line-height:1.45;max-width:1000px}
+.guide .gbelow{display:inline-block;margin:0 0 16px;font-size:19px;font-weight:700;border:3px solid var(--ink);background:var(--soft);padding:6px 14px;box-shadow:4px 4px 0 var(--ink);color:var(--ink);text-decoration:none}
+.guide .gbelow:hover{background:var(--hot)}
+.guide .ggrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-bottom:22px}
+.guide .gcard{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcard h3,.guide .gcheck h3,.guide .gsteps h3{margin:0 0 10px;font-size:20px;letter-spacing:-.01em}
+.guide .gcard ul{margin:0;padding-left:20px}
+.guide .gcard li{margin:0 0 7px}
+.guide .ib{display:inline-block;font-family:var(--f-mono);font-size:11px;font-weight:700;border:2px solid var(--ink);padding:0 5px;margin-left:4px;vertical-align:1px;background:var(--soft)}
+.guide table{border-collapse:collapse;width:100%;font-size:15px}
+.guide td{border-top:2px solid var(--ink);padding:6px 4px;vertical-align:top}
+.guide td:first-child{font-family:var(--f-mono);font-weight:700;white-space:nowrap;padding-right:12px}
+.guide .gsteps{background:var(--soft);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px;margin-bottom:22px}
+.guide .gsteps ol{margin:0;padding-left:24px;columns:2 360px;column-gap:28px}
+.guide .gsteps li{margin:0 0 8px;break-inside:avoid}
+.guide h3.ghead{font-size:22px;margin:0 0 12px}
+.guide .gex{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:18px;margin-bottom:22px}
+.guide .ex{min-width:0;background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .ex h4{margin:0 0 6px;font-size:18px}
+.guide .ex .kind{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--hot);text-transform:uppercase;letter-spacing:.04em}
+.guide .ex p{margin:0 0 8px}
+.guide .work{font-size:16px;line-height:1.45;border-left:4px solid var(--hot);background:#fff;padding:6px 14px;margin:8px 0;overflow-x:auto}
+.guide .work math.eq{display:block;text-align:left;margin:8px 0;font-size:1.15em}
+@media (max-width:520px){.guide .work math.eq{font-size:1em}}
+.guide .work math.ans{font-weight:700}
+.guide .work .wt{margin:6px 0 2px}
+.guide .ex .take{margin:8px 0 0;font-weight:500}
+.guide .ex svg{float:right;margin:0 0 6px 12px}
+.guide .gcheck{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcheck>p{margin:-4px 0 12px;color:var(--muted)}
+.guide ol.q{margin:0;padding-left:26px}
+.guide ol.q>li{margin:0 0 14px}
+.guide details{margin-top:6px}
+.guide summary{cursor:pointer;display:inline-block;font-weight:700;border:2px solid var(--ink);padding:2px 10px;background:#fff;list-style:none}
+.guide summary::-webkit-details-marker{display:none}
+.guide summary:hover{background:var(--soft)}
+.guide details[open] summary{background:var(--ink);color:#fff}
+.guide details>div{border-left:4px solid var(--hot);padding:8px 12px;margin-top:8px;background:#fff}
+.guide .gpanel>.ggrid,.guide .gpanel>.gsteps,.guide .gpanel>.gex{margin-bottom:0}
+.guide .gtabs{margin-bottom:18px}
+.guide .gnext{margin:16px 0 0;font-weight:700}
+.guide .gnext a{color:var(--ink)}
+.guide .gpanel>.ggrid+h3.ghead,.guide .gpanel>.gsteps+h3.ghead{margin-top:26px}
+.guide .gcard svg.gfig{display:block;max-width:100%;height:auto;margin:0 auto 10px}
+body.present .guide{display:none}
+@media (max-width:520px){.guide .gtip,.guide .gbelow{font-size:17px}.guide td:first-child{white-space:normal}.guide .ggrid,.guide .gex{grid-template-columns:1fr}.guide .ex svg{float:none;display:block;margin:0 auto 8px}}
+</style>
+<div class="simbar"><h2>Study guide</h2><span class="mono">Unit 7 · Current Electricity &amp; Magnetism</span></div>
+<p class="gtip"><b>How to use this:</b> read the key ideas, then cover each worked example and try it yourself before reading the solution. Do the self-check questions on paper <i>before</i> you open the answers, mark the ones you miss, and come back to them in a day or two without looking. Rereading won't do much; answering questions will.</p>
+<div class="tabs gtabs" role="tablist" aria-label="Study guide sections">
+  <button class="tab" role="tab" type="button" aria-selected="true" aria-controls="g-ideas" id="gt-ideas">Key ideas</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-solve" id="gt-solve" tabindex="-1">How to solve</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-examples" id="gt-examples" tabindex="-1">Worked examples</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-check" id="gt-check" tabindex="-1">Self-check</button>
+</div>
+<div class="gpanel" role="tabpanel" id="g-ideas" aria-labelledby="gt-ideas">
 
+<h3 class="ghead">Circuits</h3>
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Key ideas</h3>
+    <ul>
+      <li>A circuit needs two things: an <b>energy source</b> (a battery or an outlet) and a <b>closed, conducting loop</b> from the + terminal back to the − terminal. Any break stops the flow.</li>
+      <li><b>Current</b> (I) is how much charge (Q) passes a point each second. It is measured in amps (A). 1 A = 1 coulomb per second.</li>
+      <li>The charge is <b>already in the wires</b>. The battery does not supply it, and the bulb does not use it up. The same amount of charge comes out of a bulb as goes in.</li>
+      <li>What the battery gives is <b>energy</b>. It pumps charge “uphill” from the − terminal to the + terminal. The charge loses that energy in the bulbs, heaters and motors.</li>
+      <li><b>Voltage</b> (ΔV, in volts) is the energy each coulomb of charge gains in the battery or loses in a device. The + terminal is the highest-voltage spot in the circuit.</li>
+      <li>Charges drift very slowly, but they all start moving at the same moment. That is why a light comes on as soon as you flip the switch.</li>
+      <li>Conventional current goes the way + charges would move: out of the + terminal, through the circuit, and back into the − terminal.</li>
+      <li><b>Resistance</b> (R, in ohms, Ω) slows the flow of charge. Charges bump into atoms in the wire. A longer wire has more resistance. A thicker wire has less. The material matters too: copper and silver are good conductors.</li>
+      <li><b>Ohm's law:</b> ΔV = I·R. More voltage means more current. More resistance means less current.</li>
+      <li><b>Power</b> (P, in watts) is how fast a device uses energy. 1 W = 1 joule per second. A 100-W bulb uses 100 J every second.</li>
+      <li>Your electric company charges for <b>energy</b> in kilowatt-hours (kWh), not for charge or electrons.</li>
+      <li>Wall outlets in the US are <b>120 V</b>. They are wired in parallel, so every appliance gets the full 120 V and you can switch each one on or off by itself.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Series vs. parallel</h3>
+    <table>
+      <tr><td></td><td><b>Series</b> (one path)</td><td><b>Parallel</b> (branches)</td></tr>
+      <tr><td>Current</td><td>Same everywhere</td><td>Splits at a node. Branch currents add up to the battery current.</td></tr>
+      <tr><td>Voltage</td><td>The drops add up to the battery voltage</td><td>Every branch gets the full battery voltage</td></tr>
+      <tr><td>R<sub>eq</sub></td><td>Add them: bigger than any one resistor</td><td>Smaller than the smallest resistor</td></tr>
+      <tr><td>Add a bulb</td><td>Total R goes up, current goes down, bulbs get dimmer</td><td>Total R goes down, battery current goes up, other bulbs stay the same</td></tr>
+      <tr><td>Remove a bulb</td><td>All the bulbs go out</td><td>The other bulbs stay lit</td></tr>
+    </table>
+  </div>
+  <div class="gcard">
+    <h3>Equations</h3>
+    <table>
+      <tr><td>I = Q/t</td><td>current</td></tr>
+      <tr><td>ΔV = I·R</td><td>Ohm's law</td></tr>
+      <tr><td>P = ΔV·I</td><td>power</td></tr>
+      <tr><td>P = I²·R</td><td>power, if you know I and R</td></tr>
+      <tr><td>P = ΔV²/R</td><td>power, if you know ΔV and R</td></tr>
+      <tr><td>E = P·t</td><td>energy: W × s gives J; kW × h gives kWh</td></tr>
+      <tr><td>cost</td><td>kWh × price per kWh</td></tr>
+      <tr><td>R<sub>eq</sub> = R₁ + R₂ + …</td><td>series</td></tr>
+      <tr><td>1/R<sub>eq</sub> = 1/R₁ + 1/R₂ + …</td><td>parallel (flip at the end!)</td></tr>
+      <tr><td>1 kWh</td><td>3,600,000 J</td></tr>
+      <tr><td>Units</td><td>I in A, ΔV in V, R in Ω, P in W, E in J</td></tr>
+    </table>
+  </div>
+  <div class="gcard">
+    <h3>Common mistakes</h3>
+    <ul>
+      <li>Saying a dead battery is “out of charge.” It is out of <b>energy</b>: the chemicals inside are used up.</li>
+      <li>Thinking current gets smaller after it goes through a bulb. In one loop the current is the same everywhere.</li>
+      <li>Forgetting to flip at the end of a parallel problem. 1/R<sub>eq</sub> = 0.5 means R<sub>eq</sub> = 2 Ω, not 0.5 Ω.</li>
+      <li>Thinking more bulbs always means more resistance. In parallel, each new branch is another path, so the total resistance goes <i>down</i>.</li>
+      <li>Using minutes in E = P·t when you want joules. Change to seconds first. For kWh, use kilowatts and hours.</li>
+      <li>Using 1.5 V or 9 V for something plugged into the wall. Outlets are 120 V.</li>
+    </ul>
+  </div>
+</div>
+<h3 class="ghead">Magnetism (ideas only, no math)</h3>
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Magnets and fields</h3>
+    <ul>
+      <li>Every magnet has two <b>poles</b>, north (N) and south (S). The pull is strongest at the poles.</li>
+      <li><b>Like poles repel. Unlike poles attract.</b> Only the two ends facing each other matter.</li>
+      <li>Cut a magnet in half and you get two smaller magnets, each with an N and an S. You can never get a lone N or S pole.</li>
+      <li>Only <b>iron, nickel and cobalt</b> (and things made of them, like steel) stick to magnets. Copper, aluminum, gold and silver do not.</li>
+      <li>Every electron acts like a tiny magnet because of its <b>spin</b>. In most atoms the electrons pair up and cancel. In iron they don't, and neighboring atoms line up.</li>
+      <li>Iron has <b>domains</b>: small regions where the atoms all point the same way. In plain iron the domains point every which way. In a magnet most of them line up.</li>
+      <li>Stroking a nail with a magnet lines up its domains. Dropping, hammering or heating a magnet scrambles them and weakens it.</li>
+      <li>The <b>magnetic field</b> is the space around a magnet where another magnet feels a force. Field lines go from N to S outside the magnet, they never cross, and they are closest together where the field is strongest.</li>
+      <li>A compass is a small magnet. Its N end points along the field line.</li>
+      <li>Earth is a giant magnet. A compass's N end points north, so there must be a magnetic <b>south</b> pole near the geographic North Pole.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Electricity ⇄ magnetism</h3>
+    <ul>
+      <li><b>A current makes a magnetic field.</b> A compass near a wire swings when the current turns on.</li>
+      <li>Around a straight wire, the field lines are circles. <b>Right-hand rule:</b> point your right thumb along the current, and your fingers curl the way the field goes. Reverse the current and the field reverses.</li>
+      <li>Wind the wire into a coil and you get an <b>electromagnet</b>. It acts like a bar magnet with an N and S end, and you can switch it off.</li>
+      <li>Make an electromagnet stronger with <b>more current</b>, <b>more turns</b> of wire, or an <b>iron core</b> inside the coil.</li>
+      <li><b>A changing magnetic field makes a current</b> (induction). Push a magnet into a coil and current flows. Hold it still and the current stops. Pull it out and current flows the other way.</li>
+      <li>More current from induction: move the magnet faster, use a stronger magnet, or use more turns.</li>
+      <li><b>Generators</b> spin coils and magnets to make electricity. <b>Motors</b> do the reverse: current near magnets makes them turn. <b>Transformers</b> use induction to change voltage, and only work with a changing (AC) current.</li>
+    </ul>
+  </div>
+</div>
 
 </div>
-<script>const VIEWS = [];function setView(){return "explore";}</script>
+<div class="gpanel" role="tabpanel" id="g-solve" aria-labelledby="gt-solve" hidden>
+<div class="gsteps">
+  <h3>How to solve a series circuit</h3>
+  <ol>
+    <li><b>Check it's series:</b> one path, no branches.</li>
+    <li><b>Add the resistors:</b> R<sub>eq</sub> = R₁ + R₂ + R₃.</li>
+    <li><b>Find the current:</b> I = ΔV<sub>battery</sub> ÷ R<sub>eq</sub>. This is the current in every resistor.</li>
+    <li><b>Find each voltage drop:</b> ΔV₁ = I·R₁, ΔV₂ = I·R₂, and so on. The biggest resistor gets the biggest drop.</li>
+    <li><b>Check:</b> the drops should add up to the battery voltage.</li>
+  </ol>
+</div>
+<div class="gsteps">
+  <h3>How to solve a parallel circuit</h3>
+  <ol>
+    <li><b>Check it's parallel:</b> the wire splits at a node into branches.</li>
+    <li><b>Every branch gets the battery voltage:</b> ΔV₁ = ΔV₂ = ΔV<sub>battery</sub>.</li>
+    <li><b>Find each branch current:</b> I₁ = ΔV ÷ R₁, I₂ = ΔV ÷ R₂. The smallest resistor gets the biggest current.</li>
+    <li><b>Add the branch currents</b> to get the battery current.</li>
+    <li><b>Find R<sub>eq</sub>:</b> add 1/R₁ + 1/R₂ + …, then flip the answer.</li>
+    <li><b>Check:</b> ΔV<sub>battery</sub> ÷ R<sub>eq</sub> should equal the battery current, and R<sub>eq</sub> should be smaller than the smallest resistor.</li>
+  </ol>
+</div>
+<div class="gsteps">
+  <h3>How to solve a power, energy or cost problem</h3>
+  <ol>
+    <li><b>List what you know:</b> P (watts), ΔV (volts), I (amps), R (ohms), time.</li>
+    <li><b>Pick the power equation</b> that uses what you know: P = ΔV·I (most problems), P = I²·R, or P = ΔV²/R.</li>
+    <li><b>For energy in joules:</b> E = P·t with P in watts and t in seconds.</li>
+    <li><b>For energy in kWh:</b> change watts to kilowatts (÷ 1000) and time to hours, then multiply.</li>
+    <li><b>For cost:</b> multiply the kWh by the price per kWh.</li>
+  </ol>
+</div>
+
+</div>
+<div class="gpanel" role="tabpanel" id="g-examples" aria-labelledby="gt-examples" hidden>
+<div class="gex">
+  <div class="ex">
+    <div class="kind">Ohm's law</div>
+    <h4>A resistor on a 9-volt battery</h4>
+    <p>A resistor is connected to a 9.0-V battery, and an ammeter reads 0.30 A. (a) What is the resistance? (b) The battery is swapped for a 4.5-V battery. What does the ammeter read now?</p>
+    <div class="work">
+      <p class="wt">(a) Solve ΔV = I·R for R:</p>
+      <math class="eq" display="block"><mrow><mi>R</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>&#x00394;</mi><mi>V</mi></mrow><mrow><mi>I</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>9.0</mn></mrow><mrow><mn>0.30</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>R</mi><mo>&#x0003D;</mo><mn>30</mn><mspace width="0.167em" /><mtext>Ω</mtext></mrow></math>
+      <p class="wt">(b) The resistor doesn't change. Only the voltage does:</p>
+      <math class="eq" display="block"><mrow><mi>I</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>&#x00394;</mi><mi>V</mi></mrow><mrow><mi>R</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>4.5</mn></mrow><mrow><mn>30</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>I</mi><mo>&#x0003D;</mo><mn>0.15</mn><mspace width="0.167em" /><mtext>A</mtext></mrow></math>
+    </div>
+    <p class="take">Half the voltage gives half the current. You could have answered (b) without finding R: current is directly proportional to voltage.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Series circuit</div>
+    <svg width="200" height="130" viewBox="0 0 200 130" aria-label="Series circuit: an 18-volt battery with 1.0, 3.0 and 5.0 ohm resistors in one loop">
+      <path d="M20 26 H180 V112 H20 Z" fill="none" stroke="#111" stroke-width="2.5"/>
+      <rect x="8" y="58" width="24" height="16" fill="#fff"/>
+      <line x1="6" y1="60" x2="34" y2="60" stroke="#111" stroke-width="3"/><line x1="13" y1="71" x2="27" y2="71" stroke="#111" stroke-width="5"/>
+      <text x="36" y="58" font-size="11" font-family="IBM Plex Mono,monospace">+</text>
+      <text x="36" y="80" font-size="11" font-family="IBM Plex Mono,monospace">18 V</text>
+      <rect x="44" y="16" width="42" height="20" fill="#fff"/><polyline points="44,26 49,18 55,34 61,18 67,34 73,18 79,34 86,26" fill="none" stroke="#ff6a2b" stroke-width="2.5"/>
+      <rect x="114" y="16" width="42" height="20" fill="#fff"/><polyline points="114,26 119,18 125,34 131,18 137,34 143,18 149,34 156,26" fill="none" stroke="#ff6a2b" stroke-width="2.5"/>
+      <rect x="170" y="48" width="20" height="42" fill="#fff"/><polyline points="180,48 172,53 188,59 172,65 188,71 172,77 188,83 180,90" fill="none" stroke="#ff6a2b" stroke-width="2.5"/>
+      <text x="48" y="12" font-size="11" font-family="IBM Plex Mono,monospace">1.0 Ω</text>
+      <text x="118" y="12" font-size="11" font-family="IBM Plex Mono,monospace">3.0 Ω</text>
+      <text x="130" y="73" font-size="11" font-family="IBM Plex Mono,monospace">5.0 Ω</text>
+    </svg>
+    <h4>Three resistors in a row</h4>
+    <p>Resistors of 1.0 Ω, 3.0 Ω and 5.0 Ω are connected in series to an 18-V battery. Find the equivalent resistance, the current, and the voltage drop across each resistor.</p>
+    <div class="work">
+      <p class="wt">Add the resistors:</p>
+      <math class="eq" display="block"><mrow><msub><mi>R</mi><mrow><mtext>eq</mtext></mrow></msub><mo>&#x0003D;</mo><mn>1.0</mn><mo>&#x0002B;</mo><mn>3.0</mn><mo>&#x0002B;</mo><mn>5.0</mn></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>R</mi><mrow><mtext>eq</mtext></mrow></msub><mo>&#x0003D;</mo><mn>9.0</mn><mspace width="0.167em" /><mtext>Ω</mtext></mrow></math>
+      <p class="wt">Current (the same in every resistor):</p>
+      <math class="eq" display="block"><mrow><mi>I</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>&#x00394;</mi><msub><mi>V</mi><mrow><mtext>battery</mtext></mrow></msub></mrow><mrow><msub><mi>R</mi><mrow><mtext>eq</mtext></mrow></msub></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>18</mn></mrow><mrow><mn>9.0</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>I</mi><mo>&#x0003D;</mo><mn>2.0</mn><mspace width="0.167em" /><mtext>A</mtext></mrow></math>
+      <p class="wt">Voltage drops, ΔV = I·R for each one:</p>
+      <math class="eq" display="block"><mrow><mi>&#x00394;</mi><msub><mi>V</mi><mn>1</mn></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>2.0</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>1.0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>2.0</mn><mspace width="0.167em" /><mtext>V</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><mi>&#x00394;</mi><msub><mi>V</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>2.0</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>3.0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>6.0</mn><mspace width="0.167em" /><mtext>V</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><mi>&#x00394;</mi><msub><mi>V</mi><mn>3</mn></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>2.0</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>5.0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>10</mn><mspace width="0.167em" /><mtext>V</mtext></mrow></math>
+      <p class="wt">Check:</p>
+      <math class="eq ans" display="block"><mrow><mn>2.0</mn><mo>&#x0002B;</mo><mn>6.0</mn><mo>&#x0002B;</mo><mn>10</mn><mo>&#x0003D;</mo><mn>18</mn><mspace width="0.167em" /><mtext>V</mtext><mspace width="0.278em" /><mi>&#x02713;</mi></mrow></math>
+    </div>
+    <p class="take">Same current everywhere, so the biggest resistor gets the biggest share of the voltage.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Parallel circuit</div>
+    <svg width="220" height="130" viewBox="0 0 220 130" aria-label="Parallel circuit: a 9-volt battery with a 3.0 ohm and a 6.0 ohm resistor on separate branches">
+      <path d="M20 26 H170 V112 H20 Z M110 26 V112" fill="none" stroke="#111" stroke-width="2.5"/>
+      <rect x="8" y="58" width="24" height="16" fill="#fff"/>
+      <line x1="6" y1="60" x2="34" y2="60" stroke="#111" stroke-width="3"/><line x1="13" y1="71" x2="27" y2="71" stroke="#111" stroke-width="5"/>
+      <text x="36" y="58" font-size="11" font-family="IBM Plex Mono,monospace">+</text>
+      <text x="36" y="80" font-size="11" font-family="IBM Plex Mono,monospace">9.0 V</text>
+      <rect x="100" y="48" width="20" height="42" fill="#fff"/><polyline points="110,48 102,53 118,59 102,65 118,71 102,77 118,83 110,90" fill="none" stroke="#ff6a2b" stroke-width="2.5"/>
+      <rect x="160" y="48" width="20" height="42" fill="#fff"/><polyline points="170,48 162,53 178,59 162,65 178,71 162,77 178,83 170,90" fill="none" stroke="#ff6a2b" stroke-width="2.5"/>
+      <circle cx="110" cy="26" r="4" fill="#111"/><circle cx="110" cy="112" r="4" fill="#111"/>
+      <text x="122" y="73" font-size="11" font-family="IBM Plex Mono,monospace">3.0 Ω</text>
+      <text x="182" y="73" font-size="11" font-family="IBM Plex Mono,monospace">6.0 Ω</text>
+      <text x="96" y="16" font-size="10" font-family="IBM Plex Mono,monospace">node</text>
+    </svg>
+    <h4>Two branches on one battery</h4>
+    <p>A 3.0-Ω resistor and a 6.0-Ω resistor are connected in parallel to a 9.0-V battery. Find the current in each resistor, the battery current, and the equivalent resistance.</p>
+    <div class="work">
+      <p class="wt">Each branch gets the full 9.0 V:</p>
+      <math class="eq" display="block"><mrow><msub><mi>I</mi><mn>1</mn></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>9.0</mn></mrow><mrow><mn>3.0</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>3.0</mn><mspace width="0.167em" /><mtext>A</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>I</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>9.0</mn></mrow><mrow><mn>6.0</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>1.5</mn><mspace width="0.167em" /><mtext>A</mtext></mrow></math>
+      <p class="wt">The branch currents add up:</p>
+      <math class="eq" display="block"><mrow><msub><mi>I</mi><mrow><mtext>battery</mtext></mrow></msub><mo>&#x0003D;</mo><mn>3.0</mn><mo>&#x0002B;</mo><mn>1.5</mn></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>I</mi><mrow><mtext>battery</mtext></mrow></msub><mo>&#x0003D;</mo><mn>4.5</mn><mspace width="0.167em" /><mtext>A</mtext></mrow></math>
+      <p class="wt">Equivalent resistance:</p>
+      <math class="eq" display="block"><mrow><mfrac><mrow><mn>1</mn></mrow><mrow><msub><mi>R</mi><mrow><mtext>eq</mtext></mrow></msub></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>3.0</mn></mrow></mfrac><mo>&#x0002B;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>6.0</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0.50</mn></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>R</mi><mrow><mtext>eq</mtext></mrow></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>0.50</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>2.0</mn><mspace width="0.167em" /><mtext>Ω</mtext></mrow></math>
+      <p class="wt">Check:</p>
+      <math class="eq" display="block"><mrow><mfrac><mrow><mn>9.0</mn></mrow><mrow><mn>2.0</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>4.5</mn><mspace width="0.167em" /><mtext>A</mtext><mspace width="0.278em" /><mi>&#x02713;</mi></mrow></math>
+    </div>
+    <p class="take">R<sub>eq</sub> (2.0 Ω) is smaller than either resistor. The smaller resistor carries more of the current.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Power at an outlet</div>
+    <h4>Will the breaker trip?</h4>
+    <p>A 1200-W space heater is plugged into a 120-V outlet. (a) What current does it draw? (b) What is its resistance? (c) A 900-W coffee maker is plugged into the same circuit, which has a 15-A breaker. Does the breaker trip?</p>
+    <div class="work">
+      <p class="wt">(a) Solve P = ΔV·I for I:</p>
+      <math class="eq" display="block"><mrow><mi>I</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>P</mi></mrow><mrow><mi>&#x00394;</mi><mi>V</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>1200</mn></mrow><mrow><mn>120</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>I</mi><mrow><mtext>heater</mtext></mrow></msub><mo>&#x0003D;</mo><mn>10</mn><mspace width="0.167em" /><mtext>A</mtext></mrow></math>
+      <p class="wt">(b) Ohm's law:</p>
+      <math class="eq" display="block"><mrow><mi>R</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>&#x00394;</mi><mi>V</mi></mrow><mrow><mi>I</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>120</mn></mrow><mrow><mn>10</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>R</mi><mo>&#x0003D;</mo><mn>12</mn><mspace width="0.167em" /><mtext>Ω</mtext></mrow></math>
+      <p class="wt">(c) The coffee maker's current:</p>
+      <math class="eq" display="block"><mrow><msub><mi>I</mi><mrow><mtext>coffee</mtext></mrow></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>900</mn></mrow><mrow><mn>120</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>7.5</mn><mspace width="0.167em" /><mtext>A</mtext></mrow></math>
+      <p class="wt">Outlets are in parallel, so the currents add:</p>
+      <math class="eq ans" display="block"><mrow><msub><mi>I</mi><mrow><mtext>total</mtext></mrow></msub><mo>&#x0003D;</mo><mn>10</mn><mo>&#x0002B;</mo><mn>7.5</mn><mo>&#x0003D;</mo><mn>17.5</mn><mspace width="0.167em" /><mtext>A</mtext></mrow></math>
+    </div>
+    <p class="take">17.5 A is more than 15 A, so the breaker trips. Every appliance you add in parallel adds its own current to the wires in the wall.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Energy and cost</div>
+    <h4>What does a game console cost to run?</h4>
+    <p>A game console uses 150 W. It is played 3.0 hours a day for 30 days. Electricity costs $0.14 per kWh. How much energy does it use, and what does it cost?</p>
+    <div class="work">
+      <p class="wt">Change to kilowatts and total hours:</p>
+      <math class="eq" display="block"><mrow><mi>P</mi><mo>&#x0003D;</mo><mn>150</mn><mspace width="0.167em" /><mtext>W</mtext><mo>&#x0003D;</mo><mn>0.150</mn><mspace width="0.167em" /><mtext>kW</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><mi>t</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>3.0</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>30</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>90</mn><mspace width="0.167em" /><mtext>h</mtext></mrow></math>
+      <p class="wt">Energy:</p>
+      <math class="eq" display="block"><mrow><mi>E</mi><mo>&#x0003D;</mo><mi>P</mi><mo>&#x000B7;</mo><mi>t</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.150</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>90</mn><mo stretchy="false">&#x00029;</mo></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>E</mi><mo>&#x0003D;</mo><mn>13.5</mn><mspace width="0.167em" /><mtext>kWh</mtext></mrow></math>
+      <p class="wt">Cost:</p>
+      <math class="eq" display="block"><mrow><mn>13.5</mn><mo>&#x000D7;</mo><mn>0.14</mn></mrow></math>
+      <math class="eq ans" display="block"><mrow><mtext>cost</mtext><mo>&#x0003D;</mo><mi>&#x00024;</mi><mn>1.89</mn></mrow></math>
+      <p class="wt">The same energy in joules:</p>
+      <math class="eq" display="block"><mrow><mo stretchy="false">&#x00028;</mo><mn>13.5</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>3.6</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mn>6</mn></mrow></msup><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>4.86</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mn>7</mn></mrow></msup><mspace width="0.167em" /><mtext>J</mtext></mrow></math>
+    </div>
+    <p class="take">The company bills you for energy (kWh). A small power used for many hours can cost as much as a big power used for a few minutes.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Electromagnet (no math)</div>
+    <svg width="170" height="100" viewBox="0 0 170 100" aria-label="A coil of wire wrapped around an iron nail, connected to a battery">
+      <rect x="22" y="38" width="118" height="12" fill="#ccc" stroke="#111" stroke-width="2"/>
+      <polygon points="140,38 160,44 140,50" fill="#ccc" stroke="#111" stroke-width="2"/>
+      <g fill="none" stroke="#ff6a2b" stroke-width="2.5">
+        <ellipse cx="40" cy="44" rx="4" ry="14"/><ellipse cx="52" cy="44" rx="4" ry="14"/><ellipse cx="64" cy="44" rx="4" ry="14"/><ellipse cx="76" cy="44" rx="4" ry="14"/><ellipse cx="88" cy="44" rx="4" ry="14"/><ellipse cx="100" cy="44" rx="4" ry="14"/><ellipse cx="112" cy="44" rx="4" ry="14"/><ellipse cx="124" cy="44" rx="4" ry="14"/>
+      </g>
+      <path d="M40 58 V84 H70 M124 58 V84 H96" fill="none" stroke="#111" stroke-width="2"/>
+      <line x1="72" y1="74" x2="72" y2="94" stroke="#111" stroke-width="3"/><line x1="80" y1="78" x2="80" y2="90" stroke="#111" stroke-width="5"/>
+      <line x1="80" y1="84" x2="96" y2="84" stroke="#111" stroke-width="2"/>
+      <text x="40" y="20" font-size="11" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">coil</text>
+      <text x="96" y="20" font-size="11" font-family="IBM Plex Mono,monospace">iron nail</text>
+    </svg>
+    <h4>Changing an electromagnet</h4>
+    <p>A coil of wire around an iron nail, connected to a battery, picks up 8 paper clips. Predict what happens to the number of clips, and explain, if you: (a) wrap more turns of wire, (b) pull the nail out of the coil, (c) flip the battery around, (d) disconnect the battery.</p>
+    <div class="work">
+      <p class="wt">(a) <b>More clips.</b> Each turn adds its own field, and the turns add up.</p>
+      <p class="wt">(b) <b>Fewer clips.</b> The nail's domains were lining up with the coil's field and adding to it. Without the iron core, only the coil's field is left.</p>
+      <p class="wt">(c) <b>About the same number.</b> The current reverses, so the N and S ends swap. The clips are plain iron, so they are pulled toward either pole.</p>
+      <p class="wt">(d) <b>The clips fall off</b> (maybe one or two stay for a moment). No current, no field. The nail's domains mostly scramble again.</p>
+    </div>
+    <p class="take">An electromagnet is a magnet you can control: change the current, the turns or the core, and you change its strength. That is why scrapyard cranes use one.</p>
+  </div>
+</div>
+
+</div>
+<div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
+<div class="gcheck">
+  <h3>Self-check</h3>
+  <p>Answer first, then open.</p>
+  <ol class="q">
+    <li>Your phone dies and you plug it in to “recharge” it. Was the phone out of charge? What was it really out of, and what does plugging it in do?
+      <details><summary>Answer</summary><div>No. The charge is still in the wires and the battery. The battery ran out of <b>energy</b>: the chemicals that supply energy were used up. Plugging it in uses energy from the outlet to run the chemical reaction backward, so the battery can supply energy again.</div></details></li>
+    <li>45 C of charge passes a point in a wire in 15 s. What is the current? How much charge passes that point in one minute?
+      <details><summary>Answer</summary><div>I = Q/t = 45/15 = 3.0 A. In 60 s: Q = I·t = (3.0)(60) = 180 C.</div></details></li>
+    <li>Heavy-duty extension cords have thick wires. Why? And why is a 15 m cord worse than a 3 m cord of the same thickness for a space heater?
+      <details><summary>Answer</summary><div>Thicker wire has less resistance, and a longer wire has more. Less resistance means less energy wasted heating the cord, so the thick, short cord is best.</div></details></li>
+    <li>A circuit has a current of 0.60 A. The battery voltage is tripled and the resistance is doubled. What is the new current?
+      <details><summary>Answer</summary><div>Tripling ΔV triples the current; doubling R halves it. 0.60 × 3 ÷ 2 = 0.90 A.</div></details></li>
+    <li>A 600-W blender is plugged into a 120-V outlet. Find the current through it and its resistance.
+      <details><summary>Answer</summary><div>I = P ÷ ΔV = 600 ÷ 120 = 5.0 A. R = ΔV ÷ I = 120 ÷ 5.0 = 24 Ω.</div></details></li>
+    <li>Three identical bulbs are in series with a 12-V battery. What is the voltage across each bulb? A fourth identical bulb is added in series. What happens to the voltage across each bulb, the current, and the brightness?
+      <details><summary>Answer</summary><div>12 ÷ 3 = 4.0 V each. With four bulbs: 12 ÷ 4 = 3.0 V each. The total resistance goes up, so the current goes down, and every bulb gets dimmer.</div></details></li>
+    <li>Resistors of 10 Ω, 20 Ω and 20 Ω are in parallel with a 10-V battery. Find each branch current, the battery current and R<sub>eq</sub>. Then the 10-Ω resistor is removed. What happens to the other two branches?
+      <details><summary>Answer</summary><div>I = 10/10 = 1.0 A, 10/20 = 0.50 A, 10/20 = 0.50 A. Battery current = 2.0 A. 1/R<sub>eq</sub> = 0.10 + 0.05 + 0.05 = 0.20, so R<sub>eq</sub> = 5.0 Ω (check: 10/5.0 = 2.0 A). Remove the 10-Ω resistor: the other two still get 10 V and still carry 0.50 A each. Only the battery current changes, down to 1.0 A.</div></details></li>
+    <li>A 900-W coffee maker runs for 40 minutes. How much energy does it use in joules and in kWh? What does that cost at $0.15/kWh?
+      <details><summary>Answer</summary><div>Joules: E = (900)(2400 s) = 2,160,000 J = 2.16 × 10⁶ J. kWh: (0.90 kW)(⅔ h) = 0.60 kWh. Cost: 0.60 × 0.15 = $0.09, about 9¢.</div></details></li>
+    <li>A bar magnet is cut into three pieces. How many poles does the middle piece have? Explain using domains.
+      <details><summary>Answer</summary><div>Two: an N and an S, pointing the same way as the original magnet. The domains inside the middle piece are still lined up, so it is a complete magnet. You can never get a single pole.</div></details></li>
+    <li>A steel can sticks to a magnet but an aluminum can doesn't. Why?
+      <details><summary>Answer</summary><div>Steel is mostly iron. Iron's atoms act like tiny magnets (unpaired electron spins) and form domains, which line up near the magnet, so the can becomes a temporary magnet and is pulled in. In aluminum the electron magnets cancel or don't line up, so there's nothing for the magnet to pull on.</div></details></li>
+    <li>A wire runs straight up out of your desk with current going up. You place compasses around the wire. Describe the field. What happens if the current is reversed?
+      <details><summary>Answer</summary><div>The field lines are circles around the wire. Right-hand rule: thumb up, fingers curl counterclockwise as seen from above, so the compass needles point around the wire counterclockwise. Reverse the current and every needle flips to point clockwise.</div></details></li>
+    <li>A magnet is pushed into a coil connected to a meter, held still inside, and then pulled out. What does the meter show at each step? What could you change to get a bigger reading?
+      <details><summary>Answer</summary><div>Pushed in: a current. Held still: no current, because the field isn't changing. Pulled out: a current the other way. For more current: move the magnet faster, use a stronger magnet, or use a coil with more turns.</div></details></li>
+  </ol>
+</div>
+</div>
+<p class="gnext"><a href="#practice" data-view="practice">Practice these ideas →</a></p>
+<script>
+(function(){
+  var tabs=[].slice.call(document.querySelectorAll('.gtabs .tab'));
+  function show(t){tabs.forEach(function(b){var on=b===t;b.setAttribute('aria-selected',on?'true':'false');b.tabIndex=on?0:-1;document.getElementById(b.getAttribute('aria-controls')).hidden=!on;});}
+  tabs.forEach(function(b,i){
+    b.addEventListener('click',function(){show(b);});
+    b.addEventListener('keydown',function(e){var k=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(k){var n=tabs[(i+k+tabs.length)%tabs.length];show(n);n.focus();e.preventDefault();}});
+  });
+})();
+</script>
+</section>
+  </div>
+
+</div>
+<script>
+/* Explore / Study / Practice: one view at a time, Explore on every open. */
+const VIEWS = ['explore', 'study', 'practice'];
+function setView(v) {
+  if (!document.getElementById('v-' + v)) v = 'explore';
+  VIEWS.forEach(n => { const el = document.getElementById('v-' + n); if (el) el.hidden = n !== v; });
+  document.querySelectorAll('.vbtn').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === v)));
+  const back = document.getElementById('simsback'); if (back) back.hidden = v === 'explore';
+  if (v === 'practice') { const r = document.getElementById('rframe'); if (r && !r.querySelector('iframe')) r.innerHTML = '<iframe title="Practice questions" src="' + r.dataset.src + '"></iframe>'; }
+  return v;
+}
+/* A link to a view this unit doesn't have (e.g. a guide's "Practice these ideas" on a unit with no review) is hidden. */
+document.querySelectorAll('a[data-view], .gnext [data-view]').forEach(a => { if (!document.getElementById('v-' + a.dataset.view)) (a.closest('.gnext') || a).hidden = true; });
+document.addEventListener('click', e => {
+  const a = e.target.closest('[data-view]'); if (!a) return;
+  e.preventDefault(); setView(a.dataset.view);
+  const top = document.getElementById('views'); if (top && top.getBoundingClientRect().top < 0) top.scrollIntoView({ behavior: 'smooth' });
+});
+(function () { const h = location.hash.slice(1); setView(VIEWS.includes(h) ? h : 'explore'); })();
+window.addEventListener('hashchange', () => { const h = location.hash.slice(1); if (VIEWS.includes(h)) setView(h); });
+</script>
 <script>
 const UNIT = {"id": "AB-07", "tabs": [{"code": "", "name": "Ohm’s Law", "sim": "ab-ohm", "tasks": ["Make the wire longer. What happens to the resistance? Make it thicker?", "Copper or nichrome: which makes a better extension cord? A better toaster?", "I–V graph: find R = V/I for the resistor at 2 V and at 10 V. Is it ohmic?", "Why does a light bulb’s resistance change as it heats up?"]}, {"code": "", "name": "Series & Parallel", "sim": "ab-circuits", "tasks": ["Three bulbs in series, then in parallel. Which are brighter?", "Remove a bulb from each circuit. What happens to the others? Which is how your house is wired?", "Find the total resistance and the current from the battery in each circuit."]}, {"code": "", "name": "Circuit Construction Kit", "sim": "phetC", "tasks": ["Build a battery with one bulb. Measure the voltage and current.", "Add bulbs in series, then in parallel. Measure again. What patterns do you see?"]}, {"code": "", "name": "Electric Power & Bills", "sim": "bill", "tasks": ["A TV uses 100 W. Find the current it draws from a 120 V outlet.", "Run the TV 4 hours a day. How many kWh per month? What does it cost at 15¢/kWh?", "Which costs more per month: a fridge that is always on, or a hair dryer used 15 minutes a day? Why?", "Change the price to what your family pays (look at a real bill). Recalculate.", "<b>One outlet circuit:<\/b> plug in a toaster, a microwave and a hair dryer. What is the total current? Why does the breaker trip?", "Why are outlets wired in parallel? What would happen to the other appliances if they were in series?"]}, {"code": "", "name": "Magnets & Domains", "sim": "ab-magfield", "tasks": ["Drag the compass around the bar magnet. Which way does the north end point near each pole?", "Switch to Compass grid. Where is the field strongest? How can you tell?", "Flip the magnet. What changes?", "<b>Domains:<\/b> stroke the nail with the magnet. How many strokes until it becomes a magnet? Which end of the nail is N?", "Break a magnet into 2, 3 and 4 pieces. Can you ever get a lone N pole?", "Heat or drop a magnet. Why does it get weaker?"]}, {"code": "", "name": "Magnetic Field of a Wire", "sim": "ab-bwire", "tasks": ["Use the right-hand rule to predict which way the compasses point.", "Reverse the current. What happens to the compasses?", "Move farther from the wire. What happens to the field?"]}, {"code": "", "name": "PhET Magnetism", "sim": "phetMag", "tasks": ["<b>Magnets and Electromagnets:<\/b> make the electromagnet stronger in three ways.", "<b>Faraday’s Lab:<\/b> push a magnet into the coil. When does the bulb light up?"]}]};
 const SIMS = {
