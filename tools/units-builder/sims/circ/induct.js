@@ -27,24 +27,27 @@ const SIM = {
     return [{ id: 'emf', name: 'Induced emf', short: 'ε', sym: 'ε', unit: 'V', f: d => d.emf }, { id: 'I', name: 'Current', short: 'I', sym: 'I', unit: 'A', f: d => d.I }, { id: 'F', name: 'Force needed to keep it moving', short: 'F', sym: 'F', unit: 'N', f: d => d.F }, { id: 'P', name: 'Power you supply', short: 'P', sym: 'P', unit: 'W', f: d => d.P }];
   },
   work(v, d, mode){
-    if (mode === 'drop') return '<h4>1 · Falling into the coil: flux goes up</h4><div class="eq">As the magnet comes closer, more field passes through the coil. Changing flux → an emf (Faraday). First pulse: <b>' + H.n(d.p1, 'V') + '</b></div>' +
-      '<h4>2 · Falling out: flux goes down</h4><div class="eq">Leaving, the flux decreases, so the emf has the <b>opposite sign</b> (Lenz). Second pulse: <b>' + H.n(d.p2, 'V') + '</b>. It is <b>taller and narrower</b> because the magnet is moving faster by then.</div>' +
-      '<h4>3 · Same area under both pulses</h4><div class="eq">Area under an emf–time pulse = ΔΦ. The flux rises to Φ<sub>max</sub> and falls back by the same amount, so both pulses have the same area: a faster pulse must be taller and thinner.</div>' +
-      '<h4>4 · Higher drop → bigger emf</h4><div class="eq">Speed through the coil v = √(2gh) = <b>' + H.n(d.vc, 'm/s') + '</b>. emf = rate of change of flux ∝ v, so peak emf ∝ √h. Graph peak emf against √h: a straight line. More magnets → stronger B → bigger emf.</div>' +
+    if (mode === 'drop') return '<h4>1 · Falling into the coil: flux goes up</h4><p class="st">As the magnet comes closer, more field passes through the coil. Changing flux → an emf (Faraday). First pulse:</p>' + TEXA`\varepsilon_1 = ${M.n(d.p1, 'V')}` +
+      '<h4>2 · Falling out: flux goes down</h4><p class="st">Leaving, the flux decreases, so the emf has the <b>opposite sign</b> (Lenz). It is <b>taller and narrower</b> because the magnet is moving faster by then. Second pulse:</p>' + TEXA`\varepsilon_2 = ${M.n(d.p2, 'V')}` +
+      '<h4>3 · Same area under both pulses</h4><p class="st">Area under an emf–time pulse = ΔΦ. The flux rises to Φ<sub>max</sub> and falls back by the same amount, so both pulses have the same area: a faster pulse must be taller and thinner.</p>' +
+      '<h4>4 · Higher drop → bigger emf</h4><p class="st">Speed through the coil:</p>' + TEX`v = \sqrt{2gh}` + TEX`v = \sqrt{2(10\,\text{m/s}^2)(${M.n(v.h / 100, 'm')})}` + TEXA`v = ${M.n(d.vc, 'm/s')}` +
+      '<p class="st">The emf is the rate of change of flux, so it is proportional to v:</p>' + TEX`\varepsilon_{\text{peak}} \propto v \propto \sqrt{h}` + '<p class="st">Graph peak emf against √h: a straight line. More magnets → stronger B → bigger emf.</p>' +
       '<p class="note">Lab: a data logger records the coil voltage as the magnet drops through a tube. Try the copper-pipe demo (extension): currents induced in the pipe slow the magnet down a lot.</p>';
-    if (mode === 'loop') return '<h4>1 · Flux through the loop: Φ = BA (only the part inside the field)</h4><div class="eq">Entering: area inside grows at a × v per second → ΔΦ/Δt = Bav</div>' +
-      '<h4>2 · emf while entering or leaving</h4><div class="eq">ε = Bav = (' + H.iv('B') + ')(' + fnum(d.a) + ' m)(' + H.iv('v') + ') = <b>' + H.n(d.emf, 'V') + '</b> for ' + H.n(d.tIn, 's') + '</div>' +
-      '<div class="eq">' + (d.w >= d.a ? 'Fully inside: Φ = constant → <b>ε = 0</b> (no change, no emf), even though it’s in the field.' : 'The loop is wider than the field: some part is always entering while another leaves.') + '</div>' +
-      '<h4>3 · Direction (Lenz’s law)</h4><div class="eq">Entering: flux into the page increases → induced current makes field <b>out of</b> the page → <b>counterclockwise</b>. Leaving: flux decreases → <b>clockwise</b>.</div>' +
+    if (mode === 'loop') return '<h4>1 · Flux through the loop (only the part inside the field)</h4>' + TEX`\Phi = BA` + '<p class="st">Entering: the area inside grows at a × v per second:</p>' + TEX`\frac{\Delta\Phi}{\Delta t} = B a v` +
+      '<h4>2 · emf while entering or leaving</h4>' + TEX`\varepsilon = Bav` + TEX`\varepsilon = (${M.iv('B')})(${M.n(d.a, 'm')})(${M.iv('v')})` + TEXA`\varepsilon = ${M.n(d.emf, 'V')}` + '<p class="st">This lasts for ' + H.n(d.tIn, 's') + '.</p>' +
+      '<p class="st">' + (d.w >= d.a ? 'Fully inside: Φ = constant → <b>ε = 0</b> (no change, no emf), even though it’s in the field.' : 'The loop is wider than the field: some part is always entering while another leaves.') + '</p>' +
+      '<h4>3 · Direction (Lenz’s law)</h4><p class="st">Entering: flux into the page increases → induced current makes field <b>out of</b> the page → <b>counterclockwise</b>. Leaving: flux decreases → <b>clockwise</b>.</p>' +
       '<p class="note">Classic FRQ: sketch Φ vs t (ramp up, flat, ramp down) and ε vs t (block, zero, opposite block). ε is the slope of Φ.</p>';
-    if (mode === 'gen') return '<h4>1 · Flux through a rotating coil: Φ = BA cos ωt</h4><div class="eq">ω = 2πf = ' + H.n(d.om, 'rad/s') + '</div>' +
-      '<h4>2 · Induced emf: ε = NBAω sin ωt</h4><div class="eq">Peak ε₀ = NBAω = (' + v.N + ')(' + H.iv('B') + ')(' + fnum(v.A / 1e4) + ')(' + fnum(d.om) + ') = <b>' + H.n(d.peak, 'V') + '</b></div>' +
-      '<div class="eq">emf is biggest when the coil is parallel to B (flux = 0 but changing fastest), zero when perpendicular (flux biggest).</div>' +
+    if (mode === 'gen') return '<h4>1 · Flux through a rotating coil</h4>' + TEX`\Phi = BA\cos\omega t` + TEX`\omega = 2\pi f` + TEX`\omega = 2\pi(${M.iv('f')})` + TEXA`\omega = ${M.n(d.om, 'rad/s')}` +
+      '<h4>2 · Induced emf</h4>' + TEX`\varepsilon = NBA\omega\sin\omega t` + '<p class="st">Peak value:</p>' + TEX`\varepsilon_0 = NBA\omega` + TEX`\varepsilon_0 = (${M.n(v.N)})(${M.iv('B')})(${M.n(v.A / 1e4, 'm²')})(${M.n(d.om, 'rad/s')})` + TEXA`\varepsilon_0 = ${M.n(d.peak, 'V')}` +
+      '<p class="st">The emf is biggest when the coil is parallel to B (flux = 0 but changing fastest), zero when perpendicular (flux biggest).</p>' +
       '<p class="note">IB HL D.4: double the frequency → double the peak emf <i>and</i> half the period.</p>';
-    return '<h4>1 · Motional emf</h4><div class="eq">The area of the circuit grows by Lv each second → ΔΦ/Δt = BLv → ε = BLv = (' + H.iv('B') + ')(' + H.iv('L') + ')(' + H.iv('v') + ') = <b>' + H.n(d.emf, 'V') + '</b></div>' +
-      '<h4>2 · Current and direction</h4><div class="eq">I = ε/R = <b>' + H.n(d.I, 'A') + '</b>. Flux into the page increases → Lenz: the induced current makes field out of the page inside the loop → <b>counterclockwise</b>.</div>' +
-      '<h4>3 · The magnetic force on the rod opposes the motion</h4><div class="eq">F = BIL = <b>' + H.n(d.F, 'N') + '</b> to the left. To keep v constant you must push with ' + fnum(d.F) + ' N.</div>' +
-      '<h4>4 · Energy</h4><div class="eq">Your power Fv = ' + H.n(d.P, 'W') + ' = heating I²R = ' + H.n(d.Pr, 'W') + ' ✓ (that’s why Lenz’s law must be true)</div>' +
+    return '<h4>1 · Motional emf</h4><p class="st">The area of the circuit grows by Lv each second:</p>' + TEX`\frac{\Delta\Phi}{\Delta t} = BLv` + TEX`\varepsilon = BLv` + TEX`\varepsilon = (${M.iv('B')})(${M.iv('L')})(${M.iv('v')})` + TEXA`\varepsilon = ${M.n(d.emf, 'V')}` +
+      '<h4>2 · Current and direction</h4>' + TEX`I = \frac{\varepsilon}{R}` + TEX`I = \frac{${M.n(d.emf, 'V')}}{${M.iv('R')}}` + TEXA`I = ${M.n(d.I, 'A')}` +
+      '<p class="st">Flux into the page increases → Lenz: the induced current makes field out of the page inside the loop → <b>counterclockwise</b>.</p>' +
+      '<h4>3 · The magnetic force on the rod opposes the motion</h4>' + TEX`F = BIL` + TEX`F = (${M.iv('B')})(${M.n(d.I, 'A')})(${M.iv('L')})` + TEXA`F = ${M.n(d.F, 'N')}` + '<p class="st">To the left. To keep v constant you must push with ' + H.n(d.F, 'N') + '.</p>' +
+      '<h4>4 · Energy</h4><p class="st">Your power:</p>' + TEX`P = Fv` + TEX`P = (${M.n(d.F, 'N')})(${M.iv('v')})` + TEXA`P = ${M.n(d.P, 'W')}` + '<p class="st">Heating in the circuit:</p>' + TEX`P = I^2 R` + TEX`P = (${M.n(d.I, 'A')})^2(${M.iv('R')})` + TEXA`P = ${M.n(d.Pr, 'W')}` +
+      '<p class="st">They match ✓ (that’s why Lenz’s law must be true).</p>' +
       '<p class="note">Double v → double ε, I and F → 4× the power. Let go and the rod slows down.</p>';
   },
   draw(v, d, mode, opt, t, dt, A){

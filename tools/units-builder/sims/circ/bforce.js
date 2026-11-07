@@ -29,21 +29,29 @@ const SIM = {
     return [{ id: 'r', name: 'Radius of the circle', short: 'r', sym: 'r', unit: 'm', f: d => d.r }, { id: 'T', name: 'Period', short: 'T', sym: 'T', unit: 's', f: d => d.T }, { id: 'F', name: 'Magnetic force', short: 'F', sym: 'F', unit: 'N', f: d => d.F }];
   },
   work(v, d, mode, opt){
-    if (mode === 'hall') return '<h4>1 · Current to the right, B into the page</h4><div class="eq">' + (d.el ? 'In a metal the carriers are <b>electrons</b>, drifting <b>left</b> (opposite the current).' : 'Here the carriers are <b>positive</b>, drifting <b>right</b> with the current.') + ' Right-hand rule (F = qv × B): either way they are pushed toward the <b>top edge</b>.</div>' +
-      '<h4>2 · Charge piles up until it stops more piling</h4><div class="eq">The top edge becomes <b>' + (d.el ? 'negative' : 'positive') + '</b>, the bottom edge ' + (d.el ? 'positive' : 'negative') + '. That makes an electric field across the strip. It grows until qE = qv<sub>d</sub>B, then carriers go straight.</div>' +
-      '<h4>3 · Hall voltage</h4><div class="eq">E = v<sub>d</sub>B = ' + H.n(d.EH, 'V/m') + ' → ΔV<sub>H</sub> = E·w = v<sub>d</sub>Bw = (' + H.iv('vd') + ')(' + H.iv('B') + ')(' + fnum(v.w / 100) + ' m) = <b>' + H.n(d.VH, 'V') + '</b></div>' +
+    if (mode === 'hall') return '<h4>1 · Current to the right, B into the page</h4><p class="st">' + (d.el ? 'In a metal the carriers are <b>electrons</b>, drifting <b>left</b> (opposite the current).' : 'Here the carriers are <b>positive</b>, drifting <b>right</b> with the current.') + ' Right-hand rule (F = qv × B): either way they are pushed toward the <b>top edge</b>.</p>' +
+      '<h4>2 · Charge piles up until it stops more piling</h4><p class="st">The top edge becomes <b>' + (d.el ? 'negative' : 'positive') + '</b>, the bottom edge ' + (d.el ? 'positive' : 'negative') + '. That makes an electric field across the strip. It grows until the forces balance, then carriers go straight:</p>' + TEX`qE = qv_d B` +
+      '<h4>3 · Hall voltage</h4>' + TEX`E = v_d B` + TEXA`E = ${M.n(d.EH, 'V/m')}` + TEX`\Delta V_H = E\,w` + TEX`\Delta V_H = v_d B w` + TEX`\Delta V_H = (${M.iv('vd')})(${M.iv('B')})(${M.n(v.w / 100, 'm')})` + TEXA`\Delta V_H = ${M.n(d.VH, 'V')}` +
       '<p class="note">Both kinds of carrier go to the <b>same</b> edge, so the <b>sign</b> of the Hall voltage tells you which kind of charge is moving. That is how we know current in metals is carried by electrons. A Hall probe uses this to measure B.</p>';
-    if (mode === 'sel') return '<h4>1 · Two forces on a ' + d.nm + ' moving right</h4><div class="eq">Electric (down, from the + top plate): F<sub>E</sub> = qE = ' + H.n(d.FE, 'N') + ' &nbsp; Magnetic (up, right-hand rule): F<sub>B</sub> = qvB = ' + H.n(d.FB, 'N') + '</div>' +
-      '<h4>2 · Goes straight only if they balance: qE = qvB → v = E/B</h4><div class="eq">v = (' + fnum(v.E * 1e3) + ')/(' + v.B + ') = <b>' + H.n(d.v0, 'm/s') + '</b>, for any charge or mass!</div>' +
-      '<div class="eq">This particle: v = ' + H.n(d.vv, 'm/s') + ' → ' + (Math.abs(d.net) < 0.02 * d.FE ? '<b>goes straight through the slit</b>' : d.net > 0 ? 'too fast: magnetic force wins, it bends ' + (d.z > 0 ? 'up' : 'down') : 'too slow: electric force wins, it bends ' + (d.z > 0 ? 'down' : 'up')) + '</div>' +
-      '<p class="note">An electron feels both forces reversed, so the same speed still passes. IB D.3: motion in perpendicular E and B fields.</p>';
-    if (mode === 'spec') return '<h4>1 · Accelerate through V: qV = ½mv²</h4><div class="eq">¹²C⁺: v = √(2qV/m) = ' + H.n(d.v1, 'm/s') + '</div>' +
-      '<h4>2 · Semicircle in B: qvB = mv²/r → r = mv/(qB) = (1/B)√(2mV/q)</h4><div class="eq">r₁ (¹²C⁺) = <b>' + H.n(d.r1 * 100, 'cm') + '</b> &nbsp; r₂ (' + v.m2 + ' u) = <b>' + H.n(d.r2 * 100, 'cm') + '</b></div>' +
-      '<div class="eq">They land 2(r₂ − r₁) = <b>' + H.n(d.sep * 100, 'cm') + '</b> apart. r ∝ √m, so heavier ions curve less.</div>' +
-      '<h4>3 · <span style="color:#7a3fb0">IB</span> Find q/m from the measured radius</h4><div class="eq">q/m = 2V/(B²r²) = ' + H.n(d.qm, 'C/kg') + ' (true for ¹²C⁺: ' + fnum(E0 / (12 * U)) + ')</div>';
-    return '<h4>1 · The magnetic force is always perpendicular to v</h4><div class="eq">F = qvB = (' + fnum(d.q) + ')(' + fnum(d.vv) + ')(' + fnum(d.B) + ') = <b>' + H.n(d.F, 'N') + '</b>: it changes direction, never speed. Work = 0, KE stays ' + H.n(d.KE, 'J') + '.</div>' +
-      '<h4>2 · It provides the centripetal force: qvB = mv²/r</h4><div class="eq">r = mv/(qB) = <b>' + H.n(d.r, 'm') + '</b></div>' +
-      '<h4>3 · Period</h4><div class="eq">T = 2πr/v = 2πm/(qB) = <b>' + H.n(d.T, 's') + '</b>: doesn’t depend on speed!</div>' +
+    if (mode === 'sel'){ const fast = Math.abs(d.net) < 0.02 * d.FE;
+      return '<h4>1 · Two forces on a ' + d.nm + ' moving right</h4><p class="st">Electric (down, from the + top plate):</p>' + TEX`F_E = qE` + TEXA`F_E = ${M.n(d.FE, 'N')}` +
+      '<p class="st">Magnetic (up, right-hand rule):</p>' + TEX`F_B = qvB` + TEXA`F_B = ${M.n(d.FB, 'N')}` +
+      '<h4>2 · Goes straight only if they balance</h4>' + TEX`qE = qvB` + TEX`v = \frac{E}{B}` + TEX`v = \frac{${M.n(v.E * 1e3, 'V/m')}}{${M.n(v.B, 'T')}}` + TEXA`v = ${M.n(d.v0, 'm/s')}` +
+      '<p class="st">That works for any charge or mass! This particle:</p>' + TEX`v = ${M.n(d.vv, 'm/s')}` +
+      '<p class="st">' + (fast ? '<b>Goes straight through the slit</b>' : d.net > 0 ? 'Too fast: magnetic force wins, it bends ' + (d.z > 0 ? 'up' : 'down') : 'Too slow: electric force wins, it bends ' + (d.z > 0 ? 'down' : 'up')) + '.</p>' +
+      '<p class="note">An electron feels both forces reversed, so the same speed still passes. IB D.3: motion in perpendicular E and B fields.</p>'; }
+    if (mode === 'spec') return '<h4>1 · Accelerate through V</h4>' + TEX`qV = \frac{1}{2}mv^2` + TEX`v = \sqrt{\frac{2qV}{m}}` + '<p class="st">For ¹²C⁺:</p>' + TEX`v_1 = \sqrt{\frac{2(${M.n(E0)})(${M.iv('V')})}{${M.n(12 * U)}}}` + TEXA`v_1 = ${M.n(d.v1, 'm/s')}` +
+      '<h4>2 · Semicircle in B</h4>' + TEX`qvB = \frac{mv^2}{r}` + TEX`r = \frac{mv}{qB}` + TEX`r = \frac{1}{B}\sqrt{\frac{2mV}{q}}` +
+      '<p class="st">¹²C⁺:</p>' + TEX`r_1 = \frac{1}{${M.iv('B')}}\sqrt{\frac{2(${M.n(12 * U)})(${M.iv('V')})}{${M.n(E0)}}}` + TEXA`r_1 = ${M.n(d.r1 * 100, 'cm')}` +
+      '<p class="st">' + v.m2 + ' u ion:</p>' + TEX`r_2 = \frac{1}{${M.iv('B')}}\sqrt{\frac{2(${M.n(v.m2 * U)})(${M.iv('V')})}{${M.n(E0)}}}` + TEXA`r_2 = ${M.n(d.r2 * 100, 'cm')}` +
+      '<p class="st">They land twice the difference in radii apart:</p>' + TEX`\Delta x = 2(r_2 - r_1)` + TEX`\Delta x = 2(${M.n(d.r2 * 100)} - ${M.n(d.r1 * 100)})\,\text{cm}` + TEXA`\Delta x = ${M.n(d.sep * 100, 'cm')}` +
+      '<p class="st">r ∝ √m, so heavier ions curve less.</p>' +
+      '<h4>3 · <span style="color:#7a3fb0">IB</span> Find q/m from the measured radius</h4>' + TEX`\frac{q}{m} = \frac{2V}{B^2 r^2}` + TEX`\frac{q}{m} = \frac{2(${M.iv('V')})}{(${M.iv('B')})^2(${M.n(d.r1, 'm')})^2}` + TEXA`\frac{q}{m} = ${M.n(d.qm, 'C/kg')}` +
+      '<p class="st">True value for ¹²C⁺: ' + fnum(E0 / (12 * U)) + ' C/kg.</p>';
+    return '<h4>1 · The magnetic force is always perpendicular to v</h4>' + TEX`F = qvB` + TEX`F = (${M.n(d.q)})(${M.n(d.vv)})(${M.n(d.B)})` + TEXA`F = ${M.n(d.F, 'N')}` +
+      '<p class="st">It changes direction, never speed. Work = 0, KE stays ' + H.n(d.KE, 'J') + '.</p>' +
+      '<h4>2 · It provides the centripetal force</h4>' + TEX`qvB = \frac{mv^2}{r}` + TEX`r = \frac{mv}{qB}` + TEX`r = \frac{(${M.n(d.m)})(${M.n(d.vv)})}{(${M.n(d.q)})(${M.n(d.B)})}` + TEXA`r = ${M.n(d.r, 'm')}` +
+      '<h4>3 · Period</h4>' + TEX`T = \frac{2\pi r}{v}` + TEX`T = \frac{2\pi m}{qB}` + TEX`T = \frac{2\pi(${M.n(d.m)})}{(${M.n(d.q)})(${M.n(d.B)})}` + TEXA`T = ${M.n(d.T, 's')}` + '<p class="st">It doesn’t depend on speed!</p>' +
       '<p class="note">B into the page: a positive charge moving right is pushed up, so it circles counterclockwise; an electron circles clockwise. Double v → double r, same T.</p>';
   },
   draw(v, d, mode, opt, t, dt, A){

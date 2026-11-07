@@ -12,9 +12,14 @@ const SIM = {
   calc(v, mode, opt){ const Bw = MU * v.I / (2 * PI * v.r / 100), th = Math.atan(Bw / BE) / DEG, east = (opt.dir || 'n') === 'n'; return { Bw, th, tan: Bw / BE, east, slope: MU / (2 * PI * v.r / 100 * BE) }; },
   dvs(){ return [{ id: 'tan', name: 'tan θ', short: 'tan θ', sym: 'tan θ', unit: '', f: d => d.tan }, { id: 'th', name: 'Needle angle θ from north', short: 'θ', sym: 'θ', unit: '°', f: d => d.th }, { id: 'Bw', name: 'Field of the wire at the needle', short: 'B_wire', sym: 'B<sub>wire</sub>', unit: 'T', f: d => d.Bw }]; },
   work(v, d){
-    return '<h4>1 · Field of the wire at the needle</h4><div class="eq">B<sub>wire</sub> = μ₀I/(2πr) = (4π × 10⁻⁷)(' + H.iv('I') + ')/(2π × ' + fnum(v.r / 100) + ' m) = <b>' + H.n(d.Bw, 'T') + '</b>, pointing <b>' + (d.east ? 'east' : 'west') + '</b> (right-hand rule: current ' + (d.east ? 'north' : 'south') + ', compass above the wire)</div>' +
-      '<h4>2 · The needle points along the total field</h4><div class="eq">Earth’s field points north (horizontal part ≈ 2.0 × 10⁻⁵ T). The two fields are at right angles:<br>tan θ = B<sub>wire</sub>/B<sub>Earth</sub> = <b>' + H.n(d.tan) + '</b> → θ = <b>' + H.n(d.th, '°') + '</b> ' + (v.I ? (d.east ? 'east of north' : 'west of north') : '') + '</div>' +
-      '<h4>3 · The lab: graph tan θ against I</h4><div class="eq">tan θ = [μ₀/(2πr B<sub>Earth</sub>)] · I → a straight line through zero.<br>Slope = μ₀/(2πr B<sub>Earth</sub>) = ' + H.n(d.slope, '/A') + ' → B<sub>Earth</sub> = μ₀/(2πr · slope)</div>' +
+    return '<h4>1 · Field of the wire at the needle</h4>' + TEX`B_{\text{wire}} = \frac{\mu_0 I}{2\pi r}` + TEX`B_{\text{wire}} = \frac{(4\pi\times10^{-7})(${M.iv('I')})}{2\pi(${M.n(v.r / 100, 'm')})}` + TEXA`B_{\text{wire}} = ${M.n(d.Bw, 'T')}` +
+      '<p class="st">Pointing <b>' + (d.east ? 'east' : 'west') + '</b> (right-hand rule: current ' + (d.east ? 'north' : 'south') + ', compass above the wire).</p>' +
+      '<h4>2 · The needle points along the total field</h4><p class="st">Earth’s field points north (horizontal part ≈ 2.0 × 10⁻⁵ T). The two fields are at right angles:</p>' +
+      TEX`\tan\theta = \frac{B_{\text{wire}}}{B_{\text{Earth}}}` + TEX`\tan\theta = \frac{${M.n(d.Bw, 'T')}}{2.0\times10^{-5}\,\text{T}}` + TEXA`\tan\theta = ${M.n(d.tan)}` + TEXA`\theta = ${M.n(d.th, '°')}` +
+      (v.I ? '<p class="st">' + (d.east ? 'East of north.' : 'West of north.') + '</p>' : '') +
+      '<h4>3 · The lab: graph tan θ against I</h4><p class="st">A straight line through zero:</p>' + TEX`\tan\theta = \left[\frac{\mu_0}{2\pi r B_{\text{Earth}}}\right] I` +
+      '<p class="st">The slope is:</p>' + TEX`\text{slope} = \frac{\mu_0}{2\pi r B_{\text{Earth}}}` + TEXA`\text{slope} = ${M.n(d.slope, '/A')}` +
+      '<p class="st">So the lab gives B<sub>Earth</sub>:</p>' + TEX`B_{\text{Earth}} = \frac{\mu_0}{2\pi r\cdot\text{slope}}` +
       '<p class="note">Line the wire up north–south first, so with no current it lies right under the needle. Keep the current small: big angles are hard to read, and tan θ grows quickly near 90°.</p>';
   },
   draw(v, d, mode, opt, t){

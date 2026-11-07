@@ -34,17 +34,21 @@ const SIM = {
     return [{ id: 'B', name: 'Field at distance r', short: 'B', sym: 'B', unit: 'T', f: d => d.B }];
   },
   work(v, d, mode){
-    if (mode === 'motor') return '<h4>1 · Force on a current in a field: F = BIL sin θ</h4><div class="eq">F = (' + H.iv('B') + ')(' + H.iv('I') + ')(' + fnum(v.L / 100) + ' m) sin ' + v.th + '° = <b>' + H.n(d.F, 'N') + '</b></div>' +
-      '<h4>2 · Direction: right-hand rule</h4><div class="eq">Fingers along the current, curl toward B (or: thumb = I, fingers = B, palm pushes = F). Here the force is ' + (d.F < 1e-12 ? '<b>zero</b>: the wire is parallel to B.' : '<b>' + (d.into ? 'into the page ⊗' : 'out of the page ⊙') + '</b>.') + '</div>' +
+    if (mode === 'motor') return '<h4>1 · Force on a current in a field: F = BIL sin θ</h4>' + TEX`F = BIL\sin\theta` + TEX`F = (${M.iv('B')})(${M.iv('I')})(${M.n(v.L / 100, 'm')})\sin ${M.iv('th')}` + TEXA`F = ${M.n(d.F, 'N')}` +
+      '<h4>2 · Direction: right-hand rule</h4><p class="st">Fingers along the current, curl toward B (or: thumb = I, fingers = B, palm pushes = F). Here the force is ' + (d.F < 1e-12 ? '<b>zero</b>: the wire is parallel to B.' : '<b>' + (d.into ? 'into the page ⊗' : 'out of the page ⊙') + '</b>.') + '</p>' +
       '<p class="note">Biggest force when the wire is perpendicular to B; zero when parallel. Reverse the current or the field and the force reverses. This is how motors and loudspeakers work.</p>';
-    if (mode === 'two'){ const rows = d.parts.map((p, i) => '<div class="eq">Wire ' + (i + 1) + ' (' + Math.abs(p.I) + ' A ' + (p.I > 0 ? 'out' : 'in') + '): r = ' + H.n(p.r * 100, 'cm') + ', B = μ₀I/2πr = ' + H.n(p.B, 'T') + ' → (' + fnum(p.bx) + ', ' + fnum(p.by) + ')</div>').join('');
+    if (mode === 'two'){ const rows = d.parts.map((p, i) => '<p class="st">Wire ' + (i + 1) + ' (' + Math.abs(p.I) + ' A ' + (p.I > 0 ? 'out' : 'in') + '):</p>' +
+        TEX`B = \frac{\mu_0 I}{2\pi r}` + TEX`B = \frac{(4\pi\times10^{-7})(${M.n(Math.abs(p.I), 'A')})}{2\pi(${M.n(p.r * 100, 'cm')})}` + TEXA`B = ${M.n(p.B, 'T')}` +
+        '<p class="st">Components (x, y), from the circling direction:</p>' + TEX`(B_x,\, B_y) = (${M.n(p.bx)},\, ${M.n(p.by)})\,\text{T}`).join('');
       return '<h4>1 · Field at P from each wire (circles around each wire)</h4>' + rows +
-        '<h4>2 · Add as vectors</h4><div class="eq">B<sub>P</sub> = <b>' + H.n(d.B, 'T') + '</b> at ' + H.n(d.ang, '°') + ' from +x</div>' +
-        '<h4>3 · Force between the wires</h4><div class="eq">Wire 2 sits in wire 1’s field B = μ₀I₁/2πd → F/L = μ₀I₁I₂/(2πd) = <b>' + H.n(d.FL, 'N/m') + '</b>, ' + (d.attract ? '<b>attract</b> (currents the same way)' : '<b>repel</b> (currents opposite)') + '</div>' +
+        '<h4>2 · Add as vectors</h4><p class="st">Add the x parts and the y parts:</p>' + TEXA`B_P = ${M.n(d.B, 'T')}` + TEXA`\theta = ${M.n(d.ang, '°')}\ \text{from }{+x}` +
+        '<h4>3 · Force between the wires</h4><p class="st">Wire 2 sits in wire 1’s field:</p>' + TEX`B_1 = \frac{\mu_0 I_1}{2\pi d}` + TEX`\frac{F}{L} = \frac{\mu_0 I_1 I_2}{2\pi d}` +
+        TEX`\frac{F}{L} = \frac{(4\pi\times10^{-7})(${M.n(Math.abs(v.I1), 'A')})(${M.n(Math.abs(v.I2), 'A')})}{2\pi(${M.n(v.d / 100, 'm')})}` + TEXA`\frac{F}{L} = ${M.n(d.FL, 'N/m')}` +
+        '<p class="st">' + (d.attract ? '<b>Attract</b> (currents the same way).' : '<b>Repel</b> (currents opposite).') + '</p>' +
         '<p class="note">Same direction attracts, opposite repels: the reverse of charges! Newton’s third law: each wire feels the same force even if the currents differ.</p>'; }
-    return '<h4>1 · Field around a long straight wire</h4><div class="eq">B = μ₀I/(2πr) = (2×10⁻⁷)(' + H.iv('I') + ')/(' + fnum(v.r / 100) + ' m) = <b>' + H.n(d.B, 'T') + '</b></div>' +
-      '<div class="eq">That’s ' + H.n(d.earth) + '× Earth’s field (about 5×10⁻⁵ T): enough to turn a compass nearby.</div>' +
-      '<h4>2 · Direction: right-hand grip rule</h4><div class="eq">Thumb along the current, fingers curl the way B goes: ' + (d.sg > 0 ? 'out of the page → B circles <b>counterclockwise</b>.' : 'into the page → B circles <b>clockwise</b>.') + '</div>' +
+    return '<h4>1 · Field around a long straight wire</h4>' + TEX`B = \frac{\mu_0 I}{2\pi r}` + TEX`B = \frac{(4\pi\times10^{-7})(${M.iv('I')})}{2\pi(${M.n(v.r / 100, 'm')})}` + TEXA`B = ${M.n(d.B, 'T')}` +
+      '<p class="st">That’s ' + H.n(d.earth) + '× Earth’s field (about 5×10⁻⁵ T): enough to turn a compass nearby.</p>' +
+      '<h4>2 · Direction: right-hand grip rule</h4><p class="st">Thumb along the current, fingers curl the way B goes: ' + (d.sg > 0 ? 'out of the page → B circles <b>counterclockwise</b>.' : 'into the page → B circles <b>clockwise</b>.') + '</p>' +
       '<p class="note">Double r → half B (1/r, not 1/r²). Field lines are circles: no start or end, unlike electric field lines.</p>';
   },
   draw(v, d, mode, opt, t, dt, A){
