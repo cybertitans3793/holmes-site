@@ -1,0 +1,258 @@
+<section class="guide" id="guide" aria-label="Study guide">
+<style>
+.guide{margin-top:28px}
+.guide .gtip{margin:0 0 16px;font-size:19px;line-height:1.45;max-width:1000px}
+.guide .ggrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-bottom:22px}
+.guide .gcard{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcard h3,.guide .gcheck h3,.guide .gsteps h3{margin:0 0 10px;font-size:20px;letter-spacing:-.01em}
+.guide .gcard ul{margin:0;padding-left:20px}
+.guide .gcard li{margin:0 0 7px}
+.guide .ib{display:inline-block;font-family:var(--f-mono);font-size:11px;font-weight:700;border:2px solid var(--ink);padding:0 5px;margin-left:4px;vertical-align:1px;background:var(--soft)}
+.guide table{border-collapse:collapse;width:100%;font-size:15px}
+.guide td{border-top:2px solid var(--ink);padding:6px 4px;vertical-align:top}
+.guide td:first-child{font-family:var(--f-mono);font-weight:700;white-space:nowrap;padding-right:12px}
+.guide td[colspan]{white-space:normal}
+.guide .gsub{font-family:var(--f-display);font-weight:400}
+.guide .gsteps{background:var(--soft);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px;margin-bottom:22px}
+.guide .gsteps ol{margin:0;padding-left:24px;columns:2 360px;column-gap:28px}
+.guide .gsteps li{margin:0 0 8px;break-inside:avoid}
+.guide h3.ghead{font-size:22px;margin:0 0 12px}
+.guide .gex{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:18px;margin-bottom:22px}
+.guide .ex{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .ex h4{margin:0 0 6px;font-size:18px}
+.guide .ex .kind{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--hot);text-transform:uppercase;letter-spacing:.04em}
+.guide .ex p{margin:0 0 8px}
+.guide .work{font-family:var(--f-mono);font-size:14px;line-height:1.6;border-left:4px solid var(--hot);background:#fff;padding:6px 12px;margin:8px 0}
+.guide .work b{font-family:var(--f-display)}
+.guide .ex .take{margin:8px 0 0;font-weight:500}
+.guide .ex svg{float:right;margin:0 0 6px 12px}
+.guide .gcheck{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcheck>p{margin:-4px 0 12px;color:var(--muted)}
+.guide ol.q{margin:0;padding-left:26px}
+.guide ol.q>li{margin:0 0 14px}
+.guide details{margin-top:6px}
+.guide summary{cursor:pointer;display:inline-block;font-weight:700;border:2px solid var(--ink);padding:2px 10px;background:#fff;list-style:none}
+.guide summary::-webkit-details-marker{display:none}
+.guide summary:hover{background:var(--soft)}
+.guide details[open] summary{background:var(--ink);color:#fff}
+.guide details>div{border-left:4px solid var(--hot);padding:8px 12px;margin-top:8px;background:#fff}
+.guide .gpanel>.ggrid,.guide .gpanel>.gsteps,.guide .gpanel>.gex{margin-bottom:0}
+.guide .gpanel>.gsteps+.ggrid{margin-top:22px}
+.guide .gtabs{margin-bottom:18px}
+.guide .gnext{margin:16px 0 0;font-weight:700}
+.guide .gnext a{color:var(--ink)}
+body.present .guide{display:none}
+@media (max-width:520px){.guide .gtip{font-size:17px}.guide td:first-child{white-space:normal}.guide .ggrid,.guide .gex{grid-template-columns:1fr}.guide .ex svg{float:none;display:block;margin:0 auto 8px}}
+</style>
+<div class="simbar"><h2>Study guide</h2><span class="mono">Unit 4 · Waves and Optics</span></div>
+<p class="gtip"><b>How to use this:</b> read the key ideas, then cover each worked example and try it yourself before reading the solution. Do the self-check questions on paper <i>before</i> you open the answers, mark the ones you miss, and come back to them in a day or two without looking. Rereading won't do much; answering questions will.</p>
+<div class="tabs gtabs" role="tablist" aria-label="Study guide sections">
+  <button class="tab" role="tab" type="button" aria-selected="true" aria-controls="g-ideas" id="gt-ideas">Key ideas</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-solve" id="gt-solve" tabindex="-1">How to solve</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-examples" id="gt-examples" tabindex="-1">Worked examples</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-check" id="gt-check" tabindex="-1">Self-check</button>
+</div>
+<div class="gpanel" role="tabpanel" id="g-ideas" aria-labelledby="gt-ideas">
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Key ideas: waves</h3>
+    <ul>
+      <li><b>A wave carries energy</b> from place to place without carrying the medium along. In a <b>transverse</b> wave the medium moves perpendicular to the wave's travel; in a <b>longitudinal</b> wave (like sound) it moves back and forth along it.</li>
+      <li><b>v = fλ.</b> The medium sets the speed; the source sets the frequency. Crossing into a new medium, the frequency stays the same, so the wavelength changes with the speed.</li>
+      <li>At a boundary, part of a wave reflects and part transmits. The reflected pulse is <b>upside down</b> when the wave hits a medium where it travels slower (like a fixed end), and upright when it hits a faster medium (a free end).</li>
+      <li><b>Electromagnetic waves</b> are oscillating electric and magnetic fields, perpendicular to each other and to the direction of travel. They need no medium and travel at c = 3.0 × 10⁸ m/s in a vacuum. In order of increasing frequency: radio, microwave, infrared, visible, ultraviolet, X-ray, gamma.</li>
+      <li><b>Polarization:</b> a polarizing filter lets through only one direction of the electric field's oscillation. Only transverse waves can be polarized, so light can and sound can't.</li>
+      <li><b>Refraction:</b> light changes speed in a material, v = c/n, and bends at a boundary: n₁ sinθ₁ = n₂ sinθ₂ (angles from the normal). Going into a higher n, it bends toward the normal.</li>
+      <li><b>Total internal reflection</b> happens going into a <i>lower</i> n, when the angle of incidence is bigger than the critical angle: sinθ<sub>c</sub> = n₂/n₁. Optical fibres work this way.</li>
+      <li><b>Superposition:</b> overlapping waves add their displacements. Two coherent sources (same frequency, steady phase) interfere <b>constructively</b> where the path difference is mλ and <b>destructively</b> where it's (m + ½)λ.</li>
+      <li><b>Beats:</b> two sounds of slightly different frequency make a loudness that pulses at f<sub>beat</sub> = |f₁ − f₂|.</li>
+      <li><b>Diffraction:</b> waves spread out through a gap or around an edge, most when the gap is about the size of the wavelength. That's why you can hear around a corner but not see around it.</li>
+      <li><b>Double slits and gratings:</b> bright fringes where d sinθ = mλ. For small angles the fringe spacing is Δy = λL/d. A grating (many slits) gives the same angles but sharper, brighter maxima.</li>
+      <li><b>Doppler effect:</b> a source moving toward you is heard (or seen) at a higher frequency; moving away, lower. The wave's speed doesn't change, only the spacing of the wavefronts.</li>
+      <li><span class="ib">IB</span> For light, when v is much less than c: Δf/f ≈ Δλ/λ ≈ v/c. A redshift (longer λ) means the source is moving away; it's how we measure the motion of stars and galaxies.</li>
+      <li><b>Standing waves</b> form when two identical waves travel opposite ways in a confined space, making fixed <b>nodes</b> (no motion) and <b>antinodes</b> (biggest motion). Only certain wavelengths fit. The lowest frequency is the <b>first harmonic</b> (AP also calls it the fundamental).</li>
+      <li><span class="ib">IB</span> <b>Resonance:</b> driving a system at its natural frequency makes its amplitude grow large. <b>Damping</b> (light, critical or heavy) lowers and widens the resonance peak and shifts it slightly lower in frequency.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Key ideas: optics</h3>
+    <ul>
+      <li><b>Reflection:</b> the angle of incidence equals the angle of reflection, both measured from the normal.</li>
+      <li>A <b>plane mirror</b> makes a virtual, upright image the same size as the object, as far behind the mirror as the object is in front.</li>
+      <li><b>Curved mirrors:</b> a concave mirror has focal length f = R/2 and can make real or virtual images; a convex mirror always makes small, upright, virtual images.</li>
+      <li><b>Lenses:</b> a converging lens (f &gt; 0) brings parallel rays to a focus; a diverging lens (f &lt; 0) spreads them out. Mirrors and lenses use the same equation: 1/f = 1/s<sub>o</sub> + 1/s<sub>i</sub>.</li>
+      <li><b>Real images</b> form where light actually meets (s<sub>i</sub> &gt; 0, upside down, can go on a screen). <b>Virtual images</b> are where light only seems to come from (s<sub>i</sub> &lt; 0, upright).</li>
+      <li>An object inside the focal length of a converging lens gives an enlarged, upright, virtual image: a magnifying glass. A diverging lens always gives a smaller, upright, virtual image.</li>
+      <li><b>Ray diagrams</b> use three easy rays: one parallel to the axis (through, or as if from, the focus), one through the focus (comes out parallel), and one through the centre of a lens (straight on).</li>
+      <li><b>Thin films:</b> light reflects from both surfaces of a thin film and the two reflections interfere. A reflection off a material with higher n flips the wave by half a wavelength. With one flip, the reflection is brightest when 2nt = (m + ½)λ; with zero or two flips, when 2nt = mλ.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Equations</h3>
+    <table>
+      <tr><td>v = fλ, T = 1/f</td><td>wave speed, period</td></tr>
+      <tr><td>n = c/v</td><td>index of refraction</td></tr>
+      <tr><td>n₁ sinθ₁ = n₂ sinθ₂</td><td>Snell's law (IB form: n₁/n₂ = sinθ₂/sinθ₁ = v₂/v₁)</td></tr>
+      <tr><td>sinθ<sub>c</sub> = n₂/n₁</td><td>critical angle (n₁ &gt; n₂)</td></tr>
+      <tr><td>Δ(path) = mλ; (m + ½)λ</td><td>constructive; destructive</td></tr>
+      <tr><td>f<sub>beat</sub> = |f₁ − f₂|</td><td>beats</td></tr>
+      <tr><td>d sinθ = mλ</td><td>double slit or grating maxima</td></tr>
+      <tr><td>Δy = λL/d</td><td>fringe spacing (IB: s = λD/d)</td></tr>
+      <tr><td>Δf/f ≈ Δλ/λ ≈ v/c</td><td><span class="ib">IB</span> Doppler for light</td></tr>
+      <tr><td>λ<sub>n</sub> = 2L/n, f<sub>n</sub> = nv/(2L)</td><td>string, or pipe open at both ends (n = 1, 2, 3…)</td></tr>
+      <tr><td>λ<sub>n</sub> = 4L/n, f<sub>n</sub> = nv/(4L)</td><td>pipe closed at one end (n = 1, 3, 5…)</td></tr>
+      <tr><td>f = R/2</td><td>focal length of a curved mirror</td></tr>
+      <tr><td>1/f = 1/s<sub>o</sub> + 1/s<sub>i</sub></td><td>mirror and thin-lens equation</td></tr>
+      <tr><td>M = h<sub>i</sub>/h<sub>o</sub> = −s<sub>i</sub>/s<sub>o</sub></td><td>magnification</td></tr>
+    </table>
+  </div>
+  <div class="gcard">
+    <h3>Common mistakes</h3>
+    <ul>
+      <li>Saying the frequency changes when a wave enters a new medium. It's the speed and wavelength that change.</li>
+      <li>Thinking a bigger amplitude makes a wave go faster. Speed depends only on the medium.</li>
+      <li>Looking for total internal reflection going into a <i>denser</i> medium. It only happens going toward lower n.</li>
+      <li>Thinking a moving source changes the speed of its sound. Only the frequency you hear changes.</li>
+      <li>Giving a closed pipe even harmonics. A pipe closed at one end only has the odd ones.</li>
+      <li>Dropping the minus sign for a virtual image or a diverging lens's focal length.</li>
+      <li>Forgetting the half-wavelength flip when light reflects off a higher-index material in a thin film.</li>
+    </ul>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-solve" aria-labelledby="gt-solve" hidden>
+<div class="gsteps">
+  <h3>How to solve a lens or mirror problem</h3>
+  <ol>
+    <li><b>Sketch a ray diagram first</b> with two or three easy rays, so you know roughly where the image is and whether it's real or virtual.</li>
+    <li><b>Assign signs:</b> converging lens or concave mirror f &gt; 0; diverging lens or convex mirror f &lt; 0.</li>
+    <li><b>Solve 1/f = 1/s<sub>o</sub> + 1/s<sub>i</sub></b> for s<sub>i</sub>.</li>
+    <li><b>Interpret the sign:</b> s<sub>i</sub> &gt; 0 means a real image; s<sub>i</sub> &lt; 0 means a virtual one.</li>
+    <li><b>Find the magnification</b> M = −s<sub>i</sub>/s<sub>o</sub>: negative means upside down; |M| &gt; 1 means enlarged.</li>
+    <li><b>Check</b> against your ray diagram. They should agree.</li>
+  </ol>
+</div>
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Standing waves</h3>
+    <ul>
+      <li>Draw the first harmonic: a fixed end or closed end is a node; a free or open end is an antinode.</li>
+      <li>Count how many half-wavelengths (or quarter-wavelengths, for a closed pipe) fit in the length L. That gives λ.</li>
+      <li>Then f = v/λ. Higher harmonics are whole-number multiples of the first (odd multiples only for a closed pipe).</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Interference</h3>
+    <ul>
+      <li>Find the path difference from each source to the point.</li>
+      <li>Divide by λ: a whole number means constructive (bright, loud); a half-number means destructive.</li>
+      <li>For slits and gratings, use d sinθ = mλ, with d the distance between slits (for a grating, d = 1/(lines per metre)).</li>
+    </ul>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-examples" aria-labelledby="gt-examples" hidden>
+<div class="gex">
+  <div class="ex">
+    <div class="kind">Refraction and TIR</div>
+    <h4>Light leaving water</h4>
+    <p>Light travels from water (n = 1.33) into air. At 30° incidence, what is the angle in air? What is the critical angle?</p>
+    <div class="work">
+      1.33 sin30° = 1.00 sinθ₂ → sinθ₂ = 0.665 → θ₂ = <b>42°</b><br>
+      Critical: sinθ<sub>c</sub> = 1.00/1.33 = 0.752 → θ<sub>c</sub> = <b>49°</b>
+    </div>
+    <p class="take">Leaving water, light bends away from the normal. Beyond 49°, none escapes: it all reflects back into the water, which is why a pool's surface looks like a mirror from underneath.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Double slit</div>
+    <h4>Fringe spacing</h4>
+    <p>Light of wavelength 600 nm passes through two slits 0.20 mm apart onto a screen 2.0 m away. How far apart are the bright fringes?</p>
+    <div class="work">
+      Δy = λL/d = (600 × 10⁻⁹)(2.0)/(0.20 × 10⁻³)<br>
+      &nbsp;&nbsp;= <b>6.0 × 10⁻³ m</b> (6.0 mm)
+    </div>
+    <p class="take">Move the slits closer together, or use longer-wavelength (redder) light, and the fringes spread out.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Standing waves</div>
+    <h4>Open pipe vs closed pipe</h4>
+    <p>A pipe is 0.85 m long and sound travels at 340 m/s. Find the first three harmonics if the pipe is open at both ends, and if it's closed at one end.</p>
+    <div class="work">
+      Open: λ₁ = 2L = 1.7 m → f₁ = 340/1.7 = <b>200 Hz</b>, then <b>400, 600 Hz</b><br>
+      Closed: λ₁ = 4L = 3.4 m → f₁ = 340/3.4 = <b>100 Hz</b>, then <b>300, 500 Hz</b>
+    </div>
+    <p class="take">Closing one end halves the first harmonic's frequency and removes the even harmonics, which is why open and closed pipes sound so different.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Thin lens</div>
+    <h4>One lens, two images</h4>
+    <p>A converging lens has f = 10 cm. Find the image for an object (a) 15 cm and (b) 5.0 cm from the lens.</p>
+    <div class="work">
+      (a) 1/s<sub>i</sub> = 1/10 − 1/15 = 1/30 → s<sub>i</sub> = <b>+30 cm</b>, M = −30/15 = <b>−2</b>: real, inverted, twice as big<br>
+      (b) 1/s<sub>i</sub> = 1/10 − 1/5.0 = −1/10 → s<sub>i</sub> = <b>−10 cm</b>, M = +10/5.0 = <b>+2</b>: virtual, upright, twice as big
+    </div>
+    <p class="take">Outside the focal length you get a real image (a projector); inside it, a virtual one (a magnifying glass).</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Thin film</div>
+    <h4>The thinnest bright soap film</h4>
+    <p>A soap film (n = 1.33) has air on both sides. What is the thinnest film that strongly reflects green light of wavelength 532 nm?</p>
+    <div class="work">
+      Reflections: air→soap flips (higher n); soap→air doesn't. One flip, so bright when 2nt = (m + ½)λ<br>
+      Thinnest (m = 0): t = λ/(4n) = 532/(4 × 1.33) = <b>100 nm</b>
+    </div>
+    <p class="take">Different thicknesses reflect different colours, which is where the swirling colours on a soap bubble come from.</p>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
+<div class="gcheck">
+  <h3>Self-check</h3>
+  <p>Answer first, then open.</p>
+  <ol class="q">
+<li>A wave on a light rope passes into a heavier rope, where it travels slower. What happens to its frequency, speed and wavelength? Is the reflected pulse upright or inverted?
+      <details><summary>Answer</summary><div>The frequency stays the same; the speed and wavelength both decrease. The reflected pulse is inverted, because it reflects off a slower medium.</div></details></li>
+    <li>A 440 Hz note travels through air at 343 m/s. What is its wavelength?
+      <details><summary>Answer</summary><div>λ = v/f = 343/440 = 0.78 m.</div></details></li>
+    <li>Why can light be polarized, but sound can't?
+      <details><summary>Answer</summary><div>Polarization picks out one direction of oscillation perpendicular to the wave's travel, so it only works for transverse waves. Sound in air is longitudinal.</div></details></li>
+    <li>Two speakers play the same note in phase. At a certain point, one is 1.5 wavelengths farther away than the other. Is the sound loud or quiet there?
+      <details><summary>Answer</summary><div>Quiet. A path difference of 1.5λ is a half-number of wavelengths, so the waves arrive out of phase and interfere destructively.</div></details></li>
+    <li>A 440 Hz tuning fork and a guitar string sound together, and you hear 4 beats per second. What are the possible frequencies of the string?
+      <details><summary>Answer</summary><div>436 Hz or 444 Hz. The beat frequency is the difference, so you'd need another test (like tightening the string) to tell which.</div></details></li>
+    <li>Why can you hear someone talking around a corner but not see them?
+      <details><summary>Answer</summary><div>Sound wavelengths (about 1 m) are similar to the size of a doorway, so sound diffracts a lot. Light's wavelength (about 500 nm) is far smaller, so it barely diffracts around everyday objects.</div></details></li>
+    <li>You swap a diffraction grating for one with more lines per millimetre. What happens to the bright maxima on the screen?
+      <details><summary>Answer</summary><div>They spread farther apart. More lines per millimetre means a smaller d, and d sinθ = mλ gives a bigger θ.</div></details></li>
+    <li>An ambulance with its siren on drives toward you, passes, and drives away. Describe what you hear. Does the speed of the sound change?
+      <details><summary>Answer</summary><div>The pitch is higher than normal as it approaches and lower as it moves away. The speed of the sound in the air doesn't change; only the wavefront spacing (wavelength) does.</div></details></li>
+    <li><span class="ib">IB</span> A hydrogen line emitted at 656.3 nm is observed in a galaxy at 662.9 nm. Is the galaxy moving toward or away from us, and how fast?
+      <details><summary>Answer</summary><div>Away (redshift). Δλ/λ = 6.6/656.3 ≈ 0.010, so v ≈ 0.010c ≈ 3.0 × 10⁶ m/s.</div></details></li>
+    <li>A string 0.60 m long, fixed at both ends, vibrates in its third harmonic. What is the wavelength, and how many nodes are there?
+      <details><summary>Answer</summary><div>λ₃ = 2L/3 = 0.40 m. There are 4 nodes: one at each end and two in between.</div></details></li>
+    <li>Light travels down a glass optical fibre for kilometres without escaping through the sides. Explain why.
+      <details><summary>Answer</summary><div>It hits the inside wall at an angle bigger than the critical angle, going from glass into lower-index material, so it's totally internally reflected again and again.</div></details></li>
+    <li>What kind of image does a diverging lens make of a real object, wherever the object is?
+      <details><summary>Answer</summary><div>Always virtual, upright and smaller than the object, on the same side of the lens as the object.</div></details></li>
+    <li><span class="ib">IB</span> A singer shatters a wine glass by holding one note. Explain using resonance. How would damping change things?
+      <details><summary>Answer</summary><div>The note matches the glass's natural frequency, so each push adds energy in step with the vibration and the amplitude grows until the glass breaks. Damping removes energy every cycle, which lowers and widens the resonance peak, so the amplitude stays smaller.</div></details></li>
+  </ol>
+</div>
+</div>
+<p class="gnext"><a href="#practice" data-view="practice">Practice questions for this unit →</a></p>
+<script>
+(function(){
+  var root=document.currentScript?document.currentScript.parentNode:document;
+  var tabs=[].slice.call(root.querySelectorAll('.gtabs .tab'));
+  function show(t){tabs.forEach(function(b){var on=b===t;b.setAttribute('aria-selected',on?'true':'false');b.tabIndex=on?0:-1;document.getElementById(b.getAttribute('aria-controls')).hidden=!on;});}
+  tabs.forEach(function(b,i){
+    b.addEventListener('click',function(){show(b);});
+    b.addEventListener('keydown',function(e){var k=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(k){var n=tabs[(i+k+tabs.length)%tabs.length];show(n);n.focus();e.preventDefault();}});
+  });
+})();
+</script>
+</section>
