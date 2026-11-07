@@ -39,23 +39,35 @@ const SIM = {
     return [{ id: 'Pg2', name: 'Gauge pressure, hot', short: 'P_gauge', sym: 'P<sub>gauge,2</sub>', unit: 'kPa', f: d => d.Pg2 }, { id: 'P2', name: 'Absolute pressure, hot', short: 'P₂', sym: 'P<sub>2</sub>', unit: 'kPa', f: d => d.P2 }];
   },
   work(v, d, mode){
-    if (mode === 'bubble') return '<h4>1 · Pressure at the bottom: atmosphere + water</h4><div class="eq">P<sub>1</sub> = 101 + ρgh = 101 + (1000)(10)(' + H.iv('h') + ')/1000 = <b>' + H.n(d.P1, 'kPa') + '</b> &nbsp; P<sub>2</sub> = 101 kPa</div>' +
-      '<h4>2 · Same gas (n constant): P₁V₁/T₁ = P₂V₂/T₂, temperatures in kelvin</h4><div class="eq">T<sub>1</sub> = ' + d.T1 + ' K, T<sub>2</sub> = ' + d.T2 + ' K</div>' +
-      '<div class="eq">V<sub>2</sub> = V<sub>1</sub>(P<sub>1</sub>/P<sub>2</sub>)(T<sub>2</sub>/T<sub>1</sub>) = ' + H.iv('V1') + ' × (' + fnum(d.P1) + '/101) × (' + d.T2 + '/' + d.T1 + ') = <b>' + H.n(d.V2, 'cm³') + '</b></div>' +
+    if (mode === 'bubble') return '<h4>1 · Pressure at the bottom: atmosphere + water</h4>' +
+      TEX`P_1 = P_{\text{atm}} + \rho g h` + TEX`P_1 = 101 + \frac{(1000)(10)(${M.iv('h')})}{1000}` + TEXA`P_1 = ${M.n(d.P1, 'kPa')}` + TEXA`P_2 = 101\,\text{kPa}` +
+      '<h4>2 · Same gas (n constant): P₁V₁/T₁ = P₂V₂/T₂, temperatures in kelvin</h4>' +
+      TEX`T_1 = ${M.n(d.T1, 'K')}` + TEX`T_2 = ${M.n(d.T2, 'K')}` +
+      TEX`V_2 = V_1\left(\frac{P_1}{P_2}\right)\left(\frac{T_2}{T_1}\right)` + TEX`V_2 = (${M.iv('V1')})\left(\frac{${M.n(d.P1)}}{101}\right)\left(\frac{${M.n(d.T2)}}{${M.n(d.T1)}}\right)` + TEXA`V_2 = ${M.n(d.V2, 'cm³')}` +
       '<p class="note">Every 10 m of water adds about one atmosphere. Most of the growth is the pressure drop; warming adds a few percent. This is why divers must not hold their breath while rising.</p>';
-    if (mode === 'leak') return '<h4>1 · Rigid cylinder: V and T constant, so n ∝ P</h4><div class="eq">n<sub>1</sub> = P<sub>1</sub>V/RT = (' + fnum(v.P1 * 1000) + ')(' + fnum(d.Vm) + ')/(8.31 × ' + d.T + ') = ' + H.n(d.n1, 'mol') + '</div>' +
-      '<div class="eq">n<sub>2</sub> = ' + H.n(d.n2, 'mol') + ' → Δn = <b>' + H.n(d.dn, 'mol') + '</b> (' + H.n(100 * d.frac, '%') + ' of the gas)</div>' +
-      '<h4>2 · Mass of oxygen used (M = 32 g/mol)</h4><div class="eq">Δm = Δn × 0.032 = <b>' + H.n(d.dm, 'kg') + '</b></div>' +
+    if (mode === 'leak') return '<h4>1 · Rigid cylinder: V and T constant, so n ∝ P</h4>' +
+      TEX`n_1 = \frac{P_1 V}{R T}` + TEX`n_1 = \frac{(${M.n(v.P1 * 1000, 'Pa')})(${M.n(d.Vm, 'm³')})}{(8.31)(${M.n(d.T, 'K')})}` + TEXA`n_1 = ${M.n(d.n1, 'mol')}` +
+      TEX`n_2 = ${M.n(d.n2, 'mol')}` + TEX`\Delta n = n_1 - n_2` + TEX`\Delta n = ${M.n(d.n1)} - ${M.n(d.n2)}` + TEXA`\Delta n = ${M.n(d.dn, 'mol')}` +
+      '<p class="st">That is ' + H.n(100 * d.frac, '%') + ' of the gas.</p>' +
+      '<h4>2 · Mass of oxygen used (M = 32 g/mol)</h4>' +
+      TEX`\Delta m = \Delta n \times M` + TEX`\Delta m = (${M.n(d.dn)})(0.032\,\text{kg/mol})` + TEXA`\Delta m = ${M.n(d.dm, 'kg')}` +
       '<p class="note">Shortcut: fraction used = (P₁ − P₂)/P₁. The gauge reading tells you how much is left.</p>';
-    if (mode === 'balloon') return '<h4>1 · Same pressure inside and out (the bottom is open): ρ = PM/RT</h4><div class="eq">ρ<sub>out</sub> = (101 000)(0.029)/(8.31 × ' + d.To + ') = <b>' + H.n(d.ro, 'kg/m³') + '</b></div>' +
-      '<div class="eq">ρ<sub>in</sub> = (101 000)(0.029)/(8.31 × ' + d.Ti + ') = <b>' + H.n(d.ri, 'kg/m³') + '</b>: hotter air is less dense</div>' +
-      '<h4>2 · Net upward force = buoyancy − weight of hot air inside</h4><div class="eq">F = (ρ<sub>out</sub> − ρ<sub>in</sub>)Vg = (' + fnum(d.ro) + ' − ' + fnum(d.ri) + ')(' + H.iv('V') + ')(10) = <b>' + H.n(d.lift, 'N') + '</b></div>' +
-      '<div class="eq">It can lift up to <b>' + H.n(d.mass, 'kg') + '</b> of envelope, basket and people.</div>' +
+    if (mode === 'balloon') return '<h4>1 · Same pressure inside and out (the bottom is open): ρ = PM/RT</h4>' +
+      TEX`\rho_{\text{out}} = \frac{P M}{R T_{\text{out}}}` + TEX`\rho_{\text{out}} = \frac{(101\,000)(0.029)}{(8.31)(${M.n(d.To, 'K')})}` + TEXA`\rho_{\text{out}} = ${M.n(d.ro, 'kg/m³')}` +
+      TEX`\rho_{\text{in}} = \frac{P M}{R T_{\text{in}}}` + TEX`\rho_{\text{in}} = \frac{(101\,000)(0.029)}{(8.31)(${M.n(d.Ti, 'K')})}` + TEXA`\rho_{\text{in}} = ${M.n(d.ri, 'kg/m³')}` +
+      '<p class="st">Hotter air is less dense.</p>' +
+      '<h4>2 · Net upward force = buoyancy − weight of hot air inside</h4>' +
+      TEX`F = (\rho_{\text{out}} - \rho_{\text{in}})\,V g` + TEX`F = (${M.n(d.ro)} - ${M.n(d.ri)})(${M.iv('V')})(10)` + TEXA`F = ${M.n(d.lift, 'N')}` +
+      '<p class="st">It can lift up to this much envelope, basket and people:</p>' + TEX`m = \frac{F}{g}` + TEXA`m = ${M.n(d.mass, 'kg')}` +
       '<p class="note">On a hot day the outside air is less dense, so the balloon lifts less. Links to buoyancy from Fluids.</p>';
-    return '<h4>1 · Gas laws need absolute pressure and kelvin</h4><div class="eq">P<sub>1</sub> = gauge + atmosphere = ' + H.iv('Pg') + ' + 101 = <b>' + H.n(d.P1, 'kPa') + '</b> &nbsp; T<sub>1</sub> = ' + d.T1 + ' K, T<sub>2</sub> = ' + d.T2 + ' K</div>' +
-      '<h4>2 · Rigid tire (V constant): P/T = constant</h4><div class="eq">P<sub>2</sub> = P<sub>1</sub>T<sub>2</sub>/T<sub>1</sub> = ' + fnum(d.P1) + ' × ' + d.T2 + '/' + d.T1 + ' = <b>' + H.n(d.P2, 'kPa') + '</b> absolute</div>' +
-      '<div class="eq">Gauge reading = ' + fnum(d.P2) + ' − 101 = <b>' + H.n(d.Pg2, 'kPa') + '</b></div>' +
-      '<div class="bad">Common mistake: using gauge pressure and °C. ' + H.iv('Pg') + ' × ' + v.T2 + '/' + v.T1 + ' = ' + fnum(d.wrong) + ' kPa. Way off' + (v.T1 <= 0 ? ', and it breaks completely at or below 0 °C' : '') + '.</div>';
+    return '<h4>1 · Gas laws need absolute pressure and kelvin</h4>' +
+      TEX`P_1 = P_{\text{gauge}} + P_{\text{atm}}` + TEX`P_1 = ${M.iv('Pg')} + 101\,\text{kPa}` + TEXA`P_1 = ${M.n(d.P1, 'kPa')}` +
+      TEX`T_1 = ${M.n(d.T1, 'K')}` + TEX`T_2 = ${M.n(d.T2, 'K')}` +
+      '<h4>2 · Rigid tire (V constant): P/T = constant</h4>' +
+      TEX`P_2 = P_1\,\frac{T_2}{T_1}` + TEX`P_2 = (${M.n(d.P1)})\left(\frac{${M.n(d.T2)}}{${M.n(d.T1)}}\right)` + TEXA`P_2 = ${M.n(d.P2, 'kPa')}` + '<p class="st">That is the absolute pressure. The gauge reading:</p>' +
+      TEX`P_{\text{gauge,2}} = P_2 - P_{\text{atm}}` + TEX`P_{\text{gauge,2}} = ${M.n(d.P2)} - 101` + TEXA`P_{\text{gauge,2}} = ${M.n(d.Pg2, 'kPa')}` +
+      '<div class="bad"><p class="st">Common mistake: using gauge pressure and °C.</p>' + TEX`P = (${M.iv('Pg')})\left(\frac{${M.n(v.T2)}}{${M.n(v.T1)}}\right)` + TEX`P = ${M.n(d.wrong, 'kPa')}` +
+      '<p class="st">Way off' + (v.T1 <= 0 ? ', and it breaks completely at or below 0 °C' : '') + '.</p></div>';
   },
   draw(v, d, mode, opt, t, dt, A){
     if (A.s === undefined || A.reset) A.s = 0; A.s = (A.s + dt / 4) % 1.25; const s = Math.min(1, A.s);

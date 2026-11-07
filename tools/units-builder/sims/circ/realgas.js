@@ -21,10 +21,12 @@ const SIM = {
   dvs(){ return [{ id: 'Z', name: 'Compression factor Z = PV/nRT', short: 'Z', sym: 'Z', unit: '', f: d => d.Z }, { id: 'dev', name: 'Error if you assume ideal', short: 'error', sym: 'error', unit: '%', f: d => d.dev }]; },
   work(v, d){
     const ok = Math.abs(d.dev) < 5;
-    return '<h4>1 · Ideal gas model assumptions</h4><div class="eq">Molecules have <b>no volume</b> and <b>no forces</b> between them except in collisions. Then PV = nRT exactly and Z = 1.</div>' +
-      '<h4>2 · Real ' + d.nm + ' at ' + H.iv('P') + ' and ' + H.iv('T') + '</h4><div class="eq">Molar volume V<sub>m</sub> = ' + H.n(d.V * 1000, 'L/mol') + ' (ideal would be ' + H.n(d.Vid * 1000, 'L/mol') + ')</div>' +
-      '<div class="eq">Z = PV<sub>m</sub>/RT = <b>' + H.n(d.Z) + '</b> → assuming ideal is off by ' + H.n(d.dev, '%') + (ok ? ': ideal is a good model here.' : ': ideal is a poor model here.') + '</div>' +
-      '<h4>3 · Why it goes wrong</h4><div class="eq"><b>Z &lt; 1:</b> molecules attract, so they hit the walls less hard (more noticeable when slow, at low T).<br><b>Z &gt; 1:</b> molecules take up space, which matters when they’re squeezed close (high P, high density).</div>' +
+    return '<h4>1 · Ideal gas model assumptions</h4><p class="st">Molecules have <b>no volume</b> and <b>no forces</b> between them except in collisions. Then PV = nRT exactly and Z = 1.</p>' +
+      '<h4>2 · Real ' + d.nm + ' at ' + H.iv('P') + ' and ' + H.iv('T') + '</h4>' +
+      TEX`V_m = ${M.n(d.V * 1000, 'L/mol')}` + '<p class="st">An ideal gas would have:</p>' + TEX`V_{\text{ideal}} = \frac{RT}{P}` + TEXA`V_{\text{ideal}} = ${M.n(d.Vid * 1000, 'L/mol')}` +
+      TEX`Z = \frac{P V_m}{R T}` + TEX`Z = \frac{(${M.n(v.P * 1e6, 'Pa')})(${M.n(d.V, 'm³/mol')})}{(8.31)(${M.iv('T')})}` + TEXA`Z = ${M.n(d.Z)}` +
+      '<p class="st">Assuming ideal is off by:</p>' + TEX`\text{error} = 100\,(Z - 1)` + TEXA`\text{error} = ${M.n(d.dev, '%')}` + '<p class="st">' + (ok ? 'Ideal is a good model here.' : 'Ideal is a poor model here.') + '</p>' +
+      '<h4>3 · Why it goes wrong</h4><p class="st"><b>Z &lt; 1:</b> molecules attract, so they hit the walls less hard (more noticeable when slow, at low T).</p><p class="st"><b>Z &gt; 1:</b> molecules take up space, which matters when they’re squeezed close (high P, high density).</p>' +
       '<p class="note">IB: an ideal gas is a good approximation at <b>low pressure, high temperature and low density</b>. Helium behaves best: tiny atoms, very weak attractions.</p>';
   },
   draw(v, d, mode, opt){

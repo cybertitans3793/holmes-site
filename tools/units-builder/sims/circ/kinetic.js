@@ -33,22 +33,38 @@ const SIM = {
     return [{ id: 'P', name: 'Pressure', short: 'P', sym: 'P', unit: 'Pa', f: d => d.P }, { id: 'vrms', name: 'rms speed', short: 'v_rms', sym: 'v<sub>rms</sub>', unit: 'm/s', f: d => d.vrms }, { id: 'KE', name: 'Average KE per molecule', short: 'KE', sym: 'KE<sub>avg</sub>', unit: 'J', f: d => d.KE }, { id: 'U', name: 'Internal energy (monatomic)', short: 'U', sym: 'U', unit: 'J', f: d => d.U }];
   },
   work(v, d, mode, opt){
-    if (mode === 'mix') return '<h4>1 · Same temperature → same average kinetic energy</h4><div class="eq">KE<sub>avg</sub> = (3/2)k<sub>B</sub>T = 1.5 × 1.38×10⁻²³ × ' + H.iv('T') + ' = <b>' + H.n(d.KE, 'J') + '</b> for helium <i>and</i> argon</div>' +
-      '<h4>2 · Same KE, different mass → different speeds</h4><div class="eq">½mv<sub>rms</sub>² = (3/2)k<sub>B</sub>T → v<sub>rms</sub> = √(3k<sub>B</sub>T/m)</div>' +
-      '<div class="eq">He (4 u): v<sub>rms</sub> = <b>' + H.n(d.vHe, 'm/s') + '</b> &nbsp; Ar (40 u): v<sub>rms</sub> = <b>' + H.n(d.vAr, 'm/s') + '</b></div>' +
-      '<div class="eq">Ratio = √(40/4) = √10 = ' + H.n(d.ratio) + ': the lighter atoms are faster, but each carries the same KE on average.</div>' +
+    if (mode === 'mix') return '<h4>1 · Same temperature → same average kinetic energy</h4>' +
+      TEX`KE_{\text{avg}} = \frac{3}{2}\,k_B T` + TEX`KE_{\text{avg}} = (1.5)(1.38\times10^{-23}\,\text{J/K})(${M.iv('T')})` + TEXA`KE_{\text{avg}} = ${M.n(d.KE, 'J')}` +
+      '<p class="st">The same for helium <i>and</i> argon.</p>' +
+      '<h4>2 · Same KE, different mass → different speeds</h4>' +
+      TEX`\tfrac{1}{2} m v_{\text{rms}}^2 = \tfrac{3}{2}\,k_B T` + TEX`v_{\text{rms}} = \sqrt{\frac{3 k_B T}{m}}` +
+      '<p class="st">Helium (4 u):</p>' + TEX`v_{\text{rms}} = \sqrt{\frac{3(1.38\times10^{-23})(${M.iv('T')})}{(4)(1.66\times10^{-27}\,\text{kg})}}` + TEXA`v_{\text{rms,He}} = ${M.n(d.vHe, 'm/s')}` +
+      '<p class="st">Argon (40 u):</p>' + TEX`v_{\text{rms}} = \sqrt{\frac{3(1.38\times10^{-23})(${M.iv('T')})}{(40)(1.66\times10^{-27}\,\text{kg})}}` + TEXA`v_{\text{rms,Ar}} = ${M.n(d.vAr, 'm/s')}` +
+      '<p class="st">The lighter atoms are faster, but each carries the same KE on average.</p>' +
+      TEX`\frac{v_{\text{rms,He}}}{v_{\text{rms,Ar}}} = \sqrt{\frac{40}{4}}` + TEXA`\frac{v_{\text{rms,He}}}{v_{\text{rms,Ar}}} = \sqrt{10} = ${M.n(d.ratio)}` +
       '<p class="note">Classic trap: “hotter means faster” is only true for the same gas. The curves on the right have different shapes, but the same T.</p>';
-    if (mode === 'wall') return '<h4>1 · Each hit reverses the molecule’s momentum</h4><div class="eq">Δp = mv − (−mv) = 2mv<sub>x</sub> = 2(' + H.n(d.m, 'kg') + ')(' + H.iv('vx') + ') = <b>' + H.n(d.dp, 'kg·m/s') + '</b></div>' +
-      '<h4>2 · Time between hits on the same wall: there and back</h4><div class="eq">Δt = 2L/v<sub>x</sub> = 2(' + H.iv('L') + ')/' + H.iv('vx') + ' = ' + H.n(d.dt, 's') + '</div>' +
-      '<h4>3 · Average force = momentum change per time</h4><div class="eq">F = Δp/Δt = 2mv<sub>x</sub> ÷ (2L/v<sub>x</sub>) = mv<sub>x</sub>²/L = <b>' + H.n(d.F, 'N') + '</b></div>' +
-      '<h4>4 · Many molecules, three directions</h4><div class="eq">On average v<sub>x</sub>² = v²/3. With N molecules in volume V = L³: P = F/L² = Nmv²/(3V) = <b>⅓ρv²</b></div>' +
+    if (mode === 'wall') return '<h4>1 · Each hit reverses the molecule’s momentum</h4>' +
+      TEX`\Delta p = mv_x - (-mv_x)` + TEX`\Delta p = 2 m v_x` + TEX`\Delta p = 2(${M.n(d.m, 'kg')})(${M.iv('vx')})` + TEXA`\Delta p = ${M.n(d.dp, 'kg·m/s')}` +
+      '<h4>2 · Time between hits on the same wall: there and back</h4>' +
+      TEX`\Delta t = \frac{2L}{v_x}` + TEX`\Delta t = \frac{2(${M.iv('L')})}{${M.iv('vx')}}` + TEXA`\Delta t = ${M.n(d.dt, 's')}` +
+      '<h4>3 · Average force = momentum change per time</h4>' +
+      TEX`F = \frac{\Delta p}{\Delta t}` + TEX`F = \frac{2 m v_x}{2L / v_x}` + TEX`F = \frac{m v_x^2}{L}` + TEXA`F = ${M.n(d.F, 'N')}` +
+      '<h4>4 · Many molecules, three directions</h4><p class="st">On average, v<sub>x</sub>² = v²/3. With N molecules in volume V = L³:</p>' +
+      TEX`P = \frac{F}{L^2}` + TEX`P = \frac{N m v^2}{3V}` + TEXA`P = \tfrac{1}{3}\rho v^2` +
       '<p class="note">Double the speed: twice the momentum per hit <i>and</i> twice as many hits → 4× the force. That’s why P ∝ v² ∝ T.</p>';
     const g = opt.gas || 'N2';
-    return '<h4>1 · Temperature measures the average kinetic energy</h4><div class="eq">KE<sub>avg</sub> = (3/2)k<sub>B</sub>T = 1.5 × 1.38×10⁻²³ × ' + H.iv('T') + ' = <b>' + H.n(d.KE, 'J') + '</b></div>' +
-      '<h4>2 · rms speed of ' + g.replace('2', '₂') + ' (' + d.M + ' u = ' + fnum(d.m) + ' kg)</h4><div class="eq">v<sub>rms</sub> = √(3k<sub>B</sub>T/m) = <b>' + H.n(d.vrms, 'm/s') + '</b></div>' +
-      '<h4>3 · Pressure from the ideal gas law</h4><div class="eq">P = nRT/V = (' + H.iv('n') + ')(8.31)(' + H.iv('T') + ') / (' + H.n(v.V / 1000, 'm³') + ') = <b>' + H.n(d.P, 'Pa') + '</b></div>' +
-      '<h4>4 · <span style="color:#7a3fb0">IB</span> Same pressure from the molecules: P = ⅓ρv<sub>rms</sub>²</h4><div class="eq">ρ = nM/V = ' + H.n(d.rho, 'kg/m³') + ' → ⅓ρv² = ⅓(' + fnum(d.rho) + ')(' + fnum(d.vrms) + ')² = ' + H.n(d.Pk, 'Pa') + ' ✓</div>' +
-      '<h4>5 · Internal energy (ideal monatomic gas)</h4><div class="eq">U = (3/2)nRT = ' + H.n(d.U, 'J') + '. No potential energy: ideal-gas molecules only interact when they collide.</div>' +
+    return '<h4>1 · Temperature measures the average kinetic energy</h4>' +
+      TEX`KE_{\text{avg}} = \frac{3}{2}\,k_B T` + TEX`KE_{\text{avg}} = (1.5)(1.38\times10^{-23}\,\text{J/K})(${M.iv('T')})` + TEXA`KE_{\text{avg}} = ${M.n(d.KE, 'J')}` +
+      '<h4>2 · rms speed of ' + g.replace('2', '₂') + ' (' + d.M + ' u = ' + fnum(d.m) + ' kg)</h4>' +
+      TEX`v_{\text{rms}} = \sqrt{\frac{3 k_B T}{m}}` + TEX`v_{\text{rms}} = \sqrt{\frac{3(1.38\times10^{-23}\,\text{J/K})(${M.iv('T')})}{${M.n(d.m, 'kg')}}}` + TEXA`v_{\text{rms}} = ${M.n(d.vrms, 'm/s')}` +
+      '<h4>3 · Pressure from the ideal gas law</h4>' +
+      TEX`P = \frac{nRT}{V}` + TEX`P = \frac{(${M.iv('n')})(8.31\,\text{J/(mol·K)})(${M.iv('T')})}{${M.n(v.V / 1000, 'm³')}}` + TEXA`P = ${M.n(d.P, 'Pa')}` +
+      '<h4>4 · <span style="color:#7a3fb0">IB</span> Same pressure from the molecules: P = ⅓ρv<sub>rms</sub>²</h4>' +
+      TEX`\rho = \frac{nM}{V}` + TEX`\rho = ${M.n(d.rho, 'kg/m³')}` +
+      TEX`P = \tfrac{1}{3}\rho v_{\text{rms}}^2` + TEX`P = \tfrac{1}{3}(${M.n(d.rho)})(${M.n(d.vrms)})^2` + TEXA`P = ${M.n(d.Pk, 'Pa')}` + '<p class="st">It matches step 3 ✓</p>' +
+      '<h4>5 · Internal energy (ideal monatomic gas)</h4>' +
+      TEX`U = \frac{3}{2}\,nRT` + TEX`U = (1.5)(${M.iv('n')})(8.31\,\text{J/(mol·K)})(${M.iv('T')})` + TEXA`U = ${M.n(d.U, 'J')}` +
+      '<p class="st">No potential energy: ideal-gas molecules only interact when they collide.</p>' +
       '<p class="note">The speeds are spread out (Maxwell–Boltzmann). Raising T moves the peak right and flattens the curve; the area stays 1.</p>';
   },
   draw(v, d, mode, opt, t, dt, A){

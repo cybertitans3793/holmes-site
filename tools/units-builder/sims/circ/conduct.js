@@ -36,22 +36,35 @@ const SIM = {
     return [{ id: 'P', name: 'Rate of energy flow', short: 'P', sym: 'ΔQ/Δt', unit: 'W', f: d => d.P }, { id: 'kwh', name: 'Energy lost per day', short: 'E/day', sym: 'E<sub>day</sub>', unit: 'kWh', f: d => d.kwh }];
   },
   work(v, d, mode){
-    if (mode === 'convect') return '<h4>1 · Heating the bottom</h4><div class="eq">Water at the bottom is heated by conduction from the hot pot. Its particles move faster and spread out, so it <b>expands</b> and becomes <b>less dense</b>.</div>' +
-      '<h4>2 · Convection: the fluid itself moves</h4><div class="eq">The warm, less dense water <b>rises</b> (buoyancy). Cooler, denser water at the top <b>sinks</b> to take its place. The loop (a convection current) carries energy through the whole pot.</div>' +
-      '<h4>3 · Radiation: no material needed</h4><div class="eq">The burner and the pot also give off infrared radiation (your hand feels it from the side). Radiation is the only way energy reaches us from the Sun through empty space. Hotter objects radiate much more.</div>' +
+    if (mode === 'convect') return '<h4>1 · Heating the bottom</h4><p class="st">Water at the bottom is heated by conduction from the hot pot. Its particles move faster and spread out, so it <b>expands</b> and becomes <b>less dense</b>.</p>' +
+      '<h4>2 · Convection: the fluid itself moves</h4><p class="st">The warm, less dense water <b>rises</b> (buoyancy). Cooler, denser water at the top <b>sinks</b> to take its place. The loop (a convection current) carries energy through the whole pot.</p>' +
+      '<h4>3 · Radiation: no material needed</h4><p class="st">The burner and the pot also give off infrared radiation (your hand feels it from the side). Radiation is the only way energy reaches us from the Sun through empty space. Hotter objects radiate much more.</p>' +
       '<p class="note">Three ways energy moves as heat: <b>conduction</b> (particles bump neighbors, mainly solids), <b>convection</b> (the fluid moves and carries energy, liquids and gases), <b>radiation</b> (electromagnetic waves, works in a vacuum). Why is a heater placed low in a room and an air conditioner high?</p>';
-    if (mode === 'touch') return '<h4>1 · Same temperature, but they don’t feel the same</h4><div class="eq">Tile and mat are both at ' + H.iv('Tr') + '. Your foot is about 33 °C, so ΔT = ' + H.n(d.dT, '°C') + ' for both.</div>' +
-      '<h4>2 · What you feel is the RATE energy leaves your foot</h4><div class="eq">Tile (k ≈ 1.0): ΔQ/Δt = kAΔT/Δx = (1.0)(' + fnum(v.A / 1e4) + ')(' + fnum(d.dT) + ')/(0.01) = <b>' + H.n(d.Pt, 'W') + '</b></div>' +
-      '<div class="eq">Mat (k ≈ 0.04): <b>' + H.n(d.Pm, 'W') + '</b> → the tile pulls energy ' + fnum(d.ratio) + '× faster</div>' +
+    if (mode === 'touch') return '<h4>1 · Same temperature, but they don’t feel the same</h4><p class="st">Tile and mat are both at ' + H.iv('Tr') + '. Your foot is about 33 °C, so:</p>' +
+      TEX`\Delta T = 33 - ${M.iv('Tr', 1)}` + TEXA`\Delta T = ${M.n(d.dT, '°C')}` + '<p class="st">for both.</p>' +
+      '<h4>2 · What you feel is the RATE energy leaves your foot</h4>' +
+      TEX`\frac{\Delta Q}{\Delta t} = \frac{k A\,\Delta T}{\Delta x}` + '<p class="st">Tile (k ≈ 1.0):</p>' +
+      TEX`\frac{\Delta Q}{\Delta t} = \frac{(1.0)(${M.n(v.A / 1e4, 'm²')})(${M.n(d.dT, '°C')})}{0.01\,\text{m}}` + TEXA`P_{\text{tile}} = ${M.n(d.Pt, 'W')}` +
+      '<p class="st">Mat (k ≈ 0.04):</p>' +
+      TEX`\frac{\Delta Q}{\Delta t} = \frac{(0.04)(${M.n(v.A / 1e4, 'm²')})(${M.n(d.dT, '°C')})}{0.01\,\text{m}}` + TEXA`P_{\text{mat}} = ${M.n(d.Pm, 'W')}` +
+      '<p class="st">The tile pulls energy out faster:</p>' + TEXA`\frac{P_{\text{tile}}}{P_{\text{mat}}} = ${M.n(d.ratio)}` +
       '<p class="note">Thermal conductivity k is a property of the material: how its atoms are arranged and interact (CED 9.5.B.2). “The tile is colder” is the wrong explanation: it isn’t.</p>';
-    if (mode === 'rod') return '<h4>1 · Conduction through a rod: ΔQ/Δt = kAΔT/L</h4><div class="eq">' + d.nm + ': k = ' + d.k + ' W/(m·K), A = ' + H.n(v.A / 1e4, 'm²') + ', L = ' + H.n(v.L / 100, 'm') + ', ΔT = 100 − ' + H.p(v.Tc) + ' = ' + H.n(d.dT, '°C') + '</div>' +
-      '<div class="eq">ΔQ/Δt = (' + d.k + ')(' + fnum(v.A / 1e4) + ')(' + fnum(d.dT) + ')/(' + fnum(v.L / 100) + ') = <b>' + H.n(d.P, 'W') + '</b></div>' +
-      '<h4>2 · Steady state: temperature drops evenly along the rod</h4><div class="eq">Temperature gradient ΔT/L = ' + H.n(d.grad, '°C/cm') + '</div>' +
-      '<h4>3 · <span style="color:#7a3fb0">IB</span> Link to latent heat: how fast does it melt the ice?</h4><div class="eq">Mass per minute = (ΔQ/Δt × 60)/L<sub>f</sub> = <b>' + H.n(d.melt, 'g') + '</b></div>' +
+    if (mode === 'rod') return '<h4>1 · Conduction through a rod: ΔQ/Δt = kAΔT/L</h4>' +
+      '<p class="st">' + d.nm + ': k = ' + d.k + ' W/(m·K).</p>' +
+      TEX`A = ${M.n(v.A / 1e4, 'm²')}` + TEX`L = ${M.n(v.L / 100, 'm')}` +
+      TEX`\Delta T = 100\,^{\circ}\text{C} - T_{\text{cold}}` + TEX`\Delta T = 100 - ${M.p(v.Tc, '°C')}` + TEXA`\Delta T = ${M.n(d.dT, '°C')}` +
+      TEX`\frac{\Delta Q}{\Delta t} = \frac{k A\,\Delta T}{L}` + TEX`\frac{\Delta Q}{\Delta t} = \frac{(${M.n(d.k)})(${M.n(v.A / 1e4)})(${M.n(d.dT)})}{${M.n(v.L / 100)}}` + TEXA`\frac{\Delta Q}{\Delta t} = ${M.n(d.P, 'W')}` +
+      '<h4>2 · Steady state: temperature drops evenly along the rod</h4>' +
+      TEX`\frac{\Delta T}{L} = \frac{${M.n(d.dT, '°C')}}{${M.n(v.L, 'cm')}}` + TEXA`\frac{\Delta T}{L} = ${M.n(d.grad, '°C/cm')}` +
+      '<h4>3 · <span style="color:#7a3fb0">IB</span> Link to latent heat: how fast does it melt the ice?</h4>' +
+      TEX`\frac{m}{t} = \frac{(\Delta Q/\Delta t)(60\,\text{s})}{L_f}` + TEX`\frac{m}{t} = \frac{(${M.n(d.P, 'W')})(60\,\text{s})}{334\,\text{J/g}}` + TEXA`\frac{m}{t} = ${M.n(d.melt, 'g')}\,\text{per minute}` +
       '<p class="note">Double the length → half the rate. Double the area → twice the rate. Lab idea: measure ice melted per minute for rods of different lengths and graph rate vs 1/L.</p>';
-    return '<h4>1 · Rate of conduction: ΔQ/Δt = kAΔT/Δx</h4><div class="eq">' + d.nm + ': k = ' + d.k + ' W/(m·K), ΔT = ' + v.Ti + ' − ' + H.p(v.To) + ' = ' + H.n(d.dT, '°C') + ' (same size in K)</div>' +
-      '<div class="eq">ΔQ/Δt = (' + d.k + ')(' + H.iv('A') + ')(' + fnum(d.dT) + ')/(' + fnum(v.dx / 100) + ' m) = <b>' + H.n(d.P, 'W') + '</b></div>' +
-      '<h4>2 · Over a whole day</h4><div class="eq">E = P × 86 400 s = ' + H.n(d.day, 'MJ') + ' = <b>' + H.n(d.kwh, 'kWh') + '</b></div>' +
+    return '<h4>1 · Rate of conduction: ΔQ/Δt = kAΔT/Δx</h4>' +
+      '<p class="st">' + d.nm + ': k = ' + d.k + ' W/(m·K).</p>' +
+      TEX`\Delta T = T_{\text{in}} - T_{\text{out}}` + TEX`\Delta T = ${M.iv('Ti')} - ${M.p(v.To, '°C')}` + TEXA`\Delta T = ${M.n(d.dT, '°C')}` + '<p class="st">Same size in K.</p>' +
+      TEX`\frac{\Delta Q}{\Delta t} = \frac{k A\,\Delta T}{\Delta x}` + TEX`\frac{\Delta Q}{\Delta t} = \frac{(${M.n(d.k)})(${M.iv('A')})(${M.n(d.dT)})}{${M.n(v.dx / 100, 'm')}}` + TEXA`\frac{\Delta Q}{\Delta t} = ${M.n(d.P, 'W')}` +
+      '<h4>2 · Over a whole day</h4>' +
+      TEX`E = P\,\Delta t` + TEX`E = (${M.n(d.P, 'W')})(86\,400\,\text{s})` + TEX`E = ${M.n(d.day, 'MJ')}` + TEXA`E = ${M.n(d.kwh, 'kWh')}` +
       '<p class="note">Rate ∝ A and ΔT, ∝ 1/Δx. Thin glass loses a lot; that’s why houses use double glazing (a trapped air layer, k ≈ 0.025) and foam in the walls.</p>';
   },
   draw(v, d, mode, opt, t){

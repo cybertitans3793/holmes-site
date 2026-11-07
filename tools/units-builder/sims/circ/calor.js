@@ -41,20 +41,33 @@ const SIM = {
     if (mode === 'metal') l.push({ id: 'cBack', name: 'c found if you ignore the cup', short: 'c_found', sym: 'c<sub>found</sub>', unit: 'J/(kg·K)', f: d => d.cBack });
     return l; },
   work(v, d, mode, opt){
-    if (mode === 'mix') return '<h4>1 · Isolated system: energy lost by hot = energy gained by cold</h4><div class="eq">m<sub>h</sub>c(T<sub>h</sub> − T<sub>f</sub>) = m<sub>c</sub>c(T<sub>f</sub> − T<sub>c</sub>)</div>' +
-      '<h4>2 · Same substance, so c cancels</h4><div class="eq">T<sub>f</sub> = (m<sub>h</sub>T<sub>h</sub> + m<sub>c</sub>T<sub>c</sub>)/(m<sub>h</sub> + m<sub>c</sub>) = (' + H.iv('m1') + '·' + v.T1 + ' + ' + H.iv('m2') + '·' + v.T2 + ')/' + fnum(v.m1 + v.m2) + ' = <b>' + H.n(d.Tf, '°C') + '</b></div>' +
-      '<div class="eq">Q = m<sub>h</sub>c(T<sub>h</sub> − T<sub>f</sub>) = <b>' + H.n(d.Q, 'J') + '</b></div><p class="note">A mass-weighted average: the final temperature is closer to whichever has more mass.</p>';
+    if (mode === 'mix') return '<h4>1 · Isolated system: energy lost by hot = energy gained by cold</h4>' + TEX`m_h c\,(T_h - T_f) = m_c c\,(T_f - T_c)` +
+      '<h4>2 · Same substance, so c cancels</h4>' +
+      TEX`T_f = \frac{m_h T_h + m_c T_c}{m_h + m_c}` + TEX`T_f = \frac{(${M.iv('m1')})(${M.iv('T1', 1)}) + (${M.iv('m2')})(${M.iv('T2', 1)})}{${M.n(v.m1 + v.m2, 'kg')}}` + TEXA`T_f = ${M.n(d.Tf, '°C')}` +
+      TEX`Q = m_h c\,(T_h - T_f)` + TEX`Q = (${M.iv('m1')})(4186\,\text{J/(kg·K)})(${M.iv('T1', 1)} - ${M.n(d.Tf)})` + TEXA`Q = ${M.n(d.Q, 'J')}` +
+      '<p class="note">A mass-weighted average: the final temperature is closer to whichever has more mass.</p>';
     if (mode === 'ice'){
-      let h = '<h4>1 · What the ice needs to melt completely</h4><div class="eq">Warm to 0 °C: m<sub>i</sub>c<sub>ice</sub>(0 − T<sub>i</sub>) = ' + H.n(d.warm, 'J') + ' &nbsp; Melt: m<sub>i</sub>L<sub>f</sub> = ' + H.n(d.melt, 'J') + ' &nbsp; Total ' + H.n(d.warm + d.melt, 'J') + '</div>' +
-        '<h4>2 · What the drink can give before it hits 0 °C</h4><div class="eq">m<sub>d</sub>c<sub>w</sub>(T<sub>d</sub> − 0) = ' + H.n(d.avail, 'J') + '</div>';
-      if (d.all) h += '<h4>3 · Enough: all the ice melts, then everything warms together</h4><div class="eq">m<sub>d</sub>c<sub>w</sub>(T<sub>d</sub> − T<sub>f</sub>) = warm + melt + m<sub>i</sub>c<sub>w</sub>(T<sub>f</sub> − 0)</div><div class="eq">T<sub>f</sub> = <b>' + H.n(d.Tf, '°C') + '</b></div>';
-      else h += '<h4>3 · Not enough: it stops at 0 °C with ice left over</h4><div class="eq">Melted = (available − warm)/L<sub>f</sub> = (' + fnum(d.avail) + ' − ' + fnum(d.warm) + ')/3.34×10⁵ = <b>' + H.n(d.melted, 'kg') + '</b> of ' + H.iv('mi') + '. T<sub>f</sub> = <b>0 °C</b></div>';
+      let h = '<h4>1 · What the ice needs to melt completely</h4><p class="st">Warm to 0 °C:</p>' +
+        TEX`Q_{\text{warm}} = m_i c_{\text{ice}}(0 - T_i)` + TEX`Q_{\text{warm}} = (${M.iv('mi')})(2100\,\text{J/(kg·K)})(0 - ${M.p(v.Ti, '°C')})` + TEXA`Q_{\text{warm}} = ${M.n(d.warm, 'J')}` +
+        '<p class="st">Melt:</p>' + TEX`Q_{\text{melt}} = m_i L_f` + TEX`Q_{\text{melt}} = (${M.iv('mi')})(3.34\times10^{5}\,\text{J/kg})` + TEXA`Q_{\text{melt}} = ${M.n(d.melt, 'J')}` +
+        '<p class="st">Total:</p>' + TEX`Q_{\text{total}} = Q_{\text{warm}} + Q_{\text{melt}}` + TEXA`Q_{\text{total}} = ${M.n(d.warm + d.melt, 'J')}` +
+        '<h4>2 · What the drink can give before it hits 0 °C</h4>' +
+        TEX`Q_{\text{avail}} = m_d c_w (T_d - 0)` + TEX`Q_{\text{avail}} = (${M.iv('md')})(4186\,\text{J/(kg·K)})(${M.iv('Td')})` + TEXA`Q_{\text{avail}} = ${M.n(d.avail, 'J')}`;
+      if (d.all) h += '<h4>3 · Enough: all the ice melts, then everything warms together</h4>' +
+        TEX`m_d c_w (T_d - T_f) = Q_{\text{warm}} + Q_{\text{melt}} + m_i c_w (T_f - 0)` + TEXA`T_f = ${M.n(d.Tf, '°C')}`;
+      else h += '<h4>3 · Not enough: it stops at 0 °C with ice left over</h4>' +
+        TEX`m_{\text{melted}} = \frac{Q_{\text{avail}} - Q_{\text{warm}}}{L_f}` + TEX`m_{\text{melted}} = \frac{${M.n(d.avail)} - ${M.n(d.warm)}}{3.34\times10^{5}}` + TEXA`m_{\text{melted}} = ${M.n(d.melted, 'kg')}` +
+        '<p class="st">of the ' + H.iv('mi') + ' of ice. The drink ends at:</p>' + TEXA`T_f = 0\,^{\circ}\text{C}`;
       return h + '<p class="note">Always check first whether all the ice melts. If you just solve for T<sub>f</sub> and get a negative answer, the assumption was wrong. Melting needs a lot of energy: 1 kg of ice takes as much to melt as heating 1 kg of water by 80 °C.</p>';
     }
-    return '<h4>1 · Energy lost by the metal = energy gained by the water' + (v.Cc ? ' and cup' : '') + '</h4><div class="eq">m<sub>m</sub>c<sub>m</sub>(T<sub>m</sub> − T<sub>f</sub>) = (m<sub>w</sub>c<sub>w</sub>' + (v.Cc ? ' + C<sub>cup</sub>' : '') + ')(T<sub>f</sub> − T<sub>w</sub>)</div>' +
-      '<h4>2 · Solve for T<sub>f</sub> (' + d.nm + ', c = ' + d.cm + ' J/(kg·K))</h4><div class="eq">T<sub>f</sub> = <b>' + H.n(d.Tf, '°C') + '</b>. The water warms only a little: c<sub>water</sub> is huge.</div>' +
-      '<div class="eq">Q = ' + H.n(d.Q, 'J') + ' left the metal</div>' +
-      '<h4>3 · Lab version: measure T<sub>f</sub>, find c</h4><div class="eq">c<sub>m</sub> = m<sub>w</sub>c<sub>w</sub>(T<sub>f</sub> − T<sub>w</sub>)/(m<sub>m</sub>(T<sub>m</sub> − T<sub>f</sub>)) = <b>' + H.n(d.cBack, 'J/(kg·K)') + '</b>' + (v.Cc ? ' <span class="bad">too low: the cup took some energy you didn’t count</span>' : ' ✓') + '</div>' +
+    return '<h4>1 · Energy lost by the metal = energy gained by the water' + (v.Cc ? ' and cup' : '') + '</h4>' +
+      (v.Cc ? TEX`m_m c_m (T_m - T_f) = (m_w c_w + C_{\text{cup}})(T_f - T_w)` : TEX`m_m c_m (T_m - T_f) = m_w c_w (T_f - T_w)`) +
+      '<h4>2 · Solve for T<sub>f</sub> (' + d.nm + ', c = ' + d.cm + ' J/(kg·K))</h4><p class="st">The water warms only a little: c<sub>water</sub> is huge.</p>' +
+      TEXA`T_f = ${M.n(d.Tf, '°C')}` +
+      '<p class="st">Energy that left the metal:</p>' + TEXA`Q = ${M.n(d.Q, 'J')}` +
+      '<h4>3 · Lab version: measure T<sub>f</sub>, find c</h4>' +
+      TEX`c_m = \frac{m_w c_w (T_f - T_w)}{m_m (T_m - T_f)}` + TEX`c_m = \frac{(${M.iv('mw')})(4186)(${M.n(d.Tf)} - ${M.iv('Tw', 1)})}{(${M.iv('mm')})(${M.iv('Tm', 1)} - ${M.n(d.Tf)})}` + TEXA`c_m = ${M.n(d.cBack, 'J/(kg·K)')}` +
+      (v.Cc ? '<div class="bad">Too low: the cup took some energy you didn’t count.</div>' : '<p class="st">✓</p>') +
       '<p class="note">Sources of error FRQs ask about: heat lost to the cup and air, metal cooling while being moved, water evaporating. Each one makes c<sub>found</sub> too small.</p>';
   },
   draw(v, d, mode, opt, t, dt, A){
