@@ -18,11 +18,12 @@ const SIM = {
   },
   dvs(){ return [{ id: 'K', name: 'Maximum kinetic energy of the electrons', short: 'K_max', sym: 'K<sub>max</sub>', unit: 'eV', f: d => d.Kmax }, { id: 'I', name: 'Current (fraction of maximum)', short: 'I', sym: 'I', unit: '', f: d => d.I }, { id: 'Vs', name: 'Stopping voltage', short: 'V_s', sym: 'V<sub>s</sub>', unit: 'V', f: d => d.Vs }]; },
   work(v, d){
-    let s = '<h4>1 · Energy of one photon</h4><div class="eq">E = hf = (4.14×10⁻¹⁵ eV·s)(' + H.iv('f') + ') = <b>' + H.n(d.E, 'eV') + '</b> (λ = ' + fnum(d.lam) + ' nm)</div>' +
-      '<h4>2 · Compare with the work function</h4><div class="eq">' + d.nm + ': φ = ' + fnum(d.phi) + ' eV → threshold f₀ = φ/h = ' + H.n(d.f0, 'Hz') + '</div>';
+    let s = '<h4>1 · Energy of one photon</h4>' + TEX`E = hf` + TEX`E = (4.14\times10^{-15}\,\text{eV}\cdot\text{s})(${M.iv('f')})` + TEXA`E = ${M.n(d.E, 'eV')}` + TEX`\lambda = ${M.n(d.lam, 'nm')}` +
+      '<h4>2 · Compare with the work function</h4><p class="st">' + d.nm + ':</p>' + TEX`f_0 = \frac{\phi}{h}` + TEX`f_0 = \frac{${M.n(d.phi, 'eV')}}{4.14\times10^{-15}\,\text{eV}\cdot\text{s}}` + TEXA`f_0 = ${M.n(d.f0, 'Hz')}`;
     if (!d.yes) return s + '<div class="bad">hf < φ: no single photon has enough energy to free an electron. <b>No electrons, no matter how bright the light.</b> A wave model predicted that bright enough light should eventually work — it doesn’t.</div>';
-    s += '<h4>3 · Fastest electrons</h4><div class="eq">K<sub>max</sub> = hf − φ = ' + fnum(d.E) + ' − ' + fnum(d.phi) + ' = <b>' + H.n(d.K, 'eV') + '</b> = ' + H.n(d.K * 1.6e-19, 'J') + '</div>' +
-      '<h4>4 · Stopping voltage</h4><div class="eq">To stop even the fastest electrons: eV<sub>s</sub> = K<sub>max</sub> → V<sub>s</sub> = <b>' + H.n(d.K, 'V') + '</b>. Now the battery is ' + H.iv('V') + ' → current = ' + Math.round(d.I * 100) + '% of max' + (v.V <= -d.K ? ' (all stopped)' : '') + '.</div>';
+    s += '<h4>3 · Fastest electrons</h4>' + TEX`K_{\text{max}} = hf - \phi` + TEX`K_{\text{max}} = ${M.n(d.E)} - ${M.n(d.phi)}` + TEXA`K_{\text{max}} = ${M.n(d.K, 'eV')}` + TEX`K_{\text{max}} = ${M.n(d.K * 1.6e-19, 'J')}` +
+      '<h4>4 · Stopping voltage</h4><p class="st">To stop even the fastest electrons:</p>' + TEX`eV_s = K_{\text{max}}` + TEXA`V_s = ${M.n(d.K, 'V')}` +
+      '<p class="st">Now the battery is ' + H.iv('V') + ' → current = ' + Math.round(d.I * 100) + '% of max' + (v.V <= -d.K ? ' (all stopped)' : '') + '.</p>';
     return s + '<p class="note">Brighter light = more photons → <b>more electrons</b> (more current), but each electron gets the same K<sub>max</sub>. Higher frequency → bigger K<sub>max</sub>. Graph K<sub>max</sub> vs f: slope = h, x-intercept = f₀, y-intercept = −φ. Uses: solar cells, light sensors on street lights, camera sensors.</p>';
   },
   draw(v, d, mode, opt, t, dt, A){

@@ -15,10 +15,11 @@ const SIM = {
   },
   dvs(){ return [{ id: 'k', name: 'Multiplication factor k', short: 'k', sym: 'k', unit: '', f: d => d.k }]; },
   work(v, d){
-    return '<h4>1 · Fuel rods</h4><div class="eq">Uranium enriched to ' + v.enr + '% U-235. Each fission releases about 200 MeV and 2–3 fast neutrons.</div>' +
-      '<h4>2 · Moderator</h4><div class="eq">' + (d.mod ? 'Water slows the fast neutrons down (by collisions) so U-235 can capture them and fission.' : 'With no moderator the neutrons stay fast and U-235 rarely captures them: the chain reaction dies. Water-moderated reactors shut themselves down if they lose their water.') + '</div>' +
-      '<h4>3 · Control rods</h4><div class="eq">Boron or cadmium rods <b>absorb neutrons</b>. Here k = <b>' + fnum(d.k) + '</b>: power is <b>' + d.trend + '</b>. ' + (d.trend === 'steady' ? 'Each fission causes exactly one more on average (critical).' : d.trend === 'rising' ? 'Push the rods in a little to bring k back to 1.' : 'Pull the rods out a little to bring k back to 1.') + '</div>' +
-      '<h4>4 · Getting the energy out</h4><div class="eq">Coolant carries thermal energy to the <b>heat exchanger</b>, which boils water into steam. Steam spins the <b>turbine</b>; the <b>generator</b> turns kinetic energy into electrical energy. Steam is condensed and pumped back.</div>' +
+    return '<h4>1 · Fuel rods</h4><p class="st">Uranium enriched to ' + H.iv('enr') + ' U-235. Each fission releases about 200 MeV and 2–3 fast neutrons.</p>' + TEX`E_{\text{fission}} \approx 200\,\text{MeV}` +
+      '<h4>2 · Moderator</h4><p class="st">' + (d.mod ? 'Water slows the fast neutrons down (by collisions) so U-235 can capture them and fission.' : 'With no moderator the neutrons stay fast and U-235 rarely captures them: the chain reaction dies. Water-moderated reactors shut themselves down if they lose their water.') + '</p>' +
+      '<h4>3 · Control rods</h4><p class="st">Boron or cadmium rods <b>absorb neutrons</b>. The multiplication factor:</p>' + TEXA`k = ${M.n(d.k)}` +
+      '<p class="st">Power is <b>' + d.trend + '</b>. ' + (d.trend === 'steady' ? 'Each fission causes exactly one more on average (critical).' : d.trend === 'rising' ? 'Push the rods in a little to bring k back to 1.' : 'Pull the rods out a little to bring k back to 1.') + '</p>' +
+      '<h4>4 · Getting the energy out</h4><p class="st">Coolant carries thermal energy to the <b>heat exchanger</b>, which boils water into steam. Steam spins the <b>turbine</b>; the <b>generator</b> turns kinetic energy into electrical energy. Steam is condensed and pumped back.</p>' +
       '<p class="note">Shielding: thick steel and concrete absorb neutrons and gamma rays. Nuclear → thermal → kinetic → electrical; overall about 33% efficient.</p>';
   },
   draw(v, d, mode, opt, t){

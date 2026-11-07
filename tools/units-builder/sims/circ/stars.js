@@ -26,13 +26,15 @@ const SIM = {
     return [{ id: 'R', name: 'Radius (Sun = 1)', short: 'R', sym: 'R', unit: 'R☉', f: d => d.R }];
   },
   work(v, d, mode){
-    if (mode === 'par') return '<h4>1 · What parallax is</h4><div class="eq">Photograph the star in January and again in July, from opposite sides of Earth’s orbit. A nearby star shifts against the far-away background. The parallax angle p is <b>half</b> the total shift.</div>' +
-      '<h4>2 · Distance</h4><div class="eq">d (pc) = 1/p (arcsec) = 1/' + H.iv('p') + ' = <b>' + H.n(d.d, 'pc') + '</b></div>' +
-      '<h4>3 · Convert</h4><div class="eq">1 pc = 3.26 ly = 206 265 AU = 3.086×10¹⁶ m → ' + H.n(d.ly, 'ly') + ' = ' + H.n(d.au, 'AU') + ' = ' + H.n(d.m, 'm') + '</div>' +
+    if (mode === 'par') return '<h4>1 · What parallax is</h4><p class="st">Photograph the star in January and again in July, from opposite sides of Earth’s orbit. A nearby star shifts against the far-away background. The parallax angle p is <b>half</b> the total shift.</p>' +
+      '<h4>2 · Distance</h4>' + TEX`d\,(\text{pc}) = \frac{1}{p\,(\text{arcsec})}` + TEX`d = \frac{1}{${M.iv('p')}}` + TEXA`d = ${M.n(d.d, 'pc')}` +
+      '<h4>3 · Convert</h4><p class="st">1 pc = 3.26 ly = 206 265 AU = 3.086×10¹⁶ m</p>' + TEX`d = ${M.n(d.ly, 'ly')}` + TEX`d = ${M.n(d.au, 'AU')}` + TEX`d = ${M.n(d.m, 'm')}` +
       '<p class="note">A parsec is the distance at which 1 AU subtends 1 arcsecond (1/3600 of a degree). Even the nearest star (Proxima Centauri, 0.768″) is 1.3 pc away. Telescopes on the ground can measure down to about 0.01″ (100 pc); the Gaia satellite reaches thousands of parsecs. Farther stars need other methods (their luminosity).</p>';
-    return '<h4>1 · Radius from L and T</h4><div class="eq">L = 4πR²σT⁴ → R/R☉ = √(L/L☉) × (T☉/T)² = √(' + fnum(d.L) + ') × (5778/' + H.iv('T') + ')² = <b>' + H.n(d.R, 'R☉') + '</b> (' + H.n(d.Rm, 'm') + ')</div>' +
-      '<h4>2 · Where it sits</h4><div class="eq">This star is in the <b>' + d.reg + '</b> region.' + (d.reg.startsWith('instab') ? ' Stars here are unstable: their outer layers swell and shrink, so their brightness pulses with a regular period. Brighter Cepheids pulse more slowly, so the period gives L, and comparing L with b gives the distance.' : '') + '</div>' +
-      (d.ms ? '<h4>3 · Main-sequence star (Extension: mass–luminosity)</h4><div class="eq">L ∝ M<sup>3.5</sup> → M = (' + fnum(d.L) + ')<sup>1/3.5</sup> = <b>' + H.n(d.M, 'M☉') + '</b>. Lifetime ∝ M/L ≈ 10¹⁰ yr × M<sup>−2.5</sup> = <b>' + H.n(d.life, 'yr') + '</b></div>' : '') +
+    return '<h4>1 · Radius from L and T</h4><p class="st">L = 4πR²σT⁴, compared with the Sun:</p>' + TEX`\frac{R}{R_{\odot}} = \sqrt{\frac{L}{L_{\odot}}}\left(\frac{T_{\odot}}{T}\right)^2` +
+      TEX`\frac{R}{R_{\odot}} = \sqrt{${M.n(d.L)}}\left(\frac{5778}{${M.iv('T')}}\right)^2` + TEXA`R = ${M.n(d.R, 'R☉')}` + TEX`R = ${M.n(d.Rm, 'm')}` +
+      '<h4>2 · Where it sits</h4><p class="st">This star is in the <b>' + d.reg + '</b> region.' + (d.reg.startsWith('instab') ? ' Stars here are unstable: their outer layers swell and shrink, so their brightness pulses with a regular period. Brighter Cepheids pulse more slowly, so the period gives L, and comparing L with b gives the distance.' : '') + '</p>' +
+      (d.ms ? '<h4>3 · Main-sequence star (Extension: mass–luminosity)</h4>' + TEX`L \propto M^{3.5}` + TEX`M = L^{1/3.5}` + TEX`M = (${M.n(d.L)})^{1/3.5}` + TEXA`M = ${M.n(d.M, 'M☉')}` +
+        '<p class="st">Lifetime ∝ M/L:</p>' + TEX`t \approx 10^{10}\,\text{yr} \times M^{-2.5}` + TEX`t \approx 10^{10}\,\text{yr} \times (${M.n(d.M)})^{-2.5}` + TEXA`t = ${M.n(d.life, 'yr')}` : '') +
       '<p class="note">Main sequence: fusing hydrogen in the core; gravity pulling in is balanced by radiation and gas pressure pushing out. Hotter and brighter = more massive, and it burns out faster. Red giants and supergiants are cool but huge, so they are very luminous. White dwarfs are hot but tiny (Earth-sized), so they are dim. Lines of constant radius run diagonally.</p>';
   },
   draw(v, d, mode){

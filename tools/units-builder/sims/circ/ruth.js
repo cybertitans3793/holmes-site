@@ -22,12 +22,17 @@ const SIM = {
   },
   dvs(){ return [{ id: 'th', name: 'Scattering angle', short: 'θ', sym: 'θ', unit: '°', f: d => d.theta }, { id: 'rmin', name: 'Closest approach', short: 'r_min', sym: 'r<sub>min</sub>', unit: 'fm', f: d => d.rmin }, { id: 'd0', name: 'Closest approach head-on', short: 'd', sym: 'd', unit: 'fm', f: d => d.d0 }]; },
   work(v, d, mode){
-    if (mode === 'pud') return '<h4>Thomson’s plum-pudding model</h4><div class="eq">Positive charge spread thinly through the whole atom, with electrons dotted in it. The electric field is weak everywhere, so every alpha particle should go almost straight through (deflection well under 1°).</div>' +
+    if (mode === 'pud') return '<h4>Thomson’s plum-pudding model</h4><p class="st">Positive charge spread thinly through the whole atom, with electrons dotted in it. The electric field is weak everywhere, so every alpha particle should go almost straight through (deflection well under 1°).</p>' +
       '<div class="bad">Geiger and Marsden saw about 1 in 8000 alphas bounce back by more than 90°. Rutherford: “as if you fired a 15-inch shell at a piece of tissue paper and it came back and hit you.”</div><p class="note">Switch to the nuclear model to see what fits the data.</p>';
-    return '<h4>1 · What the experiment showed</h4><div class="eq">Most alphas go straight through (the atom is mostly empty space). A few deflect a lot, and a very few bounce back: all the positive charge and almost all the mass is in a tiny nucleus.</div>' +
-      '<h4>2 · Head-on: distance of closest approach (IB HL)</h4><div class="eq">All the kinetic energy becomes electric potential energy: K = k(2e)(' + d.Z + 'e)/d → d = (1.44 MeV·fm)(2)(' + d.Z + ')/' + H.iv('K') + ' = <b>' + H.n(d.d0, 'fm') + '</b> (1 fm = 10⁻¹⁵ m)</div>' +
-      '<h4>3 · Off-centre aim</h4><div class="eq">Aimed ' + H.iv('b') + ' off-centre: scattered through θ = <b>' + H.n(d.theta, '°') + '</b>; closest approach ' + H.n(d.rmin, 'fm') + '. Closer aim → bigger deflection.</div>' +
-      '<h4>4 · How big is the nucleus? (IB HL)</h4><div class="eq">R = R₀A<sup>⅓</sup> = 1.2 fm × ' + d.A + '<sup>⅓</sup> = ' + H.n(d.R, 'fm') + '. The alpha touches it at about ' + H.n(d.touch, 'fm') + '.</div>' +
+    const Z = '<mn>' + d.Z + '</mn>', A = '<mn>' + d.A + '</mn>';
+    return '<h4>1 · What the experiment showed</h4><p class="st">Most alphas go straight through (the atom is mostly empty space). A few deflect a lot, and a very few bounce back: all the positive charge and almost all the mass is in a tiny nucleus.</p>' +
+      '<h4>2 · Head-on: distance of closest approach (IB HL)</h4><p class="st">All the kinetic energy becomes electric potential energy:</p>' +
+      TEX`K = \frac{k\,(2e)(Ze)}{d}` + TEX`d = \frac{(1.44\,\text{MeV}\cdot\text{fm})(2)(Z)}{K}` +
+      TEX`d = \frac{(1.44\,\text{MeV}\cdot\text{fm})(2)(${Z})}{${M.iv('K')}}` + TEXA`d = ${M.n(d.d0, 'fm')}` + '<p class="st">(1 fm = 10⁻¹⁵ m)</p>' +
+      '<h4>3 · Off-centre aim</h4><p class="st">Aimed ' + H.iv('b') + ' off-centre. Closer aim → bigger deflection.</p>' +
+      TEXA`\theta = ${M.n(d.theta, '°')}` + TEX`r_{\text{min}} = ${M.n(d.rmin, 'fm')}` +
+      '<h4>4 · How big is the nucleus? (IB HL)</h4>' + TEX`R = R_0 A^{1/3}` + TEX`R = (1.2\,\text{fm})(${A})^{1/3}` + TEXA`R = ${M.n(d.R, 'fm')}` +
+      '<p class="st">The alpha touches it at about:</p>' + TEX`r_{\text{touch}} = ${M.n(d.touch, 'fm')}` +
       (d.strong ? '<div class="bad">The alpha reaches the nucleus: the strong force acts and the results no longer match Rutherford’s formula. This happens above about ' + fnum(d.Kmax) + ' MeV for ' + d.nm.toLowerCase() + ' — that is how the nuclear radius was first estimated.</div>' : '<p class="note">Here only the electric force acts, so the closest approach is an upper limit for the nuclear radius. Lighter targets (aluminium) have smaller charge, so fast alphas reach their nuclei more easily.</p>');
   },
   draw(v, d, mode, opt, t, dt, A){

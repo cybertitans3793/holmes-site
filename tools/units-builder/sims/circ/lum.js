@@ -27,13 +27,14 @@ const SIM = {
     return [{ id: 'Ls', name: 'Luminosity', short: 'L', sym: 'L', unit: 'L☉', f: d => d.Ls }, { id: 'b', name: 'Apparent brightness', short: 'b', sym: 'b', unit: 'W/m²', f: d => d.b }, { id: 'lam', name: 'Peak wavelength', short: 'λmax', sym: 'λ<sub>max</sub>', unit: 'nm', f: d => d.lam }];
   },
   work(v, d, mode){
-    if (mode === 'back') return '<h4>1 · Wien: temperature from the peak wavelength</h4><div class="eq">T = 2.9×10⁻³/λ<sub>max</sub> = 2.9×10⁻³/(' + v.lam + '×10⁻⁹) = <b>' + H.n(d.T, 'K') + '</b></div>' +
-      '<h4>2 · Luminosity from brightness and distance: L = 4πd²b</h4><div class="eq">d = ' + H.iv('d') + ' = ' + H.n(v.d * LY, 'm') + ' → L = 4π(' + fnum(v.d * LY) + ')²(' + fnum(d.b) + ') = <b>' + H.n(d.L, 'W') + '</b> = ' + H.n(d.Ls, 'L☉') + '</div>' +
-      '<h4>3 · Radius from Stefan–Boltzmann: L = σ4πR²T⁴</h4><div class="eq">R = √(L/(4πσT⁴)) = <b>' + H.n(d.R, 'm') + '</b> = ' + H.n(d.Rs, 'R☉') + '</div>' +
+    if (mode === 'back') return '<h4>1 · Wien: temperature from the peak wavelength</h4>' + TEX`T = \frac{2.9\times10^{-3}\,\text{m}\cdot\text{K}}{\lambda_{\text{max}}}` + TEX`T = \frac{2.9\times10^{-3}\,\text{m}\cdot\text{K}}{${M.iv('lam', 1e-9)}\,\text{m}}` + TEXA`T = ${M.n(d.T, 'K')}` +
+      '<h4>2 · Luminosity from brightness and distance</h4>' + TEX`d = ${M.iv('d')}` + TEX`d = ${M.n(v.d * LY, 'm')}` + TEX`L = 4\pi d^2 b` + TEX`L = 4\pi(${M.n(v.d * LY)})^2(${M.n(d.b)})` + TEXA`L = ${M.n(d.L, 'W')}` + TEX`L = ${M.n(d.Ls, 'L☉')}` +
+      '<h4>3 · Radius from Stefan–Boltzmann</h4>' + TEX`L = \sigma\,4\pi R^2\,T^4` + TEX`R = \sqrt{\frac{L}{4\pi\sigma T^4}}` + TEX`R = \sqrt{\frac{${M.n(d.L)}}{4\pi(5.67\times10^{-8})(${M.n(d.T)})^4}}` + TEXA`R = ${M.n(d.R, 'm')}` + TEX`R = ${M.n(d.Rs, 'R☉')}` +
       '<p class="note">This is the classic Paper 2 chain: λ<sub>max</sub> → T, then b and d → L, then L and T → R. Convert ly to m and nm to m first.</p>';
-    return '<h4>1 · Luminosity: total power radiated, L = σAT⁴ with A = 4πR²</h4><div class="eq">R = ' + H.iv('R') + ' = ' + H.n(d.R, 'm') + ' → L = (5.67×10⁻⁸)(4π)(' + fnum(d.R) + ')²(' + H.iv('T') + ')⁴ = <b>' + H.n(d.L, 'W') + '</b> = ' + H.n(d.Ls, 'L☉') + '</div>' +
-      '<h4>2 · Apparent brightness: spread over a sphere of radius d</h4><div class="eq">b = L/(4πd²) = ' + fnum(d.L) + '/(4π(' + fnum(v.d * LY) + ' m)²) = <b>' + H.n(d.b, 'W/m²') + '</b></div>' +
-      '<h4>3 · Color: Wien’s law</h4><div class="eq">λ<sub>max</sub> = 2.9×10⁻³/T = <b>' + H.n(d.lam, 'nm') + '</b>' + (d.lam < 400 ? ' (ultraviolet: looks blue-white)' : d.lam > 700 ? ' (infrared: looks red)' : ' (visible)') + '</div>' +
+    return '<h4>1 · Luminosity: total power radiated</h4><p class="st">L = σAT⁴ with A = 4πR²</p>' + TEX`R = ${M.iv('R')}` + TEX`R = ${M.n(d.R, 'm')}` + TEX`L = \sigma\,4\pi R^2\,T^4` + TEX`L = (5.67\times10^{-8})(4\pi)(${M.n(d.R)})^2(${M.iv('T')})^4` + TEXA`L = ${M.n(d.L, 'W')}` + TEX`L = ${M.n(d.Ls, 'L☉')}` +
+      '<h4>2 · Apparent brightness: spread over a sphere of radius d</h4>' + TEX`b = \frac{L}{4\pi d^2}` + TEX`b = \frac{${M.n(d.L)}}{4\pi(${M.n(v.d * LY, 'm')})^2}` + TEXA`b = ${M.n(d.b, 'W/m²')}` +
+      '<h4>3 · Color: Wien’s law</h4>' + TEX`\lambda_{\text{max}} = \frac{2.9\times10^{-3}\,\text{m}\cdot\text{K}}{T}` + TEX`\lambda_{\text{max}} = \frac{2.9\times10^{-3}\,\text{m}\cdot\text{K}}{${M.iv('T')}}` + TEXA`\lambda_{\text{max}} = ${M.n(d.lam, 'nm')}` +
+      '<p class="st">' + (d.lam < 400 ? 'Ultraviolet: looks blue-white.' : d.lam > 700 ? 'Infrared: looks red.' : 'Visible.') + '</p>' +
       '<p class="note">Double T → 16× L (T⁴). Double R → 4× L. Double d → ¼ b. A dim-looking star can be very luminous if it’s far away.</p>';
   },
   draw(v, d, mode){

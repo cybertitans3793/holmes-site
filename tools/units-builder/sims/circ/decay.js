@@ -48,24 +48,37 @@ const SIM = {
     if (mode === 'pen'){ const nm = { a: 'Alpha (a helium nucleus, +2)', b: 'Beta (a fast electron, −1)', g: 'Gamma (a photon, no charge)' }[d.src];
       const ion = { a: 'Very strongly ionizing: it rips electrons off thousands of atoms per mm, so it loses its energy fast.', b: 'Medium ionizing: it is light and fast and has half the charge of an alpha.', g: 'Weakly ionizing: no charge, so it rarely hits anything.' }[d.src];
       const stop = { a: 'a sheet of paper or about 5 cm of air', b: 'a few mm of aluminium', g: 'is only reduced by thick lead or concrete' }[d.src];
-      return '<h4>1 · ' + nm + '</h4><div class="eq">' + ion + ' Stopped by <b>' + stop + '</b>.</div>' +
-        '<h4>2 · Correct for background</h4><div class="eq">Counter reads ' + H.n(d.meas, 'counts/min') + '. Background (rocks, cosmic rays, radon) = ' + H.iv('B') + '. Corrected: ' + fnum(d.meas) + ' − ' + v.B + ' = <b>' + H.n(d.corr, 'counts/min') + '</b>.</div>' +
+      return '<h4>1 · ' + nm + '</h4><p class="st">' + ion + ' Stopped by <b>' + stop + '</b>.</p>' +
+        '<h4>2 · Correct for background</h4><p class="st">Counter reads ' + H.n(d.meas, 'counts/min') + '. Background (rocks, cosmic rays, radon) = ' + H.iv('B') + '.</p>' +
+        TEX`C_{\text{corrected}} = C_{\text{measured}} - B` + TEX`C_{\text{corrected}} = ${M.n(d.meas)} - ${M.iv('B', 1)}` + TEXA`C_{\text{corrected}} = ${M.n(d.corr, 'counts/min')}` +
         '<p class="note">More ionizing → less penetrating. Always measure the background first, with no source, and subtract it from every reading.' + (d.src === 'a' && !d.reach ? ' Alphas only travel about 5 cm in air, so the counter only sees background.' : '') + '</p>'; }
     if (mode === 'types'){
-      const nuc = (s, Z, A) => '<sup>' + A + '</sup><sub>' + Z + '</sub>' + s, emit = { a: ' + <sup>4</sup><sub>2</sub>α', 'b-': ' + <sup>0</sup><sub>−1</sub>e + ν̄', 'b-g': ' + <sup>0</sup><sub>−1</sub>e + ν̄ (then γ)', 'b+': ' + <sup>0</sup><sub>+1</sub>e + ν', g: ' + γ' }[d.ty];
+      const nuc = (s, Z, A) => { const zz = String(Z).replace(/^([+−-])(.*)$/, (m, sg, r) => '<mo>' + (sg === '-' ? '−' : sg) + '</mo><mn>' + r + '</mn>'); return '<mmultiscripts><mi mathvariant="normal">' + s + '</mi><mprescripts/><mrow>' + (/^[+−-]/.test(String(Z)) ? zz : '<mn>' + Z + '</mn>') + '</mrow><mn>' + A + '</mn></mmultiscripts>'; };
+      const O = '<mo>+</mo>', nubar = '<mover accent="true"><mi>ν</mi><mo>¯</mo></mover>',
+        emit = { a: O + nuc('α', 2, 4), 'b-': O + nuc('e', '-1', 0) + O + nubar, 'b-g': O + nuc('e', '-1', 0) + O + nubar + '<mtext> (then γ)</mtext>', 'b+': O + nuc('e', '+1', 0) + O + '<mi>ν</mi>', g: O + '<mi>γ</mi>' }[d.ty];
       const what = { a: 'Alpha: the nucleus throws out 2 protons + 2 neutrons. A drops by 4, Z by 2 — a different element.', 'b-': 'Beta-minus: a neutron turns into a proton, emitting an electron and an antineutrino. A stays, Z goes up 1.', 'b-g': 'Beta-minus (a neutron → proton + electron + antineutrino), leaving the nucleus excited; it then drops to its ground state by emitting gamma rays.', 'b+': 'Beta-plus: a proton turns into a neutron, emitting a positron and a neutrino. A stays, Z goes down 1.', g: 'Gamma: an excited nucleus (m = metastable) drops to a lower energy level and emits a photon. A and Z don’t change.' }[d.ty];
-      return '<h4>1 · The decay equation</h4><div class="eq" style="font-size:16px">' + nuc(d.sym, d.Z, d.A) + ' → ' + nuc(d.sym2, d.Z2, d.A2) + emit + '</div><div class="eq">' + what + '</div>' +
-        '<h4>2 · Check the conservation laws</h4><div class="eq">Nucleon number: ' + d.A + ' = ' + d.A2 + ' + ' + (d.ty === 'a' ? 4 : 0) + ' ✓. Charge: ' + d.Z + ' = ' + d.Z2 + ' + ' + ({ a: 2, 'b-': -1, 'b-g': -1, 'b+': 1, g: 0 }[d.ty]) + ' ✓. Lepton number is conserved too (electron with antineutrino, positron with neutrino).</div>' +
-        '<h4>3 · Use</h4><div class="eq">Half-life ' + d.hl + '. ' + d.use + '.</div>' +
+      const aOut = d.ty === 'a' ? 4 : 0, zOut = { a: 2, 'b-': -1, 'b-g': -1, 'b+': 1, g: 0 }[d.ty], CK = '<mspace width="0.6em"/><mtext>✓</mtext>', zo = zOut < 0 ? '<mrow><mo>(</mo><mo>−</mo><mn>' + (-zOut) + '</mn><mo>)</mo></mrow>' : '<mn>' + zOut + '</mn>';
+      return '<h4>1 · The decay equation</h4>' + TEX`${nuc(d.sym, d.Z, d.A) + '<mo>→</mo>' + nuc(d.sym2, d.Z2, d.A2) + emit}` + '<p class="st">' + what + '</p>' +
+        '<h4>2 · Check the conservation laws</h4><p class="st">Nucleon number (top numbers):</p>' + TEX`${'<mn>' + d.A + '</mn>'} = ${'<mn>' + d.A2 + '</mn>'} + ${'<mn>' + aOut + '</mn>'}${CK}` +
+        '<p class="st">Charge (bottom numbers):</p>' + TEX`${'<mn>' + d.Z + '</mn>'} = ${'<mn>' + d.Z2 + '</mn>'} + ${zo}${CK}` +
+        '<p class="st">Lepton number is conserved too (electron with antineutrino, positron with neutrino).</p>' +
+        '<h4>3 · Use</h4><p class="st">Half-life ' + d.hl + '. ' + d.use + '.</p>' +
         '<p class="note">Penetration: α stopped by paper or skin (very ionizing — dangerous inside the body); β by a few mm of aluminium; γ only reduced by thick lead or concrete (least ionizing). Medical tracers use γ emitters with short half-lives.</p>';
     }
-    if (mode === 'date') return d.u ? '<h4>1 · Every lead-206 atom was once uranium-238</h4><div class="eq">If the rock started with no lead: U now : U at start = 1 : (1 + Pb/U) = ' + fnum(d.frac) + '</div>' +
-      '<h4>2 · Number of half-lives</h4><div class="eq">(½)ⁿ = ' + fnum(d.frac) + ' → n = log₂(1 + Pb/U) = <b>' + fnum(d.n) + '</b></div><h4>3 · Age</h4><div class="eq">age = n × 4.47×10⁹ yr = <b>' + H.n(d.age, 'yr') + '</b></div><p class="note">The oldest rocks on Earth and meteorites give about 4.5 billion years: the age of the Solar System. You need a half-life similar to the age you are measuring.</p>'
-      : '<h4>1 · Living things keep C-14 topped up</h4><div class="eq">While alive, an organism has the same C-14 fraction as the air. After death no new C-14 comes in, and it decays with t½ = 5730 yr.</div>' +
-      '<h4>2 · Number of half-lives</h4><div class="eq">(½)ⁿ = ' + fnum(d.frac) + ' → n = log₂(100/' + fnum(v.pc) + ') = <b>' + fnum(d.n) + '</b></div><h4>3 · Age</h4><div class="eq">age = n × 5730 yr = <b>' + H.n(d.age, 'yr') + '</b></div><p class="note">Works back to about 50 000 years; after that too little C-14 is left to measure against background radiation. Whole half-lives are easy: 25% left → 2 half-lives → 11 460 yr.</p>';
-    return '<h4>1 · Decay constant</h4><div class="eq">λ = ln 2 / t½ = 0.693/' + H.iv('th') + ' = <b>' + H.n(d.lam, 's⁻¹') + '</b> — the chance per second that any one nucleus decays.</div>' +
-      '<h4>2 · Nuclei left</h4><div class="eq">t/t½ = ' + fnum(d.n) + ' half-lives → N = N₀(½)<sup>' + fnum(d.n) + '</sup> = <b>' + H.n(d.N, '') + '</b> (same as N₀e<sup>−λt</sup>)</div>' +
-      '<h4>3 · Activity</h4><div class="eq">A = λN = <b>' + H.n(d.A, 'Bq') + '</b> (decays per second). Activity halves every half-life too.</div>' +
+    if (mode === 'date') return d.u ? '<h4>1 · Every lead-206 atom was once uranium-238</h4><p class="st">If the rock started with no lead, the fraction of uranium left is:</p>' +
+      TEX`\frac{U_{\text{now}}}{U_{\text{start}}} = \frac{1}{1 + \text{Pb/U}}` + TEX`\frac{U_{\text{now}}}{U_{\text{start}}} = \frac{1}{1 + ${M.iv('r', 1)}}` + TEXA`\frac{U_{\text{now}}}{U_{\text{start}}} = ${M.n(d.frac)}` +
+      '<h4>2 · Number of half-lives</h4>' + TEX`\left(\frac{1}{2}\right)^n = ${M.n(d.frac)}` + TEX`n = \log_2\left(1 + \text{Pb/U}\right)` + TEX`n = \log_2\left(1 + ${M.iv('r', 1)}\right)` + TEXA`n = ${M.n(d.n)}` +
+      '<h4>3 · Age</h4>' + TEX`\text{age} = n \times t_{1/2}` + TEX`\text{age} = ${M.n(d.n)} \times 4.47\times10^{9}\,\text{yr}` + TEXA`\text{age} = ${M.n(d.age, 'yr')}` +
+      '<p class="note">The oldest rocks on Earth and meteorites give about 4.5 billion years: the age of the Solar System. You need a half-life similar to the age you are measuring.</p>'
+      : '<h4>1 · Living things keep C-14 topped up</h4><p class="st">While alive, an organism has the same C-14 fraction as the air. After death no new C-14 comes in, and it decays with t½ = 5730 yr.</p>' +
+      '<h4>2 · Number of half-lives</h4>' + TEX`\left(\frac{1}{2}\right)^n = ${M.n(d.frac)}` + TEX`n = \log_2\left(\frac{100}{\%\text{ left}}\right)` + TEX`n = \log_2\left(\frac{100}{${M.n(v.pc)}}\right)` + TEXA`n = ${M.n(d.n)}` +
+      '<h4>3 · Age</h4>' + TEX`\text{age} = n \times t_{1/2}` + TEX`\text{age} = ${M.n(d.n)} \times 5730\,\text{yr}` + TEXA`\text{age} = ${M.n(d.age, 'yr')}` +
+      '<p class="note">Works back to about 50 000 years; after that too little C-14 is left to measure against background radiation. Whole half-lives are easy: 25% left → 2 half-lives → 11 460 yr.</p>';
+    return '<h4>1 · Decay constant</h4>' + TEX`\lambda = \frac{\ln 2}{t_{1/2}}` + TEX`\lambda = \frac{0.693}{${M.iv('th')}}` + TEXA`\lambda = ${M.n(d.lam, 's⁻¹')}` +
+      '<p class="st">That is the chance per second that any one nucleus decays.</p>' +
+      '<h4>2 · Nuclei left</h4>' + TEX`n = \frac{t}{t_{1/2}}` + TEX`n = \frac{${M.iv('t')}}{${M.iv('th')}}` + TEX`n = ${M.n(d.n)}` +
+      TEX`N = N_0\left(\frac{1}{2}\right)^n` + TEX`N = ${M.iv('N0', 1)}\left(\frac{1}{2}\right)^{${M.n(d.n)}}` + TEXA`N = ${M.n(d.N)}` + '<p class="st">(Same as N₀e<sup>−λt</sup>.)</p>' +
+      '<h4>3 · Activity</h4>' + TEX`A = \lambda N` + TEX`A = (${M.n(d.lam, 's⁻¹')})(${M.n(d.N)})` + TEXA`A = ${M.n(d.A, 'Bq')}` + '<p class="st">Decays per second. Activity halves every half-life too.</p>' +
       '<p class="note">Watch the live sample: you can’t predict <i>which</i> nucleus decays next, but a big sample follows the curve closely. Small samples wobble more. AP dice lab: remove the dice that show 1 each roll — “half-life” ≈ 3.8 rolls.</p>';
   },
   draw(v, d, mode, opt, t, dt, A){

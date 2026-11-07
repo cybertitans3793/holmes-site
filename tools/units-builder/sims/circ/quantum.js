@@ -30,16 +30,25 @@ const SIM = {
     return [{ id: 'lam', name: 'de Broglie wavelength', short: 'λ', sym: 'λ', unit: 'nm', f: d => d.lam * 1e9 }, { id: 'p', name: 'Momentum', short: 'p', sym: 'p', unit: 'kg·m/s', f: d => d.p }];
   },
   work(v, d, mode){
-    if (mode === 'cs') return '<h4>1 · The photon behaves like a particle with momentum</h4><div class="eq">p = h/λ. In: λ = ' + H.iv('li') + ', E = hc/λ = ' + H.n(d.Ei, 'keV') + ', p = ' + H.n(d.pin, 'kg·m/s') + '</div>' +
-      '<h4>2 · Wavelength shift (Compton)</h4><div class="eq">Δλ = (h/m<sub>e</sub>c)(1 − cos θ) = (2.43 pm)(1 − cos ' + H.iv('th') + ') = <b>' + H.n(d.dl, 'pm') + '</b> → λ′ = ' + H.n(d.lo, 'pm') + '</div>' +
-      '<h4>3 · Conservation of energy</h4><div class="eq">The photon loses energy: ' + fnum(d.Ei) + ' → ' + fnum(d.Eo) + ' keV, so the electron gets K = <b>' + H.n(d.Ke, 'keV') + '</b>.</div>' +
-      '<h4>4 · Conservation of momentum (2-D)</h4><div class="eq">p<sub>in</sub> = p<sub>out</sub> + p<sub>e</sub> as vectors (see the triangle): electron p = ' + H.n(d.pe, 'kg·m/s') + ' at ' + fnum(d.phi) + '° below the original direction.</div>' +
+    if (mode === 'cs') return '<h4>1 · The photon behaves like a particle with momentum</h4>' + TEX`p = \frac{h}{\lambda}` + TEX`p = \frac{6.63\times10^{-34}\,\text{J}\cdot\text{s}}{${M.iv('li', 1e-12)}\,\text{m}}` + TEXA`p = ${M.n(d.pin, 'kg·m/s')}` +
+      TEX`E = \frac{hc}{\lambda}` + TEX`E = \frac{1240\,\text{keV}\cdot\text{pm}}{${M.iv('li')}}` + TEXA`E = ${M.n(d.Ei, 'keV')}` +
+      '<h4>2 · Wavelength shift (Compton)</h4>' + TEX`\Delta\lambda = \frac{h}{m_e c}\left(1 - \cos\theta\right)` + TEX`\Delta\lambda = (2.43\,\text{pm})\left(1 - \cos ${M.iv('th')}\right)` + TEXA`\Delta\lambda = ${M.n(d.dl, 'pm')}` +
+      TEX`\lambda' = \lambda + \Delta\lambda` + TEX`\lambda' = ${M.iv('li')} + ${M.n(d.dl, 'pm')}` + TEXA`\lambda' = ${M.n(d.lo, 'pm')}` +
+      '<h4>3 · Conservation of energy</h4><p class="st">The photon loses energy, and the electron gets it:</p>' + TEX`K_e = E_{\text{in}} - E_{\text{out}}` + TEX`K_e = ${M.n(d.Ei, 'keV')} - ${M.n(d.Eo, 'keV')}` + TEXA`K_e = ${M.n(d.Ke, 'keV')}` +
+      '<h4>4 · Conservation of momentum (2-D)</h4><p class="st">As vectors (see the triangle):</p>' + TEX`\vec{p}_{\text{in}} = \vec{p}_{\text{out}} + \vec{p}_e` + TEXA`p_e = ${M.n(d.pe, 'kg·m/s')}` +
+      '<p class="st">The electron leaves below the original direction, at:</p>' + TEXA`\varphi = ${M.n(d.phi, '°')}` +
       '<p class="note">The shift doesn’t depend on the starting λ, so it’s only noticeable for X-rays and gamma rays (λ of a few pm). A wave model can’t explain a change in wavelength that depends on angle — this convinced physicists that photons carry momentum.</p>';
-    const nm = { e: 'electron', n: 'neutron', ball: 'baseball' }[d.pt];
-    let s = '<h4>1 · Momentum</h4><div class="eq">' + (d.pt === 'ball' ? 'p = mv = (0.145 kg)(' + H.iv('u') + ')' : d.pt === 'n' ? 'K = ' + H.iv('K') + ' → p = √(2mK)' : 'Accelerated through ' + H.iv('V') + ': K = eV = ' + H.n(d.K, 'J') + ' → p = √(2mK)') + ' = <b>' + H.n(d.p, 'kg·m/s') + '</b> (v = ' + H.n(d.u, 'm/s') + ')</div>' +
-      '<h4>2 · de Broglie wavelength</h4><div class="eq">λ = h/p = 6.63×10⁻³⁴/' + fnum(d.p) + ' = <b>' + H.n(d.lam, 'm') + '</b>' + (d.pt === 'ball' ? '' : ' = ' + H.n(d.lam * 1e9, 'nm')) + '</div>';
+    let s = '<h4>1 · Momentum</h4>';
+    if (d.pt === 'ball') s += TEX`p = mv` + TEX`p = (0.145\,\text{kg})(${M.iv('u')})`;
+    else {
+      s += (d.pt === 'n' ? '<p class="st">Kinetic energy ' + H.iv('K') + ':</p>' + TEX`K = ${M.n(d.K, 'J')}` : '<p class="st">Accelerated through ' + H.iv('V') + ':</p>' + TEX`K = eV` + TEX`K = (1.6\times10^{-19}\,\text{C})(${M.iv('V')})` + TEX`K = ${M.n(d.K, 'J')}`) +
+        TEX`p = \sqrt{2mK}` + TEX`p = \sqrt{2(${M.n(d.m, 'kg')})(${M.n(d.K, 'J')})}`;
+    }
+    s += TEXA`p = ${M.n(d.p, 'kg·m/s')}` + TEX`v = ${M.n(d.u, 'm/s')}` +
+      '<h4>2 · de Broglie wavelength</h4>' + TEX`\lambda = \frac{h}{p}` + TEX`\lambda = \frac{6.63\times10^{-34}\,\text{J}\cdot\text{s}}{${M.n(d.p, 'kg·m/s')}}` + TEXA`\lambda = ${M.n(d.lam, 'm')}` + (d.pt === 'ball' ? '' : TEX`\lambda = ${M.n(d.lam * 1e9, 'nm')}`);
     if (d.pt === 'ball') return s + '<div class="bad">λ is about 10⁻³⁴ m — trillions of trillions of times smaller than a nucleus. Nothing has gaps that small, so a baseball never shows wave behaviour.</div><p class="note">Quantum effects matter when λ is comparable to the size of the system. That only happens for tiny masses.</p>';
-    return s + '<h4>3 · Diffraction by a crystal</h4><div class="eq">Atoms in graphite are about 0.213 nm apart. Like a grating: sin θ ≈ λ/d = ' + fnum(d.lam / DCRY) + (d.ring ? ' → θ = <b>' + H.n(d.th, '°') + '</b>: a ring appears.' : ' → too big: no diffraction maximum.') + '</div>' +
+    return s + '<h4>3 · Diffraction by a crystal</h4><p class="st">Atoms in graphite are about 0.213 nm apart. Like a grating:</p>' + TEX`\sin\theta \approx \frac{\lambda}{d}` + TEX`\sin\theta \approx \frac{${M.n(d.lam * 1e9, 'nm')}}{0.213\,\text{nm}}` + TEX`\sin\theta \approx ${M.n(d.lam / DCRY)}` +
+      (d.ring ? TEXA`\theta = ${M.n(d.th, '°')}` + '<p class="st">A ring appears.</p>' : (d.lam / DCRY >= 1 ? '<p class="st">λ is bigger than the atom spacing: no diffraction maximum.</p>' : '<p class="st">λ is far smaller than the atom spacing: the angle is too small to see (it just goes straight through).</p>')) +
       '<p class="note">Electrons fired through a thin crystal make rings, just like light through a grating — evidence that matter has wave properties (Davisson–Germer, G.P. Thomson). Higher voltage → more momentum → shorter λ → smaller rings. Electron microscopes use this short λ to see far more detail than light can.</p>';
   },
   draw(v, d, mode){

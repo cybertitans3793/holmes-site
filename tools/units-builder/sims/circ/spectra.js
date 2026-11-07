@@ -31,18 +31,23 @@ const SIM = {
   },
   work(v, d, mode){
     if (mode === 'myst'){
-      const list = '<div class="eq">Gaps from the ground state: ' + d.gaps.map((g, i) => '1→' + (i + 2) + ': ' + fnum(g) + ' eV').join(', ') + '; ionization ' + fnum(d.ion) + ' eV</div>';
+      const sub = n => '<mn>' + n + '</mn>';
+      const list = '<p class="st">Gaps from the ground state, and the ionization energy:</p>' + d.gaps.map((g, i) => TEX`E_{1 \to ${sub(i + 2)}} = ${M.n(g, 'eV')}`).join('') + TEX`E_{\text{ion}} = ${M.n(d.ion, 'eV')}`;
       let s = '<h4>1 · What can the atom absorb?</h4>' + list;
-      if (d.el) s += '<div class="eq">An <b>electron</b> can give up <i>part</i> of its energy, so it excites the atom to the highest level it can reach and keeps the rest: ' + (d.up === 'ion' ? '<b>ionized</b>' : d.up ? 'up to n = <b>' + (d.up + 1) + '</b>, keeps ' + H.n(d.left, 'eV') : 'not enough for any jump; it bounces off with all ' + H.iv('E')) + '.</div>';
-      else s += '<div class="eq">A <b>photon</b> is all or nothing: it is absorbed only if its energy matches a gap exactly. ' + (d.up === 'ion' ? 'Above the ionization energy: <b>ionized</b>, the electron leaves with ' + H.n(d.left, 'eV') + '.' : d.up ? 'Match! The atom jumps to n = <b>' + (d.up + 1) + '</b>.' : 'No match → the photon passes straight through.') + '</div>';
-      if (d.emits.length) s += '<h4>2 · Photons it can then emit</h4><div class="eq">' + d.emits.map(([a, b, e, l]) => a + '→' + b + ': ' + fnum(e) + ' eV, λ = <b>' + fnum(l) + ' nm</b> (' + region(l) + ')').join('<br>') + '</div><p class="note">FRQ classic: from level k there are k(k−1)/2 possible downward jumps.</p>';
+      if (d.el) s += '<p class="st">An <b>electron</b> can give up <i>part</i> of its energy, so it excites the atom to the highest level it can reach and keeps the rest: ' + (d.up === 'ion' ? '<b>ionized</b>.</p>' + TEXA`K_{\text{left}} = ${M.n(d.left, 'eV')}` : d.up ? 'up to n = <b>' + (d.up + 1) + '</b>.</p>' + TEXA`K_{\text{left}} = ${M.n(d.left, 'eV')}` : 'not enough for any jump; it bounces off with all ' + H.iv('E') + '.</p>');
+      else s += '<p class="st">A <b>photon</b> is all or nothing: it is absorbed only if its energy matches a gap exactly. ' + (d.up === 'ion' ? 'Above the ionization energy: <b>ionized</b>, the electron leaves with:</p>' + TEXA`K_{\text{left}} = ${M.n(d.left, 'eV')}` : d.up ? 'Match! The atom jumps to n = <b>' + (d.up + 1) + '</b>.</p>' : 'No match → the photon passes straight through.</p>');
+      if (d.emits.length) s += '<h4>2 · Photons it can then emit</h4>' + d.emits.map(([a, b, e, l]) => '<p class="st"><b>' + a + '→' + b + '</b> (' + region(l) + '):</p>' + TEX`E = ${M.n(e, 'eV')}` + TEXA`\lambda = ${M.n(l, 'nm')}`).join('') + '<p class="note">FRQ classic: from level k there are k(k−1)/2 possible downward jumps.</p>';
       return s;
     }
     if (d.bad) return '<div class="bad">The upper level must be above the lower level. Using n = ' + d.hi + ' → ' + d.lo + '.</div>';
-    const abs = mode === 'abs';
-    return '<h4>1 · Energy levels of hydrogen</h4><div class="eq">Eₙ = −13.6 eV/n²: E<sub>' + d.hi + '</sub> = ' + fnum(d.Ehi) + ' eV, E<sub>' + d.lo + '</sub> = ' + fnum(d.Elo) + ' eV</div>' +
-      '<h4>2 · Photon energy = the gap</h4><div class="eq">E<sub>photon</sub> = ' + fnum(d.Ehi) + ' − (' + fnum(d.Elo) + ') = <b>' + H.n(d.dE, 'eV') + '</b> = ' + H.n(d.dE * 1.6e-19, 'J') + '</div>' +
-      '<h4>3 · Wavelength and frequency</h4><div class="eq">λ = hc/E = 1240 eV·nm / ' + fnum(d.dE) + ' eV = <b>' + H.n(d.lam, 'nm') + '</b> (' + region(d.lam) + '); f = E/h = ' + H.n(d.f, 'Hz') + '</div>' +
+    const abs = mode === 'abs', hi = '<mn>' + d.hi + '</mn>', lo = '<mn>' + d.lo + '</mn>';
+    return '<h4>1 · Energy levels of hydrogen</h4>' + TEX`E_n = -\frac{13.6\,\text{eV}}{n^2}` +
+      TEX`E_${hi} = -\frac{13.6\,\text{eV}}{${hi}^2}` + TEXA`E_${hi} = ${M.n(d.Ehi, 'eV')}` +
+      TEX`E_${lo} = -\frac{13.6\,\text{eV}}{${lo}^2}` + TEXA`E_${lo} = ${M.n(d.Elo, 'eV')}` +
+      '<h4>2 · Photon energy = the gap</h4>' + TEX`E_{\text{photon}} = E_${hi} - E_${lo}` + TEX`E_{\text{photon}} = ${M.n(d.Ehi)} - ${M.p(d.Elo)}` +
+      TEXA`E_{\text{photon}} = ${M.n(d.dE, 'eV')}` + TEX`E_{\text{photon}} = ${M.n(d.dE * 1.6e-19, 'J')}` +
+      '<h4>3 · Wavelength and frequency</h4>' + TEX`\lambda = \frac{hc}{E}` + TEX`\lambda = \frac{1240\,\text{eV}\cdot\text{nm}}{${M.n(d.dE, 'eV')}}` + TEXA`\lambda = ${M.n(d.lam, 'nm')}` + '<p class="st">That is ' + region(d.lam) + ' light.</p>' +
+      TEX`f = \frac{E}{h}` + TEX`f = \frac{${M.n(d.dE * 1.6e-19, 'J')}}{6.63\times10^{-34}\,\text{J}\cdot\text{s}}` + TEXA`f = ${M.n(d.f, 'Hz')}` +
       '<p class="note">' + (abs ? 'Absorption: white light passes through cool hydrogen gas. Photons with exactly this energy lift electrons from n = ' + d.lo + ' to n = ' + d.hi + ', so this colour is missing — a dark line. Dark lines in the Sun’s spectrum tell us what the Sun is made of (helium was discovered this way).' : 'Emission: hot or electrically excited gas. The electron drops from n = ' + d.hi + ' to n = ' + d.lo + ' and emits one photon. ' + d.series + ' series. Every element has its own pattern of lines — a fingerprint. Neon signs and street lights glow with their gases’ lines.') + '</p>';
   },
   draw(v, d, mode, opt){
