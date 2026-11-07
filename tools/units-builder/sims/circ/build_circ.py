@@ -2,10 +2,13 @@
 """Builds the Show-the-work sims: frame.html + <sim>.js -> ../circ-<sim>.html (P1-05 circular motion, P1-06 work and energy)"""
 import os, re
 from tex import tex
+import sys
+ONLY = set(sys.argv[1:])  # optional: build only these sims (and their ab- variants)
 D = os.path.dirname(os.path.abspath(__file__))
 frame = open(os.path.join(D, 'frame.html'), encoding='utf-8').read()
 for name in ['curve', 'vertical', 'conical', 'turntable', 'orbits', 'crate', 'track', 'launcher', 'power', 'hang', 'crash', 'carts', 'bounce', 'ballistic', 'hockey', 'stack', 'vectors', 'ropes', 'cannon', 'springs', 'pulleys', 'gears', 'assist', 'truck', 'meet', 'balance', 'puck', 'cartball', 'chase', 'elevator', 'updown', 'brake', 'fgraphs', 'blocks', 'proj', 'incline', 'river', 'anglepull', 'torque', 'spin', 'inertia', 'mpulley', 'roll', 'angmom', 'pressure', 'float', 'scale', 'pipe', 'tank', 'stokes', 'shm', 'pend', 'circle', 'clay', 'reson', 'meas', 'scatter', 'prop', 'errbars', 'linear', 'kinetic', 'abszero', 'gasprob', 'piston', 'cycle', 'calor', 'conduct', 'entropy', 'heatcurve', 'realgas', 'lum', 'engine', 'coulomb', 'efield', 'potential', 'plates', 'cap', 'ohm', 'circuits', 'kirch', 'emf', 'rc', 'bwire', 'bforce', 'induct', 'wave', 'pulses', 'standing', 'doppler', 'snell', 'optics', 'slits', 'thinfilm', 'world', 'eye', 'sound', 'spectra', 'photo', 'quantum', 'decay', 'binding', 'ruth', 'stars', 'abmove', 'abaccel', 'abgraph', 'abkepler', 'abwork', 'abquake', 'abbang', 'abmatch', 'abtrans', 'abtable', 'capnet', 'magfield', 'compass', 'reactor', 'rub', 'bill', 'release', 'pairs']:
     js = open(os.path.join(D, name + '.js'), encoding='utf-8').read()
+    if ONLY and name not in ONLY: continue
     js = tex(re.sub(r'//@include (\S+)', lambda m: open(os.path.join(D, m.group(1)), encoding='utf-8').read(), js))
     title = re.search(r"title: '([^']+)'", js).group(1)
     out = frame.replace('{VARIANT}', '').replace('{SIMJS}', js).replace('{TITLE}', title).replace('{SIMFILE}', name + '.js')
@@ -50,6 +53,7 @@ VARIANTS = {
   'ab-stars': ('stars', {'modes': ['hr'], 'title': 'The HR Diagram', 'hint': 'L = 4πR²σT⁴'}),
 }
 for vname, (base, cfg) in VARIANTS.items():
+    if ONLY and base not in ONLY: continue
     js = open(os.path.join(D, base + '.js'), encoding='utf-8').read()
     js = tex(re.sub(r'//@include (\S+)', lambda m: open(os.path.join(D, m.group(1)), encoding='utf-8').read(), js))
     title = cfg.get('title') or re.search(r"title: '([^']+)'", js).group(1)
