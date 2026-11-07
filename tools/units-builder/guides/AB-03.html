@@ -1,0 +1,357 @@
+<section class="guide" id="guide" aria-label="Study guide">
+<style>
+.guide{margin-top:28px}
+.guide .gtip{margin:0 0 16px;font-size:19px;line-height:1.45;max-width:1000px}
+.guide .ggrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-bottom:22px}
+.guide .gcard{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcard h3,.guide .gcheck h3,.guide .gsteps h3{margin:0 0 10px;font-size:20px;letter-spacing:-.01em}
+.guide .gcard ul{margin:0;padding-left:20px}
+.guide .gcard li{margin:0 0 7px}
+.guide .ib{display:inline-block;font-family:var(--f-mono);font-size:11px;font-weight:700;border:2px solid var(--ink);padding:0 5px;margin-left:4px;vertical-align:1px;background:var(--soft)}
+.guide table{border-collapse:collapse;width:100%;font-size:15px}
+.guide td{border-top:2px solid var(--ink);padding:6px 4px;vertical-align:top}
+.guide td:first-child{font-family:var(--f-mono);font-weight:700;white-space:nowrap;padding-right:12px}
+.guide td[colspan]{white-space:normal}
+.guide .gsub{font-family:var(--f-display);font-weight:400}
+.guide .gsteps{background:var(--soft);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px;margin-bottom:22px}
+.guide .gsteps ol{margin:0;padding-left:24px;columns:2 360px;column-gap:28px}
+.guide .gsteps li{margin:0 0 8px;break-inside:avoid}
+.guide h3.ghead{font-size:22px;margin:0 0 12px}
+.guide .gex{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:18px;margin-bottom:22px}
+.guide .ex{min-width:0;background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .ex h4{margin:0 0 6px;font-size:18px}
+.guide .ex .kind{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--hot);text-transform:uppercase;letter-spacing:.04em}
+.guide .ex p{margin:0 0 8px}
+.guide .work{font-size:16px;line-height:1.45;border-left:4px solid var(--hot);background:#fff;padding:6px 14px;margin:8px 0;overflow-x:auto}
+.guide .work math.eq{display:block;text-align:left;margin:8px 0;font-size:1.15em}
+@media (max-width:520px){.guide .work math.eq{font-size:1em}}
+.guide .work math.ans{font-weight:700}
+.guide .work .wt{margin:6px 0 2px}
+.guide .ex .take{margin:8px 0 0;font-weight:500}
+.guide .ex svg{float:right;margin:0 0 6px 12px}
+.guide .gcheck{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcheck>p{margin:-4px 0 12px;color:var(--muted)}
+.guide ol.q{margin:0;padding-left:26px}
+.guide ol.q>li{margin:0 0 14px}
+.guide details{margin-top:6px}
+.guide summary{cursor:pointer;display:inline-block;font-weight:700;border:2px solid var(--ink);padding:2px 10px;background:#fff;list-style:none}
+.guide summary::-webkit-details-marker{display:none}
+.guide summary:hover{background:var(--soft)}
+.guide details[open] summary{background:var(--ink);color:#fff}
+.guide details>div{border-left:4px solid var(--hot);padding:8px 12px;margin-top:8px;background:#fff}
+.guide .gpanel>.ggrid,.guide .gpanel>.gsteps,.guide .gpanel>.gex{margin-bottom:0}
+.guide .gpanel>.gsteps+.ggrid{margin-top:22px}
+.guide .gtabs{margin-bottom:18px}
+.guide .gnext{margin:16px 0 0;font-weight:700}
+.guide .gnext a{color:var(--ink)}
+body.present .guide{display:none}
+@media (max-width:520px){.guide .gtip{font-size:17px}.guide td:first-child{white-space:normal}.guide .ggrid,.guide .gex{grid-template-columns:1fr}.guide .ex svg{float:none;display:block;margin:0 auto 8px}}
+</style>
+<div class="simbar"><h2>Study guide</h2><span class="mono">Unit 3 · Circular Motion and Gravity</span></div>
+<p class="gtip"><b>How to use this:</b> read the key ideas, then cover each worked example and try it yourself before reading the solution. Do the self-check questions on paper <i>before</i> you open the answers, mark the ones you miss, and come back to them in a day or two without looking. Rereading won't do much; answering questions will.</p>
+<div class="tabs gtabs" role="tablist" aria-label="Study guide sections">
+  <button class="tab" role="tab" type="button" aria-selected="true" aria-controls="g-ideas" id="gt-ideas">Key ideas</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-solve" id="gt-solve" tabindex="-1">How to solve</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-examples" id="gt-examples" tabindex="-1">Worked examples</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-check" id="gt-check" tabindex="-1">Self-check</button>
+</div>
+<div class="gpanel" role="tabpanel" id="g-ideas" aria-labelledby="gt-ideas">
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Moving in circles</h3>
+    <ul>
+      <li><b>Uniform circular motion</b> means moving in a circle at a constant speed.</li>
+      <li>The <b>velocity</b> always points along the <b>tangent</b>: the straight line that just touches the circle where the object is.</li>
+      <li>The speed stays the same, but the direction keeps changing. A change in direction is a change in velocity, so the object is <b>accelerating</b>.</li>
+      <li>The acceleration points <b>toward the center</b> of the circle. “Centripetal” means center-seeking.</li>
+      <li>Newton's 2nd law: the net force points the same way as the acceleration. So <b>F<sub>net</sub> points toward the center</b> too.</li>
+      <li>A real force must do the pulling in. It can be F<sub>tens</sub> (a ball on a string), F<sub>frict</sub> (a car on a curve) or F<sub>grav</sub> (the Moon around Earth).</li>
+      <li><b>There is no outward force.</b> On a sharp turn you feel pushed outward, but that is your inertia: your body keeps trying to go straight while the car turns.</li>
+      <li>If the inward force stops, the object keeps going in a straight line along the tangent. It does not fly straight out from the center.</li>
+      <li><b>Vertical circles:</b> at the bottom, the string or seat must hold you up <i>and</i> pull you in, so F<sub>tens</sub> or F<sub>norm</sub> is bigger than your weight. At the top, gravity helps pull you in, so that force is smaller. That's why riders feel heavy at the bottom of a loop and light at the top.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Gravity and orbits</h3>
+    <ul>
+      <li><b>Gravity is universal:</b> every mass pulls on every other mass. The pull is only big when at least one mass is huge, like a planet.</li>
+      <li>F<sub>grav</sub> gets bigger with bigger masses and smaller with distance. Distance is measured <b>center to center</b>.</li>
+      <li><b>Inverse square:</b> twice as far gives <sup>1</sup>/<sub>4</sub> the force; three times as far gives <sup>1</sup>/<sub>9</sub>.</li>
+      <li><b>g</b> (the gravitational field strength) depends on the planet's mass and radius, not on your mass. Higher up, g is smaller.</li>
+      <li>A <b>satellite</b> is a projectile that falls <i>around</i> Earth. Gravity is the only force on it, and gravity is its centripetal force. Near Earth's surface it needs about 8000 m/s.</li>
+      <li>Astronauts in orbit still have weight. They float because they and their ship are falling together.</li>
+      <li><b>Kepler's 1st law:</b> planets move in ellipses with the Sun at one focus. Eccentricity e = d ÷ L tells how stretched the ellipse is (e = 0 is a circle).</li>
+      <li><b>Kepler's 2nd law:</b> a line from the Sun to the planet sweeps out equal areas in equal times. So a planet moves fastest when it is closest to the Sun.</li>
+      <li><b>Kepler's 3rd law:</b> T²/R³ is the same for every planet around the same sun. Farther planets take much longer to go around.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Equations</h3>
+    <table>
+      <tr><td>v = 2πR/T</td><td>speed. R = radius (m), T = period: the time for one trip around (s)</td></tr>
+      <tr><td>a = v²/R</td><td>centripetal acceleration (m/s/s)</td></tr>
+      <tr><td>F<sub>net</sub> = m·v²/R</td><td>net force toward the center (N)</td></tr>
+      <tr><td>W = F<sub>grav</sub> = m·g</td><td>weight. g = 10 m/s/s on Earth (9.8 is also fine)</td></tr>
+      <tr><td>F<sub>grav</sub> = G·m₁·m₂/d²</td><td>gravity between any two masses; d = center-to-center distance</td></tr>
+      <tr><td>g = G·M/R²</td><td>g at the surface of a planet of mass M and radius R (N/kg = m/s/s)</td></tr>
+      <tr><td>v = √(G·M/R)</td><td>speed for a circular orbit at distance R from the center</td></tr>
+      <tr><td>T² = R³</td><td>Kepler's 3rd law for our Sun, with T in years and R in AU (1 AU = Earth's distance from the Sun). The sim calls R “a”.</td></tr>
+      <tr><td>e = d ÷ L</td><td>eccentricity: distance between foci ÷ long axis</td></tr>
+      <tr><td>G</td><td>6.67 × 10⁻¹¹ N·m²/kg²</td></tr>
+    </table>
+  </div>
+  <div class="gcard">
+    <h3>Common mistakes</h3>
+    <ul>
+      <li>Drawing an outward (“centrifugal”) force on a free-body diagram. Only draw real forces.</li>
+      <li>Saying a released object flies straight out from the center. It goes off along the tangent.</li>
+      <li>Using the diameter in v = 2πR/T. R is the radius: half the diameter.</li>
+      <li>Forgetting to square: double the speed gives 4× the acceleration and 4× the force needed.</li>
+      <li>Using the height above the ground as d. Gravity's distance is from the planet's <b>center</b>: d = R<sub>planet</sub> + height.</li>
+      <li>Forgetting that at the bottom of a vertical circle, the string or seat must also hold up the weight.</li>
+      <li>Saying there is no gravity in space. There is; orbiting things are falling.</li>
+    </ul>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-solve" aria-labelledby="gt-solve" hidden>
+<div class="gsteps">
+  <h3>How to solve a circular motion force problem</h3>
+  <ol>
+    <li><b>List what you know</b> (m, v, R, T) and what you need.</li>
+    <li><b>Need the speed?</b> If you are given the time for one trip around, use v = 2πR/T. Use the radius, in meters.</li>
+    <li><b>Find the center</b> of the circle. Which way is “in”?</li>
+    <li><b>Draw a free-body diagram</b> with real forces only: F<sub>grav</sub>, F<sub>norm</sub>, F<sub>tens</sub>, F<sub>frict</sub>.</li>
+    <li><b>Find F<sub>net</sub> = m·v²/R.</b> It points toward the center.</li>
+    <li><b>Write F<sub>net</sub> from the diagram:</b> forces pointing in minus forces pointing out. Example at the bottom of a swing: F<sub>net</sub> = F<sub>tens</sub> − F<sub>grav</sub>.</li>
+    <li><b>Solve</b> for the force you want, and check it makes sense.</li>
+  </ol>
+</div>
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Gravity by proportions</h3>
+    <ul>
+      <li>Write the change as a factor: “3 times as far”, “half the mass”.</li>
+      <li>Mass factors multiply the force: double one mass, double F<sub>grav</sub>.</li>
+      <li>Distance factors are squared and flipped: 3× the distance gives <sup>1</sup>/<sub>9</sub> the force.</li>
+      <li>Do each change in turn, then multiply.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Gravity and orbit calculations</h3>
+    <ul>
+      <li>Pick the equation: F<sub>grav</sub> for a force, g for field strength, v = √(GM/R) for orbit speed.</li>
+      <li>Use the distance from the <b>center</b>, in meters.</li>
+      <li>Type powers of ten with your calculator's EE or ×10ˣ key.</li>
+      <li>Orbit period: find v, then T = 2πR/v.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Kepler's 3rd law</h3>
+    <ul>
+      <li>For planets around our Sun, use years and AU: T² = R³.</li>
+      <li>Know R? Cube it, then take the square root to get T.</li>
+      <li>Know T? Square it, then take the cube root to get R.</li>
+    </ul>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-examples" aria-labelledby="gt-examples" hidden>
+<div class="gex">
+  <div class="ex">
+    <div class="kind">Speed, acceleration and force</div>
+    <svg width="140" height="140" viewBox="0 0 140 140" aria-label="Top view of the track: velocity arrow along the tangent, net force arrow toward the center">
+      <circle cx="62" cy="70" r="50" fill="none" stroke="#111" stroke-width="1.5" stroke-dasharray="4 4"/>
+      <circle cx="62" cy="70" r="3" fill="#111"/>
+      <rect x="104" y="64" width="16" height="12" fill="#111"/>
+      <line x1="112" y1="62" x2="112" y2="24" stroke="#111" stroke-width="3"/><polygon points="107,26 117,26 112,16" fill="#111"/>
+      <text x="118" y="30" font-size="14" font-family="IBM Plex Mono,monospace">v</text>
+      <line x1="102" y1="70" x2="74" y2="70" stroke="#ff6a2b" stroke-width="3"/><polygon points="76,65 76,75 66,70" fill="#ff6a2b"/>
+      <text x="68" y="92" font-size="13" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">F</text><text x="76" y="96" font-size="10" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">net</text>
+    </svg>
+    <h4>A race car on a circular track</h4>
+    <p>A 600 kg race car drives around a circular track with a radius of 80 m. It makes one lap every 20 s at a steady speed. Find its speed, its acceleration and the net force on it. Which force supplies it?</p>
+    <div class="work">
+      <p class="wt">Speed (one lap is one circumference):</p>
+      <math class="eq" display="block"><mrow><mi>v</mi><mo>&#x0003D;</mo><mfrac><mrow><mn>2</mn><mi>&#x003C0;</mi><mi>R</mi></mrow><mrow><mi>T</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>2</mn><mi>&#x003C0;</mi><mo stretchy="false">&#x00028;</mo><mn>80</mn><mo stretchy="false">&#x00029;</mo></mrow><mrow><mn>20</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>v</mi><mo>&#x0003D;</mo><mn>25.1</mn><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
+      <p class="wt">Acceleration (toward the center):</p>
+      <math class="eq" display="block"><mrow><mi>a</mi><mo>&#x0003D;</mo><mfrac><mrow><msup><mi>v</mi><mn>2</mn></msup></mrow><mrow><mi>R</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mo stretchy="false">&#x00028;</mo><mn>25.1</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup></mrow><mrow><mn>80</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>a</mi><mo>&#x0003D;</mo><mn>7.9</mn><mspace width="0.167em" /><mtext>m/s/s</mtext></mrow></math>
+      <p class="wt">Net force (toward the center):</p>
+      <math class="eq" display="block"><mrow><msub><mi>F</mi><mrow><mtext>net</mtext></mrow></msub><mo>&#x0003D;</mo><mi>m</mi><mi>a</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>600</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>7.9</mn><mo stretchy="false">&#x00029;</mo></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>F</mi><mrow><mtext>net</mtext></mrow></msub><mo>&#x0003D;</mo><mn>4740</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+    </div>
+    <p class="take">The road is flat, so F<sub>grav</sub> and F<sub>norm</sub> cancel. The only sideways force is <b>friction</b> from the road on the tires, so F<sub>frict</sub> = 4740 N, pointing toward the center. The car is speeding along at a constant 25 m/s and still accelerating, because its direction keeps changing.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Bottom of a circle</div>
+    <svg width="110" height="150" viewBox="0 0 110 150" aria-label="Free-body diagram of the rider at the bottom of the swing: a long tension arrow up and a shorter gravity arrow down">
+      <circle cx="40" cy="80" r="9" fill="#111"/>
+      <line x1="40" y1="70" x2="40" y2="18" stroke="#ff6a2b" stroke-width="3"/><polygon points="35,20 45,20 40,8" fill="#ff6a2b"/>
+      <text x="48" y="30" font-size="13" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">F</text><text x="56" y="34" font-size="10" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">tens</text>
+      <text x="48" y="46" font-size="10" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">800 N</text>
+      <line x1="40" y1="90" x2="40" y2="114" stroke="#111" stroke-width="3"/><polygon points="35,112 45,112 40,124" fill="#111"/>
+      <text x="48" y="112" font-size="13" font-family="IBM Plex Mono,monospace">F</text><text x="56" y="116" font-size="10" font-family="IBM Plex Mono,monospace">grav</text>
+      <text x="48" y="128" font-size="10" font-family="IBM Plex Mono,monospace">400 N</text>
+      <text x="4" y="146" font-size="10" font-family="IBM Plex Mono,monospace">center is above ↑</text>
+    </svg>
+    <h4>Feeling heavy at the bottom of a swing</h4>
+    <p>A 40 kg student on a playground swing passes through the lowest point at 5.0 m/s. The chains are 2.5 m long, so the circle has a radius of 2.5 m. How hard do the chains pull up on her, all together?</p>
+    <div class="work">
+      <p class="wt">Her weight:</p>
+      <math class="eq" display="block"><mrow><msub><mi>F</mi><mrow><mtext>grav</mtext></mrow></msub><mo>&#x0003D;</mo><mi>m</mi><mi>g</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>40</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>400</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+      <p class="wt">The net force she needs (up, toward the center):</p>
+      <math class="eq" display="block"><mrow><msub><mi>F</mi><mrow><mtext>net</mtext></mrow></msub><mo>&#x0003D;</mo><mfrac><mrow><mi>m</mi><msup><mi>v</mi><mn>2</mn></msup></mrow><mrow><mi>R</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mo stretchy="false">&#x00028;</mo><mn>40</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>5.0</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup></mrow><mrow><mn>2.5</mn></mrow></mfrac></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>F</mi><mrow><mtext>net</mtext></mrow></msub><mo>&#x0003D;</mo><mn>400</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+      <p class="wt">From the diagram, F<sub>tens</sub> points in (up) and F<sub>grav</sub> points out (down):</p>
+      <math class="eq" display="block"><mrow><msub><mi>F</mi><mrow><mtext>net</mtext></mrow></msub><mo>&#x0003D;</mo><msub><mi>F</mi><mrow><mtext>tens</mtext></mrow></msub><mo>&#x02212;</mo><msub><mi>F</mi><mrow><mtext>grav</mtext></mrow></msub></mrow></math>
+      <math class="eq" display="block"><mrow><mo>&#x02192;</mo><mspace width="0.278em" /><msub><mi>F</mi><mrow><mtext>tens</mtext></mrow></msub><mo>&#x0003D;</mo><mn>400</mn><mo>&#x0002B;</mo><mn>400</mn></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>F</mi><mrow><mtext>tens</mtext></mrow></msub><mo>&#x0003D;</mo><mn>800</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+    </div>
+    <p class="take">The chains pull with twice her weight: half to hold her up, half to pull her into the circle. That extra pull is why you feel heavy at the bottom of a swing or a loop.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Top of a circle</div>
+    <svg width="150" height="130" viewBox="0 0 150 130" aria-label="Car on the top of a curved hill: normal force up is shorter than gravity down; the center of the circle is below">
+      <path d="M8 70 Q75 10 142 70" fill="none" stroke="#111" stroke-width="2.5"/>
+      <rect x="62" y="28" width="26" height="12" fill="#111"/>
+      <line x1="66" y1="26" x2="66" y2="8" stroke="#ff6a2b" stroke-width="3"/><polygon points="61,10 71,10 66,0" fill="#ff6a2b"/>
+      <text x="72" y="13" font-size="13" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">F</text><text x="80" y="17" font-size="10" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">norm</text>
+      <line x1="84" y1="42" x2="84" y2="80" stroke="#111" stroke-width="3"/><polygon points="79,78 89,78 84,90" fill="#111"/>
+      <text x="90" y="82" font-size="13" font-family="IBM Plex Mono,monospace">F</text><text x="98" y="86" font-size="10" font-family="IBM Plex Mono,monospace">grav</text>
+      <text x="22" y="122" font-size="10" font-family="IBM Plex Mono,monospace">center is below ↓</text>
+    </svg>
+    <h4>A car over the top of a hill</h4>
+    <p>A 1200 kg car drives over a rounded hilltop with a radius of 40 m at 12 m/s. (a) Find the normal force from the road. (b) How fast would the car have to go for the road to push on it with zero force?</p>
+    <div class="work">
+      <p class="wt">(a) Weight and net force. At the top, the center is <i>below</i> the car, so F<sub>net</sub> points down:</p>
+      <math class="eq" display="block"><mrow><msub><mi>F</mi><mrow><mtext>grav</mtext></mrow></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1200</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>12,000</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>F</mi><mrow><mtext>net</mtext></mrow></msub><mo>&#x0003D;</mo><mfrac><mrow><mi>m</mi><msup><mi>v</mi><mn>2</mn></msup></mrow><mrow><mi>R</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mo stretchy="false">&#x00028;</mo><mn>1200</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>12</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup></mrow><mrow><mn>40</mn></mrow></mfrac></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>F</mi><mrow><mtext>net</mtext></mrow></msub><mo>&#x0003D;</mo><mn>4320</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+      <p class="wt">F<sub>grav</sub> points in (down) and F<sub>norm</sub> points out (up):</p>
+      <math class="eq" display="block"><mrow><msub><mi>F</mi><mrow><mtext>net</mtext></mrow></msub><mo>&#x0003D;</mo><msub><mi>F</mi><mrow><mtext>grav</mtext></mrow></msub><mo>&#x02212;</mo><msub><mi>F</mi><mrow><mtext>norm</mtext></mrow></msub></mrow></math>
+      <math class="eq" display="block"><mrow><mo>&#x02192;</mo><mspace width="0.278em" /><msub><mi>F</mi><mrow><mtext>norm</mtext></mrow></msub><mo>&#x0003D;</mo><mn>12,000</mn><mo>&#x02212;</mo><mn>4320</mn></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>F</mi><mrow><mtext>norm</mtext></mrow></msub><mo>&#x0003D;</mo><mn>7680</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+      <p class="wt">(b) With F<sub>norm</sub> = 0, gravity alone is the net force:</p>
+      <math class="eq" display="block"><mrow><mi>m</mi><mi>g</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>m</mi><msup><mi>v</mi><mn>2</mn></msup></mrow><mrow><mi>R</mi></mrow></mfrac></mrow></math>
+      <math class="eq" display="block"><mrow><mo>&#x02192;</mo><mspace width="0.278em" /><mi>v</mi><mo>&#x0003D;</mo><msqrt><mrow><mi>g</mi><mi>R</mi></mrow></msqrt><mo>&#x0003D;</mo><msqrt><mrow><mo stretchy="false">&#x00028;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>40</mn><mo stretchy="false">&#x00029;</mo></mrow></msqrt></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>v</mi><mo>&#x0003D;</mo><mn>20</mn><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
+    </div>
+    <p class="take">Over a hilltop the road pushes up less than your weight, so you feel light. At 20 m/s or faster, gravity can't pull the car down fast enough to follow the curve, and the car leaves the road.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Gravity by proportions</div>
+    <svg width="150" height="90" viewBox="0 0 150 90" aria-label="Planet with distances of 1, 2 and 3 planet radii measured from its center">
+      <circle cx="30" cy="45" r="22" fill="#ffe2d3" stroke="#111" stroke-width="2"/>
+      <circle cx="30" cy="45" r="2.5" fill="#111"/>
+      <line x1="30" y1="45" x2="140" y2="45" stroke="#111" stroke-width="1" stroke-dasharray="3 3"/>
+      <circle cx="52" cy="45" r="4" fill="#ff6a2b"/><circle cx="96" cy="45" r="4" fill="#ff6a2b"/><circle cx="140" cy="45" r="4" fill="#ff6a2b"/>
+      <text x="48" y="84" font-size="12" font-family="IBM Plex Mono,monospace">R</text><text x="88" y="84" font-size="12" font-family="IBM Plex Mono,monospace">2R</text><text x="130" y="84" font-size="12" font-family="IBM Plex Mono,monospace">3R</text>
+      <text x="44" y="14" font-size="11" font-family="IBM Plex Mono,monospace">1800 N</text>
+    </svg>
+    <h4>A space probe moving away from a planet</h4>
+    <p>A space probe feels a 1800 N pull of gravity while sitting on the surface of a planet. (a) What is the pull when the probe is 3 planet radii from the planet's center? (b) What would it be there for a probe with twice the mass? (c) How high above the surface is the probe when the pull is 450 N?</p>
+    <div class="work">
+      <p class="wt">(a) On the surface the probe is 1 radius from the center. Now it is 3 times as far:</p>
+      <math class="eq" display="block"><mrow><mi>F</mi><mo>&#x0003D;</mo><mn>1800</mn><mo>&#x000D7;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><msup><mn>3</mn><mn>2</mn></msup></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>1800</mn></mrow><mrow><mn>9</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>F</mi><mo>&#x0003D;</mo><mn>200</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+      <p class="wt">(b) Twice the mass, twice the force:</p>
+      <math class="eq ans" display="block"><mrow><mi>F</mi><mo>&#x0003D;</mo><mn>2</mn><mo>&#x000D7;</mo><mn>200</mn><mo>&#x0003D;</mo><mn>400</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+      <p class="wt">(c) The force dropped by a factor of 4:</p>
+      <math class="eq" display="block"><mrow><mfrac><mrow><mn>1800</mn></mrow><mrow><mn>450</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>4</mn><mo>&#x0003D;</mo><msup><mn>2</mn><mn>2</mn></msup></mrow></math>
+      <p class="wt">so the probe is 2 radii from the center. That is <b>1 planet radius above the surface</b>.</p>
+    </div>
+    <p class="take">Always count distance from the center. “1 radius above the surface” means 2 radii from the center, so the force is <sup>1</sup>/<sub>4</sub>, not <sup>1</sup>/<sub>2</sub>.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Field strength</div>
+    <h4>Gravity on Mars</h4>
+    <p>Mars has a mass of 6.42 × 10²³ kg and a radius of 3.39 × 10⁶ m. Find g at the surface of Mars, then the weight of a 60 kg astronaut there. Compare with Earth.</p>
+    <div class="work">
+      <math class="eq" display="block"><mrow><mi>g</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>G</mi><mi>M</mi></mrow><mrow><msup><mi>R</mi><mn>2</mn></msup></mrow></mfrac></mrow></math>
+      <math class="eq" display="block"><mrow><mi>g</mi><mo>&#x0003D;</mo><mfrac><mrow><mo stretchy="false">&#x00028;</mo><mn>6.67</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>11</mn></mrow></msup><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>6.42</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mn>23</mn></mrow></msup><mo stretchy="false">&#x00029;</mo></mrow><mrow><mo stretchy="false">&#x00028;</mo><mn>3.39</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mn>6</mn></mrow></msup><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>g</mi><mo>&#x0003D;</mo><mn>3.7</mn><mspace width="0.167em" /><mtext>N/kg</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><mi>W</mi><mo>&#x0003D;</mo><mi>m</mi><mi>g</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>60</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>3.7</mn><mo stretchy="false">&#x00029;</mo></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>W</mi><mo>&#x02248;</mo><mn>220</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+      <p class="wt">On Earth:</p>
+      <math class="eq" display="block"><mrow><mi>W</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>60</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>600</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+    </div>
+    <p class="take">The astronaut's mass is 60 kg on both planets. Only the weight changes, because g depends on the planet's mass and radius. On Mars she weighs a bit more than a third of her Earth weight.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Orbit</div>
+    <svg width="140" height="130" viewBox="0 0 140 130" aria-label="Satellite in a circular orbit around Earth, with gravity pointing to Earth's center and velocity along the tangent">
+      <circle cx="60" cy="65" r="52" fill="none" stroke="#111" stroke-width="1.5" stroke-dasharray="4 4"/>
+      <circle cx="60" cy="65" r="18" fill="#ffe2d3" stroke="#111" stroke-width="2"/>
+      <circle cx="60" cy="13" r="5" fill="#111"/>
+      <line x1="66" y1="13" x2="100" y2="13" stroke="#111" stroke-width="3"/><polygon points="98,8 98,18 108,13" fill="#111"/>
+      <text x="112" y="18" font-size="14" font-family="IBM Plex Mono,monospace">v</text>
+      <line x1="60" y1="19" x2="60" y2="38" stroke="#ff6a2b" stroke-width="3"/><polygon points="55,36 65,36 60,46" fill="#ff6a2b"/>
+      <text x="66" y="38" font-size="13" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">F</text><text x="74" y="42" font-size="10" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">grav</text>
+    </svg>
+    <h4>How fast does a satellite go?</h4>
+    <p>A navigation satellite moves in a circular orbit 2.0 × 10⁷ m from Earth's center. Earth's mass is 6.0 × 10²⁴ kg. Find the satellite's speed and how long one orbit takes.</p>
+    <div class="work">
+      <p class="wt">Gravity is the centripetal force, which gives the orbit speed:</p>
+      <math class="eq" display="block"><mrow><mi>v</mi><mo>&#x0003D;</mo><msqrt><mrow><mfrac><mrow><mi>G</mi><mi>M</mi></mrow><mrow><mi>R</mi></mrow></mfrac></mrow></msqrt></mrow></math>
+      <math class="eq" display="block"><mrow><mi>v</mi><mo>&#x0003D;</mo><msqrt><mrow><mfrac><mrow><mo stretchy="false">&#x00028;</mo><mn>6.67</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>11</mn></mrow></msup><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>6.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mn>24</mn></mrow></msup><mo stretchy="false">&#x00029;</mo></mrow><mrow><mn>2.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mn>7</mn></mrow></msup></mrow></mfrac></mrow></msqrt></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>v</mi><mo>&#x0003D;</mo><mn>4.47</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mn>3</mn></mrow></msup><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
+      <p class="wt">Period (one orbit is one circumference):</p>
+      <math class="eq" display="block"><mrow><mi>T</mi><mo>&#x0003D;</mo><mfrac><mrow><mn>2</mn><mi>&#x003C0;</mi><mi>R</mi></mrow><mrow><mi>v</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>2</mn><mi>&#x003C0;</mi><mo stretchy="false">&#x00028;</mo><mn>2.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mn>7</mn></mrow></msup><mo stretchy="false">&#x00029;</mo></mrow><mrow><mn>4.47</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mn>3</mn></mrow></msup></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>T</mi><mo>&#x0003D;</mo><mn>2.81</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mn>4</mn></mrow></msup><mspace width="0.167em" /><mtext>s</mtext><mo>&#x02248;</mo><mn>7.8</mn><mtext>&#x000A0;hours</mtext></mrow></math>
+    </div>
+    <p class="take">The satellite's own mass isn't in the equation, so a heavy and a light satellite at the same distance go the same speed. Farther out, v is smaller and the trip is longer, so the period is longer.</p>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
+<div class="gcheck">
+  <h3>Self-check</h3>
+  <p>Answer first, then open.</p>
+  <ol class="q">
+    <li>A hammer thrower spins and lets go at the instant the hammer is moving due east. Which way does the hammer go?
+      <details><summary>Answer</summary><div>East, along the tangent to the circle (while gravity pulls it down to the ground). Once she lets go, nothing pulls it toward the center, so it keeps the direction it had. It does not fly straight out from the center.</div></details></li>
+    <li>A car drives around a traffic circle at a steady 8 m/s. Is it accelerating? Which way do its velocity, acceleration and net force point? Which force provides the net force?
+      <details><summary>Answer</summary><div>Yes, it is accelerating, because its direction keeps changing. Velocity points along the tangent (the way the car is heading). Acceleration and net force both point toward the center of the circle. Friction from the road on the tires provides it.</div></details></li>
+    <li>A bus makes a sharp left turn and your backpack slides to the right across the seat. Did a force push the backpack to the right? Explain.
+      <details><summary>Answer</summary><div>No. The backpack tried to keep going straight (inertia) while the bus turned left underneath it. The seat's friction was too small to pull it around the turn with the bus, so it slid toward the right side.</div></details></li>
+    <li>The tip of a ceiling fan blade is 0.60 m from the center. The fan makes 3 turns every second. Find the speed and the acceleration of the tip.
+      <details><summary>Answer</summary><div>One turn takes T = 1/3 s = 0.333 s. v = 2πR/T = 2π(0.60)/0.333 = 11.3 m/s. a = v²/R = (11.3)²/0.60 = 213 m/s/s, about 21 times g.</div></details></li>
+    <li>A car takes a curve at 3 times its usual speed. How much friction does it need compared with usual? What if it took a curve with twice the radius at its usual speed?
+      <details><summary>Answer</summary><div>F<sub>net</sub> = m·v²/R. Three times the speed needs 3² = 9 times the friction. Twice the radius at the same speed needs half the friction.</div></details></li>
+    <li>On a roller coaster loop, where does a rider feel heaviest: at the bottom or the top? Use F<sub>norm</sub> and F<sub>grav</sub> to explain.
+      <details><summary>Answer</summary><div>At the bottom. There the center is above her, so the seat has to push up more than her weight: F<sub>norm</sub> − F<sub>grav</sub> = m·v²/R, so F<sub>norm</sub> &gt; F<sub>grav</sub>. At the top, gravity points toward the center and does part of the job, so the seat pushes less.</div></details></li>
+    <li>Two asteroids attract each other with a force F. One asteroid's mass is halved and the distance between them is tripled. What is the new force?
+      <details><summary>Answer</summary><div>Half a mass: ½F. Triple the distance: divide by 3² = 9. New force = <sup>1</sup>/<sub>18</sub> F.</div></details></li>
+    <li>A planet has twice Earth's mass and twice Earth's radius. What is g at its surface? (Earth: g = 10 N/kg.)
+      <details><summary>Answer</summary><div>g = GM/R². Twice the mass doubles g; twice the radius divides it by 2² = 4. g = 10 × 2 ÷ 4 = 5 N/kg.</div></details></li>
+    <li>Two 2000 kg trucks are parked with their centers 4.0 m apart. Find the gravity force between them. Why don't they roll toward each other?
+      <details><summary>Answer</summary><div>F<sub>grav</sub> = Gm₁m₂/d² = (6.67 × 10⁻¹¹)(2000)(2000)/(4.0)² = 1.7 × 10⁻⁵ N. That is far smaller than the friction holding each truck in place, so nothing happens.</div></details></li>
+    <li>Earth is closest to the Sun in early January and farthest in early July. When is Earth moving fastest in its orbit? Which law tells you?
+      <details><summary>Answer</summary><div>Early January. Kepler's 2nd law: the line from the Sun sweeps equal areas in equal times. When that line is short, Earth must travel farther along its orbit in the same time, so it moves faster.</div></details></li>
+    <li>A dwarf planet orbits our Sun at an average distance of 16 AU. How long is its year?
+      <details><summary>Answer</summary><div>T² = R³ = 16³ = 4096. T = √4096 = 64 years.</div></details></li>
+    <li>An ellipse has foci 3.0 cm apart and a long axis of 12 cm. Find its eccentricity. Is it closer to a circle than an orbit with e = 0.6?
+      <details><summary>Answer</summary><div>e = d ÷ L = 3.0 ÷ 12 = 0.25. Yes: a smaller e is closer to a circle (e = 0), so 0.25 is rounder than 0.6.</div></details></li>
+  </ol>
+</div>
+</div>
+<p class="gnext"><a href="#practice" data-view="practice">Practice these ideas →</a></p>
+<script>
+(function(){
+  var root=document.currentScript?document.currentScript.parentNode:document;
+  var tabs=[].slice.call(root.querySelectorAll('.gtabs .tab'));
+  function show(t){tabs.forEach(function(b){var on=b===t;b.setAttribute('aria-selected',on?'true':'false');b.tabIndex=on?0:-1;document.getElementById(b.getAttribute('aria-controls')).hidden=!on;});}
+  tabs.forEach(function(b,i){
+    b.addEventListener('click',function(){show(b);});
+    b.addEventListener('keydown',function(e){var k=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(k){var n=tabs[(i+k+tabs.length)%tabs.length];show(n);n.focus();e.preventDefault();}});
+  });
+})();
+</script>
+</section>

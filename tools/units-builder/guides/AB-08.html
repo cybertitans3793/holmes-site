@@ -1,0 +1,418 @@
+<section class="guide" id="guide" aria-label="Study guide">
+<style>
+.guide{margin-top:28px}
+.guide .gtip{margin:0 0 10px;font-size:19px;line-height:1.45;max-width:1000px}
+.guide .gbelow{display:inline-block;margin:0 0 16px;font-size:19px;font-weight:700;border:3px solid var(--ink);background:var(--soft);padding:6px 14px;box-shadow:4px 4px 0 var(--ink);color:var(--ink);text-decoration:none}
+.guide .gbelow:hover{background:var(--hot)}
+.guide .ggrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-bottom:22px}
+.guide .gcard{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcard h3,.guide .gcheck h3,.guide .gsteps h3{margin:0 0 10px;font-size:20px;letter-spacing:-.01em}
+.guide .gcard ul{margin:0;padding-left:20px}
+.guide .gcard li{margin:0 0 7px}
+.guide .ib{display:inline-block;font-family:var(--f-mono);font-size:11px;font-weight:700;border:2px solid var(--ink);padding:0 5px;margin-left:4px;vertical-align:1px;background:var(--soft)}
+.guide table{border-collapse:collapse;width:100%;font-size:15px}
+.guide td{border-top:2px solid var(--ink);padding:6px 4px;vertical-align:top}
+.guide td:first-child{font-family:var(--f-mono);font-weight:700;white-space:nowrap;padding-right:12px}
+.guide .gsteps{background:var(--soft);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px;margin-bottom:22px}
+.guide .gsteps ol{margin:0;padding-left:24px;columns:2 360px;column-gap:28px}
+.guide .gsteps li{margin:0 0 8px;break-inside:avoid}
+.guide h3.ghead{font-size:22px;margin:0 0 12px}
+.guide .gex{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:18px;margin-bottom:22px}
+.guide .ex{min-width:0;background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .ex h4{margin:0 0 6px;font-size:18px}
+.guide .ex .kind{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--hot);text-transform:uppercase;letter-spacing:.04em}
+.guide .ex p{margin:0 0 8px}
+.guide .work{font-size:16px;line-height:1.45;border-left:4px solid var(--hot);background:#fff;padding:6px 14px;margin:8px 0;overflow-x:auto}
+.guide .work math.eq{display:block;text-align:left;margin:8px 0;font-size:1.15em}
+@media (max-width:520px){.guide .work math.eq{font-size:1em}}
+.guide .work math.ans{font-weight:700}
+.guide .work .wt{margin:6px 0 2px}
+.guide .ex .take{margin:8px 0 0;font-weight:500}
+.guide .ex svg{float:right;margin:0 0 6px 12px}
+.guide .gcheck{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcheck>p{margin:-4px 0 12px;color:var(--muted)}
+.guide ol.q{margin:0;padding-left:26px}
+.guide ol.q>li{margin:0 0 14px}
+.guide details{margin-top:6px}
+.guide summary{cursor:pointer;display:inline-block;font-weight:700;border:2px solid var(--ink);padding:2px 10px;background:#fff;list-style:none}
+.guide summary::-webkit-details-marker{display:none}
+.guide summary:hover{background:var(--soft)}
+.guide details[open] summary{background:var(--ink);color:#fff}
+.guide details>div{border-left:4px solid var(--hot);padding:8px 12px;margin-top:8px;background:#fff}
+.guide .gpanel>.ggrid,.guide .gpanel>.gsteps,.guide .gpanel>.gex{margin-bottom:0}
+.guide .gtabs{margin-bottom:18px}
+.guide .gnext{margin:16px 0 0;font-weight:700}
+.guide .gnext a{color:var(--ink)}
+.guide .gpanel>.ggrid+h3.ghead,.guide .gpanel>.gsteps+h3.ghead{margin-top:26px}
+.guide .gcard svg.gfig{display:block;max-width:100%;height:auto;margin:0 auto 10px}
+body.present .guide{display:none}
+@media (max-width:520px){.guide .gtip,.guide .gbelow{font-size:17px}.guide td:first-child{white-space:normal}.guide .ggrid,.guide .gex{grid-template-columns:1fr}.guide .ex svg{float:none;display:block;margin:0 auto 8px}}
+</style>
+<div class="simbar"><h2>Study guide</h2><span class="mono">Unit 8 · Waves &amp; Earth’s Interior</span></div>
+<p class="gtip"><b>How to use this:</b> read the key ideas, then cover each worked example and try it yourself before reading the solution. Do the self-check questions on paper <i>before</i> you open the answers, mark the ones you miss, and come back to them in a day or two without looking. Rereading won't do much; answering questions will.</p>
+<div class="tabs gtabs" role="tablist" aria-label="Study guide sections">
+  <button class="tab" role="tab" type="button" aria-selected="true" aria-controls="g-ideas" id="gt-ideas">Key ideas</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-solve" id="gt-solve" tabindex="-1">How to solve</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-examples" id="gt-examples" tabindex="-1">Worked examples</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-check" id="gt-check" tabindex="-1">Self-check</button>
+</div>
+<div class="gpanel" role="tabpanel" id="g-ideas" aria-labelledby="gt-ideas">
+
+<h3 class="ghead">Waves</h3>
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Wave basics</h3>
+    <ul>
+      <li>A <b>wave</b> is a disturbance that carries <b>energy</b> from place to place. It does not carry the material along. Each bit of the medium just vibrates back and forth around one spot.</li>
+      <li>Every wave starts with a <b>vibration</b>.</li>
+      <li><b>Transverse</b> wave: the medium moves <i>perpendicular</i> to the wave's direction (a rope shaken up and down). It has crests and troughs.</li>
+      <li><b>Longitudinal</b> wave: the medium moves <i>parallel</i> to the wave's direction (a Slinky pushed and pulled). It has compressions (squeezed together) and rarefactions (spread apart). Sound is longitudinal.</li>
+      <li><b>Mechanical</b> waves need a medium (rope, water, air, rock). Sound can't travel through empty space. <b>Electromagnetic</b> waves (light, radio, X-rays) don't need a medium and all travel at c = 3.0 × 10⁸ m/s in a vacuum.</li>
+      <li><b>Amplitude</b> (m): how far the medium moves from its rest position. Crest to trough is <i>two</i> amplitudes.</li>
+      <li><b>Wavelength</b> λ (m): the length of one full cycle, like crest to crest.</li>
+      <li><b>Frequency</b> f (Hz): how many cycles each second. <b>Period</b> T (s): the time for one cycle. T = 1/f.</li>
+      <li><b>Wave speed</b> depends on the <b>medium</b> only. Changing the frequency changes the wavelength, not the speed.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>What waves do</h3>
+    <ul>
+      <li>At a <b>boundary</b>, part of a wave reflects and part goes through (is transmitted).</li>
+      <li><b>Fixed end</b> (or light rope → heavy rope): the reflected pulse comes back <b>upside down</b>. <b>Free end</b> (or heavy → light): it comes back right side up.</li>
+      <li>The frequency never changes at a boundary. The speed and wavelength do. Waves on a rope are faster, with a longer wavelength, in the lighter (less dense) rope.</li>
+      <li><b>Interference:</b> when two waves meet, their displacements add (superposition). Crest + crest = bigger: <b>constructive</b>. Crest + trough = smaller: <b>destructive</b>. Then they pass through each other unchanged.</li>
+      <li><b>Standing waves:</b> a wave and its reflection interfere to make a pattern that seems to stand still. <b>Nodes</b> don't move. <b>Antinodes</b> move the most. Each loop is half a wavelength.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Sound</h3>
+    <ul>
+      <li>Sound is a longitudinal, mechanical wave. Air particles vibrate back and forth; they do not travel from the speaker to your ear.</li>
+      <li>Sound moves at about <b>340 m/s</b> in air, and faster in water and solids.</li>
+      <li><b>Pitch</b> = frequency. High pitch means high frequency and short wavelength.</li>
+      <li><b>Loudness</b> = amplitude. Yelling makes the air vibrate farther, not faster or more often.</li>
+      <li>An <b>echo</b> is reflected sound. The sound goes there <i>and back</i>, so the distance to the wall is half of (speed × time).</li>
+      <li><b>Doppler effect:</b> when a source moves toward you, the waves bunch up and you hear a <b>higher</b> pitch. Moving away, they spread out and the pitch is <b>lower</b>. The source itself doesn't change its frequency, and the waves don't travel faster.</li>
+      <li>Light does it too: light from a star or galaxy moving away is <b>red-shifted</b> (its spectrum lines shift toward longer wavelengths).</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Light: reflection and refraction</h3>
+    <ul>
+      <li>The <b>normal</b> is a line drawn perpendicular (90°) to the surface where the ray hits. All angles are measured from the normal, not from the surface.</li>
+      <li><b>Law of reflection:</b> angle of incidence = angle of reflection.</li>
+      <li>A flat mirror makes an image <b>behind</b> the mirror, as far behind as the object is in front.</li>
+      <li><b>Refraction</b> is bending when light crosses into a new material, because its speed changes. A ray along the normal (0°) goes straight through without bending.</li>
+      <li><b>Index of refraction</b> n = c/v. A bigger n means light is slower there (the material is more “optically dense”). Air ≈ 1.00, water 1.33, glass ≈ 1.5.</li>
+      <li>Into a slower material (bigger n), light bends <b>toward</b> the normal. Into a faster material (smaller n), it bends <b>away</b> from the normal.</li>
+      <li><b>Snell's law</b> gives the angles: n₁ sin θ₁ = n₂ sin θ₂.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Equations</h3>
+    <table>
+      <tr><td>T = 1/f</td><td>period and frequency</td></tr>
+      <tr><td>f = cycles ÷ time</td><td>frequency from counting</td></tr>
+      <tr><td>v = f·λ</td><td>wave speed</td></tr>
+      <tr><td>v = d/t</td><td>also wave speed</td></tr>
+      <tr><td>d = v·t ÷ 2</td><td>echo: distance to the wall</td></tr>
+      <tr><td>λ = 2 × loop length</td><td>standing wave</td></tr>
+      <tr><td>n = c/v</td><td>index of refraction</td></tr>
+      <tr><td>n₁ sin θ₁ = n₂ sin θ₂</td><td>Snell's law</td></tr>
+      <tr><td>c</td><td>3.0 × 10⁸ m/s</td></tr>
+      <tr><td>sound in air</td><td>≈ 340 m/s</td></tr>
+    </table>
+  </div>
+  <div class="gcard">
+    <h3>Common mistakes</h3>
+    <ul>
+      <li>Calling the crest-to-trough height the amplitude. Amplitude is from the middle (rest position) to a crest.</li>
+      <li>Thinking a higher frequency makes a wave faster. In the same medium, the speed stays the same and the wavelength gets shorter.</li>
+      <li>Forgetting to divide by 2 in an echo problem.</li>
+      <li>Thinking the Doppler effect is about loudness. It's about pitch (frequency).</li>
+      <li>Measuring angles from the surface instead of the normal.</li>
+      <li>Counting nodes wrong: the two fixed ends of a string are nodes too. A pattern with 3 loops has 4 nodes.</li>
+      <li>Calculator in radians. Snell's law needs <b>degree</b> mode.</li>
+    </ul>
+  </div>
+</div>
+<h3 class="ghead">Earth's interior and plates</h3>
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Inside the Earth</h3>
+    <svg class="gfig" width="326" height="236" viewBox="0 0 326 236" aria-label="Cut-away of Earth: crust, solid mantle, liquid outer core, solid inner core, and the S-wave shadow zone on the far side from an earthquake">
+    <circle cx="104" cy="110" r="90" fill="#fff" stroke="#111" stroke-width="4"/>
+    <circle cx="104" cy="110" r="49" fill="#ffe2d3" stroke="#111" stroke-width="2"/>
+    <circle cx="104" cy="110" r="18" fill="#ff6a2b" stroke="#111" stroke-width="2"/>
+    <path d="M198.1 133.5 A 97 97 0 0 1 9.9 133.5" fill="none" stroke="#ff6a2b" stroke-width="6"/>
+    <polygon points="104,22 98,10 110,10" fill="#ff6a2b"/>
+    <text x="104" y="12" font-size="11" font-family="IBM Plex Mono,monospace" text-anchor="middle">earthquake</text>
+    <polyline points="174.9,54.6 196,34 200,34" fill="none" stroke="#111" stroke-width="1"/>
+    <circle cx="174.9" cy="54.6" r="2" fill="#111"/>
+    <text x="203" y="38" font-size="10" font-family="IBM Plex Mono,monospace">crust (thin)</text>
+    <polyline points="165.8,77.1 196,62 200,62" fill="none" stroke="#111" stroke-width="1"/>
+    <circle cx="165.8" cy="77.1" r="2" fill="#111"/>
+    <text x="203" y="66" font-size="10" font-family="IBM Plex Mono,monospace">mantle (solid)</text>
+    <polyline points="140.0,110.0 196,110 200,110" fill="none" stroke="#111" stroke-width="1"/>
+    <circle cx="140.0" cy="110.0" r="2" fill="#111"/>
+    <text x="203" y="114" font-size="10" font-family="IBM Plex Mono,monospace">outer core (liquid)</text>
+    <polyline points="110.9,115.8 196,150 200,150" fill="none" stroke="#111" stroke-width="1"/>
+    <circle cx="110.9" cy="115.8" r="2" fill="#111"/>
+    <text x="203" y="154" font-size="10" font-family="IBM Plex Mono,monospace">inner core (solid)</text>
+    <text x="104" y="224" font-size="11" font-family="IBM Plex Mono,monospace" text-anchor="middle" fill="#c43a00">S-wave shadow zone</text>
+    </svg>
+    <ul>
+      <li>Layers from the outside in: <b>crust</b> (thin, solid rock), <b>mantle</b> (solid rock that flows very slowly), <b>outer core</b> (liquid iron and nickel), <b>inner core</b> (solid iron and nickel).</li>
+      <li>The inner core is the hottest layer, but the huge pressure keeps it solid.</li>
+      <li>Nobody has drilled through the crust. We know what's inside from <b>seismic waves</b>: the waves an earthquake sends through the Earth.</li>
+      <li><b>P waves</b> (primary) are push–pull (longitudinal). They are faster and arrive first. They go through solids and liquids.</li>
+      <li><b>S waves</b> (secondary) are side to side (transverse). They are slower and arrive second. They can't go through liquids.</li>
+      <li>On the far side of the Earth from an earthquake, there is an <b>S-wave shadow zone</b> where no S waves arrive. That shows the <b>outer core is liquid</b>. P waves bend (refract) at the core, which leaves a narrower P-wave shadow zone.</li>
+      <li>The farther a station is from the quake, the longer the gap between the P and S waves. In the lab, distance (km) = 8 × (S − P time in s). Circles from <b>three</b> stations cross at the epicenter.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Plates and boundaries</h3>
+    <ul>
+      <li>The crust and the top of the mantle form rigid <b>plates</b> that move a few centimeters a year, carried by slow, heat-driven flow (convection) in the mantle.</li>
+      <li><b>Ocean crust</b> is thin and dense (basalt). <b>Continental crust</b> is thick and less dense, so it floats higher.</li>
+      <li><b>Divergent</b> boundary: plates move <b>apart</b>. Magma rises and makes new crust: mid-ocean ridges and rift valleys.</li>
+      <li><b>Convergent</b> boundary: plates move <b>together</b>. Dense ocean crust sinks under the other plate (<b>subduction</b>), making a deep trench, earthquakes and a chain of volcanoes. Two continents crumple into mountains.</li>
+      <li><b>Transform</b> boundary: plates <b>slide past</b> each other. Lots of earthquakes, few volcanoes.</li>
+      <li>Most earthquakes and volcanoes happen along plate boundaries. That's why Japan has many and Maryland has very few.</li>
+      <li><b>Magnetic stripes:</b> new sea floor at a ridge records Earth's magnetic field, which flips now and then. The stripes match on both sides, which shows the sea floor spreading.</li>
+      <li><b>Hot spots</b> stay put in the mantle while the plate moves over them, making a chain of volcanoes that get older farther from the hot spot. Plate speed = distance ÷ age.</li>
+    </ul>
+  </div>
+</div>
+
+</div>
+<div class="gpanel" role="tabpanel" id="g-solve" aria-labelledby="gt-solve" hidden>
+<div class="gsteps">
+  <h3>How to solve a wave problem</h3>
+  <ol>
+    <li><b>Sort the numbers.</b> Is each one a distance (λ, amplitude), a time (T), a count per second (f) or a speed (v)?</li>
+    <li><b>Read the picture carefully.</b> Count how many full waves fit in a length. Crest to trough is 2 amplitudes.</li>
+    <li><b>Get f and T</b> from counting: f = cycles ÷ seconds, T = 1/f.</li>
+    <li><b>Use v = f·λ</b> to find the one you're missing.</li>
+    <li><b>Check units:</b> change cm to m and ms to s if the question needs it.</li>
+  </ol>
+</div>
+<div class="gsteps">
+  <h3>How to solve a refraction problem</h3>
+  <ol>
+    <li><b>Draw the normal</b> where the ray hits the boundary. Measure every angle from it.</li>
+    <li><b>Label each side</b> with its n. Material 1 is where the light starts.</li>
+    <li><b>Predict the bend:</b> bigger n → toward the normal; smaller n → away from it.</li>
+    <li><b>Write Snell's law,</b> n₁ sin θ₁ = n₂ sin θ₂, and solve for the unknown.</li>
+    <li><b>To find an angle,</b> get its sine first, then use sin⁻¹ (calculator in degree mode).</li>
+    <li><b>Check</b> that your answer bends the way you predicted.</li>
+  </ol>
+</div>
+<div class="gsteps">
+  <h3>How to locate an earthquake</h3>
+  <ol>
+    <li><b>Read the seismogram</b> at one station: the time the P wave starts and the time the S wave starts.</li>
+    <li><b>Find the gap,</b> S − P, in seconds.</li>
+    <li><b>Find the distance:</b> 8 × (S − P) gives km (in the lab's simplified Earth).</li>
+    <li><b>Draw a circle</b> with that radius around the station. The quake is somewhere on that circle.</li>
+    <li><b>Repeat for two more stations.</b> The one spot where all three circles cross is the epicenter.</li>
+  </ol>
+</div>
+
+</div>
+<div class="gpanel" role="tabpanel" id="g-examples" aria-labelledby="gt-examples" hidden>
+<div class="gex">
+  <div class="ex">
+    <div class="kind">Reading a wave</div>
+    <svg width="256" height="120" viewBox="0 0 256 120" aria-label="Snapshot of a rope wave: two full wavelengths span 3.0 m; crest to trough is 0.40 m">
+      <line x1="16" y1="52" x2="196" y2="52" stroke="#111" stroke-width="1" stroke-dasharray="3 3"/>
+      <polyline points="16.0,52.0 17.5,49.3 19.0,46.6 20.5,44.0 22.0,41.4 23.5,39.0 25.0,36.7 26.5,34.6 28.0,32.7 29.5,31.0 31.0,29.5 32.5,28.2 34.0,27.3 35.5,26.6 37.0,26.1 38.5,26.0 40.0,26.1 41.5,26.6 43.0,27.3 44.5,28.2 46.0,29.5 47.5,31.0 49.0,32.7 50.5,34.6 52.0,36.7 53.5,39.0 55.0,41.4 56.5,44.0 58.0,46.6 59.5,49.3 61.0,52.0 62.5,54.7 64.0,57.4 65.5,60.0 67.0,62.6 68.5,65.0 70.0,67.3 71.5,69.4 73.0,71.3 74.5,73.0 76.0,74.5 77.5,75.8 79.0,76.7 80.5,77.4 82.0,77.9 83.5,78.0 85.0,77.9 86.5,77.4 88.0,76.7 89.5,75.8 91.0,74.5 92.5,73.0 94.0,71.3 95.5,69.4 97.0,67.3 98.5,65.0 100.0,62.6 101.5,60.0 103.0,57.4 104.5,54.7 106.0,52.0 107.5,49.3 109.0,46.6 110.5,44.0 112.0,41.4 113.5,39.0 115.0,36.7 116.5,34.6 118.0,32.7 119.5,31.0 121.0,29.5 122.5,28.2 124.0,27.3 125.5,26.6 127.0,26.1 128.5,26.0 130.0,26.1 131.5,26.6 133.0,27.3 134.5,28.2 136.0,29.5 137.5,31.0 139.0,32.7 140.5,34.6 142.0,36.7 143.5,39.0 145.0,41.4 146.5,44.0 148.0,46.6 149.5,49.3 151.0,52.0 152.5,54.7 154.0,57.4 155.5,60.0 157.0,62.6 158.5,65.0 160.0,67.3 161.5,69.4 163.0,71.3 164.5,73.0 166.0,74.5 167.5,75.8 169.0,76.7 170.5,77.4 172.0,77.9 173.5,78.0 175.0,77.9 176.5,77.4 178.0,76.7 179.5,75.8 181.0,74.5 182.5,73.0 184.0,71.3 185.5,69.4 187.0,67.3 188.5,65.0 190.0,62.6 191.5,60.0 193.0,57.4 194.5,54.7 196.0,52.0" fill="none" stroke="#ff6a2b" stroke-width="3"/>
+      <line x1="16" y1="96" x2="196" y2="96" stroke="#111" stroke-width="1.5"/>
+      <line x1="16" y1="90" x2="16" y2="102" stroke="#111" stroke-width="1.5"/><line x1="196" y1="90" x2="196" y2="102" stroke="#111" stroke-width="1.5"/>
+      <text x="106" y="114" font-size="11" font-family="IBM Plex Mono,monospace" text-anchor="middle">3.0 m (2 waves)</text>
+      <line x1="128" y1="26" x2="208" y2="26" stroke="#111" stroke-width="1" stroke-dasharray="2 2"/>
+      <line x1="174" y1="78" x2="208" y2="78" stroke="#111" stroke-width="1" stroke-dasharray="2 2"/>
+      <line x1="204" y1="26" x2="204" y2="78" stroke="#111" stroke-width="1.5"/>
+      <text x="210" y="56" font-size="11" font-family="IBM Plex Mono,monospace">0.40 m</text>
+      </svg>
+    <h4>A wave on a rope</h4>
+    <p>A snapshot of a rope shows exactly two full waves along 3.0 m of rope. The rope is 0.40 m from the top of a crest to the bottom of a trough. A ribbon tied to the rope goes up and down 12 times in 4.0 s. Find the amplitude, wavelength, frequency, period and speed.</p>
+    <div class="work">
+      <p class="wt">Amplitude is half of crest to trough:</p>
+      <math class="eq ans" display="block"><mrow><mi>A</mi><mo>&#x0003D;</mo><mfrac><mrow><mn>0.40</mn></mrow><mrow><mn>2</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0.20</mn><mspace width="0.167em" /><mtext>m</mtext></mrow></math>
+      <p class="wt">Two waves fit in 3.0 m:</p>
+      <math class="eq ans" display="block"><mrow><mi>&#x003BB;</mi><mo>&#x0003D;</mo><mfrac><mrow><mn>3.0</mn></mrow><mrow><mn>2</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>1.5</mn><mspace width="0.167em" /><mtext>m</mtext></mrow></math>
+      <p class="wt">Frequency and period:</p>
+      <math class="eq ans" display="block"><mrow><mi>f</mi><mo>&#x0003D;</mo><mfrac><mrow><mn>12</mn><mtext>&#x000A0;cycles</mtext></mrow><mrow><mn>4.0</mn><mtext>&#x000A0;s</mtext></mrow></mfrac><mo>&#x0003D;</mo><mn>3.0</mn><mspace width="0.167em" /><mtext>Hz</mtext></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>T</mi><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mi>f</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>3.0</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0.33</mn><mspace width="0.167em" /><mtext>s</mtext></mrow></math>
+      <p class="wt">Speed:</p>
+      <math class="eq" display="block"><mrow><mi>v</mi><mo>&#x0003D;</mo><mi>f</mi><mi>&#x003BB;</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>3.0</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>1.5</mn><mo stretchy="false">&#x00029;</mo></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>v</mi><mo>&#x0003D;</mo><mn>4.5</mn><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
+    </div>
+    <p class="take">The ribbon only moves up and down. It's the energy (and the wave shape) that moves along the rope at 4.5 m/s.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Echo</div>
+    <h4>How far away is the moth?</h4>
+    <p>A bat sends out a click and hears the echo from a moth 0.020 s later. Sound travels at 340 m/s. How far away is the moth?</p>
+    <div class="work">
+      <p class="wt">Distance the sound travels in 0.020 s (there and back):</p>
+      <math class="eq" display="block"><mrow><msub><mi>d</mi><mrow><mtext>total</mtext></mrow></msub><mo>&#x0003D;</mo><mi>v</mi><mo>&#x000B7;</mo><mi>t</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>340</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>0.020</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>6.8</mn><mspace width="0.167em" /><mtext>m</mtext></mrow></math>
+      <p class="wt">The moth is halfway:</p>
+      <math class="eq ans" display="block"><mrow><mi>d</mi><mo>&#x0003D;</mo><mfrac><mrow><mn>6.8</mn></mrow><mrow><mn>2</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>3.4</mn><mspace width="0.167em" /><mtext>m</mtext></mrow></math>
+    </div>
+    <p class="take">Bats find insects this way (echolocation), and ships find the depth of the ocean the same way (sonar).</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Sound and v = fλ</div>
+    <h4>A tuning fork in air and in water</h4>
+    <p>A 512-Hz tuning fork makes sound in air (340 m/s). (a) What is the wavelength? (b) The same fork is struck underwater, where sound travels at 1480 m/s. What are the frequency and wavelength there?</p>
+    <div class="work">
+      <p class="wt">(a) Solve v = fλ for λ:</p>
+      <math class="eq" display="block"><mrow><mi>&#x003BB;</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>v</mi></mrow><mrow><mi>f</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>340</mn></mrow><mrow><mn>512</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>&#x003BB;</mi><mrow><mtext>air</mtext></mrow></msub><mo>&#x0003D;</mo><mn>0.66</mn><mspace width="0.167em" /><mtext>m</mtext></mrow></math>
+      <p class="wt">(b) The fork sets the frequency, so it stays 512 Hz. The medium sets the speed:</p>
+      <math class="eq" display="block"><mrow><mi>&#x003BB;</mi><mo>&#x0003D;</mo><mfrac><mrow><mn>1480</mn></mrow><mrow><mn>512</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>&#x003BB;</mi><mrow><mtext>water</mtext></mrow></msub><mo>&#x0003D;</mo><mn>2.9</mn><mspace width="0.167em" /><mtext>m</mtext></mrow></math>
+    </div>
+    <p class="take">Same source, same frequency (same pitch). The faster medium stretches each wave out, so the wavelength is longer.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Standing wave</div>
+    <svg width="210" height="105" viewBox="0 0 210 105" aria-label="Standing wave with three loops on a 2.4 m rope: four nodes and three antinodes">
+      <polyline points="14.0,46.0 15.5,44.3 17.0,42.6 18.5,40.9 20.0,39.2 21.5,37.6 23.0,36.0 24.5,34.5 26.0,33.1 27.5,31.7 29.0,30.4 30.5,29.3 32.0,28.2 33.5,27.2 35.0,26.4 36.5,25.7 38.0,25.1 39.5,24.6 41.0,24.3 42.5,24.1 44.0,24.0 45.5,24.1 47.0,24.3 48.5,24.6 50.0,25.1 51.5,25.7 53.0,26.4 54.5,27.2 56.0,28.2 57.5,29.3 59.0,30.4 60.5,31.7 62.0,33.1 63.5,34.5 65.0,36.0 66.5,37.6 68.0,39.2 69.5,40.9 71.0,42.6 72.5,44.3 74.0,46.0 75.5,47.7 77.0,49.4 78.5,51.1 80.0,52.8 81.5,54.4 83.0,56.0 84.5,57.5 86.0,58.9 87.5,60.3 89.0,61.6 90.5,62.7 92.0,63.8 93.5,64.8 95.0,65.6 96.5,66.3 98.0,66.9 99.5,67.4 101.0,67.7 102.5,67.9 104.0,68.0 105.5,67.9 107.0,67.7 108.5,67.4 110.0,66.9 111.5,66.3 113.0,65.6 114.5,64.8 116.0,63.8 117.5,62.7 119.0,61.6 120.5,60.3 122.0,58.9 123.5,57.5 125.0,56.0 126.5,54.4 128.0,52.8 129.5,51.1 131.0,49.4 132.5,47.7 134.0,46.0 135.5,44.3 137.0,42.6 138.5,40.9 140.0,39.2 141.5,37.6 143.0,36.0 144.5,34.5 146.0,33.1 147.5,31.7 149.0,30.4 150.5,29.3 152.0,28.2 153.5,27.2 155.0,26.4 156.5,25.7 158.0,25.1 159.5,24.6 161.0,24.3 162.5,24.1 164.0,24.0 165.5,24.1 167.0,24.3 168.5,24.6 170.0,25.1 171.5,25.7 173.0,26.4 174.5,27.2 176.0,28.2 177.5,29.3 179.0,30.4 180.5,31.7 182.0,33.1 183.5,34.5 185.0,36.0 186.5,37.6 188.0,39.2 189.5,40.9 191.0,42.6 192.5,44.3 194.0,46.0" fill="none" stroke="#ff6a2b" stroke-width="2.5"/>
+      <polyline points="14.0,46.0 15.5,47.7 17.0,49.4 18.5,51.1 20.0,52.8 21.5,54.4 23.0,56.0 24.5,57.5 26.0,58.9 27.5,60.3 29.0,61.6 30.5,62.7 32.0,63.8 33.5,64.8 35.0,65.6 36.5,66.3 38.0,66.9 39.5,67.4 41.0,67.7 42.5,67.9 44.0,68.0 45.5,67.9 47.0,67.7 48.5,67.4 50.0,66.9 51.5,66.3 53.0,65.6 54.5,64.8 56.0,63.8 57.5,62.7 59.0,61.6 60.5,60.3 62.0,58.9 63.5,57.5 65.0,56.0 66.5,54.4 68.0,52.8 69.5,51.1 71.0,49.4 72.5,47.7 74.0,46.0 75.5,44.3 77.0,42.6 78.5,40.9 80.0,39.2 81.5,37.6 83.0,36.0 84.5,34.5 86.0,33.1 87.5,31.7 89.0,30.4 90.5,29.3 92.0,28.2 93.5,27.2 95.0,26.4 96.5,25.7 98.0,25.1 99.5,24.6 101.0,24.3 102.5,24.1 104.0,24.0 105.5,24.1 107.0,24.3 108.5,24.6 110.0,25.1 111.5,25.7 113.0,26.4 114.5,27.2 116.0,28.2 117.5,29.3 119.0,30.4 120.5,31.7 122.0,33.1 123.5,34.5 125.0,36.0 126.5,37.6 128.0,39.2 129.5,40.9 131.0,42.6 132.5,44.3 134.0,46.0 135.5,47.7 137.0,49.4 138.5,51.1 140.0,52.8 141.5,54.4 143.0,56.0 144.5,57.5 146.0,58.9 147.5,60.3 149.0,61.6 150.5,62.7 152.0,63.8 153.5,64.8 155.0,65.6 156.5,66.3 158.0,66.9 159.5,67.4 161.0,67.7 162.5,67.9 164.0,68.0 165.5,67.9 167.0,67.7 168.5,67.4 170.0,66.9 171.5,66.3 173.0,65.6 174.5,64.8 176.0,63.8 177.5,62.7 179.0,61.6 180.5,60.3 182.0,58.9 183.5,57.5 185.0,56.0 186.5,54.4 188.0,52.8 189.5,51.1 191.0,49.4 192.5,47.7 194.0,46.0" fill="none" stroke="#ff6a2b" stroke-width="2.5" stroke-dasharray="5 4"/>
+      <circle cx="14" cy="46" r="4" fill="#111"/>
+      <text x="14" y="84" font-size="11" font-family="IBM Plex Mono,monospace" text-anchor="middle">N</text>
+      <circle cx="74" cy="46" r="4" fill="#111"/>
+      <text x="74" y="84" font-size="11" font-family="IBM Plex Mono,monospace" text-anchor="middle">N</text>
+      <circle cx="134" cy="46" r="4" fill="#111"/>
+      <text x="134" y="84" font-size="11" font-family="IBM Plex Mono,monospace" text-anchor="middle">N</text>
+      <circle cx="194" cy="46" r="4" fill="#111"/>
+      <text x="194" y="84" font-size="11" font-family="IBM Plex Mono,monospace" text-anchor="middle">N</text>
+      <text x="44" y="84" font-size="11" font-family="IBM Plex Mono,monospace" text-anchor="middle" fill="#ff6a2b">A</text>
+      <text x="104" y="84" font-size="11" font-family="IBM Plex Mono,monospace" text-anchor="middle" fill="#ff6a2b">A</text>
+      <text x="164" y="84" font-size="11" font-family="IBM Plex Mono,monospace" text-anchor="middle" fill="#ff6a2b">A</text>
+      <text x="104" y="100" font-size="11" font-family="IBM Plex Mono,monospace" text-anchor="middle">2.4 m</text>
+      </svg>
+    <h4>Counting loops and nodes</h4>
+    <p>A 2.4-m rope tied at both ends vibrates in the pattern shown, with three loops, at 5.0 Hz. (a) How many nodes and antinodes are there? (b) What is the wavelength? (c) How fast do waves travel on this rope?</p>
+    <div class="work">
+      <p class="wt">(a) Count the dots and the loops, including both ends:</p>
+      <math class="eq ans" display="block"><mrow><mn>4</mn><mtext>&#x000A0;nodes</mtext><mo>&#x0002C;</mo><mspace width="0.278em" /><mn>3</mn><mtext>&#x000A0;antinodes</mtext></mrow></math>
+      <p class="wt">(b) Each loop is half a wavelength:</p>
+      <math class="eq" display="block"><mrow><mtext>loop</mtext><mo>&#x0003D;</mo><mfrac><mrow><mn>2.4</mn></mrow><mrow><mn>3</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0.80</mn><mspace width="0.167em" /><mtext>m</mtext></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>&#x003BB;</mi><mo>&#x0003D;</mo><mn>2</mn><mo stretchy="false">&#x00028;</mo><mn>0.80</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>1.6</mn><mspace width="0.167em" /><mtext>m</mtext></mrow></math>
+      <p class="wt">(c) Wave speed:</p>
+      <math class="eq" display="block"><mrow><mi>v</mi><mo>&#x0003D;</mo><mi>f</mi><mi>&#x003BB;</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>5.0</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>1.6</mn><mo stretchy="false">&#x00029;</mo></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>v</mi><mo>&#x0003D;</mo><mn>8.0</mn><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
+    </div>
+    <p class="take">The number of antinodes equals the number of loops. The number of nodes is always one more.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Refraction</div>
+    <svg width="200" height="150" viewBox="0 0 200 150" aria-label="Light ray passing from glass into water, bending away from the normal">
+      <rect x="0" y="0" width="200" height="70" fill="#ffe2d3"/>
+      <line x1="0" y1="70" x2="200" y2="70" stroke="#111" stroke-width="2"/>
+      <line x1="100" y1="6" x2="100" y2="144" stroke="#111" stroke-width="1.2" stroke-dasharray="4 3"/>
+      <line x1="56.3" y1="17.9" x2="100" y2="70" stroke="#ff6a2b" stroke-width="3"/>
+      <line x1="100" y1="70" x2="149.3" y2="116.8" stroke="#ff6a2b" stroke-width="3"/>
+      <polygon points="82.0,48.6 78.6,38.3 72.5,43.5" fill="#ff6a2b"/>
+      <text x="6" y="16" font-size="11" font-family="IBM Plex Mono,monospace">glass n = 1.50</text>
+      <text x="6" y="140" font-size="11" font-family="IBM Plex Mono,monospace">water n = 1.33</text>
+      <text x="80" y="40" font-size="11" font-family="IBM Plex Mono,monospace">40°</text>
+      <text x="104" y="104" font-size="11" font-family="IBM Plex Mono,monospace">θ₂</text>
+      <text x="104" y="14" font-size="10" font-family="IBM Plex Mono,monospace">normal</text>
+      </svg>
+    <h4>Light leaving a glass tank wall into water</h4>
+    <p>Light inside the glass wall of an aquarium (n = 1.50) hits the boundary with the water (n = 1.33) at 40° from the normal. (a) Does it bend toward or away from the normal? (b) Find the angle of refraction. (c) How fast does light travel in the glass?</p>
+    <div class="work">
+      <p class="wt">(a) It goes from a bigger n to a smaller n (into a faster material), so it bends <b>away</b> from the normal.</p>
+      <p class="wt">(b) Snell's law:</p>
+      <math class="eq" display="block"><mrow><msub><mi>n</mi><mn>1</mn></msub><mi>sin</mi><msub><mi>&#x003B8;</mi><mn>1</mn></msub><mo>&#x0003D;</mo><msub><mi>n</mi><mn>2</mn></msub><mi>sin</mi><msub><mi>&#x003B8;</mi><mn>2</mn></msub></mrow></math>
+      <math class="eq" display="block"><mrow><mo stretchy="false">&#x00028;</mo><mn>1.50</mn><mo stretchy="false">&#x00029;</mo><mi>sin</mi><msup><mn>40</mn><mo>&#x02218;</mo></msup><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1.33</mn><mo stretchy="false">&#x00029;</mo><mi>sin</mi><msub><mi>&#x003B8;</mi><mn>2</mn></msub></mrow></math>
+      <math class="eq" display="block"><mrow><mi>sin</mi><msub><mi>&#x003B8;</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mfrac><mrow><mo stretchy="false">&#x00028;</mo><mn>1.50</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>0.643</mn><mo stretchy="false">&#x00029;</mo></mrow><mrow><mn>1.33</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0.725</mn></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>&#x003B8;</mi><mn>2</mn></msub><mo>&#x0003D;</mo><msup><mi>sin</mi><mrow><mo>&#x02212;</mo><mn>1</mn></mrow></msup><mo stretchy="false">&#x00028;</mo><mn>0.725</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><msup><mn>46.5</mn><mo>&#x02218;</mo></msup></mrow></math>
+      <p class="wt">(c) Solve n = c/v for v:</p>
+      <math class="eq" display="block"><mrow><mi>v</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>c</mi></mrow><mrow><mi>n</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>3.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mn>8</mn></mrow></msup></mrow><mrow><mn>1.50</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>v</mi><mo>&#x0003D;</mo><mn>2.0</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mn>8</mn></mrow></msup><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
+    </div>
+    <p class="take">46.5° is bigger than 40°, so the ray did bend away from the normal, as predicted.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Earth's interior</div>
+    <svg width="210" height="92" viewBox="0 0 210 92" aria-label="Seismogram: small P-wave wiggles arrive first, bigger S-wave wiggles 45 s later">
+      <polyline points="10,40.0 11,40.0 12,40.0 13,40.0 14,40.0 15,40.0 16,40.0 17,40.0 18,40.0 19,40.0 20,40.0 21,40.0 22,40.0 23,40.0 24,40.0 25,40.0 26,40.0 27,40.0 28,40.0 29,40.0 30,40.0 31,40.0 32,40.0 33,40.0 34,40.0 35,40.0 36,40.0 37,40.0 38,40.0 39,40.0 40,40.0 41,34.3 42,37.0 43,43.9 44,45.0 45,38.8 46,34.6 47,38.3 48,44.3 49,43.9 50,37.9 51,35.1 52,39.5 53,44.5 54,42.9 55,37.2 56,35.7 57,40.5 58,44.4 59,41.8 60,36.7 61,36.5 62,41.3 63,44.1 64,40.9 65,36.5 66,37.3 67,42.0 68,43.6 69,40.0 70,36.5 71,38.2 72,42.4 73,43.1 74,39.3 75,36.7 76,39.0 77,42.7 78,42.4 79,38.7 80,37.0 81,39.7 82,42.8 83,41.8 84,38.3 85,37.4 86,40.3 87,42.7 88,41.1 89,38.0 90,37.8 91,40.8 92,42.5 93,40.5 94,37.8 95,38.4 96,41.2 97,42.2 98,40.0 99,37.8 100,38.9 101,41.5 102,41.9 103,39.5 104,37.9 105,39.4 106,41.7 107,41.5 108,39.2 109,38.1 110,39.8 111,41.7 112,41.1 113,38.9 114,38.4 115,40.2 116,41.7 117,40.7 118,38.8 119,38.7 120,40.0 121,24.7 122,21.4 123,32.0 124,48.1 125,57.5 126,53.5 127,39.7 128,26.7 129,24.1 130,33.4 131,47.2 132,55.0 133,51.4 134,39.5 135,28.5 136,26.5 137,34.6 138,46.3 139,52.9 140,49.6 141,39.4 142,30.0 143,28.5 144,35.5 145,45.6 146,51.1 147,48.1 148,39.3 149,31.4 150,30.2 151,36.3 152,44.9 153,49.5 154,46.8 155,39.2 156,32.5 157,31.6 158,37.0 159,44.3 160,48.2 161,45.8 162,39.2 163,33.5 164,32.9 165,37.5 166,43.8 167,47.0 168,44.9 169,39.2 170,34.4 171,33.9 172,38.0 173,43.4 174,46.0 175,44.1 176,39.2 177,35.2 178,34.8 179,38.4 180,42.9 181,45.1 182,43.4 183,39.3 184,35.8 185,35.6 186,38.7 187,42.6 188,44.4 189,42.9 190,39.3 191,36.4 192,36.3 193,38.9 194,42.3 195,43.8 196,42.4 197,39.3 198,36.9 199,36.8 200,39.1" fill="none" stroke="#111" stroke-width="1.6"/>
+      <line x1="40" y1="8" x2="40" y2="66" stroke="#1546d6" stroke-width="1.5" stroke-dasharray="3 2"/>
+      <text x="48" y="8" font-size="11" font-family="IBM Plex Mono,monospace" fill="#1546d6" text-anchor="middle">P</text>
+      <line x1="120" y1="8" x2="120" y2="66" stroke="#c43a00" stroke-width="1.5" stroke-dasharray="3 2"/>
+      <text x="128" y="8" font-size="11" font-family="IBM Plex Mono,monospace" fill="#c43a00" text-anchor="middle">S</text>
+      <line x1="40" y1="76" x2="120" y2="76" stroke="#111" stroke-width="1.5"/>
+      <text x="80" y="90" font-size="11" font-family="IBM Plex Mono,monospace" text-anchor="middle">S − P = 45 s</text>
+      </svg>
+    <h4>How far away was the earthquake?</h4>
+    <p>A seismograph station records the P wave, and the S wave arrives 45 s later. Use the lab's speeds (P waves 8 km/s, S waves 4 km/s). (a) How far away was the earthquake? (b) How long did each wave take to arrive?</p>
+    <div class="work">
+      <p class="wt">(a) Use the lab rule:</p>
+      <math class="eq" display="block"><mrow><mi>d</mi><mo>&#x0003D;</mo><mn>8</mn><mo>&#x000D7;</mo><mo stretchy="false">&#x00028;</mo><mi>S</mi><mo>&#x02212;</mo><mi>P</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>8</mn><mo>&#x000D7;</mo><mn>45</mn></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>d</mi><mo>&#x0003D;</mo><mn>360</mn><mspace width="0.167em" /><mtext>km</mtext></mrow></math>
+      <p class="wt">(b) Time = distance ÷ speed:</p>
+      <math class="eq" display="block"><mrow><msub><mi>t</mi><mi>P</mi></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>360</mn></mrow><mrow><mn>8</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>45</mn><mspace width="0.167em" /><mtext>s</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>t</mi><mi>S</mi></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>360</mn></mrow><mrow><mn>4</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>90</mn><mspace width="0.167em" /><mtext>s</mtext></mrow></math>
+      <p class="wt">Check: the gap is 90 − 45 = 45 s ✓</p>
+    </div>
+    <p class="take">Where the 8 comes from: S waves are half as fast, so they take twice as long. The gap equals the P wave's travel time, d ÷ 8, so d = 8 × gap. One station gives a distance only, so you need three stations to find the spot.</p>
+  </div>
+</div>
+
+</div>
+<div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
+<div class="gcheck">
+  <h3>Self-check</h3>
+  <p>Answer first, then open.</p>
+  <ol class="q">
+    <li>Fans in a stadium do “the wave.” The wave goes all the way around the stadium. Does any fan go around the stadium? What does travel around?
+      <details><summary>Answer</summary><div>No fan moves around; each one just stands up and sits down in place. What travels is the disturbance (the energy and the pattern). That's true of every wave: it carries energy, not the medium.</div></details></li>
+    <li>Two astronauts stand 10 m apart on the Moon, and one claps. Does the other hear it? What if they press their helmets together and one taps her helmet? Would they see a flashlight blink?
+      <details><summary>Answer</summary><div>No: the Moon has no air, and sound is a mechanical wave that needs a medium. With helmets touching, yes: the sound travels through the solid helmets. They would see the flashlight, because light is an electromagnetic wave and needs no medium.</div></details></li>
+    <li>A buoy bobs up and down 15 times in 60 s. What are the frequency and the period?
+      <details><summary>Answer</summary><div>f = 15 ÷ 60 = 0.25 Hz. T = 1/f = 1/0.25 = 4.0 s.</div></details></li>
+    <li>You shake one end of a long rope, then shake it twice as often. What happens to the wave speed and the wavelength?
+      <details><summary>Answer</summary><div>The speed stays the same, because the rope (the medium) hasn't changed. Since v = fλ, doubling f makes the wavelength half as long.</div></details></li>
+    <li>A pulse on a thin, light rope reaches a knot where it joins a thick, heavy rope. Describe the reflected pulse and the transmitted pulse.
+      <details><summary>Answer</summary><div>Going from light (less dense) to heavy (more dense), the reflected pulse comes back <b>upside down</b>. The transmitted pulse stays right side up, moves <b>slower</b> in the heavy rope and has a shorter wavelength. The frequency doesn't change.</div></details></li>
+    <li>A pulse with an amplitude of +4 cm meets a pulse with an amplitude of −1 cm on the same rope. What is the displacement where they overlap? What kind of interference is this? What happens after they pass?
+      <details><summary>Answer</summary><div>+4 + (−1) = +3 cm. One is up and one is down, so it's destructive interference (the result is smaller than the bigger pulse). Afterward both pulses keep going as if nothing happened.</div></details></li>
+    <li>A train blows its horn as it comes toward you, passes, and moves away. The horn gets louder, then softer, and the pitch drops as it passes. Which wave property explains the loudness change? Which explains the pitch change? Does the engineer on the train hear the pitch change?
+      <details><summary>Answer</summary><div>Loudness: amplitude (the sound is weaker farther away). Pitch: frequency. Coming toward you, the waves are bunched up, so you hear a higher frequency; going away, a lower one (Doppler effect). The engineer moves with the horn, so the waves reach the engineer evenly spaced and the pitch doesn't change.</div></details></li>
+    <li>A light ray hits a flat mirror with an angle of incidence of 30°. What is the angle between the incident ray and the reflected ray? What angle does the reflected ray make with the mirror's <i>surface</i>?
+      <details><summary>Answer</summary><div>The angle of reflection is also 30°, so the two rays are 30° + 30° = <b>60°</b> apart. The reflected ray is 90° − 30° = <b>60°</b> from the surface (angles are measured from the normal).</div></details></li>
+    <li>Light goes from air into cooking oil (n = 1.47). Does it bend toward or away from the normal? How fast does light travel in the oil?
+      <details><summary>Answer</summary><div>Toward the normal: the oil has a bigger n, so light slows down. v = c/n = (3.0 × 10⁸)/1.47 = 2.0 × 10⁸ m/s.</div></details></li>
+    <li>S waves from an earthquake never arrive at stations on the far side of the Earth. What does this tell scientists, and why?
+      <details><summary>Answer</summary><div>Part of the core is liquid (the outer core). S waves are side-to-side waves and can't travel through a liquid, so the core blocks them and leaves an S-wave shadow zone.</div></details></li>
+    <li>Name the type of plate boundary: (a) the Mid-Atlantic Ridge, where new sea floor forms; (b) the west coast of South America, where ocean crust dives under the continent and the Andes volcanoes form; (c) the San Andreas Fault, where two plates slide past each other.
+      <details><summary>Answer</summary><div>(a) Divergent. (b) Convergent (subduction). (c) Transform.</div></details></li>
+    <li>A volcanic island is 300 km from the hot spot that made it, and its rock is 6 million years old. How fast is the plate moving, in km per million years and in cm per year?
+      <details><summary>Answer</summary><div>300 km ÷ 6 million years = 50 km per million years. 50 km = 5,000,000 cm, so that's 5,000,000 cm ÷ 1,000,000 years = 5 cm/year.</div></details></li>
+  </ol>
+</div>
+</div>
+<p class="gnext"><a href="#practice" data-view="practice">Practice these ideas →</a></p>
+<script>
+(function(){
+  var tabs=[].slice.call(document.querySelectorAll('.gtabs .tab'));
+  function show(t){tabs.forEach(function(b){var on=b===t;b.setAttribute('aria-selected',on?'true':'false');b.tabIndex=on?0:-1;document.getElementById(b.getAttribute('aria-controls')).hidden=!on;});}
+  tabs.forEach(function(b,i){
+    b.addEventListener('click',function(){show(b);});
+    b.addEventListener('keydown',function(e){var k=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(k){var n=tabs[(i+k+tabs.length)%tabs.length];show(n);n.focus();e.preventDefault();}});
+  });
+})();
+</script>
+</section>

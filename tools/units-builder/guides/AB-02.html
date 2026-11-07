@@ -1,0 +1,311 @@
+<section class="guide" id="guide" aria-label="Study guide">
+<style>
+.guide{margin-top:28px}
+.guide .gtip{margin:0 0 16px;font-size:19px;line-height:1.45;max-width:1000px}
+.guide .ggrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-bottom:22px}
+.guide .gcard{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcard h3,.guide .gcheck h3,.guide .gsteps h3{margin:0 0 10px;font-size:20px;letter-spacing:-.01em}
+.guide .gcard ul{margin:0;padding-left:20px}
+.guide .gcard li{margin:0 0 7px}
+.guide .ib{display:inline-block;font-family:var(--f-mono);font-size:11px;font-weight:700;border:2px solid var(--ink);padding:0 5px;margin-left:4px;vertical-align:1px;background:var(--soft)}
+.guide table{border-collapse:collapse;width:100%;font-size:15px}
+.guide td{border-top:2px solid var(--ink);padding:6px 4px;vertical-align:top}
+.guide td:first-child{font-family:var(--f-mono);font-weight:700;white-space:nowrap;padding-right:12px}
+.guide td[colspan]{white-space:normal}
+.guide .gsub{font-family:var(--f-display);font-weight:400}
+.guide .gsteps{background:var(--soft);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px;margin-bottom:22px}
+.guide .gsteps ol{margin:0;padding-left:24px;columns:2 360px;column-gap:28px}
+.guide .gsteps li{margin:0 0 8px;break-inside:avoid}
+.guide h3.ghead{font-size:22px;margin:0 0 12px}
+.guide .gex{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:18px;margin-bottom:22px}
+.guide .ex{min-width:0;background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .ex h4{margin:0 0 6px;font-size:18px}
+.guide .ex .kind{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--hot);text-transform:uppercase;letter-spacing:.04em}
+.guide .ex p{margin:0 0 8px}
+.guide .work{font-size:16px;line-height:1.45;border-left:4px solid var(--hot);background:#fff;padding:6px 14px;margin:8px 0;overflow-x:auto}
+.guide .work math.eq{display:block;text-align:left;margin:8px 0;font-size:1.15em}
+@media (max-width:520px){.guide .work math.eq{font-size:1em}}
+.guide .work math.ans{font-weight:700}
+.guide .work .wt{margin:6px 0 2px}
+.guide .ex .take{margin:8px 0 0;font-weight:500}
+.guide .ex svg{float:right;margin:0 0 6px 12px}
+.guide .gcheck{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcheck>p{margin:-4px 0 12px;color:var(--muted)}
+.guide ol.q{margin:0;padding-left:26px}
+.guide ol.q>li{margin:0 0 14px}
+.guide details{margin-top:6px}
+.guide summary{cursor:pointer;display:inline-block;font-weight:700;border:2px solid var(--ink);padding:2px 10px;background:#fff;list-style:none}
+.guide summary::-webkit-details-marker{display:none}
+.guide summary:hover{background:var(--soft)}
+.guide details[open] summary{background:var(--ink);color:#fff}
+.guide details>div{border-left:4px solid var(--hot);padding:8px 12px;margin-top:8px;background:#fff}
+.guide .gpanel>.ggrid,.guide .gpanel>.gsteps,.guide .gpanel>.gex{margin-bottom:0}
+.guide .gpanel>.gsteps+.ggrid{margin-top:22px}
+.guide .gtabs{margin-bottom:18px}
+.guide .gnext{margin:16px 0 0;font-weight:700}
+.guide .gnext a{color:var(--ink)}
+body.present .guide{display:none}
+@media (max-width:520px){.guide .gtip{font-size:17px}.guide td:first-child{white-space:normal}.guide .ggrid,.guide .gex{grid-template-columns:1fr}.guide .ex svg{float:none;display:block;margin:0 auto 8px}}
+</style>
+<div class="simbar"><h2>Study guide</h2><span class="mono">Unit 2 · Newton’s Laws</span></div>
+<p class="gtip"><b>How to use this:</b> read the key ideas, then cover each worked example and try it yourself before reading the solution. Do the self-check questions on paper <i>before</i> you open the answers, mark the ones you miss, and come back to them in a day or two without looking. Rereading won't do much; answering questions will.</p>
+<div class="tabs gtabs" role="tablist" aria-label="Study guide sections">
+  <button class="tab" role="tab" type="button" aria-selected="true" aria-controls="g-ideas" id="gt-ideas">Key ideas</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-solve" id="gt-solve" tabindex="-1">How to solve</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-examples" id="gt-examples" tabindex="-1">Worked examples</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-check" id="gt-check" tabindex="-1">Self-check</button>
+</div>
+<div class="gpanel" role="tabpanel" id="g-ideas" aria-labelledby="gt-ideas">
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Key ideas</h3>
+    <ul>
+      <li>A <b>force</b> is a push or a pull that comes from an <b>interaction</b> between two objects. It has a size (in newtons, N) and a direction.</li>
+      <li><b>Contact forces</b> need touching: F<sub>norm</sub>, F<sub>frict</sub>, F<sub>tens</sub>, F<sub>air</sub>, F<sub>app</sub>, F<sub>spring</sub>. <b>Field forces</b> act from a distance: gravity (F<sub>grav</sub>), electric and magnetic forces.</li>
+      <li>A <b>free-body diagram</b> shows every force on one object. Each arrow is labeled, points the way the force acts, and is longer for a bigger force.</li>
+      <li>The <b>net force</b> (F<sub>net</sub>) is all the forces added up, with directions. Think tug of war: F<sub>net</sub> tells you who wins, and by how much.</li>
+      <li>If every force is cancelled by an equal, opposite force, the forces are <b>balanced</b> and F<sub>net</sub> = 0.</li>
+      <li><b>Newton's 1st law:</b> with balanced forces, an object at rest stays at rest, and a moving object keeps the same speed and direction. No force is needed to <i>keep</i> something moving.</li>
+      <li><b>Inertia</b> is how much an object resists a change in its motion. It depends only on <b>mass</b>: more mass, more inertia.</li>
+      <li><b>Mass</b> (kg) is the amount of stuff in an object. It is the same everywhere. <b>Weight</b> is the force of gravity on it, W = F<sub>grav</sub> = m·g, in newtons. Weight changes from planet to planet.</li>
+      <li><b>Newton's 2nd law:</b> a = F<sub>net</sub> ÷ m. Double the net force, double the acceleration. Double the mass, half the acceleration.</li>
+      <li>The acceleration points the same way as the net force. The object does not have to <i>move</i> that way: if F<sub>net</sub> points backward, it slows down.</li>
+      <li><b>Friction</b> opposes sliding. F<sub>frict</sub> = μ·F<sub>norm</sub>, where μ (“mu”) is the coefficient of friction. It depends on the two surfaces.</li>
+      <li><b>Static friction</b> holds a resting object still, up to a limit. Once it slides, <b>kinetic friction</b> takes over, and it is usually smaller.</li>
+      <li><b>Newton's 3rd law:</b> forces come in pairs. If A pushes on B, B pushes back on A just as hard, in the opposite direction, at the same time.</li>
+      <li>The two forces in a pair are <b>equal</b>, but their effects are not. The object with less mass gets the bigger acceleration.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Equations</h3>
+    <table>
+      <tr><td>F<sub>net</sub> = sum of forces</td><td>add forces that point the same way; subtract forces that point opposite ways</td></tr>
+      <tr><td>a = F<sub>net</sub> ÷ m</td><td>Newton's 2nd law. a in m/s/s, F<sub>net</sub> in N, m in kg.</td></tr>
+      <tr><td>F<sub>net</sub> = m · a</td><td>same law, rearranged to find a force</td></tr>
+      <tr><td>W = F<sub>grav</sub> = m · g</td><td>weight. On Earth g = 10 N/kg (9.8 is also fine).</td></tr>
+      <tr><td>F<sub>frict</sub> = μ · F<sub>norm</sub></td><td>friction. μ has no units.</td></tr>
+      <tr><td>F<sub>norm</sub> = F<sub>grav</sub></td><td>for an object on a level floor with no other up or down forces</td></tr>
+      <tr><td>a = Δv ÷ t</td><td>from Unit 1, to link the acceleration to a change in speed</td></tr>
+    </table>
+  </div>
+  <div class="gcard">
+    <h3>Common mistakes</h3>
+    <ul>
+      <li>Thinking a moving object needs a forward force to keep going. At constant velocity the forces are balanced.</li>
+      <li>Putting a weight in newtons where a = F<sub>net</sub> ÷ m needs a mass in kilograms.</li>
+      <li>Using just one force, or the biggest force, in place of F<sub>net</sub>.</li>
+      <li>Using the mass for F<sub>norm</sub> in F<sub>frict</sub> = μ·F<sub>norm</sub>. F<sub>norm</sub> is a force: on a level floor, it equals the weight, m·g.</li>
+      <li>Saying the two forces in a 3rd-law pair cancel. They act on <i>different</i> objects, so they never cancel each other.</li>
+      <li>Thinking the bigger or faster object pushes harder in a collision. The forces are always equal.</li>
+    </ul>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-solve" aria-labelledby="gt-solve" hidden>
+<div class="gsteps">
+  <h3>How to solve a Newton's 2nd law problem</h3>
+  <ol>
+    <li><b>Draw a free-body diagram</b> of the one object. Label every force.</li>
+    <li><b>Find the weight:</b> F<sub>grav</sub> = m·g. If you are given the weight, find the mass: m = F<sub>grav</sub> ÷ g.</li>
+    <li><b>Up and down:</b> if the object doesn't speed up or slow down vertically, F<sub>norm</sub> = F<sub>grav</sub>.</li>
+    <li><b>Friction:</b> F<sub>frict</sub> = μ·F<sub>norm</sub>. It points opposite the sliding.</li>
+    <li><b>Net force:</b> bigger force minus the smaller one in that direction. Give the direction.</li>
+    <li><b>Acceleration:</b> a = F<sub>net</sub> ÷ m, in the direction of F<sub>net</sub>.</li>
+  </ol>
+</div>
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Finding a missing force</h3>
+    <ul>
+      <li>Find F<sub>net</sub> = m·a. It points the same way as a.</li>
+      <li>The force on the side of the acceleration is <b>bigger</b> than the opposite force by F<sub>net</sub>.</li>
+      <li>Constant velocity or at rest? Then a = 0, F<sub>net</sub> = 0, and opposite forces are equal.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Which forces go on the diagram?</h3>
+    <ul>
+      <li>Is a planet nearby? Then draw F<sub>grav</sub>, down.</li>
+      <li>What is touching the object right now? A surface (F<sub>norm</sub>, maybe F<sub>frict</sub>), a rope (F<sub>tens</sub>), air (F<sub>air</sub>), a hand (F<sub>app</sub>).</li>
+      <li>Nothing touching? No contact force. A thrown ball has no “force of the throw” once it leaves your hand.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Spotting 3rd-law pairs</h3>
+    <ul>
+      <li>Write it as “A pushes B …” then swap the names: “B pushes A …” in the opposite direction.</li>
+      <li>Both forces are the same type and the same size.</li>
+      <li>Each object gets one force. To compare effects, use a = F ÷ m for each object.</li>
+    </ul>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-examples" aria-labelledby="gt-examples" hidden>
+<div class="gex">
+  <div class="ex">
+    <div class="kind">Balanced forces</div>
+    <svg width="180" height="140" viewBox="0 0 180 140" aria-label="Free-body diagram of the sled: Fnorm up and Fgrav down the same length, Ftens right and Ffrict left the same length">
+      <rect x="60" y="55" width="40" height="30" fill="#fff" stroke="#111" stroke-width="2"/>
+      <line x1="80" y1="55" x2="80" y2="20" stroke="#111" stroke-width="3"/><polygon points="75,22 85,22 80,13" fill="#111"/>
+      <line x1="80" y1="85" x2="80" y2="118" stroke="#111" stroke-width="3"/><polygon points="75,116 85,116 80,125" fill="#111"/>
+      <line x1="100" y1="70" x2="140" y2="70" stroke="#ff6a2b" stroke-width="3"/><polygon points="138,65 138,75 147,70" fill="#ff6a2b"/>
+      <line x1="60" y1="70" x2="20" y2="70" stroke="#ff6a2b" stroke-width="3"/><polygon points="22,65 22,75 13,70" fill="#ff6a2b"/>
+      <g font-size="11" font-family="IBM Plex Mono,monospace"><text x="86" y="26">F<tspan font-size="8" dy="3">norm</tspan></text><text x="86" y="128">F<tspan font-size="8" dy="3">grav</tspan></text><text x="110" y="62" fill="#ff6a2b">F<tspan font-size="8" dy="3">tens</tspan></text><text x="14" y="62" fill="#ff6a2b">F<tspan font-size="8" dy="3">frict</tspan></text></g>
+    </svg>
+    <h4>Pulling a sled at a steady speed</h4>
+    <p>A child pulls a 45 kg sled across level snow with a horizontal rope. The rope pulls with 60 N, and the sled moves at a constant speed. Draw its free-body diagram. Find F<sub>grav</sub>, F<sub>norm</sub>, F<sub>frict</sub> and the coefficient of friction μ.</p>
+    <div class="work">
+      <p class="wt">Weight:</p>
+      <math class="eq" display="block"><mrow><msub><mi>F</mi><mrow><mtext>grav</mtext></mrow></msub><mo>&#x0003D;</mo><mi>m</mi><mo>&#x000B7;</mo><mi>g</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>45</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>F</mi><mrow><mtext>grav</mtext></mrow></msub><mo>&#x0003D;</mo><mn>450</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+      <p class="wt">No up or down acceleration, so up = down:</p>
+      <math class="eq ans" display="block"><mrow><msub><mi>F</mi><mrow><mtext>norm</mtext></mrow></msub><mo>&#x0003D;</mo><mn>450</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+      <p class="wt">Constant speed means balanced forces, so left = right:</p>
+      <math class="eq ans" display="block"><mrow><msub><mi>F</mi><mrow><mtext>frict</mtext></mrow></msub><mo>&#x0003D;</mo><msub><mi>F</mi><mrow><mtext>tens</mtext></mrow></msub><mo>&#x0003D;</mo><mn>60</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+      <p class="wt">Now solve F<sub>frict</sub> = μ·F<sub>norm</sub> for μ:</p>
+      <math class="eq" display="block"><mrow><mi>&#x003BC;</mi><mo>&#x0003D;</mo><mfrac><mrow><msub><mi>F</mi><mrow><mtext>frict</mtext></mrow></msub></mrow><mrow><msub><mi>F</mi><mrow><mtext>norm</mtext></mrow></msub></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>60</mn></mrow><mrow><mn>450</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>&#x003BC;</mi><mo>&#x02248;</mo><mn>0.13</mn></mrow></math>
+    </div>
+    <p class="take">The sled keeps moving even though F<sub>net</sub> = 0. That's Newton's 1st law: balanced forces mean no <i>change</i> in motion, not no motion.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Finding acceleration</div>
+    <svg width="180" height="140" viewBox="0 0 180 140" aria-label="Free-body diagram of the bin: Fnorm up and Fgrav down the same length, Fapp right longer than Ffrict left">
+      <rect x="60" y="55" width="40" height="30" fill="#fff" stroke="#111" stroke-width="2"/>
+      <line x1="80" y1="55" x2="80" y2="20" stroke="#111" stroke-width="3"/><polygon points="75,22 85,22 80,13" fill="#111"/>
+      <line x1="80" y1="85" x2="80" y2="118" stroke="#111" stroke-width="3"/><polygon points="75,116 85,116 80,125" fill="#111"/>
+      <line x1="100" y1="70" x2="160" y2="70" stroke="#ff6a2b" stroke-width="3"/><polygon points="158,65 158,75 167,70" fill="#ff6a2b"/>
+      <line x1="60" y1="70" x2="38" y2="70" stroke="#ff6a2b" stroke-width="3"/><polygon points="40,65 40,75 31,70" fill="#ff6a2b"/>
+      <g font-size="11" font-family="IBM Plex Mono,monospace"><text x="86" y="26">F<tspan font-size="8" dy="3">norm</tspan></text><text x="86" y="128">F<tspan font-size="8" dy="3">grav</tspan></text><text x="114" y="62" fill="#ff6a2b">F<tspan font-size="8" dy="3">app</tspan></text><text x="18" y="62" fill="#ff6a2b">F<tspan font-size="8" dy="3">frict</tspan></text></g>
+    </svg>
+    <h4>Shoving a bin of gym mats</h4>
+    <p>You push a 50 kg bin of gym mats across a level floor with a 260 N horizontal force. The coefficient of kinetic friction is 0.30. Find the bin's acceleration. If it started from rest, how fast is it moving after 3.0 s?</p>
+    <div class="work">
+      <math class="eq" display="block"><mrow><msub><mi>F</mi><mrow><mtext>grav</mtext></mrow></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>50</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>500</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>F</mi><mrow><mtext>norm</mtext></mrow></msub><mo>&#x0003D;</mo><msub><mi>F</mi><mrow><mtext>grav</mtext></mrow></msub><mo>&#x0003D;</mo><mn>500</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>F</mi><mrow><mtext>frict</mtext></mrow></msub><mo>&#x0003D;</mo><mi>&#x003BC;</mi><mo>&#x000B7;</mo><msub><mi>F</mi><mrow><mtext>norm</mtext></mrow></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>0.30</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>500</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>150</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+      <p class="wt">Net force: right minus left.</p>
+      <math class="eq" display="block"><mrow><msub><mi>F</mi><mrow><mtext>net</mtext></mrow></msub><mo>&#x0003D;</mo><mn>260</mn><mo>&#x02212;</mo><mn>150</mn><mo>&#x0003D;</mo><mn>110</mn><mspace width="0.167em" /><mtext>N,&#x000A0;right</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><mi>a</mi><mo>&#x0003D;</mo><mfrac><mrow><msub><mi>F</mi><mrow><mtext>net</mtext></mrow></msub></mrow><mrow><mi>m</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>110</mn></mrow><mrow><mn>50</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>a</mi><mo>&#x0003D;</mo><mn>2.2</mn><mspace width="0.167em" /><mtext>m/s/s,&#x000A0;right</mtext></mrow></math>
+      <p class="wt">Speed after 3.0 s, from a = Δv ÷ t:</p>
+      <math class="eq" display="block"><mrow><mi>&#x00394;</mi><mi>v</mi><mo>&#x0003D;</mo><mi>a</mi><mo>&#x000B7;</mo><mi>t</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>2.2</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>3.0</mn><mo stretchy="false">&#x00029;</mo></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>v</mi><mo>&#x0003D;</mo><mn>6.6</mn><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
+    </div>
+    <p class="take">Only the 110 N left over after friction speeds the bin up. Push with exactly 150 N and it would slide at a constant speed.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Finding a missing force</div>
+    <svg width="120" height="140" viewBox="0 0 120 140" aria-label="Free-body diagram of the drone: Fapp up longer than Fgrav down">
+      <rect x="40" y="60" width="40" height="20" fill="#fff" stroke="#111" stroke-width="2"/>
+      <line x1="60" y1="60" x2="60" y2="16" stroke="#ff6a2b" stroke-width="3"/><polygon points="55,18 65,18 60,9" fill="#ff6a2b"/>
+      <line x1="60" y1="80" x2="60" y2="116" stroke="#111" stroke-width="3"/><polygon points="55,114 65,114 60,123" fill="#111"/>
+      <g font-size="11" font-family="IBM Plex Mono,monospace"><text x="66" y="24" fill="#ff6a2b">F<tspan font-size="8" dy="3">app</tspan></text><text x="66" y="126">F<tspan font-size="8" dy="3">grav</tspan></text><text x="2" y="44" font-size="10">a ↑</text></g>
+    </svg>
+    <h4>How hard do the drone's propellers push?</h4>
+    <p>A 1.5 kg camera drone lifts straight up off the ground, speeding up at 2.0 m/s/s. Ignore air resistance. How big is the upward force from the propellers (F<sub>app</sub>)? What force would make it hover?</p>
+    <div class="work">
+      <math class="eq" display="block"><mrow><msub><mi>F</mi><mrow><mtext>grav</mtext></mrow></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1.5</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>15</mn><mspace width="0.167em" /><mtext>N,&#x000A0;down</mtext></mrow></math>
+      <p class="wt">The net force points the same way as a (up):</p>
+      <math class="eq" display="block"><mrow><msub><mi>F</mi><mrow><mtext>net</mtext></mrow></msub><mo>&#x0003D;</mo><mi>m</mi><mo>&#x000B7;</mo><mi>a</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1.5</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>2.0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>3.0</mn><mspace width="0.167em" /><mtext>N,&#x000A0;up</mtext></mrow></math>
+      <p class="wt">The up force must beat the down force by 3.0 N:</p>
+      <math class="eq" display="block"><mrow><msub><mi>F</mi><mrow><mtext>app</mtext></mrow></msub><mo>&#x0003D;</mo><msub><mi>F</mi><mrow><mtext>grav</mtext></mrow></msub><mo>&#x0002B;</mo><msub><mi>F</mi><mrow><mtext>net</mtext></mrow></msub><mo>&#x0003D;</mo><mn>15</mn><mo>&#x0002B;</mo><mn>3.0</mn></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>F</mi><mrow><mtext>app</mtext></mrow></msub><mo>&#x0003D;</mo><mn>18</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+      <p class="wt">Hovering means a = 0, so the forces balance:</p>
+      <math class="eq ans" display="block"><mrow><msub><mi>F</mi><mrow><mtext>app</mtext></mrow></msub><mo>&#x0003D;</mo><msub><mi>F</mi><mrow><mtext>grav</mtext></mrow></msub><mo>&#x0003D;</mo><mn>15</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+    </div>
+    <p class="take">To speed up going up, the up force has to be bigger than the weight. To rise at a <i>steady</i> speed, the propellers only need 15 N, the same as hovering.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Mass vs. weight</div>
+    <h4>A rover on Earth and on Mars</h4>
+    <p>A 200 kg rover is tested on Earth (g = 10 N/kg), then sent to Mars (g = 3.7 N/kg). Find its mass and weight in each place. On both planets, its motor gives it a net force of 100 N on flat ground. Find its acceleration on each planet.</p>
+    <div class="work">
+      <p class="wt">Mass does not change with location:</p>
+      <math class="eq ans" display="block"><mrow><mi>m</mi><mo>&#x0003D;</mo><mn>200</mn><mspace width="0.167em" /><mtext>kg&#x000A0;on&#x000A0;both&#x000A0;planets</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>W</mi><mrow><mtext>Earth</mtext></mrow></msub><mo>&#x0003D;</mo><mi>m</mi><mo>&#x000B7;</mo><mi>g</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>200</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>2000</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>W</mi><mrow><mtext>Mars</mtext></mrow></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>200</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>3.7</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>740</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+      <p class="wt">Newton's 2nd law uses the mass:</p>
+      <math class="eq" display="block"><mrow><mi>a</mi><mo>&#x0003D;</mo><mfrac><mrow><msub><mi>F</mi><mrow><mtext>net</mtext></mrow></msub></mrow><mrow><mi>m</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>100</mn></mrow><mrow><mn>200</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>a</mi><mo>&#x0003D;</mo><mn>0.50</mn><mspace width="0.167em" /><mtext>m/s/s&#x000A0;on&#x000A0;both&#x000A0;planets</mtext></mrow></math>
+    </div>
+    <p class="take">On Mars the rover weighs much less, but it is just as hard to speed up. Inertia depends on mass, not weight.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Newton's 3rd law</div>
+    <h4>Two skaters push apart</h4>
+    <p>Two ice skaters stand face to face and push off each other. Jamal (60 kg) pushes Priya (40 kg) with a 120 N force. Ignore friction. How hard does Priya push Jamal? Find each skater's acceleration.</p>
+    <div class="work">
+      <p class="wt">3rd law: the pair of forces is equal and opposite.</p>
+      <math class="eq ans" display="block"><mrow><msub><mi>F</mi><mrow><mtext>on&#x000A0;Jamal</mtext></mrow></msub><mo>&#x0003D;</mo><mn>120</mn><mspace width="0.167em" /><mtext>N,&#x000A0;backward</mtext></mrow></math>
+      <p class="wt">2nd law for each skater on their own:</p>
+      <math class="eq" display="block"><mrow><msub><mi>a</mi><mrow><mtext>Jamal</mtext></mrow></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>120</mn></mrow><mrow><mn>60</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>a</mi><mrow><mtext>Jamal</mtext></mrow></msub><mo>&#x0003D;</mo><mn>2.0</mn><mspace width="0.167em" /><mtext>m/s/s</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>a</mi><mrow><mtext>Priya</mtext></mrow></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>120</mn></mrow><mrow><mn>40</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>a</mi><mrow><mtext>Priya</mtext></mrow></msub><mo>&#x0003D;</mo><mn>3.0</mn><mspace width="0.167em" /><mtext>m/s/s</mtext></mrow></math>
+    </div>
+    <p class="take">They feel the same size force, in opposite directions. Priya has less mass (less inertia), so she gets the bigger acceleration. It doesn't matter who “does the pushing.”</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Ratios</div>
+    <h4>Changing the force and the mass</h4>
+    <p>A cart on a track accelerates at 3.0 m/s/s. Then the net force on it is made 4 times bigger, and a load is added that doubles its mass. What is the new acceleration?</p>
+    <div class="work">
+      <p class="wt">a goes up with F<sub>net</sub> and down with m:</p>
+      <math class="eq" display="block"><mrow><msub><mi>a</mi><mrow><mtext>new</mtext></mrow></msub><mo>&#x0003D;</mo><mi>a</mi><mo>&#x000D7;</mo><mfrac><mrow><mn>4</mn></mrow><mrow><mn>2</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>3.0</mn><mo>&#x000D7;</mo><mn>2</mn></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>a</mi><mrow><mtext>new</mtext></mrow></msub><mo>&#x0003D;</mo><mn>6.0</mn><mspace width="0.167em" /><mtext>m/s/s</mtext></mrow></math>
+    </div>
+    <p class="take">Multiply by the force factor, divide by the mass factor. You don't need the actual force or mass.</p>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
+<div class="gcheck">
+  <h3>Self-check</h3>
+  <p>Answer first, then open.</p>
+  <ol class="q">
+    <li>A marble rolls onto a long, level floor at 2 m/s. Pretend there is no friction and no air. What will it do next? Which law tells you?
+      <details><summary>Answer</summary><div>Keep rolling at 2 m/s in a straight line (Newton's 1st law). Nothing needs to push it to keep it going.</div></details></li>
+    <li>Which has more inertia: 2 kg of feathers or 2 kg of lead?
+      <details><summary>Answer</summary><div>The same. Inertia depends only on mass, and both are 2 kg.</div></details></li>
+    <li>A 40 kg rover weighs 400 N on Earth. On Mars it weighs 150 N. What is its mass on Mars? What is g there?
+      <details><summary>Answer</summary><div>Mass is still 40 kg: moving to another planet doesn't change how much stuff it has. g = W ÷ m = 150 ÷ 40 = 3.75, about 3.8 N/kg.</div></details></li>
+    <li>A curling stone slides across the ice and slowly slows down. List the forces on its free-body diagram.
+      <details><summary>Answer</summary><div>F<sub>grav</sub> down, F<sub>norm</sub> up (equal), and F<sub>frict</sub> backward, opposite the motion. There is no forward force: nothing is pushing it anymore.</div></details></li>
+    <li>A box has three horizontal forces on it: 50 N right, 20 N left and 30 N left. What is the net force? What could the box be doing?
+      <details><summary>Answer</summary><div>Right 50 N, left 20 + 30 = 50 N, so F<sub>net</sub> = 0. The forces are balanced: the box is either at rest or moving at a constant velocity.</div></details></li>
+    <li>A 4.0 kg cart has a net force of 10 N on it. What is its acceleration?
+      <details><summary>Answer</summary><div>a = F<sub>net</sub> ÷ m = 10 ÷ 4.0 = 2.5 m/s/s, in the direction of the net force.</div></details></li>
+    <li>A wagon accelerates at 6.0 m/s/s. The net force is doubled and the mass is tripled. What is the new acceleration?
+      <details><summary>Answer</summary><div>a = 6.0 × 2 ÷ 3 = 4.0 m/s/s.</div></details></li>
+    <li>A 25 kg box sits on a floor. The coefficient of static friction is 0.50. You push it sideways with 100 N. Does it move? How big is the friction force?
+      <details><summary>Answer</summary><div>F<sub>norm</sub> = 250 N, so the most static friction can hold is 0.50 × 250 = 125 N. Your 100 N is less than that, so the box stays put. Static friction matches your push: 100 N.</div></details></li>
+    <li>A 2.0 kg backpack slides across a hallway floor with nothing pushing it. The coefficient of kinetic friction is 0.30. Find the friction force and the backpack's acceleration.
+      <details><summary>Answer</summary><div>F<sub>norm</sub> = F<sub>grav</sub> = 20 N. F<sub>frict</sub> = 0.30 × 20 = 6.0 N, backward. Friction is the net force, so a = 6.0 ÷ 2.0 = 3.0 m/s/s, backward (it slows down).</div></details></li>
+    <li>A ball has left your hand and is still rising. Ignoring air resistance, what forces act on it? Which way is the net force?
+      <details><summary>Answer</summary><div>Only F<sub>grav</sub>, down. The net force is down even though the ball moves up, so the ball slows down. The push from your hand stopped when the ball left it.</div></details></li>
+    <li>A soccer player heads a ball. Compare the force of her head on the ball with the force of the ball on her head. Why does the ball reverse direction while her head barely moves?
+      <details><summary>Answer</summary><div>The forces are equal in size and opposite in direction (Newton's 3rd law). The player has much more mass than the ball, so the same force gives her a much smaller acceleration.</div></details></li>
+    <li>A rower pulls the oars so the blades push water backward. What pushes the boat forward?
+      <details><summary>Answer</summary><div>The water pushes the oars forward, just as hard as the oars push the water backward. That forward push on the oars moves the boat.</div></details></li>
+  </ol>
+</div>
+</div>
+<p class="gnext"><a href="#practice" data-view="practice">Practice these ideas →</a></p>
+<script>
+(function(){
+  var root=document.currentScript?document.currentScript.parentNode:document;
+  var tabs=[].slice.call(root.querySelectorAll('.gtabs .tab'));
+  function show(t){tabs.forEach(function(b){var on=b===t;b.setAttribute('aria-selected',on?'true':'false');b.tabIndex=on?0:-1;document.getElementById(b.getAttribute('aria-controls')).hidden=!on;});}
+  tabs.forEach(function(b,i){
+    b.addEventListener('click',function(){show(b);});
+    b.addEventListener('keydown',function(e){var k=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(k){var n=tabs[(i+k+tabs.length)%tabs.length];show(n);n.focus();e.preventDefault();}});
+  });
+})();
+</script>
+</section>

@@ -1,0 +1,325 @@
+<section class="guide" id="guide" aria-label="Study guide">
+<style>
+.guide{margin-top:28px}
+.guide .gtip{margin:0 0 16px;font-size:19px;line-height:1.45;max-width:1000px}
+.guide .ggrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-bottom:22px}
+.guide .gcard{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcard h3,.guide .gcheck h3,.guide .gsteps h3{margin:0 0 10px;font-size:20px;letter-spacing:-.01em}
+.guide .gcard ul{margin:0;padding-left:20px}
+.guide .gcard li{margin:0 0 7px}
+.guide .ib{display:inline-block;font-family:var(--f-mono);font-size:11px;font-weight:700;border:2px solid var(--ink);padding:0 5px;margin-left:4px;vertical-align:1px;background:var(--soft)}
+.guide table{border-collapse:collapse;width:100%;font-size:15px}
+.guide td{border-top:2px solid var(--ink);padding:6px 4px;vertical-align:top}
+.guide td:first-child{font-family:var(--f-mono);font-weight:700;white-space:nowrap;padding-right:12px}
+.guide td[colspan]{white-space:normal}
+.guide .gsub{font-family:var(--f-display);font-weight:400}
+.guide .gsteps{background:var(--soft);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px;margin-bottom:22px}
+.guide .gsteps ol{margin:0;padding-left:24px;columns:2 360px;column-gap:28px}
+.guide .gsteps li{margin:0 0 8px;break-inside:avoid}
+.guide h3.ghead{font-size:22px;margin:0 0 12px}
+.guide .gex{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:18px;margin-bottom:22px}
+.guide .ex{min-width:0;background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .ex h4{margin:0 0 6px;font-size:18px}
+.guide .ex .kind{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--hot);text-transform:uppercase;letter-spacing:.04em}
+.guide .ex p{margin:0 0 8px}
+.guide .work{font-size:16px;line-height:1.45;border-left:4px solid var(--hot);background:#fff;padding:6px 14px;margin:8px 0;overflow-x:auto}
+.guide .work math.eq{display:block;text-align:left;margin:8px 0;font-size:1.15em}
+@media (max-width:520px){.guide .work math.eq{font-size:1em}}
+.guide .work math.ans{font-weight:700}
+.guide .work .wt{margin:6px 0 2px}
+.guide .ex .take{margin:8px 0 0;font-weight:500}
+.guide .ex svg{float:right;margin:0 0 6px 12px}
+.guide .gcheck{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcheck>p{margin:-4px 0 12px;color:var(--muted)}
+.guide ol.q{margin:0;padding-left:26px}
+.guide ol.q>li{margin:0 0 14px}
+.guide details{margin-top:6px}
+.guide summary{cursor:pointer;display:inline-block;font-weight:700;border:2px solid var(--ink);padding:2px 10px;background:#fff;list-style:none}
+.guide summary::-webkit-details-marker{display:none}
+.guide summary:hover{background:var(--soft)}
+.guide details[open] summary{background:var(--ink);color:#fff}
+.guide details>div{border-left:4px solid var(--hot);padding:8px 12px;margin-top:8px;background:#fff}
+.guide .gpanel>.ggrid,.guide .gpanel>.gsteps,.guide .gpanel>.gex{margin-bottom:0}
+.guide .gpanel>.gsteps+.ggrid{margin-top:22px}
+.guide .gtabs{margin-bottom:18px}
+.guide .gnext{margin:16px 0 0;font-weight:700}
+.guide .gnext a{color:var(--ink)}
+body.present .guide{display:none}
+@media (max-width:520px){.guide .gtip{font-size:17px}.guide td:first-child{white-space:normal}.guide .ggrid,.guide .gex{grid-template-columns:1fr}.guide .ex svg{float:none;display:block;margin:0 auto 8px}}
+</style>
+<div class="simbar"><h2>Study guide</h2><span class="mono">Unit 1 · Kinematics</span></div>
+<p class="gtip"><b>How to use this:</b> read the key ideas, then cover each worked example and try it yourself before reading the solution. Do the self-check questions on paper <i>before</i> you open the answers, mark the ones you miss, and come back to them in a day or two without looking. Rereading won't do much; answering questions will.</p>
+<div class="tabs gtabs" role="tablist" aria-label="Study guide sections">
+  <button class="tab" role="tab" type="button" aria-selected="true" aria-controls="g-ideas" id="gt-ideas">Key ideas</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-solve" id="gt-solve" tabindex="-1">How to solve</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-examples" id="gt-examples" tabindex="-1">Worked examples</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-check" id="gt-check" tabindex="-1">Self-check</button>
+</div>
+<div class="gpanel" role="tabpanel" id="g-ideas" aria-labelledby="gt-ideas">
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Key ideas</h3>
+    <ul>
+      <li><b>Distance</b> is how much ground you cover. It is a <b>scalar</b>: just a number, no direction.</li>
+      <li><b>Displacement</b> is how far out of place you end up: final position minus starting position. It is a <b>vector</b>: a number <i>and</i> a direction.</li>
+      <li>If you never turn around, distance and displacement have the same size. A <b>round trip</b> always has zero displacement.</li>
+      <li><b>Speed</b> is how fast you cover ground. <b>Velocity</b> is speed with a direction.</li>
+      <li><b>Average speed</b> uses distance. <b>Average velocity</b> uses displacement. Both divide by the total time.</li>
+      <li>An object is <b>accelerating</b> when its velocity changes. There are three ways: speed up, slow down, or turn.</li>
+      <li>Acceleration is the change in velocity each second. An acceleration of 5 m/s/s means the velocity changes by 5 m/s every second.</li>
+      <li><b>Direction of acceleration:</b> speeding up, it points the way the object moves. Slowing down, it points the opposite way.</li>
+      <li>A minus sign tells you a <b>direction</b> (left, west, down). It does not mean “less than nothing,” and a negative acceleration does not always mean slowing down.</li>
+      <li><b>Position–time graphs:</b> slope = velocity. Straight line: constant velocity. Flat line: at rest. Curved line: the velocity is changing (steeper and steeper means speeding up).</li>
+      <li><b>Velocity–time graphs:</b> above the axis means moving + ; below means moving −. Slope = acceleration. Area between the line and the axis = displacement.</li>
+      <li><b>Free fall:</b> only gravity acts. Everything falls with the same acceleration, 9.8 m/s/s down (we use about 10), whatever its mass.</li>
+      <li>In free fall the velocity changes by −10 m/s each second, going up <i>and</i> coming down. At the top, v = 0 for an instant, but the acceleration is still 10 m/s/s down.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Equations</h3>
+    <table>
+      <tr><td>avg speed = d ÷ t</td><td>d = distance, t = time</td></tr>
+      <tr><td>avg velocity = Δx ÷ t</td><td>Δx = displacement (final − starting position)</td></tr>
+      <tr><td>a = Δv ÷ t</td><td>a = acceleration, Δv = v<sub>f</sub> − v<sub>i</sub> (final minus starting velocity)</td></tr>
+      <tr><td>slope = rise ÷ run</td><td>position–time: slope = velocity. Velocity–time: slope = acceleration.</td></tr>
+      <tr><td>area = b · h</td><td>rectangle under a velocity–time line (constant velocity)</td></tr>
+      <tr><td>area = ½ · b · h</td><td>triangle under a velocity–time line (speeding up from rest or slowing to a stop)</td></tr>
+      <tr><td>g ≈ 10 m/s/s</td><td>free-fall acceleration, downward (9.8 is also fine)</td></tr>
+      <tr><td>t<sub>up</sub> = v<sub>i</sub> ÷ 10</td><td>time to reach the top of a throw. Time down = time up.</td></tr>
+      <tr><td colspan="2"><span class="gsub">Units: distance and displacement in m, time in s, velocity in m/s, acceleration in <b>m/s/s</b>.</span></td></tr>
+    </table>
+  </div>
+  <div class="gcard">
+    <h3>Common mistakes</h3>
+    <ul>
+      <li>Using distance to find average velocity. Average velocity needs displacement.</li>
+      <li>Thinking negative acceleration always means slowing down. Moving in the − direction and speeding up also gives a negative acceleration.</li>
+      <li>Reading a velocity–time graph like a position–time graph. On a v–t graph a flat line means <i>constant velocity</i>, not stopped. Stopped is a flat line on the axis.</li>
+      <li>Saying the acceleration is zero at the top of a throw. Only the velocity is zero there.</li>
+      <li>Thinking heavier things fall faster. Without air resistance, they fall together.</li>
+      <li>Forgetting that area below the time axis counts as displacement in the − direction.</li>
+    </ul>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-solve" aria-labelledby="gt-solve" hidden>
+<div class="gsteps">
+  <h3>How to solve a back-and-forth trip</h3>
+  <ol>
+    <li><b>Draw a number line.</b> Mark the start, each turn-around point and the finish.</li>
+    <li><b>Distance:</b> find the length of each leg (no signs) and add them up.</li>
+    <li><b>Displacement:</b> final position − starting position. Give the direction (+ or −, east or west).</li>
+    <li><b>Find the total time</b> for the whole trip.</li>
+    <li><b>Average speed</b> = distance ÷ time. <b>Average velocity</b> = displacement ÷ time, with a direction.</li>
+    <li><b>Check:</b> average speed can never be smaller than the size of the average velocity.</li>
+  </ol>
+</div>
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Finding an acceleration</h3>
+    <ul>
+      <li>Pick a + direction. Write v<sub>i</sub>, v<sub>f</sub> and t with signs.</li>
+      <li>Find Δv = v<sub>f</sub> − v<sub>i</sub>. Keep the sign.</li>
+      <li>Divide: a = Δv ÷ t. The sign of a is its direction.</li>
+      <li>Check with the rule: speeding up → a points the way it moves. Slowing down → a points the other way.</li>
+      <li>From a data table: find how much the velocity changes each second. That change is a.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Reading a graph</h3>
+    <ul>
+      <li><b>First, read the axis label.</b> Position–time and velocity–time graphs follow different rules.</li>
+      <li>Split the graph into stages wherever the line changes.</li>
+      <li>For each stage, pick two points on the line. Slope = rise ÷ run.</li>
+      <li>Position–time: slope is the velocity. Velocity–time: slope is the acceleration.</li>
+      <li>Velocity–time displacement: cut the area into rectangles and triangles, find each one, then add.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Free fall</h3>
+    <ul>
+      <li>Up is +. The velocity drops by 10 m/s every second.</li>
+      <li>Count down by tens until you reach 0. That is the top.</li>
+      <li>Keep counting into negatives for the trip down. Same height means same speed, opposite direction.</li>
+      <li>“Dropped” means it starts at 0 m/s.</li>
+    </ul>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-examples" aria-labelledby="gt-examples" hidden>
+<div class="gex">
+  <div class="ex">
+    <div class="kind">Distance and displacement</div>
+    <svg width="200" height="112" viewBox="0 0 200 112" aria-label="Number line from 0 to 25 m: the robot goes from 4 m to 22 m, back to 1 m, then to 13 m">
+      <line x1="12" y1="88" x2="190" y2="88" stroke="#111" stroke-width="2"/>
+      <g stroke="#111" stroke-width="2"><line x1="12" y1="84" x2="12" y2="92"/><line x1="47" y1="84" x2="47" y2="92"/><line x1="82" y1="84" x2="82" y2="92"/><line x1="117" y1="84" x2="117" y2="92"/><line x1="152" y1="84" x2="152" y2="92"/><line x1="187" y1="84" x2="187" y2="92"/></g>
+      <g font-size="10" font-family="IBM Plex Mono,monospace" text-anchor="middle"><text x="12" y="104">0</text><text x="47" y="104">5</text><text x="82" y="104">10</text><text x="117" y="104">15</text><text x="152" y="104">20</text><text x="187" y="104">25 m</text></g>
+      <circle cx="40" cy="22" r="4" fill="#111"/>
+      <line x1="40" y1="22" x2="160" y2="22" stroke="#ff6a2b" stroke-width="3"/><polygon points="158,17 158,27 166,22" fill="#ff6a2b"/>
+      <line x1="166" y1="44" x2="25" y2="44" stroke="#ff6a2b" stroke-width="3"/><polygon points="27,39 27,49 19,44" fill="#ff6a2b"/>
+      <line x1="19" y1="66" x2="97" y2="66" stroke="#ff6a2b" stroke-width="3"/><polygon points="95,61 95,71 103,66" fill="#ff6a2b"/>
+      <g font-size="10" font-family="IBM Plex Mono,monospace"><text x="96" y="16">18 m</text><text x="84" y="38">21 m</text><text x="46" y="60">12 m</text><text x="18" y="16">start</text></g>
+    </svg>
+    <h4>A delivery robot in a hallway</h4>
+    <p>A robot rolls along a hallway marked in meters. It starts at the 4 m mark, rolls to 22 m, back to 1 m, then forward to 13 m. The whole trip takes 25 s. Find its distance, displacement, average speed and average velocity.</p>
+    <div class="work">
+      <p class="wt">Distance: add the legs, ignoring direction.</p>
+      <math class="eq" display="block"><mrow><mi>d</mi><mo>&#x0003D;</mo><mn>18</mn><mo>&#x0002B;</mo><mn>21</mn><mo>&#x0002B;</mo><mn>12</mn></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>d</mi><mo>&#x0003D;</mo><mn>51</mn><mspace width="0.167em" /><mtext>m</mtext></mrow></math>
+      <p class="wt">Displacement: final position minus starting position.</p>
+      <math class="eq" display="block"><mrow><mi>&#x00394;</mi><mi>x</mi><mo>&#x0003D;</mo><mn>13</mn><mo>&#x02212;</mo><mn>4</mn></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>&#x00394;</mi><mi>x</mi><mo>&#x0003D;</mo><mn>9</mn><mspace width="0.167em" /><mtext>m,&#x000A0;forward&#x000A0;(+)</mtext></mrow></math>
+      <p class="wt">Average speed uses distance:</p>
+      <math class="eq" display="block"><mrow><mtext>avg&#x000A0;speed</mtext><mo>&#x0003D;</mo><mfrac><mrow><mi>d</mi></mrow><mrow><mi>t</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>51</mn></mrow><mrow><mn>25</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mtext>avg&#x000A0;speed</mtext><mo>&#x02248;</mo><mn>2.0</mn><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
+      <p class="wt">Average velocity uses displacement:</p>
+      <math class="eq" display="block"><mrow><mtext>avg&#x000A0;velocity</mtext><mo>&#x0003D;</mo><mfrac><mrow><mi>&#x00394;</mi><mi>x</mi></mrow><mrow><mi>t</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>9</mn></mrow><mrow><mn>25</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mtext>avg&#x000A0;velocity</mtext><mo>&#x0003D;</mo><mn>0.36</mn><mspace width="0.167em" /><mtext>m/s,&#x000A0;forward</mtext></mrow></math>
+    </div>
+    <p class="take">The robot covered a lot of ground but ended up only 9 m from where it began. Turning around makes the displacement (and the average velocity) much smaller than the distance (and the average speed).</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Acceleration and its sign</div>
+    <h4>A cyclist brakes while riding west</h4>
+    <p>A cyclist rides west at 12 m/s. She brakes and slows to 3 m/s in 4.5 s. Call east +. Find her acceleration (size and direction).</p>
+    <div class="work">
+      <p class="wt">Moving west means negative velocities:</p>
+      <math class="eq" display="block"><mrow><msub><mi>v</mi><mi>i</mi></msub><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>12</mn><mspace width="0.167em" /><mtext>m/s</mtext><mspace width="2em" /><msub><mi>v</mi><mi>f</mi></msub><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>3</mn><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><mi>&#x00394;</mi><mi>v</mi><mo>&#x0003D;</mo><msub><mi>v</mi><mi>f</mi></msub><mo>&#x02212;</mo><msub><mi>v</mi><mi>i</mi></msub><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>3</mn><mo>&#x02212;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>12</mn><mo stretchy="false">&#x00029;</mo></mrow></math>
+      <math class="eq" display="block"><mrow><mi>&#x00394;</mi><mi>v</mi><mo>&#x0003D;</mo><mo>&#x0002B;</mo><mn>9</mn><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><mi>a</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>&#x00394;</mi><mi>v</mi></mrow><mrow><mi>t</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mo>&#x0002B;</mo><mn>9</mn></mrow><mrow><mn>4.5</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>a</mi><mo>&#x0003D;</mo><mo>&#x0002B;</mo><mn>2.0</mn><mspace width="0.167em" /><mtext>m/s/s,&#x000A0;east</mtext></mrow></math>
+    </div>
+    <p class="take">The acceleration is <i>positive</i> but she is slowing down. That fits the rule: she moves west and slows down, so the acceleration points the other way, east. The sign tells you a direction, not “speeding up.”</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Position–time graph</div>
+    <svg width="190" height="122" viewBox="0 0 190 122" aria-label="Position-time graph: rising from 0 to 12 m in 4 s, flat at 12 m until 6 s, falling to 4 m at 10 s">
+      <line x1="28" y1="100" x2="186" y2="100" stroke="#111" stroke-width="2"/><line x1="28" y1="100" x2="28" y2="6" stroke="#111" stroke-width="2"/>
+      <line x1="28" y1="16" x2="118" y2="16" stroke="#111" stroke-width="1" stroke-dasharray="3 3"/>
+      <polyline points="28,100 88,16 118,16 178,72" fill="none" stroke="#ff6a2b" stroke-width="3"/>
+      <g font-size="10" font-family="IBM Plex Mono,monospace"><text x="10" y="20">12</text><text x="16" y="76">4</text><text x="85" y="113">4</text><text x="115" y="113">6</text><text x="170" y="113">10</text><text x="34" y="10">x (m)</text><text x="150" y="96">t (s)</text>
+      <text x="40" y="56">A</text><text x="98" y="12">B</text><text x="152" y="40">C</text></g>
+      <line x1="28" y1="72" x2="178" y2="72" stroke="#111" stroke-width="1" stroke-dasharray="3 3"/>
+    </svg>
+    <h4>A toy car's three-stage trip</h4>
+    <p>The position–time graph shows a toy car. Find its velocity in each stage and describe what it is doing. Then find its total distance and its displacement.</p>
+    <div class="work">
+      <p class="wt">Stage A (0–4 s): slope = rise ÷ run.</p>
+      <math class="eq" display="block"><mrow><msub><mi>v</mi><mi>A</mi></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>12</mn><mo>&#x02212;</mo><mn>0</mn></mrow><mrow><mn>4</mn><mo>&#x02212;</mo><mn>0</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>v</mi><mi>A</mi></msub><mo>&#x0003D;</mo><mo>&#x0002B;</mo><mn>3</mn><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
+      <p class="wt">Stage B (4–6 s): the line is flat.</p>
+      <math class="eq ans" display="block"><mrow><msub><mi>v</mi><mi>B</mi></msub><mo>&#x0003D;</mo><mn>0</mn><mspace width="0.167em" /><mtext>m/s&#x000A0;(at&#x000A0;rest)</mtext></mrow></math>
+      <p class="wt">Stage C (6–10 s):</p>
+      <math class="eq" display="block"><mrow><msub><mi>v</mi><mi>C</mi></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>4</mn><mo>&#x02212;</mo><mn>12</mn></mrow><mrow><mn>10</mn><mo>&#x02212;</mo><mn>6</mn></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mo>&#x02212;</mo><mn>8</mn></mrow><mrow><mn>4</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>v</mi><mi>C</mi></msub><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>2</mn><mspace width="0.167em" /><mtext>m/s</mtext></mrow></math>
+      <p class="wt">Distance: 12 m out, then 8 m back.</p>
+      <math class="eq ans" display="block"><mrow><mi>d</mi><mo>&#x0003D;</mo><mn>12</mn><mo>&#x0002B;</mo><mn>8</mn><mo>&#x0003D;</mo><mn>20</mn><mspace width="0.167em" /><mtext>m</mtext></mrow></math>
+      <p class="wt">Displacement: final position − starting position.</p>
+      <math class="eq ans" display="block"><mrow><mi>&#x00394;</mi><mi>x</mi><mo>&#x0003D;</mo><mn>4</mn><mo>&#x02212;</mo><mn>0</mn><mo>&#x0003D;</mo><mo>&#x0002B;</mo><mn>4</mn><mspace width="0.167em" /><mtext>m</mtext></mrow></math>
+    </div>
+    <p class="take">A: moves + at a steady 3 m/s. B: stopped. C: moves back (−) at a steady 2 m/s, slower than in A because the line is less steep. Straight lines mean constant velocity in every stage.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Velocity–time graph</div>
+    <svg width="200" height="122" viewBox="0 0 200 122" aria-label="Velocity-time graph: from 4 m/s to 10 m/s over 5 s, constant 10 m/s until 9 s, down to 0 at 14 s, with the area shaded">
+      <polygon points="24,100 24,68 84,20 132,20 192,100" fill="#fde1d6"/>
+      <line x1="24" y1="100" x2="196" y2="100" stroke="#111" stroke-width="2"/><line x1="24" y1="100" x2="24" y2="6" stroke="#111" stroke-width="2"/>
+      <line x1="84" y1="20" x2="84" y2="100" stroke="#111" stroke-width="1" stroke-dasharray="3 3"/><line x1="132" y1="20" x2="132" y2="100" stroke="#111" stroke-width="1" stroke-dasharray="3 3"/>
+      <line x1="24" y1="68" x2="84" y2="68" stroke="#111" stroke-width="1" stroke-dasharray="3 3"/>
+      <polyline points="24,68 84,20 132,20 192,100" fill="none" stroke="#ff6a2b" stroke-width="3"/>
+      <g font-size="10" font-family="IBM Plex Mono,monospace"><text x="4" y="24">10</text><text x="10" y="72">4</text><text x="81" y="113">5</text><text x="129" y="113">9</text><text x="184" y="113">14</text><text x="30" y="10">v (m/s)</text></g>
+    </svg>
+    <h4>A scooter speeds up, cruises and stops</h4>
+    <p>The velocity–time graph shows a scooter. Find the acceleration in each stage and the total displacement.</p>
+    <div class="work">
+      <p class="wt">Accelerations are slopes:</p>
+      <math class="eq" display="block"><mrow><msub><mi>a</mi><mn>1</mn></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>10</mn><mo>&#x02212;</mo><mn>4</mn></mrow><mrow><mn>5</mn><mo>&#x02212;</mo><mn>0</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>1.2</mn><mspace width="0.167em" /><mtext>m/s/s</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>a</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mn>0</mn><mspace width="0.167em" /><mtext>m/s/s</mtext><mspace width="1em" /><mtext>(flat&#x000A0;line)</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>a</mi><mn>3</mn></msub><mo>&#x0003D;</mo><mfrac><mrow><mn>0</mn><mo>&#x02212;</mo><mn>10</mn></mrow><mrow><mn>14</mn><mo>&#x02212;</mo><mn>9</mn></mrow></mfrac><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>2</mn><mspace width="0.167em" /><mtext>m/s/s</mtext></mrow></math>
+      <p class="wt">Displacement is the area. Stage 1 is a rectangle under a triangle:</p>
+      <math class="eq" display="block"><mrow><msub><mi>A</mi><mn>1</mn></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>5</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>4</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac></mstyle><mo stretchy="false">&#x00028;</mo><mn>5</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>6</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>20</mn><mo>&#x0002B;</mo><mn>15</mn><mo>&#x0003D;</mo><mn>35</mn><mspace width="0.167em" /><mtext>m</mtext></mrow></math>
+      <p class="wt">Stage 2 is a rectangle, 4 s wide:</p>
+      <math class="eq" display="block"><mrow><msub><mi>A</mi><mn>2</mn></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>4</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>40</mn><mspace width="0.167em" /><mtext>m</mtext></mrow></math>
+      <p class="wt">Stage 3 is a triangle, 5 s wide:</p>
+      <math class="eq" display="block"><mrow><msub><mi>A</mi><mn>3</mn></msub><mo>&#x0003D;</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac></mstyle><mo stretchy="false">&#x00028;</mo><mn>5</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>10</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>25</mn><mspace width="0.167em" /><mtext>m</mtext></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>&#x00394;</mi><mi>x</mi><mo>&#x0003D;</mo><mn>35</mn><mo>&#x0002B;</mo><mn>40</mn><mo>&#x0002B;</mo><mn>25</mn><mo>&#x0003D;</mo><mn>100</mn><mspace width="0.167em" /><mtext>m</mtext></mrow></math>
+    </div>
+    <p class="take">Stage 1: the line moves away from the axis, so it speeds up. Stage 3: it moves toward the axis, so it slows down, and the slope is negative. The whole graph stays above the axis, so the scooter always moves in the + direction.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Free fall</div>
+    <svg width="170" height="132" viewBox="0 0 170 132" aria-label="Velocity-time graph for a ball thrown up at 25 m/s: a straight line down to 0 at 2.5 s and to minus 25 m/s at 5 s">
+      <polygon points="24,15 24,65 94,65" fill="#fde1d6"/>
+      <line x1="24" y1="65" x2="166" y2="65" stroke="#111" stroke-width="2"/><line x1="24" y1="122" x2="24" y2="6" stroke="#111" stroke-width="2"/>
+      <line x1="24" y1="15" x2="164" y2="115" stroke="#ff6a2b" stroke-width="3"/>
+      <line x1="24" y1="115" x2="164" y2="115" stroke="#111" stroke-width="1" stroke-dasharray="3 3"/>
+      <g font-size="10" font-family="IBM Plex Mono,monospace"><text x="4" y="19">25</text><text x="0" y="119">−25</text><text x="86" y="78">2.5</text><text x="156" y="78">5</text><text x="30" y="10">v (m/s)</text><text x="134" y="60">t (s)</text></g>
+    </svg>
+    <h4>A ball tossed straight up</h4>
+    <p>You toss a ball straight up at 25 m/s. Ignore air resistance and use g = 10 m/s/s. Fill in its velocity each second. When does it reach the top? How long is it in the air? How high does it go?</p>
+    <div class="work">
+      <p class="wt">Up is +. Subtract 10 m/s every second:</p>
+      <p class="wt">0 s: +25 · 1 s: +15 · 2 s: +5 · 3 s: −5 · 4 s: −15 · 5 s: −25 (m/s)</p>
+      <p class="wt">Time to the top (where v = 0):</p>
+      <math class="eq" display="block"><mrow><msub><mi>t</mi><mrow><mtext>up</mtext></mrow></msub><mo>&#x0003D;</mo><mfrac><mrow><msub><mi>v</mi><mi>i</mi></msub></mrow><mrow><mn>10</mn></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>25</mn></mrow><mrow><mn>10</mn></mrow></mfrac></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>t</mi><mrow><mtext>up</mtext></mrow></msub><mo>&#x0003D;</mo><mn>2.5</mn><mspace width="0.167em" /><mtext>s</mtext></mrow></math>
+      <p class="wt">Time down = time up:</p>
+      <math class="eq ans" display="block"><mrow><msub><mi>t</mi><mrow><mtext>air</mtext></mrow></msub><mo>&#x0003D;</mo><mn>2.5</mn><mo>&#x0002B;</mo><mn>2.5</mn><mo>&#x0003D;</mo><mn>5.0</mn><mspace width="0.167em" /><mtext>s</mtext></mrow></math>
+      <p class="wt">Height = shaded area on the v–t graph (a triangle):</p>
+      <math class="eq" display="block"><mrow><mtext>height</mtext><mo>&#x0003D;</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac></mstyle><mo stretchy="false">&#x00028;</mo><mn>2.5</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>25</mn><mo stretchy="false">&#x00029;</mo></mrow></math>
+      <math class="eq ans" display="block"><mrow><mtext>height</mtext><mo>&#x02248;</mo><mn>31</mn><mspace width="0.167em" /><mtext>m</mtext></mrow></math>
+    </div>
+    <p class="take">At 2 s it moves up at 5 m/s; at 3 s it moves down at 5 m/s, at the same height. The acceleration is 10 m/s/s down the whole time, even at the top where v = 0.</p>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
+<div class="gcheck">
+  <h3>Self-check</h3>
+  <p>Answer first, then open.</p>
+  <ol class="q">
+    <li>A dog runs 30 m out to fetch a ball and trots back to drop it at your feet. It does this 3 times. What are its distance and its displacement?
+      <details><summary>Answer</summary><div>Distance = 3 × 60 = 180 m. Displacement = 0 m, because it ended where it started (a round trip).</div></details></li>
+    <li>A bus travels 18 km in 0.25 hours. What is its average speed?
+      <details><summary>Answer</summary><div>avg speed = d ÷ t = 18 ÷ 0.25 = 72 km/h.</div></details></li>
+    <li>When is an object's average speed bigger than the size of its average velocity?
+      <details><summary>Answer</summary><div>When it changes direction. Turning back adds to the distance but takes away from the displacement. With no turn-around, the two are the same size.</div></details></li>
+    <li>A car speeds up from 6 m/s to 20 m/s in 3.5 s. Find its acceleration.
+      <details><summary>Answer</summary><div>Δv = 20 − 6 = 14 m/s. a = 14 ÷ 3.5 = 4.0 m/s/s, in the direction it moves.</div></details></li>
+    <li>A cart moves to the left (the − direction) and speeds up. Is its acceleration + or −? Why?
+      <details><summary>Answer</summary><div>Negative. It is speeding up, so the acceleration points the way it moves, which is left (−). A negative acceleration does not always mean slowing down.</div></details></li>
+    <li>A velocity table reads: 0 s, 18 m/s; 1 s, 15 m/s; 2 s, 12 m/s; 3 s, 9 m/s. Describe the motion and find the acceleration.
+      <details><summary>Answer</summary><div>Moving in the + direction and slowing down at a steady rate. The velocity drops 3 m/s each second, so a = −3 m/s/s.</div></details></li>
+    <li>On a position–time graph, the line curves and gets steeper and steeper. What is the object doing?
+      <details><summary>Answer</summary><div>Speeding up. The slope is the velocity, and the slope keeps getting bigger.</div></details></li>
+    <li>A velocity–time graph is a flat line at −6 m/s from 0 s to 5 s. Describe the motion and find the displacement.
+      <details><summary>Answer</summary><div>Constant velocity of 6 m/s in the − direction (not stopped). Area = (5)(−6) = −30 m, so the displacement is 30 m in the − direction.</div></details></li>
+    <li>A velocity–time line goes straight from +10 m/s at 0 s to −10 m/s at 4 s. What happens at 2 s? What is the acceleration? What is the displacement from 0 to 4 s?
+      <details><summary>Answer</summary><div>At 2 s the line crosses the axis: the object stops for an instant and turns around. a = (−10 − 10) ÷ 4 = −5 m/s/s. The area above the axis (+10 m) and the area below (−10 m) cancel, so the displacement is 0 m: it is back where it started.</div></details></li>
+    <li>A rock is dropped off a cliff. How fast is it moving after 3 s? What is its acceleration then? (Ignore air resistance.)
+      <details><summary>Answer</summary><div>It gains 10 m/s each second from 0, so after 3 s it moves at 30 m/s downward. The acceleration is still 10 m/s/s downward, the same as at every other moment.</div></details></li>
+    <li>A ball thrown straight up lands back in the thrower's hand 7.0 s later. About how fast was it thrown?
+      <details><summary>Answer</summary><div>Time up = time down, so it took 3.5 s to reach the top. It loses 10 m/s each second, so it started at about 3.5 × 10 = 35 m/s.</div></details></li>
+    <li>A bowling ball and a marble are dropped together from the same height. Ignoring air resistance, which lands first?
+      <details><summary>Answer</summary><div>They land at the same time. Free-fall acceleration is the same for every mass.</div></details></li>
+  </ol>
+</div>
+</div>
+<p class="gnext"><a href="#practice" data-view="practice">Practice these ideas →</a></p>
+<script>
+(function(){
+  var root=document.currentScript?document.currentScript.parentNode:document;
+  var tabs=[].slice.call(root.querySelectorAll('.gtabs .tab'));
+  function show(t){tabs.forEach(function(b){var on=b===t;b.setAttribute('aria-selected',on?'true':'false');b.tabIndex=on?0:-1;document.getElementById(b.getAttribute('aria-controls')).hidden=!on;});}
+  tabs.forEach(function(b,i){
+    b.addEventListener('click',function(){show(b);});
+    b.addEventListener('keydown',function(e){var k=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(k){var n=tabs[(i+k+tabs.length)%tabs.length];show(n);n.focus();e.preventDefault();}});
+  });
+})();
+</script>
+</section>
