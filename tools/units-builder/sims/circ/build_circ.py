@@ -40,6 +40,7 @@ VARIANTS = {
   'ab-track': ('track', {'modes': ['valley', 'hump', 'loop', 'rough'], 'opts': {'sys': ['earth']}, 'flag': 'ABP', 'hint': 'KEi + PEi + W = KEf + PEf · g = 10 m/s²'}),
   'ab-carts': ('carts', {'flag': 'ABP', 'labels': {'elastic': 'Rebound (bouncy bumpers)', 'sticky': 'Hit and stick (clay)', 'explode': 'Explosion (push apart)'}}),
   'ab-magfield': ('magfield', {'modes': ['bar', 'dom'], 'title': 'Magnets & Domains'}),
+  'ab-cartball': ('cartball', {'flag': 'ABP'}),
   'ab-coulomb': ('coulomb', {'modes': ['two']}),
   'ab-efield': ('efield', {'modes': ['one', 'two']}),
   'ab-ohm': ('ohm', {'modes': ['wire', 'iv'], 'opts': {'dev': ['res', 'lamp']}}),

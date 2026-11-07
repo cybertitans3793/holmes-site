@@ -24,13 +24,13 @@ const SIM = {
   work(v, d, mode){
     let h = '<h4>1 · Before launch the ball rides with the cart</h4><p class="st">So it already has the cart’s horizontal velocity: ' + H.iv('v') + ' →</p>' +
       '<h4>2 · In the air: no horizontal force on the ball</h4><p class="st">Gravity pulls straight down; nothing pushes it ← or → (ignoring air). By Newton’s 1st law its horizontal velocity stays ' + H.iv('v') + '.</p>' +
-      '<p class="st">Time in the air (up and back down) <span class="hint">(why: Unit 2)</span>:</p>' + TEX`t = \frac{2u}{g}` + TEX`t = \frac{2\left(${M.iv('u')}\right)}{${M.n(10, 'm/s²')}}` + TEX`t = ${M.n(d.tAir, 's')}` +
+      (window.ABP ? '<p class="st">The sim times the flight: the ball is in the air for ' + H.n(d.tAir, 's') + '.</p>' : '<p class="st">Time in the air (up and back down) <span class="hint">(why: Unit 2)</span>:</p>' + TEX`t = \frac{2u}{g}` + TEX`t = \frac{2\left(${M.iv('u')}\right)}{${M.n(10, 'm/s²')}}` + TEX`t = ${M.n(d.tAir, 's')}`) +
       '<p class="st">Ball, horizontally:</p>' + TEX`x_{\text{ball}} = vt` + TEX`x_{\text{ball}} = \left(${M.iv('v')}\right)\left(${M.n(d.tAir, 's')}\right)` + TEXA`x_{\text{ball}} = ${M.n(d.xBall, 'm')}`;
     if (mode === 'const') return h + '<h4>3 · The cart also keeps going at ' + H.iv('v') + '</h4>' + TEX`x_{\text{cart}} = vt` + TEXA`x_{\text{cart}} = ${M.n(d.xCart, 'm')}` + '<p class="st">Same distance → the ball lands <b>right back in the launcher</b>.</p>' +
       '<p class="note">From the cart it looks like the ball goes straight up and down. Switch to “Watch from: The cart.” Same idea: drop your keys on a smooth train and they land at your feet.</p>' +
       '<p class="note">Common mistake: “the ball falls behind because the cart moves out from under it.” Only if the cart changes its velocity. Try the other two modes.</p>';
-    h += '<h4>3 · But the cart ' + (mode === 'speed' ? 'speeds up' : 'slows down') + ' while the ball is in the air</h4><p class="st"><span class="hint">(½at²: Unit 2)</span></p>' +
-      (mode === 'speed' ? TEX`x_{\text{cart}} = vt + \frac{1}{2}at^2` : TEX`x_{\text{cart}} = vt - \frac{1}{2}at^2`) + TEX`x_{\text{cart}} = ${M.n(d.xCart, 'm')}` +
+    h += '<h4>3 · But the cart ' + (mode === 'speed' ? 'speeds up' : 'slows down') + ' while the ball is in the air</h4>' +
+      (window.ABP ? '<p class="st">Because the cart ' + (mode === 'speed' ? 'speeds up, it covers <b>more</b>' : 'slows down, it covers <b>less</b>') + ' distance than vt. The sim measures it:</p>' + TEXA`x_{\text{cart}} = ${M.n(d.xCart, 'm')}` : '<p class="st"><span class="hint">(½at²: Unit 2)</span></p>' + (mode === 'speed' ? TEX`x_{\text{cart}} = vt + \frac{1}{2}at^2` : TEX`x_{\text{cart}} = vt - \frac{1}{2}at^2`) + TEX`x_{\text{cart}} = ${M.n(d.xCart, 'm')}`) +
       '<h4>4 · Compare</h4>' + TEX`\Delta x = x_{\text{ball}} - x_{\text{cart}}` + TEX`\Delta x = ${M.n(d.xBall)} - ${M.p(d.xCart)}` + TEXA`\Delta x = ${M.n(d.miss, 'm')}` +
       '<p class="st">The ball lands <b>' + (d.miss > 0 ? 'ahead of' : 'behind') + '</b> the launcher.</p>' +
       '<p class="note">The ball didn’t change its horizontal motion; the cart did. In the cart’s view the ball seems to drift ' + (d.miss > 0 ? 'forward' : 'backward') + ' with no force pushing it, which is how you know the cart is not an inertial (constant-velocity) frame.</p>';
