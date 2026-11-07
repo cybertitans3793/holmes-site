@@ -19,16 +19,18 @@ const SIM = {
   },
   dvs(){ return [{ id: 'a', name: 'Acceleration', short: 'a', sym: 'a', unit: 'm/s/s', f: d => d.a }]; },
   work(v, d, mode){
-    const sgn = x => (x > 0 ? '+' : '') + fint(x);
-    if (mode === 'fall') return '<h4>1 · What is free fall?</h4><div class="eq">Gravity is the only force acting (ignore air resistance). The acceleration is 9.8 m/s/s down — about <b>10 m/s/s down</b> — no matter what the object weighs.</div>' +
-      '<h4>2 · Velocity changes by −10 m/s every second</h4><div class="eq">' + d.rows.map(([t, vv]) => 't = ' + t + ' s: ' + sgn(vv) + ' m/s').join('<br>') + '</div>' +
-      (v.v0 > 0 ? '<h4>3 · At the very top</h4><div class="eq">After ' + fint(d.tTop) + ' s the velocity is 0 m/s for an instant — but the acceleration is <b>still 10 m/s/s down</b>. Going up it slows down; coming down it speeds up.</div>' : '') +
+    const mn = (x, u) => '<mrow>' + (x < 0 ? '<mo>−</mo>' : '') + '<mn>' + fint(Math.abs(x)) + '</mn>' + M.u(u) + '</mrow>', mp = (x, u) => x < 0 ? '<mrow><mo>(</mo>' + mn(x, u) + '<mo>)</mo></mrow>' : mn(x, u);
+    const sgn = x => (x > 0 ? '+' : '') + fint(x), sg = (x, u) => '<mrow>' + (x > 0 ? '<mo>+</mo>' : '') + mn(x, u) + '</mrow>';
+    if (mode === 'fall') return '<h4>1 · What is free fall?</h4><p class="st">Gravity is the only force acting (ignore air resistance). The acceleration is 9.8 m/s/s down — about <b>10 m/s/s down</b> — no matter what the object weighs.</p>' +
+      '<h4>2 · Velocity changes by −10 m/s every second</h4>' + d.rows.map(([t, vv]) => TEX`t = ${mn(t, 's')}\qquad v = ${sg(vv, 'm/s')}`).join('') +
+      (v.v0 > 0 ? '<h4>3 · At the very top</h4><p class="st">After ' + fint(d.tTop) + ' s the velocity is 0 m/s for an instant — but the acceleration is <b>still 10 m/s/s down</b>. Going up it slows down; coming down it speeds up.</p>' : '') +
       '<p class="note">Going up: velocity up, acceleration down → slowing down. Coming down: velocity down, acceleration down → speeding up. ' + (v.v0 > 0 ? 'It takes the same time to come back down to where it was thrown, and it is moving just as fast (' + fint(v.v0) + ' m/s, now downward).' : '') + '</p>';
     const moving = v.v0 > 0 ? '+ (right)' : v.v0 < 0 ? '− (left)' : 'at rest to start', speeding = d.a === 0 ? 'constant velocity' : v.v0 === 0 || Math.sign(v.v0) === Math.sign(d.a) ? 'speeding up' : 'slowing down';
     const flip = v.v0 !== 0 && d.a !== 0 && Math.sign(d.vEnd) !== Math.sign(v.v0) && d.vEnd !== 0;
-    return '<h4>1 · Read the table: Δv each second</h4><div class="eq">Every 1 s the velocity changes by ' + sgn(d.a) + ' m/s' + (d.a ? ': that’s a <b>uniform</b> (constant) acceleration.' : ': no change at all.') + '</div>' +
-      '<h4>2 · a = Δv ÷ Δt (first and last rows)</h4><div class="eq">a = (' + sgn(d.vEnd) + ' − ' + sgn(v.v0) + ') m/s ÷ 5 s = <b>' + sgn(d.a) + ' m/s/s</b></div>' +
-      '<h4>3 · Direction</h4><div class="eq">Moving ' + moving + ', ' + speeding + '. ' + (d.a === 0 ? 'Not accelerating.' : 'Acceleration is <b>' + (d.a > 0 ? '+ (right)' : '− (left)') + '</b>: ' + (speeding === 'speeding up' ? 'same direction it moves (speeding up rule).' : 'opposite the direction it moves (slowing down rule).')) + '</div>' +
+    return '<h4>1 · Read the table: Δv each second</h4><p class="st">Every 1 s the velocity changes by ' + sgn(d.a) + ' m/s' + (d.a ? ': that’s a <b>uniform</b> (constant) acceleration.' : ': no change at all.') + '</p>' +
+      '<h4>2 · a = Δv ÷ Δt (first and last rows)</h4>' + TEX`a = \frac{\Delta v}{\Delta t}` + TEX`a = \frac{v_{\text{last}} - v_{\text{first}}}{\Delta t}` +
+      TEX`a = \frac{${mp(d.vEnd, 'm/s')} - ${mp(v.v0, 'm/s')}}{${mn(5, 's')}}` + TEXA`a = ${sg(d.a, 'm/s/s')}` +
+      '<h4>3 · Direction</h4><p class="st">Moving ' + moving + ', ' + speeding + '. ' + (d.a === 0 ? 'Not accelerating.' : 'Acceleration is <b>' + (d.a > 0 ? '+ (right)' : '− (left)') + '</b>: ' + (speeding === 'speeding up' ? 'same direction it moves (speeding up rule).' : 'opposite the direction it moves (slowing down rule).')) + '</p>' +
       (flip ? '<div class="bad">The velocity changes sign during the table: the car slows to a stop and turns around.</div>' : '') +
       '<p class="note">A negative acceleration doesn’t always mean slowing down — it means the acceleration points left. Speeding up or slowing down depends on whether v and a point the same way.</p>';
   },

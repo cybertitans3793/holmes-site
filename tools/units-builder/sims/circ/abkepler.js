@@ -22,14 +22,17 @@ const SIM = {
   },
   dvs(mode){ return mode === 'third' ? [{ id: 'T', name: 'Orbit time', short: 'T', sym: 'T', unit: 'yr', noTag: true, f: d => d.T }] : [{ id: 'ratio', name: 'Fastest ÷ slowest speed', short: 'ratio', sym: '', unit: '', noTag: true, f: d => d.ratio }]; },
   work(v, d, mode){
-    if (mode === 'third') return '<h4>1 · Kepler’s 3rd law</h4><div class="eq">For every planet going around the Sun: <b>T² = a³</b><br>(T in years, a = average distance in AU; 1 AU = Earth–Sun distance)</div>' +
-      '<h4>2 · Your planet</h4><div class="eq">a³ = ' + fint(v.a) + '³ = ' + fint(d.a3) + '<br>T² = ' + fint(d.a3) + ' → T = √' + fint(d.a3) + ' = <b>' + fint(d.T) + ' years</b></div>' +
-      '<h4>3 · Check the ratio</h4><div class="eq">T² ÷ a³ = ' + fint(d.T2) + ' ÷ ' + fint(d.a3) + ' = <b>1</b> — the same for every planet in the table.</div>' +
+    const mn = (x, u) => '<mrow>' + (x < 0 ? '<mo>−</mo>' : '') + '<mn>' + fint(Math.abs(x)) + '</mn>' + M.u(u) + '</mrow>', mp = (x, u) => x < 0 ? '<mrow><mo>(</mo>' + mn(x, u) + '<mo>)</mo></mrow>' : mn(x, u);
+    if (mode === 'third') return '<h4>1 · Kepler’s 3rd law</h4><p class="st">For every planet going around the Sun (T in years, a = average distance in AU; 1 AU = Earth–Sun distance):</p>' + TEX`T^2 = a^3` +
+      '<h4>2 · Your planet</h4>' + TEX`T^2 = a^3` + TEX`T^2 = (${M.iv('a')})^3` + TEX`T^2 = ${mn(d.a3)}` + TEX`T = \sqrt{${mn(d.a3)}}` + TEXA`T = ${mn(d.T, 'years')}` +
+      '<h4>3 · Check the ratio</h4>' + TEX`\frac{T^2}{a^3} = 1` + TEX`\frac{T^2}{a^3} = \frac{${mn(d.T2)}}{${mn(d.a3)}}` + TEXA`\frac{T^2}{a^3} = ${mn(d.T2 / d.a3)}` + '<p class="st">The same for every planet in the table.</p>' +
       '<p class="note">Planets farther out take longer for two reasons: they have farther to go, and they move slower. Doubling the distance makes the year about 2.8 times longer, not 2 times.</p>';
     const pct = fint(v.f);
-    return '<h4>1 · Kepler’s 2nd law</h4><div class="eq">A line from the Sun to the planet sweeps out <b>equal areas in equal times</b>.</div>' +
-      '<h4>2 · The two shaded slices</h4><div class="eq">Each one takes ' + pct + '% of a year, so each one has the <b>same area</b> (' + pct + '% of the whole ellipse).</div>' +
-      '<h4>3 · So the speed changes</h4><div class="eq">Close to the Sun the slice is short and wide: the planet covers more distance in the same time.<br>Distance near the Sun ÷ distance far away ≈ ' + fint(d.dP / d.dA) + '<br>Fastest ÷ slowest speed = (1 + e) ÷ (1 − e) = <b>' + fint(d.ratio) + '</b></div>' +
+    return '<h4>1 · Kepler’s 2nd law</h4><p class="st">A line from the Sun to the planet sweeps out <b>equal areas in equal times</b>.</p>' +
+      '<h4>2 · The two shaded slices</h4><p class="st">Each one takes ' + pct + '% of a year, so each one has the <b>same area</b> (' + pct + '% of the whole ellipse).</p>' +
+      '<h4>3 · So the speed changes</h4><p class="st">Close to the Sun the slice is short and wide: the planet covers more distance in the same time.</p>' +
+      TEX`\frac{\text{distance near the Sun}}{\text{distance far away}} \approx ${mn(d.dP / d.dA)}` + '<p class="st">Fastest ÷ slowest speed:</p>' +
+      TEX`\frac{v_{\text{fast}}}{v_{\text{slow}}} = \frac{1 + e}{1 - e}` + TEX`\frac{v_{\text{fast}}}{v_{\text{slow}}} = \frac{1 + ${M.iv('e')}}{1 - ${M.iv('e')}}` + TEXA`\frac{v_{\text{fast}}}{v_{\text{slow}}} = ${mn(d.ratio)}` +
       '<p class="note">' + (v.e < 0.05 ? 'A circle: the planet is always the same distance from the Sun, so its speed never changes.' : 'Planets move fastest when closest to the Sun (perihelion) and slowest when farthest away (aphelion). Gravity speeds the planet up as it falls in, and slows it down as it climbs out.') + '</p>';
   },
   draw(v, d, mode, opt, t){

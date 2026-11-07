@@ -39,13 +39,26 @@ const SIM = {
   },
   dvs(){ return [{ id: 'x', name: 'x', short: 'x', sym: 'x', unit: 'm', f: d => d.final || d.disp }]; },
   work(v, d, mode){
-    const sg = x => (x > 0 ? '+' : x < 0 ? '−' : '') + fint(Math.abs(x)), t = i => (i * d.T) + '–' + ((i + 1) * d.T) + ' s';
-    if (mode === 'pt') return d.us.map((u, i) => '<h4>Stage ' + (i + 1) + ' (' + t(i) + ')</h4><div class="eq">slope = rise ÷ run = (' + fint(d.xs[i + 1]) + ' m − ' + fint(d.xs[i]) + ' m) ÷ ' + d.T + ' s = <b>' + sg(u) + ' m/s</b><br>' + stageWords(u, u).replace(/^./, c => c.toUpperCase()) + (u ? (Math.abs(u) >= 7 ? ' (fast: steep line).' : Math.abs(u) <= 2 ? ' (slow: gentle line).' : '.') : ' (flat line: zero slope).') + '</div>').join('') +
+    const mn = (x, u) => '<mrow>' + (x < 0 ? '<mo>−</mo>' : '') + '<mn>' + fint(Math.abs(x)) + '</mn>' + M.u(u) + '</mrow>', mp = (x, u) => x < 0 ? '<mrow><mo>(</mo>' + mn(x, u) + '<mo>)</mo></mrow>' : mn(x, u);
+    const sg = x => (x > 0 ? '+' : x < 0 ? '−' : '') + fint(Math.abs(x)), t = i => (i * d.T) + '–' + ((i + 1) * d.T) + ' s', sg1 = (x, un) => '<mrow>' + (x > 0 ? '<mo>+</mo>' : '') + mn(x, un) + '</mrow>';
+    if (mode === 'pt') return d.us.map((u, i) => '<h4>Stage ' + (i + 1) + ' (' + t(i) + ')</h4>' + TEX`\text{slope} = \frac{\text{rise}}{\text{run}}` +
+      TEX`\text{slope} = \frac{${mp(d.xs[i + 1], 'm')} - ${mp(d.xs[i], 'm')}}{${mn(d.T, 's')}}` + TEXA`\text{slope} = ${sg1(u, 'm/s')}` +
+      '<p class="st">' + stageWords(u, u).replace(/^./, c => c.toUpperCase()) + (u ? (Math.abs(u) >= 7 ? ' (fast: steep line).' : Math.abs(u) <= 2 ? ' (slow: gentle line).' : '.') : ' (flat line: zero slope).') + '</p>').join('') +
       '<p class="note">“As the slope goes, so goes the velocity.” Straight line = constant velocity. Uphill = + direction, downhill = − direction, flat = at rest. Final position: ' + fint(d.final) + ' m.</p>';
-    let s = d.st.map((x, i) => { const p = x.parts, area = p.cross ? '½ · ' + fint(p.t0) + ' s · ' + sg(x.va) + ' m/s + ½ · ' + fint(d.T - p.t0) + ' s · ' + sg(x.vb) + ' m/s = ' + sg(p.A1) + ' m + ' + sg(p.A2) + ' m'
-        : (p.near !== 0 ? 'rectangle ' + d.T + ' s × ' + sg(p.near) + ' m/s = ' + sg(p.rect) + ' m' : '') + (p.near !== 0 && p.far !== p.near ? '<br>+ ' : '') + (p.far !== p.near ? 'triangle ½ × ' + d.T + ' s × ' + sg(p.far - p.near) + ' m/s = ' + sg(p.tri) + ' m' : '') + (x.va === 0 && x.vb === 0 ? 'no area: at rest' : '');
-      return '<h4>Stage ' + (i + 1) + ' (' + t(i) + ')</h4><div class="eq">' + stageWords(x.va, x.vb).replace(/^./, c => c.toUpperCase()) + '.<br>a = slope = Δv ÷ Δt = (' + sg(x.vb) + ' − ' + sg(x.va) + ') m/s ÷ ' + d.T + ' s = <b>' + sg(x.a) + ' m/s/s</b><br>Displacement = area: ' + area + ' → <b>' + sg(x.area) + ' m</b></div>'; }).join('');
-    return s + '<h4>Whole trip</h4><div class="eq">Displacement = ' + d.st.map(x => sg(x.area)).join(' + ') + ' = <b>' + sg(d.disp) + ' m</b>' + (Math.abs(d.dist - Math.abs(d.disp)) > 1e-9 ? '; distance = <b>' + fint(d.dist) + ' m</b> (count area below the axis as positive)' : '') + '</div>' +
+    let s = d.st.map((x, i) => { const p = x.parts, T = mn(d.T, 's'); let area;
+      if (p.cross) area = TEX`A_{\text{tri}} = \frac{1}{2}\,b\,h` + TEX`A_1 = \frac{1}{2}(${mn(p.t0, 's')})(${mp(x.va, 'm/s')}) = ${mn(p.A1, 'm')}` + TEX`A_2 = \frac{1}{2}(${mn(d.T - p.t0, 's')})(${mp(x.vb, 'm/s')}) = ${mn(p.A2, 'm')}` +
+        TEX`\Delta x = A_1 + A_2` + TEX`\Delta x = ${mn(p.A1, 'm')} + ${mp(p.A2, 'm')}` + TEXA`\Delta x = ${sg1(x.area, 'm')}`;
+      else { const hasR = p.near !== 0, hasT = p.far !== p.near;
+        area = (hasR ? TEX`A_{\text{rect}} = b\,h` + TEX`A_{\text{rect}} = (${T})(${mp(p.near, 'm/s')}) = ${mn(p.rect, 'm')}` : '') +
+          (hasT ? TEX`A_{\text{tri}} = \frac{1}{2}\,b\,h` + TEX`A_{\text{tri}} = \frac{1}{2}(${T})(${mp(p.far - p.near, 'm/s')}) = ${mn(p.tri, 'm')}` : '') +
+          (hasR && hasT ? TEX`\Delta x = A_{\text{rect}} + A_{\text{tri}}` + TEX`\Delta x = ${mn(p.rect, 'm')} + ${mp(p.tri, 'm')}` : '') +
+          (!hasR && !hasT ? '<p class="st">No area: at rest.</p>' : '') + TEXA`\Delta x = ${sg1(x.area, 'm')}`; }
+      return '<h4>Stage ' + (i + 1) + ' (' + t(i) + ')</h4><p class="st">' + stageWords(x.va, x.vb).replace(/^./, c => c.toUpperCase()) + '.</p>' +
+        '<p class="st">Acceleration = slope of the line:</p>' + TEX`a = \frac{\Delta v}{\Delta t}` + TEX`a = \frac{${mp(x.vb, 'm/s')} - ${mp(x.va, 'm/s')}}{${T}}` + TEXA`a = ${sg1(x.a, 'm/s/s')}` +
+        '<p class="st">Displacement = area under the line:</p>' + area; }).join('');
+    const tot = d.st.map((x, i) => (i ? '<mo>+</mo>' + mp(x.area, 'm') : mn(x.area, 'm'))).join('');
+    return s + '<h4>Whole trip</h4>' + TEX`\Delta x = \Delta x_1 + \Delta x_2 + \Delta x_3` + TEX`\Delta x = ${tot}` + TEXA`\Delta x = ${sg1(d.disp, 'm')}` +
+      (Math.abs(d.dist - Math.abs(d.disp)) > 1e-9 ? '<p class="st">Distance: count area below the axis as positive.</p>' + TEXA`d = ${mn(d.dist, 'm')}` : '') +
       '<p class="note">Area above the time axis = + displacement; area below = − displacement. The line crossing the axis means the object turned around.</p>';
   },
   draw(v, d, mode, opt, t){

@@ -30,21 +30,26 @@ const SIM = {
   },
   dvs(){ return [{ id: 'd', name: 'Distance', short: 'd', sym: 'd', unit: '', f: d => d.dist }]; },
   work(v, d, mode){
-    const show = (x, u) => '<span class="n">' + fint(Math.abs(x)) + ' ' + u + '</span>';
-    if (mode === 'trip') return '<h4>Distance</h4><div class="eq">There and back: ' + v.d + ' mi + ' + v.d + ' mi = <b>' + show(d.dist, 'mi') + '</b></div>' +
-      '<h4>Displacement</h4><div class="eq">You finish where you started (a round trip), so displacement = <b>0 mi</b></div>' +
-      '<h4>Time</h4><div class="eq">' + v.t1 + ' min + ' + v.t2 + ' min = ' + (v.t1 + v.t2) + ' min = <b>' + show(d.T, 'hr') + '</b></div>' +
-      '<h4>Average speed = distance ÷ time</h4><div class="eq">' + fint(d.dist) + ' mi ÷ ' + fint(d.T) + ' hr = <b>' + show(d.sp, 'mi/hr') + '</b></div>' +
-      '<h4>Average velocity = displacement ÷ time</h4><div class="eq">0 mi ÷ ' + fint(d.T) + ' hr = <b>0 mi/hr</b></div>' +
+    const mn = (x, u) => '<mrow>' + (x < 0 ? '<mo>−</mo>' : '') + '<mn>' + fint(Math.abs(x)) + '</mn>' + M.u(u) + '</mrow>', mp = (x, u) => x < 0 ? '<mrow><mo>(</mo>' + mn(x, u) + '<mo>)</mo></mrow>' : mn(x, u);
+    const sg = (x, u) => '<mrow>' + (x > 0 ? '<mo>+</mo>' : '') + mn(x, u) + '</mrow>', plus = a => a.join('<mo>+</mo>');
+    if (mode === 'trip') return '<h4>Distance</h4><p class="st">There and back:</p>' + TEX`d = ${mn(v.d, 'mi')} + ${mn(v.d, 'mi')}` + TEXA`d = ${mn(d.dist, 'mi')}` +
+      '<h4>Displacement</h4><p class="st">You finish where you started (a round trip), so displacement is zero.</p>' + TEXA`\Delta x = 0\,\text{mi}` +
+      '<h4>Time</h4>' + TEX`t = t_1 + t_2` + TEX`t = ${mn(v.t1, 'min')} + ${mn(v.t2, 'min')}` + TEX`t = ${mn(v.t1 + v.t2, 'min')}` + TEXA`t = ${mn(d.T, 'hr')}` +
+      '<h4>Average speed = distance ÷ time</h4>' + TEX`\text{speed} = \frac{d}{t}` + TEX`\text{speed} = \frac{${mn(d.dist, 'mi')}}{${mn(d.T, 'hr')}}` + TEXA`\text{speed} = ${mn(d.sp, 'mi/hr')}` +
+      '<h4>Average velocity = displacement ÷ time</h4>' + TEX`\text{velocity} = \frac{\Delta x}{t}` + TEX`\text{velocity} = \frac{0\,\text{mi}}{${mn(d.T, 'hr')}}` + TEXA`\text{velocity} = 0\,\text{mi/hr}` +
       '<p class="note">You were moving the whole time, but your average velocity is zero: you ended up right back where you started.</p>';
-    if (mode === 'coach') return '<h4>Distance (add up every leg, ignore direction)</h4><div class="eq">' + d.legs.map(x => Math.abs(x)).join(' + ') + ' = <b>' + show(d.dist, 'yd') + '</b></div>' +
-      '<h4>Displacement (finish − start)</h4><div class="eq">' + v.D + ' yd − ' + v.A + ' yd = <b>' + (d.disp ? show(d.disp, 'yd') + ', ' + (d.disp > 0 ? 'toward the 50' : 'toward the goal line') : '0 yd') + '</b></div>' +
-      '<h4>Average speed = distance ÷ time</h4><div class="eq">' + fint(d.dist) + ' yd ÷ ' + v.t + ' s = <b>' + show(d.sp, 'yd/s') + '</b></div>' +
-      '<h4>Average velocity = displacement ÷ time</h4><div class="eq">' + fint(Math.abs(d.disp)) + ' yd ÷ ' + v.t + ' s = <b>' + show(d.vel, 'yd/s') + '</b>' + (d.disp ? (d.disp > 0 ? ' toward the 50' : ' toward the goal line') : '') + '</div>' +
-      '<p class="note">Distance and speed don’t care about direction. Displacement and velocity only care where he started and where he finished.</p>';
-    const changed = d.legs.filter(x => x).some(x => Math.sign(x) !== Math.sign(d.legs.find(y => y)));
-    return '<h4>Distance (amount of ground covered)</h4><div class="eq">' + d.legs.filter(x => x).map(x => Math.abs(x) + ' m').join(' + ') + ' = <b>' + show(d.dist, 'm') + '</b></div>' +
-      '<h4>Displacement (overall change in position)</h4><div class="eq">' + d.legs.filter(x => x).map((x, i) => (i ? (x > 0 ? ' + ' : ' − ') : (x < 0 ? '−' : '')) + Math.abs(x)).join('') + ' = <b>' + (d.disp ? show(d.disp, 'm') + ', ' + dirW(d.disp) : '0 m') + '</b></div>' +
+    if (mode === 'coach'){ const where = d.disp ? '<mtext>' + (d.disp > 0 ? 'toward the 50' : 'toward the goal line') + '</mtext>' : '';
+      return '<h4>Distance (add up every leg, ignore direction)</h4>' + TEX`d = ${plus(d.legs.map(x => mn(Math.abs(x), 'yd')))}` + TEXA`d = ${mn(d.dist, 'yd')}` +
+      '<h4>Displacement (finish − start)</h4>' + TEX`\Delta x = x_D - x_A` + TEX`\Delta x = ${mn(v.D, 'yd')} - ${mn(v.A, 'yd')}` + TEXA`\Delta x = ${mn(Math.abs(d.disp), 'yd')}\ ${where}` +
+      '<h4>Average speed = distance ÷ time</h4>' + TEX`\text{speed} = \frac{d}{t}` + TEX`\text{speed} = \frac{${mn(d.dist, 'yd')}}{${mn(v.t, 's')}}` + TEXA`\text{speed} = ${mn(d.sp, 'yd/s')}` +
+      '<h4>Average velocity = displacement ÷ time</h4>' + TEX`\text{velocity} = \frac{\Delta x}{t}` + TEX`\text{velocity} = \frac{${mn(Math.abs(d.disp), 'yd')}}{${mn(v.t, 's')}}` + TEXA`\text{velocity} = ${mn(Math.abs(d.vel), 'yd/s')}\ ${where}` +
+      '<p class="note">Distance and speed don’t care about direction. Displacement and velocity only care where he started and where he finished.</p>'; }
+    const nz = d.legs.filter(x => x), changed = nz.some(x => Math.sign(x) !== Math.sign(nz[0])),
+      dTerms = nz.length ? plus(nz.map(x => mn(Math.abs(x), 'm'))) : mn(0, 'm'),
+      xTerms = nz.length ? nz.map((x, i) => (i ? '<mo>+</mo>' + mp(x, 'm') : mn(x, 'm'))).join('') : mn(0, 'm'),
+      dirw = d.disp ? '<mtext>' + dirW(d.disp) + '</mtext>' : '';
+    return '<h4>Distance (amount of ground covered)</h4>' + TEX`d = \left|\text{leg}_1\right| + \left|\text{leg}_2\right| + \left|\text{leg}_3\right|` + TEX`d = ${dTerms}` + TEXA`d = ${mn(d.dist, 'm')}` +
+      '<h4>Displacement (overall change in position)</h4>' + TEX`\Delta x = \text{leg}_1 + \text{leg}_2 + \text{leg}_3` + TEX`\Delta x = ${xTerms}` + TEXA`\Delta x = ${mn(Math.abs(d.disp), 'm')}\ ${dirw}` +
       '<p class="note">' + (d.disp === 0 && d.dist > 0 ? 'Round trip: you finish where you started, so the displacement is 0.' : changed ? 'You changed direction, so distance and displacement are different. Displacement is a vector: west cancels east.' : 'No change of direction, so distance and displacement have the same number (but displacement also has a direction).') + '</p>';
   },
   draw(v, d, mode, opt, t){

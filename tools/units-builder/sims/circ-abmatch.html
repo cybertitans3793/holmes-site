@@ -266,12 +266,12 @@ const SIM = {
   calc(v, mode){ return { T: tgt(mode, v.q) }; },
   dvs(){ return [{ id: 'x', name: '—', short: '', sym: '', unit: '', noTag: true, f: () => 0 }]; },
   work(v, d, mode, opt){
-    const how = mode === 'pt' ? '<h4>How to drive</h4><div class="eq">Press <b>Start</b>. For 10 seconds, drag the walker left and right along the track. Your position is graphed in orange.</div>'
-      : '<h4>How to drive</h4><div class="eq">Press <b>Start</b>. For 10 seconds, drag the <b>speed lever</b>: right of center = moving forward (+), left = backward (−), center = standing still. Your velocity is graphed in orange.</div>';
+    const how = mode === 'pt' ? '<h4>How to drive</h4><p class="st">Press <b>Start</b>. For 10 seconds, drag the walker left and right along the track. Your position is graphed in orange.</p>'
+      : '<h4>How to drive</h4><p class="st">Press <b>Start</b>. For 10 seconds, drag the <b>speed lever</b>: right of center = moving forward (+), left = backward (−), center = standing still. Your velocity is graphed in orange.</p>';
     const read = mode === 'pt' ? '<p class="note">Reading a position–time graph: <b>flat</b> = standing still · <b>sloped line</b> = steady speed (steeper = faster) · <b>up</b> = moving forward, <b>down</b> = moving back · <b>curving steeper</b> = speeding up, <b>flattening</b> = slowing down.</p>'
       : '<p class="note">Reading a velocity–time graph: <b>on the zero line</b> = standing still · <b>flat above/below zero</b> = steady speed forward/backward · <b>sloping away from zero</b> = speeding up · <b>sloping toward zero</b> = slowing down.</p>';
-    const res = G.done && G.mode === mode && G.q === v.q ? '<h4>Your match: ' + Math.round(G.score) + '%</h4><div class="eq">' + (G.score >= 85 ? 'Great match!' : G.score >= 65 ? 'Close — look where the orange line drifts from the gray one.' : 'Try again — read the graph one piece at a time first.') + '</div>' : '';
-    const story = G.done || opt.who === 'demo' ? '<h4>The story of target #' + v.q + '</h4><div class="eq">' + d.T.story.join('<br>') + '</div>' : '<p class="note">Before you start: say out loud what the walker has to do in each part of the graph.</p>';
+    const res = G.done && G.mode === mode && G.q === v.q ? '<h4>Your match: ' + Math.round(G.score) + '%</h4><p class="st">' + (G.score >= 85 ? 'Great match!' : G.score >= 65 ? 'Close — look where the orange line drifts from the gray one.' : 'Try again — read the graph one piece at a time first.') + '</p>' : '';
+    const story = G.done || opt.who === 'demo' ? '<h4>The story of target #' + v.q + '</h4><p class="st">' + d.T.story.join('<br>') + '</p>' : '<p class="note">Before you start: say out loud what the walker has to do in each part of the graph.</p>';
     return how + res + story + read;
   },
   draw(v, d, mode, opt, t, dt, A){

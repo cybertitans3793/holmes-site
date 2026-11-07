@@ -21,17 +21,30 @@ const SIM = {
   },
   dvs(){ return [{ id: 'x', name: '—', short: '', sym: '', unit: '', noTag: true, f: () => 0 }]; },
   work(v, d, mode){
-    const a = 2 * d.i, b = a + 2, i = d.i;
+    const mn = (x, u) => '<mrow>' + (x < 0 ? '<mo>−</mo>' : '') + '<mn>' + fint(Math.abs(x)) + '</mn>' + M.u(u) + '</mrow>', mp = (x, u) => x < 0 ? '<mrow><mo>(</mo>' + mn(x, u) + '<mo>)</mo></mrow>' : mn(x, u);
+    const a = 2 * d.i, b = a + 2, i = d.i, sg1 = (x, un) => '<mrow>' + (x > 0 ? '<mo>+</mo>' : '') + mn(x, un) + '</mrow>';
     const kind = vv0 => vv0 === 0 ? 'standing still' : vv0 > 0 ? 'moving forward (+)' : 'moving backward (−)';
     if (mode === 'p2v'){ const vel = d.V[i];
-      return '<h4>1 · Slope of the position–time graph (' + a + ' to ' + b + ' s)</h4><div class="eq">slope = rise ÷ run = Δx ÷ Δt = (' + fint(d.X[i + 1]) + ' − ' + fint(d.X[i]) + ') m ÷ 2 s = <b>' + sgn(vel) + ' m/s</b></div>' +
-        '<h4>2 · That slope IS the velocity</h4><div class="eq">So the velocity–time graph is a flat line at <b>' + sgn(vel) + ' m/s</b> from ' + a + ' to ' + b + ' s: ' + kind(vel) + (vel ? ' at a steady speed.' : '.') + '</div>' +
+      return '<h4>1 · Slope of the position–time graph (' + a + ' to ' + b + ' s)</h4>' + TEX`\text{slope} = \frac{\text{rise}}{\text{run}}` +
+        TEX`\text{slope} = \frac{${mp(d.X[i + 1], 'm')} - ${mp(d.X[i], 'm')}}{${mn(2, 's')}}` + TEXA`\text{slope} = ${sg1(vel, 'm/s')}` +
+        '<h4>2 · That slope IS the velocity</h4><p class="st">So the velocity–time graph is a flat line from ' + a + ' to ' + b + ' s: ' + kind(vel) + (vel ? ' at a steady speed.' : '.') + '</p>' + TEXA`v = ${sg1(vel, 'm/s')}` +
         '<p class="note">Steeper p–t line → bigger velocity. Flat p–t line → velocity 0. A p–t line going down → negative velocity. Each straight piece of a p–t graph makes a <b>flat</b> piece on the v–t graph. (A smooth curve on a p–t graph would make a sloped v–t line: try the other mode.)</p>'; }
-    const v0 = d.V[i], v1 = d.V[i + 1], A = (v0 + v1) / 2 * 2, acc = (v1 - v0) / 2;
-    const shape = v0 === v1 ? 'a rectangle: area = base × height = 2 s × ' + sgn(v0) + ' m/s' : (v0 === 0 || v1 === 0) && v0 * v1 >= 0 ? 'a triangle: area = ½ × base × height = ½ × 2 s × ' + sgn(v0 || v1) + ' m/s' : v0 * v1 < 0 ? 'two triangles, one above and one below zero (the part below counts as negative)' : 'a rectangle plus a triangle: 2 × ' + sgn(Math.min(Math.abs(v0), Math.abs(v1)) * Math.sign(v0)) + ' + ½ × 2 × ' + sgn(Math.abs(v1 - v0) * Math.sign(v0));
-    return '<h4>1 · Area under the velocity–time graph (' + a + ' to ' + b + ' s)</h4><div class="eq">The shape is ' + shape + ' → <b>' + sgn(A) + ' m</b></div>' +
-      '<h4>2 · That area IS the displacement</h4><div class="eq">So the position changes by <b>' + sgn(A) + ' m</b>: from ' + fint(+d.X[i].toFixed(2)) + ' m to ' + fint(+d.X[i + 1].toFixed(2)) + ' m.</div>' +
-      '<h4>3 · Slope of the velocity–time graph</h4><div class="eq">slope = Δv ÷ Δt = (' + sgn(v1) + ' − ' + sgn(v0) + ') ÷ 2 s = <b>' + sgn(acc) + ' m/s/s</b> = the acceleration' + (acc === 0 ? ' (none: steady speed)' : Math.abs(v1) > Math.abs(v0) ? ' → speeding up' : ' → slowing down') + '</div>' +
+    const v0 = d.V[i], v1 = d.V[i + 1], A = (v0 + v1) / 2 * 2, acc = (v1 - v0) / 2, B = mn(2, 's');
+    let area;
+    if (v0 === v1) area = '<p class="st">The shape is a rectangle.</p>' + TEX`A = b\,h` + TEX`A = (${B})(${mp(v0, 'm/s')})` + TEXA`\Delta x = ${sg1(A, 'm')}`;
+    else if ((v0 === 0 || v1 === 0) && v0 * v1 >= 0) area = '<p class="st">The shape is a triangle.</p>' + TEX`A = \frac{1}{2}\,b\,h` + TEX`A = \frac{1}{2}(${B})(${mp(v0 || v1, 'm/s')})` + TEXA`\Delta x = ${sg1(A, 'm')}`;
+    else if (v0 * v1 < 0){ const t0 = 2 * v0 / (v0 - v1), A1 = 0.5 * t0 * v0, A2 = 0.5 * (2 - t0) * v1;
+      area = '<p class="st">Two triangles, one above and one below zero (the part below counts as negative).</p>' + TEX`A = \frac{1}{2}\,b\,h` +
+        TEX`A_1 = \frac{1}{2}(${mn(t0, 's')})(${mp(v0, 'm/s')}) = ${mn(A1, 'm')}` + TEX`A_2 = \frac{1}{2}(${mn(2 - t0, 's')})(${mp(v1, 'm/s')}) = ${mn(A2, 'm')}` +
+        TEX`\Delta x = A_1 + A_2` + TEX`\Delta x = ${mn(A1, 'm')} + ${mp(A2, 'm')}` + TEXA`\Delta x = ${sg1(A, 'm')}`; }
+    else { const rc = 2 * Math.min(Math.abs(v0), Math.abs(v1)) * Math.sign(v0), hh = Math.abs(v1 - v0) * Math.sign(v0);
+      area = '<p class="st">The shape is a rectangle plus a triangle.</p>' + TEX`A_{\text{rect}} = b\,h` + TEX`A_{\text{rect}} = (${B})(${mp(rc / 2, 'm/s')}) = ${mn(rc, 'm')}` +
+        TEX`A_{\text{tri}} = \frac{1}{2}\,b\,h` + TEX`A_{\text{tri}} = \frac{1}{2}(${B})(${mp(hh, 'm/s')}) = ${mn(hh, 'm')}` +
+        TEX`\Delta x = A_{\text{rect}} + A_{\text{tri}}` + TEX`\Delta x = ${mn(rc, 'm')} + ${mp(hh, 'm')}` + TEXA`\Delta x = ${sg1(A, 'm')}`; }
+    return '<h4>1 · Area under the velocity–time graph (' + a + ' to ' + b + ' s)</h4>' + area +
+      '<h4>2 · That area IS the displacement</h4><p class="st">So the position changes by ' + sgn(A) + ' m: from ' + fint(+d.X[i].toFixed(2)) + ' m to ' + fint(+d.X[i + 1].toFixed(2)) + ' m.</p>' +
+      '<h4>3 · Slope of the velocity–time graph</h4>' + TEX`\text{slope} = \frac{\Delta v}{\Delta t}` + TEX`\text{slope} = \frac{${mp(v1, 'm/s')} - ${mp(v0, 'm/s')}}{${B}}` + TEXA`a = ${sg1(acc, 'm/s/s')}` +
+      '<p class="st">This slope is the acceleration' + (acc === 0 ? ' (none: steady speed).' : Math.abs(v1) > Math.abs(v0) ? ' → speeding up.' : ' → slowing down.') + '</p>' +
       '<p class="note">Area above zero = moving forward; area below zero = moving backward. A sloped v–t line makes a <b>curved</b> p–t graph: speeding up curves steeper, slowing down flattens out.</p>';
   },
   draw(v, d, mode){
