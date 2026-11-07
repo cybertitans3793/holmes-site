@@ -39,6 +39,7 @@ html,body{margin:0;height:100%;background:#16283b;overflow:hidden;font-family:"S
 .num{font-variant-numeric:tabular-nums}
 input.ans{width:80px;font:13px Arial;padding:2px 4px}
 .eq{font:14px "Cambria Math","Times New Roman",serif}
+.mw math{display:block;text-align:left;margin:4px 0;font-size:1em;overflow-x:auto;max-width:100%}.mw math.ans,.mw math.ans *{font-weight:700}.mw p.st{margin:3px 0}
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@500;700&display=swap"><style id="holmes-embed">
 html,body{background:#fff!important}
@@ -163,6 +164,22 @@ var XL = (function () {
   return { W: W, H: H, el: el, panel: panel, check: check, radios: radios, slider: slider, button: button, playButton: playButton, iconButton: iconButton, Canvas: Canvas, Tab: Tab, lerp: lerp, clamp: clamp, interp: interp, rr: rr, arrow: arrow, font: font, axes: axes, ICON: { PLAY: PLAY, PAUSE: PAUSE, STEP: STEP, RESTART: RESTART } };
 })();
 var EXTRA_TABS = [];
+/* MathML for live numbers in the worked-equation panels: MM.n('12.3', 'kPa') gives a number with its unit,
+   MM.e('6.3', 3, 'Pa') gives 6.3 × 10³ Pa. Units: words separated by spaces, powers as m^-2 or kg/m^3. */
+var MM = (function () {
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+  function num(x) { var s = String(x).trim(), neg = /^[-−]/.test(s); if (neg) s = s.slice(1); return (neg ? '<mo>−</mo>' : '') + '<mn>' + esc(s) + '</mn>'; }
+  function unit(u) {
+    if (!u) return '';
+    return '<mspace width="0.167em"/>' + String(u).split(' ').map(function (t) {
+      var m = /^(.*?)\^(-?\d+)$/.exec(t);
+      return m ? '<msup><mtext>' + esc(m[1]) + '</mtext><mrow>' + num(m[2]) + '</mrow></msup>' : '<mtext>' + esc(t) + '</mtext>';
+    }).join('<mspace width="0.167em"/>');
+  }
+  function n(x, u) { return '<mrow>' + num(x) + unit(u) + '</mrow>'; }
+  function e(m, p, u) { return '<mrow>' + num(m) + '<mo>×</mo><msup><mn>10</mn><mrow>' + num(p) + '</mrow></msup>' + unit(u) + '</mrow>'; }
+  return { n: n, e: e, u: unit };
+})();
 
 /* Shared pieces for the Fluids Lab tabs: units, colours, model-view transforms, sensors, scenery. */
 var FL = (function () {
@@ -565,7 +582,7 @@ EXTRA_TABS.push(function (stage) {
   el('div', { style: 'font-size:12px', text: 'Drag the hose outlet and the top of the hump.' }, sip);
   XL.check(sip, 'Atmosphere', S.atm, function (v) { S.atm = v; });
   var info = XL.panel(right, 'padding:6px 10px', 'Physics');
-  var infoBox = el('div', { style: 'font-size:13px;line-height:1.55' }, info);
+  var infoBox = el('div', { cls: 'mw', style: 'font-size:13px;line-height:1.55' }, info);
   function sync() { Object.keys(panels).forEach(function (k) { panels[k].style.display = k === S.scen ? '' : 'none'; }); }
   sync();
   // ---- interaction ----
@@ -611,10 +628,13 @@ EXTRA_TABS.push(function (stage) {
     ctx.font = '12px Arial'; ctx.fillStyle = '#222'; ctx.textAlign = 'left';
     ctx.fillText('pushed down d₁ = ' + (S.d1 * 100).toFixed(1) + ' cm', x1 + w1 / 2 + 8, base - h0 + 20);
     ctx.fillText('lifted d₂ = ' + (d2 * 100).toFixed(2) + ' cm', x2 + w2 / 2 + 8, base - h0 - 40);
-    infoBox.innerHTML = 'Pascal: pressure applied to an enclosed fluid is transmitted everywhere.<br><b>P = F₁/A₁ = F₂/A₂ = ' + (Pfl / 1000).toFixed(1) + ' kPa</b> (gauge)<br>' +
-      'F₁ = F₂ (A₁/A₂) = ' + F2.toFixed(0) + ' × ' + (S.A1 / S.A2).toFixed(3) + ' = <b>' + F1.toFixed(0) + ' N</b><br>' +
-      'Volume pushed is the same: A₁d₁ = A₂d₂<br>Work in = F₁d₁ = <b>' + (F1 * S.d1).toFixed(0) + ' J</b> &nbsp; Work out = F₂d₂ = <b>' + (F2 * d2).toFixed(0) + ' J</b><br>' +
-      '<span style="color:#555">Force is multiplied, but energy is not: you push farther.</span>';
+    infoBox.innerHTML = '<p class="st">Pascal: pressure applied to an enclosed fluid is transmitted everywhere.</p>' +
+      ("<math display=\"block\"><mrow><mi>P</mi><mo>&#x0003D;</mo><mfrac><mrow><msub><mi>F</mi><mn>1</mn></msub></mrow><mrow><msub><mi>A</mi><mn>1</mn></msub></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><msub><mi>F</mi><mn>2</mn></msub></mrow><mrow><msub><mi>A</mi><mn>2</mn></msub></mrow></mfrac></mrow></math>") + ("<math class=\"ans\" display=\"block\"><mrow><mi>P</mi><mo>&#x0003D;</mo>" + (MM.n((Pfl / 1000).toFixed(1), 'kPa')) + "<mspace width=\"0.278em\" /><mtext>(gauge)</mtext></mrow></math>") +
+      ("<math display=\"block\"><mrow><msub><mi>F</mi><mn>1</mn></msub><mo>&#x0003D;</mo><msub><mi>F</mi><mn>2</mn></msub><mrow><mo stretchy=\"true\" fence=\"true\" form=\"prefix\">&#x00028;</mo><mfrac><mrow><msub><mi>A</mi><mn>1</mn></msub></mrow><mrow><msub><mi>A</mi><mn>2</mn></msub></mrow></mfrac><mo stretchy=\"true\" fence=\"true\" form=\"postfix\">&#x00029;</mo></mrow></mrow></math>") + ("<math display=\"block\"><mrow><msub><mi>F</mi><mn>1</mn></msub><mo>&#x0003D;</mo>" + (MM.n(F2.toFixed(0), 'N')) + "<mo>&#x000D7;</mo>" + (MM.n((S.A1 / S.A2).toFixed(3))) + "</mrow></math>") + ("<math class=\"ans\" display=\"block\"><mrow><msub><mi>F</mi><mn>1</mn></msub><mo>&#x0003D;</mo>" + (MM.n(F1.toFixed(0), 'N')) + "</mrow></math>") +
+      '<p class="st">Volume pushed is the same:</p>' + ("<math display=\"block\"><mrow><msub><mi>A</mi><mn>1</mn></msub><msub><mi>d</mi><mn>1</mn></msub><mo>&#x0003D;</mo><msub><mi>A</mi><mn>2</mn></msub><msub><mi>d</mi><mn>2</mn></msub></mrow></math>") +
+      '<p class="st">Work in and work out:</p>' + ("<math display=\"block\"><mrow><msub><mi>W</mi><mrow><mtext>in</mtext></mrow></msub><mo>&#x0003D;</mo><msub><mi>F</mi><mn>1</mn></msub><msub><mi>d</mi><mn>1</mn></msub></mrow></math>") + ("<math class=\"ans\" display=\"block\"><mrow><msub><mi>W</mi><mrow><mtext>in</mtext></mrow></msub><mo>&#x0003D;</mo>" + (MM.n((F1 * S.d1).toFixed(0), 'J')) + "</mrow></math>") +
+      ("<math display=\"block\"><mrow><msub><mi>W</mi><mrow><mtext>out</mtext></mrow></msub><mo>&#x0003D;</mo><msub><mi>F</mi><mn>2</mn></msub><msub><mi>d</mi><mn>2</mn></msub></mrow></math>") + ("<math class=\"ans\" display=\"block\"><mrow><msub><mi>W</mi><mrow><mtext>out</mtext></mrow></msub><mo>&#x0003D;</mo>" + (MM.n((F2 * d2).toFixed(0), 'J')) + "</mrow></math>") +
+      '<p class="st" style="color:#555">Force is multiplied, but energy is not: you push farther.</p>';
   }
   // ---- U-tube with two liquids ----
   function drawUtube(ctx) {
@@ -634,7 +654,10 @@ EXTRA_TABS.push(function (stage) {
     if (ho > 0) { dim(xl - tw / 2 - 14, yI - ho * s, yI, 'h_oil = ' + (ho * 100).toFixed(1) + ' cm', '#a07800'); }
     if (dh > 0.001) { ctx.save(); ctx.translate(xr + tw / 2 + 110, 0); dim(0, yb - hR * s, yI, 'Δh = ' + (dh * 100).toFixed(1) + ' cm', '#2b6cb0'); ctx.restore(); }
     ctx.font = '12px Arial'; ctx.fillStyle = '#333'; ctx.textAlign = 'center'; ctx.fillText('light liquid (ρ = ' + S.rhoOil + ')', xl, 70); ctx.fillText('water (1000 kg/m³)', xr, 70);
-    infoBox.innerHTML = 'Both arms are open to the air. At the level of the interface, the pressure is the same in both arms:<br><b>P₀ + ρ_oil g h_oil = P₀ + ρ_w g Δh</b><br>Δh = (ρ_oil/ρ_w) h_oil = ' + (S.rhoOil / 1000).toFixed(2) + ' × ' + (ho * 100).toFixed(1) + ' cm = <b>' + (dh * 100).toFixed(1) + ' cm</b><br><span style="color:#555">The light liquid stands higher than the water it balances.</span>';
+    infoBox.innerHTML = '<p class="st">Both arms are open to the air. At the level of the interface, the pressure is the same in both arms:</p>' +
+      ("<math display=\"block\"><mrow><msub><mi>P</mi><mn>0</mn></msub><mo>&#x0002B;</mo><msub><mi>&#x003C1;</mi><mrow><mtext>oil</mtext></mrow></msub><mspace width=\"0.167em\" /><mi>g</mi><mspace width=\"0.167em\" /><msub><mi>h</mi><mrow><mtext>oil</mtext></mrow></msub><mo>&#x0003D;</mo><msub><mi>P</mi><mn>0</mn></msub><mo>&#x0002B;</mo><msub><mi>&#x003C1;</mi><mrow><mtext>w</mtext></mrow></msub><mspace width=\"0.167em\" /><mi>g</mi><mspace width=\"0.167em\" /><mi>&#x00394;</mi><mi>h</mi></mrow></math>") +
+      ("<math display=\"block\"><mrow><mi>&#x00394;</mi><mi>h</mi><mo>&#x0003D;</mo><mfrac><mrow><msub><mi>&#x003C1;</mi><mrow><mtext>oil</mtext></mrow></msub></mrow><mrow><msub><mi>&#x003C1;</mi><mrow><mtext>w</mtext></mrow></msub></mrow></mfrac><mspace width=\"0.167em\" /><msub><mi>h</mi><mrow><mtext>oil</mtext></mrow></msub></mrow></math>") + ("<math display=\"block\"><mrow><mi>&#x00394;</mi><mi>h</mi><mo>&#x0003D;</mo>" + (MM.n((S.rhoOil / 1000).toFixed(2))) + "<mo>&#x000D7;</mo>" + (MM.n((ho * 100).toFixed(1), 'cm')) + "</mrow></math>") + ("<math class=\"ans\" display=\"block\"><mrow><mi>&#x00394;</mi><mi>h</mi><mo>&#x0003D;</mo>" + (MM.n((dh * 100).toFixed(1), 'cm')) + "</mrow></math>") +
+      '<p class="st" style="color:#555">The light liquid stands higher than the water it balances.</p>';
   }
   // ---- manometer on a gas tank ----
   function drawMano(ctx) {
@@ -656,8 +679,11 @@ EXTRA_TABS.push(function (stage) {
     ctx.font = 'bold 13px Arial'; ctx.fillText('h = ' + (h * 100).toFixed(1) + ' cm', xd + 10, (yL + yR) / 2);
     // scale bar
     var bar = Math.pow(10, Math.floor(Math.log10(150 / s))), bl = bar * s; ctx.fillStyle = '#333'; ctx.fillRect(40, 640, bl, 4); ctx.font = '11px Arial'; ctx.fillText((bar * 100) + ' cm', 40 + bl + 6, 646);
-    infoBox.innerHTML = 'Absolute gas pressure: <b>' + (S.gasP / 1000).toFixed(1) + ' kPa</b><br>Atmospheric pressure: 101.3 kPa<br>Gauge pressure = absolute − atmospheric = <b>' + (Pg / 1000).toFixed(1) + ' kPa</b><br>' +
-      'P_gauge = ρgh ⇒ h = ' + (Pg / 1000).toFixed(1) + ' kPa / (' + rho + ' × 9.8) = <b>' + (h * 100).toFixed(1) + ' cm</b><br><span style="color:#555">' + (Pg < 0 ? 'Negative gauge pressure: the gas pulls the liquid toward the tank.' : 'Denser liquid ⇒ smaller height for the same pressure.') + '</span>';
+    infoBox.innerHTML = '<p class="st">Absolute gas pressure: <b>' + (S.gasP / 1000).toFixed(1) + ' kPa</b><br>Atmospheric pressure: 101.3 kPa</p><p class="st">Gauge pressure = absolute − atmospheric:</p>' +
+      ("<math display=\"block\"><mrow><msub><mi>P</mi><mrow><mtext>gauge</mtext></mrow></msub><mo>&#x0003D;</mo><msub><mi>P</mi><mrow><mtext>abs</mtext></mrow></msub><mo>&#x02212;</mo><msub><mi>P</mi><mrow><mtext>atm</mtext></mrow></msub></mrow></math>") + ("<math class=\"ans\" display=\"block\"><mrow><msub><mi>P</mi><mrow><mtext>gauge</mtext></mrow></msub><mo>&#x0003D;</mo>" + (MM.n((Pg / 1000).toFixed(1), 'kPa')) + "</mrow></math>") +
+      ("<math display=\"block\"><mrow><msub><mi>P</mi><mrow><mtext>gauge</mtext></mrow></msub><mo>&#x0003D;</mo><mi>&#x003C1;</mi><mi>g</mi><mi>h</mi></mrow></math>") + ("<math display=\"block\"><mrow><mi>h</mi><mo>&#x0003D;</mo><mfrac><mrow><msub><mi>P</mi><mrow><mtext>gauge</mtext></mrow></msub></mrow><mrow><mi>&#x003C1;</mi><mi>g</mi></mrow></mfrac></mrow></math>") +
+      ("<math display=\"block\"><mrow><mi>h</mi><mo>&#x0003D;</mo><mfrac><mrow>" + (MM.e((Pg / 1000).toFixed(1), 3, 'Pa')) + "</mrow><mrow><mo stretchy=\"false\">&#x00028;</mo>" + (MM.n(rho, 'kg/m^3')) + "<mo stretchy=\"false\">&#x00029;</mo><mo stretchy=\"false\">&#x00028;</mo>" + (MM.n('9.8', 'm/s^2')) + "<mo stretchy=\"false\">&#x00029;</mo></mrow></mfrac></mrow></math>") + ("<math class=\"ans\" display=\"block\"><mrow><mi>h</mi><mo>&#x0003D;</mo>" + (MM.n((h * 100).toFixed(1), 'cm')) + "</mrow></math>") +
+      '<p class="st" style="color:#555">' + (Pg < 0 ? 'Negative gauge pressure: the gas pulls the liquid toward the tank.' : 'Denser liquid ⇒ smaller height for the same pressure.') + '</p>';
   }
   // ---- barometer ----
   function drawBaro(ctx) {
@@ -672,7 +698,10 @@ EXTRA_TABS.push(function (stage) {
     ctx.font = 'bold 14px Arial'; ctx.fillText('h = ' + (water ? h.toFixed(2) + ' m' : (h * 1000).toFixed(0) + ' mm'), xd + 10, (base - 40 + yTop) / 2);
     for (var k = 0; k < 8; k++) { var ax = x - 100 + k * 28; ctx.fillStyle = '#d03a2f'; XL.arrow(ctx, ax, base - 110, ax, base - 64, 9, 8, 3); ctx.fill(); }
     ctx.font = '12px Arial'; ctx.fillStyle = '#d03a2f'; ctx.textAlign = 'center'; ctx.fillText('air pushes down on the dish', x, base - 118);
-    infoBox.innerHTML = 'Air pressure at ' + S.alt + ' m: <b>' + (Patm / 1000).toFixed(1) + ' kPa</b><br>The column is held up by the air: P_atm = ρgh<br>h = ' + (Patm / 1000).toFixed(1) + ' kPa / (' + rho + ' × 9.8) = <b>' + (water ? h.toFixed(2) + ' m' : (h * 1000).toFixed(0) + ' mm') + '</b><br><span style="color:#555">' + (water ? 'A water barometer would need a tube over 10 m tall!' : 'Standard pressure holds up 760 mm of mercury.') + '</span>';
+    infoBox.innerHTML = '<p class="st">Air pressure at ' + S.alt + ' m: <b>' + (Patm / 1000).toFixed(1) + ' kPa</b></p><p class="st">The column is held up by the air:</p>' +
+      ("<math display=\"block\"><mrow><msub><mi>P</mi><mrow><mtext>atm</mtext></mrow></msub><mo>&#x0003D;</mo><mi>&#x003C1;</mi><mi>g</mi><mi>h</mi></mrow></math>") + ("<math display=\"block\"><mrow><mi>h</mi><mo>&#x0003D;</mo><mfrac><mrow><msub><mi>P</mi><mrow><mtext>atm</mtext></mrow></msub></mrow><mrow><mi>&#x003C1;</mi><mi>g</mi></mrow></mfrac></mrow></math>") +
+      ("<math display=\"block\"><mrow><mi>h</mi><mo>&#x0003D;</mo><mfrac><mrow>" + (MM.e((Patm / 1000).toFixed(1), 3, 'Pa')) + "</mrow><mrow><mo stretchy=\"false\">&#x00028;</mo>" + (MM.n(rho, 'kg/m^3')) + "<mo stretchy=\"false\">&#x00029;</mo><mo stretchy=\"false\">&#x00028;</mo>" + (MM.n('9.8', 'm/s^2')) + "<mo stretchy=\"false\">&#x00029;</mo></mrow></mfrac></mrow></math>") + ("<math class=\"ans\" display=\"block\"><mrow><mi>h</mi><mo>&#x0003D;</mo>" + (water ? MM.n(h.toFixed(2), 'm') : MM.n((h * 1000).toFixed(0), 'mm')) + "</mrow></math>") +
+      '<p class="st" style="color:#555">' + (water ? 'A water barometer would need a tube over 10 m tall!' : 'Standard pressure holds up 760 mm of mercury.') + '</p>';
   }
   // ---- siphon ----
   var siphonM = new FL.MVT(42, 120, 420);
@@ -694,10 +723,10 @@ EXTRA_TABS.push(function (stage) {
     ctx.strokeStyle = '#7a3db8'; ctx.setLineDash([5, 4]); ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(M.x(-2.2), M.y(0)); ctx.lineTo(M.x(7.5), M.y(0)); ctx.stroke(); ctx.setLineDash([]);
     ctx.font = '12px Arial'; ctx.fillStyle = '#7a3db8'; ctx.textAlign = 'left'; ctx.fillText('water surface level', M.x(7.6) - 110, M.y(0) - 6);
     ctx.fillStyle = '#222'; ctx.font = 'bold 13px Arial'; ctx.fillText(broken ? (S.sOut >= surf ? 'Outlet is above the surface: no flow' : 'Siphon broken: water boils / air gets in at the top') : 'Flowing: v = ' + v.toFixed(2) + ' m/s', 20, 30);
-    infoBox.innerHTML = 'Outlet ' + Math.abs(dh).toFixed(2) + ' m ' + (dh >= 0 ? 'below' : 'above') + ' the surface; hump ' + (S.sTop - surf).toFixed(2) + ' m above it.<br>' +
-      'Bernoulli from surface to outlet: <b>v = √(2gΔh) = ' + (dh > 0 ? Math.sqrt(2 * G * dh).toFixed(2) : '0') + ' m/s</b><br>' +
-      'Pressure at the top of the hump:<br>P_top = P_atm − ρg(h_top) − ½ρv² = <b>' + (Math.max(Ptop, 0) / 1000).toFixed(1) + ' kPa</b><br>' +
-      '<span style="color:#555">The air pressure on the tank pushes the water up and over. If P_top drops to ~0 (about 10 m up for water), the siphon fails.</span>';
+    infoBox.innerHTML = '<p class="st">Outlet ' + Math.abs(dh).toFixed(2) + ' m ' + (dh >= 0 ? 'below' : 'above') + ' the surface; hump ' + (S.sTop - surf).toFixed(2) + ' m above it.</p>' +
+      '<p class="st">Bernoulli from surface to outlet:</p>' + ("<math display=\"block\"><mrow><mi>v</mi><mo>&#x0003D;</mo><msqrt><mrow><mn>2</mn><mi>g</mi><mspace width=\"0.167em\" /><mi>&#x00394;</mi><mi>h</mi></mrow></msqrt></mrow></math>") + ("<math class=\"ans\" display=\"block\"><mrow><mi>v</mi><mo>&#x0003D;</mo>" + (MM.n(dh > 0 ? Math.sqrt(2 * G * dh).toFixed(2) : '0', 'm/s')) + "</mrow></math>") +
+      '<p class="st">Pressure at the top of the hump:</p>' + ("<math display=\"block\"><mrow><msub><mi>P</mi><mrow><mtext>top</mtext></mrow></msub><mo>&#x0003D;</mo><msub><mi>P</mi><mrow><mtext>atm</mtext></mrow></msub><mo>&#x02212;</mo><mi>&#x003C1;</mi><mi>g</mi><msub><mi>h</mi><mrow><mtext>top</mtext></mrow></msub><mo>&#x02212;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac><mi>&#x003C1;</mi><msup><mi>v</mi><mn>2</mn></msup></mrow></math>") + ("<math class=\"ans\" display=\"block\"><mrow><msub><mi>P</mi><mrow><mtext>top</mtext></mrow></msub><mo>&#x0003D;</mo>" + (MM.n((Math.max(Ptop, 0) / 1000).toFixed(1), 'kPa')) + "</mrow></math>") +
+      '<p class="st" style="color:#555">The air pressure on the tank pushes the water up and over. If P_top drops to ~0 (about 10 m up for water), the siphon fails.</p>';
   }
   T.frame = function () {
     var ctx = cv.prep(); ctx.clearRect(0, 0, 650, H); bg(ctx); hot = {};
@@ -793,8 +822,8 @@ EXTRA_TABS.push(function (stage) {
     sel.value = b.mat;
     var mS = XL.slider(p, 'Mass', 0.1, 25, 0.05, b.m, function (v) { b.m = v; if (b.mat !== 'custom') { b.V = XL.clamp(v / dens(b.mat), 1, 8); b.m = b.V * dens(b.mat); vS.set(b.V); mS.set(b.m); } upd(); }, function (v) { return v.toFixed(2) + ' kg'; });
     var vS = XL.slider(p, 'Volume', 1, 8, 0.05, b.V, function (v) { b.V = v; if (b.mat !== 'custom') { b.m = Math.min(25, v * dens(b.mat)); mS.set(b.m); } upd(); }, function (v) { return v.toFixed(2) + ' L'; });
-    var dTxt = el('div', { style: 'font-size:12px;margin-top:2px' }, p);
-    function upd() { dTxt.innerHTML = 'Density = m/V = <b>' + (b.m / b.V).toFixed(2) + ' kg/L</b>'; }
+    var dTxt = el('div', { cls: 'mw', style: 'font-size:12px;margin-top:2px' }, p);
+    function upd() { dTxt.innerHTML = ("<math display=\"block\"><mrow><mi>&#x003C1;</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>m</mi></mrow><mrow><mi>V</mi></mrow></mfrac></mrow></math>") + ("<math class=\"ans\" display=\"block\"><mrow><mi>&#x003C1;</mi><mo>&#x0003D;</mo>" + (MM.n((b.m / b.V).toFixed(2), 'kg/L')) + "</mrow></math>"); }
     sel.onchange = function () { b.mat = sel.value; if (b.mat !== 'custom') { b.m = Math.min(25, b.V * dens(b.mat)); if (b.m >= 25) b.V = 25 / dens(b.mat); mS.set(b.m); vS.set(b.V); } upd(); };
     upd(); b.ui = { sel: sel, mS: mS, vS: vS, upd: upd };
   }

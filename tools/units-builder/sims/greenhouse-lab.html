@@ -39,6 +39,7 @@ html,body{margin:0;height:100%;background:#2a221e;overflow:hidden;font-family:"S
 .num{font-variant-numeric:tabular-nums}
 input.ans{width:80px;font:13px Arial;padding:2px 4px}
 .eq{font:14px "Cambria Math","Times New Roman",serif}
+.mw math{display:block;text-align:left;margin:4px 0;font-size:1em;overflow-x:auto;max-width:100%}.mw math.ans,.mw math.ans *{font-weight:700}.mw p.st{margin:3px 0}
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@500;700&display=swap"><style id="holmes-embed">
 html,body{background:#fff!important}
@@ -163,6 +164,22 @@ var XL = (function () {
   return { W: W, H: H, el: el, panel: panel, check: check, radios: radios, slider: slider, button: button, playButton: playButton, iconButton: iconButton, Canvas: Canvas, Tab: Tab, lerp: lerp, clamp: clamp, interp: interp, rr: rr, arrow: arrow, font: font, axes: axes, ICON: { PLAY: PLAY, PAUSE: PAUSE, STEP: STEP, RESTART: RESTART } };
 })();
 var EXTRA_TABS = [];
+/* MathML for live numbers in the worked-equation panels: MM.n('12.3', 'kPa') gives a number with its unit,
+   MM.e('6.3', 3, 'Pa') gives 6.3 × 10³ Pa. Units: words separated by spaces, powers as m^-2 or kg/m^3. */
+var MM = (function () {
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+  function num(x) { var s = String(x).trim(), neg = /^[-−]/.test(s); if (neg) s = s.slice(1); return (neg ? '<mo>−</mo>' : '') + '<mn>' + esc(s) + '</mn>'; }
+  function unit(u) {
+    if (!u) return '';
+    return '<mspace width="0.167em"/>' + String(u).split(' ').map(function (t) {
+      var m = /^(.*?)\^(-?\d+)$/.exec(t);
+      return m ? '<msup><mtext>' + esc(m[1]) + '</mtext><mrow>' + num(m[2]) + '</mrow></msup>' : '<mtext>' + esc(t) + '</mtext>';
+    }).join('<mspace width="0.167em"/>');
+  }
+  function n(x, u) { return '<mrow>' + num(x) + unit(u) + '</mrow>'; }
+  function e(m, p, u) { return '<mrow>' + num(m) + '<mo>×</mo><msup><mn>10</mn><mrow>' + num(p) + '</mrow></msup>' + unit(u) + '</mrow>'; }
+  return { n: n, e: e, u: unit };
+})();
 
 /* physics + small formatting helpers shared by the tabs */
 var PH = (function () {
@@ -592,7 +609,7 @@ EXTRA_TABS.push(function (stage) {
   XL.button(cr, 'Start cold (3 K)', function () { S.T = 3; S.hist = []; S.t = 0; });
   XL.button(cr, 'Start hot', function () { S.T = Math.max(400, Teq() * 1.4); S.hist = []; S.t = 0; });
   var ep = XL.panel(right, 'padding-bottom:10px', 'Equilibrium temperature');
-  var eqBox = el('div', { cls: 'eq', style: 'line-height:1.6' }, ep);
+  var eqBox = el('div', { cls: 'eq mw', style: 'line-height:1.6' }, ep);
   var hideBox = XL.check(ep, 'Hide the answer (work it out first)', S.hide, function (v) { S.hide = v; });
   el('div', { style: 'font-size:11px;color:#555;margin-top:4px', html: 'Here ε lumps the whole atmosphere into one number: the fraction of the surface’s infrared that gets out to space. The <b>Atmosphere</b> tab opens that box up.' }, ep);
 
@@ -661,10 +678,11 @@ EXTRA_TABS.push(function (stage) {
   }
   function equation() {
     var te = Teq(), inner = (1 - S.a) * S.S / (4 * S.e * SIG);
-    var h = '<div>Balance: &nbsp;(1 − α) S/4 = εσT⁴</div>';
-    h += '<div>T = [ (1 − α) S / (4εσ) ]<sup>1/4</sup></div>';
-    h += '<div style="font-size:13px">T = [ (1 − ' + S.a.toFixed(2) + ')(' + PH.fmt(S.S) + ') / (4 × ' + (S.e < 0.1 ? S.e.toFixed(4) : S.e.toFixed(2)) + ' × 5.67×10⁻⁸) ]<sup>1/4</sup></div>';
-    h += S.hide ? '<div><b>T = ?</b></div>' : '<div><b>T = ' + PH.fmt(te) + ' K &nbsp;(' + PH.fmt(PH.C(te)) + ' °C)</b></div>';
+    var es = S.e < 0.1 ? S.e.toFixed(4) : S.e.toFixed(2);
+    var h = '<p class="st">Balance:</p>' + ("<math display=\"block\"><mrow><mo stretchy=\"false\">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><mi>&#x003B1;</mi><mo stretchy=\"false\">&#x00029;</mo><mspace width=\"0.167em\" /><mfrac><mrow><mi>S</mi></mrow><mrow><mn>4</mn></mrow></mfrac><mo>&#x0003D;</mo><mi>&#x003B5;</mi><mi>&#x003C3;</mi><msup><mi>T</mi><mn>4</mn></msup></mrow></math>");
+    h += ("<math display=\"block\"><mrow><mi>T</mi><mo>&#x0003D;</mo><msup><mrow><mo stretchy=\"true\" fence=\"true\" form=\"prefix\">[</mo><mfrac><mrow><mo stretchy=\"false\">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><mi>&#x003B1;</mi><mo stretchy=\"false\">&#x00029;</mo><mspace width=\"0.167em\" /><mi>S</mi></mrow><mrow><mn>4</mn><mi>&#x003B5;</mi><mi>&#x003C3;</mi></mrow></mfrac><mo stretchy=\"true\" fence=\"true\" form=\"postfix\">]</mo></mrow><mrow><mn>1</mn><mo>&#x0002F;</mo><mn>4</mn></mrow></msup></mrow></math>");
+    h += ("<math display=\"block\"><mrow><mi>T</mi><mo>&#x0003D;</mo><msup><mrow><mo stretchy=\"true\" fence=\"true\" form=\"prefix\">[</mo><mfrac><mrow><mo stretchy=\"false\">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo>" + (MM.n(S.a.toFixed(2))) + "<mo stretchy=\"false\">&#x00029;</mo><mo stretchy=\"false\">&#x00028;</mo>" + (MM.n(PH.fmt(S.S))) + "<mo stretchy=\"false\">&#x00029;</mo></mrow><mrow><mn>4</mn><mo>&#x000D7;</mo>" + (MM.n(es)) + "<mo>&#x000D7;</mo><mn>5.67</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>8</mn></mrow></msup></mrow></mfrac><mo stretchy=\"true\" fence=\"true\" form=\"postfix\">]</mo></mrow><mrow><mn>1</mn><mo>&#x0002F;</mo><mn>4</mn></mrow></msup></mrow></math>");
+    h += S.hide ? ("<math class=\"ans\" display=\"block\"><mrow><mi>T</mi><mo>&#x0003D;</mo><mtext>?</mtext></mrow></math>") : ("<math class=\"ans\" display=\"block\"><mrow><mi>T</mi><mo>&#x0003D;</mo>" + (MM.n(PH.fmt(te), 'K')) + "<mspace width=\"1em\" /><mo stretchy=\"false\">&#x00028;</mo>" + (MM.n(PH.fmt(PH.C(te)), '°C')) + "<mo stretchy=\"false\">&#x00029;</mo></mrow></math>");
     eqBox.innerHTML = h;
   }
   var lastEq = '';
@@ -730,7 +748,7 @@ EXTRA_TABS.push(function (stage) {
   XL.button(rp, 'Jump to balance', function () { var r = solve(); S.Ts = r.Ts; S.Ta = r.Ta; });
   XL.button(rp, 'Start cold', function () { S.Ts = 200; S.Ta = 180; });
   var pp = XL.panel(right, 'padding:6px 10px', 'IB-style practice');
-  var probBox = el('div', { style: 'font-size:12px;line-height:1.45' }, pp);
+  var probBox = el('div', { cls: 'mw', style: 'font-size:12px;line-height:1.45' }, pp);
   var pr2 = el('div', { style: 'display:flex;gap:6px;align-items:center;margin-top:5px;flex-wrap:wrap' }, pp);
   XL.button(pr2, 'New problem', newProblem, 'padding:3px 8px');
   var ans = el('input', { cls: 'ans', type: 'text', placeholder: 'answer' }, pr2);
@@ -761,22 +779,26 @@ EXTRA_TABS.push(function (stage) {
     else { q = 'The surface temperature is ' + p.Tsr + ' K. Determine the <b>emissivity of the atmosphere</b>.'; unitSp.textContent = ''; }
     var h = given + q;
     if (p.showSol) {
-      var sq = p.q, lines = ['Mean absorbed by Earth: (1 − ' + p.al.toFixed(2) + ') × 1361/4 = ' + sq.toFixed(1) + ' W m⁻²'];
+      var sq = p.q, WM = 'W m^-2', Q = MM.n(sq.toFixed(1)), A = MM.n(p.a.toFixed(2)), E = MM.n(p.eps.toFixed(2));
+      var lines = ['<p class="st">Mean absorbed by Earth:</p>' + ("<math display=\"block\"><mrow><mo stretchy=\"false\">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo>" + (MM.n(p.al.toFixed(2))) + "<mo stretchy=\"false\">&#x00029;</mo><mo>&#x000D7;</mo><mfrac><mrow><mn>1361</mn></mrow><mrow><mn>4</mn></mrow></mfrac><mo>&#x0003D;</mo>" + (MM.n(sq.toFixed(1), WM)) + "</mrow></math>")];
       if (p.kind === 'eps') {
-        lines.push('Surface emits σT⁴ = 5.67×10⁻⁸ × ' + p.Tsr + '⁴ = ' + (SIG * Math.pow(p.Tsr, 4)).toFixed(1) + ' W m⁻²');
-        lines.push('Combine the two balances: σTₛ⁴(1 − ε/2) = ' + sq.toFixed(1) + (p.a ? '(1 − ' + p.a.toFixed(2) + '/2)' : ''));
-        lines.push('ε = 2[1 − ' + (sq * (1 - p.a / 2)).toFixed(1) + '/' + (SIG * Math.pow(p.Tsr, 4)).toFixed(1) + '] = <b>' + p.ans.toFixed(2) + '</b>');
+        var sTr = SIG * Math.pow(p.Tsr, 4);
+        lines.push('<p class="st">Surface emits:</p>' + ("<math display=\"block\"><mrow><mi>&#x003C3;</mi><msubsup><mi>T</mi><mrow><mtext>s</mtext></mrow><mn>4</mn></msubsup><mo>&#x0003D;</mo><mn>5.67</mn><mo>&#x000D7;</mo><msup><mn>10</mn><mrow><mo>&#x02212;</mo><mn>8</mn></mrow></msup><mo>&#x000D7;</mo><msup>" + (MM.n(p.Tsr)) + "<mn>4</mn></msup></mrow></math>") + ("<math display=\"block\"><mrow><mi>&#x003C3;</mi><msubsup><mi>T</mi><mrow><mtext>s</mtext></mrow><mn>4</mn></msubsup><mo>&#x0003D;</mo>" + (MM.n(sTr.toFixed(1), WM)) + "</mrow></math>"));
+        lines.push('<p class="st">Combine the two balances:</p>' + (p.a ? ("<math display=\"block\"><mrow><mi>&#x003C3;</mi><msubsup><mi>T</mi><mrow><mtext>s</mtext></mrow><mn>4</mn></msubsup><mrow><mo stretchy=\"true\" fence=\"true\" form=\"prefix\">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><mfrac><mrow><mi>&#x003B5;</mi></mrow><mrow><mn>2</mn></mrow></mfrac><mo stretchy=\"true\" fence=\"true\" form=\"postfix\">&#x00029;</mo></mrow><mo>&#x0003D;</mo>" + (Q) + "<mrow><mo stretchy=\"true\" fence=\"true\" form=\"prefix\">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><mfrac><mrow>" + (A) + "</mrow><mrow><mn>2</mn></mrow></mfrac><mo stretchy=\"true\" fence=\"true\" form=\"postfix\">&#x00029;</mo></mrow></mrow></math>") : ("<math display=\"block\"><mrow><mi>&#x003C3;</mi><msubsup><mi>T</mi><mrow><mtext>s</mtext></mrow><mn>4</mn></msubsup><mrow><mo stretchy=\"true\" fence=\"true\" form=\"prefix\">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><mfrac><mrow><mi>&#x003B5;</mi></mrow><mrow><mn>2</mn></mrow></mfrac><mo stretchy=\"true\" fence=\"true\" form=\"postfix\">&#x00029;</mo></mrow><mo>&#x0003D;</mo>" + (Q) + "</mrow></math>")));
+        lines.push(("<math display=\"block\"><mrow><mi>&#x003B5;</mi><mo>&#x0003D;</mo><mn>2</mn><mrow><mo stretchy=\"true\" fence=\"true\" form=\"prefix\">[</mo><mn>1</mn><mo>&#x02212;</mo><mfrac><mrow>" + (MM.n((sq * (1 - p.a / 2)).toFixed(1))) + "</mrow><mrow>" + (MM.n(sTr.toFixed(1))) + "</mrow></mfrac><mo stretchy=\"true\" fence=\"true\" form=\"postfix\">]</mo></mrow></mrow></math>") + ("<math class=\"ans\" display=\"block\"><mrow><mi>&#x003B5;</mi><mo>&#x0003D;</mo>" + (MM.n(p.ans.toFixed(2))) + "</mrow></math>"));
       } else {
-        lines.push('Atmosphere: ' + (p.a ? 'a·(absorbed sun) + ' : '') + 'εσTₛ⁴ = 2εσTₐ⁴ &nbsp;(it emits both up and down)');
-        lines.push('Surface: ' + (p.a ? '(1−a)' : '') + '(absorbed sun) + εσTₐ⁴ = σTₛ⁴');
-        lines.push('⇒ σTₛ⁴ = ' + sq.toFixed(1) + (p.a ? '(1 − ' + p.a.toFixed(2) + '/2)' : '') + ' / (1 − ' + p.eps.toFixed(2) + '/2) = ' + (SIG * Math.pow(p.Ts, 4)).toFixed(1) + ' W m⁻² ⇒ Tₛ = ' + p.Ts.toFixed(0) + ' K');
-        if (p.kind === 'Ta') lines.push('εσTₐ⁴ = [' + (p.a ? (p.a * sq).toFixed(1) + ' + ' : '') + p.eps.toFixed(2) + ' × ' + (SIG * Math.pow(p.Ts, 4)).toFixed(1) + '] / 2 ⇒ Tₐ = <b>' + p.Ta.toFixed(0) + ' K</b>');
-        if (p.kind === 'win') lines.push('Escapes: (1 − ε)σTₛ⁴ = ' + (1 - p.eps).toFixed(2) + ' × ' + (SIG * Math.pow(p.Ts, 4)).toFixed(1) + ' = <b>' + p.ans.toFixed(0) + ' W m⁻²</b>');
-        if (p.kind === 'Ts') lines[lines.length - 1] = lines[lines.length - 1].replace('Tₛ = ' + p.Ts.toFixed(0) + ' K', '<b>Tₛ = ' + p.Ts.toFixed(0) + ' K</b>');
+        var sT = SIG * Math.pow(p.Ts, 4), V = MM.n(sT.toFixed(1));
+        lines.push('<p class="st">Atmosphere (it emits both up and down):</p>' + (p.a ? ("<math display=\"block\"><mrow><mi>a</mi><mo>&#x000B7;</mo><mo stretchy=\"false\">&#x00028;</mo><mtext>absorbed&#x000A0;sun</mtext><mo stretchy=\"false\">&#x00029;</mo><mo>&#x0002B;</mo><mi>&#x003B5;</mi><mi>&#x003C3;</mi><msubsup><mi>T</mi><mrow><mtext>s</mtext></mrow><mn>4</mn></msubsup><mo>&#x0003D;</mo><mn>2</mn><mi>&#x003B5;</mi><mi>&#x003C3;</mi><msubsup><mi>T</mi><mrow><mtext>a</mtext></mrow><mn>4</mn></msubsup></mrow></math>") : ("<math display=\"block\"><mrow><mi>&#x003B5;</mi><mi>&#x003C3;</mi><msubsup><mi>T</mi><mrow><mtext>s</mtext></mrow><mn>4</mn></msubsup><mo>&#x0003D;</mo><mn>2</mn><mi>&#x003B5;</mi><mi>&#x003C3;</mi><msubsup><mi>T</mi><mrow><mtext>a</mtext></mrow><mn>4</mn></msubsup></mrow></math>")));
+        lines.push('<p class="st">Surface:</p>' + (p.a ? ("<math display=\"block\"><mrow><mo stretchy=\"false\">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><mi>a</mi><mo stretchy=\"false\">&#x00029;</mo><mo stretchy=\"false\">&#x00028;</mo><mtext>absorbed&#x000A0;sun</mtext><mo stretchy=\"false\">&#x00029;</mo><mo>&#x0002B;</mo><mi>&#x003B5;</mi><mi>&#x003C3;</mi><msubsup><mi>T</mi><mrow><mtext>a</mtext></mrow><mn>4</mn></msubsup><mo>&#x0003D;</mo><mi>&#x003C3;</mi><msubsup><mi>T</mi><mrow><mtext>s</mtext></mrow><mn>4</mn></msubsup></mrow></math>") : ("<math display=\"block\"><mrow><mo stretchy=\"false\">&#x00028;</mo><mtext>absorbed&#x000A0;sun</mtext><mo stretchy=\"false\">&#x00029;</mo><mo>&#x0002B;</mo><mi>&#x003B5;</mi><mi>&#x003C3;</mi><msubsup><mi>T</mi><mrow><mtext>a</mtext></mrow><mn>4</mn></msubsup><mo>&#x0003D;</mo><mi>&#x003C3;</mi><msubsup><mi>T</mi><mrow><mtext>s</mtext></mrow><mn>4</mn></msubsup></mrow></math>")));
+        lines.push('<p class="st">Solve the two together:</p>' + (p.a ? ("<math display=\"block\"><mrow><mi>&#x003C3;</mi><msubsup><mi>T</mi><mrow><mtext>s</mtext></mrow><mn>4</mn></msubsup><mo>&#x0003D;</mo><mfrac><mrow>" + (Q) + "<mrow><mo stretchy=\"true\" fence=\"true\" form=\"prefix\">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><mfrac><mrow>" + (A) + "</mrow><mrow><mn>2</mn></mrow></mfrac><mo stretchy=\"true\" fence=\"true\" form=\"postfix\">&#x00029;</mo></mrow></mrow><mrow><mn>1</mn><mo>&#x02212;</mo><mfrac><mrow>" + (E) + "</mrow><mrow><mn>2</mn></mrow></mfrac></mrow></mfrac></mrow></math>") : ("<math display=\"block\"><mrow><mi>&#x003C3;</mi><msubsup><mi>T</mi><mrow><mtext>s</mtext></mrow><mn>4</mn></msubsup><mo>&#x0003D;</mo><mfrac><mrow>" + (Q) + "</mrow><mrow><mn>1</mn><mo>&#x02212;</mo><mfrac><mrow>" + (E) + "</mrow><mrow><mn>2</mn></mrow></mfrac></mrow></mfrac></mrow></math>")) +
+          ("<math display=\"block\"><mrow><mi>&#x003C3;</mi><msubsup><mi>T</mi><mrow><mtext>s</mtext></mrow><mn>4</mn></msubsup><mo>&#x0003D;</mo>" + (MM.n(sT.toFixed(1), WM)) + "</mrow></math>") + (p.kind === 'Ts' ? ("<math class=\"ans\" display=\"block\"><mrow><msub><mi>T</mi><mrow><mtext>s</mtext></mrow></msub><mo>&#x0003D;</mo>" + (MM.n(p.Ts.toFixed(0), 'K')) + "</mrow></math>") : ("<math display=\"block\"><mrow><msub><mi>T</mi><mrow><mtext>s</mtext></mrow></msub><mo>&#x0003D;</mo>" + (MM.n(p.Ts.toFixed(0), 'K')) + "</mrow></math>")));
+        if (p.kind === 'Ta') lines.push((p.a ? ("<math display=\"block\"><mrow><mi>&#x003B5;</mi><mi>&#x003C3;</mi><msubsup><mi>T</mi><mrow><mtext>a</mtext></mrow><mn>4</mn></msubsup><mo>&#x0003D;</mo><mfrac><mrow>" + (MM.n((p.a * sq).toFixed(1))) + "<mo>&#x0002B;</mo>" + (E) + "<mo>&#x000D7;</mo>" + (V) + "</mrow><mrow><mn>2</mn></mrow></mfrac></mrow></math>") : ("<math display=\"block\"><mrow><mi>&#x003B5;</mi><mi>&#x003C3;</mi><msubsup><mi>T</mi><mrow><mtext>a</mtext></mrow><mn>4</mn></msubsup><mo>&#x0003D;</mo><mfrac><mrow>" + (E) + "<mo>&#x000D7;</mo>" + (V) + "</mrow><mrow><mn>2</mn></mrow></mfrac></mrow></math>")) + ("<math class=\"ans\" display=\"block\"><mrow><msub><mi>T</mi><mrow><mtext>a</mtext></mrow></msub><mo>&#x0003D;</mo>" + (MM.n(p.Ta.toFixed(0), 'K')) + "</mrow></math>"));
+        if (p.kind === 'win') lines.push('<p class="st">Escapes:</p>' + ("<math display=\"block\"><mrow><mo stretchy=\"false\">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><mi>&#x003B5;</mi><mo stretchy=\"false\">&#x00029;</mo><mspace width=\"0.167em\" /><mi>&#x003C3;</mi><msubsup><mi>T</mi><mrow><mtext>s</mtext></mrow><mn>4</mn></msubsup><mo>&#x0003D;</mo>" + (MM.n((1 - p.eps).toFixed(2))) + "<mo>&#x000D7;</mo>" + (MM.n(sT.toFixed(1), WM)) + "</mrow></math>") + ("<math class=\"ans\" display=\"block\"><mrow><mo stretchy=\"false\">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><mi>&#x003B5;</mi><mo stretchy=\"false\">&#x00029;</mo><mspace width=\"0.167em\" /><mi>&#x003C3;</mi><msubsup><mi>T</mi><mrow><mtext>s</mtext></mrow><mn>4</mn></msubsup><mo>&#x0003D;</mo>" + (MM.n(p.ans.toFixed(0), WM)) + "</mrow></math>"));
       }
-      h += '<div style="margin-top:4px;padding:4px 6px;background:#fff;border:1px solid #ddd;border-radius:5px;font-size:11.5px">' + lines.join('<br>') + '</div>';
+      h += '<div style="margin-top:4px;padding:4px 6px;background:#fff;border:1px solid #ddd;border-radius:5px;font-size:11.5px">' + lines.join('') + '</div>';
     }
     probBox.innerHTML = h;
+    pp.style.maxHeight = (662 - pp.offsetTop) + 'px'; pp.style.overflowY = 'auto'; pp.scrollTop = p.showSol ? Math.max(0, probBox.lastChild.offsetTop - 40) : 0;
   }
   function check() {
     var p = S.prob; if (!p) return; var v = parseFloat(String(ans.value).replace(/[^0-9.\-eE]/g, ''));
