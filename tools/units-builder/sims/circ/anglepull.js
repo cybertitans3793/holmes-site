@@ -27,20 +27,26 @@ const SIM = {
       { id: 'Fx', name: 'Horizontal part of the pull', short: 'F_x', sym: 'F<sub>x</sub>', unit: 'N', f: d => d.Fx }];
   },
   work(v, d, mode){
-    let h = '<h4>1 · Free-body diagram: split the pull into components</h4><div class="eq">F<sub>x</sub> = F cosθ (forward) &nbsp; F<sub>y</sub> = F sinθ (up)</div>' +
-      '<h4>2 · Vertical: N + F sinθ = mg → N = mg − F sinθ</h4><div class="eq">Pulling up at an angle takes some of the weight, so the floor pushes up less, and <b>friction gets smaller</b>.</div>';
+    let h = '<h4>1 · Free-body diagram: split the pull into components</h4>' + TEX`F_x = F\cos\theta` + '<p class="st">forward</p>' + TEX`F_y = F\sin\theta` + '<p class="st">up</p>' +
+      '<h4>2 · Vertical: the floor pushes up less</h4>' + TEX`N + F\sin\theta = mg` + TEX`N = mg - F\sin\theta` +
+      '<p class="st">Pulling up at an angle takes some of the weight, so the floor pushes up less, and <b>friction gets smaller</b>.</p>';
     if (mode === 'const'){
-      h += '<h4>3 · Horizontal, constant velocity: F cosθ = μ<sub>k</sub>N</h4><div class="eq">F cosθ = μ<sub>k</sub>(mg − F sinθ) → <b>F = μ<sub>k</sub>mg / (cosθ + μ<sub>k</sub>sinθ)</b></div>' +
-        '<div class="eq">= (' + H.iv('mu') + ')(' + H.iv('m') + ')(' + H.g() + ') / (cos ' + H.iv('th') + ' + ' + H.iv('mu') + ' sin ' + H.iv('th') + ') = <b>' + H.n(d.F, 'N') + '</b></div>' +
-        '<div class="eq">Check: N = ' + H.n(d.W) + ' − ' + H.n(d.Fy) + ' = ' + H.n(d.N, 'N') + ', friction μN = ' + H.n(d.f, 'N') + ' = F cosθ = ' + H.n(d.Fx, 'N') + ' ✓</div>' +
-        '<h4>4 · Is there a best angle?</h4><div class="eq">Too flat: friction is big. Too steep: most of the pull goes upward, wasted. The smallest pull is at <b>tanθ = μ<sub>k</sub></b> → θ = ' + H.n(d.best, '°') + ', needing ' + H.n(d.Fbest, 'N') + ' (vs ' + H.n(d.Fflat, 'N') + ' pulling flat).</div>' +
+      h += '<h4>3 · Horizontal, constant velocity</h4>' + TEX`F\cos\theta = \mu_k N` + TEX`F\cos\theta = \mu_k(mg - F\sin\theta)` + TEXA`F = \frac{\mu_k mg}{\cos\theta + \mu_k\sin\theta}` +
+        TEX`F = \frac{(${M.iv('mu')})(${M.iv('m')})(10\,\text{m/s}^2)}{\cos ${M.iv('th')} + (${M.iv('mu')})\sin ${M.iv('th')}}` + TEXA`F = ${M.n(d.F, 'N')}` +
+        '<p class="st">Check the normal force and friction:</p>' +
+        TEX`N = mg - F\sin\theta` + TEX`N = ${M.n(d.W)} - ${M.n(d.Fy)}` + TEXA`N = ${M.n(d.N, 'N')}` +
+        TEX`f = \mu_k N` + TEXA`f = ${M.n(d.f, 'N')}` + TEX`F\cos\theta = ${M.n(d.Fx, 'N')}` + '<p class="st">Friction equals the forward part of the pull ✓</p>' +
+        '<h4>4 · Is there a best angle?</h4><p class="st">Too flat: friction is big. Too steep: most of the pull goes upward, wasted. The smallest pull is at</p>' +
+        TEXA`\tan\theta = \mu_k` + TEXA`\theta_{\text{best}} = ${M.n(d.best, '°')}` + TEXA`F_{\text{best}} = ${M.n(d.Fbest, 'N')}` +
+        '<p class="st">compared with pulling flat:</p>' + TEX`F_{\text{flat}} = ${M.n(d.Fflat, 'N')}` +
         '<p class="note">Graph F vs θ to see the minimum. Common mistake: writing N = mg when the rope pulls at an angle.</p>';
       return h;
     }
-    h += '<div class="eq">N = (' + H.iv('m') + ')(' + H.g() + ') − (' + H.iv('F') + ')sin ' + H.iv('th') + ' = <b>' + H.n(d.N, 'N') + '</b></div>';
+    h += TEX`N = mg - F\sin\theta` + TEX`N = (${M.iv('m')})(10\,\text{m/s}^2) - (${M.iv('F')})\sin ${M.iv('th')}` + TEXA`N = ${M.n(d.N, 'N')}`;
     if (d.lifts) return h + '<div class="bad">F sinθ is more than mg: the sled would lift off the ground. N = 0 and this is no longer a sliding problem.</div>';
-    h += '<h4>3 · Horizontal: ΣF<sub>x</sub> = F cosθ − μ<sub>k</sub>N</h4><div class="eq">F cosθ = ' + H.n(d.Fx, 'N') + ', friction μ<sub>k</sub>N = (' + H.iv('mu') + ')(' + H.n(d.N) + ') = ' + H.n(d.fk, 'N') + '</div>';
-    h += d.moves ? '<div class="eq">a = (F cosθ − μ<sub>k</sub>N)/m = (' + H.n(d.Fx) + ' − ' + H.n(d.fk) + ') / ' + H.iv('m') + ' = <b>' + H.n(d.a, 'm/s²') + '</b></div>'
+    h += '<h4>3 · Horizontal</h4>' + TEX`\Sigma F_x = F\cos\theta - \mu_k N` + TEX`F\cos\theta = ${M.n(d.Fx, 'N')}` +
+      TEX`f_k = \mu_k N` + TEX`f_k = (${M.iv('mu')})(${M.n(d.N)})` + TEXA`f_k = ${M.n(d.fk, 'N')}`;
+    h += d.moves ? TEX`a = \frac{F\cos\theta - \mu_k N}{m}` + TEX`a = \frac{${M.n(d.Fx)} - ${M.n(d.fk)}}{${M.iv('m')}}` + TEXA`a = ${M.n(d.a, 'm/s²')}`
       : '<div class="bad">F cosθ isn’t more than friction: it won’t speed up (treating μ as static too, it stays put).</div>';
     return h + '<p class="note">Change θ with F fixed: a goes up, then down. The best angle is again tanθ = μ<sub>k</sub> (' + H.n(d.best, '°') + ').</p>';
   },

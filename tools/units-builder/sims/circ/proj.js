@@ -44,25 +44,32 @@ const SIM = {
   },
   work(v, d, mode){
     if (mode === 'target' && !d.ok) return '<div class="bad">At ' + H.iv('th') + ' the launch line points below the target, so no speed can reach it. Aim higher.</div>';
-    const iv0 = mode === 'target' ? H.n(d.v0, 'm/s') : H.iv('v0'), ith = mode === 'horiz' ? '0°' : H.iv('th');
+    const iv0 = mode === 'target' ? M.n(d.v0, 'm/s') : M.iv('v0'), ith = mode === 'horiz' ? '<mrow><mn>0</mn><mo>°</mo></mrow>' : M.iv('th');
     let h = '<h4>1 · Split the launch velocity into components</h4>' +
-      (mode === 'horiz' ? '<div class="eq">Launched horizontally: v<sub>x</sub> = ' + iv0 + ', v<sub>y0</sub> = 0</div>'
-        : '<div class="eq">v<sub>x</sub> = v<sub>0</sub>cosθ = (' + iv0 + ')cos ' + ith + ' = ' + H.n(d.vx, 'm/s') + ' &nbsp; v<sub>y0</sub> = v<sub>0</sub>sinθ = ' + H.n(d.vy, 'm/s') + '</div>') +
+      (mode === 'horiz' ? '<p class="st">Launched horizontally:</p>' + TEXA`v_x = ${iv0}` + TEXA`v_{y0} = 0`
+        : TEX`v_x = v_0\cos\theta` + TEX`v_x = (${iv0})\cos ${ith}` + TEXA`v_x = ${M.n(d.vx, 'm/s')}` +
+          TEX`v_{y0} = v_0\sin\theta` + TEX`v_{y0} = (${iv0})\sin ${ith}` + TEXA`v_{y0} = ${M.n(d.vy, 'm/s')}`) +
       '<p class="note">Horizontal: no force → v<sub>x</sub> stays constant. Vertical: a = −g. The two directions are independent; time links them.</p>';
     if (mode === 'target'){
-      h += '<h4>2 · Horizontal gives the time</h4><div class="eq">t = D/v<sub>x</sub> = D/(v<sub>0</sub>cosθ)</div>' +
-        '<h4>3 · Vertical must land on the target</h4><div class="eq">y<sub>T</sub> = (v<sub>0</sub>sinθ)t − ½gt² → substitute t: y<sub>T</sub> = D tanθ − gD²/(2v<sub>0</sub>²cos²θ)</div>' +
-        '<div class="eq">v<sub>0</sub> = (D/cosθ)·√(g / (2(D tanθ − y<sub>T</sub>))) = <b>' + H.n(d.v0, 'm/s') + '</b>, in the air for ' + H.n(d.T, 's') + '</div>' +
+      h += '<h4>2 · Horizontal gives the time</h4>' + TEX`t = \frac{D}{v_x}` + TEX`t = \frac{D}{v_0\cos\theta}` +
+        '<h4>3 · Vertical must land on the target</h4>' + TEX`y_T = (v_0\sin\theta)\,t - \frac{1}{2}g t^2` + '<p class="st">Substitute t:</p>' +
+        TEX`y_T = D\tan\theta - \frac{g D^2}{2 v_0^2\cos^2\theta}` + '<p class="st">Solve for the launch speed:</p>' +
+        TEX`v_0 = \frac{D}{\cos\theta}\sqrt{\frac{g}{2\left(D\tan\theta - y_T\right)}}` + TEXA`v_0 = ${M.n(d.v0, 'm/s')}` +
+        '<p class="st">Time in the air:</p>' + TEXA`t = ${M.n(d.T, 's')}` +
         '<p class="note">Try other angles: the needed speed has a minimum somewhere between θ = 45° and straight at the target.</p>';
       return h;
     }
     h += '<h4>2 · Vertical: how long is it in the air?</h4>' +
-      (d.h === 0 ? '<div class="eq">Lands at the same height: 0 = v<sub>y0</sub>t − ½gt² → t = 2v<sub>y0</sub>/g = 2(' + H.n(d.vy) + ')/10 = <b>' + H.n(d.T, 's') + '</b></div>'
-        : mode === 'horiz' ? '<div class="eq">Falls h with v<sub>y0</sub> = 0: h = ½gt² → t = √(2h/g) = √(2 × ' + H.iv('h') + ' / 10) = <b>' + H.n(d.T, 's') + '</b></div><p class="note">The same time as a ball just dropped from the cliff (the grey ball): horizontal speed doesn’t change how fast it falls.</p>'
-        : '<div class="eq">0 = h + v<sub>y0</sub>t − ½gt² → t = [v<sub>y0</sub> + √(v<sub>y0</sub>² + 2gh)]/g = <b>' + H.n(d.T, 's') + '</b></div>');
-    h += '<h4>3 · Horizontal: how far?</h4><div class="eq">R = v<sub>x</sub>t = (' + H.n(d.vx) + ')(' + H.n(d.T) + ') = <b>' + H.n(d.R, 'm') + '</b></div>';
-    if (d.vy > 0) h += '<h4>4 · Top of the path: v<sub>y</sub> = 0 (v<sub>x</sub> isn’t!)</h4><div class="eq">t<sub>top</sub> = v<sub>y0</sub>/g = ' + H.n(d.tTop, 's') + ' &nbsp; y<sub>max</sub> = ' + (d.h ? 'h + ' : '') + 'v<sub>y0</sub>²/2g = <b>' + H.n(d.yMax, 'm') + '</b>. Speed at the top = v<sub>x</sub> = ' + H.n(d.vx, 'm/s') + '</div>';
-    h += '<h4>' + (d.vy > 0 ? '5' : '4') + ' · Impact velocity</h4><div class="eq">v<sub>x</sub> = ' + H.n(d.vx) + ', v<sub>y</sub> = v<sub>y0</sub> − gt = ' + H.n(d.vyEnd) + ' → |v| = √(v<sub>x</sub>² + v<sub>y</sub>²) = <b>' + H.n(d.vEnd, 'm/s') + '</b> at ' + H.n(-d.angEnd, '°') + ' below horizontal</div>';
+      (d.h === 0 ? '<p class="st">Lands at the same height:</p>' + TEX`0 = v_{y0}t - \frac{1}{2}g t^2` + TEX`t = \frac{2 v_{y0}}{g}` + TEX`t = \frac{2(${M.n(d.vy)})}{10\,\text{m/s}^2}` + TEXA`t = ${M.n(d.T, 's')}`
+        : mode === 'horiz' ? '<p class="st">Falls h with v<sub>y0</sub> = 0:</p>' + TEX`h = \frac{1}{2}g t^2` + TEX`t = \sqrt{\frac{2h}{g}}` + TEX`t = \sqrt{\frac{2 \times ${M.iv('h')}}{10\,\text{m/s}^2}}` + TEXA`t = ${M.n(d.T, 's')}` + '<p class="note">The same time as a ball just dropped from the cliff (the grey ball): horizontal speed doesn’t change how fast it falls.</p>'
+        : TEX`0 = h + v_{y0}t - \frac{1}{2}g t^2` + TEX`t = \frac{v_{y0} + \sqrt{v_{y0}^2 + 2gh}}{g}` + TEXA`t = ${M.n(d.T, 's')}`);
+    h += '<h4>3 · Horizontal: how far?</h4>' + TEX`R = v_x t` + TEX`R = (${M.n(d.vx)})(${M.n(d.T)})` + TEXA`R = ${M.n(d.R, 'm')}`;
+    if (d.vy > 0) h += '<h4>4 · Top of the path: v<sub>y</sub> = 0 (v<sub>x</sub> isn’t!)</h4>' + TEX`t_{\text{top}} = \frac{v_{y0}}{g}` + TEXA`t_{\text{top}} = ${M.n(d.tTop, 's')}` +
+      (d.h ? TEX`y_{\text{max}} = h + \frac{v_{y0}^2}{2g}` : TEX`y_{\text{max}} = \frac{v_{y0}^2}{2g}`) + TEXA`y_{\text{max}} = ${M.n(d.yMax, 'm')}` +
+      '<p class="st">Speed at the top is just v<sub>x</sub>:</p>' + TEXA`v_{\text{top}} = ${M.n(d.vx, 'm/s')}`;
+    h += '<h4>' + (d.vy > 0 ? '5' : '4') + ' · Impact velocity</h4>' + TEX`v_y = v_{y0} - g t` + TEXA`v_y = ${M.n(d.vyEnd, 'm/s')}` +
+      TEX`|v| = \sqrt{v_x^2 + v_y^2}` + TEX`|v| = \sqrt{(${M.n(d.vx)})^2 + (${M.n(d.vyEnd)})^2}` + TEXA`|v| = ${M.n(d.vEnd, 'm/s')}` +
+      '<p class="st">Angle below horizontal:</p>' + TEXA`\theta = ${M.n(-d.angEnd, '°')}`;
     if (mode === 'level') h += '<p class="note">Range on level ground: R = v<sub>0</sub>² sin(2θ)/g. Biggest at 45°; complementary angles (like 30° and 60°) give the same range: the dashed path is ' + H.n(90 - v.th, '°') + '.</p>';
     return h;
   },

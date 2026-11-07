@@ -20,12 +20,17 @@ const SIM = {
   },
   dvs(){ return [{ id: 'r2', name: 'How straight (R², 1 = perfect line)', short: 'R²', sym: 'R²', unit: '', f: d => d.r2 }, { id: 'm', name: 'Gradient', short: 'm', sym: 'm', unit: '', f: d => d.m }]; },
   work(v, d, mode, opt){
-    const e = d.e;
-    return '<h4>1 · The raw graph of ' + e.y + ' vs ' + e.x + ' is curved</h4><div class="eq">A curve is hard to check by eye and hard to get a gradient from. Find the relationship, then plot something that should be a straight line.</div>' +
+    const e = d.e, phys = {
+      pend: TEX`\text{gradient} = \frac{2\pi}{\sqrt{g}}` + TEX`g = \left(\frac{2\pi}{\text{gradient}}\right)^2` + TEX`g = \left(\frac{2\pi}{${M.n(d.m)}}\right)^2` + TEXA`g = ${M.n(d.res, e.gu)}`,
+      fall: '<p class="st">From d = ½gt²: gradient = g/2.</p>' + TEX`g = 2\times\text{gradient}` + TEX`g = 2\times ${M.n(d.m)}` + TEXA`g = ${M.n(d.res, e.gu)}`,
+      light: '<p class="st">From I = P/(4πr²): gradient = P/4π.</p>' + TEX`P = 4\pi\times\text{gradient}` + TEX`P = 4\pi\times ${M.n(d.m)}` + TEXA`P = ${M.n(d.res, e.gu)}`,
+      gas: '<p class="st">PV = nRT is constant, so the gradient is PV.</p>' + TEX`PV = \text{gradient}` + TEX`PV = ${M.n(d.m)}` + TEXA`PV = ${M.n(d.res, e.gu)}`
+    };
+    return '<h4>1 · The raw graph of ' + e.y + ' vs ' + e.x + ' is curved</h4><p class="st">A curve is hard to check by eye and hard to get a gradient from. Find the relationship, then plot something that should be a straight line.</p>' +
       '<h4>2 · You’re plotting ' + e.y + ' against ' + d.t[0].replace('x', e.x) + '</h4>' +
-      (d.right ? '<div class="eq"><b>Straight line through the origin</b> (R² = ' + d.r2.toFixed(4) + '): that’s the right choice.</div>' +
-        '<h4>3 · Read the physics from the gradient</h4><div class="eq">gradient = ' + H.n(d.m) + ' &nbsp; ' + e.meaning + '</div><div class="eq">' + e.gl + ' = <b>' + H.n(d.res, e.gu) + '</b></div>'
-        : '<div class="bad">Still curved (or not through the origin): R² = ' + d.r2.toFixed(4) + '. Try another choice.</div>') +
+      TEX`R^2 = ${'<mn>' + d.r2.toFixed(4) + '</mn>'}` + (d.right ? '<p class="st"><b>Straight line through the origin</b>: that’s the right choice.</p>' +
+        '<h4>3 · Read the physics from the gradient</h4>' + TEX`\text{gradient} = ${M.n(d.m)}` + phys[mode]
+        : '<div class="bad">Still curved (or not through the origin). Try another choice.</div>') +
       '<p class="note">Check two things: straight, and through the origin when the relationship is a pure proportion. A straight line that misses the origin points to a systematic error.</p>';
   },
   draw(v, d, mode){

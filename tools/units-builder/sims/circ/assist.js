@@ -22,12 +22,19 @@ const SIM = {
     { id: 'gain', name: 'Speed gained', short: 'gain', sym: 'gain', unit: 'km/s', f: d => d.gain },
     { id: 's', name: 'Speed relative to the planet', short: 'v_rel', sym: 'v<sub>rel</sub>', unit: 'km/s', f: d => d.s }]; },
   work(v, d){
-    return '<h4>1 · Ride along with the planet (planet frame)</h4><div class="eq">Coming in head-on, the craft’s speed relative to the planet is v + U = ' + H.iv('v') + ' + ' + H.iv('U') + ' = <b>' + H.n(d.s, 'km/s') + '</b></div>' +
-      '<h4>2 · In the planet’s frame, gravity only turns the craft</h4><div class="eq">It swings around and leaves at the <b>same speed</b>, ' + H.n(d.s, 'km/s') + ', turned by ' + H.iv('turn') + '. Like a perfectly elastic bounce off the planet.</div>' +
-      '<h4>3 · Switch back to the Sun’s frame: add the planet’s velocity</h4><div class="eq">v<sub>out</sub> = v<sub>rel,out</sub> + U = (' + H.n(d.relOut[0]) + ' + ' + H.n(d.U) + ', ' + H.n(d.relOut[1]) + ') km/s → |v<sub>out</sub>| = <b>' + H.n(d.vout, 'km/s') + '</b></div>' +
-      '<div class="eq">' + (d.gain >= 0 ? 'Gained ' : 'Lost ') + '<b>' + H.n(Math.abs(d.gain), 'km/s') + '</b>. A full U-turn gives the most: v + 2U = ' + H.n(d.max, 'km/s') + '.</div>' +
+    const dvx = d.out[0] + v.v, dvy = d.out[1], dvm = Math.hypot(dvx, dvy);
+    return '<h4>1 · Ride along with the planet (planet frame)</h4><p class="st">Coming in head-on, the craft’s speed relative to the planet is v + U:</p>' + TEX`v_{\text{rel}} = v + U` + TEX`v_{\text{rel}} = ${M.iv('v')} + ${M.iv('U')}` + TEXA`v_{\text{rel}} = ${M.n(d.s, 'km/s')}` +
+      '<h4>2 · In the planet’s frame, gravity only turns the craft</h4><p class="st">It swings around and leaves at the <b>same speed</b>, ' + H.n(d.s, 'km/s') + ', turned by ' + H.iv('turn') + '. Like a perfectly elastic bounce off the planet.</p>' +
+      '<h4>3 · Switch back to the Sun’s frame: add the planet’s velocity</h4>' + TEX`\vec{v}_{\text{out}} = \vec{v}_{\text{rel,out}} + \vec{U}` +
+      TEX`\vec{v}_{\text{out}} = \left(${M.n(d.relOut[0])} + ${M.n(d.U)},\ ${M.n(d.relOut[1])}\right)\,\text{km/s}` + TEX`\vec{v}_{\text{out}} = \left(${M.n(d.out[0])},\ ${M.n(d.out[1])}\right)\,\text{km/s}` +
+      TEX`|\vec{v}_{\text{out}}| = \sqrt{(${M.n(d.out[0])})^2 + (${M.n(d.out[1])})^2}` + TEXA`|\vec{v}_{\text{out}}| = ${M.n(d.vout, 'km/s')}` +
+      '<p class="st">' + (d.gain >= 0 ? 'Gained ' : 'Lost ') + '<b>' + H.n(Math.abs(d.gain), 'km/s') + '</b>. A full U-turn gives the most:</p>' + TEX`v_{\text{max}} = v + 2U` + TEX`v_{\text{max}} = ${M.n(d.max, 'km/s')}` +
       '<p class="note">Same idea as a tennis ball bouncing off the front of a moving train: it comes back faster than it was thrown.</p>' +
-      '<h4>4 · Where does the energy come from?</h4><div class="eq">The craft gains ΔK = ' + H.n(d.dK, 'J') + '. The planet loses exactly that much. Momentum is conserved, so the planet (Jupiter, 1.9×10<sup>27</sup> kg) slows by about ' + H.n(d.dPlanet, 'm/s') + ': far too little to ever measure.</div>' +
+      '<h4>4 · Where does the energy come from?</h4>' + TEX`\Delta K = \tfrac{1}{2}m\left(v_{\text{out}}^2 - v^2\right)` +
+      TEX`\Delta K = \tfrac{1}{2}(${M.iv('m')})\left[(${M.n(d.vout * 1000, 'm/s')})^2 - (${M.n(v.v * 1000, 'm/s')})^2\right]` + TEXA`\Delta K = ${M.n(d.dK, 'J')}` +
+      '<p class="st">The planet loses exactly that much. Momentum is conserved, so the planet (Jupiter, 1.9×10<sup>27</sup> kg) slows slightly:</p>' +
+      TEX`\Delta v_{\text{planet}} = \frac{m\,|\Delta\vec{v}|}{M_{\text{planet}}}` + TEX`\Delta v_{\text{planet}} = \frac{(${M.iv('m')})(${M.n(dvm * 1000, 'm/s')})}{1.9\times10^{27}\,\text{kg}}` + TEXA`\Delta v_{\text{planet}} = ${M.n(d.dPlanet, 'm/s')}` +
+      '<p class="st">Far too little to ever measure.</p>' +
       '<p class="note">Voyager, Cassini and New Horizons all used this. In movies it’s usually called a slingshot.</p>';
   },
   draw(v, d, mode, opt, t, dt, A){

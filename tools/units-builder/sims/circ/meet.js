@@ -33,19 +33,24 @@ const SIM = {
     { id: 'close', name: mode === 'head' ? 'Closing speed v_A + v_B' : 'Closing speed (difference)', short: 'v_close', sym: 'v<sub>close</sub>', unit: 'm/s', f: d => d.close }]; },
   work(v, d, mode){
     let h = '<h4>1 · Constant velocity: position = start + velocity × time</h4>';
-    if (mode === 'head') h += '<div class="eq">Put A’s start at x = 0 and call → positive.</div><div class="eq">x<sub>A</sub> = 0 + ' + H.iv('vA') + '·t &nbsp;&nbsp; x<sub>B</sub> = ' + H.iv('d') + ' − ' + H.iv('vB') + '·t &nbsp;(B moves ←, so its velocity is negative)</div>' +
-      '<h4>2 · They meet when they’re at the same place: x<sub>A</sub> = x<sub>B</sub></h4><div class="eq">v<sub>A</sub>t = d − v<sub>B</sub>t → t = d/(v<sub>A</sub> + v<sub>B</sub>) = ' + H.iv('d') + ' / ' + H.n(d.close, 'm/s') + ' = <b>' + H.n(d.t, 's') + '</b></div>';
-    else if (mode === 'catch') h += '<div class="eq">Put A’s start at x = 0. Both move →.</div><div class="eq">x<sub>A</sub> = ' + H.iv('vA') + '·t &nbsp;&nbsp; x<sub>B</sub> = ' + H.iv('d') + ' + ' + H.iv('vB') + '·t</div>' +
+    if (mode === 'head') h += '<p class="st">Put A’s start at x = 0 and call → positive. B moves ←, so its velocity is negative.</p>' +
+      TEX`x_A = v_A\,t` + TEX`x_B = d - v_B\,t` + TEX`x_A = ${M.iv('vA')}\cdot t` + TEX`x_B = ${M.iv('d')} - ${M.iv('vB')}\cdot t` +
+      '<h4>2 · They meet when they’re at the same place: x<sub>A</sub> = x<sub>B</sub></h4>' +
+      TEX`v_A t = d - v_B t` + TEX`t = \frac{d}{v_A + v_B}` + TEX`t = \frac{${M.iv('d')}}{${M.n(d.close, 'm/s')}}` + TEXA`t = ${M.n(d.t, 's')}`;
+    else if (mode === 'catch') h += '<p class="st">Put A’s start at x = 0. Both move →.</p>' +
+      TEX`x_A = v_A\,t` + TEX`x_B = d + v_B\,t` + TEX`x_A = ${M.iv('vA')}\cdot t` + TEX`x_B = ${M.iv('d')} + ${M.iv('vB')}\cdot t` +
       '<h4>2 · They meet when x<sub>A</sub> = x<sub>B</sub></h4>' + (d.never ? '<div class="bad">A is not faster than B, so the gap never closes. On the x–t graph the lines never cross.</div>'
-        : '<div class="eq">v<sub>A</sub>t = d + v<sub>B</sub>t → t = d/(v<sub>A</sub> − v<sub>B</sub>) = ' + H.iv('d') + ' / ' + H.n(d.close, 'm/s') + ' = <b>' + H.n(d.t, 's') + '</b></div>');
-    else h += '<div class="eq">Both leave x = 0 going →. A leaves at t = 0; B leaves ' + H.iv('td') + ' later.</div><div class="eq">x<sub>A</sub> = ' + H.iv('vA') + '·t &nbsp;&nbsp; x<sub>B</sub> = ' + H.iv('vB') + '·(t − ' + H.iv('td') + ')</div>' +
+        : TEX`v_A t = d + v_B t` + TEX`t = \frac{d}{v_A - v_B}` + TEX`t = \frac{${M.iv('d')}}{${M.n(d.close, 'm/s')}}` + TEXA`t = ${M.n(d.t, 's')}`);
+    else h += '<p class="st">Both leave x = 0 going →. A leaves at t = 0; B leaves ' + H.iv('td') + ' later.</p>' +
+      TEX`x_A = v_A\,t` + TEX`x_B = v_B\,(t - t_d)` + TEX`x_A = ${M.iv('vA')}\cdot t` + TEX`x_B = ${M.iv('vB')}\cdot\left(t - ${M.iv('td')}\right)` +
       '<h4>2 · They meet when x<sub>A</sub> = x<sub>B</sub></h4>' + (d.never ? '<div class="bad">B is not faster than A, so B never catches up.</div>'
-        : '<div class="eq">v<sub>A</sub>t = v<sub>B</sub>(t − t<sub>d</sub>) → t = v<sub>B</sub>t<sub>d</sub>/(v<sub>B</sub> − v<sub>A</sub>) = (' + H.iv('vB') + ')(' + H.iv('td') + ') / ' + H.n(d.close, 'm/s') + ' = <b>' + H.n(d.t, 's') + '</b> after A leaves</div>');
+        : TEX`v_A t = v_B (t - t_d)` + TEX`t = \frac{v_B t_d}{v_B - v_A}` + TEX`t = \frac{\left(${M.iv('vB')}\right)\left(${M.iv('td')}\right)}{${M.n(d.close, 'm/s')}}` + TEXA`t = ${M.n(d.t, 's')}` + '<p class="st">That is the time after A leaves.</p>');
     if (d.never) return h;
-    h += '<h4>3 · Where: put t back into either equation</h4><div class="eq">x = v<sub>A</sub>t = (' + H.iv('vA') + ')(' + H.n(d.t, 's') + ') = <b>' + H.n(d.x, 'm') + '</b> from A’s start</div>' +
-      '<div class="eq">Check with B: x<sub>B</sub> = ' + H.n(d.xB(d.t), 'm') + ' ✓</div>' +
-      '<h4>4 · Shortcut: closing speed</h4><div class="eq">' + (mode === 'head' ? 'Coming toward each other, the gap shrinks by v<sub>A</sub> + v<sub>B</sub>' : 'Going the same way, the gap shrinks by the difference in speeds') +
-      ' = ' + H.n(d.close, 'm/s') + ' every second. Gap ' + H.n(d.lead, 'm') + (mode === 'late' ? ' (A’s head start when B leaves)' : '') + ' ÷ ' + H.n(d.close, 'm/s') + ' = ' + H.n(d.lead / d.close, 's') + (mode === 'late' ? ' after B leaves' : '') + '.</div>' +
+    h += '<h4>3 · Where: put t back into either equation</h4>' + TEX`x = v_A t` + TEX`x = \left(${M.iv('vA')}\right)\left(${M.n(d.t, 's')}\right)` + TEXA`x = ${M.n(d.x, 'm')}` +
+      '<p class="st">That is the distance from A’s start. Check with B (it should match) ✓:</p>' + TEX`x_B = ${M.n(d.xB(d.t), 'm')}` +
+      '<h4>4 · Shortcut: closing speed</h4><p class="st">' + (mode === 'head' ? 'Coming toward each other, the gap shrinks by v<sub>A</sub> + v<sub>B</sub>' : 'Going the same way, the gap shrinks by the difference in speeds') +
+      ' = ' + H.n(d.close, 'm/s') + ' every second.' + (mode === 'late' ? ' The gap is A’s head start when B leaves.' : '') + '</p>' +
+      TEX`t = \frac{\text{gap}}{v_{\text{close}}}` + TEX`t = \frac{${M.n(d.lead, 'm')}}{${M.n(d.close, 'm/s')}}` + TEXA`t = ${M.n(d.lead / d.close, 's')}` + (mode === 'late' ? '<p class="st">That is the time after B leaves.</p>' : '') +
       '<p class="note">On the x–t graph the slope is the velocity, and the crossing point is the answer: its t and x are when and where.</p>';
     return h;
   },

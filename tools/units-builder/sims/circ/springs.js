@@ -27,20 +27,22 @@ const SIM = {
     if (mode !== 'one') l.push({ id: 'F1', name: 'Force in spring 1', short: 'F1', sym: 'F<sub>1</sub>', unit: 'N', f: d => d.F1, vs: 'F2' }, { id: 'F2', name: 'Force in spring 2', short: 'F2', sym: 'F<sub>2</sub>', unit: 'N', f: d => d.F2 });
     return l; },
   work(v, d, mode){
-    let h = '<h4>1 · The mass hangs at rest, so the spring force balances the weight</h4><div class="eq">F<sub>spring</sub> = mg = (' + H.iv('m') + ')(' + H.g() + ') = <b>' + H.n(d.F, 'N') + '</b></div>';
-    if (mode === 'one') return h + '<h4>2 · Hooke’s law</h4><div class="eq">F = kx → x = F/k = ' + H.n(d.F, 'N') + ' / ' + H.iv('k1') + ' = <b>' + H.n(d.x, 'm') + '</b> = ' + H.n(d.x * 100, 'cm') + '</div>' +
+    let h = '<h4>1 · The mass hangs at rest, so the spring force balances the weight</h4>' + TEX`F_{\text{spring}} = mg` + TEX`F_{\text{spring}} = (${M.iv('m')})(10\,\text{m/s}^2)` + TEXA`F_{\text{spring}} = ${M.n(d.F, 'N')}`;
+    if (mode === 'one') return h + '<h4>2 · Hooke’s law</h4>' + TEX`F = kx` + TEX`x = \frac{F}{k}` + TEX`x = \frac{${M.n(d.F, 'N')}}{${M.iv('k1')}}` + TEXA`x = ${M.n(d.x, 'm')}` + TEX`x = ${M.n(d.x * 100, 'cm')}` +
       '<p class="note">Double the mass → double the stretch (until the spring is overstretched). The slope of F vs x is k: a stiffer spring has a steeper line.</p>' +
-      '<h4>3 · Energy stored</h4><div class="eq">U<sub>s</sub> = ½kx² = ½(' + H.iv('k1') + ')(' + H.n(d.x) + ')² = ' + H.n(d.U, 'J') + ' (area under F vs x)</div>';
-    if (mode === 'series') h += '<h4>2 · In series, each spring feels the whole weight</h4><div class="eq">F<sub>1</sub> = F<sub>2</sub> = ' + H.n(d.F, 'N') + '</div>' +
-      '<div class="eq">x<sub>1</sub> = F/k<sub>1</sub> = ' + H.n(d.x1, 'm') + ', x<sub>2</sub> = F/k<sub>2</sub> = ' + H.n(d.x2, 'm') + '</div>' +
-      '<h4>3 · The stretches add</h4><div class="eq">x = x<sub>1</sub> + x<sub>2</sub> = <b>' + H.n(d.x, 'm') + '</b></div>' +
-      '<h4>4 · Effective spring constant (softer than either)</h4><div class="eq">1/k<sub>eff</sub> = 1/k<sub>1</sub> + 1/k<sub>2</sub> = 1/' + H.iv('k1') + ' + 1/' + H.iv('k2') + ' → k<sub>eff</sub> = <b>' + H.n(d.keff, 'N/m') + '</b></div>' +
-      '<p class="note">Check: F/k<sub>eff</sub> = ' + H.n(d.F / d.keff, 'm') + ' ✓. Two equal springs in series act like one spring with half the k.</p>';
-    else h += '<h4>2 · In parallel, both springs stretch the same amount</h4><div class="eq">x<sub>1</sub> = x<sub>2</sub> = x</div>' +
-      '<h4>3 · The forces add up to the weight</h4><div class="eq">k<sub>1</sub>x + k<sub>2</sub>x = mg → x = mg/(k<sub>1</sub> + k<sub>2</sub>) = ' + H.n(d.F) + ' / (' + H.iv('k1') + ' + ' + H.iv('k2') + ') = <b>' + H.n(d.x, 'm') + '</b></div>' +
-      '<div class="eq">F<sub>1</sub> = k<sub>1</sub>x = ' + H.n(d.F1, 'N') + ', F<sub>2</sub> = k<sub>2</sub>x = ' + H.n(d.F2, 'N') + ' (the stiffer spring carries more)</div>' +
-      '<h4>4 · Effective spring constant (stiffer than either)</h4><div class="eq">k<sub>eff</sub> = k<sub>1</sub> + k<sub>2</sub> = <b>' + H.n(d.keff, 'N/m') + '</b></div>';
-    h += '<h4>5 · Energy stored</h4><div class="eq">U<sub>s</sub> = ½k<sub>eff</sub>x² = ' + H.n(d.U, 'J') + ' (spring 1: ' + H.n(d.U1, 'J') + ', spring 2: ' + H.n(d.U2, 'J') + ')</div>';
+      '<h4>3 · Energy stored</h4><p class="st">The area under F vs x:</p>' + TEX`U_s = \frac{1}{2} k x^2` + TEX`U_s = \frac{1}{2}(${M.iv('k1')})(${M.n(d.x)})^2` + TEXA`U_s = ${M.n(d.U, 'J')}`;
+    if (mode === 'series') h += '<h4>2 · In series, each spring feels the whole weight</h4>' + TEX`F_1 = F_2 = F` + TEXA`F_1 = F_2 = ${M.n(d.F, 'N')}` +
+      TEX`x_1 = \frac{F}{k_1}` + TEXA`x_1 = ${M.n(d.x1, 'm')}` + TEX`x_2 = \frac{F}{k_2}` + TEXA`x_2 = ${M.n(d.x2, 'm')}` +
+      '<h4>3 · The stretches add</h4>' + TEX`x = x_1 + x_2` + TEXA`x = ${M.n(d.x, 'm')}` +
+      '<h4>4 · Effective spring constant (softer than either)</h4>' + TEX`\frac{1}{k_{\text{eff}}} = \frac{1}{k_1} + \frac{1}{k_2}` + TEX`\frac{1}{k_{\text{eff}}} = \frac{1}{${M.iv('k1')}} + \frac{1}{${M.iv('k2')}}` + TEXA`k_{\text{eff}} = ${M.n(d.keff, 'N/m')}` +
+      '<p class="st">Check: F/k<sub>eff</sub> gives the same stretch.</p>' + TEX`\frac{F}{k_{\text{eff}}} = ${M.n(d.F / d.keff, 'm')}` +
+      '<p class="note">Two equal springs in series act like one spring with half the k.</p>';
+    else h += '<h4>2 · In parallel, both springs stretch the same amount</h4>' + TEX`x_1 = x_2 = x` +
+      '<h4>3 · The forces add up to the weight</h4>' + TEX`k_1 x + k_2 x = mg` + TEX`x = \frac{mg}{k_1 + k_2}` + TEX`x = \frac{${M.n(d.F)}}{${M.iv('k1')} + ${M.iv('k2')}}` + TEXA`x = ${M.n(d.x, 'm')}` +
+      TEX`F_1 = k_1 x` + TEXA`F_1 = ${M.n(d.F1, 'N')}` + TEX`F_2 = k_2 x` + TEXA`F_2 = ${M.n(d.F2, 'N')}` + '<p class="st">The stiffer spring carries more.</p>' +
+      '<h4>4 · Effective spring constant (stiffer than either)</h4>' + TEX`k_{\text{eff}} = k_1 + k_2` + TEXA`k_{\text{eff}} = ${M.n(d.keff, 'N/m')}`;
+    h += '<h4>5 · Energy stored</h4>' + TEX`U_s = \frac{1}{2} k_{\text{eff}} x^2` + TEXA`U_s = ${M.n(d.U, 'J')}` +
+      '<p class="st">Spring 1: ' + H.n(d.U1, 'J') + ', spring 2: ' + H.n(d.U2, 'J') + '.</p>';
     return h;
   },
   draw(v, d, mode){

@@ -21,16 +21,20 @@ const SIM = {
     if (mode === 'drop') l.unshift({ id: 'vy', name: 'Speed at point B', short: 'v_B', sym: 'v<sub>B</sub>', unit: 'm/s', f: d => d.past ? NaN : d.vy });
     return l; },
   work(v, d, mode){
-    let h = '<h4>1 · Equilibrium (forces balance)</h4><div class="eq">kx<sub>eq</sub> = mg → x<sub>eq</sub> = mg/k = (' + H.iv('m') + ')(' + H.g() + ') / ' + H.iv('k') + ' = <b>' + H.n(d.xeq, 'm') + '</b></div>';
+    let h = '<h4>1 · Equilibrium (forces balance)</h4>' + TEX`k x_{\text{eq}} = mg` + TEX`x_{\text{eq}} = \frac{mg}{k}` + TEX`x_{\text{eq}} = \frac{(${M.iv('m')})(10\,\text{m/s}^2)}{${M.iv('k')}}` + TEXA`x_{\text{eq}} = ${M.n(d.xeq, 'm')}`;
     if (mode === 'gentle') return h + '<p class="note">Lowered by hand, the mass just settles here. Your hand takes away energy (it does negative work), so there’s no bouncing.</p>' +
-      '<h4>2 · Compare with dropping it</h4><div class="eq">Dropped from the unstretched length, it goes down to x<sub>max</sub> = 2mg/k = ' + H.n(d.xmax, 'm') + ' — twice as far. Switch to “Dropped” to see why.</div>';
-    h += '<h4>2 · Energy from release (at rest) to point B, stretch y</h4><div class="eq">Gravity energy given up: mgy = (' + H.iv('m') + ')(' + H.g() + ')(' + H.iv('y') + ') = ' + H.n(d.dUg, 'J') + '</div>' +
-      '<div class="eq">Stored in the spring: ½ky² = ½(' + H.iv('k') + ')(' + H.iv('y') + ')² = ' + H.n(d.Us, 'J') + '</div>' +
+      '<h4>2 · Compare with dropping it</h4><p class="st">Dropped from the unstretched length, it goes down twice as far. Switch to “Dropped” to see why.</p>' +
+      TEX`x_{\text{max}} = \frac{2mg}{k}` + TEXA`x_{\text{max}} = ${M.n(d.xmax, 'm')}`;
+    h += '<h4>2 · Energy from release (at rest) to point B, stretch y</h4><p class="st">Gravity energy given up:</p>' +
+      TEX`\Delta U_g = mgy` + TEX`\Delta U_g = (${M.iv('m')})(10\,\text{m/s}^2)(${M.iv('y')})` + TEX`\Delta U_g = ${M.n(d.dUg, 'J')}` +
+      '<p class="st">Stored in the spring:</p>' +
+      TEX`U_s = \frac{1}{2} k y^2` + TEX`U_s = \frac{1}{2}(${M.iv('k')})(${M.iv('y')})^2` + TEX`U_s = ${M.n(d.Us, 'J')}` +
       (d.past ? '<div class="bad">B is below the lowest point: the mass never gets there (K would be negative).</div>'
-              : '<div class="eq">K = mgy − ½ky² = <b>' + H.n(d.K, 'J') + '</b> → v<sub>B</sub> = √(2K/m) = <b>' + H.n(d.vy, 'm/s') + '</b></div>') +
-      '<h4>3 · Lowest point (K = 0 again)</h4><div class="eq">mgx<sub>max</sub> = ½kx<sub>max</sub>² → x<sub>max</sub> = 2mg/k = <b>' + H.n(d.xmax, 'm') + '</b> = 2x<sub>eq</sub></div>' +
+              : '<p class="st">What is left over is kinetic energy:</p>' + TEX`K = mgy - \frac{1}{2} k y^2` + TEXA`K = ${M.n(d.K, 'J')}` +
+                TEX`v_B = \sqrt{\frac{2K}{m}}` + TEXA`v_B = ${M.n(d.vy, 'm/s')}`) +
+      '<h4>3 · Lowest point (K = 0 again)</h4>' + TEX`m g x_{\text{max}} = \frac{1}{2} k x_{\text{max}}^2` + TEX`x_{\text{max}} = \frac{2mg}{k}` + TEXA`x_{\text{max}} = ${M.n(d.xmax, 'm')}` + '<p class="st">That is twice the equilibrium stretch: x<sub>max</sub> = 2x<sub>eq</sub>.</p>' +
       '<p class="note">Not the same as equilibrium! At x<sub>max</sub> the spring pulls up with 2mg, so the mass bounces back up.</p>' +
-      '<h4>4 · Fastest point is at equilibrium</h4><div class="eq">v<sub>max</sub> at y = x<sub>eq</sub>: ½mv² = mgx<sub>eq</sub> − ½kx<sub>eq</sub>² → v<sub>max</sub> = <b>' + H.n(d.vmax, 'm/s') + '</b></div>';
+      '<h4>4 · Fastest point is at equilibrium</h4><p class="st">At y = x<sub>eq</sub>:</p>' + TEX`\frac{1}{2} m v^2 = m g x_{\text{eq}} - \frac{1}{2} k x_{\text{eq}}^2` + TEXA`v_{\text{max}} = ${M.n(d.vmax, 'm/s')}`;
     return h;
   },
   draw(v, d, mode, opt, t, dt, A){

@@ -27,16 +27,18 @@ const SIM = {
     { id: 'lost', name: 'Fraction of KE lost', short: 'KE lost', sym: 'KE lost', unit: '', f: d => d.lost }]; },
   work(v, d, mode){
     let h = '<h4>Stage 1 · The collision (fast): momentum is conserved</h4>';
-    if (mode === 'stick') h += '<div class="eq">mv = (m + M)V → V = mv/(m + M) = (' + H.n(d.m, 'kg') + ')(' + H.iv('v') + ') / (' + H.n(d.m) + ' + ' + H.iv('M') + ') = <b>' + H.n(d.V, 'm/s') + '</b></div>';
-    else if (mode === 'through') h += '<div class="eq">mv = mv<sub>out</sub> + MV → V = m(v − v<sub>out</sub>)/M = (' + H.n(d.m, 'kg') + ')(' + H.iv('v') + ' − ' + H.iv('vo') + ') / ' + H.iv('M') + ' = <b>' + H.n(d.V, 'm/s') + '</b></div>' +
+    if (mode === 'stick') h += TEX`mv = (m + M)\,V` + TEX`V = \frac{mv}{m + M}` + TEX`V = \frac{(${M.n(d.m, 'kg')})(${M.iv('v')})}{${M.n(d.m)} + ${M.iv('M')}}` + TEXA`V = ${M.n(d.V, 'm/s')}`;
+    else if (mode === 'through') h += TEX`mv = mv_{\text{out}} + MV` + TEX`V = \frac{m\,(v - v_{\text{out}})}{M}` + TEX`V = \frac{(${M.n(d.m, 'kg')})(${M.iv('v')} - ${M.iv('vo')})}{${M.iv('M')}}` + TEXA`V = ${M.n(d.V, 'm/s')}` +
       (d.bad ? '<div class="bad">The bullet can’t come out faster than it went in.</div>' : '');
-    else h += '<div class="eq">mv = m(−v<sub>back</sub>) + MV → V = m(v + v<sub>back</sub>)/M = (' + H.n(d.m, 'kg') + ')(' + H.iv('v') + ' + ' + H.iv('vo') + ') / ' + H.iv('M') + ' = <b>' + H.n(d.V, 'm/s') + '</b></div>' +
+    else h += TEX`mv = m(-v_{\text{back}}) + MV` + TEX`V = \frac{m\,(v + v_{\text{back}})}{M}` + TEX`V = \frac{(${M.n(d.m, 'kg')})(${M.iv('v')} + ${M.iv('vo')})}{${M.iv('M')}}` + TEXA`V = ${M.n(d.V, 'm/s')}` +
       '<p class="note">Bouncing back gives the block a bigger push than sticking: the bullet’s Δp is bigger.</p>';
     h += '<p class="note">Energy is <b>not</b> conserved in this stage: ' + H.n(100 * d.lost) + '% of the bullet’s kinetic energy turns into heat and deformation.</p>' +
-      '<h4>Stage 2 · The swing (slow): mechanical energy is conserved</h4><div class="eq">½' + (mode === 'stick' ? '(m + M)' : 'M') + 'V² = ' + (mode === 'stick' ? '(m + M)' : 'M') + 'gh → h = V²/(2g) = (' + H.n(d.V) + ')² / (2 × ' + H.g() + ') = <b>' + H.n(d.h, 'm') + '</b></div>' +
+      '<h4>Stage 2 · The swing (slow): mechanical energy is conserved</h4>' + (mode === 'stick' ? TEX`\tfrac{1}{2}(m + M)\,V^2 = (m + M)\,g\,h` : TEX`\tfrac{1}{2}MV^2 = Mgh`) +
+      TEX`h = \frac{V^2}{2g}` + TEX`h = \frac{(${M.n(d.V)})^2}{2\,(${M.n(10, 'm/s²')})}` + TEXA`h = ${M.n(d.h, 'm')}` +
       '<p class="note">Momentum is not conserved here: the string and gravity are outside forces.</p>' +
-      '<h4>Swing angle</h4><div class="eq">h = L(1 − cosθ) → θ = cos<sup>−1</sup>(1 − h/L) = cos<sup>−1</sup>(1 − ' + H.n(d.h) + '/' + H.iv('L') + ') = <b>' + (d.over ? 'past horizontal' : H.n(d.th, '°')) + '</b></div>' +
-      (mode === 'stick' ? '<h4>Working backward (the real lab)</h4><div class="eq">Measure h → V = √(2gh) → v = (m + M)V/m. That’s how this device measures bullet speeds.</div>' : '');
+      '<h4>Swing angle</h4>' + TEX`h = L\,(1 - \cos\theta)` + TEX`\theta = \cos^{-1}\left(1 - \frac{h}{L}\right)` + TEX`\theta = \cos^{-1}\left(1 - \frac{${M.n(d.h)}}{${M.iv('L')}}\right)` +
+      (d.over ? '<p class="st"><b>Past horizontal</b></p>' : TEXA`\theta = ${M.n(d.th, '°')}`) +
+      (mode === 'stick' ? '<h4>Working backward (the real lab)</h4><p class="st">Measure h, then find the block’s speed, then the bullet’s speed. That’s how this device measures bullet speeds.</p>' + TEX`V = \sqrt{2gh}` + TEX`v = \frac{(m + M)\,V}{m}` : '');
     return h;
   },
   draw(v, d, mode, opt, t, dt, A){

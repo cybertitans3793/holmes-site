@@ -49,25 +49,45 @@ const SIM = {
       { id: 'aNeed', name: 'Braking rate needed to just avoid', short: 'a_need', sym: 'a<sub>need</sub>', unit: 'm/s²', f: d => d.aNeed }];
   },
   work(v, d, mode){
-    if (mode === 'police') return '<h4>1 · Position of each (start at the speeder passing the police car)</h4><div class="eq">Speeder (constant v): x<sub>S</sub> = ' + H.iv('vS') + '·t</div>' +
-      '<div class="eq">Police (from rest, a constant' + (v.td > 0 ? ', starting at t<sub>d</sub>' : '') + '): x<sub>P</sub> = ½(' + H.iv('a') + ')' + (v.td > 0 ? '(t − ' + H.iv('td') + ')²' : 't²') + '</div>' +
-      '<h4>2 · Catch up when x<sub>P</sub> = x<sub>S</sub></h4>' +
-      (v.td > 0 ? '<div class="eq">Let τ = t − t<sub>d</sub>: ½aτ² = v<sub>S</sub>(τ + t<sub>d</sub>) → ½aτ² − v<sub>S</sub>τ − v<sub>S</sub>t<sub>d</sub> = 0</div><div class="eq">Quadratic formula: τ = [v<sub>S</sub> + √(v<sub>S</sub>² + 2av<sub>S</sub>t<sub>d</sub>)]/a = ' + H.n(d.tau, 's') + ' → t = <b>' + H.n(d.t, 's') + '</b></div>'
-        : '<div class="eq">½at² = v<sub>S</sub>t → t(½at − v<sub>S</sub>) = 0 → t = 0 (where they start) or t = 2v<sub>S</sub>/a = 2(' + H.iv('vS') + ')/' + H.iv('a') + ' = <b>' + H.n(d.t, 's') + '</b></div>') +
-      '<h4>3 · Where, and how fast</h4><div class="eq">x = v<sub>S</sub>t = <b>' + H.n(d.x, 'm') + '</b> &nbsp; v<sub>police</sub> = aτ = <b>' + H.n(d.vPol, 'm/s') + '</b> (' + H.n(d.ratio) + '× the speeder)</div>' +
-      (v.td === 0 ? '<p class="note">With no wait the police are always going exactly 2× the speeder’s speed when they catch up. Why? Equal distances in equal times → equal average velocities: (0 + v<sub>P</sub>)/2 = v<sub>S</sub>.</p>' : '') +
-      '<p class="note">On the v–t graph the areas under the two lines are equal at the catch-up time. The police are going the same speed as the speeder at t = ' + H.n(v.td + v.vS / v.a, 's') + ': that’s when the gap is biggest, not when they meet.</p>';
-    if (mode === 'head') return '<h4>1 · Position of each (→ positive, A starts at x = 0)</h4><div class="eq">A (constant v): x<sub>A</sub> = ' + H.iv('vA') + '·t</div><div class="eq">B (from rest at d, accelerating ←): x<sub>B</sub> = ' + H.iv('d') + ' − ½(' + H.iv('a') + ')t²</div>' +
-      '<h4>2 · Meet when x<sub>A</sub> = x<sub>B</sub></h4><div class="eq">v<sub>A</sub>t = d − ½at² → ½at² + v<sub>A</sub>t − d = 0</div>' +
-      '<div class="eq">t = [−v<sub>A</sub> + √(v<sub>A</sub>² + 2ad)]/a = <b>' + H.n(d.t, 's') + '</b> (take the + root: time can’t be negative)</div>' +
-      '<h4>3 · Where</h4><div class="eq">x = v<sub>A</sub>t = <b>' + H.n(d.x, 'm') + '</b> from A’s start. B is going ' + H.n(d.vBm, 'm/s') + ' ← by then.</div>' +
+    const I = id => (v[id] < 0 ? '<mrow><mo>(</mo>' + M.iv(id, 1) + '<mo>)</mo></mrow>' : M.iv(id, 1));
+    if (mode === 'police'){
+      const td = v.td > 0;
+      return '<h4>1 · Position of each (start at the speeder passing the police car)</h4><p class="st">Speeder (constant speed):</p>' + TEX`x_S = v_S\,t` + TEX`x_S = ${I('vS')}\,t` +
+        '<p class="st">Police (from rest, constant acceleration' + (td ? ', starting at t<sub>d</sub>' : '') + '):</p>' +
+        (td ? TEX`x_P = \frac{1}{2}\,a\,(t - t_d)^2` + TEX`x_P = \frac{1}{2}(${I('a')})(t - ${I('td')})^2` : TEX`x_P = \frac{1}{2}\,a\,t^2` + TEX`x_P = \frac{1}{2}(${I('a')})\,t^2`) +
+        '<h4>2 · Catch up when x<sub>P</sub> = x<sub>S</sub></h4>' +
+        (td ? '<p class="st">Let τ = t − t<sub>d</sub>, the time the police have been moving:</p>' + TEX`\frac{1}{2}\,a\,\tau^2 = v_S(\tau + t_d)` + TEX`\frac{1}{2}\,a\,\tau^2 - v_S\,\tau - v_S\,t_d = 0` +
+          '<p class="st">Quadratic formula:</p>' + TEX`\tau = \frac{v_S + \sqrt{v_S^2 + 2\,a\,v_S\,t_d}}{a}` +
+          TEX`\tau = \frac{${I('vS')} + \sqrt{(${I('vS')})^2 + 2(${I('a')})(${I('vS')})(${I('td')})}}{${I('a')}}` + TEX`\tau = ${M.n(d.tau, 's')}` +
+          '<p class="st">Then t = t<sub>d</sub> + τ:</p>' + TEX`t = t_d + \tau = ${I('td')} + ${M.n(d.tau)}` + TEXA`t = ${M.n(d.t, 's')}`
+          : TEX`\frac{1}{2}\,a\,t^2 = v_S\,t` + '<p class="st">t = 0 is where they start. Divide by t for the catch-up:</p>' + TEX`t = \frac{2\,v_S}{a}` + TEX`t = \frac{2(${I('vS')})}{${I('a')}}` + TEXA`t = ${M.n(d.t, 's')}`) +
+        '<h4>3 · Where, and how fast</h4>' + TEX`x = v_S\,t` + TEX`x = (${I('vS')})(${M.n(d.t)})` + TEXA`x = ${M.n(d.x, 'm')}` +
+        TEX`v_{\text{police}} = a\,\tau` + TEX`v_{\text{police}} = (${I('a')})(${M.n(d.tau)})` + TEXA`v_{\text{police}} = ${M.n(d.vPol, 'm/s')}` +
+        '<p class="st">That is ' + H.n(d.ratio) + '× the speeder’s speed.</p>' +
+        (v.td === 0 ? '<p class="note">With no wait the police are always going exactly 2× the speeder’s speed when they catch up. Why? Equal distances in equal times → equal average velocities: (0 + v<sub>P</sub>)/2 = v<sub>S</sub>.</p>' : '') +
+        '<p class="note">On the v–t graph the areas under the two lines are equal at the catch-up time. The police are going the same speed as the speeder at t = ' + H.n(v.td + v.vS / v.a, 's') + ': that’s when the gap is biggest, not when they meet.</p>';
+    }
+    if (mode === 'head') return '<h4>1 · Position of each (→ positive, A starts at x = 0)</h4><p class="st">A (constant speed):</p>' + TEX`x_A = v_A\,t` + TEX`x_A = ${I('vA')}\,t` +
+      '<p class="st">B (from rest at d, accelerating ←):</p>' + TEX`x_B = d - \frac{1}{2}\,a\,t^2` + TEX`x_B = ${I('d')} - \frac{1}{2}(${I('a')})\,t^2` +
+      '<h4>2 · Meet when x<sub>A</sub> = x<sub>B</sub></h4>' + TEX`v_A\,t = d - \frac{1}{2}\,a\,t^2` + TEX`\frac{1}{2}\,a\,t^2 + v_A\,t - d = 0` +
+      '<p class="st">Quadratic formula (take the + root: time can’t be negative):</p>' + TEX`t = \frac{-v_A + \sqrt{v_A^2 + 2\,a\,d}}{a}` +
+      TEX`t = \frac{-${I('vA')} + \sqrt{(${I('vA')})^2 + 2(${I('a')})(${I('d')})}}{${I('a')}}` + TEXA`t = ${M.n(d.t, 's')}` +
+      '<h4>3 · Where</h4>' + TEX`x = v_A\,t` + TEX`x = (${I('vA')})(${M.n(d.t)})` + TEXA`x = ${M.n(d.x, 'm')}` +
+      '<p class="st">That is measured from A’s start. B is going ' + H.n(d.vBm, 'm/s') + ' ← by then.</p>' +
       '<p class="note">B’s x–t curve bends more and more steeply: its velocity keeps growing. A’s is a straight line.</p>';
-    let h = '<h4>1 · Watch it from the truck (relative motion)</h4><div class="eq">A closes in at v<sub>A</sub> − v<sub>B</sub> = ' + H.iv('vA') + ' − ' + H.iv('vB') + ' = ' + H.n(d.dv, 'm/s') + ' and that closing speed shrinks at ' + H.iv('a') + '</div>' +
-      '<h4>2 · The danger ends when A has slowed to the truck’s speed</h4><div class="eq">Extra distance A covers until then: (Δv)²/(2a) = (' + H.n(d.dv) + ')²/(2 × ' + H.iv('a') + ') = <b>' + H.n(d.stopRel, 'm') + '</b></div>' +
+    let h = '<h4>1 · Watch it from the truck (relative motion)</h4><p class="st">A closes in at the difference of the speeds:</p>' + TEX`\Delta v = v_A - v_B` + TEX`\Delta v = ${I('vA')} - ${I('vB')}` + TEXA`\Delta v = ${M.n(d.dv, 'm/s')}` +
+      '<p class="st">and that closing speed shrinks at a = ' + H.iv('a') + '.</p>' +
+      '<h4>2 · The danger ends when A has slowed to the truck’s speed</h4><p class="st">Extra distance A covers until then:</p>' + TEX`\Delta x_{\text{rel}} = \frac{(\Delta v)^2}{2\,a}` +
+      TEX`\Delta x_{\text{rel}} = \frac{(${M.n(d.dv)})^2}{2(${I('a')})}` + TEXA`\Delta x_{\text{rel}} = ${M.n(d.stopRel, 'm')}` +
       '<h4>3 · Compare with the gap</h4>';
-    h += d.hit ? '<div class="bad">' + H.n(d.stopRel, 'm') + ' > ' + H.iv('d') + ' → <b>crash</b>.</div><div class="eq">When: d = Δv·t − ½at² → t = [Δv − √(Δv² − 2ad)]/a = <b>' + H.n(d.t, 's') + '</b>, hitting at ' + H.n(d.vHit, 'm/s') + ' relative to the truck</div>'
-      : '<div class="eq">' + H.n(d.stopRel, 'm') + ' ≤ ' + H.iv('d') + ' → <b>no crash</b>. Closest gap: ' + H.n(d.minGap, 'm') + ' at t = ' + H.n(d.t, 's') + '.</div>';
-    h += '<h4>4 · Braking needed to just avoid it</h4><div class="eq">a = (Δv)²/(2d) = <b>' + H.n(d.aNeed, 'm/s²') + '</b>. By F = ma, that’s a braking force of ' + H.n(d.aNeed, 'm/s²') + ' × m.</div>' +
+    if (d.hit) h += TEX`\Delta x_{\text{rel}} > d \quad\Rightarrow\quad ${M.n(d.stopRel)} > ${I('d')}` + '<div class="bad"><b>Crash.</b></div>' +
+      '<p class="st">When: d = Δv·t − ½at², so</p>' + TEX`t = \frac{\Delta v - \sqrt{\Delta v^2 - 2\,a\,d}}{a}` +
+      TEX`t = \frac{${M.n(d.dv)} - \sqrt{(${M.n(d.dv)})^2 - 2(${I('a')})(${I('d')})}}{${I('a')}}` + TEXA`t = ${M.n(d.t, 's')}` +
+      '<p class="st">It hits at ' + H.n(d.vHit, 'm/s') + ' relative to the truck.</p>';
+    else h += TEX`\Delta x_{\text{rel}} \le d \quad\Rightarrow\quad ${M.n(d.stopRel)} \le ${I('d')}` + '<p class="st"><b>No crash.</b> The closest gap is</p>' +
+      TEX`\text{gap}_{\min} = d - \Delta x_{\text{rel}} = ${I('d')} - ${M.n(d.stopRel)}` + TEXA`\text{gap}_{\min} = ${M.n(d.minGap, 'm')}` + '<p class="st">at t = ' + H.n(d.t, 's') + '.</p>';
+    h += '<h4>4 · Braking needed to just avoid it</h4>' + TEX`a = \frac{(\Delta v)^2}{2\,d}` + TEX`a = \frac{(${M.n(d.dv)})^2}{2(${I('d')})}` + TEXA`a = ${M.n(d.aNeed, 'm/s²')}` +
+      '<p class="st">By F = ma, that’s a braking force of ' + H.n(d.aNeed, 'm/s²') + ' × m.</p>' +
       '<p class="note">Common mistake: using A’s full stopping distance v<sub>A</sub>²/2a. The truck is moving too, so only the relative speed matters (unless the truck is stopped).</p>';
     return h;
   },

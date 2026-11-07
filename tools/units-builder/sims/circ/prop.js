@@ -18,21 +18,33 @@ const SIM = {
   },
   dvs(){ return [{ id: 'dR', name: 'Absolute uncertainty of the result', short: 'ΔR', sym: 'ΔR', unit: '', f: d => d.dR }, { id: 'pct', name: 'Percentage uncertainty of the result', short: '%', sym: '%ΔR', unit: '%', f: d => d.pct }]; },
   work(v, d, mode, opt){
-    const f = x => fnum(x);
-    if (mode === 'add') return '<h4>1 · Adding or subtracting: add the <b>absolute</b> uncertainties</h4><div class="eq">R = A ' + d.sym + ' B = ' + H.iv('A') + ' ' + d.sym + ' ' + H.iv('B') + ' = ' + H.n(d.R) + '</div>' +
-      '<div class="eq">ΔR = ΔA + ΔB = ' + H.iv('dA') + ' + ' + H.iv('dB') + ' = <b>' + H.n(d.dR) + '</b> → R = ' + f(d.R) + ' ± ' + f(d.dR) + ' (' + H.n(d.pct, '%') + ')</div>' +
+    const op = '<mo>' + d.sym + '</mo>';
+    if (mode === 'add') return '<h4>1 · Adding or subtracting: add the <b>absolute</b> uncertainties</h4>' +
+      TEX`R = A ${op} B` + TEX`R = ${M.iv('A')} ${op} ${M.iv('B')}` + TEXA`R = ${M.n(d.R)}` +
+      TEX`\Delta R = \Delta A + \Delta B` + TEX`\Delta R = ${M.iv('dA')} + ${M.iv('dB')}` + TEXA`\Delta R = ${M.n(d.dR)}` +
+      TEXA`R = ${M.num(d.R)} \pm ${M.num(d.dR)}` +
+      TEX`\%\Delta R = \frac{\Delta R}{|R|}\times 100` + TEX`\%\Delta R = \frac{${M.num(d.dR)}}{${M.num(Math.abs(d.R))}}\times 100` + TEXA`\%\Delta R = ${M.n(d.pct, '%')}` +
       '<p class="note">Always add, even when subtracting: the worst case is one value too high and the other too low.</p>' +
       (d.sym === '−' ? '<p class="note">Subtracting two nearly equal values gives a small result with the same absolute uncertainty: a huge percentage uncertainty. Try the preset.</p>' : '');
-    if (mode === 'mult') return '<h4>1 · Multiplying or dividing: add the <b>fractional</b> (or percentage) uncertainties</h4><div class="eq">ΔA/A = ' + H.n(d.fA * 100, '%') + ', ΔB/B = ' + H.n(d.fB * 100, '%') + '</div>' +
-      '<div class="eq">R = A ' + d.sym + ' B = ' + H.n(d.R) + ', ΔR/R = ' + H.n(d.fA * 100, '%') + ' + ' + H.n(d.fB * 100, '%') + ' = <b>' + H.n(d.pct, '%') + '</b></div>' +
-      '<div class="eq">ΔR = ' + H.n(d.pct / 100) + ' × ' + H.n(d.R) + ' = <b>' + H.n(d.dR) + '</b> → R = ' + f(d.R) + ' ± ' + f(d.dR) + '</div>' +
+    if (mode === 'mult') return '<h4>1 · Multiplying or dividing: add the <b>fractional</b> (or percentage) uncertainties</h4>' +
+      TEX`\frac{\Delta A}{A} = \frac{${M.iv('dA')}}{${M.iv('A')}}` + TEX`\frac{\Delta A}{A} = ${M.n(d.fA * 100, '%')}` +
+      TEX`\frac{\Delta B}{B} = \frac{${M.iv('dB')}}{${M.iv('B')}}` + TEX`\frac{\Delta B}{B} = ${M.n(d.fB * 100, '%')}` +
+      TEX`R = A ${op} B` + TEX`R = ${M.iv('A')} ${op} ${M.iv('B')}` + TEX`R = ${M.n(d.R)}` +
+      TEX`\frac{\Delta R}{R} = \frac{\Delta A}{A} + \frac{\Delta B}{B}` + TEX`\frac{\Delta R}{R} = ${M.n(d.fA * 100, '%')} + ${M.n(d.fB * 100, '%')}` + TEXA`\frac{\Delta R}{R} = ${M.n(d.pct, '%')}` +
+      TEX`\Delta R = \frac{\Delta R}{R}\times R` + TEX`\Delta R = ${M.n(d.pct / 100)} \times ${M.n(d.R)}` + TEXA`\Delta R = ${M.n(d.dR)}` +
+      TEXA`R = ${M.num(d.R)} \pm ${M.num(d.dR)}` +
       '<p class="note">Dividing also adds the percentages, never subtracts them.</p>';
-    if (mode === 'power') return '<h4>1 · Powers: multiply the fractional uncertainty by |n|</h4><div class="eq">R = A<sup>n</sup> = ' + H.iv('A') + '<sup>' + f(v.n) + '</sup> = ' + H.n(d.R) + '</div>' +
-      '<div class="eq">ΔR/R = |n|·ΔA/A = ' + f(Math.abs(v.n)) + ' × ' + H.n(d.fA * 100, '%') + ' = <b>' + H.n(d.pct, '%') + '</b> → ΔR = ' + H.n(d.dR) + '</div>' +
+    if (mode === 'power') return '<h4>1 · Powers: multiply the fractional uncertainty by |n|</h4>' +
+      TEX`R = A^{n}` + TEX`R = \left(${M.iv('A')}\right)^{${M.num(v.n)}}` + TEX`R = ${M.n(d.R)}` +
+      TEX`\frac{\Delta R}{R} = |n|\,\frac{\Delta A}{A}` + TEX`\frac{\Delta R}{R} = ${M.num(Math.abs(v.n))} \times ${M.n(d.fA * 100, '%')}` + TEXA`\frac{\Delta R}{R} = ${M.n(d.pct, '%')}` +
+      TEX`\Delta R = \frac{\Delta R}{R}\times |R|` + TEX`\Delta R = ${M.n(d.pct / 100)} \times ${M.num(Math.abs(d.R))}` + TEXA`\Delta R = ${M.n(d.dR)}` +
       '<p class="note">Square roots halve the percentage uncertainty (n = ½); squaring doubles it. For example, if T has a 2% uncertainty, T² has 4%.</p>';
-    return '<h4>1 · Density of a cube: ρ = m/L³</h4><div class="eq">V = L³ = (' + H.iv('L') + ')³ = ' + H.n(d.V, 'cm³') + ' → ρ = ' + H.iv('m') + ' / ' + H.n(d.V) + ' = <b>' + H.n(d.R, 'g/cm³') + '</b></div>' +
-      '<h4>2 · Percentages: mass once, length three times (it’s cubed)</h4><div class="eq">Δρ/ρ = Δm/m + 3ΔL/L = ' + H.n(d.partM, '%') + ' + 3(' + H.n(d.fL * 100, '%') + ') = <b>' + H.n(d.pct, '%') + '</b></div>' +
-      '<div class="eq">ρ = (' + f(d.R) + ' ± ' + f(d.dR) + ') g/cm³</div>' +
+    return '<h4>1 · Density of a cube: ρ = m/L³</h4>' +
+      TEX`V = L^3` + TEX`V = \left(${M.iv('L')}\right)^3` + TEX`V = ${M.n(d.V, 'cm³')}` +
+      TEX`\rho = \frac{m}{V}` + TEX`\rho = \frac{${M.iv('m')}}{${M.n(d.V, 'cm³')}}` + TEXA`\rho = ${M.n(d.R, 'g/cm³')}` +
+      '<h4>2 · Percentages: mass once, length three times (it’s cubed)</h4>' +
+      TEX`\frac{\Delta\rho}{\rho} = \frac{\Delta m}{m} + 3\,\frac{\Delta L}{L}` + TEX`\frac{\Delta\rho}{\rho} = ${M.n(d.partM, '%')} + 3\left(${M.n(d.fL * 100, '%')}\right)` + TEXA`\frac{\Delta\rho}{\rho} = ${M.n(d.pct, '%')}` +
+      TEXA`\rho = \left(${M.num(d.R)} \pm ${M.num(d.dR)}\right)\,\text{g/cm}^3` +
       '<p class="note">Which measurement should you improve? The bar chart shows where the uncertainty comes from: here the cubed length dominates (' + H.n(d.partL, '%') + ' vs ' + H.n(d.partM, '%') + ').</p>';
   },
   draw(v, d, mode){

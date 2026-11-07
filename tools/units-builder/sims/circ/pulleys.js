@@ -29,24 +29,28 @@ const SIM = {
       { id: 'T', name: 'Tension', short: 'T', sym: 'T', unit: 'N', f: d => d.T }];
   },
   work(v, d, mode){
-    if (mode === 'atwood') return '<h4>1 · Whole system (both masses + string)</h4><div class="eq">The tensions are internal and cancel. Net force = m<sub>1</sub>g − m<sub>2</sub>g, mass = m<sub>1</sub> + m<sub>2</sub></div>' +
-      '<div class="eq">a = (m<sub>1</sub> − m<sub>2</sub>)g / (m<sub>1</sub> + m<sub>2</sub>) = (' + H.iv('m1') + ' − ' + H.iv('m2') + ')(' + H.g() + ') / ' + H.n(d.M, 'kg') + ' = <b>' + H.n(d.a, 'm/s²') + '</b></div>' +
+    const I = id => M.iv(id, 1), CK = '<mtext>✓</mtext>';
+    if (mode === 'atwood') return '<h4>1 · Whole system (both masses + string)</h4><p class="st">The tensions are internal and cancel. Net force = m<sub>1</sub>g − m<sub>2</sub>g, mass = m<sub>1</sub> + m<sub>2</sub>.</p>' +
+      TEX`a = \frac{(m_1 - m_2)\,g}{m_1 + m_2}` + TEX`a = \frac{(${I('m1')} - ${I('m2')})(10)}{${M.n(d.M)}}` + TEXA`a = ${M.n(d.a, 'm/s²')}` +
       '<p class="note">Positive: the left mass goes down. The acceleration is always less than g.</p>' +
-      '<h4>2 · One mass at a time (to find T)</h4><div class="eq">Left (down = +): m<sub>1</sub>g − T = m<sub>1</sub>a → T = m<sub>1</sub>(g − a) = (' + H.iv('m1') + ')(' + H.n(G10 - d.a) + ') = <b>' + H.n(d.T, 'N') + '</b></div>' +
-      '<div class="eq">Right (up = +): T − m<sub>2</sub>g = m<sub>2</sub>a → T = ' + H.n(v.m2 * (G10 + d.a), 'N') + ' ✓</div>' +
-      '<h4>3 · Newton’s third law</h4><div class="eq">The string pulls up on each mass with T = ' + H.n(d.T, 'N') + '; each mass pulls down on the string with the same T. T is between the two weights (' + H.n(d.W2, 'N') + ' and ' + H.n(d.W1, 'N') + ').</div>';
-    if (mode === 'table') return '<h4>1 · Forces along the motion</h4><div class="eq">Hanging weight m<sub>2</sub>g = (' + H.iv('m2') + ')(' + H.g() + ') = ' + H.n(d.W2, 'N') + ' pulls the system; friction μ<sub>k</sub>m<sub>1</sub>g = (' + H.iv('mu') + ')(' + H.iv('m1') + ')(' + H.g() + ') = ' + H.n(d.f, 'N') + ' resists</div>' +
-      (d.moves ? '<h4>2 · Whole system</h4><div class="eq">a = (m<sub>2</sub>g − μ<sub>k</sub>m<sub>1</sub>g)/(m<sub>1</sub> + m<sub>2</sub>) = (' + H.n(d.W2) + ' − ' + H.n(d.f) + ') / ' + H.n(d.M, 'kg') + ' = <b>' + H.n(d.a, 'm/s²') + '</b></div>' +
-        '<h4>3 · Block on the table alone</h4><div class="eq">T − μ<sub>k</sub>m<sub>1</sub>g = m<sub>1</sub>a → T = m<sub>1</sub>a + f = (' + H.iv('m1') + ')(' + H.n(d.a) + ') + ' + H.n(d.f) + ' = <b>' + H.n(d.T, 'N') + '</b></div>' +
-        '<h4>4 · Hanging mass alone (check)</h4><div class="eq">m<sub>2</sub>g − T = m<sub>2</sub>a → T = ' + H.n(v.m2 * (G10 - d.a), 'N') + ' ✓ (less than its weight, because it accelerates down)</div>'
-        : '<div class="bad">The hanging weight is not more than the friction, so (treating μ as static too) nothing moves. T = m<sub>2</sub>g = ' + H.n(d.T, 'N') + '.</div>');
-    return '<h4>1 · Free-body diagram of the moving part (load' + (d.n > 1 ? ' + lower pulleys' : '') + ')</h4><div class="eq">Cut every rope that touches it. ' + (d.n === 1 ? 'One rope segment pulls up' : H.iv('n') + ' rope segments pull up') + ', each with tension T. Its weight W pulls down.</div>' +
-      '<div class="eq">W = mg = (' + H.iv('m') + ')(' + H.g() + ') = ' + H.n(d.W, 'N') + '</div>' +
+      '<h4>2 · One mass at a time (to find T)</h4><p class="st">Left (down = +):</p>' + TEX`m_1 g - T = m_1 a` + TEX`T = m_1 (g - a)` + TEX`T = (${I('m1')})(${M.n(G10 - d.a)})` + TEXA`T = ${M.n(d.T, 'N')}` +
+      '<p class="st">Right (up = +):</p>' + TEX`T - m_2 g = m_2 a` + TEX`T = m_2 (g + a)` + TEX`T = (${I('m2')})(${M.n(G10 + d.a)})` + TEXA`T = ${M.n(v.m2 * (G10 + d.a), 'N')}\ ${CK}` +
+      '<h4>3 · Newton’s third law</h4><p class="st">The string pulls up on each mass with T = ' + H.n(d.T, 'N') + '; each mass pulls down on the string with the same T. T is between the two weights (' + H.n(d.W2, 'N') + ' and ' + H.n(d.W1, 'N') + ').</p>';
+    if (mode === 'table') return '<h4>1 · Forces along the motion</h4><p class="st">The hanging weight pulls the system:</p>' + TEX`W_2 = m_2 g` + TEX`W_2 = (${I('m2')})(10)` + TEXA`W_2 = ${M.n(d.W2, 'N')}` +
+      '<p class="st">Friction resists:</p>' + TEX`f = \mu_k m_1 g` + TEX`f = (${I('mu')})(${I('m1')})(10)` + TEXA`f = ${M.n(d.f, 'N')}` +
+      (d.moves ? '<h4>2 · Whole system</h4>' + TEX`a = \frac{m_2 g - \mu_k m_1 g}{m_1 + m_2}` + TEX`a = \frac{${M.n(d.W2)} - ${M.n(d.f)}}{${M.n(d.M)}}` + TEXA`a = ${M.n(d.a, 'm/s²')}` +
+        '<h4>3 · Block on the table alone</h4>' + TEX`T - \mu_k m_1 g = m_1 a` + TEX`T = m_1 a + f` + TEX`T = (${I('m1')})(${M.n(d.a)}) + ${M.n(d.f)}` + TEXA`T = ${M.n(d.T, 'N')}` +
+        '<h4>4 · Hanging mass alone (check)</h4>' + TEX`m_2 g - T = m_2 a` + TEX`T = m_2 (g - a)` + TEX`T = (${I('m2')})(${M.n(G10 - d.a)})` + TEXA`T = ${M.n(v.m2 * (G10 - d.a), 'N')}\ ${CK}` +
+        '<p class="st">(Less than its weight, because it accelerates down.)</p>'
+        : '<div class="bad">The hanging weight is not more than the friction, so (treating μ as static too) nothing moves.</div>' + TEX`T = m_2 g` + TEXA`T = ${M.n(d.T, 'N')}`);
+    return '<h4>1 · Free-body diagram of the moving part (load' + (d.n > 1 ? ' + lower pulleys' : '') + ')</h4><p class="st">Cut every rope that touches it. ' + (d.n === 1 ? 'One rope segment pulls up' : H.iv('n') + ' rope segments pull up') + ', each with tension T. Its weight W pulls down.</p>' +
+      TEX`W = m g` + TEX`W = (${I('m')})(10)` + TEXA`W = ${M.n(d.W, 'N')}` +
       '<p class="note">Light pulleys: their mass is ignored.</p>' +
-      '<h4>2 · One rope, so one tension</h4><div class="eq">With light, frictionless pulleys the tension is the same all along the rope, and it equals your pull: F = T.</div>' +
-      '<h4>3 · Newton’s 2nd law (held still or lifted at constant speed, so a = 0)</h4><div class="eq">ΣF<sub>y</sub> = 0: &nbsp; nT − W = 0 → T = W/n = ' + H.n(d.W) + ' / ' + H.iv('n') + ' = <b>' + H.n(d.T, 'N') + '</b></div>' +
+      '<h4>2 · One rope, so one tension</h4><p class="st">With light, frictionless pulleys the tension is the same all along the rope, and it equals your pull: F = T.</p>' +
+      '<h4>3 · Newton’s 2nd law (held still or lifted at constant speed, so a = 0)</h4>' + TEX`\Sigma F_y = n\,T - W = 0` + TEX`T = \frac{W}{n}` + TEX`T = \frac{${M.n(d.W)}}{${I('n')}}` + TEXA`T = ${M.n(d.T, 'N')}` +
       '<p class="note">The weight is shared between the segments. Count only the segments attached to the moving part, not the one in your hand.</p>' +
-      '<h4>4 · Free-body diagram of the top pulleys (what the ceiling holds)</h4><div class="eq">All ' + H.iv('n') + ' segments <i>plus</i> the end you pull down on hang from the top: F<sub>ceiling</sub> = (n + 1)T = (' + H.n(d.n + 1) + ')(' + H.n(d.T) + ') = <b>' + H.n(d.ceil, 'N') + '</b></div>' +
+      '<h4>4 · Free-body diagram of the top pulleys (what the ceiling holds)</h4><p class="st">All ' + H.iv('n') + ' segments <i>plus</i> the end you pull down on hang from the top:</p>' +
+      TEX`F_{\text{ceiling}} = (n + 1)\,T` + TEX`F_{\text{ceiling}} = (${M.n(d.n + 1)})(${M.n(d.T)})` + TEXA`F_{\text{ceiling}} = ${M.n(d.ceil, 'N')}` +
       '<p class="note">That’s more than the weight: you are pulling down on the rope, and the ceiling holds that too. (Rope pulled straight down.)</p>';
   },
   draw(v, d, mode, opt, t, dt, A){

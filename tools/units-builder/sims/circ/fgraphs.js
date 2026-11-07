@@ -22,12 +22,12 @@ const SIM = {
   work(v, d){
     const ids = ['F1', 'F2', 'F3'];
     let h = '<h4>1 · Newton’s 2nd law in each stage: a = F<sub>net</sub>/m</h4>';
-    for (let i = 0; i < 3; i++) h += '<div class="eq">' + (3 * i) + '–' + (3 * i + 3) + ' s: a = ' + H.iv(ids[i]) + ' / ' + H.iv('m') + ' = <b>' + H.n(d.as[i], 'm/s²') + '</b></div>';
+    for (let i = 0; i < 3; i++) h += '<p class="st">' + (3 * i) + '–' + (3 * i + 3) + ' s:</p>' + TEX`a = \frac{F_{\text{net}}}{m}` + TEX`a = \frac{${M.p(v[ids[i]])}}{${M.iv('m', 1)}}` + TEXA`a = ${M.n(d.as[i], 'm/s²')}`;
     h += '<p class="note">The a–t graph is the F–t graph divided by m: same shape.</p><h4>2 · Velocity: Δv = a·Δt (area under the a–t graph)</h4>';
-    for (let i = 0; i < 3; i++) h += '<div class="eq">v(' + (3 * i + 3) + ' s) = ' + H.n(d.vs[i]) + ' + (' + H.n(d.as[i]) + ')(3) = <b>' + H.n(d.vs[i + 1], 'm/s') + '</b></div>';
+    for (let i = 0; i < 3; i++) h += '<p class="st">At ' + (3 * i + 3) + ' s:</p>' + TEX`v = v_{\text{prev}} + a\,\Delta t` + TEX`v = ${M.p(d.vs[i])} + ${M.p(d.as[i])}(3)` + TEXA`v = ${M.n(d.vs[i + 1], 'm/s')}`;
     h += '<h4>3 · Position: Δx = area under the v–t graph</h4>';
-    for (let i = 0; i < 3; i++) h += '<div class="eq">' + (3 * i) + '–' + (3 * i + 3) + ' s: Δx = ½(' + H.n(d.vs[i]) + ' + ' + H.n(d.vs[i + 1]) + ')(3) = ' + H.n(d.xs[i + 1] - d.xs[i], 'm') + ' → x = <b>' + H.n(d.xs[i + 1], 'm') + '</b></div>';
-    h += '<h4>4 · Read the shapes</h4><div class="eq">F = 0 → a = 0 → v flat → x a straight line (Newton’s 1st law). F constant → v a straight line → x a curve (parabola).</div>' +
+    for (let i = 0; i < 3; i++) h += '<p class="st">' + (3 * i) + '–' + (3 * i + 3) + ' s:</p>' + TEX`\Delta x = \frac{1}{2}(v_i + v_f)\,\Delta t` + TEX`\Delta x = \frac{1}{2}(${M.p(d.vs[i])} + ${M.p(d.vs[i + 1])})(3)` + TEX`\Delta x = ${M.n(d.xs[i + 1] - d.xs[i], 'm')}` + TEXA`x = ${M.n(d.xs[i + 1], 'm')}`;
+    h += '<h4>4 · Read the shapes</h4><p class="st">F = 0 → a = 0 → v flat → x a straight line (Newton’s 1st law). F constant → v a straight line → x a curve (parabola).</p>' +
       '<p class="note">Where v crosses zero, the cart turns around: that’s the peak or valley of the x–t graph. F can point backward while the cart moves forward: it’s slowing down.</p>';
     return h;
   },

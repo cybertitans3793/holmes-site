@@ -27,16 +27,25 @@ const SIM = {
       { id: 'T2', name: 'Right cable tension', short: 'T2', sym: 'T<sub>2</sub>', unit: 'N', f: d => d.T2 },
       { id: 'ratio', name: 'Bigger tension ÷ weight', short: 'T/mg', sym: 'T<sub>max</sub>/mg', unit: '', f: d => d.ratio }]; },
   work(v, d, mode){
-    if (mode === 'center') return '<h4>1 · Free-body diagram of the knot (or the hanging mass)</h4><div class="eq">Two tensions T, each at θ below horizontal, and the weight mg = (' + H.iv('m') + ')(' + H.g() + ') = ' + H.n(d.W, 'N') + '</div>' +
-      '<h4>2 · x: the horizontal parts cancel</h4><div class="eq">T cosθ − T cosθ = 0 (the ropes are symmetric)</div>' +
-      '<h4>3 · y: the vertical parts hold up the weight</h4><div class="eq">2T sinθ = mg → T = mg/(2 sinθ) = ' + H.n(d.W) + ' / (2 sin ' + H.iv('th') + ') = <b>' + H.n(d.T, 'N') + '</b></div>' +
-      '<div class="eq">That is <b>' + H.n(d.ratio) + ' ×</b> the weight.</div>' +
-      '<h4>4 · Can you pull it perfectly flat?</h4><div class="eq">At θ = 0, sinθ = 0: there is no vertical part to hold the weight, so T would have to be infinite. No rope, cable or person can do it. It always sags a little.</div>' +
+    if (mode === 'center') return '<h4>1 · Free-body diagram of the knot (or the hanging mass)</h4><p class="st">Two tensions T, each at θ below horizontal, and the weight:</p>' +
+      TEX`W = mg` + TEX`W = (${M.iv('m')})(10\,\text{m/s}^2)` + TEXA`W = ${M.n(d.W, 'N')}` +
+      '<h4>2 · x: the horizontal parts cancel</h4>' + TEX`T\,\cos\theta - T\,\cos\theta = 0` + '<p class="st">The ropes are symmetric.</p>' +
+      '<h4>3 · y: the vertical parts hold up the weight</h4>' +
+      TEX`2T\,\sin\theta = mg` + TEX`T = \frac{mg}{2\,\sin\theta}` + TEX`T = \frac{${M.n(d.W)}}{2\,\sin ${M.iv('th')}}` + TEXA`T = ${M.n(d.T, 'N')}` +
+      '<p class="st">That is a multiple of the weight:</p>' + TEXA`\frac{T}{mg} = ${M.n(d.ratio)}` +
+      '<h4>4 · Can you pull it perfectly flat?</h4><p class="st">At θ = 0, sinθ = 0: there is no vertical part to hold the weight, so T would have to be infinite. No rope, cable or person can do it. It always sags a little.</p>' +
       '<p class="note">At θ = 30° each rope holds exactly mg. Below 30°, each rope pulls harder than the weight itself.</p>';
-    return '<h4>1 · Free-body diagram of the knot</h4><div class="eq">T<sub>1</sub> up-left at ' + H.iv('t1') + ', T<sub>2</sub> up-right at ' + H.iv('t2') + ', weight mg = ' + H.n(d.W, 'N') + ' down</div>' +
-      '<h4>2 · x: T<sub>1</sub>cosθ<sub>1</sub> = T<sub>2</sub>cosθ<sub>2</sub></h4><h4>3 · y: T<sub>1</sub>sinθ<sub>1</sub> + T<sub>2</sub>sinθ<sub>2</sub> = mg</h4>' +
-      '<h4>4 · Solve the two equations together</h4><div class="eq">T<sub>1</sub> = mg cosθ<sub>2</sub>/sin(θ<sub>1</sub> + θ<sub>2</sub>) = <b>' + H.n(d.T1, 'N') + '</b></div><div class="eq">T<sub>2</sub> = mg cosθ<sub>1</sub>/sin(θ<sub>1</sub> + θ<sub>2</sub>) = <b>' + H.n(d.T2, 'N') + '</b></div>' +
-      '<h4>5 · Check</h4><div class="eq">x: ' + H.n(d.x1) + ' vs ' + H.n(d.x2) + ' ✓ &nbsp; y: ' + H.n(d.y1) + ' + ' + H.n(d.y2) + ' = ' + H.n(d.y1 + d.y2) + ' = mg ✓</div>' +
+    return '<h4>1 · Free-body diagram of the knot</h4><p class="st">T<sub>1</sub> up-left at ' + H.iv('t1') + ', T<sub>2</sub> up-right at ' + H.iv('t2') + ', weight down:</p>' +
+      TEXA`W = ${M.n(d.W, 'N')}` +
+      '<h4>2 · x: the horizontal parts balance</h4>' + TEX`T_1\cos\theta_1 = T_2\cos\theta_2` +
+      '<h4>3 · y: the vertical parts hold up the weight</h4>' + TEX`T_1\sin\theta_1 + T_2\sin\theta_2 = mg` +
+      '<h4>4 · Solve the two equations together</h4>' +
+      TEX`T_1 = \frac{mg\cos\theta_2}{\sin(\theta_1 + \theta_2)}` + TEX`T_1 = \frac{(${M.n(d.W)})\cos ${M.iv('t2')}}{\sin(${M.iv('t1')} + ${M.iv('t2')})}` + TEXA`T_1 = ${M.n(d.T1, 'N')}` +
+      TEX`T_2 = \frac{mg\cos\theta_1}{\sin(\theta_1 + \theta_2)}` + TEX`T_2 = \frac{(${M.n(d.W)})\cos ${M.iv('t1')}}{\sin(${M.iv('t1')} + ${M.iv('t2')})}` + TEXA`T_2 = ${M.n(d.T2, 'N')}` +
+      '<h4>5 · Check</h4><p class="st">x: the two horizontal parts match ✓</p>' +
+      TEX`T_1\cos\theta_1 = ${M.n(d.x1, 'N')}` + TEX`T_2\cos\theta_2 = ${M.n(d.x2, 'N')}` +
+      '<p class="st">y: the two vertical parts add up to the weight ✓</p>' +
+      TEX`T_1\sin\theta_1 + T_2\sin\theta_2 = ${M.n(d.y1)} + ${M.n(d.y2)}` + TEXA`mg = ${M.n(d.y1 + d.y2, 'N')}` +
       '<p class="note">The steeper cable carries more of the load.</p>';
   },
   draw(v, d, mode){

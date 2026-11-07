@@ -30,20 +30,24 @@ const SIM = {
     return [{ id: 'F2', name: 'Force on the big piston', short: 'F2', sym: 'F<sub>2</sub>', unit: 'N', f: d => d.F2 }, { id: 'd2', name: 'Big piston rises', short: 'd2', sym: 'd<sub>2</sub>', unit: 'cm', f: d => d.d2 }, { id: 'P', name: 'Pressure in the fluid', short: 'P', sym: 'P', unit: 'Pa', f: d => d.P }];
   },
   work(v, d, mode, opt){
-    if (mode === 'depth') return '<h4>1 · The weight of the liquid above pushes down</h4><div class="eq">Extra pressure: ρgh = (' + H.iv('rho') + ')(' + H.g() + ')(' + H.iv('h') + ') = <b>' + H.n(d.dP, 'Pa') + '</b></div>' +
-      '<h4>2 · Add the air pushing on the surface</h4><div class="eq">Absolute: P = P<sub>0</sub> + ρgh = 1.01×10<sup>5</sup> + ' + H.n(d.dP) + ' = <b>' + H.n(d.P, 'Pa') + '</b> (' + H.n(d.ratio) + ' atm)</div>' +
-      '<div class="eq">Gauge (what a tire gauge reads): P − P<sub>0</sub> = ρgh = ' + H.n(d.dP, 'Pa') + '</div>' +
+    if (mode === 'depth') return '<h4>1 · The weight of the liquid above pushes down</h4><p class="st">Extra pressure:</p>' +
+      TEX`\Delta P = \rho g h` + TEX`\Delta P = (${M.iv('rho')})(10\,\text{m/s}^2)(${M.iv('h')})` + TEXA`\Delta P = ${M.n(d.dP, 'Pa')}` +
+      '<h4>2 · Add the air pushing on the surface</h4>' +
+      TEX`P = P_0 + \rho g h` + TEX`P = 1.01\times10^{5}\,\text{Pa} + ${M.n(d.dP)}` + TEXA`P = ${M.n(d.P, 'Pa')}` + '<p class="st">That is ' + H.n(d.ratio) + ' atm.</p>' +
+      '<p class="st">Gauge pressure (what a tire gauge reads):</p>' + TEX`P_{\text{gauge}} = P - P_0 = \rho g h` + TEXA`P_{\text{gauge}} = ${M.n(d.dP, 'Pa')}` +
       '<p class="note">Only depth matters, not the shape or width of the container: a narrow tube and a wide lake at the same depth have the same pressure. ~10 m of water adds about 1 atm.</p>' +
       '<p class="note">Pressure pushes equally in all directions at a point, and always perpendicular to any surface it touches.</p>';
-    if (mode === 'utube') return '<h4>1 · Points at the same height in the same connected liquid have the same pressure</h4><div class="eq">Pick the boundary between the liquids on the left, and the same height on the right.</div>' +
-      '<h4>2 · Pressure there from each side</h4><div class="eq">Left: P<sub>0</sub> + ρ<sub>oil</sub>gh<sub>oil</sub> &nbsp; Right: P<sub>0</sub> + ρ<sub>w</sub>gh<sub>w</sub></div>' +
-      '<div class="eq">ρ<sub>oil</sub>h<sub>oil</sub> = ρ<sub>w</sub>h<sub>w</sub> → h<sub>w</sub> = (' + H.iv('r1') + ')(' + H.iv('h1') + ') / ' + H.iv('r2') + ' = <b>' + H.n(d.h2, 'cm') + '</b></div>' +
-      '<div class="eq">The oil side stands ' + H.n(d.diff, 'cm') + ' higher: the less dense liquid needs a taller column to make the same pressure.</div>' +
+    if (mode === 'utube') return '<h4>1 · Points at the same height in the same connected liquid have the same pressure</h4><p class="st">Pick the boundary between the liquids on the left, and the same height on the right.</p>' +
+      '<h4>2 · Pressure there from each side</h4>' + TEX`P_{\text{left}} = P_0 + \rho_{\text{oil}} g h_{\text{oil}}` + TEX`P_{\text{right}} = P_0 + \rho_w g h_w` +
+      '<p class="st">Set them equal:</p>' + TEX`\rho_{\text{oil}} h_{\text{oil}} = \rho_w h_w` + TEX`h_w = \frac{\rho_{\text{oil}} h_{\text{oil}}}{\rho_w}` +
+      TEX`h_w = \frac{(${M.iv('r1')})(${M.iv('h1')})}{${M.iv('r2')}}` + TEXA`h_w = ${M.n(d.h2, 'cm')}` +
+      '<p class="st">The oil side stands higher by</p>' + TEXA`\Delta h = ${M.n(d.diff, 'cm')}` + '<p class="st">The less dense liquid needs a taller column to make the same pressure.</p>' +
       '<p class="note">Lab use: measure both heights and you’ve measured the oil’s density, ρ<sub>oil</sub> = ρ<sub>w</sub>h<sub>w</sub>/h<sub>oil</sub>.</p>';
-    return '<h4>1 · Pascal’s principle: the pressure you add spreads through the whole fluid</h4><div class="eq">P = F<sub>1</sub>/A<sub>1</sub> = ' + H.iv('F1') + ' / ' + H.n(v.A1 * 1e-4, 'm²') + ' = ' + H.n(d.P, 'Pa') + '</div>' +
-      '<h4>2 · Same pressure on the big piston</h4><div class="eq">F<sub>2</sub> = PA<sub>2</sub> = F<sub>1</sub>(A<sub>2</sub>/A<sub>1</sub>) = ' + H.iv('F1') + ' × ' + H.n(d.ratio) + ' = <b>' + H.n(d.F2, 'N') + '</b> (lifts ' + H.n(d.mLift, 'kg') + ')</div>' +
-      '<h4>3 · But it moves less: the volume pushed in comes out the other side</h4><div class="eq">A<sub>1</sub>d<sub>1</sub> = A<sub>2</sub>d<sub>2</sub> → d<sub>2</sub> = ' + H.iv('d1') + ' / ' + H.n(d.ratio) + ' = <b>' + H.n(d.d2, 'cm') + '</b></div>' +
-      '<div class="eq">Work in = ' + H.n(d.W1, 'J') + ' = work out = ' + H.n(d.W2, 'J') + '. A force multiplier, not an energy multiplier.</div>';
+    return '<h4>1 · Pascal’s principle: the pressure you add spreads through the whole fluid</h4>' +
+      TEX`P = \frac{F_1}{A_1}` + TEX`P = \frac{${M.iv('F1')}}{${M.n(v.A1 * 1e-4, 'm²')}}` + TEXA`P = ${M.n(d.P, 'Pa')}` +
+      '<h4>2 · Same pressure on the big piston</h4>' + TEX`F_2 = P A_2 = F_1\,\frac{A_2}{A_1}` + TEX`F_2 = ${M.iv('F1')} \times ${M.n(d.ratio)}` + TEXA`F_2 = ${M.n(d.F2, 'N')}` + '<p class="st">That lifts ' + H.n(d.mLift, 'kg') + '.</p>' +
+      '<h4>3 · But it moves less: the volume pushed in comes out the other side</h4>' + TEX`A_1 d_1 = A_2 d_2` + TEX`d_2 = d_1\,\frac{A_1}{A_2}` + TEX`d_2 = \frac{${M.iv('d1')}}{${M.n(d.ratio)}}` + TEXA`d_2 = ${M.n(d.d2, 'cm')}` +
+      '<p class="st">Work in equals work out:</p>' + TEXA`W_{\text{in}} = ${M.n(d.W1, 'J')}` + TEXA`W_{\text{out}} = ${M.n(d.W2, 'J')}` + '<p class="st">A force multiplier, not an energy multiplier.</p>';
   },
   draw(v, d, mode, opt){
     if (mode === 'depth'){

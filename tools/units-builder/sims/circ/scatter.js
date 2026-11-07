@@ -19,14 +19,18 @@ const SIM = {
   },
   dvs(mode){ return [{ id: 'mean', name: 'Mean of the trials', short: 'mean', sym: 'mean', unit: mode === 'data' ? 'm/s²' : 'cm', f: d => d.mean }, { id: 'half', name: 'Uncertainty (half the range)', short: 'Δ', sym: 'Δ', unit: mode === 'data' ? 'm/s²' : 'cm', f: d => d.half }, { id: 'err', name: 'Mean − true value', short: 'error', sym: 'error', unit: mode === 'data' ? 'm/s²' : 'cm', f: d => d.err }]; },
   work(v, d, mode){
-    const u = mode === 'data' ? 'm/s²' : 'cm';
-    let h = '<h4>1 · Two kinds of error</h4><div class="eq"><b>Random</b> (spread σ = ' + H.iv('sig') + '): readings scatter both ways. Affects <b>precision</b>. Reduced by repeating and averaging.</div>' +
-      '<div class="eq"><b>Systematic</b> (offset ' + H.iv('bias') + '): every reading is off the same way, e.g. a zero error or a badly calibrated meter. Affects <b>accuracy</b>. Repeating does <b>not</b> help.</div>';
-    if (mode === 'target') return h + '<h4>2 · On the target</h4><div class="eq">Precise = shots close together. Accurate = shots centered on the bull’s-eye. ' + (v.sig < 1 && v.bias < 1 ? 'Here: both.' : v.sig < 1 ? 'Here: precise but not accurate.' : v.bias < 1 ? 'Here: accurate on average, but not precise.' : 'Here: neither.') + '</div>';
-    return h + '<h4>2 · ' + H.iv('n') + ' trials measuring g (true value 9.81 m/s²)</h4><div class="eq">Mean = <b>' + d.mean.toFixed(2) + ' ' + u + '</b></div>' +
-      '<div class="eq">Uncertainty ≈ half the range = (' + d.mx.toFixed(2) + ' − ' + d.mn.toFixed(2) + ')/2 = <b>±' + d.half.toFixed(2) + ' ' + u + '</b> (' + H.n(d.pct, '%') + ')</div>' +
-      '<div class="eq">g = (' + d.mean.toFixed(2) + ' ± ' + d.half.toFixed(2) + ') ' + u + ' → ' + (Math.abs(d.err) <= d.half ? 'the true value is inside the range: <b>consistent</b>' : 'the true value is outside the range: likely a <b>systematic</b> error') + '</div>' +
-      '<p class="note">IB: report a mean with its uncertainty, and compare with the accepted value using the percentage difference: ' + H.n(100 * Math.abs(d.err) / 9.81, '%') + ' here.</p>';
+    const u = mode === 'data' ? 'm/s²' : 'cm', N2 = x => '<mn>' + Math.abs(x).toFixed(2) + '</mn>', S2 = x => (x < 0 ? '<mo>−</mo>' : '') + N2(x);
+    let h = '<h4>1 · Two kinds of error</h4><p class="st"><b>Random</b> (spread σ = ' + H.iv('sig') + '): readings scatter both ways. Affects <b>precision</b>. Reduced by repeating and averaging.</p>' +
+      '<p class="st"><b>Systematic</b> (offset ' + H.iv('bias') + '): every reading is off the same way, e.g. a zero error or a badly calibrated meter. Affects <b>accuracy</b>. Repeating does <b>not</b> help.</p>';
+    if (mode === 'target') return h + '<h4>2 · On the target</h4><p class="st">Precise = shots close together. Accurate = shots centered on the bull’s-eye. ' + (v.sig < 1 && v.bias < 1 ? 'Here: both.' : v.sig < 1 ? 'Here: precise but not accurate.' : v.bias < 1 ? 'Here: accurate on average, but not precise.' : 'Here: neither.') + '</p>';
+    return h + '<h4>2 · ' + H.iv('n') + ' trials measuring g (true value 9.81 m/s²)</h4><p class="st">Average the trials:</p>' + TEXA`\text{mean} = ${S2(d.mean)}${M.u(u)}` +
+      '<p class="st">Uncertainty ≈ half the range:</p>' +
+      TEX`\Delta g = \frac{\text{max} - \text{min}}{2}` + TEX`\Delta g = \frac{${S2(d.mx)} - ${S2(d.mn)}}{2}` + TEXA`\Delta g = \pm ${N2(d.half)}${M.u(u)}` +
+      TEX`\%\Delta g = \frac{\Delta g}{\text{mean}}\times 100` + TEX`\%\Delta g = \frac{${N2(d.half)}}{${N2(d.mean)}}\times 100` + TEXA`\%\Delta g = ${M.n(d.pct, '%')}` +
+      '<p class="st">Write the result and compare with the true value:</p>' + TEXA`g = \left(${S2(d.mean)} \pm ${N2(d.half)}\right)${M.u(u)}` +
+      '<p class="st">' + (Math.abs(d.err) <= d.half ? 'The true value is inside the range: <b>consistent</b>.' : 'The true value is outside the range: likely a <b>systematic</b> error.') + '</p>' +
+      '<p class="note">IB: report a mean with its uncertainty, and compare with the accepted value using the percentage difference:</p>' +
+      TEX`\text{percentage difference} = \frac{\left|\text{mean} - 9.81\right|}{9.81}\times 100` + TEXA`\text{percentage difference} = ${M.n(100 * Math.abs(d.err) / 9.81, '%')}`;
   },
   draw(v, d, mode){
     if (mode === 'target'){

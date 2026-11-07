@@ -16,10 +16,13 @@ const SIM = {
     { id: 'vt', name: 'Terminal velocity', short: 'v_t', sym: 'v<sub>t</sub>', unit: 'm/s', f: d => d.vt },
     { id: 'Fd', name: 'Drag at terminal velocity', short: 'F_d', sym: 'F<sub>d</sub>', unit: 'N', f: d => d.Fd }]; },
   work(v, d){
-    return '<h4>1 · Three forces on the falling sphere</h4><div class="eq">Weight mg = ρ<sub>s</sub>(4/3πr³)g = ' + H.n(d.W, 'N') + ' down; buoyancy ρ<sub>f</sub>(4/3πr³)g = ' + H.n(d.Fb, 'N') + ' up; drag F<sub>d</sub> = 6πηrv up (Stokes’ law), growing with v</div>' +
-      '<h4>2 · Terminal velocity: forces balance</h4><div class="eq">mg = F<sub>b</sub> + 6πηrv<sub>t</sub> → v<sub>t</sub> = 2r²(ρ<sub>s</sub> − ρ<sub>f</sub>)g / (9η)</div>' +
-      '<div class="eq">= 2(' + H.n(d.r, 'm') + ')²(' + H.iv('rs') + ' − ' + H.iv('rf') + ')(10) / (9 × ' + H.iv('eta') + ') = <b>' + H.n(d.vt, 'm/s') + '</b> (' + H.n(d.vmm, 'mm/s') + ')</div>' +
-      '<h4>3 · Functional dependence</h4><div class="eq">v<sub>t</sub> ∝ r²: double the radius → 4× the terminal velocity. Weight grows as r³, drag only as r.</div>' +
+    return '<h4>1 · Three forces on the falling sphere</h4><p class="st">Weight, down:</p>' + TEX`W = \rho_s\left(\frac{4}{3}\pi r^3\right)g` + TEXA`W = ${M.n(d.W, 'N')}` +
+      '<p class="st">Buoyancy, up:</p>' + TEX`F_b = \rho_f\left(\frac{4}{3}\pi r^3\right)g` + TEXA`F_b = ${M.n(d.Fb, 'N')}` +
+      '<p class="st">Drag, up (Stokes’ law), growing with v:</p>' + TEX`F_d = 6\pi\eta r v` +
+      '<h4>2 · Terminal velocity: forces balance</h4>' + TEX`mg = F_b + 6\pi\eta r v_t` + TEX`v_t = \frac{2r^2\left(\rho_s - \rho_f\right)g}{9\eta}` +
+      TEX`\Delta\rho = \rho_s - \rho_f = ${M.iv('rs')} - ${M.iv('rf')}` + TEX`\Delta\rho = ${M.n(v.rs - v.rf, 'kg/m³')}` +
+      TEX`v_t = \frac{2\left(${M.n(d.r, 'm')}\right)^2 (${M.n(v.rs - v.rf)})(10)}{9 \times ${M.iv('eta')}}` + TEXA`v_t = ${M.n(d.vt, 'm/s')}` + TEX`v_t = ${M.n(d.vmm, 'mm/s')}` +
+      '<h4>3 · Functional dependence</h4>' + TEX`v_t \propto r^2` + '<p class="st">Double the radius → 4× the terminal velocity. Weight grows as r³, drag only as r.</p>' +
       '<p class="note">Lab: time spheres of different radii falling through glycerin; a graph of v<sub>t</sub> against r² is a straight line whose slope gives η.</p>' +
       '<p class="note">Stokes’ law only works for slow, smooth flow (small spheres, thick liquids).</p>';
   },

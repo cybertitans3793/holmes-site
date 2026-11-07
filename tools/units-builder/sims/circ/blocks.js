@@ -36,22 +36,25 @@ const SIM = {
       { id: 'a', name: 'Acceleration', short: 'a', sym: 'a', unit: 'm/s²', f: d => d.a }];
   },
   work(v, d, mode){
+    const I = id => M.iv(id, 1), CK = '<mtext>✓</mtext>';
     if (mode === 'push'){
       const far = d.pushedLeft ? 'right block (m<sub>2</sub>)' : 'left block (m<sub>1</sub>)', farId = d.pushedLeft ? 'm2' : 'm1';
-      let h = '<h4>1 · Whole system: both blocks move together</h4><div class="eq">The contact forces between them are internal and cancel. ' + (v.mu > 0 ? 'Friction on both: μ(m<sub>1</sub> + m<sub>2</sub>)g = ' + H.n(d.fs, 'N') + '.' : 'No friction.') + '</div>';
+      const sub = (s, n) => '<msub><mi>' + s + '</mi><mn>' + n + '</mn></msub>', mf = sub('m', d.pushedLeft ? 2 : 1), ff = sub('f', d.pushedLeft ? 2 : 1), fr = v.mu > 0;
+      let h = '<h4>1 · Whole system: both blocks move together</h4><p class="st">The contact forces between them are internal and cancel. ' + (fr ? 'Friction on both blocks:' : 'No friction.') + '</p>' +
+        (fr ? TEX`f = \mu_k (m_1 + m_2)\,g` + TEX`f = (${I('mu')})(${I('m1')} + ${I('m2')})(10)` + TEXA`f = ${M.n(d.fs, 'N')}` : '');
       if (!d.moves) return h + '<div class="bad">The push isn’t more than friction, so (treating μ as static too) they don’t move. How static friction splits between the blocks can’t be found from these numbers, so P isn’t shown.</div>';
-      h += '<div class="eq">a = (F' + (v.mu > 0 ? ' − f' : '') + ')/(m<sub>1</sub> + m<sub>2</sub>) = (' + H.iv('F') + (v.mu > 0 ? ' − ' + H.n(d.fs) : '') + ') / (' + H.iv('m1') + ' + ' + H.iv('m2') + ') = <b>' + H.n(d.a, 'm/s²') + '</b></div>' +
-        '<h4>2 · Now just the ' + far + '</h4><div class="eq">The only push on it is the contact force P from the other block' + (v.mu > 0 ? ' (minus its own friction)' : '') + '.</div>' +
-        '<div class="eq">P' + (v.mu > 0 ? ' − f' : '') + ' = ma → P = (' + H.iv(farId) + ')(' + H.n(d.a) + ')' + (v.mu > 0 ? ' + ' + H.n(d.fFar) : '') + ' = <b>' + H.n(d.P, 'N') + '</b></div>' +
-        '<div class="eq">Shortcut: P = F × m<sub>far</sub>/(m<sub>1</sub> + m<sub>2</sub>) = ' + H.n(v.F * d.share, 'N') + (v.mu > 0 ? ' (friction cancels out of this!)' : '') + '</div>' +
-        '<h4>3 · Newton’s third law</h4><div class="eq">Block 1 pushes block 2 with P = ' + H.n(d.P, 'N') + '; block 2 pushes back on block 1 with ' + H.n(d.P, 'N') + '. Equal, even though the masses differ.</div>' +
+      h += (fr ? TEX`a = \frac{F - f}{m_1 + m_2}` + TEX`a = \frac{${I('F')} - ${M.n(d.fs)}}{${I('m1')} + ${I('m2')}}` : TEX`a = \frac{F}{m_1 + m_2}` + TEX`a = \frac{${I('F')}}{${I('m1')} + ${I('m2')}}`) + TEXA`a = ${M.n(d.a, 'm/s²')}` +
+        '<h4>2 · Now just the ' + far + '</h4><p class="st">The only push on it is the contact force P from the other block' + (fr ? ' (minus its own friction)' : '') + '.</p>' +
+        (fr ? TEX`P - ${ff} = ${mf}\,a` + TEX`P = ${mf}\,a + ${ff}` + TEX`P = (${I(farId)})(${M.n(d.a)}) + ${M.n(d.fFar)}` : TEX`P = ${mf}\,a` + TEX`P = (${I(farId)})(${M.n(d.a)})`) + TEXA`P = ${M.n(d.P, 'N')}` +
+        '<p class="st">Shortcut:</p>' + TEX`P = F\,\frac{${mf}}{m_1 + m_2}` + TEX`P = ${I('F')}\,\frac{${I(farId)}}{${M.n(v.m1 + v.m2)}}` + TEXA`P = ${M.n(v.F * d.share, 'N')}` + (fr ? '<p class="st">(Friction cancels out of this!)</p>' : '') +
+        '<h4>3 · Newton’s third law</h4><p class="st">Block 1 pushes block 2 with P = ' + H.n(d.P, 'N') + '; block 2 pushes back on block 1 with ' + H.n(d.P, 'N') + '. Equal, even though the masses differ.</p>' +
         '<p class="note">Push the other side: P changes, because now the other block has to be accelerated by it. Push the heavy block into the light one for the smaller P.</p>';
       return h;
     }
-    return '<h4>1 · Whole train</h4><div class="eq">a = F/(m<sub>1</sub> + m<sub>2</sub> + m<sub>3</sub>) = ' + H.iv('F') + ' / ' + H.n(d.M, 'kg') + ' = <b>' + H.n(d.a, 'm/s²') + '</b> (frictionless)</div>' +
-      '<h4>2 · The back cart alone</h4><div class="eq">Only T<sub>23</sub> pulls it: T<sub>23</sub> = m<sub>3</sub>a = (' + H.iv('m3') + ')(' + H.n(d.a) + ') = <b>' + H.n(d.T23, 'N') + '</b></div>' +
-      '<h4>3 · The back two carts together</h4><div class="eq">Only T<sub>12</sub> pulls them: T<sub>12</sub> = (m<sub>2</sub> + m<sub>3</sub>)a = ' + H.n(v.m2 + v.m3, 'kg') + ' × ' + H.n(d.a) + ' = <b>' + H.n(d.T12, 'N') + '</b></div>' +
-      '<div class="eq">Check the middle cart: T<sub>12</sub> − T<sub>23</sub> = ' + H.n(d.T12 - d.T23, 'N') + ' = m<sub>2</sub>a = ' + H.n(v.m2 * d.a, 'N') + ' ✓</div>' +
+    return '<h4>1 · Whole train</h4><p class="st">Frictionless.</p>' + TEX`a = \frac{F}{m_1 + m_2 + m_3}` + TEX`a = \frac{${I('F')}}{${M.n(d.M)}}` + TEXA`a = ${M.n(d.a, 'm/s²')}` +
+      '<h4>2 · The back cart alone</h4><p class="st">Only T<sub>23</sub> pulls it:</p>' + TEX`T_{23} = m_3\,a` + TEX`T_{23} = (${I('m3')})(${M.n(d.a)})` + TEXA`T_{23} = ${M.n(d.T23, 'N')}` +
+      '<h4>3 · The back two carts together</h4><p class="st">Only T<sub>12</sub> pulls them:</p>' + TEX`T_{12} = (m_2 + m_3)\,a` + TEX`T_{12} = (${M.n(v.m2 + v.m3)})(${M.n(d.a)})` + TEXA`T_{12} = ${M.n(d.T12, 'N')}` +
+      '<p class="st">Check the middle cart:</p>' + TEX`T_{12} - T_{23} = m_2\,a` + TEX`${M.n(d.T12)} - ${M.n(d.T23)} = (${I('m2')})(${M.n(d.a)})` + TEXA`${M.n(d.T12 - d.T23, 'N')} = ${M.n(v.m2 * d.a, 'N')}\ ${CK}` +
       '<p class="note">Tension is biggest near the front: each rope has to accelerate everything behind it. F > T<sub>12</sub> > T<sub>23</sub>.</p>';
   },
   draw(v, d, mode, opt, t, dt, A){

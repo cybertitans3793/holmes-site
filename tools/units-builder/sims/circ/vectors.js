@@ -23,14 +23,22 @@ const SIM = {
   work(v, d){
     const quad = d.X >= 0 && d.Y >= 0 ? 'I' : d.X < 0 && d.Y >= 0 ? 'II' : d.X < 0 ? 'III' : 'IV';
     return '<h4>1 · Break each force into components (angles from +x, counterclockwise)</h4>' +
-      '<div class="eq">F<sub>1x</sub> = F<sub>1</sub>cosθ<sub>1</sub> = (' + H.iv('F1') + ')cos ' + H.iv('a1') + ' = ' + H.n(d.x1, 'N') + ' &nbsp; F<sub>1y</sub> = F<sub>1</sub>sinθ<sub>1</sub> = ' + H.n(d.y1, 'N') + '</div>' +
-      '<div class="eq">F<sub>2x</sub> = (' + H.iv('F2') + ')cos ' + H.iv('a2') + ' = ' + H.n(d.x2, 'N') + ' &nbsp; F<sub>2y</sub> = (' + H.iv('F2') + ')sin ' + H.iv('a2') + ' = ' + H.n(d.y2, 'N') + '</div>' +
-      '<h4>2 · Add the x’s, add the y’s</h4><div class="eq">ΣF<sub>x</sub> = ' + H.n(d.x1) + ' + ' + H.p(d.x2) + ' = <b>' + H.n(d.X, 'N') + '</b> &nbsp; ΣF<sub>y</sub> = ' + H.n(d.y1) + ' + ' + H.p(d.y2) + ' = <b>' + H.n(d.Y, 'N') + '</b></div>' +
-      '<h4>3 · Put them back together</h4><div class="eq">F<sub>net</sub> = √(ΣF<sub>x</sub>² + ΣF<sub>y</sub>²) = √((' + H.n(d.X) + ')² + (' + H.n(d.Y) + ')²) = <b>' + H.n(d.R, 'N') + '</b></div>' +
-      '<div class="eq">tan<sup>−1</sup>(|ΣF<sub>y</sub>|/|ΣF<sub>x</sub>|) = ' + H.n(d.ref, '°') + ', quadrant ' + quad + ' → direction <b>' + H.n(d.ang, '°') + '</b></div>' +
+      TEX`F_{1x} = F_1\cos\theta_1` + TEX`F_{1x} = (${M.iv('F1')})\cos ${M.iv('a1')}` + TEXA`F_{1x} = ${M.n(d.x1, 'N')}` +
+      TEX`F_{1y} = F_1\sin\theta_1` + TEX`F_{1y} = (${M.iv('F1')})\sin ${M.iv('a1')}` + TEXA`F_{1y} = ${M.n(d.y1, 'N')}` +
+      TEX`F_{2x} = F_2\cos\theta_2` + TEX`F_{2x} = (${M.iv('F2')})\cos ${M.iv('a2')}` + TEXA`F_{2x} = ${M.n(d.x2, 'N')}` +
+      TEX`F_{2y} = F_2\sin\theta_2` + TEX`F_{2y} = (${M.iv('F2')})\sin ${M.iv('a2')}` + TEXA`F_{2y} = ${M.n(d.y2, 'N')}` +
+      '<h4>2 · Add the x’s, add the y’s</h4>' +
+      TEX`\Sigma F_x = F_{1x} + F_{2x}` + TEX`\Sigma F_x = ${M.n(d.x1)} + ${M.p(d.x2)}` + TEXA`\Sigma F_x = ${M.n(d.X, 'N')}` +
+      TEX`\Sigma F_y = F_{1y} + F_{2y}` + TEX`\Sigma F_y = ${M.n(d.y1)} + ${M.p(d.y2)}` + TEXA`\Sigma F_y = ${M.n(d.Y, 'N')}` +
+      '<h4>3 · Put them back together</h4>' +
+      TEX`F_{\text{net}} = \sqrt{\Sigma F_x^2 + \Sigma F_y^2}` + TEX`F_{\text{net}} = \sqrt{\left(${M.n(d.X)}\right)^2 + \left(${M.n(d.Y)}\right)^2}` + TEXA`F_{\text{net}} = ${M.n(d.R, 'N')}` +
+      '<p class="st">The reference angle, then the quadrant (' + quad + ') fixes the direction:</p>' +
+      TEX`\theta_{\text{ref}} = \tan^{-1}\left(\frac{|\Sigma F_y|}{|\Sigma F_x|}\right)` + TEX`\theta_{\text{ref}} = ${M.n(d.ref, '°')}` + TEXA`\theta = ${M.n(d.ang, '°')}` +
       '<p class="note">Always check the quadrant: the calculator’s tan<sup>−1</sup> only gives angles in quadrants I and IV.</p>' +
-      '<h4>4 · Angle between the forces: ' + H.n(d.between, '°') + '</h4><div class="eq">Biggest net force at 0° (' + H.n(v.F1 + v.F2, 'N') + '), smallest at 180° (' + H.n(Math.abs(v.F1 - v.F2), 'N') + ').</div>' +
-      '<h4>5 · Equilibrant</h4><div class="eq">The force that would balance them: ' + H.n(d.R, 'N') + ' at ' + H.n((d.ang + 180) % 360, '°') + '</div>';
+      '<h4>4 · Angle between the forces: ' + H.n(d.between, '°') + '</h4><p class="st">Biggest net force at 0°, smallest at 180°:</p>' +
+      TEX`F_{\text{max}} = F_1 + F_2 = ${M.n(v.F1 + v.F2, 'N')}` + TEX`F_{\text{min}} = |F_1 - F_2| = ${M.n(Math.abs(v.F1 - v.F2), 'N')}` +
+      '<h4>5 · Equilibrant</h4><p class="st">The force that would balance them has the same size, pointing the opposite way:</p>' +
+      TEXA`F_{\text{eq}} = ${M.n(d.R, 'N')}` + TEXA`\theta_{\text{eq}} = ${M.n((d.ang + 180) % 360, '°')}`;
   },
   draw(v, d, mode, opt){
     const view = opt.view, ox = 190, oy = 175, maxF = Math.max(v.F1 + v.F2, 1), sc = (view === 'comp' ? 135 : 120) / maxF;

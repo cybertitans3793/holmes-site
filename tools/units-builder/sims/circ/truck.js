@@ -36,31 +36,36 @@ const SIM = {
       { id: 'fmax', name: 'Max static friction μ_s mg', short: 'f_s,max', sym: 'f<sub>s,max</sub>', unit: 'N', f: d => d.fmax }];
   },
   work(v, d, mode){
+    const I = id => M.iv(id, 1);
     const fwd = mode === 'speed' ? 'forward' : 'backward', end = mode === 'speed' ? 'tailgate' : 'cab';
-    let h = '<h4>1 · Free-body diagram of the box</h4><div class="eq">Weight mg down, normal force N up, and friction from the truck bed. Friction is the <b>only</b> horizontal force on the box.</div>' +
-      '<div class="eq">Vertical: N = mg = (' + H.iv('m') + ')(' + H.g() + ') = ' + H.n(d.N, 'N') + '</div>';
+    let h = '<h4>1 · Free-body diagram of the box</h4><p class="st">Weight mg down, normal force N up, and friction from the truck bed. Friction is the <b>only</b> horizontal force on the box.</p><p class="st">Vertical:</p>' +
+      TEX`N = m g` + TEX`N = (${I('m')})(10)` + TEXA`N = ${M.n(d.N, 'N')}`;
     if (mode === 'const') return h +
-      '<h4>2 · Constant velocity → a = 0 → ΣF = 0</h4><div class="eq">The only horizontal force is friction, so f = <b>0 N</b>, whether the truck goes ' + H.iv('v') + ' or 0 m/s.</div>' +
+      '<h4>2 · Constant velocity → a = 0 → ΣF = 0</h4><p class="st">The only horizontal force is friction, so it must be zero, whether the truck goes ' + H.iv('v') + ' or 0 m/s.</p>' + TEXA`f = 0\,\text{N}` +
       '<p class="note">Common mistake: “friction pushes the box forward to keep it moving.” Newton’s 1st law: nothing is needed to <i>keep</i> it moving at constant velocity.</p>' +
-      '<h4>3 · Whole system (truck + box)</h4><div class="eq">ΣF = (M + m)(0) = 0. The road’s push forward on the tires just balances air resistance and rolling friction (ignored here).</div>' +
-      '<h4>4 · How far could the truck accelerate before the box slips?</h4><div class="eq">a<sub>max</sub> = μ<sub>s</sub>g = (' + H.iv('mus') + ')(' + H.g() + ') = ' + H.n(d.amax, 'm/s²') + '. Try “Speeding up.”</div>';
-    h += '<h4>2 · Friction needed for the box to keep up with the truck</h4><div class="eq">f = ma = (' + H.iv('m') + ')(' + H.iv('a') + ') = <b>' + H.n(d.need, 'N') + '</b>, pointing <b>' + fwd + '</b> (the same way the truck accelerates)</div>' +
-      '<h4>3 · The most static friction can give</h4><div class="eq">f<sub>s,max</sub> = μ<sub>s</sub>N = (' + H.iv('mus') + ')(' + H.n(d.N, 'N') + ') = <b>' + H.n(d.fmax, 'N') + '</b></div>' +
+      '<h4>3 · Whole system (truck + box)</h4>' + TEX`\Sigma F = (M + m)\,a` + TEXA`\Sigma F = (M + m)(0) = 0` +
+      '<p class="st">The road’s push forward on the tires just balances air resistance and rolling friction (ignored here).</p>' +
+      '<h4>4 · How far could the truck accelerate before the box slips?</h4>' + TEX`a_{\max} = \mu_s g` + TEX`a_{\max} = (${I('mus')})(10)` + TEXA`a_{\max} = ${M.n(d.amax, 'm/s²')}` + '<p class="st">Try “Speeding up.”</p>';
+    h += '<h4>2 · Friction needed for the box to keep up with the truck</h4>' + TEX`f = m a` + TEX`f = (${I('m')})(${I('a')})` + TEXA`f = ${M.n(d.need, 'N')}` +
+      '<p class="st">Pointing <b>' + fwd + '</b> (the same way the truck accelerates).</p>' +
+      '<h4>3 · The most static friction can give</h4>' + TEX`f_{s,\max} = \mu_s N` + TEX`f_{s,\max} = (${I('mus')})(${M.n(d.N)})` + TEXA`f_{s,\max} = ${M.n(d.fmax, 'N')}` +
       '<h4>4 · Compare</h4>';
-    if (d.sticks) h += '<div class="eq">' + H.n(d.need, 'N') + ' ≤ ' + H.n(d.fmax, 'N') + ' → static friction can do it. The box <b>moves with the truck</b>: a<sub>box</sub> = ' + H.n(Math.abs(d.at), 'm/s²') + ', f = ' + H.n(d.need, 'N') + ' (not μ<sub>s</sub>N!)</div>' +
+    if (d.sticks) h += TEX`${M.n(d.need, 'N')} \le ${M.n(d.fmax, 'N')}` + '<p class="st">Static friction can do it. The box <b>moves with the truck</b>: a<sub>box</sub> = ' + H.n(Math.abs(d.at), 'm/s²') + ', f = ' + H.n(d.need, 'N') + ' (not μ<sub>s</sub>N!)</p>' +
       '<p class="note">Static friction is only as big as it needs to be. μ<sub>s</sub>N is the <i>limit</i>, not the value.</p>';
-    else h += '<div class="bad">' + H.n(d.need, 'N') + ' > ' + H.n(d.fmax, 'N') + ' → static friction can’t keep up. The box <b>slides</b> toward the ' + end + '.</div>' +
-      '<div class="eq">Now it’s kinetic: f<sub>k</sub> = μ<sub>k</sub>N = (' + H.iv('muk') + ')(' + H.n(d.N, 'N') + ') = ' + H.n(Math.abs(d.f), 'N') + '</div>' +
+    else h += TEX`${M.n(d.need, 'N')} > ${M.n(d.fmax, 'N')}` + '<div class="bad">Static friction can’t keep up. The box <b>slides</b> toward the ' + end + '.</div>' +
+      '<p class="st">Now it’s kinetic:</p>' + TEX`f_k = \mu_k N` + TEX`f_k = (${d.mukBad ? M.n(d.mukE) : I('muk')})(${M.n(d.N)})` + TEXA`f_k = ${M.n(Math.abs(d.f), 'N')}` +
       (d.mukBad ? '<p class="note">μ<sub>k</sub> is set above μ<sub>s</sub>, which real surfaces don’t do. Using μ<sub>k</sub> = μ<sub>s</sub>.</p>' : '') +
-      '<div class="eq">a<sub>box</sub> = f<sub>k</sub>/m = μ<sub>k</sub>g = <b>' + H.n(Math.abs(d.abox), 'm/s²') + '</b> ' + fwd + ' (ground frame): it still speeds ' + (mode === 'speed' ? 'up' : 'down') + ', just less than the truck</div>' +
-      '<div class="eq">Relative to the truck: a<sub>rel</sub> = ' + H.n(Math.abs(d.at)) + ' − ' + H.n(Math.abs(d.abox)) + ' = ' + H.n(Math.abs(d.arel), 'm/s²') + ' toward the ' + end + '. It reaches it (' + H.n(d.dEdge, 'm') + ' away) after t = √(2d/a<sub>rel</sub>) = ' + H.n(d.tSlide, 's') + '</div>';
-    h += '<div class="eq">Biggest acceleration with no slipping: a<sub>max</sub> = μ<sub>s</sub>mg/m = μ<sub>s</sub>g = ' + H.n(d.amax, 'm/s²') + ' (the mass cancels)</div>' +
+      TEX`a_{\text{box}} = \frac{f_k}{m}` + TEX`a_{\text{box}} = \frac{${M.n(Math.abs(d.f))}}{${I('m')}}` + TEXA`a_{\text{box}} = ${M.n(Math.abs(d.abox), 'm/s²')}` +
+      '<p class="st">Direction: ' + fwd + ' (ground frame). It still speeds ' + (mode === 'speed' ? 'up' : 'down') + ', just less than the truck.</p>' +
+      '<p class="st">Relative to the truck:</p>' + TEX`a_{\text{rel}} = a_{\text{truck}} - a_{\text{box}}` + TEX`a_{\text{rel}} = ${M.n(Math.abs(d.at))} - ${M.n(Math.abs(d.abox))}` + TEXA`a_{\text{rel}} = ${M.n(Math.abs(d.arel), 'm/s²')}` +
+      '<p class="st">toward the ' + end + ', which is ' + H.n(d.dEdge, 'm') + ' away:</p>' + TEX`t = \sqrt{\frac{2\,d}{a_{\text{rel}}}}` + TEX`t = \sqrt{\frac{2(${M.n(d.dEdge)})}{${M.n(Math.abs(d.arel))}}}` + TEXA`t = ${M.n(d.tSlide, 's')}`;
+    h += '<p class="st">Biggest acceleration with no slipping (the mass cancels):</p>' + TEX`a_{\max} = \frac{\mu_s m g}{m} = \mu_s g` + TEX`a_{\max} = (${I('mus')})(10)` + TEXA`a_{\max} = ${M.n(d.amax, 'm/s²')}` +
       '<h4>5 · The system: truck + box</h4>';
-    if (d.sticks) h += '<div class="eq">Same acceleration, so treat them as one object. Friction between them is internal and cancels.</div>' +
-      '<div class="eq">F<sub>road</sub> = (M + m)a = (' + H.iv('M') + ' + ' + H.iv('m') + ')(' + H.iv('a') + ') = <b>' + H.n(Math.abs(d.Froad), 'N') + '</b> ' + fwd + '</div>';
-    else h += '<div class="eq">Different accelerations, so you <b>can’t</b> use (M + m)a. Do the truck by itself instead:</div>' +
-      '<div class="eq">F<sub>road</sub> − f = Ma → F<sub>road</sub> = Ma + f = (' + H.iv('M') + ')(' + H.iv('a') + ') + ' + H.n(Math.abs(d.f)) + ' = <b>' + H.n(Math.abs(d.Froad), 'N') + '</b> ' + fwd + '</div>';
-    h += '<h4>6 · Newton’s third law</h4><div class="eq">The bed pushes the box ' + fwd + ' with ' + H.n(Math.abs(d.f), 'N') + '; the box pushes the bed ' + (mode === 'speed' ? 'backward' : 'forward') + ' with ' + H.n(Math.abs(d.f), 'N') + '.</div>';
+    if (d.sticks) h += '<p class="st">Same acceleration, so treat them as one object. Friction between them is internal and cancels.</p>' + TEX`F_{\text{road}} = (M + m)\,a` +
+      TEX`F_{\text{road}} = (${I('M')} + ${I('m')})(${I('a')})` + TEXA`F_{\text{road}} = ${M.n(Math.abs(d.Froad), 'N')}` + '<p class="st">Pointing ' + fwd + '.</p>';
+    else h += '<p class="st">Different accelerations, so you <b>can’t</b> use (M + m)a. Do the truck by itself instead:</p>' + TEX`F_{\text{road}} - f = M a` + TEX`F_{\text{road}} = M a + f` +
+      TEX`F_{\text{road}} = (${I('M')})(${I('a')}) + ${M.n(Math.abs(d.f))}` + TEXA`F_{\text{road}} = ${M.n(Math.abs(d.Froad), 'N')}` + '<p class="st">Pointing ' + fwd + '.</p>';
+    h += '<h4>6 · Newton’s third law</h4><p class="st">The bed pushes the box ' + fwd + ' with ' + H.n(Math.abs(d.f), 'N') + '; the box pushes the bed ' + (mode === 'speed' ? 'backward' : 'forward') + ' with ' + H.n(Math.abs(d.f), 'N') + '.</p>';
     return h;
   },
   draw(v, d, mode, opt, t, dt, A){

@@ -28,20 +28,23 @@ const SIM = {
     return l;
   },
   work(v, d, mode){
-    let h = '<h4>1 · Braking: F = ma with friction as the net force</h4><div class="eq">f = μN = μmg = ma → a = μg = (' + H.iv('mu') + ')(' + H.g() + ') = <b>' + H.n(d.a, 'm/s²') + '</b> (the mass cancels: a truck and a bike stop at the same rate)</div>' +
-      '<h4>2 · Reaction: still going full speed</h4><div class="eq">d<sub>r</sub> = v·t<sub>r</sub> = (' + H.iv('v') + ')(' + (mode === 'stop' ? H.iv('tr') : H.n(d.tr, 's')) + ') = <b>' + H.n(d.dR, 'm') + '</b>' + (mode === 'yellow' ? ' (reaction time 1.0 s)' : '') + '</div>' +
-      '<h4>3 · Braking distance</h4><div class="eq">v<sub>f</sub>² = v<sub>0</sub>² − 2ad → d<sub>b</sub> = v²/(2μg) = (' + H.iv('v') + ')² / (2 × ' + H.n(d.a) + ') = <b>' + H.n(d.dB, 'm') + '</b></div>' +
-      '<div class="eq">Total: d<sub>stop</sub> = ' + H.n(d.dR) + ' + ' + H.n(d.dB) + ' = <b>' + H.n(d.dS, 'm') + '</b> vs ' + H.iv('D') + '</div>';
+    const I = id => M.iv(id, 1), vv = I('v') + '<mspace width="0.167em"/><mtext>m/s</mtext>';
+    let h = '<h4>1 · Braking: F = ma with friction as the net force</h4><p class="st">The friction force is the net force:</p>' + TEX`f = \mu N = \mu m g = m a` + TEX`a = \mu g` + TEX`a = (${I('mu')})(10)` + TEXA`a = ${M.n(d.a, 'm/s²')}` +
+      '<p class="st">The mass cancels: a truck and a bike stop at the same rate.</p>' +
+      '<h4>2 · Reaction: still going full speed</h4>' + TEX`d_r = v\,t_r` + TEX`d_r = (${vv})(${mode === 'stop' ? M.iv('tr') : M.n(d.tr, 's')})` + TEXA`d_r = ${M.n(d.dR, 'm')}` + (mode === 'yellow' ? '<p class="st">(Reaction time 1.0 s.)</p>' : '') +
+      '<h4>3 · Braking distance</h4><p class="st">From v<sub>f</sub>² = v<sub>0</sub>² − 2ad with v<sub>f</sub> = 0:</p>' + TEX`d_b = \frac{v^2}{2\,\mu g}` + TEX`d_b = \frac{(${vv})^2}{2(${M.n(d.a)})}` + TEXA`d_b = ${M.n(d.dB, 'm')}` +
+      '<p class="st">Total stopping distance:</p>' + TEX`d_{\text{stop}} = d_r + d_b` + TEX`d_{\text{stop}} = ${M.n(d.dR)} + ${M.n(d.dB)}` + TEXA`d_{\text{stop}} = ${M.n(d.dS, 'm')}` + '<p class="st">Compare with D = ' + H.iv('D') + '.</p>';
     if (mode === 'stop'){
-      h += d.canStop ? '<div class="eq"><b>Stops in time</b>, with ' + H.n(d.slack, 'm') + ' to spare.</div>'
+      h += d.canStop ? '<p class="st"><b>Stops in time</b>, with ' + H.n(d.slack, 'm') + ' to spare.</p>'
         : '<div class="bad">Can’t stop: it reaches the obstacle still going ' + H.n(d.vHit, 'm/s') + ' (v² = v<sub>0</sub>² − 2a(D − d<sub>r</sub>)).</div>';
-      h += '<h4>4 · Functional dependence</h4><div class="eq">Double the speed: reaction distance ×2, braking distance <b>×4</b>. Halve μ (wet road): braking distance ×2.</div>' +
+      h += '<h4>4 · Functional dependence</h4><p class="st">Double the speed: reaction distance ×2, braking distance <b>×4</b>. Halve μ (wet road): braking distance ×2.</p>' +
         '<p class="note">That’s why speeding is so much worse than it sounds: the braking part grows with v².</p>';
       return h;
     }
-    h += '<h4>4 · Option A: stop</h4><div class="eq">' + (d.canStop ? 'Works: ' + H.n(d.dS, 'm') + ' ≤ ' + H.iv('D') : 'Doesn’t work: you need ' + H.n(d.dS, 'm') + ' but only have ' + H.iv('D')) + '</div>' +
-      '<h4>5 · Option B: keep going at constant speed</h4><div class="eq">You must cover D + 15 m (the intersection) before red: t = (D + 15)/v = (' + H.iv('D') + ' + 15)/' + H.iv('v') + ' = ' + H.n(d.tGo, 's') + ' vs yellow ' + H.iv('Ty') + ' → ' + (d.canGo ? 'works' : 'doesn’t work') + '</div>';
-    h += (d.canStop && d.canGo) ? '<div class="eq"><b>Both work</b>: safe either way.</div>' : d.canStop ? '<div class="eq"><b>Stop.</b></div>' : d.canGo ? '<div class="eq"><b>Go.</b></div>'
+    h += '<h4>4 · Option A: stop</h4>' + TEX`${M.n(d.dS, 'm')} ${d.canStop ? '<mo>≤</mo>' : '<mo>&gt;</mo>'} ${M.iv('D')}` + '<p class="st">' + (d.canStop ? 'Works.' : 'Doesn’t work: you need ' + H.n(d.dS, 'm') + ' but only have ' + H.iv('D') + '.') + '</p>' +
+      '<h4>5 · Option B: keep going at constant speed</h4><p class="st">You must cover D + 15 m (the intersection) before red:</p>' + TEX`t = \frac{D + 15}{v}` + TEX`t = \frac{${I('D')} + 15}{${vv}}` + TEXA`t = ${M.n(d.tGo, 's')}` +
+      '<p class="st">Yellow lasts ' + H.iv('Ty') + ' → ' + (d.canGo ? 'works' : 'doesn’t work') + '.</p>';
+    h += (d.canStop && d.canGo) ? '<p class="st"><b>Both work</b>: safe either way.</p>' : d.canStop ? '<p class="st"><b>Stop.</b></p>' : d.canGo ? '<p class="st"><b>Go.</b></p>'
       : '<div class="bad"><b>Dilemma zone</b>: too close to stop, too far to make it. Engineers set yellow times so this can’t happen at the speed limit.</div>';
     return h;
   },

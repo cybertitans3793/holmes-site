@@ -34,17 +34,21 @@ const SIM = {
       { id: 'K1', name: 'Total KE after', short: 'K after', sym: 'K<sub>after</sub>', unit: 'J', f: d => d.K1, vs: 'K0' },
       { id: 'K0', name: 'Total KE before', short: 'K before', sym: 'K<sub>before</sub>', unit: 'J', f: d => d.K0 }]; },
   work(v, d, mode){
-    if (mode === 'stick') return '<h4>1 · Momentum before, in components</h4><div class="eq">p<sub>x</sub> = m<sub>A</sub>v<sub>A</sub> = (' + H.iv('mA') + ')(' + H.iv('vA') + ') = ' + H.n(d.px, 'kg·m/s') + '</div><div class="eq">p<sub>y</sub> = m<sub>B</sub>v<sub>B</sub> = (' + H.iv('mB') + ')(' + H.iv('vB') + ') = ' + H.n(d.py, 'kg·m/s') + '</div>' +
-      '<h4>2 · Each component is conserved separately</h4><div class="eq">V<sub>x</sub> = p<sub>x</sub>/(m<sub>A</sub> + m<sub>B</sub>) = ' + H.n(d.Vx, 'm/s') + ', V<sub>y</sub> = p<sub>y</sub>/(m<sub>A</sub> + m<sub>B</sub>) = ' + H.n(d.Vy, 'm/s') + '</div>' +
-      '<h4>3 · Put the components back together</h4><div class="eq">V = √(V<sub>x</sub>² + V<sub>y</sub>²) = <b>' + H.n(d.V, 'm/s') + '</b> at tan<sup>−1</sup>(V<sub>y</sub>/V<sub>x</sub>) = <b>' + H.n(d.ang, '°') + '</b> above the x-axis</div>' +
-      '<h4>4 · Kinetic energy</h4><div class="eq">' + H.n(d.K0, 'J') + ' → ' + H.n(d.K1, 'J') + ': ' + H.n(100 * d.lost) + '% lost (sticking is inelastic).</div>' +
+    if (mode === 'stick') return '<h4>1 · Momentum before, in components</h4>' + TEX`p_x = m_A v_A` + TEX`p_x = (${M.iv('mA')})(${M.iv('vA')})` + TEXA`p_x = ${M.n(d.px, 'kg·m/s')}` +
+      TEX`p_y = m_B v_B` + TEX`p_y = (${M.iv('mB')})(${M.iv('vB')})` + TEXA`p_y = ${M.n(d.py, 'kg·m/s')}` +
+      '<h4>2 · Each component is conserved separately</h4>' + TEX`V_x = \frac{p_x}{m_A + m_B}` + TEXA`V_x = ${M.n(d.Vx, 'm/s')}` + TEX`V_y = \frac{p_y}{m_A + m_B}` + TEXA`V_y = ${M.n(d.Vy, 'm/s')}` +
+      '<h4>3 · Put the components back together</h4>' + TEX`V = \sqrt{V_x^2 + V_y^2}` + TEX`V = \sqrt{(${M.n(d.Vx)})^2 + (${M.n(d.Vy)})^2}` + TEXA`V = ${M.n(d.V, 'm/s')}` +
+      TEX`\theta = \tan^{-1}\left(\frac{V_y}{V_x}\right)` + TEX`\theta = \tan^{-1}\left(\frac{${M.n(d.Vy)}}{${M.n(d.Vx)}}\right)` + TEXA`\theta = ${M.n(d.ang, '°')}` + '<p class="st">above the x-axis.</p>' +
+      '<h4>4 · Kinetic energy</h4>' + TEX`K_{\text{before}} = ${M.n(d.K0, 'J')}` + TEX`K_{\text{after}} = ${M.n(d.K1, 'J')}` + TEXA`\text{lost} = ${M.n(100 * d.lost)}\%` + '<p class="st">Sticking is inelastic.</p>' +
       '<p class="note">You can’t add the speeds or the energies to get the answer. Momentum is a vector: add it tip to tail.</p>';
-    return '<h4>1 · Before: all of the momentum is along x</h4><div class="eq">p<sub>x</sub> = m<sub>A</sub>v<sub>A</sub> = (' + H.iv('mA') + ')(' + H.iv('vA') + ') = ' + H.n(d.pAx, 'kg·m/s') + ', p<sub>y</sub> = 0</div>' +
-      '<h4>2 · A after, in components</h4><div class="eq">p<sub>Ax</sub>′ = m<sub>A</sub>v<sub>A</sub>′cosθ<sub>A</sub> = ' + H.n(d.pAx1) + ', p<sub>Ay</sub>′ = m<sub>A</sub>v<sub>A</sub>′sinθ<sub>A</sub> = ' + H.n(d.pAy1) + '</div>' +
-      '<h4>3 · B gets whatever is left in each direction</h4><div class="eq">p<sub>Bx</sub>′ = ' + H.n(d.pAx) + ' − ' + H.n(d.pAx1) + ' = ' + H.n(d.pBx1) + ' &nbsp; p<sub>By</sub>′ = 0 − ' + H.n(d.pAy1) + ' = ' + H.n(d.pBy1) + '</div>' +
-      '<div class="eq">v<sub>B</sub>′ = √(p<sub>Bx</sub>′² + p<sub>By</sub>′²)/m<sub>B</sub> = <b>' + H.n(d.uB, 'm/s') + '</b> at <b>' + H.n(-d.angB, '°') + '</b> below the x-axis</div>' +
+    return '<h4>1 · Before: all of the momentum is along x</h4>' + TEX`p_x = m_A v_A` + TEX`p_x = (${M.iv('mA')})(${M.iv('vA')})` + TEXA`p_x = ${M.n(d.pAx, 'kg·m/s')}` + TEX`p_y = 0` +
+      '<h4>2 · A after, in components</h4>' + TEX`p'_{Ax} = m_A v'_A\cos\theta_A` + TEXA`p'_{Ax} = ${M.n(d.pAx1, 'kg·m/s')}` + TEX`p'_{Ay} = m_A v'_A\sin\theta_A` + TEXA`p'_{Ay} = ${M.n(d.pAy1, 'kg·m/s')}` +
+      '<h4>3 · B gets whatever is left in each direction</h4>' + TEX`p'_{Bx} = p_x - p'_{Ax}` + TEX`p'_{Bx} = ${M.n(d.pAx)} - ${M.p(d.pAx1)}` + TEXA`p'_{Bx} = ${M.n(d.pBx1, 'kg·m/s')}` +
+      TEX`p'_{By} = 0 - p'_{Ay}` + TEX`p'_{By} = 0 - ${M.p(d.pAy1)}` + TEXA`p'_{By} = ${M.n(d.pBy1, 'kg·m/s')}` +
+      TEX`v'_B = \frac{\sqrt{(p'_{Bx})^2 + (p'_{By})^2}}{m_B}` + TEX`v'_B = \frac{\sqrt{(${M.n(d.pBx1)})^2 + (${M.n(d.pBy1)})^2}}{${M.iv('mB')}}` + TEXA`v'_B = ${M.n(d.uB, 'm/s')}` +
+      '<p class="st">at <b>' + H.n(-d.angB, '°') + '</b> below the x-axis.</p>' +
       '<p class="note">The y-momenta of A and B after must cancel, so they go off on opposite sides.</p>' +
-      '<h4>4 · Energy check</h4><div class="eq">K before ' + H.n(d.K0, 'J') + ', K after ' + H.n(d.K1, 'J') + '</div>' +
+      '<h4>4 · Energy check</h4>' + TEX`K_{\text{before}} = ${M.n(d.K0, 'J')}` + TEX`K_{\text{after}} = ${M.n(d.K1, 'J')}` +
       (d.gain ? '<div class="bad">K went up. That is impossible without an energy source: make A slower after the hit.</div>'
               : Math.abs(d.lost) < 0.01 ? '<div class="ok">Elastic (K kept).' + (Math.abs(v.mA - v.mB) < 0.005 ? ' Equal masses: the paths are ' + H.n(d.between, '°') + ' apart (90° for elastic).' : '') + '</div>'
               : '<div class="ok">' + H.n(100 * d.lost) + '% of K lost: an inelastic collision.</div>');

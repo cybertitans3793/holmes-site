@@ -19,13 +19,20 @@ const SIM = {
     { id: 'gs', name: 'Passenger g-force', short: 'g’s', sym: 'g’s', unit: 'g', f: d => d.gs },
     { id: 'Fp', name: 'Force on a 70 kg passenger', short: 'F_passenger', sym: 'F<sub>passenger</sub>', unit: 'N', f: d => d.Fp }]; },
   work(v, d, mode){
-    return '<h4>1 · Change in momentum (+ is toward the wall)</h4><div class="eq">Δp = m(v<sub>f</sub> − v<sub>i</sub>) = (' + H.iv('m') + ')(' + H.n(d.vf, 'm/s') + ' − ' + H.iv('v0') + ') = <b>' + H.n(d.dp, 'kg·m/s') + '</b></div>' +
+    return '<h4>1 · Change in momentum (+ is toward the wall)</h4>' + TEX`\Delta p = m\,(v_f - v_i)` +
+      TEX`\Delta p = (${M.iv('m')})(${M.n(d.vf, 'm/s')} - ${M.p(v.v0, 'm/s')})` + TEXA`\Delta p = ${M.n(d.dp, 'kg·m/s')}` +
       (mode === 'bounce' ? '<p class="note">Bouncing back makes Δv bigger (' + H.n(d.dv, 'm/s') + ' instead of ' + H.n(-v.v0, 'm/s') + '), so the impulse is bigger.</p>' : '') +
-      '<h4>2 · Impulse–momentum theorem</h4><div class="eq">J = F<sub>avg</sub>Δt = Δp → F<sub>avg</sub> = Δp/Δt = ' + H.n(d.dp) + ' / ' + H.iv('dt') + ' = <b>' + H.n(d.F, 'N') + '</b></div>' +
+      '<h4>2 · Impulse–momentum theorem</h4><p class="st">The impulse equals the change in momentum:</p>' + TEX`J = F_{\text{avg}}\,\Delta t = \Delta p` +
+      TEX`F_{\text{avg}} = \frac{\Delta p}{\Delta t}` + TEX`F_{\text{avg}} = \frac{${M.n(d.dp)}}{${M.iv('dt')}}` + TEXA`F_{\text{avg}} = ${M.n(d.F, 'N')}` +
       '<p class="note">Negative means the wall pushes the car backward. Same Δp, longer Δt → smaller force: that is the whole point of a crumple zone.</p>' +
-      '<h4>3 · What a 70 kg passenger feels</h4><div class="eq">a = Δv/Δt = ' + H.n(d.dv, 'm/s') + ' / ' + H.iv('dt') + ' = ' + H.n(d.a, 'm/s²') + ' → <b>' + H.n(d.gs) + ' g’s</b>, force ' + H.n(d.Fp, 'N') + '</div>' +
-      '<h4>4 · Force–time graph</h4><div class="eq">The area under F vs t is the impulse. A triangle-shaped hit with the same area peaks at 2F<sub>avg</sub> = ' + H.n(Math.abs(d.Fpk), 'N') + '.</div>' +
-      '<h4>5 · Energy</h4><div class="eq">K before = ' + H.n(d.Ki, 'J') + ', K after = ' + H.n(d.Kf, 'J') + '. Momentum of car + Earth is conserved; kinetic energy is not.</div>';
+      '<h4>3 · What a 70 kg passenger feels</h4>' + TEX`a = \frac{\Delta v}{\Delta t}` + TEX`a = \frac{${M.n(d.dv, 'm/s')}}{${M.iv('dt')}}` + TEX`a = ${M.n(d.a, 'm/s²')}` +
+      TEX`\frac{|a|}{g} = \frac{${M.n(Math.abs(d.a))}}{10}` + TEXA`\text{g-force} = ${M.n(d.gs)}\ g` +
+      TEX`F = m_{\text{p}}\,|a| = (70\,\text{kg})(${M.n(Math.abs(d.a))})` + TEXA`F = ${M.n(d.Fp, 'N')}` +
+      '<h4>4 · Force–time graph</h4><p class="st">The area under F vs t is the impulse. A triangle-shaped hit with the same area peaks at twice the average force:</p>' +
+      TEX`F_{\text{peak}} = 2F_{\text{avg}} = 2\left(${M.n(Math.abs(d.F))}\right)` + TEXA`F_{\text{peak}} = ${M.n(Math.abs(d.Fpk), 'N')}` +
+      '<h4>5 · Energy</h4>' + TEX`K = \tfrac{1}{2}mv^2` + TEX`K_i = \tfrac{1}{2}(${M.iv('m')})(${M.iv('v0')})^2` + TEXA`K_i = ${M.n(d.Ki, 'J')}` +
+      TEX`K_f = \tfrac{1}{2}(${M.iv('m')})(${M.p(d.vf)})^2` + TEXA`K_f = ${M.n(d.Kf, 'J')}` +
+      '<p class="st">Momentum of car + Earth is conserved; kinetic energy is not.</p>';
   },
   draw(v, d, mode, opt, t, dt, A){
     panelTitle('CRASH', 10, 18);

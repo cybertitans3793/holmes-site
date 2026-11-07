@@ -17,13 +17,17 @@ const SIM = {
     { id: 'v2', name: 'Speed after bounce', short: 'v_up', sym: 'v<sub>up</sub>', unit: 'm/s', f: d => d.v2 },
     { id: 'Klost', name: 'Fraction of KE lost', short: 'KE lost', sym: 'KE lost', unit: '', f: d => d.Klost }]; },
   work(v, d){
-    return '<h4>1 · Speed just before hitting (energy)</h4><div class="eq">v<sub>down</sub> = √(2gh) = √(2(' + H.g() + ')(' + H.iv('h') + ')) = <b>' + H.n(d.v1, 'm/s') + '</b></div>' +
-      '<h4>2 · Speed just after (from the bounce height)</h4><div class="eq">h′ = ' + H.iv('f') + ' × h = ' + H.n(d.h2, 'm') + ' → v<sub>up</sub> = √(2gh′) = <b>' + H.n(d.v2, 'm/s') + '</b></div>' +
-      '<h4>3 · Change in momentum (+ = up)</h4><div class="eq">Δp = m(v<sub>up</sub> − (−v<sub>down</sub>)) = (' + H.iv('m') + ')(' + H.n(d.v2) + ' + ' + H.n(d.v1) + ') = <b>' + H.n(d.dp, 'kg·m/s') + '</b></div>' +
+    return '<h4>1 · Speed just before hitting (energy)</h4>' + TEX`v_{\text{down}} = \sqrt{2gh}` + TEX`v_{\text{down}} = \sqrt{2\,(${M.n(10, 'm/s²')})(${M.iv('h')})}` + TEXA`v_{\text{down}} = ${M.n(d.v1, 'm/s')}` +
+      '<h4>2 · Speed just after (from the bounce height)</h4>' + TEX`h' = \frac{h'}{h}\,h = (${M.iv('f')})\,h` + TEX`h' = ${M.n(d.h2, 'm')}` +
+      TEX`v_{\text{up}} = \sqrt{2gh'}` + TEX`v_{\text{up}} = \sqrt{2\,(${M.n(10, 'm/s²')})(${M.n(d.h2)})}` + TEXA`v_{\text{up}} = ${M.n(d.v2, 'm/s')}` +
+      '<h4>3 · Change in momentum (+ = up)</h4>' + TEX`\Delta p = m\left(v_{\text{up}} - (-v_{\text{down}})\right)` + TEX`\Delta p = (${M.iv('m')})(${M.n(d.v2)} + ${M.n(d.v1)})` + TEXA`\Delta p = ${M.n(d.dp, 'kg·m/s')}` +
       '<p class="note">Bouncing up adds to Δp. A superball gets almost twice the impulse of a clay ball dropped from the same height.</p>' +
-      '<h4>4 · Force from the floor</h4><div class="eq">(N − mg)Δt = Δp → N = Δp/Δt + mg = ' + H.n(d.dp) + ' / ' + H.iv('dt') + ' + ' + H.n(v.m * G10) + ' = <b>' + H.n(d.N, 'N') + '</b> (' + H.n(d.ratio) + ' × its weight)</div>' +
-      '<h4>5 · Is momentum conserved?</h4><div class="eq">Not for the ball alone: the floor pushes on it. For ball + Earth, yes. Earth gets Δp = ' + H.n(-d.dp, 'kg·m/s') + ', so its speed changes by ' + H.n(d.vE, 'm/s') + '.</div>' +
-      '<h4>6 · How elastic?</h4><div class="eq">K<sub>after</sub>/K<sub>before</sub> = h′/h = ' + H.iv('f') + ' → <b>' + H.n(100 * d.Klost) + '%</b> of the kinetic energy is lost' + (v.f >= 0.999 ? ' (perfectly elastic)' : v.f === 0 ? ' (perfectly inelastic)' : '') + '.</div>';
+      '<h4>4 · Force from the floor</h4><p class="st">The floor’s push N and the weight mg act on the ball during contact:</p>' + TEX`(N - mg)\,\Delta t = \Delta p` + TEX`N = \frac{\Delta p}{\Delta t} + mg` +
+      TEX`N = \frac{${M.n(d.dp)}}{${M.iv('dt')}} + ${M.n(v.m * G10)}` + TEXA`N = ${M.n(d.N, 'N')}` + '<p class="st">That is ' + H.n(d.ratio) + ' × its weight.</p>' +
+      '<h4>5 · Is momentum conserved?</h4><p class="st">Not for the ball alone: the floor pushes on it. For ball + Earth, yes. Earth gets</p>' + TEX`\Delta p_{\text{Earth}} = ${M.n(-d.dp, 'kg·m/s')}` +
+      '<p class="st">so its speed changes by ' + H.n(d.vE, 'm/s') + '.</p>' +
+      '<h4>6 · How elastic?</h4>' + TEX`\frac{K_{\text{after}}}{K_{\text{before}}} = \frac{h'}{h} = ${M.iv('f')}` + TEXA`\text{lost} = ${M.n(100 * d.Klost)}\%` +
+      '<p class="st">of the kinetic energy is lost' + (v.f >= 0.999 ? ' (perfectly elastic)' : v.f === 0 ? ' (perfectly inelastic)' : '') + '.</p>';
   },
   draw(v, d, mode, opt, t, dt, A){
     panelTitle('SIDE VIEW', 10, 18);

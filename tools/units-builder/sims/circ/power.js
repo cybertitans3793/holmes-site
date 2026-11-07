@@ -41,24 +41,31 @@ const SIM = {
       { id: 'hp', name: 'Horsepower', short: 'hp', sym: 'hp', unit: 'hp', f: d => d.hp }]; },
   work(v, d, mode){
     if (mode === 'compare'){ const cmp = (a, b) => Math.abs(a - b) < 1e-9 ? 'the same' : a > b ? 'lifter 1' : 'lifter 2';
-      return '<h4>1 · Work = weight × height</h4><div class="eq">Lifter 1: W = (' + H.iv('m1') + ')(10)(' + H.iv('h') + ') = <b>' + H.n(d.W1, 'J') + '</b><br>Lifter 2: W = (' + H.iv('m2') + ')(10)(' + H.iv('h') + ') = <b>' + H.n(d.W2, 'J') + '</b></div>' +
-        '<h4>2 · Power = work ÷ time</h4><div class="eq">Lifter 1: P = ' + H.n(d.W1) + ' ÷ ' + H.iv('t1') + ' = <b>' + H.n(d.P1, 'W') + '</b><br>Lifter 2: P = ' + H.n(d.W2) + ' ÷ ' + H.iv('t2') + ' = <b>' + H.n(d.P2, 'W') + '</b></div>' +
-        '<h4>3 · Compare</h4><div class="eq">More work: <b>' + cmp(d.W1, d.W2) + '</b> · More power: <b>' + cmp(d.P1, d.P2) + '</b></div>' +
+      return '<h4>1 · Work = weight × height</h4>' + TEX`W = mgh` +
+        '<p class="st"><b>Lifter 1:</b></p>' + TEX`W_1 = (${M.iv('m1')})(10\,\text{m/s}^2)(${M.iv('h')})` + TEXA`W_1 = ${M.n(d.W1, 'J')}` +
+        '<p class="st"><b>Lifter 2:</b></p>' + TEX`W_2 = (${M.iv('m2')})(10\,\text{m/s}^2)(${M.iv('h')})` + TEXA`W_2 = ${M.n(d.W2, 'J')}` +
+        '<h4>2 · Power = work ÷ time</h4>' + TEX`P = \frac{W}{t}` +
+        '<p class="st"><b>Lifter 1:</b></p>' + TEX`P_1 = \frac{${M.n(d.W1)}}{${M.iv('t1')}}` + TEXA`P_1 = ${M.n(d.P1, 'W')}` +
+        '<p class="st"><b>Lifter 2:</b></p>' + TEX`P_2 = \frac{${M.n(d.W2)}}{${M.iv('t2')}}` + TEXA`P_2 = ${M.n(d.P2, 'W')}` +
+        '<h4>3 · Compare</h4><p class="st">More work: <b>' + cmp(d.W1, d.W2) + '</b> · More power: <b>' + cmp(d.P1, d.P2) + '</b></p>' +
         '<p class="note">Work only depends on the force and the distance. Power also depends on <b>how fast</b> the work gets done. Doing twice the work in twice the time is the same power.</p>'; }
-    if (mode === 'push') return '<h4>1 · Power from force and speed</h4><div class="eq">P = W/t = F·d/t = F × v<br>P = ' + H.iv('F') + ' × ' + H.iv('v') + ' = <b>' + H.n(d.P, 'W') + '</b></div>' +
-      '<h4>2 · In horsepower</h4><div class="eq">' + H.n(d.P) + ' ÷ 746 = <b>' + H.n(d.hp, 'hp') + '</b></div>' +
-      '<h4>3 · What that means</h4><div class="eq">Every second the force moves the object ' + H.iv('v') + ', doing ' + H.n(d.Wper, 'J') + ' of work each second.</div>' +
+    if (mode === 'push') return '<h4>1 · Power from force and speed</h4>' +
+      TEX`P = \frac{W}{t}` + TEX`P = \frac{F d}{t}` + TEX`P = F v` + TEX`P = (${M.iv('F')})(${M.iv('v')})` + TEXA`P = ${M.n(d.P, 'W')}` +
+      '<h4>2 · In horsepower</h4>' + TEX`\frac{${M.n(d.P, 'W')}}{746\,\text{W/hp}}` + TEXA`P = ${M.n(d.hp, 'hp')}` +
+      '<h4>3 · What that means</h4><p class="st">Every second the force moves the object ' + H.iv('v') + ', doing ' + H.n(d.Wper, 'J') + ' of work each second.</p>' +
       '<p class="note">At constant speed the forward force just balances drag or friction, so all of this power goes into heating the water, air or road — the KE doesn’t change. Going twice as fast against the same force takes twice the power.</p>';
-    let h = '<h4>1 · Work done against gravity (constant speed: lifting force = mg)</h4><div class="eq">W = Fd = mgh = (' + H.iv('m') + ')(' + H.g() + ')(' + H.iv('h') + ') = <b>' + H.n(d.Wk, 'J') + '</b></div>';
+    let h = '<h4>1 · Work done against gravity (constant speed: lifting force = mg)</h4>' +
+      TEX`W = F d` + TEX`W = mgh` + TEX`W = (${M.iv('m')})(10\,\text{m/s}^2)(${M.iv('h')})` + TEXA`W = ${M.n(d.Wk, 'J')}`;
     if (mode === 'motor'){
-      h += '<h4>2 · Time it takes</h4><div class="eq">P = W/t → t = W/P = ' + H.n(d.Wk, 'J') + ' / ' + H.iv('P') + ' = <b>' + H.n(d.t, 's') + '</b></div>' +
-        '<h4>3 · Same thing using P = Fv</h4><div class="eq">P = Fv = mg·v → v = P/(mg) = ' + H.iv('P') + ' / ' + H.n(d.W, 'N') + ' = <b>' + H.n(d.sp, 'm/s') + '</b></div>' +
-        '<div class="eq">Check: t = h/v = ' + H.iv('h') + ' / ' + H.n(d.sp, 'm/s') + ' = ' + H.n(v.h / d.sp, 's') + ' ✓</div>' +
+      h += '<h4>2 · Time it takes</h4>' + TEX`P = \frac{W}{t}` + TEX`t = \frac{W}{P}` + TEX`t = \frac{${M.n(d.Wk, 'J')}}{${M.iv('P')}}` + TEXA`t = ${M.n(d.t, 's')}` +
+        '<h4>3 · Same thing using P = Fv</h4>' + TEX`P = F v = mg\,v` + TEX`v = \frac{P}{mg}` + TEX`v = \frac{${M.iv('P')}}{${M.n(d.W, 'N')}}` + TEXA`v = ${M.n(d.sp, 'm/s')}` +
+        '<p class="st">Check:</p>' + TEX`t = \frac{h}{v}` + TEX`t = \frac{${M.iv('h')}}{${M.n(d.sp, 'm/s')}}` + TEXA`t = ${M.n(v.h / d.sp, 's')}` + '<p class="st">Same time ✓</p>' +
         '<p class="note">' + H.n(d.hp) + ' horsepower (1 hp = 746 W). Doubling the power halves the time; the work stays the same.</p>';
     } else {
-      h += '<h4>2 · Power</h4><div class="eq">P = W/t = ' + H.n(d.Wk, 'J') + ' / ' + H.iv('t') + ' = <b>' + H.n(d.P, 'W') + '</b></div>' +
+      h += '<h4>2 · Power</h4>' + TEX`P = \frac{W}{t}` + TEX`P = \frac{${M.n(d.Wk, 'J')}}{${M.iv('t')}}` + TEXA`P = ${M.n(d.P, 'W')}` +
         '<p class="note">= ' + H.n(d.hp) + ' hp, or about ' + H.n(d.bulbs) + ' old 60 W light bulbs. Walking or running up the same stairs does the <b>same work</b>; running just does it faster.</p>' +
-        '<h4>3 · Average vertical speed</h4><div class="eq">v = h/t = ' + H.iv('h') + ' / ' + H.iv('t') + ' = ' + H.n(d.sp, 'm/s') + ', and P = mg·v = ' + H.n(d.W * d.sp, 'W') + ' ✓</div>' +
+        '<h4>3 · Average vertical speed</h4>' + TEX`v = \frac{h}{t}` + TEX`v = \frac{${M.iv('h')}}{${M.iv('t')}}` + TEXA`v = ${M.n(d.sp, 'm/s')}` +
+        '<p class="st">Check with P = mg·v:</p>' + TEX`P = mg\,v` + TEX`P = (${M.n(d.W, 'N')})(${M.n(d.sp, 'm/s')})` + TEXA`P = ${M.n(d.W * d.sp, 'W')}` + '<p class="st">Same power ✓</p>' +
         '<p class="note">Measure it for real: time yourself on a staircase and measure the height of one step × number of steps.</p>';
     }
     return h;

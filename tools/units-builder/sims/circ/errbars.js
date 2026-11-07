@@ -22,12 +22,19 @@ const SIM = {
   },
   dvs(){ return [{ id: 'dm', name: 'Uncertainty in the gradient', short: 'Δm', sym: 'Δm', unit: 'cm/N', f: d => d.dm }, { id: 'm', name: 'Gradient of the best-fit line', short: 'm', sym: 'm', unit: 'cm/N', f: d => d.m }, { id: 'b', name: 'y-intercept', short: 'b', sym: 'b', unit: 'cm', f: d => d.b }]; },
   work(v, d){
-    return '<h4>1 · Plot the data with error bars (±' + H.iv('dy') + ')</h4><div class="eq">A good best-fit line passes through every error bar' + (d.missed ? '. <span style="color:#c43a00">It misses ' + d.missed + ' of them: the error bars are too small for this scatter, or there is a mistake.</span>' : ': it does here.') + '</div>' +
-      '<h4>2 · Gradient of the best-fit line</h4><div class="eq">m = <b>' + H.n(d.m, 'cm/N') + '</b></div>' +
-      '<h4>3 · Steepest and shallowest lines that still go through the error bars</h4><div class="eq">Draw them from the first bar to the last: m<sub>max</sub> = ' + H.n(d.mMax) + ', m<sub>min</sub> = ' + H.n(d.mMin) + '</div>' +
-      '<div class="eq">Δm = (m<sub>max</sub> − m<sub>min</sub>)/2 = <b>' + H.n(d.dm, 'cm/N') + '</b> → m = ' + fnum(d.m) + ' ± ' + fnum(d.dm) + ' cm/N (' + H.n(d.pct, '%') + ')</div>' +
-      '<h4>4 · Use the gradient: k = 1/m (convert cm to m)</h4><div class="eq">k = 100/m = ' + H.n(d.kfit, 'N/m') + ' ± ' + H.n(d.dk, 'N/m') + ' (same ' + H.n(d.pct, '%') + '). True k = ' + H.iv('k') + '.</div>' +
-      '<h4>5 · The intercept</h4><div class="eq">b = ' + H.n(d.b, 'cm') + ' ± ' + H.n(d.db, 'cm') + ' → ' + (d.zeroIn ? 'zero is within the uncertainty: no sign of a systematic error' : '<b>zero is outside the range: a systematic error</b> (like a ruler zero error). It shifts the line but doesn’t change the gradient.') + '</div>' +
+    return '<h4>1 · Plot the data with error bars (±' + H.iv('dy') + ')</h4><p class="st">A good best-fit line passes through every error bar' + (d.missed ? '. <span style="color:#c43a00">It misses ' + d.missed + ' of them: the error bars are too small for this scatter, or there is a mistake.</span>' : ': it does here.') + '</p>' +
+      '<h4>2 · Gradient of the best-fit line</h4>' + TEXA`m = ${M.n(d.m, 'cm/N')}` +
+      '<h4>3 · Steepest and shallowest lines that still go through the error bars</h4><p class="st">Draw them from the first bar to the last:</p>' +
+      TEX`m_{\text{max}} = ${M.n(d.mMax, 'cm/N')}` + TEX`m_{\text{min}} = ${M.n(d.mMin, 'cm/N')}` +
+      TEX`\Delta m = \frac{m_{\text{max}} - m_{\text{min}}}{2}` + TEX`\Delta m = \frac{${M.num(d.mMax)} - ${M.p(d.mMin)}}{2}` + TEXA`\Delta m = ${M.n(d.dm, 'cm/N')}` +
+      TEXA`m = \left(${M.num(d.m)} \pm ${M.num(d.dm)}\right)\,\text{cm/N}` +
+      TEX`\%\Delta m = \frac{\Delta m}{m}\times 100` + TEX`\%\Delta m = \frac{${M.num(d.dm)}}{${M.num(d.m)}}\times 100` + TEXA`\%\Delta m = ${M.n(d.pct, '%')}` +
+      '<h4>4 · Use the gradient: k = 1/m (convert cm to m)</h4>' +
+      TEX`k = \frac{100}{m}` + TEX`k = \frac{100}{${M.num(d.m)}}` + TEXA`k = ${M.n(d.kfit, 'N/m')}` +
+      TEXA`\Delta k = ${M.n(d.dk, 'N/m')}` +
+      '<p class="st">Same ' + H.n(d.pct, '%') + ' uncertainty as the gradient. True k = ' + H.iv('k') + '.</p>' +
+      '<h4>5 · The intercept</h4>' + TEXA`b = ${M.n(d.b, 'cm')} \pm ${M.n(d.db, 'cm')}` +
+      '<p class="st">' + (d.zeroIn ? 'Zero is within the uncertainty: no sign of a systematic error.' : '<b>Zero is outside the range: a systematic error</b> (like a ruler zero error). It shifts the line but doesn’t change the gradient.') + '</p>' +
       '<p class="note">This is why IB likes gradients: a systematic offset moves the intercept but leaves the slope (and so k) alone.</p>';
   },
   draw(v, d){

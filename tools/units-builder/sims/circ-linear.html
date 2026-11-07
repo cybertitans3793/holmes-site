@@ -252,12 +252,17 @@ const SIM = {
   },
   dvs(){ return [{ id: 'r2', name: 'How straight (R², 1 = perfect line)', short: 'R²', sym: 'R²', unit: '', f: d => d.r2 }, { id: 'm', name: 'Gradient', short: 'm', sym: 'm', unit: '', f: d => d.m }]; },
   work(v, d, mode, opt){
-    const e = d.e;
-    return '<h4>1 · The raw graph of ' + e.y + ' vs ' + e.x + ' is curved</h4><div class="eq">A curve is hard to check by eye and hard to get a gradient from. Find the relationship, then plot something that should be a straight line.</div>' +
+    const e = d.e, phys = {
+      pend: ("<math display=\"block\"><mrow><mtext>gradient</mtext><mo>&#x0003D;</mo><mfrac><mrow><mn>2</mn><mi>&#x003C0;</mi></mrow><mrow><msqrt><mrow><mi>g</mi></mrow></msqrt></mrow></mfrac></mrow></math>") + ("<math display=\"block\"><mrow><mi>g</mi><mo>&#x0003D;</mo><msup><mrow><mo stretchy=\"true\" fence=\"true\" form=\"prefix\">&#x00028;</mo><mfrac><mrow><mn>2</mn><mi>&#x003C0;</mi></mrow><mrow><mtext>gradient</mtext></mrow></mfrac><mo stretchy=\"true\" fence=\"true\" form=\"postfix\">&#x00029;</mo></mrow><mn>2</mn></msup></mrow></math>") + ("<math display=\"block\"><mrow><mi>g</mi><mo>&#x0003D;</mo><msup><mrow><mo stretchy=\"true\" fence=\"true\" form=\"prefix\">&#x00028;</mo><mfrac><mrow><mn>2</mn><mi>&#x003C0;</mi></mrow><mrow>" + (M.n(d.m)) + "</mrow></mfrac><mo stretchy=\"true\" fence=\"true\" form=\"postfix\">&#x00029;</mo></mrow><mn>2</mn></msup></mrow></math>") + ("<math class=\"ans\" display=\"block\"><mrow><mi>g</mi><mo>&#x0003D;</mo>" + (M.n(d.res, e.gu)) + "</mrow></math>"),
+      fall: '<p class="st">From d = ½gt²: gradient = g/2.</p>' + ("<math display=\"block\"><mrow><mi>g</mi><mo>&#x0003D;</mo><mn>2</mn><mo>&#x000D7;</mo><mtext>gradient</mtext></mrow></math>") + ("<math display=\"block\"><mrow><mi>g</mi><mo>&#x0003D;</mo><mn>2</mn><mo>&#x000D7;</mo>" + (M.n(d.m)) + "</mrow></math>") + ("<math class=\"ans\" display=\"block\"><mrow><mi>g</mi><mo>&#x0003D;</mo>" + (M.n(d.res, e.gu)) + "</mrow></math>"),
+      light: '<p class="st">From I = P/(4πr²): gradient = P/4π.</p>' + ("<math display=\"block\"><mrow><mi>P</mi><mo>&#x0003D;</mo><mn>4</mn><mi>&#x003C0;</mi><mo>&#x000D7;</mo><mtext>gradient</mtext></mrow></math>") + ("<math display=\"block\"><mrow><mi>P</mi><mo>&#x0003D;</mo><mn>4</mn><mi>&#x003C0;</mi><mo>&#x000D7;</mo>" + (M.n(d.m)) + "</mrow></math>") + ("<math class=\"ans\" display=\"block\"><mrow><mi>P</mi><mo>&#x0003D;</mo>" + (M.n(d.res, e.gu)) + "</mrow></math>"),
+      gas: '<p class="st">PV = nRT is constant, so the gradient is PV.</p>' + ("<math display=\"block\"><mrow><mi>P</mi><mi>V</mi><mo>&#x0003D;</mo><mtext>gradient</mtext></mrow></math>") + ("<math display=\"block\"><mrow><mi>P</mi><mi>V</mi><mo>&#x0003D;</mo>" + (M.n(d.m)) + "</mrow></math>") + ("<math class=\"ans\" display=\"block\"><mrow><mi>P</mi><mi>V</mi><mo>&#x0003D;</mo>" + (M.n(d.res, e.gu)) + "</mrow></math>")
+    };
+    return '<h4>1 · The raw graph of ' + e.y + ' vs ' + e.x + ' is curved</h4><p class="st">A curve is hard to check by eye and hard to get a gradient from. Find the relationship, then plot something that should be a straight line.</p>' +
       '<h4>2 · You’re plotting ' + e.y + ' against ' + d.t[0].replace('x', e.x) + '</h4>' +
-      (d.right ? '<div class="eq"><b>Straight line through the origin</b> (R² = ' + d.r2.toFixed(4) + '): that’s the right choice.</div>' +
-        '<h4>3 · Read the physics from the gradient</h4><div class="eq">gradient = ' + H.n(d.m) + ' &nbsp; ' + e.meaning + '</div><div class="eq">' + e.gl + ' = <b>' + H.n(d.res, e.gu) + '</b></div>'
-        : '<div class="bad">Still curved (or not through the origin): R² = ' + d.r2.toFixed(4) + '. Try another choice.</div>') +
+      ("<math display=\"block\"><mrow><msup><mi>R</mi><mn>2</mn></msup><mo>&#x0003D;</mo>" + ('<mn>' + d.r2.toFixed(4) + '</mn>') + "</mrow></math>") + (d.right ? '<p class="st"><b>Straight line through the origin</b>: that’s the right choice.</p>' +
+        '<h4>3 · Read the physics from the gradient</h4>' + ("<math display=\"block\"><mrow><mtext>gradient</mtext><mo>&#x0003D;</mo>" + (M.n(d.m)) + "</mrow></math>") + phys[mode]
+        : '<div class="bad">Still curved (or not through the origin). Try another choice.</div>') +
       '<p class="note">Check two things: straight, and through the origin when the relationship is a pure proportion. A straight line that misses the origin points to a systematic error.</p>';
   },
   draw(v, d, mode){

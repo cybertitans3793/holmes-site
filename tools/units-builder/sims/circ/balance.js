@@ -37,30 +37,35 @@ const SIM = {
       { id: 'W', name: 'Weight = drag at terminal speed', short: 'W', sym: 'W', unit: 'N', f: d => d.W }];
   },
   work(v, d, mode, opt){
+    const g = M.n(10, 'm/s²');
     if (mode === 'push'){
-      let h = '<h4>1 · Free-body diagram of the crate</h4><div class="eq">Vertical: N = mg = (' + H.iv('m') + ')(' + H.g() + ') = ' + H.n(d.N, 'N') + ' (it doesn’t move up or down)</div>' +
-        '<div class="eq">Horizontal: your push F = ' + H.iv('F') + ' forward, kinetic friction backward</div>' +
-        '<h4>2 · Friction while it slides</h4><div class="eq">f<sub>k</sub> = μ<sub>k</sub>N = (' + H.iv('mu') + ')(' + H.n(d.N, 'N') + ') = <b>' + H.n(d.f, 'N') + '</b></div>' +
-        '<h4>3 · Net force</h4><div class="eq">ΣF = F − f<sub>k</sub> = ' + H.iv('F') + ' − ' + H.n(d.f, 'N') + ' = <b>' + H.n(d.net, 'N') + '</b></div>';
-      h += d.bal ? '<div class="eq">ΣF = 0 → <b>constant velocity</b>. Newton’s 1st law: balanced forces don’t mean “not moving,” they mean “velocity not changing.”</div>'
-        : d.net > 0 ? '<div class="eq">ΣF points forward → the crate <b>speeds up</b>. (How fast it speeds up is Newton’s 2nd law, next unit.)</div>'
-        : '<div class="eq">ΣF points backward → the crate <b>slows down</b>, even though you’re still pushing forward.</div>';
-      h += '<h4>4 · Push needed for constant velocity</h4><div class="eq">F = f<sub>k</sub> = ' + H.n(d.f, 'N') + '. Faster or slower doesn’t matter: the same push keeps it at <i>any</i> steady speed.</div>' +
+      let h = '<h4>1 · Free-body diagram of the crate</h4><p class="st">Vertical: the crate doesn’t move up or down.</p>' +
+        TEX`N = mg` + TEX`N = \left(${M.iv('m')}\right)\left(${g}\right)` + TEX`N = ${M.n(d.N, 'N')}` +
+        '<p class="st">Horizontal: your push F = ' + H.iv('F') + ' forward, kinetic friction backward.</p>' +
+        '<h4>2 · Friction while it slides</h4>' + TEX`f_k = \mu_k N` + TEX`f_k = \left(${M.iv('mu')}\right)\left(${M.n(d.N, 'N')}\right)` + TEXA`f_k = ${M.n(d.f, 'N')}` +
+        '<h4>3 · Net force</h4>' + TEX`\Sigma F = F - f_k` + TEX`\Sigma F = ${M.iv('F')} - ${M.n(d.f, 'N')}` + TEXA`\Sigma F = ${M.n(d.net, 'N')}`;
+      h += d.bal ? '<p class="st">ΣF = 0 → <b>constant velocity</b>. Newton’s 1st law: balanced forces don’t mean “not moving,” they mean “velocity not changing.”</p>'
+        : d.net > 0 ? '<p class="st">ΣF points forward → the crate <b>speeds up</b>. (How fast it speeds up is Newton’s 2nd law, next unit.)</p>'
+        : '<p class="st">ΣF points backward → the crate <b>slows down</b>, even though you’re still pushing forward.</p>';
+      h += '<h4>4 · Push needed for constant velocity</h4>' + TEX`F = f_k` + TEXA`F = ${M.n(d.f, 'N')}` +
+        '<p class="st">Faster or slower doesn’t matter: the same push keeps it at <i>any</i> steady speed.</p>' +
         '<p class="note">Common mistake: “if it moves forward, the forward force must be bigger.” Only if it’s speeding up.</p>';
       return h;
     }
-    if (mode === 'letgo') return '<h4>1 · After you let go, the only horizontal force is friction</h4><div class="eq">f<sub>k</sub> = μ<sub>k</sub>mg = (' + H.iv('mu') + ')(' + H.iv('m') + ')(' + H.g() + ') = <b>' + H.n(d.f, 'N') + '</b>, backward</div>' +
-      (v.mu === 0 ? '<h4>2 · No friction → no net force</h4><div class="eq">ΣF = 0, so the crate keeps moving at ' + H.iv('v0') + ' <b>forever</b>. Nothing is needed to keep it going: that’s inertia.</div>'
-        : '<h4>2 · Unbalanced → the velocity changes</h4><div class="eq">ΣF = ' + H.n(d.f, 'N') + ' backward, so the crate slows down and stops.</div>' +
-          '<div class="eq">Preview of Unit 2: it stops after ' + H.n(d.tStop, 's') + ' and ' + H.n(d.dStop, 'm') + '.</div>') +
-      '<h4>3 · Why do things “naturally” stop?</h4><div class="eq">Not because the push “runs out.” Friction stops them. Make μ smaller and watch it go farther; at μ = 0 it never stops.</div>' +
+    if (mode === 'letgo') return '<h4>1 · After you let go, the only horizontal force is friction</h4>' +
+      TEX`f_k = \mu_k m g` + TEX`f_k = \left(${M.iv('mu')}\right)\left(${M.iv('m')}\right)\left(${g}\right)` + TEXA`f_k = ${M.n(d.f, 'N')}` + '<p class="st">It points backward.</p>' +
+      (v.mu === 0 ? '<h4>2 · No friction → no net force</h4>' + TEX`\Sigma F = 0` + '<p class="st">The crate keeps moving at ' + H.iv('v0') + ' <b>forever</b>. Nothing is needed to keep it going: that’s inertia.</p>'
+        : '<h4>2 · Unbalanced → the velocity changes</h4>' + TEX`\Sigma F = ${M.n(d.f, 'N')}\ \text{backward}` + '<p class="st">So the crate slows down and stops.</p>' +
+          '<p class="st">Preview of Unit 2:</p>' + TEX`t_{\text{stop}} = ${M.n(d.tStop, 's')}` + TEX`d_{\text{stop}} = ${M.n(d.dStop, 'm')}`) +
+      '<h4>3 · Why do things “naturally” stop?</h4><p class="st">Not because the push “runs out.” Friction stops them. Make μ smaller and watch it go farther; at μ = 0 it never stops.</p>' +
       '<p class="note">Aristotle thought a moving object needs a force to keep moving. Galileo and Newton: it needs a force to <i>change</i> its motion.</p>';
     const open = opt.chute === 'open';
-    return '<h4>1 · Forces on the skydiver</h4><div class="eq">Weight W = mg = (' + H.iv('m') + ')(' + H.g() + ') = ' + H.n(d.W, 'N') + ' down. Air drag D = bv² up, and it grows as the speed grows.</div>' +
-      (open ? '<h4>2 · Chute opens at ' + H.n(d.v0, 'm/s') + '</h4><div class="eq">D = bv² = (' + H.iv('b') + ')(' + H.n(d.v0) + ')² = ' + H.n(d.dragStart, 'N') + ' > W, so ΣF points <b>up</b>: the skydiver slows down (while still falling!).</div>'
-        : '<h4>2 · Just after jumping</h4><div class="eq">v ≈ 0, so D ≈ 0 and ΣF = W down: the skydiver speeds up. As v grows, D grows.</div>') +
-      '<h4>3 · Terminal speed: the forces balance</h4><div class="eq">ΣF = 0: bv<sub>t</sub>² = mg → v<sub>t</sub> = √(mg/b) = √(' + H.n(d.W) + ' / ' + H.iv('b') + ') = <b>' + H.n(d.vt, 'm/s') + '</b></div>' +
-      '<div class="eq">From then on: constant velocity, even though gravity is still pulling.</div>' +
+    return '<h4>1 · Forces on the skydiver</h4>' + TEX`W = mg` + TEX`W = \left(${M.iv('m')}\right)\left(${g}\right)` + TEX`W = ${M.n(d.W, 'N')}\ \text{down}` +
+      '<p class="st">Air drag points up, and it grows as the speed grows:</p>' + TEX`D = bv^2` +
+      (open ? '<h4>2 · Chute opens at ' + H.n(d.v0, 'm/s') + '</h4>' + TEX`D = bv^2` + TEX`D = \left(${M.iv('b')}\right)\left(${M.n(d.v0)}\right)^2` + TEX`D = ${M.n(d.dragStart, 'N')}` + '<p class="st">D > W, so ΣF points <b>up</b>: the skydiver slows down (while still falling!).</p>'
+        : '<h4>2 · Just after jumping</h4><p class="st">v ≈ 0, so D ≈ 0 and ΣF = W down: the skydiver speeds up. As v grows, D grows.</p>') +
+      '<h4>3 · Terminal speed: the forces balance</h4><p class="st">ΣF = 0, so drag equals weight:</p>' + TEX`bv_t^2 = mg` + TEX`v_t = \sqrt{\frac{mg}{b}}` + TEX`v_t = \sqrt{\frac{${M.n(d.W)}}{${M.iv('b')}}}` + TEXA`v_t = ${M.n(d.vt, 'm/s')}` +
+      '<p class="st">From then on: constant velocity, even though gravity is still pulling.</p>' +
       '<p class="note">Heavier skydivers have a higher terminal speed: the drag has to grow bigger to balance a bigger weight.</p>';
   },
   draw(v, d, mode, opt, t, dt, A){

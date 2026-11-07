@@ -20,14 +20,18 @@ const SIM = {
     { id: 'N', name: 'Normal force', short: 'N', sym: 'N', unit: 'N', f: d => d.N, vs: 'Wt' },
     { id: 'Wt', name: 'Weight mg', short: 'mg', sym: 'mg', unit: 'N', f: d => d.W }]; },
   work(v, d){
-    return '<h4>1 · Work done by the pull (only the part along the motion counts)</h4><div class="eq">W<sub>F</sub> = F d cosθ = (' + H.iv('F') + ')(' + H.iv('d') + ') cos ' + H.iv('th') + ' = <b>' + H.n(d.WF, 'J') + '</b></div>' +
-      '<h4>2 · Normal force (vertical forces balance)</h4><div class="eq">N + F sinθ = mg → N = mg − F sinθ = (' + H.iv('m') + ')(' + H.g() + ') − (' + H.iv('F') + ') sin ' + H.iv('th') + ' = <b>' + H.n(d.N, 'N') + '</b></div>' +
+    return '<h4>1 · Work done by the pull (only the part along the motion counts)</h4>' +
+      TEX`W_F = F\,d\cos\theta` + TEX`W_F = (${M.iv('F')})(${M.iv('d')})\cos ${M.iv('th')}` + TEXA`W_F = ${M.n(d.WF, 'J')}` +
+      '<h4>2 · Normal force (vertical forces balance)</h4>' +
+      TEX`N + F\,\sin\theta = mg` + TEX`N = mg - F\,\sin\theta` + TEX`N = (${M.iv('m')})(10\,\text{m/s}^2) - (${M.iv('F')})\sin ${M.iv('th')}` + TEXA`N = ${M.n(d.N, 'N')}` +
       (d.lifts ? '<div class="bad">F sinθ is more than the weight: the crate would lift off the floor. N = 0.</div>' : '<p class="note">Pulling upward at an angle makes N smaller, so friction is smaller too.</p>') +
-      '<h4>3 · Work done by friction (opposite the motion, cos 180° = −1)</h4><div class="eq">W<sub>f</sub> = −μ<sub>k</sub>N d = −(' + H.iv('mu') + ')(' + H.n(d.N, 'N') + ')(' + H.iv('d') + ') = <b>' + H.n(d.Wf, 'J') + '</b></div>' +
-      '<h4>4 · Work by gravity and by N</h4><div class="eq">Both are perpendicular to the motion: W = Fd cos 90° = 0</div>' +
-      '<h4>5 · Work–energy theorem (starts from rest)</h4><div class="eq">W<sub>net</sub> = W<sub>F</sub> + W<sub>f</sub> = ' + H.n(d.WF) + ' + (' + H.n(d.Wf) + ') = <b>' + H.n(d.Wnet, 'J') + '</b> = ΔK</div>' +
+      '<h4>3 · Work done by friction (opposite the motion, cos 180° = −1)</h4>' +
+      TEX`W_f = -\mu_k N d` + TEX`W_f = -(${M.iv('mu')})(${M.n(d.N, 'N')})(${M.iv('d')})` + TEXA`W_f = ${M.n(d.Wf, 'J')}` +
+      '<h4>4 · Work by gravity and by N</h4><p class="st">Both are perpendicular to the motion:</p>' + TEX`W = F d\cos 90^{\circ} = 0` +
+      '<h4>5 · Work–energy theorem (starts from rest)</h4>' +
+      TEX`W_{\text{net}} = W_F + W_f` + TEX`W_{\text{net}} = ${M.n(d.WF)} + ${M.p(d.Wf)}` + TEXA`W_{\text{net}} = ${M.n(d.Wnet, 'J')}` + '<p class="st">This equals the change in kinetic energy, ΔK.</p>' +
       (d.stops ? '<div class="bad">W<sub>net</sub> ≤ 0: friction takes out at least as much as the pull puts in. A crate starting from rest won’t speed up.</div>'
-               : '<div class="eq">½mv<sub>f</sub>² = W<sub>net</sub> → v<sub>f</sub> = √(2W<sub>net</sub>/m) = √(2(' + H.n(d.Wnet) + ')/' + H.iv('m') + ') = <b>' + H.n(d.vf, 'm/s') + '</b></div>');
+               : TEX`\frac{1}{2} m v_f^2 = W_{\text{net}}` + TEX`v_f = \sqrt{\frac{2 W_{\text{net}}}{m}}` + TEX`v_f = \sqrt{\frac{2(${M.n(d.Wnet)})}{${M.iv('m')}}}` + TEXA`v_f = ${M.n(d.vf, 'm/s')}`);
   },
   draw(v, d, mode, opt, t, dt, A){
     panelTitle('SIDE VIEW', 10, 18);

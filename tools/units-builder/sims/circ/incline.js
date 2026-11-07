@@ -32,23 +32,28 @@ const SIM = {
       { id: 'N', name: 'Normal force', short: 'N', sym: 'N', unit: 'N', f: d => d.N }];
   },
   work(v, d, mode){
-    let h = '<h4>1 · Tilt your axes: x along the ramp, y perpendicular to it</h4><div class="eq">Then only the weight needs splitting: mg = (' + H.iv('m') + ')(' + H.g() + ') = ' + H.n(d.W, 'N') + '</div>' +
-      '<div class="eq">Along the ramp (down): mg sinθ = ' + H.n(d.W) + ' sin ' + H.iv('th') + ' = <b>' + H.n(d.Wpar, 'N') + '</b> &nbsp; Into the ramp: mg cosθ = <b>' + H.n(d.Wperp, 'N') + '</b></div>' +
+    let h = '<h4>1 · Tilt your axes: x along the ramp, y perpendicular to it</h4><p class="st">Then only the weight needs splitting:</p>' +
+      TEX`W = mg` + TEX`W = (${M.iv('m')})(10\,\text{m/s}^2)` + TEXA`W = ${M.n(d.W, 'N')}` +
+      '<p class="st">Along the ramp (down):</p>' + TEX`W_{\parallel} = mg\sin\theta` + TEX`W_{\parallel} = ${M.n(d.W)}\sin ${M.iv('th')}` + TEXA`W_{\parallel} = ${M.n(d.Wpar, 'N')}` +
+      '<p class="st">Into the ramp:</p>' + TEX`W_{\perp} = mg\cos\theta` + TEXA`W_{\perp} = ${M.n(d.Wperp, 'N')}` +
       '<p class="note">Check: θ = 0 → all of mg presses into the floor; θ = 90° → all of it pulls along the (vertical) wall. sin goes with “along” here because θ is the ramp angle.</p>' +
-      '<h4>2 · Perpendicular: no acceleration, so N = mg cosθ = ' + H.n(d.N, 'N') + '</h4>';
+      '<h4>2 · Perpendicular: no acceleration</h4>' + TEX`N = mg\cos\theta` + TEXA`N = ${M.n(d.N, 'N')}`;
     if (mode === 'rest'){
-      h += '<h4>3 · Can static friction hold it?</h4><div class="eq">Needs f = mg sinθ = ' + H.n(d.Wpar, 'N') + '; max f<sub>s</sub> = μ<sub>s</sub>N = (' + H.iv('mus') + ')(' + H.n(d.N) + ') = ' + H.n(d.fmax, 'N') + '</div>';
+      h += '<h4>3 · Can static friction hold it?</h4><p class="st">Friction needed to hold it:</p>' + TEXA`f = mg\sin\theta = ${M.n(d.Wpar, 'N')}` +
+        '<p class="st">Most static friction can give:</p>' + TEX`f_{s,\text{max}} = \mu_s N` + TEX`f_{s,\text{max}} = (${M.iv('mus')})(${M.n(d.N)})` + TEXA`f_{s,\text{max}} = ${M.n(d.fmax, 'N')}`;
       h += d.slides ? '<div class="bad">' + H.n(d.Wpar, 'N') + ' > ' + H.n(d.fmax, 'N') + ' → it <b>slides</b>.</div>' +
-        '<h4>4 · Sliding: kinetic friction</h4><div class="eq">a = (mg sinθ − μ<sub>k</sub>mg cosθ)/m = g(sinθ − μ<sub>k</sub>cosθ) = <b>' + H.n(d.a, 'm/s²') + '</b> down the ramp (mass cancels)</div>' + (d.bad ? '<p class="note">μ<sub>k</sub> above μ<sub>s</sub> isn’t realistic; using μ<sub>k</sub> = μ<sub>s</sub>.</p>' : '')
-        : '<div class="eq">' + H.n(d.Wpar, 'N') + ' ≤ ' + H.n(d.fmax, 'N') + ' → it <b>stays put</b>. Static friction is exactly ' + H.n(d.f, 'N') + ' up the ramp (not μ<sub>s</sub>N).</div>';
-      h += '<h4>' + (d.slides ? '5' : '4') + ' · The slipping angle</h4><div class="eq">Just about to slip: mg sinθ = μ<sub>s</sub>mg cosθ → <b>tanθ = μ<sub>s</sub></b> → θ = ' + H.n(d.thSlip, '°') + '. Mass cancels: a heavy and a light block slip at the same angle.</div>' +
+        '<h4>4 · Sliding: kinetic friction</h4>' + TEX`a = \frac{mg\sin\theta - \mu_k mg\cos\theta}{m}` + TEX`a = g\left(\sin\theta - \mu_k\cos\theta\right)` + TEXA`a = ${M.n(d.a, 'm/s²')}` + '<p class="st">down the ramp (mass cancels)</p>' + (d.bad ? '<p class="note">μ<sub>k</sub> above μ<sub>s</sub> isn’t realistic; using μ<sub>k</sub> = μ<sub>s</sub>.</p>' : '')
+        : TEX`${M.n(d.Wpar, 'N')} \le ${M.n(d.fmax, 'N')}` + '<p class="st">It <b>stays put</b>. Static friction is exactly the needed amount (not μ<sub>s</sub>N), pointing up the ramp:</p>' + TEXA`f_s = ${M.n(d.f, 'N')}`;
+      h += '<h4>' + (d.slides ? '5' : '4') + ' · The slipping angle</h4><p class="st">Just about to slip:</p>' + TEX`mg\sin\theta = \mu_s mg\cos\theta` + TEXA`\tan\theta = \mu_s` + TEXA`\theta_{\text{slip}} = ${M.n(d.thSlip, '°')}` +
+        '<p class="st">Mass cancels: a heavy and a light block slip at the same angle.</p>' +
         '<p class="note">Lab tip: tilt a board until a block just slips, measure θ, and you’ve measured μ<sub>s</sub> = tanθ.</p>';
       return h;
     }
-    h += '<h4>3 · Along the ramp (up = +), block moving up</h4><div class="eq">Friction points down the ramp (against the motion): f<sub>k</sub> = μ<sub>k</sub>N = (' + H.iv('muk') + ')(' + H.n(d.N) + ') = ' + H.n(d.f, 'N') + '</div>' +
-      '<div class="eq">ΣF = F − mg sinθ − f<sub>k</sub> = ' + H.iv('F') + ' − ' + H.n(d.Wpar) + ' − ' + H.n(d.f) + ' = ' + H.n(d.net, 'N') + '</div>' +
-      '<div class="eq">a = ΣF/m = <b>' + H.n(d.a, 'm/s²') + '</b> ' + (d.a > 0.005 ? '(speeding up the ramp)' : d.a < -0.005 ? '(slowing down while it still moves up)' : '(constant velocity)') + '</div>' +
-      '<h4>4 · Push for constant velocity up the ramp</h4><div class="eq">ΣF = 0 → F = mg sinθ + μ<sub>k</sub>mg cosθ = <b>' + H.n(d.Fconst, 'N') + '</b></div>' +
+    h += '<h4>3 · Along the ramp (up = +), block moving up</h4><p class="st">Friction points down the ramp (against the motion):</p>' +
+      TEX`f_k = \mu_k N` + TEX`f_k = (${M.iv('muk')})(${M.n(d.N)})` + TEXA`f_k = ${M.n(d.f, 'N')}` +
+      TEX`\Sigma F = F - mg\sin\theta - f_k` + TEX`\Sigma F = ${M.iv('F')} - ${M.n(d.Wpar)} - ${M.n(d.f)}` + TEXA`\Sigma F = ${M.n(d.net, 'N')}` +
+      TEX`a = \frac{\Sigma F}{m}` + TEXA`a = ${M.n(d.a, 'm/s²')}` + '<p class="st">' + (d.a > 0.005 ? 'Speeding up the ramp.' : d.a < -0.005 ? 'Slowing down while it still moves up.' : 'Constant velocity.') + '</p>' +
+      '<h4>4 · Push for constant velocity up the ramp</h4>' + TEX`\Sigma F = 0` + TEX`F = mg\sin\theta + \mu_k mg\cos\theta` + TEXA`F = ${M.n(d.Fconst, 'N')}` +
       '<p class="note">Pushing it <i>down</i> the ramp at constant speed would need F = μ<sub>k</sub>mg cosθ − mg sinθ instead: friction flips direction, gravity doesn’t.</p>';
     return h;
   },

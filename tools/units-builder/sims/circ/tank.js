@@ -22,18 +22,22 @@ const SIM = {
     return [{ id: 'xMid', name: 'Range from the middle hole', short: 'x_mid', sym: 'x<sub>mid</sub>', unit: 'm', f: d => d.xMid }];
   },
   work(v, d, mode){
-    if (mode === 'one') return '<h4>1 · Bernoulli from the surface (point 1) to the hole (point 2)</h4><div class="eq">P<sub>1</sub> + ½ρv<sub>1</sub>² + ρgh = P<sub>2</sub> + ½ρv<sub>2</sub>² + 0. Wide tank: v<sub>1</sub> ≈ 0. ' + (v.Pg > 0 ? 'Top sealed: P<sub>1</sub> − P<sub>2</sub> = ' + H.iv('Pg') + '.' : 'Both open to the air: P<sub>1</sub> = P<sub>2</sub>.') + '</div>' +
-      '<div class="eq">v = √(2gh' + (v.Pg > 0 ? ' + 2ΔP/ρ' : '') + ') = √(2(10)(' + H.iv('h') + ')' + (v.Pg > 0 ? ' + 2(' + H.n(v.Pg * 1000) + ')/1000' : '') + ') = <b>' + H.n(d.sp, 'm/s') + '</b></div>' +
+    if (mode === 'one') return '<h4>1 · Bernoulli from the surface (point 1) to the hole (point 2)</h4>' + TEX`P_1 + \frac{1}{2}\rho v_1^2 + \rho g h = P_2 + \frac{1}{2}\rho v_2^2` +
+      '<p class="st">Wide tank: v<sub>1</sub> ≈ 0. ' + (v.Pg > 0 ? 'Top sealed: P<sub>1</sub> − P<sub>2</sub> = ' + H.iv('Pg') + '.' : 'Both open to the air: P<sub>1</sub> = P<sub>2</sub>.') + '</p>' +
+      (v.Pg > 0 ? TEX`v = \sqrt{2gh + \frac{2\Delta P}{\rho}}` + TEX`v = \sqrt{2(10)(${M.iv('h')}) + \frac{2(${M.n(v.Pg * 1000)})}{1000}}`
+        : TEX`v = \sqrt{2gh}` + TEX`v = \sqrt{2(10)(${M.iv('h')})}`) + TEXA`v = ${M.n(d.sp, 'm/s')}` +
       '<p class="note">Torricelli: the same speed as something dropped from the surface down to the hole.</p>' +
-      '<h4>2 · Then it’s a horizontal projectile</h4><div class="eq">Fall time: t = √(2y/g) = √(2(' + H.iv('y') + ')/10) = ' + H.n(d.tf, 's') + '</div>' +
-      '<div class="eq">Lands at x = vt = (' + H.n(d.sp) + ')(' + H.n(d.tf) + ') = <b>' + H.n(d.x, 'm') + '</b></div>' +
-      '<h4>3 · Flow rate</h4><div class="eq">Q = av = (' + H.n(v.a * 1e-4, 'm²') + ')(' + H.n(d.sp) + ') = ' + H.n(d.Q, 'm³/s') + ' = ' + H.n(d.Lmin, 'L/min') + '</div>' +
+      '<h4>2 · Then it’s a horizontal projectile</h4><p class="st">Fall time:</p>' + TEX`t = \sqrt{\frac{2y}{g}}` + TEX`t = \sqrt{\frac{2(${M.iv('y')})}{10\,\text{m/s}^2}}` + TEX`t = ${M.n(d.tf, 's')}` +
+      '<p class="st">Where it lands:</p>' + TEX`x = vt` + TEX`x = (${M.n(d.sp)})(${M.n(d.tf)})` + TEXA`x = ${M.n(d.x, 'm')}` +
+      '<h4>3 · Flow rate</h4>' + TEX`Q = av` + TEX`Q = (${M.n(v.a * 1e-4, 'm²')})(${M.n(d.sp)})` + TEXA`Q = ${M.n(d.Q, 'm³/s')}` + TEX`Q = ${M.n(d.Lmin, 'L/min')}` +
       '<p class="note">As the tank drains, h drops, so v and x shrink: the stream gets weaker over time.</p>';
     const hs = d.holes;
-    return '<h4>1 · Each hole: v = √(2gh) where h is the depth below the surface</h4><h4>2 · Each stream falls from height y = H − h: t = √(2y/g)</h4>' +
-      '<div class="eq">x = vt = √(2gh)·√(2y/g) = <b>2√(hy)</b></div>' +
-      hs.map((q, i) => '<div class="eq">' + ['Low', 'Middle', 'High'][i] + ' hole (y = ' + H.n(q.y, 'm') + ', h = ' + H.n(q.h, 'm') + '): v = ' + H.n(q.s, 'm/s') + ', x = ' + H.n(q.x, 'm') + '</div>').join('') +
-      '<h4>3 · Which goes farthest?</h4><div class="eq">h + y = H is fixed, and hy is biggest when h = y: the <b>middle</b> hole, x = H = ' + H.iv('H') + '. The low and high holes (same hy) land at the same spot.</div>' +
+    return '<h4>1 · Each hole: v = √(2gh) where h is the depth below the surface</h4>' + TEX`v = \sqrt{2gh}` +
+      '<h4>2 · Each stream falls from height y = H − h</h4>' + TEX`t = \sqrt{\frac{2y}{g}}` +
+      TEX`x = vt` + TEX`x = \sqrt{2gh}\cdot\sqrt{\frac{2y}{g}}` + TEXA`x = 2\sqrt{hy}` +
+      hs.map((q, i) => '<p class="st"><b>' + ['Low', 'Middle', 'High'][i] + ' hole</b> (y = ' + H.n(q.y, 'm') + ', h = ' + H.n(q.h, 'm') + '):</p>' + TEX`v = ${M.n(q.s, 'm/s')}` + TEX`x = ${M.n(q.x, 'm')}`).join('') +
+      '<h4>3 · Which goes farthest?</h4><p class="st">h + y = H is fixed, and hy is biggest when h = y: the <b>middle</b> hole. The low and high holes (same hy) land at the same spot.</p>' +
+      TEXA`x_{\text{max}} = H = ${M.iv('H')}` +
       '<p class="note">The low hole squirts fastest but has the least time to fly; the high hole has lots of time but squirts slowly.</p>';
   },
   draw(v, d, mode){

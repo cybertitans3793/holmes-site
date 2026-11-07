@@ -75,46 +75,68 @@ const SIM = {
   },
   work(v, d, mode, opt){
     if (window.ABP){ const W = d.Eth > 0 ? -d.Eth : 0, dR = roughBefore(d.tr, d.sB);
-      let h = '<h4>1 · Start (point A)</h4><div class="eq">KE<sub>i</sub> = ½mv² = ½(' + H.iv('m') + ')(' + H.iv('v0') + ')² = ' + H.n(d.KA, 'J') + '<br>PE<sub>i</sub> = mgh = (' + H.iv('m') + ')(10)(' + H.iv('h0') + ') = ' + H.n(d.UgA, 'J') + '<br>TME = <b>' + H.n(d.E0, 'J') + '</b></div>' +
-        '<h4>2 · Point B</h4><div class="eq">h = ' + H.n(d.hB, 'm') + ' → PE<sub>f</sub> = mgh = <b>' + H.n(d.UgB, 'J') + '</b></div>';
+      let h = '<h4>1 · Start (point A)</h4>' +
+        TEX`KE_i = \frac{1}{2} m v^2` + TEX`KE_i = \frac{1}{2}(${M.iv('m')})(${M.iv('v0')})^2` + TEX`KE_i = ${M.n(d.KA, 'J')}` +
+        TEX`PE_i = mgh` + TEX`PE_i = (${M.iv('m')})(10)(${M.iv('h0')})` + TEX`PE_i = ${M.n(d.UgA, 'J')}` +
+        TEX`\text{TME} = KE_i + PE_i` + TEXA`\text{TME} = ${M.n(d.E0, 'J')}` +
+        '<h4>2 · Point B</h4>' + TEX`h = ${M.n(d.hB, 'm')}` + TEX`PE_f = mgh` + TEXA`PE_f = ${M.n(d.UgB, 'J')}`;
       let n = 3;
-      if (mode === 'rough') h += '<h4>' + (n++) + ' · Work done by friction</h4><div class="eq">' + (dR > 0 ? 'Friction force F<sub>f</sub> = μF<sub>N</sub> = μmg = (' + H.iv('mu') + ')(' + H.iv('m') + ')(10) = ' + H.n(v.mu * v.m * 10, 'N') + '<br>Rough ground crossed before B: d = ' + H.n(dR, 'm') + '<br>W = −F<sub>f</sub> × d = <b>' + H.n(W, 'J') + '</b> (negative: friction takes energy out)' : 'The cart hasn’t reached the rough patch yet: W = 0 J so far.') + '</div>';
-      h += '<h4>' + (n++) + ' · KE<sub>i</sub> + PE<sub>i</sub> + W = KE<sub>f</sub> + PE<sub>f</sub></h4><div class="eq">' + H.n(d.KA) + ' + ' + H.n(d.UgA) + (mode === 'rough' ? ' + (' + H.n(W) + ')' : ' + 0') + ' = KE<sub>f</sub> + ' + H.n(d.UgB) + '<br>KE<sub>f</sub> = <b>' + H.n(d.KB, 'J') + '</b></div>';
+      if (mode === 'rough') h += '<h4>' + (n++) + ' · Work done by friction</h4>' + (dR > 0 ?
+        '<p class="st">Friction force:</p>' + TEX`F_f = \mu F_N = \mu m g` + TEX`F_f = (${M.iv('mu')})(${M.iv('m')})(10)` + TEX`F_f = ${M.n(v.mu * v.m * 10, 'N')}` +
+        '<p class="st">Rough ground crossed before B:</p>' + TEX`d = ${M.n(dR, 'm')}` +
+        TEX`W = -F_f \times d` + TEX`W = -(${M.n(v.mu * v.m * 10, 'N')})(${M.n(dR, 'm')})` + TEXA`W = ${M.n(W, 'J')}` + '<p class="st">Negative: friction takes energy out.</p>'
+        : '<p class="st">The cart hasn’t reached the rough patch yet: W = 0 J so far.</p>');
+      h += '<h4>' + (n++) + ' · KE<sub>i</sub> + PE<sub>i</sub> + W = KE<sub>f</sub> + PE<sub>f</sub></h4>' + TEX`KE_i + PE_i + W = KE_f + PE_f` +
+        TEX`${M.n(d.KA)} + ${M.n(d.UgA)} + ${mode === 'rough' ? M.p(W) : '<mn>0</mn>'} = KE_f + ${M.n(d.UgB)}` + TEXA`KE_f = ${M.n(d.KB, 'J')}`;
       if (!d.reach) h += '<div class="bad">' + (d.why === 'fall' ? 'The cart falls off the loop before it gets to B.' : 'KE would be negative: the cart runs out of energy and turns back before B.') + '</div>';
-      else h += '<h4>' + (n++) + ' · Speed at B</h4><div class="eq">KE = ½mv² → v = √(2KE/m) = √(2 × ' + H.n(d.KB) + ' / ' + H.iv('m') + ') = <b>' + H.n(d.vB, 'm/s') + '</b></div>';
-      if (mode === 'rough') h += '<h4>' + (n++) + ' · TME</h4><div class="eq">TME at B = ' + H.n(d.E0) + ' − ' + H.n(-W) + ' = <b>' + H.n(d.E0 + W, 'J') + '</b>. Friction lowers the total mechanical energy; the lost energy heats the cart and ground.</div>' +
-        '<div class="eq">Height it climbs on the far ramp: ' + (d.hf > 0 ? '<b>' + H.n(d.hf, 'm') + '</b> (lower than the start)' : 'none — it stops on the rough patch.') + '</div>';
-      if (mode === 'loop') h += '<h4>' + (n++) + ' · Making the loop</h4><div class="eq">It has to be going fast enough at the top. Starting from rest, the start must be at least <b>2.5 × the loop radius</b> = ' + H.n(2.5 * v.R, 'm') + ' high.</div>';
+      else h += '<h4>' + (n++) + ' · Speed at B</h4>' + TEX`KE = \frac{1}{2} m v^2` + TEX`v = \sqrt{\frac{2\,KE}{m}}` + TEX`v = \sqrt{\frac{2 \times ${M.n(d.KB)}}{${M.iv('m')}}}` + TEXA`v = ${M.n(d.vB, 'm/s')}`;
+      if (mode === 'rough') h += '<h4>' + (n++) + ' · TME</h4>' + TEX`\text{TME at B} = \text{TME}_A - |W|` + TEX`\text{TME at B} = ${M.n(d.E0)} - ${M.n(-W)}` + TEXA`\text{TME at B} = ${M.n(d.E0 + W, 'J')}` +
+        '<p class="st">Friction lowers the total mechanical energy; the lost energy heats the cart and ground.</p>' +
+        '<p class="st">Height it climbs on the far ramp:</p>' + (d.hf > 0 ? TEXA`h = ${M.n(d.hf, 'm')}` + '<p class="st">That is lower than the start.</p>' : '<p class="st">None — it stops on the rough patch.</p>');
+      if (mode === 'loop') h += '<h4>' + (n++) + ' · Making the loop</h4><p class="st">It has to be going fast enough at the top. Starting from rest, the start must be at least <b>2.5 × the loop radius</b> high.</p>' +
+        TEX`h \geq 2.5\,R` + TEXA`h \geq ${M.n(2.5 * v.R, 'm')}`;
       return h + (mode === 'rough' ? '' : '<p class="note">No friction: W = 0, so TME stays the same everywhere. PE turns into KE and back. The mass cancels: every cart has the same speed at B.</p>');
     }
-    const cart = opt.sys === 'cart';
-    let h = '<h4>1 · Start (point A)</h4><div class="eq">' + (cart ? 'K<sub>A</sub> = ½mv<sub>A</sub>² = ½(' + H.iv('m') + ')(' + H.iv('v0') + ')² = <b>' + H.n(d.KA, 'J') + '</b>'
-        : 'E<sub>A</sub> = mgh<sub>A</sub> + ½mv<sub>A</sub>² = (' + H.iv('m') + ')(' + H.g() + ')(' + H.iv('h0') + ') + ½(' + H.iv('m') + ')(' + H.iv('v0') + ')² = <b>' + H.n(d.E0, 'J') + '</b>') + '</div>' +
-      '<h4>2 · Point B</h4><div class="eq">Height read off the track: h<sub>B</sub> = <b>' + H.n(d.hB, 'm') + '</b></div>';
+    const cart = opt.sys === 'cart', rf = d.Eth > 0, sp = d.Us > 0, dRb = roughBefore(d.tr, d.sB);
+    let h = '<h4>1 · Start (point A)</h4>' + (cart
+        ? TEX`K_A = \frac{1}{2} m v_A^2` + TEX`K_A = \frac{1}{2}(${M.iv('m')})(${M.iv('v0')})^2` + TEXA`K_A = ${M.n(d.KA, 'J')}`
+        : TEX`E_A = m g h_A + \frac{1}{2} m v_A^2` + TEX`m g h_A = (${M.iv('m')})(10\,\text{m/s}^2)(${M.iv('h0')})` + TEX`\frac{1}{2} m v_A^2 = \frac{1}{2}(${M.iv('m')})(${M.iv('v0')})^2` + TEXA`E_A = ${M.n(d.E0, 'J')}`) +
+      '<h4>2 · Point B</h4><p class="st">Height read off the track:</p>' + TEXA`h_B = ${M.n(d.hB, 'm')}`;
     const extras = [];
-    if (mode === 'rough' && d.Eth > 0) extras.push(['μ<sub>k</sub>mgd', 'Rough patch crossed before B: d = ' + H.n(roughBefore(d.tr, d.sB), 'm') + ', so ' + (cart ? 'W<sub>f</sub> = −μ<sub>k</sub>mgd = −' : 'ΔE<sub>th</sub> = μ<sub>k</sub>mgd = ') + '(' + H.iv('mu') + ')(' + H.iv('m') + ')(' + H.g() + ')(' + H.n(roughBefore(d.tr, d.sB), 'm') + ') = ' + H.n(cart ? -d.Eth : d.Eth, 'J')]);
-    if (mode === 'spring' && d.Us > 0) extras.push(['½kx²', 'Spring squeezed by x = ' + H.n(d.xc, 'm') + ' at B: ' + (cart ? 'W<sub>s</sub> = −½kx² = ' + H.n(-d.Us, 'J') : 'U<sub>s</sub> = ½kx² = ½(' + H.iv('k') + ')(' + H.n(d.xc) + ')² = ' + H.n(d.Us, 'J'))]);
-    extras.forEach((e, i) => { h += '<h4>' + (3 + i) + ' · ' + (mode === 'rough' ? 'Friction on the rough patch' : 'Spring') + '</h4><div class="eq">' + e[1] + '</div>'; });
+    if (mode === 'rough' && rf) extras.push('<p class="st">Rough patch crossed before B:</p>' + TEX`d = ${M.n(dRb, 'm')}` + (cart
+      ? TEX`W_f = -\mu_k m g d` + TEX`W_f = -(${M.iv('mu')})(${M.iv('m')})(10\,\text{m/s}^2)(${M.n(dRb, 'm')})` + TEXA`W_f = ${M.n(-d.Eth, 'J')}`
+      : TEX`\Delta E_{\text{th}} = \mu_k m g d` + TEX`\Delta E_{\text{th}} = (${M.iv('mu')})(${M.iv('m')})(10\,\text{m/s}^2)(${M.n(dRb, 'm')})` + TEXA`\Delta E_{\text{th}} = ${M.n(d.Eth, 'J')}`));
+    if (mode === 'spring' && sp) extras.push('<p class="st">Spring squeezed at B:</p>' + TEX`x = ${M.n(d.xc, 'm')}` + (cart
+      ? TEX`W_s = -\frac{1}{2} k x^2` + TEX`W_s = -\frac{1}{2}(${M.iv('k')})(${M.n(d.xc)})^2` + TEXA`W_s = ${M.n(-d.Us, 'J')}`
+      : TEX`U_s = \frac{1}{2} k x^2` + TEX`U_s = \frac{1}{2}(${M.iv('k')})(${M.n(d.xc)})^2` + TEXA`U_s = ${M.n(d.Us, 'J')}`));
+    extras.forEach((e, i) => { h += '<h4>' + (3 + i) + ' · ' + (mode === 'rough' ? 'Friction on the rough patch' : 'Spring') + '</h4>' + e; });
     const n = 3 + extras.length;
     if (cart){
       h += '<h4>' + n + ' · Work–energy theorem (cart only: gravity is outside the system, so it does work)</h4>' +
-        '<div class="eq">W<sub>g</sub> = mg(h<sub>A</sub> − h<sub>B</sub>) = (' + H.iv('m') + ')(' + H.g() + ')(' + H.iv('h0') + ' − ' + H.n(d.hB, 'm') + ') = ' + H.n(d.Wg, 'J') + '</div>' +
-        '<div class="eq">W<sub>g</sub>' + (mode === 'rough' && d.Eth > 0 ? ' + W<sub>f</sub>' : '') + (mode === 'spring' && d.Us > 0 ? ' + W<sub>s</sub>' : '') + ' = K<sub>B</sub> − K<sub>A</sub> → K<sub>B</sub> = <b>' + H.n(d.KB, 'J') + '</b></div>';
+        TEX`W_g = mg(h_A - h_B)` + TEX`W_g = (${M.iv('m')})(10\,\text{m/s}^2)(${M.iv('h0')} - ${M.n(d.hB, 'm')})` + TEX`W_g = ${M.n(d.Wg, 'J')}` +
+        (rf ? TEX`W_g + W_f = K_B - K_A` + TEX`${M.n(d.Wg)} + ${M.p(-d.Eth)} = K_B - ${M.n(d.KA)}`
+         : sp ? TEX`W_g + W_s = K_B - K_A` + TEX`${M.n(d.Wg)} + ${M.p(-d.Us)} = K_B - ${M.n(d.KA)}`
+         : TEX`W_g = K_B - K_A` + TEX`${M.n(d.Wg)} = K_B - ${M.n(d.KA)}`) + TEXA`K_B = ${M.n(d.KB, 'J')}`;
     } else {
       h += '<h4>' + n + ' · Energy conservation (cart + Earth' + (mode === 'rough' ? ', friction makes thermal energy' : '') + ')</h4>' +
-        '<div class="eq">mgh<sub>A</sub> + ½mv<sub>A</sub>² = mgh<sub>B</sub> + ½mv<sub>B</sub>²' + (mode === 'rough' && d.Eth > 0 ? ' + ΔE<sub>th</sub>' : '') + (mode === 'spring' && d.Us > 0 ? ' + ½kx²' : '') + '</div>' +
-        '<div class="eq">K<sub>B</sub> = ' + H.n(d.E0) + ' − ' + H.n(d.UgB) + (d.Eth > 0 ? ' − ' + H.n(d.Eth) : '') + (d.Us > 0 ? ' − ' + H.n(d.Us) : '') + ' = <b>' + H.n(d.KB, 'J') + '</b></div>';
+        (rf ? TEX`m g h_A + \frac{1}{2} m v_A^2 = m g h_B + \frac{1}{2} m v_B^2 + \Delta E_{\text{th}}` + TEX`K_B = E_A - U_{gB} - \Delta E_{\text{th}}` + TEX`K_B = ${M.n(d.E0)} - ${M.n(d.UgB)} - ${M.n(d.Eth)}`
+         : sp ? TEX`m g h_A + \frac{1}{2} m v_A^2 = m g h_B + \frac{1}{2} m v_B^2 + \frac{1}{2} k x^2` + TEX`K_B = E_A - U_{gB} - U_s` + TEX`K_B = ${M.n(d.E0)} - ${M.n(d.UgB)} - ${M.n(d.Us)}`
+         : TEX`m g h_A + \frac{1}{2} m v_A^2 = m g h_B + \frac{1}{2} m v_B^2` + TEX`K_B = E_A - U_{gB}` + TEX`K_B = ${M.n(d.E0)} - ${M.n(d.UgB)}`) + TEXA`K_B = ${M.n(d.KB, 'J')}`;
     }
     if (!d.reach) h += '<div class="bad">' + (d.why === 'fall' ? 'The cart falls off the loop before it gets to B (N would have to be negative).' : 'K would be negative before B: the cart runs out of energy and turns around before it gets there.') + '</div>';
-    else h += '<div class="eq">v<sub>B</sub> = √(2K<sub>B</sub>/m) = √(v<sub>A</sub>² + 2g(h<sub>A</sub> − h<sub>B</sub>)' + (mode === 'rough' && d.Eth > 0 ? ' − 2μ<sub>k</sub>gd' : '') + (mode === 'spring' && d.Us > 0 ? ' − kx²/m' : '') + ') = <b>' + H.n(d.vB, 'm/s') + '</b></div>' +
-      (mode === 'spring' && d.Us > 0 ? '' : '<p class="note">m cancels when there’s no spring: every cart has the same speed at B.</p>');
-    if (mode === 'loop') h += '<h4>' + (n + 1) + ' · Top of the loop (height 2R)</h4><div class="eq">v<sub>top</sub>² = v<sub>A</sub>² + 2g(h<sub>A</sub> − 2R) = ' + H.n(d.vtop2, 'm²/s²') + '</div>' +
-      '<div class="eq">Stays on the track if N ≥ 0: mg + N = mv²/R needs v<sub>top</sub>² ≥ gR = ' + H.n(G10 * v.R, 'm²/s²') + '</div>' +
-      '<div class="eq">From rest: g(h<sub>A</sub> − 2R)·2 ≥ gR → h<sub>A</sub> ≥ 2.5R = <b>' + H.n(d.hmin, 'm') + '</b>' + (v.v0 > 0 ? ' (less with a starting push)' : '') + '</div>' +
+    else h += (rf ? TEX`v_B = \sqrt{v_A^2 + 2g(h_A - h_B) - 2\mu_k g d}` : sp ? TEX`v_B = \sqrt{v_A^2 + 2g(h_A - h_B) - \frac{k x^2}{m}}` : TEX`v_B = \sqrt{v_A^2 + 2g(h_A - h_B)}`) +
+      TEX`v_B = \sqrt{\frac{2 K_B}{m}}` + TEX`v_B = \sqrt{\frac{2(${M.n(d.KB)})}{${M.iv('m')}}}` + TEXA`v_B = ${M.n(d.vB, 'm/s')}` +
+      (sp ? '' : '<p class="note">m cancels when there’s no spring: every cart has the same speed at B.</p>');
+    if (mode === 'loop') h += '<h4>' + (n + 1) + ' · Top of the loop (height 2R)</h4>' +
+      TEX`v_{\text{top}}^2 = v_A^2 + 2g(h_A - 2R)` + TEX`v_{\text{top}}^2 = ${M.n(d.vtop2, 'm²/s²')}` +
+      '<p class="st">Stays on the track if N ≥ 0:</p>' + TEX`mg + N = \frac{m v^2}{R}` + TEX`v_{\text{top}}^2 \geq gR` + TEX`gR = ${M.n(G10 * v.R, 'm²/s²')}` +
+      '<p class="st">From rest:</p>' + TEX`2g(h_A - 2R) \geq gR` + TEX`h_A \geq 2.5\,R` + TEXA`h_{\text{min}} = ${M.n(d.hmin, 'm')}` + (v.v0 > 0 ? '<p class="st">That is less with a starting push.</p>' : '') +
       (d.Ntop >= 0 ? '<div class="ok">N at the top = ' + H.n(d.Ntop, 'N') + ' → makes the loop.</div>' : '<div class="bad">N at the top would be ' + H.n(d.Ntop, 'N') + ' → falls off.</div>');
-    if (mode === 'rough') h += '<h4>' + (n + 1) + ' · How high it climbs the far ramp</h4><div class="eq">mgh<sub>A</sub> + ½mv<sub>A</sub>² − μ<sub>k</sub>mgd = mgh<sub>f</sub> → h<sub>f</sub> = h<sub>A</sub> + v<sub>A</sub>²/2g − μ<sub>k</sub>d = <b>' + H.n(d.hf, 'm') + '</b></div>' +
+    if (mode === 'rough') h += '<h4>' + (n + 1) + ' · How high it climbs the far ramp</h4>' +
+      TEX`m g h_A + \frac{1}{2} m v_A^2 - \mu_k m g d = m g h_f` + TEX`h_f = h_A + \frac{v_A^2}{2g} - \mu_k d` + TEXA`h_f = ${M.n(d.hf, 'm')}` +
       (d.hf < 0 ? '<div class="bad">Negative: it stops on the rough patch after ' + H.n(d.dstop, 'm') + ' of it.</div>' : '');
-    if (mode === 'spring') h += '<h4>' + (n + 1) + ' · Biggest squeeze (all energy in the spring)</h4><div class="eq">E<sub>A</sub> = ½kx<sub>max</sub>² → x<sub>max</sub> = √(2E<sub>A</sub>/k) = √(2(' + H.n(d.E0) + ')/' + H.iv('k') + ') = <b>' + H.n(d.xmax, 'm') + '</b></div>';
+    if (mode === 'spring') h += '<h4>' + (n + 1) + ' · Biggest squeeze (all energy in the spring)</h4>' +
+      TEX`E_A = \frac{1}{2} k x_{\text{max}}^2` + TEX`x_{\text{max}} = \sqrt{\frac{2 E_A}{k}}` + TEX`x_{\text{max}} = \sqrt{\frac{2(${M.n(d.E0)})}{${M.iv('k')}}}` + TEXA`x_{\text{max}} = ${M.n(d.xmax, 'm')}`;
     return h;
   },
   draw(v, d, mode, opt, t, dt, A){

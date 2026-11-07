@@ -18,10 +18,12 @@ const SIM = {
     { id: 'v2', name: 'Speed in part 2', short: 'v2', sym: 'v<sub>2</sub>', unit: 'm/s', f: d => d.v2 },
     { id: 'Q', name: 'Volume flow rate', short: 'Q', sym: 'Q', unit: 'm³/s', f: d => d.Q }]; },
   work(v, d){
-    return '<h4>1 · Continuity: the same volume passes every point each second</h4><div class="eq">Q = A<sub>1</sub>v<sub>1</sub> = (' + H.n(v.A1 * 1e-4, 'm²') + ')(' + H.iv('v1') + ') = ' + H.n(d.Q, 'm³/s') + ' (' + H.n(d.L, 'L/min') + ')</div>' +
-      '<div class="eq">A<sub>1</sub>v<sub>1</sub> = A<sub>2</sub>v<sub>2</sub> → v<sub>2</sub> = v<sub>1</sub>(A<sub>1</sub>/A<sub>2</sub>) = ' + H.iv('v1') + ' × ' + H.n(v.A1 / v.A2) + ' = <b>' + H.n(d.v2, 'm/s') + '</b></div>' +
-      '<h4>2 · Bernoulli: energy per volume is the same along the flow</h4><div class="eq">P<sub>1</sub> + ½ρv<sub>1</sub>² + ρgy<sub>1</sub> = P<sub>2</sub> + ½ρv<sub>2</sub>² + ρgy<sub>2</sub></div>' +
-      '<div class="eq">P<sub>2</sub> = P<sub>1</sub> − ½ρ(v<sub>2</sub>² − v<sub>1</sub>²) − ρgΔy = 2.0×10<sup>5</sup> − ' + H.p(d.dK) + ' − ' + H.p(d.dU) + ' = <b>' + H.n(d.P2, 'Pa') + '</b></div>' +
+    return '<h4>1 · Continuity: the same volume passes every point each second</h4>' +
+      TEX`Q = A_1 v_1` + TEX`Q = (${M.n(v.A1 * 1e-4, 'm²')})(${M.iv('v1')})` + TEXA`Q = ${M.n(d.Q, 'm³/s')}` + TEX`Q = ${M.n(d.L, 'L/min')}` +
+      TEX`A_1 v_1 = A_2 v_2` + TEX`v_2 = v_1\,\frac{A_1}{A_2}` + TEX`v_2 = ${M.iv('v1')} \times ${M.n(v.A1 / v.A2)}` + TEXA`v_2 = ${M.n(d.v2, 'm/s')}` +
+      '<h4>2 · Bernoulli: energy per volume is the same along the flow</h4>' +
+      TEX`P_1 + \frac{1}{2}\rho v_1^2 + \rho g y_1 = P_2 + \frac{1}{2}\rho v_2^2 + \rho g y_2` +
+      TEX`P_2 = P_1 - \frac{1}{2}\rho\left(v_2^2 - v_1^2\right) - \rho g\,\Delta y` + TEX`P_2 = 2.0\times10^{5}\,\text{Pa} - ${M.p(d.dK)} - ${M.p(d.dU)}` + TEXA`P_2 = ${M.n(d.P2, 'Pa')}` +
       (d.bad ? '<div class="bad">That’s below zero: impossible. The water can’t be pushed up and sped up this much with only 2.0×10⁵ Pa behind it.</div>' : '') +
       '<p class="note">Where the fluid is faster, the pressure is lower (at the same height). Going uphill also costs pressure: ρgΔy = ' + H.n(d.dU, 'Pa') + '.</p>' +
       '<p class="note">Common mistake: “narrow pipe → water squeezed → higher pressure.” The opposite is true for steady flow.</p>';

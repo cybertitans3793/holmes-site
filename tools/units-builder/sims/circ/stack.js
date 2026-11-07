@@ -15,11 +15,12 @@ const SIM = {
     { id: 'vt', name: 'Top ball speed after', short: 'v_top', sym: 'v<sub>top</sub>', unit: 'm/s', f: d => d.vt },
     { id: 'ratio', name: 'h′/h', short: 'h′/h', sym: 'h′/h', unit: '', f: d => d.ratio }]; },
   work(v, d){
-    return '<h4>1 · Both balls hit the floor at the same speed</h4><div class="eq">u = √(2gh) = √(2(' + H.g() + ')(' + H.iv('h') + ')) = <b>' + H.n(d.u, 'm/s') + '</b></div>' +
-      '<h4>2 · Bottom ball bounces off the floor (elastic): now moving up at u</h4><div class="eq">It meets the top ball, which is still coming down at u. Relative speed = 2u.</div>' +
-      '<h4>3 · Elastic collision of the two balls (+ = up)</h4><div class="eq">v<sub>top</sub> = [(m − M)(−u) + 2M(u)]/(m + M) = u(3M − m)/(M + m) = ' + H.n(d.u) + ' × ' + H.n(d.k) + ' = <b>' + H.n(d.vt, 'm/s') + '</b></div>' +
-      '<div class="eq">v<sub>bottom</sub> = u(M − 3m)/(M + m) = ' + H.n(d.vb, 'm/s') + (d.vb < 0 ? ' (moving down)' : '') + '</div>' +
-      '<h4>4 · How high the top ball goes</h4><div class="eq">h′ = v<sub>top</sub>²/(2g) = <b>' + H.n(d.h2, 'm') + '</b> = ' + H.n(d.ratio) + ' × the drop height</div>' +
+    return '<h4>1 · Both balls hit the floor at the same speed</h4>' + TEX`u = \sqrt{2gh}` + TEX`u = \sqrt{2\,(${M.n(10, 'm/s²')})(${M.iv('h')})}` + TEXA`u = ${M.n(d.u, 'm/s')}` +
+      '<h4>2 · Bottom ball bounces off the floor (elastic): now moving up at u</h4><p class="st">It meets the top ball, which is still coming down at u. Relative speed = 2u.</p>' +
+      '<h4>3 · Elastic collision of the two balls (+ = up)</h4>' + TEX`v_{\text{top}} = \frac{(m - M)(-u) + 2M\,(u)}{m + M}` + TEX`v_{\text{top}} = u\,\frac{3M - m}{M + m}` +
+      TEX`v_{\text{top}} = (${M.n(d.u)})(${M.n(d.k)})` + TEXA`v_{\text{top}} = ${M.n(d.vt, 'm/s')}` +
+      TEX`v_{\text{bottom}} = u\,\frac{M - 3m}{M + m}` + TEX`v_{\text{bottom}} = ${M.n(d.vb, 'm/s')}` + (d.vb < 0 ? '<p class="st">The bottom ball is moving down.</p>' : '') +
+      '<h4>4 · How high the top ball goes</h4>' + TEX`h' = \frac{v_{\text{top}}^2}{2g}` + TEXA`h' = ${M.n(d.h2, 'm')}` + TEX`\frac{h'}{h} = ${M.n(d.ratio)}` + '<p class="st">That is ' + H.n(d.ratio) + ' × the drop height.</p>' +
       '<p class="note">If M is much bigger than m, v<sub>top</sub> → 3u and h′ → 9h. Momentum and energy are both conserved; the bottom ball gives most of its energy to the top one.</p>';
   },
   draw(v, d, mode, opt, t, dt, A){

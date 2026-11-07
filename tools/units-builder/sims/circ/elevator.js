@@ -25,16 +25,22 @@ const SIM = {
       { id: 'vmax', name: 'Cruising speed', short: 'v', sym: 'v<sub>max</sub>', unit: 'm/s', f: d => d.vmax }];
   },
   work(v, d, mode){
-    const h0 = '<h4>1 · Free-body diagram of you</h4><div class="eq">Only two forces: weight mg = (' + H.iv('m') + ')(' + H.g() + ') = ' + H.n(d.W, 'N') + ' down, and the scale’s normal force N up. <b>The scale reads N</b>, not mg.</div>' +
-      '<div class="eq">Newton’s 2nd law (up = +): N − mg = ma → <b>N = m(g + a)</b></div>';
-    if (mode === 'snap') return h0 + '<h4>2 · Cable snaps: everything falls with a = −g</h4><div class="eq">N = m(g + (−g)) = <b>0 N</b>. You, the scale and the elevator all fall together, so you don’t press on the scale.</div>' +
-      '<div class="eq">This is true even if the elevator was still going up at ' + H.iv('v0') + ' when it snapped: the acceleration is −g the moment the only force is gravity.</div>' +
+    const I = id => M.iv(id, 1), CK = '<mtext>✓</mtext>';
+    const h0 = '<h4>1 · Free-body diagram of you</h4><p class="st">Only two forces: weight mg down, and the scale’s normal force N up. <b>The scale reads N</b>, not mg.</p>' +
+      TEX`W = m g` + TEX`W = (${I('m')})(10)` + TEXA`W = ${M.n(d.W, 'N')}` +
+      '<p class="st">Newton’s 2nd law (up = +):</p>' + TEX`N - m g = m a` + TEXA`N = m(g + a)`;
+    if (mode === 'snap') return h0 + '<h4>2 · Cable snaps: everything falls with a = −g</h4>' + TEX`N = m\left(g + (-g)\right)` + TEXA`N = 0\,\text{N}` +
+      '<p class="st">You, the scale and the elevator all fall together, so you don’t press on the scale.</p>' +
+      '<p class="st">This is true even if the elevator was still going up at ' + H.iv('v0') + ' when it snapped: the acceleration is −g the moment the only force is gravity.</p>' +
       '<p class="note">“Weightless” doesn’t mean gravity turned off: mg is still ' + H.n(d.W, 'N') + '. It means nothing is holding you up. Same reason astronauts float in orbit.</p>';
-    const up = mode === 'up', dirW = up ? 'up' : 'down';
+    const up = mode === 'up', dirW = up ? 'up' : 'down', plus = '<mo>+</mo>', minus = '<mo>−</mo>';
     return h0 +
-      '<h4>2 · Starting (speeding up going ' + dirW + '): a points ' + dirW + '</h4><div class="eq">N = m(g + a) = (' + H.iv('m') + ')(10 ' + (up ? '+' : '−') + ' ' + H.iv('a') + ') = <b>' + H.n(d.N1, 'N') + '</b> → you feel ' + (up ? '<b>heavier</b>' : '<b>lighter</b>') + ' (scale shows ' + H.n(d.read1, 'kg') + ')</div>' +
-      '<h4>3 · Cruising at ' + H.n(d.vmax, 'm/s') + ': a = 0</h4><div class="eq">N = mg = <b>' + H.n(d.N2, 'N') + '</b>: same as standing still, however fast you go. (Newton’s 1st law)</div>' +
-      '<h4>4 · Stopping (slowing down going ' + dirW + '): a points ' + (up ? 'down' : 'up') + '</h4><div class="eq">N = (' + H.iv('m') + ')(10 ' + (up ? '−' : '+') + ' ' + H.iv('a') + ') = <b>' + H.n(d.N3, 'N') + '</b> → you feel ' + (up ? '<b>lighter</b>' : '<b>heavier</b>') + ' (' + H.n(d.read3, 'kg') + ')</div>' +
+      '<h4>2 · Starting (speeding up going ' + dirW + '): a points ' + dirW + '</h4>' + TEX`N = (${I('m')})(10 ${up ? plus : minus} ${I('a')})` + TEXA`N = ${M.n(d.N1, 'N')}` +
+      '<p class="st">You feel ' + (up ? '<b>heavier</b>' : '<b>lighter</b>') + ' (scale shows ' + H.n(d.read1, 'kg') + ').</p>' +
+      '<h4>3 · Cruising at ' + H.n(d.vmax, 'm/s') + ': a = 0</h4>' + TEX`N = m g` + TEX`N = (${I('m')})(10)` + TEXA`N = ${M.n(d.N2, 'N')}` +
+      '<p class="st">Same as standing still, however fast you go. (Newton’s 1st law)</p>' +
+      '<h4>4 · Stopping (slowing down going ' + dirW + '): a points ' + (up ? 'down' : 'up') + '</h4>' + TEX`N = (${I('m')})(10 ${up ? minus : plus} ${I('a')})` + TEXA`N = ${M.n(d.N3, 'N')}` +
+      '<p class="st">You feel ' + (up ? '<b>lighter</b>' : '<b>heavier</b>') + ' (' + H.n(d.read3, 'kg') + ').</p>' +
       '<p class="note">The scale depends on the direction of the <b>acceleration</b>, not the direction of motion. Heavier whenever a points up: starting up <i>or</i> stopping on the way down.</p>' +
       (v.a > G10 * 0.99 && !up ? '<div class="bad">a = g going down: you’d float off the scale.</div>' : '');
   },

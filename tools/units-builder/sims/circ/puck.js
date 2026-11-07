@@ -32,19 +32,20 @@ const SIM = {
   },
   work(v, d, mode){
     if (mode === 'line'){
-      let h = '<h4>1 · Before the kick: no net force</h4><div class="eq">No friction, no push, so ΣF = 0 and the velocity stays ' + H.iv('v0') + ' (Newton’s 1st law). Equal spacing between the dots = constant velocity.</div>' +
-        '<div class="eq">At the kick: x = v<sub>0</sub>t<sub>k</sub> = (' + H.iv('v0') + ')(' + H.iv('tk') + ') = ' + H.n(d.xk, 'm') + '</div>' +
-        '<h4>2 · The kick: a brief force changes the velocity</h4><div class="eq">v<sub>1</sub> = v<sub>0</sub> + Δv = ' + H.iv('v0') + ' + ' + H.p(v.dv, 'm/s') + ' = <b>' + H.n(d.v1, 'm/s') + '</b></div>' +
-        (d.stop ? '<div class="eq">It stops dead and <b>stays</b> stopped: nothing else pushes it.</div>' : d.flip ? '<div class="eq">The sign flipped: the puck now moves the other way.</div>' : '') +
-        '<h4>3 · After the kick: no net force again</h4><div class="eq">The new velocity stays ' + H.n(d.v1, 'm/s') + ' until something else pushes it. It does <b>not</b> slowly “use up” the kick.</div>' +
-        '<div class="eq">x(8 s) = ' + H.n(d.xk) + ' + (' + H.n(d.v1) + ')(8 − ' + H.iv('tk') + ') = <b>' + H.n(d.xEnd, 'm') + '</b></div>' +
-        '<h4>4 · Read the graphs</h4><div class="eq">v–t: two flat steps (a force acted only at the jump). x–t: two straight lines; the slope changes at the kick.</div>';
+      let h = '<h4>1 · Before the kick: no net force</h4><p class="st">No friction, no push, so ΣF = 0 and the velocity stays ' + H.iv('v0') + ' (Newton’s 1st law). Equal spacing between the dots = constant velocity.</p>' +
+        '<p class="st">At the kick:</p>' + TEX`x_k = v_0\,t_k` + TEX`x_k = \left(${M.iv('v0')}\right)\left(${M.iv('tk')}\right)` + TEX`x_k = ${M.n(d.xk, 'm')}` +
+        '<h4>2 · The kick: a brief force changes the velocity</h4>' + TEX`v_1 = v_0 + \Delta v` + TEX`v_1 = ${M.iv('v0')} + ${M.p(v.dv, 'm/s')}` + TEXA`v_1 = ${M.n(d.v1, 'm/s')}` +
+        (d.stop ? '<p class="st">It stops dead and <b>stays</b> stopped: nothing else pushes it.</p>' : d.flip ? '<p class="st">The sign flipped: the puck now moves the other way.</p>' : '') +
+        '<h4>3 · After the kick: no net force again</h4><p class="st">The new velocity stays ' + H.n(d.v1, 'm/s') + ' until something else pushes it. It does <b>not</b> slowly “use up” the kick.</p>' +
+        TEX`x(8\,\text{s}) = x_k + v_1\,\left(8 - t_k\right)` + TEX`x(8\,\text{s}) = ${M.n(d.xk)} + ${M.p(d.v1)}\left(8 - ${M.iv('tk')}\right)` + TEXA`x(8\,\text{s}) = ${M.n(d.xEnd, 'm')}` +
+        '<h4>4 · Read the graphs</h4><p class="st">v–t: two flat steps (a force acted only at the jump). x–t: two straight lines; the slope changes at the kick.</p>';
       return h;
     }
-    return '<h4>1 · Before the kick</h4><div class="eq">ΣF = 0, so the puck slides → at a steady ' + H.iv('v0') + '.</div>' +
-      '<h4>2 · The kick only changes the ↑ part of the velocity</h4><div class="eq">After: v<sub>x</sub> = ' + H.iv('v0') + ' (unchanged: the kick had no → part) and v<sub>y</sub> = ' + H.iv('dvy') + '</div>' +
-      '<h4>3 · Add them</h4><div class="eq">speed = √(v<sub>x</sub>² + v<sub>y</sub>²) = √((' + H.n(v.v0) + ')² + (' + H.n(v.dvy) + ')²) = <b>' + H.n(d.sp, 'm/s') + '</b> at θ = tan<sup>−1</sup>(v<sub>y</sub>/v<sub>x</sub>) = <b>' + H.n(d.ang, '°') + '</b></div>' +
-      '<h4>4 · After the kick: a straight line, not a curve</h4><div class="eq">No force acts after the kick, so the new path is straight at constant speed. The puck does <b>not</b> go straight ↑ (the direction it was kicked): it keeps its → motion too.</div>' +
+    return '<h4>1 · Before the kick</h4><p class="st">ΣF = 0, so the puck slides → at a steady ' + H.iv('v0') + '.</p>' +
+      '<h4>2 · The kick only changes the ↑ part of the velocity</h4><p class="st">The kick had no → part, so v<sub>x</sub> is unchanged:</p>' + TEX`v_x = ${M.iv('v0')}` + TEX`v_y = ${M.iv('dvy')}` +
+      '<h4>3 · Add them</h4>' + TEX`v = \sqrt{v_x^2 + v_y^2}` + TEX`v = \sqrt{\left(${M.n(v.v0)}\right)^2 + \left(${M.n(v.dvy)}\right)^2}` + TEXA`v = ${M.n(d.sp, 'm/s')}` +
+      TEX`\theta = \text{tan}^{-1}\left(\frac{v_y}{v_x}\right)` + TEX`\theta = \text{tan}^{-1}\left(\frac{${M.n(v.dvy)}}{${M.n(v.v0)}}\right)` + TEXA`\theta = ${M.n(d.ang, '°')}` +
+      '<h4>4 · After the kick: a straight line, not a curve</h4><p class="st">No force acts after the kick, so the new path is straight at constant speed. The puck does <b>not</b> go straight ↑ (the direction it was kicked): it keeps its → motion too.</p>' +
       '<p class="note">Classic test question: a spaceship coasting → fires its engine ↑ briefly. Which path does it follow afterward?</p>';
   },
   draw(v, d, mode, opt, t, dt, A){

@@ -22,16 +22,24 @@ const SIM = {
     { id: 'T', name: b ? 'Time to cross' : 'Flight time', short: 't', sym: 't', unit: b ? 's' : 'h', f: d => d.T },
     { id: 'sp', name: 'Speed relative to the ground', short: 'v_g', sym: 'v<sub>ground</sub>', unit: b ? 'm/s' : 'km/h', f: d => d.sp }]; },
   work(v, d, mode){
-    const b = mode === 'boat', u = b ? 'm/s' : 'km/h', vbS = b ? 'v<sub>b</sub>' : 'v<sub>a</sub>', vcS = b ? 'v<sub>c</sub>' : 'v<sub>w</sub>', across = b ? 'across' : 'north', down = b ? 'downstream' : 'east';
-    let h = '<h4>1 · Velocities add as vectors</h4><div class="eq">v<sub>ground</sub> = v<sub>' + (b ? 'boat rel. water' : 'plane rel. air') + '</sub> + v<sub>' + (b ? 'water rel. ground' : 'air rel. ground') + '</sub></div>' +
-      '<h4>2 · Components (' + across + ' and ' + down + ')</h4><div class="eq">' + across[0].toUpperCase() + across.slice(1) + ': ' + vbS + 'cosφ = (' + H.iv('vb') + ')cos ' + H.iv('phi') + ' = ' + H.n(d.ay, u) + '</div>' +
-      '<div class="eq">' + down[0].toUpperCase() + down.slice(1) + ': ' + vcS + ' − ' + vbS + 'sinφ = ' + H.iv('vc') + ' − (' + H.iv('vb') + ')sin ' + H.iv('phi') + ' = ' + H.n(d.gx, u) + '</div>' +
-      '<div class="eq">Ground speed √(' + H.n(d.ay) + '² + ' + H.n(d.gx) + '²) = <b>' + H.n(d.sp, u) + '</b></div>';
+    const b = mode === 'boat', u = b ? 'm/s' : 'km/h', across = b ? 'across' : 'north', down = b ? 'downstream' : 'east';
+    const VB = b ? '<msub><mi>v</mi><mi>b</mi></msub>' : '<msub><mi>v</mi><mi>a</mi></msub>', VC = b ? '<msub><mi>v</mi><mi>c</mi></msub>' : '<msub><mi>v</mi><mi>w</mi></msub>', DW = b ? '<mi>w</mi>' : '<mi>D</mi>';
+    let h = '<h4>1 · Velocities add as vectors</h4>' + (b ? TEX`\vec{v}_{\text{ground}} = \vec{v}_{\text{boat}} + \vec{v}_{\text{water}}` : TEX`\vec{v}_{\text{ground}} = \vec{v}_{\text{plane}} + \vec{v}_{\text{air}}`) +
+      '<h4>2 · Components (' + across + ' = y, ' + down + ' = x)</h4><p class="st"><b>' + across[0].toUpperCase() + across.slice(1) + ':</b></p>' +
+      TEX`v_y = ${VB}\cos\varphi` + TEX`v_y = (${M.iv('vb')})\cos ${M.iv('phi')}` + TEXA`v_y = ${M.n(d.ay, u)}` +
+      '<p class="st"><b>' + down[0].toUpperCase() + down.slice(1) + ':</b></p>' +
+      TEX`v_x = ${VC} - ${VB}\sin\varphi` + TEX`v_x = ${M.iv('vc')} - (${M.iv('vb')})\sin ${M.iv('phi')}` + TEXA`v_x = ${M.n(d.gx, u)}` +
+      '<p class="st">Ground speed:</p>' +
+      TEX`v = \sqrt{v_y^2 + v_x^2}` + TEX`v = \sqrt{(${M.n(d.ay)})^2 + (${M.n(d.gx)})^2}` + TEXA`v = ${M.n(d.sp, u)}`;
     if (!d.ok) return h + '<div class="bad">Aimed this far ' + (b ? 'upstream' : 'west') + ', there’s no ' + across + ' component left: it never gets ' + (b ? 'across' : 'there') + '.</div>';
-    h += '<h4>3 · Only the ' + across + ' part gets you ' + (b ? 'across' : 'there') + '</h4><div class="eq">t = ' + (b ? 'w' : 'D') + ' / v<sub>' + across + '</sub> = ' + H.iv('W') + ' / ' + H.n(d.ay, u) + ' = <b>' + H.n(d.T, b ? 's' : 'h') + '</b></div>' +
-      '<div class="eq">Meanwhile it drifts ' + down + ': ' + H.n(d.gx) + ' × ' + H.n(d.T) + ' = <b>' + H.n(d.drift, b ? 'm' : 'km') + '</b></div>' +
-      '<h4>4 · Two different “best” aims</h4><div class="eq"><b>Fastest crossing:</b> aim straight ' + across + ' (φ = 0): t = ' + (b ? 'w' : 'D') + '/' + vbS + ' = ' + H.n(d.tMin, b ? 's' : 'h') + '. The ' + (b ? 'current' : 'wind') + ' doesn’t change the time, only where you land.</div>' +
-      (isFinite(d.phiStraight) ? '<div class="eq"><b>No drift:</b> aim so ' + vbS + 'sinφ cancels ' + vcS + ': sinφ = ' + vcS + '/' + vbS + ' → φ = <b>' + H.n(d.phiStraight, '°') + '</b> (slower, but lands straight ' + (b ? 'across' : 'north') + ')</div>'
+    h += '<h4>3 · Only the ' + across + ' part gets you ' + (b ? 'across' : 'there') + '</h4>' +
+      TEX`t = \frac{${DW}}{v_y}` + TEX`t = \frac{${M.iv('W')}}{${M.n(d.ay, u)}}` + TEXA`t = ${M.n(d.T, b ? 's' : 'h')}` +
+      '<p class="st">Meanwhile it drifts ' + down + ':</p>' +
+      TEX`\text{drift} = v_x\,t` + TEX`\text{drift} = (${M.n(d.gx)})(${M.n(d.T)})` + TEXA`\text{drift} = ${M.n(d.drift, b ? 'm' : 'km')}` +
+      '<h4>4 · Two different “best” aims</h4><p class="st"><b>Fastest crossing:</b> aim straight ' + across + ' (φ = 0). The ' + (b ? 'current' : 'wind') + ' doesn’t change the time, only where you land.</p>' +
+      TEX`t_{\text{min}} = \frac{${DW}}{${VB}}` + TEX`t_{\text{min}} = \frac{${M.iv('W')}}{${M.iv('vb')}}` + TEXA`t_{\text{min}} = ${M.n(d.tMin, b ? 's' : 'h')}` +
+      (isFinite(d.phiStraight) ? '<p class="st"><b>No drift:</b> aim so the ' + (b ? 'boat' : 'plane') + '’s sideways part cancels the ' + (b ? 'current' : 'wind') + ' (slower, but lands straight ' + across + ').</p>' +
+        TEX`${VB}\sin\varphi = ${VC}` + TEX`\sin\varphi = \frac{${VC}}{${VB}}` + TEXA`\varphi = ${M.n(d.phiStraight, '°')}`
         : '<div class="bad">The ' + (b ? 'current' : 'wind') + ' is faster than ' + (b ? 'the boat' : 'the plane') + ': no aim can cancel the drift.</div>');
     return h;
   },

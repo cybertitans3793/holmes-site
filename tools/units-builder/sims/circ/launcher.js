@@ -22,16 +22,21 @@ const SIM = {
       { id: 'vl', name: 'Speed leaving the spring', short: 'v', sym: 'v', unit: 'm/s', f: d => d.v2 > 0 ? d.vl : NaN },
       { id: 'Us', name: 'Spring energy ½kx²', short: 'U_s', sym: 'U<sub>s</sub>', unit: 'J', f: d => d.Us }]; },
   work(v, d, mode){
-    let h = '<h4>1 · Energy stored in the spring</h4><div class="eq">U<sub>s</sub> = ½kx² = ½(' + H.iv('k') + ')(' + H.iv('x') + ')² = <b>' + H.n(d.Us, 'J') + '</b></div>' +
+    let h = '<h4>1 · Energy stored in the spring</h4>' + TEX`U_s = \frac{1}{2} k x^2` + TEX`U_s = \frac{1}{2}(${M.iv('k')})(${M.iv('x')})^2` + TEXA`U_s = ${M.n(d.Us, 'J')}` +
       '<p class="note">It’s the area under the F–x line (a triangle: ½ × x × kx).</p>';
     if (mode === 'flat'){
-      h += '<h4>2 · Launch speed (no friction, track is level)</h4><div class="eq">½kx² = ½mv² → v = x√(k/m) = (' + H.iv('x') + ')√(' + H.iv('k') + '/' + H.iv('m') + ') = <b>' + H.n(d.vl, 'm/s') + '</b></div>' +
-        '<h4>3 · Height it reaches on the ramp</h4><div class="eq">½kx² = mgh → h = kx²/(2mg) = (' + H.iv('k') + ')(' + H.iv('x') + ')² / (2(' + H.iv('m') + ')(' + H.g() + ')) = <b>' + H.n(d.h, 'm') + '</b></div>' +
+      h += '<h4>2 · Launch speed (no friction, track is level)</h4>' +
+        TEX`\frac{1}{2} k x^2 = \frac{1}{2} m v^2` + TEX`v = x\sqrt{\frac{k}{m}}` + TEX`v = (${M.iv('x')})\sqrt{\frac{${M.iv('k')}}{${M.iv('m')}}}` + TEXA`v = ${M.n(d.vl, 'm/s')}` +
+        '<h4>3 · Height it reaches on the ramp</h4>' +
+        TEX`\frac{1}{2} k x^2 = mgh` + TEX`h = \frac{k x^2}{2 m g}` + TEX`h = \frac{(${M.iv('k')})(${M.iv('x')})^2}{2(${M.iv('m')})(10\,\text{m/s}^2)}` + TEXA`h = ${M.n(d.h, 'm')}` +
         '<p class="note">Double x → 4× the energy → 2× the speed but 4× the height.</p>';
     } else {
-      h += '<h4>2 · Highest point (measured from where it was released)</h4><div class="eq">½kx² = mgH → H = kx²/(2mg) = <b>' + H.n(d.H, 'm') + '</b></div>' +
-        '<div class="eq">Above the spring’s relaxed top: H − x = ' + H.n(d.hAbove, 'm') + '</div>' +
-        '<h4>3 · Speed as it leaves the spring (it has already risen x)</h4><div class="eq">½kx² = ½mv² + mgx → v = √(kx²/m − 2gx) = √(' + H.n(v.k * v.x * v.x / v.m) + ' − ' + H.n(2 * G10 * v.x) + ') = <b>' + (d.v2 > 0 ? H.n(d.vl, 'm/s') : '—') + '</b></div>' +
+      h += '<h4>2 · Highest point (measured from where it was released)</h4>' +
+        TEX`\frac{1}{2} k x^2 = mgH` + TEX`H = \frac{k x^2}{2 m g}` + TEXA`H = ${M.n(d.H, 'm')}` +
+        '<p class="st">Above the spring’s relaxed top:</p>' + TEX`H - x = ${M.n(d.hAbove, 'm')}` +
+        '<h4>3 · Speed as it leaves the spring (it has already risen x)</h4>' +
+        TEX`\frac{1}{2} k x^2 = \frac{1}{2} m v^2 + mgx` + TEX`v = \sqrt{\frac{k x^2}{m} - 2 g x}` + TEX`v = \sqrt{${M.n(v.k * v.x * v.x / v.m)} - ${M.n(2 * G10 * v.x)}}` +
+        (d.v2 > 0 ? TEXA`v = ${M.n(d.vl, 'm/s')}` : TEXA`v = ${'<mtext>—</mtext>'}`) +
         (d.weak ? '<div class="bad">½kx² ≤ mgx: the spring can’t even lift the ball back to its relaxed length.</div>' : '') +
         '<p class="note">Here the mass doesn’t cancel: a heavier ball goes less high.</p>';
     }

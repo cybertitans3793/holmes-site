@@ -19,31 +19,39 @@ const SIM = {
   dvs(){ return [{ id: 'd', name: 'Absolute uncertainty', short: 'Δ', sym: 'Δ', unit: '', f: d => d.d }, { id: 'pct', name: 'Percentage uncertainty', short: '%', sym: '%Δ', unit: '%', f: d => d.pct }]; },
   work(v, d, mode){
     const fx = (x, dp) => (Math.round(x * 10 ** dp + 1e-6) / 10 ** dp).toFixed(dp);
-    const steps = '<h4>How to read any instrument</h4><div class="eq"><b>①</b> Find the smallest division (analog) or the last digit (digital). That’s the <b>resolution</b>.<br>' +
-      '<b>②</b> Uncertainty of one reading: <b>analog → ± half the smallest division</b>; <b>digital → ± one in the last digit</b>.<br>' +
-      '<b>③</b> Before you read: check the zero, and look straight at the scale (no parallax).<br>' +
-      '<b>④</b> If the measurement is the difference of two readings (both ends of an object), the two uncertainties <b>add</b>.<br>' +
-      '<b>⑤</b> Write it as (value ± uncertainty) unit: uncertainty to 1 significant figure, value to the same decimal place.</div>';
+    const N = (x, dp) => { const s = fx(Math.abs(x), dp); return (x < 0 && +s !== 0 ? '<mo>−</mo>' : '') + '<mn>' + s + '</mn>'; };
+    const steps = '<h4>How to read any instrument</h4><p class="st"><b>①</b> Find the smallest division (analog) or the last digit (digital). That’s the <b>resolution</b>.</p>' +
+      '<p class="st"><b>②</b> Uncertainty of one reading: <b>analog → ± half the smallest division</b>; <b>digital → ± one in the last digit</b>.</p>' +
+      '<p class="st"><b>③</b> Before you read: check the zero, and look straight at the scale (no parallax).</p>' +
+      '<p class="st"><b>④</b> If the measurement is the difference of two readings (both ends of an object), the two uncertainties <b>add</b>.</p>' +
+      '<p class="st"><b>⑤</b> Write it as (value ± uncertainty) unit: uncertainty to 1 significant figure, value to the same decimal place.</p>';
     if (mode === 'ruler') return steps +
-      '<h4>1 · Resolution and uncertainty of one reading</h4><div class="eq">Smallest division = 1 mm = 0.1 cm (analog) → each reading is ± ½ × 0.1 = <b>±0.05 cm</b></div>' +
-      '<h4>2 · Read both ends</h4><div class="eq">Left end x<sub>1</sub> = ' + fx(d.e1, 2) + ' cm, right end x<sub>2</sub> = ' + fx(d.e2, 2) + ' cm (eye straight above each end)</div>' +
-      '<div class="eq">L = x<sub>2</sub> − x<sub>1</sub> = ' + fx(d.e2, 2) + ' − ' + fx(d.e1, 2) + ' = <b>' + fx(d.read, 2) + ' cm</b></div>' +
-      '<h4>3 · Two readings → add the uncertainties</h4><div class="eq">ΔL = 0.05 + 0.05 = <b>0.1 cm</b></div>' +
-      '<h4>4 · Write it properly</h4><div class="eq">ΔL has 1 decimal place, so round L to 1 decimal place: <b>L = (' + fx(d.read, 1) + ' ± 0.1) cm</b></div>' +
-      '<h4>5 · Percentage uncertainty</h4><div class="eq">ΔL/L × 100 = 0.1 / ' + fx(d.read, 1) + ' × 100 = <b>' + H.n(d.pct, '%') + '</b></div>' +
+      '<h4>1 · Resolution and uncertainty of one reading</h4><p class="st">Smallest division = 1 mm = 0.1 cm (analog), so each reading is ± ½ of that:</p>' +
+      TEX`\Delta x = \pm\frac{1}{2}\left(\text{smallest division}\right)` + TEX`\Delta x = \pm\frac{1}{2}\times 0.1\,\text{cm}` + TEXA`\Delta x = \pm 0.05\,\text{cm}` +
+      '<h4>2 · Read both ends</h4><p class="st">Eye straight above each end:</p>' +
+      TEX`x_1 = ${N(d.e1, 2)}\,\text{cm}` + TEX`x_2 = ${N(d.e2, 2)}\,\text{cm}` +
+      TEX`L = x_2 - x_1` + TEX`L = ${N(d.e2, 2)}\,\text{cm} - ${N(d.e1, 2)}\,\text{cm}` + TEXA`L = ${N(d.read, 2)}\,\text{cm}` +
+      '<h4>3 · Two readings → add the uncertainties</h4>' +
+      TEX`\Delta L = \Delta x_1 + \Delta x_2` + TEX`\Delta L = 0.05\,\text{cm} + 0.05\,\text{cm}` + TEXA`\Delta L = 0.1\,\text{cm}` +
+      '<h4>4 · Write it properly</h4><p class="st">ΔL has 1 decimal place, so round L to 1 decimal place:</p>' +
+      TEXA`L = \left(${N(d.read, 1)} \pm 0.1\right)\,\text{cm}` +
+      '<h4>5 · Percentage uncertainty</h4>' +
+      TEX`\%\Delta L = \frac{\Delta L}{L}\times 100` + TEX`\%\Delta L = \frac{0.1}{${N(d.read, 1)}}\times 100` + TEXA`\%\Delta L = ${M.n(d.pct, '%')}` +
       '<p class="note">Lining the pencil up with 0 doesn’t remove the first reading: you still judge where the end sits. A longer object has the same ΔL, so a smaller percentage uncertainty.</p>';
     if (mode === 'meter') return steps +
-      '<h4>1 · Resolution and uncertainty</h4><div class="eq">Labeled every 1 A with 10 divisions between labels → smallest division 0.1 A (analog) → <b>±0.05 A</b></div>' +
-      '<h4>2 · Check the zero</h4>' + (v.zero ? '<div class="bad">With no current the needle already sits at ' + H.iv('zero') + ': a zero error. It is systematic: every reading is off by the same amount.</div>' : '<div class="eq">The needle sits on 0 with no current: no zero error.</div>') +
-      '<h4>3 · Read the needle (straight on)</h4><div class="eq">Nearest half-division: the needle reads <b>' + fx(d.read, 2) + ' A</b></div>' +
-      (v.zero ? '<div class="eq">Correct for the zero error: ' + fx(d.read, 2) + ' − (' + H.p(v.zero) + ') = <b>' + fx(d.corrected, 2) + ' A</b></div>' : '') +
-      '<h4>4 · Write it properly</h4><div class="eq"><b>I = (' + fx(v.zero ? d.corrected : d.read, 2) + ' ± 0.05) A</b>, ' + H.n(d.pct, '%') + '</div>' +
+      '<h4>1 · Resolution and uncertainty</h4><p class="st">Labeled every 1 A with 10 divisions between labels, so the smallest division is 0.1 A (analog):</p>' +
+      TEX`\Delta I = \pm\frac{1}{2}\left(\text{smallest division}\right)` + TEX`\Delta I = \pm\frac{1}{2}\times 0.1\,\text{A}` + TEXA`\Delta I = \pm 0.05\,\text{A}` +
+      '<h4>2 · Check the zero</h4>' + (v.zero ? '<div class="bad">With no current the needle already sits at ' + H.iv('zero') + ': a zero error. It is systematic: every reading is off by the same amount.</div>' : '<p class="st">The needle sits on 0 with no current: no zero error.</p>') +
+      '<h4>3 · Read the needle (straight on)</h4><p class="st">Nearest half-division:</p>' + TEXA`I_{\text{read}} = ${N(d.read, 2)}\,\text{A}` +
+      (v.zero ? '<p class="st">Correct for the zero error:</p>' + TEX`I = I_{\text{read}} - I_{\text{zero}}` + TEX`I = ${N(d.read, 2)}\,\text{A} - ${M.p(v.zero, 'A')}` + TEXA`I = ${N(d.corrected, 2)}\,\text{A}` : '') +
+      '<h4>4 · Write it properly</h4>' + TEXA`I = \left(${N(v.zero ? d.corrected : d.read, 2)} \pm 0.05\right)\,\text{A}` +
+      TEX`\%\Delta I = \frac{\Delta I}{I}\times 100` + TEX`\%\Delta I = \frac{0.05}{${N(d.corrected, 2)}}\times 100` + TEXA`\%\Delta I = ${M.n(d.pct, '%')}` +
       '<p class="note">One reading here (the scale starts at a fixed zero), so no doubling. Correcting a zero error doesn’t change the uncertainty, only the value.</p>';
     return steps +
-      '<h4>1 · Resolution and uncertainty</h4><div class="eq">The last digit shown is the ' + (v.res ? fx(d.s, v.res) + ' g' : '1 g') + ' place (digital) → <b>Δm = ±' + fx(d.s, v.res) + ' g</b></div>' +
-      '<h4>2 · Check the zero</h4><div class="eq">Press tare with nothing (or just the container) on the scale so it reads 0 first.</div>' +
-      '<h4>3 · Write it properly</h4><div class="eq">Display ' + fx(d.read, v.res) + ' g → <b>m = (' + fx(d.read, v.res) + ' ± ' + fx(d.s, v.res) + ') g</b></div>' +
-      '<h4>4 · Percentage uncertainty</h4><div class="eq">' + fx(d.s, v.res) + ' / ' + fx(d.read, v.res) + ' × 100 = <b>' + H.n(d.pct, '%') + '</b></div>' +
+      '<h4>1 · Resolution and uncertainty</h4><p class="st">The last digit shown is the ' + (v.res ? fx(d.s, v.res) + ' g' : '1 g') + ' place (digital), so the uncertainty is one in that digit:</p>' + TEXA`\Delta m = \pm ${N(d.s, v.res)}\,\text{g}` +
+      '<h4>2 · Check the zero</h4><p class="st">Press tare with nothing (or just the container) on the scale so it reads 0 first.</p>' +
+      '<h4>3 · Write it properly</h4><p class="st">Display ' + fx(d.read, v.res) + ' g, so:</p>' + TEXA`m = \left(${N(d.read, v.res)} \pm ${N(d.s, v.res)}\right)\,\text{g}` +
+      '<h4>4 · Percentage uncertainty</h4>' + TEX`\%\Delta m = \frac{\Delta m}{m}\times 100` + TEX`\%\Delta m = \frac{${N(d.s, v.res)}}{${N(d.read, v.res)}}\times 100` + TEXA`\%\Delta m = ${M.n(d.pct, '%')}` +
       '<p class="note">Don’t halve a digital resolution: you can’t see between digits. More decimals means more precise, not necessarily more accurate (a badly calibrated scale is still wrong).</p>';
   },
   draw(v, d, mode){

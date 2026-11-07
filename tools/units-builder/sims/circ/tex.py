@@ -8,7 +8,11 @@ from latex2mathml.converter import convert
 def _fix(m):
     m = m.replace(' xmlns="http://www.w3.org/1998/Math/MathML"', '')
     m = re.sub(r'<mo stretchy="false">&#x0007C;</mo>', '<mo stretchy="false" lspace="0" rspace="0">&#x0007C;</mo>', m)
-    m = re.sub(r'(<mi>(?:sin|cos|tan)</mi>)', r'\1<mspace width="0.167em"/>', m)
+    # thin space before sin/cos/tan when a variable or number sits right in front (T cos θ, 2T sin θ)
+    m = re.sub(r'(</mi>|</mn>|</msub>|</msup>)((?:<msup>)?<mi>(?:sin|cos|tan)</mi>)', r'\1<mspace width="0.167em"/>\2', m)
+    # space after sin/cos/tan, but not inside <msup> (\tan^{-1}): there it goes after the whole power
+    m = re.sub(r'(?<!<msup>)(<mi>(?:sin|cos|tan)</mi>)', r'\1<mspace width="0.167em"/>', m)
+    m = re.sub(r'(<msup><mi>(?:sin|cos|tan)</mi>(?:(?!</msup>).)*</msup>)', r'\1<mspace width="0.167em"/>', m)
     return m
 
 def _one(src, ans):

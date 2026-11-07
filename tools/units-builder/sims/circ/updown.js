@@ -33,23 +33,29 @@ const SIM = {
       { id: 'y', name: 'Height where they pass', short: 'y', sym: 'y', unit: 'm', f: d => d.y }];
   },
   work(v, d, mode){
+    const I = id => (v[id] < 0 ? '<mrow><mo>(</mo>' + M.iv(id, 1) + '<mo>)</mo></mrow>' : M.iv(id, 1));
     if (mode === 'throw'){
-      let h = '<h4>1 · Set up (up = +, origin at the bottom)</h4><div class="eq">y<sub>0</sub> = ' + H.iv('h0') + ', v<sub>0</sub> = ' + H.iv('v0') + ', a = −g = −10 m/s² <b>the whole time</b>: going up, at the top, and coming down</div>';
-      if (v.v0 > 0) h += '<h4>2 · To the top: v = 0 there (but a is still −g!)</h4><div class="eq">v = v<sub>0</sub> − gt → t<sub>top</sub> = v<sub>0</sub>/g = ' + H.iv('v0') + ' / ' + H.g() + ' = <b>' + H.n(d.tTop, 's') + '</b></div>' +
-        '<div class="eq">v² = v<sub>0</sub>² − 2gΔy → rise = v<sub>0</sub>²/2g = ' + H.n(d.rise, 'm') + ' → y<sub>max</sub> = <b>' + H.n(d.yMax, 'm') + '</b></div>' +
+      let h = '<h4>1 · Set up (up = +, origin at the bottom)</h4>' + TEX`y_0 = h = ${M.iv('h0')}` + TEX`v_0 = ${M.iv('v0')}` + TEX`a = -g = -10\,\text{m/s}^2` +
+        '<p class="st">The acceleration is −g <b>the whole time</b>: going up, at the top, and coming down.</p>';
+      if (v.v0 > 0) h += '<h4>2 · To the top: v = 0 there (but a is still −g!)</h4>' + TEX`v = v_0 - g\,t` + TEX`t_{\text{top}} = \frac{v_0}{g}` + TEX`t_{\text{top}} = \frac{${I('v0')}}{10}` + TEXA`t_{\text{top}} = ${M.n(d.tTop, 's')}` +
+        '<p class="st">How high it rises, from v² = v<sub>0</sub>² − 2gΔy with v = 0:</p>' + TEX`\text{rise} = \frac{v_0^2}{2g}` + TEX`\text{rise} = \frac{(${I('v0')})^2}{2(10)}` + TEX`\text{rise} = ${M.n(d.rise, 'm')}` +
+        TEX`y_{\max} = h + \text{rise} = ${I('h0')} + ${M.n(d.rise)}` + TEXA`y_{\max} = ${M.n(d.yMax, 'm')}` +
         '<p class="note">Symmetry: it’s back at the cliff edge after 2t<sub>top</sub> = ' + H.n(d.backAt, 's') + ', moving down at ' + H.n(v.v0, 'm/s') + ', the same speed it was thrown.</p>';
-      h += '<h4>' + (v.v0 > 0 ? '3' : '2') + ' · To the bottom: y = 0</h4><div class="eq">0 = h + v<sub>0</sub>t − ½gt² → 5t² − (' + H.n(v.v0) + ')t − ' + H.n(v.h0) + ' = 0</div>' +
-        '<div class="eq">t = [v<sub>0</sub> + √(v<sub>0</sub>² + 2gh)]/g = <b>' + H.n(d.tLand, 's') + '</b> (the + root)</div>' +
-        '<div class="eq">v<sub>land</sub> = v<sub>0</sub> − gt = ' + H.iv('v0') + ' − (10)(' + H.n(d.tLand) + ') = <b>' + H.n(d.vLand, 'm/s') + '</b></div>' +
+      h += '<h4>' + (v.v0 > 0 ? '3' : '2') + ' · To the bottom: y = 0</h4>' + TEX`0 = h + v_0\,t - \frac{1}{2}\,g\,t^2` + TEX`5\,t^2 - (${M.n(v.v0)})\,t - ${M.n(v.h0)} = 0` +
+        '<p class="st">Quadratic formula (the + root):</p>' + TEX`t = \frac{v_0 + \sqrt{v_0^2 + 2\,g\,h}}{g}` + TEX`t = \frac{${I('v0')} + \sqrt{(${I('v0')})^2 + 2(10)(${I('h0')})}}{10}` + TEXA`t = ${M.n(d.tLand, 's')}` +
+        TEX`v_{\text{land}} = v_0 - g\,t` + TEX`v_{\text{land}} = ${I('v0')} - (10)(${M.n(d.tLand)})` + TEXA`v_{\text{land}} = ${M.n(d.vLand, 'm/s')}` +
         '<p class="note">Check without time: v² = v<sub>0</sub>² + 2gh → |v| = ' + H.n(Math.sqrt(v.v0 * v.v0 + 2 * G10 * v.h0), 'm/s') + '. Thrown up or down at the same speed, it hits the bottom at the same speed.</p>';
       return h;
     }
-    let h = '<h4>1 · Both start at t = 0 with a = −g (up = +)</h4><div class="eq">A (dropped): y<sub>A</sub> = ' + H.iv('H') + ' − ½gt² &nbsp;&nbsp; B (thrown up): y<sub>B</sub> = ' + H.iv('v0') + '·t − ½gt²</div>' +
-      '<h4>2 · They pass when y<sub>A</sub> = y<sub>B</sub></h4><div class="eq">H − ½gt² = v<sub>0</sub>t − ½gt² → the ½gt² cancels! → t = H/v<sub>0</sub> = ' + H.iv('H') + ' / ' + H.iv('v0') + ' = <b>' + H.n(d.t, 's') + '</b></div>' +
+    let h = '<h4>1 · Both start at t = 0 with a = −g (up = +)</h4><p class="st">A (dropped):</p>' + TEX`y_A = H - \frac{1}{2}\,g\,t^2` + TEX`y_A = ${I('H')} - \frac{1}{2}(10)\,t^2` +
+      '<p class="st">B (thrown up):</p>' + TEX`y_B = v_0\,t - \frac{1}{2}\,g\,t^2` + TEX`y_B = (${I('v0')})\,t - \frac{1}{2}(10)\,t^2` +
+      '<h4>2 · They pass when y<sub>A</sub> = y<sub>B</sub></h4>' + TEX`H - \frac{1}{2}\,g\,t^2 = v_0\,t - \frac{1}{2}\,g\,t^2` +
+      '<p class="st">The ½gt² cancels!</p>' + TEX`H = v_0\,t` + TEX`t = \frac{H}{v_0}` + TEX`t = \frac{${I('H')}}{${I('v0')}}` + TEXA`t = ${M.n(d.t, 's')}` +
       '<p class="note">Why it cancels: both fall at the same rate, so relative to each other they move at a constant ' + H.n(v.v0, 'm/s') + ', as if there were no gravity.</p>';
-    if (!d.ok) return h + '<div class="bad">But one ball hits the ground first (A lands at ' + H.n(d.tA, 's') + ', B at ' + H.n(d.tB, 's') + '), so they never pass in the air. B needs at least √(gH/2) = ' + H.n(d.vMin, 'm/s') + '.</div>';
-    return h + '<h4>3 · Where</h4><div class="eq">y = H − ½gt² = ' + H.iv('H') + ' − 5(' + H.n(d.t) + ')² = <b>' + H.n(d.y, 'm') + '</b></div>' +
-      '<div class="eq">Velocities then: A ' + H.n(d.vAm, 'm/s') + ', B ' + H.n(d.vBm, 'm/s') + (d.vBm < 0 ? ' (B is already coming back down)' : ' (B still going up)') + '</div>';
+    if (!d.ok) return h + '<div class="bad">But one ball hits the ground first (A lands at ' + H.n(d.tA, 's') + ', B at ' + H.n(d.tB, 's') + '), so they never pass in the air. B needs at least:</div>' +
+      TEX`v_{0,\min} = \sqrt{\frac{g\,H}{2}} = \sqrt{\frac{(10)(${I('H')})}{2}}` + TEXA`v_{0,\min} = ${M.n(d.vMin, 'm/s')}`;
+    return h + '<h4>3 · Where</h4>' + TEX`y = H - \frac{1}{2}\,g\,t^2` + TEX`y = ${I('H')} - 5(${M.n(d.t)})^2` + TEXA`y = ${M.n(d.y, 'm')}` +
+      '<p class="st">Velocities then: A ' + H.n(d.vAm, 'm/s') + ', B ' + H.n(d.vBm, 'm/s') + (d.vBm < 0 ? ' (B is already coming back down)' : ' (B still going up)') + '</p>';
   },
   draw(v, d, mode, opt, t, dt, A){
     if (A.t === undefined || A.reset) A.t = 0; A.t += dt;

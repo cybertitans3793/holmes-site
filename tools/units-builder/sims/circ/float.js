@@ -22,21 +22,23 @@ const SIM = {
     return [{ id: 'T', name: 'String tension (apparent weight)', short: 'T', sym: 'T', unit: 'N', f: d => d.T }, { id: 'a', name: 'Acceleration if let go', short: 'a', sym: 'a', unit: 'm/s²', f: d => d.a }, { id: 'Fb', name: 'Buoyant force', short: 'F_b', sym: 'F<sub>b</sub>', unit: 'N', f: d => d.Fb }];
   },
   work(v, d, mode, opt){
-    const h0 = '<h4>1 · Archimedes: the buoyant force = the weight of the liquid pushed aside</h4><div class="eq">F<sub>b</sub> = ρ<sub>fl</sub>V<sub>sub</sub>g. It comes from the pressure being bigger on the bottom of the block than on the top.</div>' +
-      '<div class="eq">Block: m = ρ<sub>obj</sub>V = (' + H.iv('rb') + ')(' + H.n(d.V, 'm³') + ') = ' + H.n(d.m, 'kg') + ', weight ' + H.n(d.W, 'N') + '</div>';
+    const h0 = '<h4>1 · Archimedes: the buoyant force = the weight of the liquid pushed aside</h4>' + TEX`F_b = \rho_{\text{fl}} V_{\text{sub}}\, g` +
+      '<p class="st">It comes from the pressure being bigger on the bottom of the block than on the top.</p>' +
+      '<p class="st">Block:</p>' + TEX`m = \rho_{\text{obj}} V` + TEX`m = (${M.iv('rb')})(${M.n(d.V, 'm³')})` + TEXA`m = ${M.n(d.m, 'kg')}` + TEXA`W = mg = ${M.n(d.W, 'N')}`;
     if (mode === 'float'){
       if (d.sinks) return h0 + '<div class="bad">ρ<sub>obj</sub> ≥ ρ<sub>fl</sub>: even fully under, F<sub>b</sub> = ' + H.n(d.FbFull, 'N') + ' can’t hold up ' + H.n(d.W, 'N') + '. It sinks.</div>';
-      return h0 + '<h4>2 · Floating: forces balance</h4><div class="eq">F<sub>b</sub> = mg → ρ<sub>fl</sub>V<sub>sub</sub>g = ρ<sub>obj</sub>Vg → <b>V<sub>sub</sub>/V = ρ<sub>obj</sub>/ρ<sub>fl</sub></b> = ' + H.iv('rb') + ' / ' + H.iv('rf') + ' = <b>' + H.n(d.frac) + '</b></div>' +
-        '<div class="eq">F<sub>b</sub> = mg = ' + H.n(d.Fb, 'N') + '; ' + H.n(d.Vsub, 'L') + ' of the block is under the surface</div>' +
+      return h0 + '<h4>2 · Floating: forces balance</h4>' + TEX`F_b = mg` + TEX`\rho_{\text{fl}} V_{\text{sub}}\, g = \rho_{\text{obj}} V g` +
+        TEX`\frac{V_{\text{sub}}}{V} = \frac{\rho_{\text{obj}}}{\rho_{\text{fl}}}` + TEX`\frac{V_{\text{sub}}}{V} = \frac{${M.iv('rb')}}{${M.iv('rf')}}` + TEXA`\frac{V_{\text{sub}}}{V} = ${M.n(d.frac)}` +
+        TEXA`F_b = mg = ${M.n(d.Fb, 'N')}` + '<p class="st">That much of the block is under the surface:</p>' + TEXA`V_{\text{sub}} = ${M.n(d.Vsub, 'L')}` +
         '<p class="note">Ice (920) in water: 92% under. In salt water a little less is under: denser liquid, same weight to hold up.</p>' +
         '<p class="note">Common mistake: “the buoyant force equals the weight of the whole block’s volume of water.” Only when it’s fully under.</p>';
     }
-    if (mode === 'tied') return h0 + '<h4>2 · Fully under: V<sub>sub</sub> = V</h4><div class="eq">F<sub>b</sub> = (' + H.iv('rf') + ')(' + H.n(d.V) + ')(' + H.g() + ') = <b>' + H.n(d.Fb, 'N') + '</b></div>' +
-      '<h4>3 · Free-body diagram: F<sub>b</sub> up; mg and T down</h4><div class="eq">F<sub>b</sub> = mg + T → T = ' + H.n(d.Fb) + ' − ' + H.n(d.W) + ' = <b>' + H.n(d.T, 'N') + '</b></div>' +
-      '<div class="eq">Cut the string: a = (F<sub>b</sub> − mg)/m = ' + H.n(d.a0, 'm/s²') + ' upward (ignoring drag) until it reaches the surface.</div>';
-    return h0 + '<h4>2 · Fully under: F<sub>b</sub> = ρ<sub>fl</sub>Vg = <b>' + H.n(d.Fb, 'N') + '</b></h4>' +
-      (opt.held !== 'free' ? '<h4>3 · On a string: T + F<sub>b</sub> = mg</h4><div class="eq">T = ' + H.n(d.W) + ' − ' + H.n(d.Fb) + ' = <b>' + H.n(d.T, 'N') + '</b> (the “apparent weight”: lighter by F<sub>b</sub>)</div>'
-        : '<h4>3 · Let go: Newton’s 2nd law (down +)</h4><div class="eq">mg − F<sub>b</sub> = ma → a = g(1 − ρ<sub>fl</sub>/ρ<sub>obj</sub>) = 10(1 − ' + H.iv('rf') + '/' + H.iv('rb') + ') = <b>' + H.n(d.a, 'm/s²') + '</b> (ignoring drag)</div>') +
+    if (mode === 'tied') return h0 + '<h4>2 · Fully under: V<sub>sub</sub> = V</h4>' + TEX`F_b = \rho_{\text{fl}} V g` + TEX`F_b = (${M.iv('rf')})(${M.n(d.V)})(10\,\text{m/s}^2)` + TEXA`F_b = ${M.n(d.Fb, 'N')}` +
+      '<h4>3 · Free-body diagram: F<sub>b</sub> up; mg and T down</h4>' + TEX`F_b = mg + T` + TEX`T = F_b - mg` + TEX`T = ${M.n(d.Fb)} - ${M.n(d.W)}` + TEXA`T = ${M.n(d.T, 'N')}` +
+      '<p class="st">Cut the string (ignoring drag):</p>' + TEX`a = \frac{F_b - mg}{m}` + TEXA`a = ${M.n(d.a0, 'm/s²')}` + '<p class="st">upward until it reaches the surface.</p>';
+    return h0 + '<h4>2 · Fully under</h4>' + TEX`F_b = \rho_{\text{fl}} V g` + TEXA`F_b = ${M.n(d.Fb, 'N')}` +
+      (opt.held !== 'free' ? '<h4>3 · On a string: T + F<sub>b</sub> = mg</h4>' + TEX`T = mg - F_b` + TEX`T = ${M.n(d.W)} - ${M.n(d.Fb)}` + TEXA`T = ${M.n(d.T, 'N')}` + '<p class="st">This is the “apparent weight”: lighter by F<sub>b</sub>.</p>'
+        : '<h4>3 · Let go: Newton’s 2nd law (down +)</h4>' + TEX`mg - F_b = ma` + TEX`a = g\left(1 - \frac{\rho_{\text{fl}}}{\rho_{\text{obj}}}\right)` + TEX`a = (10\,\text{m/s}^2)\left(1 - \frac{${M.iv('rf')}}{${M.iv('rb')}}\right)` + TEXA`a = ${M.n(d.a, 'm/s²')}` + '<p class="st">Ignoring drag.</p>') +
       '<p class="note">F<sub>b</sub> doesn’t depend on how deep the block is (once it’s fully under) or on what it’s made of, only on its volume and the liquid.</p>';
   },
   draw(v, d, mode, opt, t, dt, A){

@@ -30,33 +30,44 @@ const SIM = {
     { id: 'K0', name: 'Total kinetic energy before', short: 'K before', sym: 'K<sub>before</sub>', unit: 'J', f: d => d.K0 },
     { id: 'JB', name: 'Impulse on B', short: 'J_B', sym: 'J<sub>B</sub>', unit: 'N·s', f: d => d.JB }]); },
   work(v, d, mode){
-    const pb = '<h4>1 · Momentum before (+ = right)</h4><div class="eq">p = m<sub>A</sub>v<sub>A</sub> + m<sub>B</sub>v<sub>B</sub> = (' + H.iv('mA') + ')(' + (mode === 'explode' ? H.n(0, 'm/s') : H.iv('vA')) + ') + (' + H.iv('mB') + ')(' + (mode === 'explode' ? H.n(0, 'm/s') : H.iv('vB')) + ') = <b>' + H.n(d.p0, 'kg·m/s') + '</b></div>';
+    const ex = mode === 'explode';
+    const pb = '<h4>1 · Momentum before (+ = right)</h4>' + TEX`p = m_A v_A + m_B v_B` +
+      TEX`p = (${M.iv('mA')})(${ex ? M.n(0, 'm/s') : M.iv('vA')}) + (${M.iv('mB')})(${ex ? M.n(0, 'm/s') : M.iv('vB')})` + TEXA`p = ${M.n(d.p0, 'kg·m/s')}`;
     if (!d.meet) return pb + '<div class="bad">A isn’t gaining on B (v<sub>A</sub> ≤ v<sub>B</sub>), so they never collide. Make A faster than B.</div>';
     let h = pb;
+    const pAfter = TEX`p' = (${M.iv('mA')})(${M.p(d.uA)}) + (${M.iv('mB')})(${M.p(d.uB)})` + TEXA`p' = ${M.n(d.p1, 'kg·m/s')}`;
+    const sticky = TEX`m_A v_A + m_B v_B = (m_A + m_B)\,v'` + TEX`v' = \frac{p}{m_A + m_B}` + TEX`v' = \frac{${M.n(d.p0)}}{${M.iv('mA')} + ${M.iv('mB')}}` + TEXA`v' = ${M.n(d.uA, 'm/s')}`;
+    const zero = TEX`0 = m_A v'_A + m_B v'_B` + TEX`v'_B = -\frac{m_A v'_A}{m_B}` + TEX`v'_B = -\frac{(${M.iv('mA')})(${M.p(d.uA)})}{${M.iv('mB')}}` + TEXA`v'_B = ${M.n(d.uB, 'm/s')}`;
     if (window.ABP){
-      if (mode === 'sticky') h += '<h4>2 · Momentum is conserved; they move together</h4><div class="eq">m<sub>A</sub>v<sub>A</sub> + m<sub>B</sub>v<sub>B</sub> = (m<sub>A</sub> + m<sub>B</sub>)v′ → v′ = ' + H.n(d.p0) + ' / (' + H.iv('mA') + ' + ' + H.iv('mB') + ') = <b>' + H.n(d.uA, 'm/s') + '</b></div>';
-      else if (mode === 'elastic') h += '<h4>2 · They rebound</h4><div class="eq">Perfectly bouncy bumpers. After: v<sub>A</sub>′ = <b>' + H.n(d.uA, 'm/s') + '</b>, v<sub>B</sub>′ = <b>' + H.n(d.uB, 'm/s') + '</b></div>' +
-        '<h4>3 · Check: momentum after</h4><div class="eq">(' + H.iv('mA') + ')(' + H.n(d.uA) + ') + (' + H.iv('mB') + ')(' + H.n(d.uB) + ') = <b>' + H.n(d.p1, 'kg·m/s') + '</b> = momentum before ✓</div>' +
+      if (mode === 'sticky') h += '<h4>2 · Momentum is conserved; they move together</h4>' + sticky;
+      else if (mode === 'elastic') h += '<h4>2 · They rebound</h4><p class="st">Perfectly bouncy bumpers. After the collision:</p>' + TEXA`v'_A = ${M.n(d.uA, 'm/s')}` + TEXA`v'_B = ${M.n(d.uB, 'm/s')}` +
+        '<h4>3 · Check: momentum after</h4>' + pAfter + '<p class="st">This equals the momentum before ✓</p>' +
         '<p class="note">Equal masses, B at rest: they swap velocities (Newton’s cradle).</p>';
-      else h += '<h4>2 · Momentum stays zero</h4><div class="eq">0 = m<sub>A</sub>v<sub>A</sub>′ + m<sub>B</sub>v<sub>B</sub>′ → v<sub>B</sub>′ = −m<sub>A</sub>v<sub>A</sub>′/m<sub>B</sub> = −(' + H.iv('mA') + ')(' + H.n(d.uA) + ')/' + H.iv('mB') + ' = <b>' + H.n(d.uB, 'm/s') + '</b></div>' +
+      else h += '<h4>2 · Momentum stays zero</h4>' + zero +
         '<p class="note">The lighter cart moves off faster, but both carts get the same size momentum (' + H.n(Math.abs(v.mA * d.uA), 'kg·m/s') + ') in opposite directions.</p>';
     } else if (mode === 'sticky'){
-      h += '<h4>2 · Momentum is conserved; they move together</h4><div class="eq">m<sub>A</sub>v<sub>A</sub> + m<sub>B</sub>v<sub>B</sub> = (m<sub>A</sub> + m<sub>B</sub>)v′ → v′ = ' + H.n(d.p0) + ' / (' + H.iv('mA') + ' + ' + H.iv('mB') + ') = <b>' + H.n(d.uA, 'm/s') + '</b></div>' +
-        '<h4>3 · Kinetic energy</h4><div class="eq">before ' + H.n(d.K0, 'J') + ' → after ' + H.n(d.K1, 'J') + ': lost <b>' + H.n(-d.dK, 'J') + '</b> (' + H.n(d.K0 > 0 ? -100 * d.dK / d.K0 : 0) + '%) to thermal energy and denting the clay.</div>' +
+      h += '<h4>2 · Momentum is conserved; they move together</h4>' + sticky +
+        '<h4>3 · Kinetic energy</h4>' + TEX`K = \tfrac{1}{2}mv^2` + TEX`K_{\text{before}} = ${M.n(d.K0, 'J')}` + TEX`K_{\text{after}} = ${M.n(d.K1, 'J')}` +
+        TEX`\text{lost} = K_{\text{before}} - K_{\text{after}}` + TEXA`\text{lost} = ${M.n(-d.dK, 'J')}\ \left(${M.n(d.K0 > 0 ? -100 * d.dK / d.K0 : 0)}\%\right)` +
+        '<p class="st">This is lost to thermal energy and denting the clay.</p>' +
         '<p class="note">Perfectly inelastic: the most kinetic energy a collision can lose while still conserving momentum.</p>';
     } else if (mode === 'elastic'){
-      h += '<h4>2 · Two things are conserved</h4><div class="eq">Momentum: m<sub>A</sub>v<sub>A</sub> + m<sub>B</sub>v<sub>B</sub> = m<sub>A</sub>v<sub>A</sub>′ + m<sub>B</sub>v<sub>B</sub>′</div><div class="eq">Kinetic energy: ½m<sub>A</sub>v<sub>A</sub>² + ½m<sub>B</sub>v<sub>B</sub>² = ½m<sub>A</sub>v<sub>A</sub>′² + ½m<sub>B</sub>v<sub>B</sub>′²</div>' +
-        '<h4>3 · Solving both together gives</h4><div class="eq">v<sub>A</sub>′ = [(m<sub>A</sub> − m<sub>B</sub>)v<sub>A</sub> + 2m<sub>B</sub>v<sub>B</sub>]/(m<sub>A</sub> + m<sub>B</sub>) = <b>' + H.n(d.uA, 'm/s') + '</b></div>' +
-        '<div class="eq">v<sub>B</sub>′ = [(m<sub>B</sub> − m<sub>A</sub>)v<sub>B</sub> + 2m<sub>A</sub>v<sub>A</sub>]/(m<sub>A</sub> + m<sub>B</sub>) = <b>' + H.n(d.uB, 'm/s') + '</b></div>' +
-        '<h4>4 · Check</h4><div class="eq">p after = (' + H.iv('mA') + ')(' + H.n(d.uA) + ') + (' + H.iv('mB') + ')(' + H.n(d.uB) + ') = ' + H.n(d.p1, 'kg·m/s') + ' ✓ &nbsp; K after = ' + H.n(d.K1, 'J') + ' ✓</div>' +
+      h += '<h4>2 · Two things are conserved</h4><p class="st">Momentum:</p>' + TEX`m_A v_A + m_B v_B = m_A v'_A + m_B v'_B` +
+        '<p class="st">Kinetic energy:</p>' + TEX`\tfrac{1}{2}m_A v_A^2 + \tfrac{1}{2}m_B v_B^2 = \tfrac{1}{2}m_A (v'_A)^2 + \tfrac{1}{2}m_B (v'_B)^2` +
+        '<h4>3 · Solving both together gives</h4>' + TEX`v'_A = \frac{(m_A - m_B)\,v_A + 2m_B v_B}{m_A + m_B}` +
+        TEX`v'_A = \frac{(${M.n(v.mA - v.mB)})(${M.p(d.vA)}) + 2(${M.iv('mB', 1)})(${M.p(d.vB)})}{${M.n(v.mA + v.mB)}}` + TEXA`v'_A = ${M.n(d.uA, 'm/s')}` +
+        TEX`v'_B = \frac{(m_B - m_A)\,v_B + 2m_A v_A}{m_A + m_B}` +
+        TEX`v'_B = \frac{(${M.n(v.mB - v.mA)})(${M.p(d.vB)}) + 2(${M.iv('mA', 1)})(${M.p(d.vA)})}{${M.n(v.mA + v.mB)}}` + TEXA`v'_B = ${M.n(d.uB, 'm/s')}` +
+        '<h4>4 · Check</h4>' + pAfter + '<p class="st">Momentum is conserved ✓</p>' + TEX`K' = \tfrac{1}{2}(${M.iv('mA')})(${M.p(d.uA)})^2 + \tfrac{1}{2}(${M.iv('mB')})(${M.p(d.uB)})^2` + TEXA`K' = ${M.n(d.K1, 'J')}` + '<p class="st">Kinetic energy is conserved ✓</p>' +
         '<p class="note">Equal masses, B at rest: they swap velocities (Newton’s cradle).</p>';
     } else {
-      h += '<h4>2 · Momentum stays zero</h4><div class="eq">0 = m<sub>A</sub>v<sub>A</sub>′ + m<sub>B</sub>v<sub>B</sub>′ → v<sub>B</sub>′ = −(m<sub>A</sub>/m<sub>B</sub>)v<sub>A</sub>′</div>' +
-        '<h4>3 · The spring’s energy becomes kinetic energy</h4><div class="eq">' + H.iv('Es') + ' = ½m<sub>A</sub>v<sub>A</sub>′² + ½m<sub>B</sub>v<sub>B</sub>′²</div>' +
-        '<div class="eq">v<sub>A</sub>′ = −√(2U<sub>s</sub>m<sub>B</sub>/(m<sub>A</sub>(m<sub>A</sub>+m<sub>B</sub>))) = <b>' + H.n(d.uA, 'm/s') + '</b>, v<sub>B</sub>′ = <b>' + H.n(d.uB, 'm/s') + '</b></div>' +
+      h += '<h4>2 · Momentum stays zero</h4>' + TEX`0 = m_A v'_A + m_B v'_B` + TEX`v'_B = -\frac{m_A}{m_B}\,v'_A` +
+        '<h4>3 · The spring’s energy becomes kinetic energy</h4>' + TEX`U_s = \tfrac{1}{2}m_A (v'_A)^2 + \tfrac{1}{2}m_B (v'_B)^2 = ${M.iv('Es')}` +
+        TEX`v'_A = -\sqrt{\frac{2U_s\,m_B}{m_A\,(m_A + m_B)}}` + TEX`v'_A = -\sqrt{\frac{2(${M.iv('Es')})(${M.iv('mB')})}{(${M.iv('mA')})(${M.iv('mA')} + ${M.iv('mB')})}}` + TEXA`v'_A = ${M.n(d.uA, 'm/s')}` + TEXA`v'_B = ${M.n(d.uB, 'm/s')}` +
         '<p class="note">The lighter cart gets the bigger speed and the bigger share of the energy, but both get the same size momentum (' + H.n(Math.abs(v.mA * d.uA), 'kg·m/s') + ').</p>';
     }
-    h += '<h4>' + (window.ABP ? (mode === 'elastic' ? 4 : 3) : mode === 'elastic' ? 5 : 4) + ' · Impulse on B (= −impulse on A)</h4><div class="eq">J<sub>B</sub> = m<sub>B</sub>Δv<sub>B</sub> = (' + H.iv('mB') + ')(' + H.n(d.uB) + ' − ' + H.n(d.vB) + ') = <b>' + H.n(d.JB, 'N·s') + '</b></div>';
+    h += '<h4>' + (window.ABP ? (mode === 'elastic' ? 4 : 3) : mode === 'elastic' ? 5 : 4) + ' · Impulse on B (= −impulse on A)</h4>' + TEX`J_B = m_B\,\Delta v_B = m_B\,(v'_B - v_B)` +
+      TEX`J_B = (${M.iv('mB')})(${M.n(d.uB)} - ${M.p(d.vB)})` + TEXA`J_B = ${M.n(d.JB, 'N·s')}`;
     return h;
   },
   draw(v, d, mode, opt, t, dt, A){

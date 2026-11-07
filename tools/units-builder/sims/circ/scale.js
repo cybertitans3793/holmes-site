@@ -17,11 +17,11 @@ const SIM = {
     { id: 'Fb', name: 'Buoyant force', short: 'F_b', sym: 'F<sub>b</sub>', unit: 'N', f: d => d.Fb },
     { id: 'sum', name: 'Top + bottom readings', short: 'sum', sym: 'T + N', unit: 'N', f: d => d.sum }]; },
   work(v, d){
-    return '<h4>1 · Buoyant force on the block</h4><div class="eq">F<sub>b</sub> = ρ<sub>water</sub>V<sub>sub</sub>g = (1000)(' + H.n(d.V) + ' × ' + H.iv('f') + ')(10) = <b>' + H.n(d.Fb, 'N') + '</b></div>' +
+    return '<h4>1 · Buoyant force on the block</h4>' + TEX`F_b = \rho_{\text{water}} V_{\text{sub}}\, g` + TEX`F_b = (1000)(${M.n(d.V)} \times ${M.iv('f')})(10)` + TEXA`F_b = ${M.n(d.Fb, 'N')}` +
       (d.floats ? '<div class="bad">The block’s density (' + H.n(d.rho, 'kg/m³') + ') is less than water’s: it floats, and the string goes slack.</div>' : '') +
-      '<h4>2 · Free-body diagram of the block (at rest): T + F<sub>b</sub> = mg</h4><div class="eq">Top scale: T = ' + H.n(d.W) + ' − ' + H.n(d.Fb) + ' = <b>' + H.n(d.T, 'N') + '</b> (reads less by F<sub>b</sub>)</div>' +
-      '<h4>3 · The water pushes up on the block, so the block pushes down on the water (Newton’s 3rd law)</h4><div class="eq">Bottom scale: N = Mg + F<sub>b</sub> = ' + H.n(v.M * G10) + ' + ' + H.n(d.Fb) + ' = <b>' + H.n(d.B, 'N') + '</b> (reads more by F<sub>b</sub>)</div>' +
-      '<h4>4 · Check with the whole system</h4><div class="eq">Block + beaker + water: T + N = (M + m)g → ' + H.n(d.T) + ' + ' + H.n(d.B) + ' = ' + H.n(d.sum, 'N') + ' = ' + H.n(d.total, 'N') + ' ✓</div>' +
+      '<h4>2 · Free-body diagram of the block (at rest)</h4>' + TEX`T + F_b = mg` + TEX`T = mg - F_b` + TEX`T = ${M.n(d.W)} - ${M.n(d.Fb)}` + TEXA`T = ${M.n(d.T, 'N')}` + '<p class="st">The top scale reads less by F<sub>b</sub>.</p>' +
+      '<h4>3 · The water pushes up on the block, so the block pushes down on the water (Newton’s 3rd law)</h4>' + TEX`N = Mg + F_b` + TEX`N = ${M.n(v.M * G10)} + ${M.n(d.Fb)}` + TEXA`N = ${M.n(d.B, 'N')}` + '<p class="st">The bottom scale reads more by F<sub>b</sub>.</p>' +
+      '<h4>4 · Check with the whole system</h4><p class="st">Block + beaker + water:</p>' + TEX`T + N = (M + m)g` + TEX`T + N = ${M.n(d.T)} + ${M.n(d.B)}` + TEXA`T + N = ${M.n(d.sum, 'N')}` + TEX`(M + m)g = ${M.n(d.total, 'N')}` + '<p class="st">They match ✓</p>' +
       '<p class="note">The “missing” weight on the top scale shows up on the bottom scale. Once the block is fully under, lowering it further changes nothing (unless it touches the bottom).</p>';
   },
   draw(v, d){
