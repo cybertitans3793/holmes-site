@@ -33,21 +33,20 @@ const SIM = {
     return [{ id: 'w', name: 'Angular velocity after', short: 'ω', sym: 'ω', unit: 'rad/s', f: d => d.w }, { id: 'L', name: 'Angular momentum', short: 'L', sym: 'L', unit: 'kg·m²/s', f: d => d.L }, { id: 'K2', name: 'KE after', short: 'K2', sym: 'K<sub>2</sub>', unit: 'J', f: d => d.K2, vs: 'K1' }, { id: 'K1', name: 'KE before', short: 'K1', sym: 'K<sub>1</sub>', unit: 'J', f: d => d.K1 }];
   },
   work(v, d, mode){
-    if (mode === 'stool') return '<h4>1 · No outside torque (frictionless stool) → L = Iω stays the same</h4>' +
-      '<div class="eq">Arms out: I<sub>1</sub> = I<sub>body</sub> + 2mr<sub>1</sub>² = 1.2 + 2(' + H.iv('m') + ')(' + H.iv('r1') + ')² = ' + H.n(d.I1, 'kg·m²') + '</div>' +
-      '<div class="eq">Arms in: I<sub>2</sub> = 1.2 + 2(' + H.iv('m') + ')(' + H.iv('r2') + ')² = ' + H.n(d.I2, 'kg·m²') + '</div>' +
-      '<h4>2 · I<sub>1</sub>ω<sub>1</sub> = I<sub>2</sub>ω<sub>2</sub></h4><div class="eq">ω<sub>2</sub> = I<sub>1</sub>ω<sub>1</sub>/I<sub>2</sub> = (' + H.n(d.I1) + ')(' + H.iv('w1') + ') / ' + H.n(d.I2) + ' = <b>' + H.n(d.w2, 'rad/s') + '</b> (' + H.n(d.ratio) + '× faster)</div>' +
-      '<h4>3 · Kinetic energy is <i>not</i> conserved</h4><div class="eq">K = ½Iω² = L²/2I: ' + H.n(d.K1, 'J') + ' → <b>' + H.n(d.K2, 'J') + '</b>. It goes <b>up</b>: you did work pulling the weights in.</div>' +
+    if (mode === 'stool') return '<h4>1 · No outside torque (frictionless stool) → L = Iω stays the same</h4><p class="st">Arms out:</p>' + TEX`I_1 = I_{\text{body}} + 2mr_1^2` + TEX`I_1 = 1.2 + 2(${M.iv('m')})(${M.iv('r1')})^2` + TEXA`I_1 = ${M.n(d.I1, 'kg·m²')}` +
+      '<p class="st">Arms in:</p>' + TEX`I_2 = I_{\text{body}} + 2mr_2^2` + TEX`I_2 = 1.2 + 2(${M.iv('m')})(${M.iv('r2')})^2` + TEXA`I_2 = ${M.n(d.I2, 'kg·m²')}` +
+      '<h4>2 · I<sub>1</sub>ω<sub>1</sub> = I<sub>2</sub>ω<sub>2</sub></h4>' + TEX`\omega_2 = \frac{I_1\omega_1}{I_2}` + TEX`\omega_2 = \frac{(${M.n(d.I1)})(${M.iv('w1')})}{${M.n(d.I2)}}` + TEXA`\omega_2 = ${M.n(d.w2, 'rad/s')}` + '<p class="st">(' + H.n(d.ratio) + '× faster)</p>' +
+      '<h4>3 · Kinetic energy is <i>not</i> conserved</h4>' + TEX`K = \tfrac{1}{2}I\omega^2 = \frac{L^2}{2I}` + TEX`K_1 = ${M.n(d.K1, 'J')}` + TEXA`K_2 = ${M.n(d.K2, 'J')}` + '<p class="st">It goes <b>up</b>: you did work pulling the weights in.</p>' +
       '<p class="note">Same physics as a figure skater pulling her arms in, or a diver tucking.</p>';
-    if (mode === 'jump') return '<h4>1 · Before: the kid’s angular momentum about the center</h4><div class="eq">L = mvR (moving along the edge, so r<sub>⊥</sub> = R) = (' + H.iv('m') + ')(' + H.iv('v') + ')(' + H.iv('R') + ') = <b>' + H.n(d.L, 'kg·m²/s') + '</b> (the merry-go-round starts at rest)</div>' +
-      '<h4>2 · After: they turn together</h4><div class="eq">I = ½MR² + mR² = ' + H.n(d.Id) + ' + ' + H.n(v.m * v.R * v.R) + ' = ' + H.n(d.If, 'kg·m²') + '</div>' +
-      '<div class="eq">ω = L/I = <b>' + H.n(d.w, 'rad/s') + '</b>; the kid now moves at ωR = ' + H.n(d.vEdge, 'm/s') + '</div>' +
-      '<h4>3 · Energy</h4><div class="eq">K before ' + H.n(d.K1, 'J') + ' → after <b>' + H.n(d.K2, 'J') + '</b>: some is lost (it’s a perfectly inelastic collision, rotational version).</div>' +
+    if (mode === 'jump') return '<h4>1 · Before: the kid’s angular momentum about the center</h4><p class="st">Moving along the edge, so r<sub>⊥</sub> = R. The merry-go-round starts at rest.</p>' + TEX`L = mvR` + TEX`L = (${M.iv('m')})(${M.iv('v')})(${M.iv('R')})` + TEXA`L = ${M.n(d.L, 'kg·m²/s')}` +
+      '<h4>2 · After: they turn together</h4>' + TEX`I = \tfrac{1}{2}MR^2 + mR^2` + TEX`I = ${M.n(d.Id)} + ${M.n(v.m * v.R * v.R)}` + TEXA`I = ${M.n(d.If, 'kg·m²')}` +
+      TEX`\omega = \frac{L}{I}` + TEXA`\omega = ${M.n(d.w, 'rad/s')}` + '<p class="st">The kid now moves at ωR:</p>' + TEX`v = \omega R = ${M.n(d.vEdge, 'm/s')}` +
+      '<h4>3 · Energy</h4>' + TEX`K_{\text{before}} = ${M.n(d.K1, 'J')}` + TEXA`K_{\text{after}} = ${M.n(d.K2, 'J')}` + '<p class="st">Some is lost (it’s a perfectly inelastic collision, rotational version).</p>' +
       '<p class="note">Linear momentum isn’t conserved here: the axle pushes on the merry-go-round. That force goes through the axis, so it makes no torque, and L is conserved.</p>';
-    return '<h4>1 · Before: the clay’s angular momentum about the hinge</h4><div class="eq">L = mvr = (' + H.iv('m') + ')(' + H.iv('v') + ')(' + H.iv('r') + ') = <b>' + H.n(d.L, 'kg·m²/s') + '</b></div>' +
-      '<h4>2 · After: door + clay turn together</h4><div class="eq">I = ⅓ML² + mr² = ⅓(' + H.iv('M') + ')(1)² + (' + H.iv('m') + ')(' + H.iv('r') + ')² = ' + H.n(d.If, 'kg·m²') + '</div>' +
-      '<div class="eq">ω = L/I = <b>' + H.n(d.w, 'rad/s') + '</b></div>' +
-      '<h4>3 · Energy</h4><div class="eq">K: ' + H.n(d.K1, 'J') + ' → ' + H.n(d.K2, 'J') + ' (most is lost: the clay sticks)</div>' +
+    return '<h4>1 · Before: the clay’s angular momentum about the hinge</h4>' + TEX`L = mvr` + TEX`L = (${M.iv('m')})(${M.iv('v')})(${M.iv('r')})` + TEXA`L = ${M.n(d.L, 'kg·m²/s')}` +
+      '<h4>2 · After: door + clay turn together</h4>' + TEX`I = \tfrac{1}{3}ML^2 + mr^2` + TEX`I = \tfrac{1}{3}(${M.iv('M')})(1)^2 + (${M.iv('m')})(${M.iv('r')})^2` + TEXA`I = ${M.n(d.If, 'kg·m²')}` +
+      TEX`\omega = \frac{L}{I}` + TEXA`\omega = ${M.n(d.w, 'rad/s')}` +
+      '<h4>3 · Energy</h4>' + TEX`K_{\text{before}} = ${M.n(d.K1, 'J')}` + TEX`K_{\text{after}} = ${M.n(d.K2, 'J')}` + '<p class="st">Most is lost: the clay sticks.</p>' +
       '<p class="note">Hit near the hinge and the door barely moves: small r, small L. That’s why handles are on the far edge.</p>';
   },
   draw(v, d, mode, opt, t, dt, A){

@@ -25,16 +25,17 @@ const SIM = {
     { id: 'I', name: 'Rotational inertia I', short: 'I', sym: 'I', unit: 'kg·m²', f: d => d.I },
     { id: 'al', name: 'Angular acceleration α = τ/I', short: 'α', sym: 'α', unit: 'rad/s²', f: d => d.al }]; },
   work(v, d, mode){
-    if (mode === 'beads') return '<h4>1 · Rotational inertia: I = Σmr²</h4><div class="eq">Two beads: 2mr² = 2(' + H.iv('m') + ')(' + H.iv('r') + ')² = ' + H.n(d.Ib, 'kg·m²') + '</div>' +
-      '<div class="eq">Rod about its center: (1/12)ML² = (1/12)(' + H.iv('M') + ')(1 m)² = ' + H.n(d.Ir, 'kg·m²') + '</div>' +
-      '<div class="eq">Total I = <b>' + H.n(d.I, 'kg·m²') + '</b></div>' +
-      '<h4>2 · Newton’s 2nd law for rotation: τ = Iα</h4><div class="eq">α = τ/I = ' + H.iv('tau') + ' / ' + H.n(d.I) + ' = <b>' + H.n(d.al, 'rad/s²') + '</b></div>' +
+    if (mode === 'beads') return '<h4>1 · Rotational inertia: I = Σmr²</h4><p class="st">Two beads:</p>' + TEX`I_{\text{beads}} = 2mr^2` + TEX`I_{\text{beads}} = 2(${M.iv('m')})(${M.iv('r')})^2` + TEXA`I_{\text{beads}} = ${M.n(d.Ib, 'kg·m²')}` +
+      '<p class="st">Rod about its center:</p>' + TEX`I_{\text{rod}} = \tfrac{1}{12}ML^2` + TEX`I_{\text{rod}} = \tfrac{1}{12}(${M.iv('M')})(1\,\text{m})^2` + TEXA`I_{\text{rod}} = ${M.n(d.Ir, 'kg·m²')}` +
+      '<p class="st">Total:</p>' + TEXA`I = ${M.n(d.I, 'kg·m²')}` +
+      '<h4>2 · Newton’s 2nd law for rotation: τ = Iα</h4>' + TEX`\alpha = \frac{\tau}{I}` + TEX`\alpha = \frac{${M.iv('tau')}}{${M.n(d.I)}}` + TEXA`\alpha = ${M.n(d.al, 'rad/s²')}` +
       '<p class="note">I depends on <b>where</b> the mass is, not just how much. Move the beads twice as far out: their part of I goes up ×4 (r²).</p>' +
       '<p class="note">Same idea as m in F = ma: bigger I, harder to change the spin.</p>';
-    return '<h4>1 · I depends on the shape: where the mass sits relative to the axis</h4><div class="eq">' + d.s[1] + ': I = ' + d.s[3] + ' = ' + H.n(d.s[2]) + ' × (' + H.iv('M') + ')(' + H.iv('R') + ')² = <b>' + H.n(d.I, 'kg·m²') + '</b></div>' +
+    const form = { hoop: TEX`I = MR^2`, disk: TEX`I = \tfrac{1}{2}MR^2`, shell: TEX`I = \tfrac{2}{3}MR^2`, ball: TEX`I = \tfrac{2}{5}MR^2`, rodc: TEX`I = \tfrac{1}{12}ML^2`, rode: TEX`I = \tfrac{1}{3}ML^2` }[d.s[0]];
+    return '<h4>1 · I depends on the shape: where the mass sits relative to the axis</h4><p class="st">' + d.s[1] + ':</p>' + form + TEX`I = ${M.n(d.s[2])} \times (${M.iv('M')})(${M.iv('R')})^2` + TEXA`I = ${M.n(d.I, 'kg·m²')}` +
       '<p class="note">Hoop: all the mass at R → biggest (for the round shapes). Solid sphere: lots of mass near the center → smallest.</p>' +
-      '<h4>2 · Same torque, different shapes</h4><div class="eq">α = τ/I = ' + H.iv('tau') + ' / ' + H.n(d.I) + ' = <b>' + H.n(d.al, 'rad/s²') + '</b></div>' +
-      '<h4>3 · A rod: same rod, different axis</h4><div class="eq">About its center (1/12)ML², about one end (1/3)ML²: 4× bigger, because more of the mass is far from the axis.</div>' +
+      '<h4>2 · Same torque, different shapes</h4>' + TEX`\alpha = \frac{\tau}{I}` + TEX`\alpha = \frac{${M.iv('tau')}}{${M.n(d.I)}}` + TEXA`\alpha = ${M.n(d.al, 'rad/s²')}` +
+      '<h4>3 · A rod: same rod, different axis</h4><p class="st">About its center, <i>I</i> = (1/12)ML²; about one end, <i>I</i> = (1/3)ML². The end is 4× bigger, because more of the mass is far from the axis.</p>' +
       '<p class="note">On the AP exam you’re given these formulas; the skill is comparing them and explaining why.</p>';
   },
   draw(v, d, mode, opt, t, dt, A){

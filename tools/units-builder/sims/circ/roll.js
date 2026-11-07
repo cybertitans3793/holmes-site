@@ -24,16 +24,17 @@ const SIM = {
     return [{ id: 'hmax', name: 'Height it rolls up to', short: 'h', sym: 'h<sub>max</sub>', unit: 'm', f: d => d.hmax }, { id: 'Kr', name: 'Rotational KE at the bottom', short: 'K_rot', sym: 'K<sub>rot</sub>', unit: 'J', f: d => d.Kr }];
   },
   work(v, d, mode, opt){
-    const nm = d.s[1].replace(' (no friction)', ''), kS = d.k === 0 ? '0 (it doesn’t spin)' : d.s[0] === 'ball' ? '⅖' : d.s[0] === 'disk' ? '½' : d.s[0] === 'shell' ? '⅔' : '1';
-    const h0 = '<h4>1 · Rolling without slipping: v = Rω</h4><div class="eq">' + nm + ': I = kMR² with k = ' + kS + '</div>' +
-      '<div class="eq">K = ½Mv² + ½Iω² = ½Mv² + ½(kMR²)(v/R)² = ½Mv²(1 + k)</div><p class="note">The R’s cancel! Static friction makes it spin but does no work (the contact point doesn’t slide), so energy is conserved.</p>';
-    if (mode === 'down') return h0 + '<h4>2 · Energy: Mgh = ½Mv²(1 + k)</h4><div class="eq">v = √(2gh/(1 + k)) = √(2(10)(' + H.iv('h') + ')/' + H.n(1 + d.k) + ') = <b>' + H.n(d.vb, 'm/s') + '</b>. M and R both cancel.</div>' +
-      '<h4>3 · Where the energy went</h4><div class="eq">Mgh = ' + H.n(d.E, 'J') + ' → moving ½Mv² = ' + H.n(d.Kt, 'J') + ' + spinning ½Iω² = ' + H.n(d.Kr, 'J') + ' (' + H.n(100 * d.k / (1 + d.k)) + '% spinning)</div>' +
-      '<h4>4 · Who wins?</h4><div class="eq">Smaller k → less energy tied up in spinning → faster. Order: block (if frictionless), solid ball, disk, hollow ball, hoop. Time for this one: ' + H.n(d.t, 's') + '.</div>' +
+    const nm = d.s[1].replace(' (no friction)', ''), kS = d.k === 0 ? '<mn>0</mn>' : d.s[0] === 'ball' ? '<mfrac><mn>2</mn><mn>5</mn></mfrac>' : d.s[0] === 'disk' ? '<mfrac><mn>1</mn><mn>2</mn></mfrac>' : d.s[0] === 'shell' ? '<mfrac><mn>2</mn><mn>3</mn></mfrac>' : '<mn>1</mn>';
+    const h0 = '<h4>1 · Rolling without slipping: v = Rω</h4><p class="st">' + nm + ':</p>' + TEX`I = kMR^2` + TEX`k = ${kS}` + (d.k === 0 ? '<p class="st">It doesn’t spin.</p>' : '') +
+      TEX`K = \tfrac{1}{2}Mv^2 + \tfrac{1}{2}I\omega^2` + TEX`K = \tfrac{1}{2}Mv^2 + \tfrac{1}{2}(kMR^2)\left(\frac{v}{R}\right)^2` + TEX`K = \tfrac{1}{2}Mv^2(1 + k)` +
+      '<p class="note">The R’s cancel! Static friction makes it spin but does no work (the contact point doesn’t slide), so energy is conserved.</p>';
+    if (mode === 'down') return h0 + '<h4>2 · Energy: Mgh = ½Mv²(1 + k)</h4>' + TEX`v = \sqrt{\frac{2gh}{1 + k}}` + TEX`v = \sqrt{\frac{2(10)(${M.iv('h')})}{${M.n(1 + d.k)}}}` + TEXA`v = ${M.n(d.vb, 'm/s')}` + '<p class="st">M and R both cancel.</p>' +
+      '<h4>3 · Where the energy went</h4>' + TEX`Mgh = ${M.n(d.E, 'J')}` + '<p class="st">Moving:</p>' + TEX`\tfrac{1}{2}Mv^2 = ${M.n(d.Kt, 'J')}` + '<p class="st">Spinning:</p>' + TEX`\tfrac{1}{2}I\omega^2 = ${M.n(d.Kr, 'J')}` + '<p class="st">(' + H.n(100 * d.k / (1 + d.k)) + '% of the energy is spinning)</p>' +
+      '<h4>4 · Who wins?</h4><p class="st">Smaller k → less energy tied up in spinning → faster. Order: block (if frictionless), solid ball, disk, hollow ball, hoop. Time for this one: ' + H.n(d.t, 's') + '.</p>' +
       '<p class="note">A heavy hoop and a light hoop tie. A big ball and a small ball tie. Only the shape (k) matters.</p>';
-    return h0 + '<h4>2 · Rolling up: all the KE turns into Mgh</h4><div class="eq">½Mv<sub>0</sub>²(1 + k) = Mgh → h = (1 + k)v<sub>0</sub>²/2g = (' + H.n(1 + d.k) + ')(' + H.iv('v0') + ')² / 20 = <b>' + H.n(d.hmax, 'm') + '</b></div>' +
+    return h0 + '<h4>2 · Rolling up: all the KE turns into Mgh</h4>' + TEX`\tfrac{1}{2}Mv_0^2(1 + k) = Mgh` + TEX`h = \frac{(1 + k)\,v_0^2}{2g}` + TEX`h = \frac{(${M.n(1 + d.k)})(${M.iv('v0')})^2}{20}` + TEXA`h = ${M.n(d.hmax, 'm')}` +
       '<p class="note">The hoop goes highest: it carries the most spinning energy, and that’s turned into height too. The sliding block (no spin) only reaches v<sub>0</sub>²/2g = ' + H.n(v.v0 * v.v0 / 20, 'm') + '.</p>' +
-      '<div class="eq">Energy at the bottom: moving ' + H.n(d.Kt, 'J') + ' + spinning ' + H.n(d.Kr, 'J') + ' = ' + H.n(d.E, 'J') + '</div>';
+      '<p class="st">Energy at the bottom:</p>' + TEX`E = \tfrac{1}{2}Mv_0^2 + \tfrac{1}{2}I\omega^2` + TEX`E = ${M.n(d.Kt, 'J')} + ${M.n(d.Kr, 'J')}` + TEXA`E = ${M.n(d.E, 'J')}`;
   },
   draw(v, d, mode, opt, t, dt, A){
     if (A.t === undefined || A.reset) A.t = 0; A.t += dt;

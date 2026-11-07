@@ -27,23 +27,28 @@ const SIM = {
     l.push({ id: 'al', name: 'Pulley’s angular acceleration', short: 'α', sym: 'α', unit: 'rad/s²', f: d => d.al });
     return l; },
   work(v, d, mode, opt){
-    const kS = opt.shape === 'hoop' ? 'MR²' : '½MR²', IR = opt.shape === 'hoop' ? 'M' : '½M';
-    let h = '<h4>1 · The pulley: τ = Iα, with the string not slipping (a = Rα)</h4><div class="eq">I = ' + kS + ' = ' + H.n(d.I, 'kg·m²') + '</div>';
+    const hoop = opt.shape === 'hoop', IR = hoop ? 'M' : '½M', IRm = hoop ? '<mi>M</mi>' : '<mfrac><mn>1</mn><mn>2</mn></mfrac><mi>M</mi>';
+    let h = '<h4>1 · The pulley: τ = Iα, with the string not slipping (a = Rα)</h4>' + (hoop ? TEX`I = MR^2` : TEX`I = \tfrac{1}{2}MR^2`) + TEXA`I = ${M.n(d.I, 'kg·m²')}`;
     if (mode === 'spool'){
-      h += '<div class="eq">Torque from the string: TR = Iα = I(a/R) → T = (I/R²)a = ' + IR + '·a</div>' +
-        '<h4>2 · The hanging mass (down = +): mg − T = ma</h4><div class="eq">mg − ' + IR + '·a = ma → <b>a = mg/(m + ' + IR + ')</b> = (' + H.iv('m') + ')(' + H.g() + ') / (' + H.iv('m') + ' + ' + H.n(d.Ieff) + ') = <b>' + H.n(d.a, 'm/s²') + '</b></div>' +
-        '<div class="eq">T = m(g − a) = <b>' + H.n(d.T1, 'N') + '</b> (less than mg = ' + H.n(v.m * G10, 'N') + ')</div>' +
-        '<div class="eq">α = a/R = ' + H.n(d.a) + ' / ' + H.iv('R') + ' = ' + H.n(d.al, 'rad/s²') + '</div>' +
+      h += '<p class="st">Torque from the string: TR = Iα = I(a/R), so</p>' + TEX`T = \frac{I}{R^2}\,a` + TEX`T = ${IRm}\,a` +
+        '<h4>2 · The hanging mass (down = +)</h4>' + TEX`mg - T = ma` + TEX`mg - ${IRm}\,a = ma` + TEX`a = \frac{mg}{m + ${IRm}}` +
+        TEX`a = \frac{(${M.iv('m')})(10\,\text{m/s}^2)}{${M.iv('m')} + ${M.n(d.Ieff)}}` + TEXA`a = ${M.n(d.a, 'm/s²')}` +
+        '<p class="st">Tension (less than mg = ' + H.n(v.m * G10, 'N') + '):</p>' + TEX`T = m(g - a)` + TEXA`T = ${M.n(d.T1, 'N')}` +
+        '<p class="st">Angular acceleration of the pulley:</p>' + TEX`\alpha = \frac{a}{R}` + TEX`\alpha = \frac{${M.n(d.a)}}{${M.iv('R')}}` + TEXA`\alpha = ${M.n(d.al, 'rad/s²')}` +
         '<p class="note">R cancels out of a (I/R² = ' + IR + '), but not out of α. A massless pulley (M = 0) gives free fall: a = g.</p>';
       return h;
     }
     const at = mode === 'atwood';
-    h += '<div class="eq">The two sides pull with <b>different</b> tensions; their difference turns the pulley: (' + (at ? 'T<sub>1</sub> − T<sub>2</sub>' : 'T<sub>2</sub> − T<sub>1</sub>') + ')R = Iα → ' + (at ? 'T<sub>1</sub> − T<sub>2</sub>' : 'T<sub>2</sub> − T<sub>1</sub>') + ' = ' + IR + '·a</div>' +
+    h += '<p class="st">The two sides pull with <b>different</b> tensions; their difference turns the pulley:</p>' + (at ? TEX`(T_1 - T_2)R = I\alpha` + TEX`T_1 - T_2 = ${IRm}\,a` : TEX`(T_2 - T_1)R = I\alpha` + TEX`T_2 - T_1 = ${IRm}\,a`) +
       '<h4>2 · Newton’s 2nd law for each mass</h4>' +
-      (at ? '<div class="eq">Left (down +): m<sub>1</sub>g − T<sub>1</sub> = m<sub>1</sub>a &nbsp; Right (up +): T<sub>2</sub> − m<sub>2</sub>g = m<sub>2</sub>a</div>'
-        : '<div class="eq">Block: T<sub>1</sub> = m<sub>1</sub>a &nbsp; Hanging (down +): m<sub>2</sub>g − T<sub>2</sub> = m<sub>2</sub>a</div>') +
-      '<h4>3 · Add all three equations: the tensions cancel</h4><div class="eq">a = ' + (at ? '(m<sub>1</sub> − m<sub>2</sub>)g' : 'm<sub>2</sub>g') + ' / (m<sub>1</sub> + m<sub>2</sub> + ' + IR + ') = <b>' + H.n(d.a, 'm/s²') + '</b> (vs ' + H.n(d.a0, 'm/s²') + ' with a massless pulley)</div>' +
-      '<div class="eq">T<sub>1</sub> = <b>' + H.n(d.T1, 'N') + '</b> &nbsp; T<sub>2</sub> = <b>' + H.n(d.T2, 'N') + '</b> → difference ' + H.n(Math.abs(d.T1 - d.T2), 'N') + ' = ' + IR + '·a ✓</div>' +
+      (at ? '<p class="st">Left (down +):</p>' + TEX`m_1 g - T_1 = m_1 a` + '<p class="st">Right (up +):</p>' + TEX`T_2 - m_2 g = m_2 a`
+        : '<p class="st">Block:</p>' + TEX`T_1 = m_1 a` + '<p class="st">Hanging (down +):</p>' + TEX`m_2 g - T_2 = m_2 a`) +
+      '<h4>3 · Add all three equations: the tensions cancel</h4>' +
+      (at ? TEX`a = \frac{(m_1 - m_2)g}{m_1 + m_2 + ${IRm}}` + TEX`a = \frac{(${M.iv('m1')} - ${M.iv('m2')})(10\,\text{m/s}^2)}{${M.iv('m1')} + ${M.iv('m2')} + ${M.n(d.Ieff)}}`
+        : TEX`a = \frac{m_2 g}{m_1 + m_2 + ${IRm}}` + TEX`a = \frac{(${M.iv('m2')})(10\,\text{m/s}^2)}{${M.iv('m1')} + ${M.iv('m2')} + ${M.n(d.Ieff)}}`) +
+      TEXA`a = ${M.n(d.a, 'm/s²')}` + '<p class="st">(vs ' + H.n(d.a0, 'm/s²') + ' with a massless pulley)</p>' +
+      TEXA`T_1 = ${M.n(d.T1, 'N')}` + TEXA`T_2 = ${M.n(d.T2, 'N')}` +
+      '<p class="st">Check: the difference in tensions equals ' + IR + '·a ✓</p>' + TEX`\left|T_1 - T_2\right| = ${M.n(Math.abs(d.T1 - d.T2), 'N')}` +
       '<p class="note">The pulley acts like an extra mass ' + IR + ' = ' + H.n(d.Ieff, 'kg') + ' that has to be accelerated, but it isn’t pulled by gravity in the direction of motion.</p>';
     return h;
   },

@@ -30,17 +30,21 @@ const SIM = {
     if (mode === 'stop') l.unshift({ id: 'al', name: 'Angular acceleration', short: 'α', sym: 'α', unit: 'rad/s²', f: d => d.al });
     return l; },
   work(v, d, mode){
-    let h = '<h4>1 · Same equations as Unit 2, with rotational letters</h4><div class="eq">x → θ, v → ω, a → α: &nbsp; ω = ω<sub>0</sub> + αt, &nbsp; Δθ = ω<sub>0</sub>t + ½αt², &nbsp; ω² = ω<sub>0</sub>² + 2αΔθ</div>';
-    if (mode === 'stop') h += '<h4>2 · Convert rpm to rad/s</h4><div class="eq">ω<sub>0</sub> = ' + H.iv('rpm') + ' × 2π/60 = <b>' + H.n(d.w0, 'rad/s') + '</b></div>' +
-      '<h4>3 · Angular acceleration (it ends at ω = 0)</h4><div class="eq">α = (0 − ω<sub>0</sub>)/t = −' + H.n(d.w0) + ' / ' + H.iv('tS') + ' = <b>' + H.n(d.al, 'rad/s²') + '</b></div>' +
-      '<h4>4 · How far it turns while stopping</h4><div class="eq">Δθ = ω<sub>avg</sub>t = ½(' + H.n(d.w0) + ' + 0)(' + H.iv('tS') + ') = <b>' + H.n(d.th, 'rad') + '</b> = ' + H.n(d.th) + '/2π = <b>' + H.n(d.revs, 'rev') + '</b></div>' +
+    let h = '<h4>1 · Same equations as Unit 2, with rotational letters</h4><p class="st">x → θ, v → ω, a → α:</p>' + TEX`\omega = \omega_0 + \alpha t` + TEX`\Delta\theta = \omega_0 t + \tfrac{1}{2}\alpha t^2` + TEX`\omega^2 = \omega_0^2 + 2\alpha\,\Delta\theta`;
+    if (mode === 'stop') h += '<h4>2 · Convert rpm to rad/s</h4>' + TEX`\omega_0 = \text{rpm}_0 \times \frac{2\pi}{60}` + TEX`\omega_0 = ${M.iv('rpm')} \times \frac{2\pi}{60}` + TEXA`\omega_0 = ${M.n(d.w0, 'rad/s')}` +
+      '<h4>3 · Angular acceleration (it ends at ω = 0)</h4>' + TEX`\alpha = \frac{0 - \omega_0}{t}` + TEX`\alpha = \frac{-${M.n(d.w0)}}{${M.iv('tS')}}` + TEXA`\alpha = ${M.n(d.al, 'rad/s²')}` +
+      '<h4>4 · How far it turns while stopping</h4>' + TEX`\Delta\theta = \omega_{\text{avg}}\, t` + TEX`\Delta\theta = \tfrac{1}{2}(${M.n(d.w0)} + 0)(${M.iv('tS')})` + TEXA`\Delta\theta = ${M.n(d.th, 'rad')}` +
+      TEX`\text{rev} = \frac{\Delta\theta}{2\pi} = \frac{${M.n(d.th)}}{2\pi}` + TEXA`\text{rev} = ${M.n(d.revs, 'rev')}` +
       '<p class="note">Area under the ω–t graph = angle turned, just like area under v–t = displacement.</p>';
     else {
-      h += '<h4>2 · After ' + H.iv('t') + '</h4><div class="eq">ω = ' + H.iv('w0') + ' + (' + H.iv('al') + ')(' + H.iv('t') + ') = <b>' + H.n(d.w, 'rad/s') + '</b></div>' +
-        '<div class="eq">Δθ = (' + H.n(d.w0) + ')(' + H.n(d.T) + ') + ½(' + H.n(d.al) + ')(' + H.n(d.T) + ')² = <b>' + H.n(d.th, 'rad') + '</b> = ' + H.n(d.revs, 'rev') + '</div>';
+      h += '<h4>2 · After ' + H.iv('t') + '</h4>' + TEX`\omega = ${M.iv('w0')} + \left(${M.iv('al')}\right)\left(${M.iv('t')}\right)` + TEXA`\omega = ${M.n(d.w, 'rad/s')}` +
+        TEX`\Delta\theta = \omega_0 t + \tfrac{1}{2}\alpha t^2` + TEX`\Delta\theta = (${M.n(d.w0)})(${M.n(d.T)}) + \tfrac{1}{2}(${M.n(d.al)})(${M.n(d.T)})^2` + TEXA`\Delta\theta = ${M.n(d.th, 'rad')}` +
+        TEXA`\text{rev} = ${M.n(d.revs, 'rev')}`;
       if (isFinite(d.tTurn) && d.tTurn < d.T) h += '<p class="note">It stopped at t = ' + H.n(d.tTurn, 's') + ' and then spun the other way; Δθ is the net angle.</p>';
     }
-    h += '<h4>' + (mode === 'stop' ? '5' : '3') + ' · A point on the rim (r = ' + H.iv('R') + ')</h4><div class="eq">Speed v = rω = <b>' + H.n(d.v1, 'm/s') + '</b> &nbsp; tangential a<sub>t</sub> = rα = ' + H.n(d.at, 'm/s²') + ' &nbsp; centripetal a<sub>c</sub> = rω² = ' + H.n(d.ac, 'm/s²') + '</div>' +
+    h += '<h4>' + (mode === 'stop' ? '5' : '3') + ' · A point on the rim (r = ' + H.iv('R') + ')</h4><p class="st">Speed:</p>' + TEX`v = r\omega` + TEX`v = (${M.iv('R')})(${M.n(d.w)})` + TEXA`v = ${M.n(d.v1, 'm/s')}` +
+      '<p class="st">Tangential acceleration:</p>' + TEX`a_t = r\alpha` + TEX`a_t = (${M.iv('R')})(${M.n(d.al)})` + TEXA`a_t = ${M.n(d.at, 'm/s²')}` +
+      '<p class="st">Centripetal acceleration:</p>' + TEX`a_c = r\omega^2` + TEX`a_c = (${M.iv('R')})(${M.n(d.w)})^2` + TEXA`a_c = ${M.n(d.ac, 'm/s²')}` +
       '<p class="note">Every point on the wheel has the same ω and α, but points farther out move faster: v = rω. Radians make these work; degrees and revs don’t.</p>';
     return h;
   },

@@ -38,27 +38,28 @@ const SIM = {
     return [{ id: 'T', name: 'Cable tension', short: 'T', sym: 'T', unit: 'N', f: d => d.T }, { id: 'Hx', name: 'Hinge force, horizontal', short: 'H_x', sym: 'H<sub>x</sub>', unit: 'N', f: d => d.Hx }, { id: 'Hy', name: 'Hinge force, vertical', short: 'H_y', sym: 'H<sub>y</sub>', unit: 'N', f: d => d.Hy }];
   },
   work(v, d, mode){
-    if (mode === 'wrench') return '<h4>1 · Torque = how hard a force twists</h4><div class="eq">τ = rF sinθ = (' + H.iv('r') + ')(' + H.iv('F') + ') sin ' + H.iv('th') + ' = <b>' + H.n(d.tau, 'N·m') + '</b></div>' +
-      '<h4>2 · Two ways to read sinθ</h4><div class="eq">Lever arm: r<sub>⊥</sub> = r sinθ = ' + H.n(d.arm, 'm') + ' (the perpendicular distance from the bolt to the force’s line of action) → τ = r<sub>⊥</sub>F</div>' +
-      '<div class="eq">Or the part of the force perpendicular to the wrench: F<sub>⊥</sub> = F sinθ = ' + H.n(d.Fperp, 'N') + ' → τ = rF<sub>⊥</sub></div>' +
+    if (mode === 'wrench') return '<h4>1 · Torque = how hard a force twists</h4>' + TEX`\tau = rF\sin\theta` + TEX`\tau = (${M.iv('r')})(${M.iv('F')})\sin ${M.iv('th')}` + TEXA`\tau = ${M.n(d.tau, 'N·m')}` +
+      '<h4>2 · Two ways to read sinθ</h4><p class="st">Lever arm: the perpendicular distance from the bolt to the force’s line of action.</p>' + TEX`r_{\perp} = r\sin\theta` + TEXA`r_{\perp} = ${M.n(d.arm, 'm')}` + TEX`\tau = r_{\perp} F` +
+      '<p class="st">Or the part of the force perpendicular to the wrench:</p>' + TEX`F_{\perp} = F\sin\theta` + TEXA`F_{\perp} = ${M.n(d.Fperp, 'N')}` + TEX`\tau = r F_{\perp}` +
       '<p class="note">Push along the wrench (θ = 0° or 180°): no twist at all. Biggest torque at 90°. Doubling r (a longer wrench) doubles τ.</p>';
-    if (mode === 'seesaw') return '<h4>1 · Each kid’s weight makes a torque about the pivot (counterclockwise +)</h4><div class="eq">Left: τ<sub>1</sub> = m<sub>1</sub>g d<sub>1</sub> = (' + H.iv('m1') + ')(' + H.g() + ')(' + H.iv('d1') + ') = ' + H.n(d.t1, 'N·m') + ' ↺</div>' +
-      '<div class="eq">Right: τ<sub>2</sub> = m<sub>2</sub>g d<sub>2</sub> = (' + H.iv('m2') + ')(' + H.g() + ')(' + H.iv('d2') + ') = ' + H.n(d.t2, 'N·m') + ' ↻</div>' +
-      '<h4>2 · Net torque</h4><div class="eq">Στ = ' + H.n(d.t1) + ' − ' + H.n(d.t2) + ' = <b>' + H.n(d.net, 'N·m') + '</b> → ' + (d.bal ? '<b>balanced</b>' : d.net > 0 ? 'tips left (↺)' : 'tips right (↻)') + '</div>' +
-      '<h4>3 · Where should the right kid sit to balance?</h4><div class="eq">m<sub>1</sub>d<sub>1</sub> = m<sub>2</sub>d<sub>2</sub> → d<sub>2</sub> = m<sub>1</sub>d<sub>1</sub>/m<sub>2</sub> = <b>' + H.n(d.dNeed, 'm') + '</b>' + (d.dNeed > 2 ? ' (past the end: can’t balance)' : '') + '</div>' +
-      '<h4>4 · The pivot</h4><div class="eq">Balanced or not, the pivot pushes up with (m<sub>1</sub> + m<sub>2</sub>)g = ' + H.n(d.N, 'N') + ' (massless board). It makes no torque about itself: r = 0.</div>' +
+    if (mode === 'seesaw') return '<h4>1 · Each kid’s weight makes a torque about the pivot (counterclockwise +)</h4><p class="st">Left kid (↺):</p>' + TEX`\tau_1 = m_1 g\, d_1` + TEX`\tau_1 = (${M.iv('m1')})(${'<mrow><mn>10</mn><mspace width="0.167em"/><mtext>m/s²</mtext></mrow>'})(${M.iv('d1')})` + TEXA`\tau_1 = ${M.n(d.t1, 'N·m')}` +
+      '<p class="st">Right kid (↻):</p>' + TEX`\tau_2 = m_2 g\, d_2` + TEX`\tau_2 = (${M.iv('m2')})(${'<mrow><mn>10</mn><mspace width="0.167em"/><mtext>m/s²</mtext></mrow>'})(${M.iv('d2')})` + TEXA`\tau_2 = ${M.n(d.t2, 'N·m')}` +
+      '<h4>2 · Net torque</h4>' + TEX`\Sigma\tau = \tau_1 - \tau_2` + TEX`\Sigma\tau = ${M.n(d.t1)} - ${M.n(d.t2)}` + TEXA`\Sigma\tau = ${M.n(d.net, 'N·m')}` +
+      '<p class="st">' + (d.bal ? '<b>Balanced</b>' : d.net > 0 ? 'Tips left (↺)' : 'Tips right (↻)') + '</p>' +
+      '<h4>3 · Where should the right kid sit to balance?</h4>' + TEX`m_1 d_1 = m_2 d_2` + TEX`d_2 = \frac{m_1 d_1}{m_2}` + TEXA`d_2 = ${M.n(d.dNeed, 'm')}` + (d.dNeed > 2 ? '<p class="st">That is past the end: can’t balance.</p>' : '') +
+      '<h4>4 · The pivot</h4><p class="st">Balanced or not, the pivot pushes up with the total weight (massless board). It makes no torque about itself: r = 0.</p>' + TEX`N = (m_1 + m_2)g` + TEXA`N = ${M.n(d.N, 'N')}` +
       '<p class="note">Equilibrium needs both: ΣF = 0 <i>and</i> Στ = 0.</p>';
-    if (mode === 'plank') return '<h4>1 · Free-body diagram of the plank</h4><div class="eq">Supports at A (x = 0) and B (x = 3 m); plank 4 m, its weight Mg = ' + H.n(d.W, 'N') + ' acts at its center (x = 2 m); person mg = ' + H.n(d.w, 'N') + ' at x = ' + H.iv('x') + '.</div>' +
-      '<h4>2 · Torques about A (so N<sub>A</sub> drops out)</h4><div class="eq">N<sub>B</sub>(3) = Mg(2) + mg·x → N<sub>B</sub> = [' + H.n(d.W) + '(2) + ' + H.n(d.w) + '(' + H.iv('x') + ')] / 3 = <b>' + H.n(d.NB, 'N') + '</b></div>' +
-      '<h4>3 · Forces: N<sub>A</sub> + N<sub>B</sub> = Mg + mg</h4><div class="eq">N<sub>A</sub> = ' + H.n(d.W + d.w) + ' − ' + H.n(d.NB) + ' = <b>' + H.n(d.NA, 'N') + '</b></div>' +
+    if (mode === 'plank') return '<h4>1 · Free-body diagram of the plank</h4><p class="st">Supports at A (x = 0) and B (x = 3 m); plank 4 m, its weight Mg = ' + H.n(d.W, 'N') + ' acts at its center (x = 2 m); person mg = ' + H.n(d.w, 'N') + ' at x = ' + H.iv('x') + '.</p>' +
+      '<h4>2 · Torques about A (so N<sub>A</sub> drops out)</h4>' + TEX`N_B (3) = Mg(2) + mg\,x` + TEX`N_B = \frac{${M.n(d.W)}(2) + ${M.n(d.w)}(${M.iv('x')})}{3}` + TEXA`N_B = ${M.n(d.NB, 'N')}` +
+      '<h4>3 · Forces: N<sub>A</sub> + N<sub>B</sub> = Mg + mg</h4>' + TEX`N_A = (Mg + mg) - N_B` + TEX`N_A = ${M.n(d.W + d.w)} - ${M.n(d.NB)}` + TEXA`N_A = ${M.n(d.NA, 'N')}` +
       (d.tips ? '<div class="bad">N<sub>A</sub> would have to pull <i>down</i>. A support can only push, so the plank <b>tips</b> about B.</div>' : '') +
-      '<h4>4 · How far out before it tips?</h4><div class="eq">About to tip: N<sub>A</sub> = 0. Torques about B: M g(1) = mg(x − 3) → x = 3 + M/m = <b>' + H.n(d.xTip, 'm') + '</b>' + (d.xTip >= 4 ? ' (past the end of the plank: safe all the way out)' : '') + '</div>' +
+      '<h4>4 · How far out before it tips?</h4><p class="st">About to tip: N<sub>A</sub> = 0. Torques about B:</p>' + TEX`Mg(1) = mg(x - 3)` + TEX`x = 3 + \frac{M}{m}` + TEXA`x = ${M.n(d.xTip, 'm')}` + (d.xTip >= 4 ? '<p class="st">That is past the end of the plank: safe all the way out.</p>' : '') +
       '<p class="note">Choose the pivot point at an unknown force: it disappears from the torque equation.</p>';
-    return '<h4>1 · Torques about the hinge (the hinge force drops out)</h4><div class="eq">Clockwise: beam Mg at L/2 and sign mg at x: ' + H.n(d.W) + '(1) + ' + H.n(d.w) + '(' + H.iv('x') + ') = ' + H.n(d.tauDown, 'N·m') + '</div>' +
-      '<div class="eq">Counterclockwise: only the cable, T sinθ at the end: T sinθ · L</div>' +
-      '<h4>2 · Balance them</h4><div class="eq">T = ' + H.n(d.tauDown) + ' / (2 sin ' + H.iv('th') + ') = <b>' + H.n(d.T, 'N') + '</b></div>' +
-      '<h4>3 · Then forces give the hinge</h4><div class="eq">Horizontal: H<sub>x</sub> = T cosθ = <b>' + H.n(d.Hx, 'N') + '</b> (pushing out from the wall)</div>' +
-      '<div class="eq">Vertical: H<sub>y</sub> = Mg + mg − T sinθ = <b>' + H.n(d.Hy, 'N') + '</b>' + (d.Hy < 0 ? ' (negative: the hinge pulls down)' : '') + '</div>' +
+    return '<h4>1 · Torques about the hinge (the hinge force drops out)</h4><p class="st">Clockwise: beam Mg at L/2 and sign mg at x.</p>' + TEX`\tau_{\text{cw}} = Mg\,\frac{L}{2} + mg\,x` + TEX`\tau_{\text{cw}} = ${M.n(d.W)}(1) + ${M.n(d.w)}(${M.iv('x')})` + TEXA`\tau_{\text{cw}} = ${M.n(d.tauDown, 'N·m')}` +
+      '<p class="st">Counterclockwise: only the cable, T sinθ at the end.</p>' + TEX`\tau_{\text{ccw}} = T\,\sin\theta \cdot L` +
+      '<h4>2 · Balance them</h4>' + TEX`T = \frac{\tau_{\text{cw}}}{L\,\sin\theta}` + TEX`T = \frac{${M.n(d.tauDown)}}{2\,\sin ${M.iv('th')}}` + TEXA`T = ${M.n(d.T, 'N')}` +
+      '<h4>3 · Then forces give the hinge</h4><p class="st">Horizontal (pushing out from the wall):</p>' + TEX`H_x = T\,\cos\theta` + TEXA`H_x = ${M.n(d.Hx, 'N')}` +
+      '<p class="st">Vertical:</p>' + TEX`H_y = Mg + mg - T\,\sin\theta` + TEXA`H_y = ${M.n(d.Hy, 'N')}` + (d.Hy < 0 ? '<p class="st">Negative: the hinge pulls down.</p>' : '') +
       '<p class="note">A low cable angle needs a huge tension: sinθ is small, so the cable has little lever arm.</p>';
   },
   draw(v, d, mode, opt, t, dt, A){
