@@ -31,25 +31,30 @@ const SIM = {
     return [{ id: 'si', name: 'Image distance', short: 'sᵢ', sym: 's<sub>i</sub>', unit: 'cm', f: d => isFinite(d.si) && Math.abs(d.si) < 400 ? d.si : NaN, negNote: 'virtual (sᵢ < 0)', signOK: 'The image switches between real and virtual.' }, { id: 'M', name: 'Magnification', short: 'M', sym: 'M', unit: '', f: d => isFinite(d.M) && Math.abs(d.M) < 20 ? d.M : NaN, signOK: 'The image flips between upright and inverted.' }]; },
   work(v, d, mode){
     if (mode === 'refl'){
-      if (d.diff) return '<h4>1 · Law of reflection</h4><div class="eq">At every point, θ<sub>r</sub> = θ<sub>i</sub> measured from the <b>local</b> normal.</div>' +
-        '<h4>2 · Smooth or rough?</h4><div class="eq">' + (v.r === 0 ? '<b>Specular</b>: one flat surface, one normal, so parallel rays leave parallel. You see a clear image (mirror, still water).' : '<b>Diffuse</b>: the normals tilt from bump to bump, so the reflected rays spread over about ' + fnum(d.sp) + '°. No image, but you can see the surface from any angle (paper, walls).') + '</div>' +
+      if (d.diff) return '<h4>1 · Law of reflection</h4><p class="st">At every point, the angle of reflection equals the angle of incidence, measured from the <b>local</b> normal.</p>' + TEXA`\theta_r = \theta_i` +
+        '<h4>2 · Smooth or rough?</h4><p class="st">' + (v.r === 0 ? '<b>Specular</b>: one flat surface, one normal, so parallel rays leave parallel. You see a clear image (mirror, still water).' : '<b>Diffuse</b>: the normals tilt from bump to bump, so the reflected rays spread over about ' + fnum(d.sp) + '°. No image, but you can see the surface from any angle (paper, walls).') + '</p>' +
         '<p class="note">Diffuse reflection does not break the law of reflection; each ray still obeys it.</p>';
-      return '<h4>1 · Where the image is</h4><div class="eq">Plane mirror: sᵢ = −sₒ, so your image is <b>' + H.n(v.D, 'cm') + '</b> behind the glass, upright and the same size (M = +1).</div>' +
-        '<h4>2 · Ray from your feet</h4><div class="eq">It hits the mirror halfway between your eye and the floor: y = e/2 = ' + fnum(d.e) + '/2 = <b>' + H.n(d.bot, 'cm') + '</b> (eye height e = ' + fnum(d.e) + ' cm).</div>' +
-        '<h4>3 · Ray from the top of your head</h4><div class="eq">It hits halfway between your eye and your head: y = ' + H.n(d.top, 'cm') + '.</div>' +
-        '<h4>4 · Shortest mirror</h4><div class="eq">L = ' + fnum(d.top) + ' − ' + fnum(d.bot) + ' = <b>H/2 = ' + H.n(d.L, 'cm') + '</b>. Change D: it does not matter how far away you stand.</div>';
+      return '<h4>1 · Where the image is</h4><p class="st">Plane mirror: the image is as far behind the glass as you are in front.</p>' + TEX`s_i = -s_o` + TEX`s_i = -(${M.iv('D')})` + TEXA`s_i = ${M.n(-v.D, 'cm')}` +
+        '<p class="st">Upright and the same size:</p>' + TEX`M = +1` +
+        '<h4>2 · Ray from your feet</h4><p class="st">It hits the mirror halfway between your eye and the floor (eye height e = ' + H.n(d.e, 'cm') + ').</p>' + TEX`y = \frac{e}{2}` + TEX`y = \frac{${M.n(d.e)}}{2}` + TEXA`y = ${M.n(d.bot, 'cm')}` +
+        '<h4>3 · Ray from the top of your head</h4><p class="st">It hits halfway between your eye and your head.</p>' + TEXA`y = ${M.n(d.top, 'cm')}` +
+        '<h4>4 · Shortest mirror</h4>' + TEX`L = y_{\text{top}} - y_{\text{bottom}}` + TEX`L = ${M.n(d.top)} - ${M.n(d.bot)}` + TEX`L = \frac{H}{2}` + TEXA`L = ${M.n(d.L, 'cm')}` +
+        '<p class="st">Change D: it does not matter how far away you stand.</p>';
     }
     const nm = { conv: 'converging lens', div: 'diverging lens', cave: 'concave mirror', vex: 'convex mirror', plane: 'plane mirror' }[d.kind];
-    if (d.plane) return '<h4>Plane mirror</h4><div class="eq">The image is as far behind the mirror as the object is in front: sᵢ = −sₒ = <b>' + H.n(d.si, 'cm') + '</b>; M = +1.</div><p class="note">Virtual, upright, same size, left–right reversed. A full-length mirror only needs to be half your height.</p>';
-    if (!isFinite(d.si)) return '<h4>Object at the focal point</h4><div class="bad">1/sᵢ = 1/f − 1/sₒ = 0, so the reflected or refracted rays come out parallel: no image forms (it is “at infinity”). Lighthouses and headlights put the bulb here.</div>';
+    if (d.plane) return '<h4>Plane mirror</h4><p class="st">The image is as far behind the mirror as the object is in front.</p>' + TEX`s_i = -s_o` + TEXA`s_i = ${M.n(d.si, 'cm')}` + TEX`M = +1` + '<p class="note">Virtual, upright, same size, left–right reversed. A full-length mirror only needs to be half your height.</p>';
+    if (!isFinite(d.si)) return '<h4>Object at the focal point</h4>' + TEX`\frac{1}{s_i} = \frac{1}{f} - \frac{1}{s_o}` + TEXA`\frac{1}{s_i} = 0` + '<div class="bad">So the reflected or refracted rays come out parallel: no image forms (it is “at infinity”). Lighthouses and headlights put the bulb here.</div>';
     const desc = [d.real ? 'real' : 'virtual', d.M < 0 ? 'inverted' : 'upright', Math.abs(Math.abs(d.M) - 1) < 0.01 ? 'same size' : Math.abs(d.M) > 1 ? 'enlarged' : 'reduced'].join(', ');
     const use = d.kind === 'conv' ? { 'beyond 2f': 'camera or eye: small real image on the sensor/retina', 'at 2f': 'photocopier at 100%', 'between f and 2f': 'projector: big real image on a screen', 'inside f': 'magnifying glass: big virtual image' }[d.region]
       : d.kind === 'cave' ? { 'beyond 2f': 'telescope mirror', 'at 2f': 'image same size, at 2f', 'between f and 2f': 'stage spotlight / projector', 'inside f': 'makeup or shaving mirror' }[d.region]
       : d.kind === 'vex' ? 'security and car side mirrors: wide view, small upright image (“objects are closer than they appear”)' : 'eyeglasses for nearsighted people; peepholes';
-    return '<h4>1 · Sign of f</h4><div class="eq">A ' + nm + ' has f = <b>' + (d.f > 0 ? '+' : '−') + fnum(Math.abs(d.f)) + ' cm</b> (' + (d.f > 0 ? 'converging → positive' : 'diverging → negative') + ').</div>' +
-      '<h4>2 · Image distance</h4><div class="eq">1/sᵢ = 1/f − 1/sₒ = 1/(' + fnum(d.f) + ') − 1/' + H.iv('so') + ' → sᵢ = <b>' + H.n(d.si, 'cm') + '</b>' + (d.si > 0 ? (mode === 'lens' ? ' (opposite side from the object)' : ' (in front of the mirror)') : (mode === 'lens' ? ' (same side as the object)' : ' (behind the mirror)')) + '</div>' +
-      '<h4>3 · Magnification</h4><div class="eq">M = −sᵢ/sₒ = −(' + fnum(d.si) + ')/' + fnum(v.so) + ' = <b>' + fnum(d.M) + '</b> → hᵢ = M hₒ = ' + H.n(d.hi, 'cm') + '</div>' +
-      '<h4>4 · Describe it</h4><div class="eq"><b>' + desc + '</b></div>' + (d.region !== 'any' ? '<p class="note">Object ' + d.region + '. Use: ' + use + '.</p>' : '<p class="note">A ' + nm + ' always gives a virtual, upright, reduced image. Use: ' + use + '.</p>') +
+    const fs = (d.f > 0 ? '<mo>+</mo>' : '<mo>−</mo>') + M.n(Math.abs(d.f), 'cm');
+    return '<h4>1 · Sign of f</h4><p class="st">A ' + nm + ': ' + (d.f > 0 ? 'converging → positive f.' : 'diverging → negative f.') + '</p>' + TEXA`f = ${fs}` +
+      '<h4>2 · Image distance</h4>' + TEX`\frac{1}{s_i} = \frac{1}{f} - \frac{1}{s_o}` + TEX`\frac{1}{s_i} = \frac{1}{${M.p(d.f, 'cm')}} - \frac{1}{${M.iv('so')}}` + TEXA`s_i = ${M.n(d.si, 'cm')}` +
+      '<p class="st">' + (d.si > 0 ? (mode === 'lens' ? 'Positive: opposite side from the object.' : 'Positive: in front of the mirror.') : (mode === 'lens' ? 'Negative: same side as the object.' : 'Negative: behind the mirror.')) + '</p>' +
+      '<h4>3 · Magnification</h4>' + TEX`M = -\frac{s_i}{s_o}` + TEX`M = -\frac{${M.p(d.si)}}{${M.n(v.so)}}` + TEXA`M = ${M.n(d.M)}` +
+      TEX`h_i = M\,h_o` + TEX`h_i = (${M.p(d.M)})(${M.iv('ho')})` + TEXA`h_i = ${M.n(d.hi, 'cm')}` +
+      '<h4>4 · Describe it</h4><p class="st"><b>' + desc + '</b></p>' + (d.region !== 'any' ? '<p class="note">Object ' + d.region + '. Use: ' + use + '.</p>' : '<p class="note">A ' + nm + ' always gives a virtual, upright, reduced image. Use: ' + use + '.</p>') +
       '<p class="note">Check the ray diagram: real images are where the rays actually cross; virtual images are where the dashed extensions cross.</p>';
   },
   draw(v, d, mode){

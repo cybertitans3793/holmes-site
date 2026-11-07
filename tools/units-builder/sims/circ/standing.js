@@ -39,20 +39,36 @@ const SIM = {
     return [{ id: 'f', name: 'Frequency', short: 'f', sym: 'f', unit: 'Hz', f: d => d.f }, { id: 'lam', name: 'Wavelength', short: 'λ', sym: 'λ', unit: 'm', f: d => d.lam }];
   },
   work(v, d, mode, opt){
-    if (mode === 'micro') return '<h4>1 · A standing wave inside the oven</h4><div class="eq">Microwaves reflect off the metal walls. The waves going each way make a standing wave: hot spots (antinodes) and cold spots (nodes). Take the turntable out so the food stays still.</div>' +
-      '<h4>2 · Hot spots are half a wavelength apart</h4><div class="eq">Each wavelength has two antinodes, so the gap between melted spots is λ/2. Measure it on the ruler: Δx = ' + H.iv('g') + ' → λ = 2Δx = ' + H.n(2 * v.g, 'cm') + '</div>' +
-      '<h4>3 · Speed of light</h4><div class="eq">c = fλ = (' + H.iv('fg') + ')(' + fnum(2 * v.g / 100) + ' m) = <b>' + H.n(d.c, 'm/s') + '</b> (accepted 3.00×10⁸ m/s, ' + fnum(Math.abs(d.c - 3e8) / 3e8 * 100) + '% off)</div>' +
+    if (mode === 'micro') return '<h4>1 · A standing wave inside the oven</h4><p class="st">Microwaves reflect off the metal walls. The waves going each way make a standing wave: hot spots (antinodes) and cold spots (nodes). Take the turntable out so the food stays still.</p>' +
+      '<h4>2 · Hot spots are half a wavelength apart</h4><p class="st">Each wavelength has two antinodes, so the gap between melted spots is λ/2. Measure it on the ruler.</p>' +
+      TEX`\Delta x = \frac{\lambda}{2}` + TEX`\lambda = 2\,\Delta x` + TEX`\lambda = 2(${M.iv('g')})` + TEXA`\lambda = ${M.n(2 * v.g, 'cm')}` +
+      '<h4>3 · Speed of light</h4>' + TEX`c = f\lambda` + TEX`c = (${M.iv('fg')})(${M.n(2 * v.g / 100, 'm')})` + TEXA`c = ${M.n(d.c, 'm/s')}` +
+      '<p class="st">Accepted value 3.00×10⁸ m/s, so you are ' + fnum(Math.abs(d.c - 3e8) / 3e8 * 100) + '% off.</p>' +
       '<p class="note">Read the real gap off the ruler under the bar, then set the slider to it. Lab tip: measure across several spots and divide, and use chocolate, cheese or marshmallows on a plate for about 20 s. The turntable is there to move food through the hot spots so it heats evenly.</p>';
-    if (mode === 'tube') return '<h4>1 · The set-up</h4><div class="eq">A tube in water: closed at the water surface, open at the top. Closed end = displacement node; open end = antinode. So resonance needs L = λ/4, 3λ/4, 5λ/4, …</div>' +
-      (d.hide ? '<h4>2 · Find the loud lengths</h4><div class="eq">Slide the tube until it gets loud. Record the <b>first</b> loud L for 256, 320, 384, 480 and 512 Hz. Graph L against 1/f: L = (v/4)(1/f), so <b>v = 4 × slope</b>. (You can also use two loud lengths for one fork: they are λ/2 apart.)</div>' : '<h4>2 · Where it should be loud</h4><div class="eq">v = 331 + 0.6T = 331 + 0.6(' + v.T + ') = ' + H.n(d.vs, 'm/s') + '. λ = v/f = ' + H.n(d.lam * 100, 'cm') + ' → L = ' + d.ns.slice(0, 3).map(x => fnum(x * 100) + ' cm').join(', ') + ' …</div>') +
-      (d.hide ? '<h4>3 · Check your answer</h4><div class="eq">Compare your v with 331 + 0.6T for the air temperature. Switch the speed of sound back to Shown to check.</div>' : '<h4>3 · The lab trick</h4><div class="eq">Successive loud lengths differ by <b>λ/2 = ' + H.n(d.lam * 50, 'cm') + '</b>. Measure two of them, double the gap to get λ, then v = fλ. No end correction needed!</div>') +
-      '<p class="note">Right now: ' + (d.loud > 0.6 ? '<b>resonance!</b> L ≈ ' + d.k + 'λ/4.' : 'quiet. Move the tube until it gets loud.') + ' Warmer air → faster sound → the loud lengths move up.</p>';
+    if (mode === 'tube'){
+      const Ls = d.ns.slice(0, 3).map(x => M.n(x * 100, 'cm')).join('<mo>,</mo><mspace width="0.5em"/>') + '<mo>,</mo><mspace width="0.5em"/><mo>…</mo>';
+      return '<h4>1 · The set-up</h4><p class="st">A tube in water: closed at the water surface, open at the top. Closed end = displacement node; open end = antinode. So resonance needs:</p>' +
+        TEX`L = \frac{\lambda}{4},\ \frac{3\lambda}{4},\ \frac{5\lambda}{4},\ \dots` +
+        (d.hide ? '<h4>2 · Find the loud lengths</h4><p class="st">Slide the tube until it gets loud. Record the <b>first</b> loud L for 256, 320, 384, 480 and 512 Hz. Graph L against 1/f:</p>' +
+          TEX`L = \frac{v}{4}\left(\frac{1}{f}\right)` + TEXA`v = 4 \times \text{slope}` +
+          '<p class="st">You can also use two loud lengths for one fork: they are λ/2 apart.</p>'
+        : '<h4>2 · Where it should be loud</h4>' + TEX`v = 331 + 0.6\,T` + TEX`v = 331 + 0.6(${M.iv('T', 1)})` + TEX`v = ${M.n(d.vs, 'm/s')}` +
+          TEX`\lambda = \frac{v}{f}` + TEX`\lambda = \frac{${M.n(d.vs, 'm/s')}}{${M.iv('f')}}` + TEX`\lambda = ${M.n(d.lam * 100, 'cm')}` +
+          '<p class="st">First three loud lengths:</p>' + TEXA`L = ${Ls}`) +
+        (d.hide ? '<h4>3 · Check your answer</h4><p class="st">Compare your v with the value for the air temperature. Switch the speed of sound back to Shown to check.</p>' + TEX`v = 331 + 0.6\,T`
+        : '<h4>3 · The lab trick</h4><p class="st">Successive loud lengths differ by half a wavelength. Measure two of them, double the gap to get λ, then use v = fλ. No end correction needed!</p>' +
+          TEX`\Delta L = \frac{\lambda}{2}` + TEXA`\Delta L = ${M.n(d.lam * 50, 'cm')}` + TEX`v = f\lambda`) +
+        '<p class="note">Right now: ' + (d.loud > 0.6 ? '<b>resonance!</b> L ≈ ' + d.k + 'λ/4.' : 'quiet. Move the tube until it gets loud.') + ' Warmer air → faster sound → the loud lengths move up.</p>';
+    }
     const what = mode === 'pipe' ? { oo: 'Open end = displacement <b>antinode</b> at both ends.', co: 'Closed end = displacement <b>node</b>; open end = <b>antinode</b>.', cc: 'Closed end = displacement <b>node</b> at both ends.' }[d.ends]
       : { ff: 'Fixed end = <b>node</b> at both ends.', fr: 'Fixed end = <b>node</b>; free end = <b>antinode</b>.', rr: 'Free end = <b>antinode</b> at both ends.' }[d.ends];
-    return '<h4>1 · Boundary conditions</h4><div class="eq">' + what + '</div>' +
-      '<h4>2 · Fit the wave in</h4><div class="eq">' + (d.asym ? 'One node and one antinode: L = nλ/4 with n odd only (1, 3, 5, …).' : 'Same kind at both ends: L = nλ/2 with n = 1, 2, 3, …') + '<br>Harmonic n = <b>' + d.n + '</b>: λ = ' + (d.asym ? '4L/n' : '2L/n') + ' = <b>' + H.n(d.lam, 'm') + '</b></div>' +
-      (d.ft ? '<h4>3 · Wave speed from tension</h4><div class="eq">v = √(F<sub>T</sub>/μ) = √(' + H.iv('FT') + ' ÷ ' + fnum(v.mu / 1000) + ' kg/m) = <b>' + H.n(d.vw, 'm/s') + '</b>. Tighter string → faster waves; heavier string → slower.</div>' : '') +
-      '<h4>' + (d.ft ? 4 : 3) + ' · Frequency</h4><div class="eq">f = v/λ = ' + (d.ft ? fnum(d.vw) + ' m/s' : H.iv('v')) + '/' + fnum(d.lam) + ' m = <b>' + H.n(d.f, 'Hz') + '</b> = ' + d.n + ' × f₁ (f₁ = ' + fnum(d.f1) + ' Hz)</div>' +
+    return '<h4>1 · Boundary conditions</h4><p class="st">' + what + '</p>' +
+      '<h4>2 · Fit the wave in</h4><p class="st">' + (d.asym ? 'One node and one antinode: n odd only (1, 3, 5, …).' : 'Same kind at both ends: n = 1, 2, 3, …') + '</p>' +
+      (d.asym ? TEX`L = \frac{n\lambda}{4}` : TEX`L = \frac{n\lambda}{2}`) + '<p class="st">Harmonic n = <b>' + d.n + '</b>:</p>' +
+      (d.asym ? TEX`\lambda = \frac{4L}{n}` + TEX`\lambda = \frac{4(${M.iv('L')})}{${M.n(d.n)}}` : TEX`\lambda = \frac{2L}{n}` + TEX`\lambda = \frac{2(${M.iv('L')})}{${M.n(d.n)}}`) + TEXA`\lambda = ${M.n(d.lam, 'm')}` +
+      (d.ft ? '<h4>3 · Wave speed from tension</h4>' + TEX`v = \sqrt{\frac{F_T}{\mu}}` + TEX`v = \sqrt{\frac{${M.iv('FT')}}{${M.n(v.mu / 1000, 'kg/m')}}}` + TEXA`v = ${M.n(d.vw, 'm/s')}` + '<p class="st">Tighter string → faster waves; heavier string → slower.</p>' : '') +
+      '<h4>' + (d.ft ? 4 : 3) + ' · Frequency</h4>' + TEX`f = \frac{v}{\lambda}` + TEX`f = \frac{${d.ft ? M.n(d.vw, 'm/s') : M.iv('v')}}{${M.n(d.lam, 'm')}}` + TEXA`f = ${M.n(d.f, 'Hz')}` +
+      '<p class="st">That is ' + d.n + ' times the fundamental:</p>' + TEX`f = n\,f_1` + TEX`f_1 = ${M.n(d.f1, 'Hz')}` +
       '<p class="note">' + (d.asym ? 'Only odd harmonics exist, so this ' + (mode === 'pipe' ? 'pipe' : 'string') + ' has no 2nd harmonic. ' : '') + 'Points between neighbouring nodes move in phase; points on either side of a node are in antiphase. ' + (mode === 'pipe' ? 'For pipes the pattern shows how far the air moves (displacement).' : 'Tighter string → faster wave → higher pitch.') + '</p>';
   },
   draw(v, d, mode, opt, t){

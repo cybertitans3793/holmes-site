@@ -19,10 +19,17 @@ const SIM = {
   dvs(){ return [{ id: 'I', name: 'Reflected brightness at this λ', short: 'I', sym: 'I', unit: '', f: d => d.I }]; },
   work(v, d){
     const sh = (s, a, b) => s ? 'n goes up (' + a + ' → ' + b + '): <b>½λ shift</b>' : 'n goes down (' + a + ' → ' + b + '): no shift';
-    return '<h4>1 · Phase change at each reflection</h4><div class="eq">Top surface (air → film): ' + sh(d.sh1, '1.00', fnum(v.nf)) + '<br>Bottom surface (film → below): ' + sh(d.sh2, fnum(v.nf), fnum(v.ns)) + '</div>' +
-      '<h4>2 · Extra path inside the film</h4><div class="eq">The second ray goes down and back: 2t = ' + H.n(2 * v.t, 'nm') + '. Inside the film λ<sub>film</sub> = λ/n = ' + H.iv('lam') + '/' + fnum(v.nf) + ' = ' + H.n(d.lf, 'nm') + '.</div>' +
-      '<h4>3 · Add it up (in wavelengths)</h4><div class="eq">2t/λ<sub>film</sub> ' + (d.one ? '+ ½ (one shift)' : (d.sh1 ? '(both shifted: they cancel)' : '(no shifts)')) + ' = <b>' + fnum(d.cyc) + '</b> → ' + (Math.abs(d.cyc - Math.round(d.cyc)) < 0.08 ? '<b>constructive</b>: strong reflection' : Math.abs(d.cyc - Math.round(d.cyc)) > 0.42 ? '<b>destructive</b>: no reflection' : 'partly bright') + '</div>' +
-      '<h4>4 · Thinnest film that works</h4><div class="eq">' + (d.one ? 'One shift: constructive at 2t = ½λ<sub>film</sub> → t = λ/(4n) = <b>' + H.n(d.tCon, 'nm') + '</b>; destructive at t = λ/(2n) = ' + H.n(d.tDes, 'nm') : 'Zero or two shifts: destructive at t = λ/(4n) = <b>' + H.n(d.tDes, 'nm') + '</b>; constructive at t = λ/(2n) = ' + H.n(d.tCon, 'nm')) + '</div>' +
+    const cycTxt = d.one ? 'One shift adds ½:' : (d.sh1 ? 'Both shifted, so they cancel:' : 'No shifts:');
+    const near = Math.abs(d.cyc - Math.round(d.cyc));
+    const thin = d.one
+      ? '<p class="st">One shift: constructive at 2t = ½λ<sub>film</sub>.</p>' + TEX`t_{\text{con}} = \frac{\lambda}{4n}` + TEX`t_{\text{con}} = \frac{${M.iv('lam')}}{4(${M.n(v.nf)})}` + TEXA`t_{\text{con}} = ${M.n(d.tCon, 'nm')}` + '<p class="st">Destructive:</p>' + TEX`t_{\text{des}} = \frac{\lambda}{2n}` + TEXA`t_{\text{des}} = ${M.n(d.tDes, 'nm')}`
+      : '<p class="st">Zero or two shifts: destructive at 2t = ½λ<sub>film</sub>.</p>' + TEX`t_{\text{des}} = \frac{\lambda}{4n}` + TEX`t_{\text{des}} = \frac{${M.iv('lam')}}{4(${M.n(v.nf)})}` + TEXA`t_{\text{des}} = ${M.n(d.tDes, 'nm')}` + '<p class="st">Constructive:</p>' + TEX`t_{\text{con}} = \frac{\lambda}{2n}` + TEXA`t_{\text{con}} = ${M.n(d.tCon, 'nm')}`;
+    return '<h4>1 · Phase change at each reflection</h4><p class="st">Top surface (air → film): ' + sh(d.sh1, '1.00', fnum(v.nf)) + '<br>Bottom surface (film → below): ' + sh(d.sh2, fnum(v.nf), fnum(v.ns)) + '</p>' +
+      '<h4>2 · Extra path inside the film</h4><p class="st">The second ray goes down and back:</p>' + TEX`\text{extra path} = 2t` + TEX`\text{extra path} = 2(${M.iv('t')})` + TEXA`\text{extra path} = ${M.n(2 * v.t, 'nm')}` +
+      '<p class="st">Inside the film the wavelength is shorter:</p>' + TEX`\lambda_{\text{film}} = \frac{\lambda}{n}` + TEX`\lambda_{\text{film}} = \frac{${M.iv('lam')}}{${M.n(v.nf)}}` + TEXA`\lambda_{\text{film}} = ${M.n(d.lf, 'nm')}` +
+      '<h4>3 · Add it up (in wavelengths)</h4><p class="st">' + cycTxt + '</p>' + (d.one ? TEX`\text{cycles} = \frac{2t}{\lambda_{\text{film}}} + \frac{1}{2}` : TEX`\text{cycles} = \frac{2t}{\lambda_{\text{film}}}`) + TEX`\text{cycles} = \frac{${M.n(2 * v.t)}}{${M.n(d.lf)}}${d.one ? '<mo>+</mo><mfrac><mn>1</mn><mn>2</mn></mfrac>' : ''}` + TEXA`\text{cycles} = ${M.n(d.cyc)}` +
+      '<p class="st">' + (near < 0.08 ? '<b>constructive</b>: strong reflection' : near > 0.42 ? '<b>destructive</b>: no reflection' : 'partly bright') + '</p>' +
+      '<h4>4 · Thinnest film that works</h4>' + thin +
       '<p class="note">' + (v.ns > v.nf ? 'Coating on glass: both reflections shift, so a quarter-wave layer cancels the reflection — that’s an anti-reflection coating on glasses and camera lenses.' : 'Soap bubble / film in air: only the top reflection shifts. A film much thinner than λ reflects nothing (looks black) just before it pops.') + ' Different thicknesses favour different colours, so you see bands.</p>';
   },
   draw(v, d, mode, opt, t){
