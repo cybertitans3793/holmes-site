@@ -2,14 +2,15 @@
 """Builds the Exam Skills pages, units/EXAM-AP.html, units/EXAM-IB.html and units/EXAM-IA.html (internal assessment, content in ia/).
 The Sims web app serves them like unit pages (...exec?unit=EXAM-AP); the Site's Exam Skills > AP and IB
 pages embed those links. Text for the exam-format and task-verb/command-term sections is in exam/*.html.
-The four practice sets stay in the Review app (?unit=XS-AP, XS-AP-FRQ, XS-IB, XS-IB-1B) on their own Site pages.
+IB Paper 1B practice stays in the Review app (?unit=XS-IB-1B) on its own hidden Site page, Exam Skills > IB Paper 1B.
 Also builds units/EXAM-PE.html, the Practice Exams page: one card per exam, linking to its timed sections in the Review app.
 Usage:  python3 exam.py [output folder]     (default: out/)"""
 import re, os, sys
 D = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, D)
 from site_links import SITE, REVIEW_APP
-XS = SITE + 'exam-skills/'   # the Site pages that hold the practice sets
+XS = SITE + 'exam-skills/'   # Site pages under Exam Skills (IB Paper 1B practice, the IA page)
+PE_PAGE = SITE + 'practice-exams'   # the Practice Exams Site page (embeds EXAM-PE)
 EXAMS = REVIEW_APP + '?unit=EXAMS'   # every open practice exam (Review app, FCPS sign-in)
 # The practice exams themselves (College Board / IB papers) live only in the Review app, never in this repo: this page only links to them.
 
@@ -20,7 +21,7 @@ def split(html, mark):
 
 ap_exam, ap_terms = split(open(f'{D}/exam/ap_intro.html').read(), '<h3>Task verbs</h3>')
 ib_exam, ib_terms = split(open(f'{D}/exam/ib_intro.html').read(), '<h3>Command terms</h3>')
-ap_exam += '<p class="muted">Tip: the task verb tells you what earns the points. Check the <b>Task verbs</b> tab before you start the free-response practice.</p>'
+ap_exam += '<p class="muted">Tip: the task verb tells you what earns the points. Check the <b>Task verbs</b> tab before you write free-response answers.</p>'
 ib_terms = ib_terms.replace('<p class="muted">Source:',
     '<p class="note">The guide says other words may still appear in questions (for example <i>deduce</i> or <i>evaluate</i>). They are not defined in the 2025 glossary, so read them in their plain meaning.</p><p class="muted">Source:')
 
@@ -105,22 +106,20 @@ if(start>0 && start<tabs.length) show(start);
 # ---------------- AP ----------------
 ap_tabs = [
  dict(label='The exam', html='<div class="card">'+ap_exam+'</div><h3>Practice</h3><div class="tiles">'
-   '<a class="tile" href="'+XS+'ap-multiple-choice" target="_blank" rel="noopener"><span class="k">MULTIPLE CHOICE ↗</span><b>Task verbs and question types</b>Tell the verbs apart and recognise each free-response type.</a>'
-   '<a class="tile" href="'+XS+'ap-free-response" target="_blank" rel="noopener"><span class="k">WRITTEN, SELF-MARKED ↗</span><b>Free-response practice</b>One task of each type. Write your answer, then mark it against the scoring points.</a></div>'),
+   '<a class="tile" href="'+PE_PAGE+'" target="_blank" rel="noopener"><span class="k">TIMED, SCORED ↗</span><b>Practice exams</b>Full timed exams with an estimated score. Timed or Practice mode (you can pause).</a>''</div>'),
  dict(label='Task verbs', html='<div class="card">'+ap_terms+'</div>'),
- dict(label='Multiple-choice practice', href=XS + 'ap-multiple-choice'),
- dict(label='Free-response practice', href=XS + 'ap-free-response'),
+ dict(label='Practice exams', href=PE_PAGE),
 ]
 
 # ---------------- IB ----------------
 ib_tabs = [
  dict(label='The exam', html='<div class="card">'+ib_exam+'</div><h3>Practice and guides</h3><div class="tiles">'
-   '<a class="tile" href="'+XS+'ib-multiple-choice" target="_blank" rel="noopener"><span class="k">MULTIPLE CHOICE ↗</span><b>Command terms, data skills and IA</b>Command terms, uncertainties, graphs and how the IA is marked.</a>'
    '<a class="tile" href="'+XS+'ib-paper-1b" target="_blank" rel="noopener"><span class="k">WRITTEN, SELF-MARKED ↗</span><b>Paper 1B practice</b>Real IB data-based questions. Answer, then mark yourself against the mark scheme.</a>'
+   '<a class="tile" href="'+PE_PAGE+'" target="_blank" rel="noopener"><span class="k">TIMED, SCORED ↗</span><b>Practice exams</b>Full timed exams with an estimated score. Timed or Practice mode (you can pause).</a>'
    '<a class="tile" href="'+XS+'ia" target="_blank" rel="noopener"><span class="k">GUIDE ↗</span><b>Internal assessment</b>How the IA is graded, the stages and deadlines, a report template, uncertainties, topic ideas, a checklist and examples.</a></div>'),
  dict(label='Command terms', html='<div class="card">'+ib_terms+'</div>'),
- dict(label='Multiple-choice practice', href=XS + 'ib-multiple-choice'),
  dict(label='Paper 1B practice', href=XS + 'ib-paper-1b'),
+ dict(label='Practice exams', href=PE_PAGE),
  dict(label='Internal assessment', href=XS + 'ia'),
 ]
 
