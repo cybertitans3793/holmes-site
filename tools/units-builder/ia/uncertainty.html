@@ -1,0 +1,56 @@
+<div class="card"><h3>Class rules for uncertainty</h3>
+<p>The IB doesn’t require one method, but you must use a sensible one and use it consistently. In this class:</p>
+<div class="tbl"><table>
+<tr><th>Situation</th><th>Uncertainty</th><th>Example</th></tr>
+<tr><td><b>One reading, analogue scale</b> (ruler, protractor, thermometer)</td><td>± half the smallest division</td><td>Metre stick marked in mm: (500.0 ± 0.5) mm</td></tr>
+<tr><td><b>One reading, digital display</b> (stopwatch, balance, meter, app)</td><td>± 1 in the last decimal place shown</td><td>Stopwatch reads 2.34 s: (2.34 ± 0.01) s</td></tr>
+<tr><td><b>Repeated readings</b></td><td>Use the mean, ± half the range: (max − min) ÷ 2. If that comes out smaller than the reading uncertainty (for example, all repeats are equal), use the reading uncertainty.</td><td>2.31, 2.40, 2.35 s → mean 2.353 s, half range 0.045 s → (2.35 ± 0.05) s</td></tr>
+<tr><td><b>Timing several cycles</b></td><td>Time <i>n</i> cycles, then divide both the time and its uncertainty by <i>n</i></td><td>10 swings: (14.25 ± 0.09) s → <i>T</i> = (1.425 ± 0.009) s</td></tr></table></div>
+<p>Put the uncertainty in each column heading, e.g. <b><i>t</i> / s (±0.01)</b>, and add one sentence under the table saying where it comes from.</p></div>
+
+<div class="card"><h3>Writing results</h3>
+<ul><li>Round the uncertainty to <b>1 significant figure</b> (2 is fine if it starts with a 1).</li>
+<li>Round the value to the <b>same decimal place</b> as its uncertainty: (9.7 ± 0.2) m s<sup>−2</sup>, not (9.734 ± 0.2).</li>
+<li>Keep extra digits while you calculate and round only the final answer.</li>
+<li>Raw readings from one instrument all get the same number of decimal places.</li></ul></div>
+
+<div class="card"><h3>Propagating uncertainties</h3>
+<p>The same rules as the data booklet:</p>
+<div class="tbl"><table><tr><th>If you…</th><th>then…</th><th>Example</th></tr>
+<tr><td>add or subtract</td><td>add the <b>absolute</b> uncertainties</td><td><i>x</i> = <i>a</i> − <i>b</i>: Δ<i>x</i> = Δ<i>a</i> + Δ<i>b</i></td></tr>
+<tr><td>multiply or divide</td><td>add the <b>percentage</b> (fractional) uncertainties</td><td><i>v</i> = <i>d</i>/<i>t</i>: %<i>v</i> = %<i>d</i> + %<i>t</i></td></tr>
+<tr><td>raise to a power <i>n</i></td><td><b>multiply</b> the percentage uncertainty by |<i>n</i>|</td><td><i>T</i>²: %(<i>T</i>²) = 2 × %<i>T</i>; √<i>L</i>: half of %<i>L</i></td></tr>
+<tr><td>multiply by an exact number</td><td>multiply the absolute uncertainty by it</td><td>2π<i>r</i>: Δ = 2π Δ<i>r</i></td></tr></table></div>
+<h4>Worked example</h4>
+<ol class="ia-steps"><li>Ten swings timed three times: 14.23, 14.35, 14.18 s. Mean = 14.253 s. Half range = (14.35 − 14.18) ÷ 2 = 0.085 s, which is bigger than the stopwatch’s 0.01 s, so use 0.085 s.</li>
+<li>One swing: <i>T</i> = 14.253 ÷ 10 = 1.4253 s, Δ<i>T</i> = 0.0085 s → (1.425 ± 0.009) s. Percentage: 0.0085 ÷ 1.4253 = 0.60 %.</li>
+<li>Squared: <i>T</i>² = 2.0315 s², percentage = 2 × 0.60 % = 1.19 %, so Δ(<i>T</i>²) = 0.024 s² → <b>(2.03 ± 0.02) s²</b>.</li></ol></div>
+
+<div class="card"><h3>Graphs</h3>
+<ul>
+<li><b>Linearise:</b> plot whatever makes your equation a straight line (see the Report template tab).</li>
+<li><b>Axes:</b> label each as quantity / unit, e.g. <i>T</i>² / s², with sensible scales.</li>
+<li><b>Error bars</b> on every point for the DV, and for the IV too if they’d be visible. If they’re too small to see, say so in a note under the graph.</li>
+<li><b>Best-fit line:</b> straight, balanced through the points. Don’t force it through the origin unless your physics says it must pass through (0, 0).</li>
+<li><b>Steepest and shallowest lines:</b> the steepest and shallowest straight lines that still pass through the error bars (the tool below uses the first and last points).</li>
+<li><b>Gradient uncertainty</b> = (steepest − shallowest) ÷ 2. Do the same for the intercept.</li>
+<li>Graphing software is fine, but say what it did (e.g. “linear fit from Google Sheets”) and still find the uncertainty from the steepest and shallowest lines. A high R² is not an uncertainty.</li></ul></div>
+
+<div class="card"><h3>Outliers, random and systematic error</h3>
+<ul>
+<li><b>Outlier:</b> a point clearly off the trend. Circle it, explain the likely cause, and re-measure it if you can. You may leave it out of the fit if you give a reason. No statistical test is needed.</li>
+<li><b>Random error</b> scatters readings both ways. It shows as spread in your repeats and around the line, and repeats reduce its effect.</li>
+<li><b>Systematic error</b> shifts every reading the same way (a zero error, or always reading from one side). Repeats don’t remove it. It often shows up as an unexpected intercept.</li>
+<li><b>Comparing with an accepted value:</b> percentage difference = |yours − accepted| ÷ accepted × 100 %. If the accepted value lies inside your ± range, your result agrees with theory. If the difference is much bigger than your percentage uncertainty, look for a systematic error and discuss it in your evaluation.</li></ul></div>
+
+<div class="card" id="gt"><h3>Gradient and uncertainty tool</h3><p class="muted">Type your data, one point per line: x, y, uncertainty in y. The tool draws error bars, the best-fit line, and the steepest and shallowest lines through the first and last error bars, then gives the gradient with its uncertainty. Use it to check your own graph; you still need to make the graph in your report.</p>
+<textarea data-in rows="8" spellcheck="false">1.25, 87.6, 1.2
+1.43, 98.6, 1.3
+1.67, 117.1, 1.4
+2.00, 139.5, 1.1
+2.50, 172.4, 1.6
+3.33, 229.8, 1.8
+5.00, 343.1, 2.5</textarea>
+<div class="rq"><label>x-axis label<input data-xl value="1/L / m⁻¹"></label><label>y-axis label<input data-yl value="f / Hz"></label></div>
+<canvas data-c width="680" height="400"></canvas><p class="out" data-res></p></div>
+<p class="muted">Uncertainty rules as taught in class. Propagation follows the IB Physics data booklet; graph skills follow the IB Physics guide (2025), pp. 30–31.</p>

@@ -1,0 +1,38 @@
+/* Extra styles for the IA page. Uses the Exam Skills page variables (exam.py CSS). */
+.ia-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:12px 0}
+.ia-facts div{border:2px solid var(--ink);background:var(--paper);padding:10px 12px}
+.ia-facts b{display:block;font-family:var(--display);font-size:1.6rem;line-height:1.1}
+.ia-facts span{font-size:.9rem;color:var(--muted)}
+.ia-gate{display:inline-block;font-family:var(--mono);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;background:var(--orange);color:var(--white);padding:2px 6px;margin-left:6px;vertical-align:middle}
+.ia-due{font-family:var(--mono);color:var(--muted)}
+.ia-btn{display:inline-block;font-family:var(--display);font-weight:500;font-size:.98rem;border:2px solid var(--ink);background:var(--ink);color:var(--white);padding:8px 14px;cursor:pointer;box-shadow:3px 3px 0 var(--orange);text-decoration:none}
+.ia-btn.ghost{background:var(--white);color:var(--ink);box-shadow:3px 3px 0 var(--ink)}
+.ia-btn[aria-disabled=true]{opacity:.55;cursor:default}
+.ia-btn:focus-visible,.ia-stagebar button:focus-visible,.ia-filters button:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+.card h3 small,.card h3 + small{font-family:var(--mono);font-size:.72rem;font-weight:400;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-left:8px}
+.card h4{font-family:var(--display);font-size:1.02rem;margin:1.1em 0 .3em}
+.ia-steps{padding-left:24px}.ia-steps li{margin:8px 0}.ia-steps ul{margin:4px 0}
+.ia-stagebar{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
+.ia-stagebar button{font-family:var(--display);font-weight:500;font-size:.95rem;border:2px solid var(--ink);background:var(--white);color:var(--ink);padding:6px 12px;cursor:pointer;box-shadow:3px 3px 0 var(--ink)}
+.ia-stagebar button[aria-selected=true]{background:var(--orange);color:var(--white);border-color:var(--ink)}
+.ia-stage{display:none}.ia-stage.on{display:block}
+.ia-tag{display:inline-block;font-family:var(--mono);font-size:.66rem;letter-spacing:.05em;text-transform:uppercase;padding:1px 5px;margin-left:4px;border:1.5px solid;vertical-align:middle}
+.ia-tag.ib{border-color:var(--ink);color:var(--ink)}
+.ia-tag.cl{border-color:var(--orange);color:#b54314}
+.ia-progress{font-family:var(--mono);font-size:.95rem}
+.ia-filters{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0 10px}
+.ia-filters .lab{font-family:var(--mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-right:4px;min-width:64px}
+.ia-filters button{font:inherit;font-size:.88rem;border:1.5px solid var(--ink);background:var(--white);color:var(--ink);padding:3px 10px;cursor:pointer}
+.ia-filters button[aria-pressed=true]{background:var(--ink);color:var(--white)}
+.ia-search{font:inherit;padding:7px 10px;border:2px solid var(--ink);background:var(--white);width:100%;max-width:420px;margin:4px 0 10px}
+.ia-ideas{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.ia-idea{background:var(--white);border:2px solid var(--ink);padding:12px 14px}
+.ia-idea .a{font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.ia-idea .q{font-family:var(--display);font-size:1.02rem;margin:4px 0 6px;line-height:1.3}
+.ia-idea .q i{font-style:normal;color:var(--orange)}
+.ia-idea p{margin:6px 0;font-size:.92rem}
+.ia-idea .n{color:var(--muted)}
+.ia-idea .g{margin-top:6px}
+.ia-idea .g span{display:inline-block;font-family:var(--mono);font-size:.66rem;text-transform:uppercase;letter-spacing:.04em;border:1px solid var(--line);background:var(--paper);padding:1px 5px;margin:2px 3px 0 0}
+.ia-count{font-family:var(--mono);font-size:.85rem;color:var(--muted)}
+.panel .wrap a:not(.tile):not(.ia-btn){color:var(--ink);text-decoration-color:var(--orange);text-decoration-thickness:2px;text-underline-offset:2px}
