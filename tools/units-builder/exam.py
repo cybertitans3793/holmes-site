@@ -7,8 +7,9 @@ Usage:  python3 exam.py [output folder]     (default: out/)"""
 import re, os, sys
 D = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, D)
-from site_links import SITE
+from site_links import SITE, REVIEW_APP
 XS = SITE + 'exam-skills/'   # the Site pages that hold the practice sets
+EXAMS = REVIEW_APP + '?unit=EXAMS'   # timed practice exams (Review app, FCPS sign-in); the exams themselves never go in this repo
 
 def split(html, mark):
     html = re.sub(r'<h3>What is in this section</h3>.*$', '', html, flags=re.S)
@@ -103,10 +104,12 @@ if(start>0 && start<tabs.length) show(start);
 ap_tabs = [
  dict(label='The exam', html='<div class="card">'+ap_exam+'</div><h3>Practice</h3><div class="tiles">'
    '<a class="tile" href="'+XS+'ap-multiple-choice" target="_blank" rel="noopener"><span class="k">MULTIPLE CHOICE ↗</span><b>Task verbs and question types</b>Tell the verbs apart and recognise each free-response type.</a>'
-   '<a class="tile" href="'+XS+'ap-free-response" target="_blank" rel="noopener"><span class="k">WRITTEN, SELF-MARKED ↗</span><b>Free-response practice</b>One task of each type. Write your answer, then mark it against the scoring points.</a></div>'),
+   '<a class="tile" href="'+XS+'ap-free-response" target="_blank" rel="noopener"><span class="k">WRITTEN, SELF-MARKED ↗</span><b>Free-response practice</b>One task of each type. Write your answer, then mark it against the scoring points.</a>'
+   '<a class="tile" href="'+EXAMS+'" target="_blank" rel="noopener"><span class="k">TIMED, SCORED ↗</span><b>Practice exams</b>Full timed exam sections with an estimated AP score. Sign in with your FCPS account.</a></div>'),
  dict(label='Task verbs', html='<div class="card">'+ap_terms+'</div>'),
  dict(label='Multiple-choice practice', href=XS + 'ap-multiple-choice'),
  dict(label='Free-response practice', href=XS + 'ap-free-response'),
+ dict(label='Practice exams', href=EXAMS),
 ]
 
 # ---------------- IB ----------------
