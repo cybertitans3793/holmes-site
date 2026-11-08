@@ -22,16 +22,6 @@
 },
 {
 "area": "Motion & forces",
-"iv": "Ramp angle",
-"dv": "Acceleration of a cart",
-"gear": [
-"Lab basics",
-"Phone"
-],
-"src": "G"
-},
-{
-"area": "Motion & forces",
 "iv": "Release height of a toy car on a ramp",
 "dv": "Distance it rolls along the floor",
 "gear": [
@@ -135,25 +125,6 @@
 "Lab basics"
 ],
 "src": "G"
-},
-{
-"area": "Oscillations",
-"iv": "Length of a pendulum",
-"dv": "Period",
-"gear": [
-"Lab basics"
-],
-"note": "A classic: fine if your analysis and evaluation are strong.",
-"src": ""
-},
-{
-"area": "Oscillations",
-"iv": "Mass on a spring",
-"dv": "Period",
-"gear": [
-"Lab basics"
-],
-"src": ""
 },
 {
 "area": "Oscillations",
