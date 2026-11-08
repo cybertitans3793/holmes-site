@@ -7,7 +7,6 @@
 "Lab basics",
 "Phone"
 ],
-"physics": "At terminal velocity weight = drag. If drag ∝ v², then v² ∝ m: plot v² against m.",
 "note": "Film the fall and measure speed over the last part, or time a long drop.",
 "src": "G"
 },
@@ -19,7 +18,6 @@
 "Lab basics",
 "Phone"
 ],
-"physics": "With drag ∝ Av², v² ∝ 1/A for a fixed load: plot v² against 1/A.",
 "src": "G"
 },
 {
@@ -30,7 +28,6 @@
 "Lab basics",
 "Phone"
 ],
-"physics": "a = g sin θ, minus friction effects: plot a against sin θ; the gradient should be close to g.",
 "src": "G"
 },
 {
@@ -41,7 +38,6 @@
 "Lab basics",
 "Buy"
 ],
-"physics": "Energy: mgh = F·d, so d ∝ h if the resistive force is constant. The gradient tells you about the resistive force.",
 "src": ""
 },
 {
@@ -52,7 +48,6 @@
 "Lab basics",
 "Phone"
 ],
-"physics": "Coefficient of restitution e = √(h_bounce / h_drop): plot h_bounce against h_drop; gradient = e².",
 "src": "G"
 },
 {
@@ -63,7 +58,6 @@
 "Lab basics",
 "Buy"
 ],
-"physics": "No simple equation: find the pattern and compare with published data on ball temperature and bounce.",
 "note": "Warm or cool balls in water; the temperature changes quickly once out, so be fast and consistent.",
 "src": "G"
 },
@@ -74,7 +68,6 @@
 "gear": [
 "Buy"
 ],
-"physics": "Find how e depends on pressure; compare with published sports-science values.",
 "note": "Needs a pump with a pressure gauge.",
 "src": "T"
 },
@@ -85,7 +78,6 @@
 "gear": [
 "Lab basics"
 ],
-"physics": "Beam theory: d = FL³/(3EI), so d ∝ F. The gradient gives Young’s modulus of the ruler.",
 "src": "T"
 },
 {
@@ -95,7 +87,6 @@
 "gear": [
 "Lab basics"
 ],
-"physics": "d ∝ L³: plot ln d against ln L and check the gradient is about 3.",
 "src": "T"
 },
 {
@@ -106,7 +97,6 @@
 "Lab basics",
 "Phone"
 ],
-"physics": "Stiffness k ∝ 1/L³, so T ∝ L^1.5 when the end mass dominates: plot ln T against ln L.",
 "src": "T"
 },
 {
@@ -116,7 +106,6 @@
 "gear": [
 "Lab basics"
 ],
-"physics": "d = FL³/(48EI), so d ∝ L³ (log–log gradient 3).",
 "src": "G"
 },
 {
@@ -126,7 +115,6 @@
 "gear": [
 "Lab basics"
 ],
-"physics": "Crater size grows as a power of the impact energy: find the power from a ln–ln graph and compare with published studies.",
 "src": "T"
 },
 {
@@ -137,7 +125,6 @@
 "Lab basics",
 "Buy"
 ],
-"physics": "Beverloo’s law: flow rate ∝ D^2.5, so the time for a fixed amount ∝ D^−2.5.",
 "src": "T"
 },
 {
@@ -147,17 +134,15 @@
 "gear": [
 "Lab basics"
 ],
-"physics": "The small-angle formula breaks down: T ≈ T₀(1 + θ₀²/16) with θ₀ in radians, so plot T against θ₀².",
 "src": "G"
 },
 {
 "area": "Oscillations",
 "iv": "Length of a pendulum",
-"dv": "Period (to measure g)",
+"dv": "Period",
 "gear": [
 "Lab basics"
 ],
-"physics": "T = 2π√(L/g): plot T² against L; gradient = 4π²/g.",
 "note": "A classic: fine if your analysis and evaluation are strong.",
 "src": ""
 },
@@ -168,7 +153,6 @@
 "gear": [
 "Lab basics"
 ],
-"physics": "T = 2π√(m/k): plot T² against m; the gradient gives k, and the intercept shows the spring’s own mass.",
 "src": ""
 },
 {
@@ -178,7 +162,6 @@
 "gear": [
 "Lab basics"
 ],
-"physics": "T ∝ 1/d: plot T against 1/d.",
 "src": "T"
 },
 {
@@ -188,7 +171,6 @@
 "gear": [
 "Buy"
 ],
-"physics": "Stiffness ∝ 1/N and mass ∝ N, so T ∝ N.",
 "src": "T"
 },
 {
@@ -199,7 +181,6 @@
 "Lab basics",
 "Buy"
 ],
-"physics": "Rolling without slipping: T = 2π√(7(R − r)/(5g)), so T² ∝ (R − r).",
 "src": "T"
 },
 {
@@ -210,7 +191,6 @@
 "Lab basics",
 "Phone"
 ],
-"physics": "Amplitude decays exponentially; the decay rate increases with area. Find the relationship.",
 "src": "G"
 },
 {
@@ -220,7 +200,6 @@
 "gear": [
 "Lab basics"
 ],
-"physics": "Newton’s law of cooling: rate ∝ (T − T_room). Plot rate against ΔT, or ln ΔT against time.",
 "src": "T"
 },
 {
@@ -230,7 +209,6 @@
 "gear": [
 "Lab basics"
 ],
-"physics": "Heat loss depends on surface area and heat capacity depends on mass, so the rate falls as volume rises. Find the relationship.",
 "src": "G"
 },
 {
@@ -241,7 +219,6 @@
 "Lab basics",
 "Buy"
 ],
-"physics": "Conduction: rate of heat loss falls as thickness rises (roughly ∝ 1/thickness for thin layers).",
 "src": "G"
 },
 {
@@ -252,31 +229,7 @@
 "Lab basics",
 "Buy"
 ],
-"physics": "Stokes’ law: fall speed ∝ 1/viscosity. Viscosity drops sharply as temperature rises; try ln t against 1/T (T in kelvin).",
 "note": "Use a tall column so fall times are several seconds.",
-"src": "G"
-},
-{
-"area": "Sound",
-"iv": "Vibrating length of a string",
-"dv": "Fundamental frequency",
-"gear": [
-"Lab basics",
-"Phone"
-],
-"physics": "f = (1/2L)√(F/μ): plot f against 1/L; gradient = v/2.",
-"note": "A phone frequency app measures f.",
-"src": "G"
-},
-{
-"area": "Sound",
-"iv": "Tension in a string",
-"dv": "Fundamental frequency",
-"gear": [
-"Lab basics",
-"Phone"
-],
-"physics": "f ∝ √F: plot f² against F; the gradient gives the mass per length.",
 "src": "G"
 },
 {
@@ -287,7 +240,6 @@
 "Phone",
 "Buy"
 ],
-"physics": "No simple textbook equation: find the pattern, then compare with published studies of wine-glass resonance.",
 "src": "G"
 },
 {
@@ -298,7 +250,6 @@
 "Phone",
 "Buy"
 ],
-"physics": "Closed pipe: f = v/(4(L + e)). Plot 1/f against L: the gradient gives the speed of sound, the intercept the end correction e.",
 "src": "T"
 },
 {
@@ -308,7 +259,6 @@
 "gear": [
 "Phone"
 ],
-"physics": "Inverse square law: the level should drop about 6 dB per doubling of distance. Plot dB against log r.",
 "note": "Work outdoors or in a large room; reflections spoil it.",
 "src": "G"
 },
@@ -319,7 +269,6 @@
 "gear": [
 "Phone"
 ],
-"physics": "Inverse square law for a point source: I ∝ 1/r². Plot I against 1/r², or ln I against ln r (gradient −2).",
 "note": "Use a phone light-sensor app in a dark room.",
 "src": "G"
 },
@@ -331,7 +280,6 @@
 "Phone",
 "Buy"
 ],
-"physics": "Malus’s law: I = I₀ cos²θ. Plot I against cos²θ.",
 "src": "G"
 },
 {
@@ -342,7 +290,6 @@
 "Phone",
 "Buy"
 ],
-"physics": "Each sheet removes the same fraction: I = I₀e^(−kn). Plot ln I against n.",
 "src": "G"
 },
 {
@@ -352,7 +299,6 @@
 "gear": [
 "Ask first"
 ],
-"physics": "Diffraction: width ≈ 2λD/b. The gradient gives the hair’s thickness b.",
 "note": "Laser pointer: never point it at eyes. Ask before using one.",
 "src": "G"
 },
@@ -364,7 +310,6 @@
 "Buy",
 "Ask first"
 ],
-"physics": "A solar cell’s voltage falls roughly linearly as it warms. Compare the gradient with the manufacturer’s temperature coefficient.",
 "src": "G"
 },
 {
@@ -375,7 +320,6 @@
 "Buy",
 "Ask first"
 ],
-"physics": "eV ≈ hc/λ: plot V against 1/λ; the gradient gives an estimate of Planck’s constant.",
 "src": ""
 },
 {
@@ -385,7 +329,6 @@
 "gear": [
 "Phone"
 ],
-"physics": "Far from the magnet, B ∝ 1/r³ along its axis: plot ln B against ln r (gradient −3).",
 "note": "A phone magnetometer app measures B. Subtract the background (Earth’s) field.",
 "src": ""
 },
@@ -397,7 +340,6 @@
 "Phone",
 "Ask first"
 ],
-"physics": "B ∝ I for a coil (B = μ₀nI for a long solenoid). The gradient leads to μ₀.",
 "src": "G"
 },
 {
@@ -408,7 +350,6 @@
 "Phone",
 "Buy"
 ],
-"physics": "Permanent magnets weaken as they warm. Find the relationship and compare with published temperature coefficients.",
 "src": "G"
 },
 {
@@ -418,7 +359,6 @@
 "gear": [
 "Buy"
 ],
-"physics": "Eddy currents: the slowing force grows with wall thickness and conductivity, so the fall time rises with both.",
 "note": "Fall times of several seconds make hand timing workable.",
 "src": "G"
 },
@@ -429,7 +369,6 @@
 "gear": [
 "Ask first"
 ],
-"physics": "t½ = RC ln 2: plot t½ against R; the gradient gives the capacitance.",
 "note": "Large capacitors make times long enough to read a multimeter.",
 "src": "G"
 },
@@ -440,7 +379,6 @@
 "gear": [
 "Ask first"
 ],
-"physics": "From V = ε − Ir at each temperature: find r from a V–I graph, then plot r against temperature.",
 "src": "G"
 },
 {
@@ -450,7 +388,6 @@
 "gear": [
 "Ask first"
 ],
-"physics": "Faraday’s law: a faster magnet gives a bigger emf, and speed ∝ √h, so expect the peak emf ∝ √h.",
 "note": "Needs a data logger fast enough to catch the peak.",
 "src": "G"
 },
@@ -462,7 +399,6 @@
 "Lab basics",
 "Buy"
 ],
-"physics": "Torricelli: √h falls linearly with time. Plot √h against t.",
 "src": "T"
 },
 {
@@ -473,7 +409,6 @@
 "Lab basics",
 "Buy"
 ],
-"physics": "Flow rises steeply with diameter. Find the power from a ln–ln graph and compare with Poiseuille’s law (∝ d⁴) for slow, smooth flow.",
 "src": "G"
 },
 {
@@ -483,7 +418,6 @@
 "gear": [
 "Phone"
 ],
-"physics": "Find the pattern with slow-motion video; compare with published droplet studies.",
 "src": "G"
 }
 ]

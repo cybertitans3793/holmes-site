@@ -9,10 +9,12 @@ Wiring (in exam.py, after page() is defined):
 ia_tabs() returns the same dicts page() already takes (label + html); the first tab carries ia.css.
 Tab order matters: the data-go="N" links inside the fragments count tabs from 0 in this order.
 Preview locally: python3 ia/preview.py  -> out/EXAM-IA.html (out/ is git-ignored)."""
-import html, json, os
+import html, json, os, sys
 
 D = os.path.dirname(os.path.abspath(__file__))
-DRIVE_FOLDER = ''   # FCPS-only Drive folder of IA originals; Josh pastes the link here when it exists
+sys.path.insert(0, os.path.dirname(D))
+from site_links import SITE, COURSE_FOLDER
+P1_00 = SITE + COURSE_FOLDER['P1'] + '/p1-00'   # the Measurement (IB) unit page: uncertainty and graphing sims
 
 TABS = [            # (label, file)  - keep in step with the data-go numbers in the fragments
     ('Start here', 'start.html'),            # 0
@@ -23,7 +25,6 @@ TABS = [            # (label, file)  - keep in step with the data-go numbers in 
     ('Topic ideas', None),                   # 5  built from ideas.json
     ('Checklist', 'checklist.html'),         # 6
     ('Examples', 'examples.html'),           # 7
-    ('Resources', 'resources.html'),         # 8
 ]
 
 def _read(name):
@@ -44,13 +45,14 @@ def _ideas_html():
         cards += (f'<div class="ia-idea" data-area="{e(i["area"])}" data-gear="{e("|".join(i["gear"]))}">'
                   f'<div class="a">{e(i["area"])}</div>'
                   f'<div class="q">{e(i["iv"])} <i>→</i> {e(i["dv"][0].lower() + i["dv"][1:])}</div>'
-                  f'<p>{e(i["physics"])}</p>{note}'
+                  f'{note}'
                   f'<div class="g">' + ''.join(f'<span>{e(g)}</span>' for g in i['gear']) + '</div></div>')
     return ('<div class="card"><h3>Topic ideas</h3>'
         '<p>Each idea reads <b>what you change → what you measure</b>. They are starting points, not finished questions: pick one, then make it yours with a specific system, range and measuring method. '
         'Your topic doesn’t need to be original, but your data, analysis and writing must be your own.</p>'
         '<ul><li><b>Lab basics</b>: rulers, stands, masses, stopwatches, thermometers, hot plates. <b>Phone</b>: a phone sensor app or slow-motion video. '
         '<b>Buy</b>: needs a cheap item or two; students often buy their own materials. <b>Ask first</b>: needs special equipment or has a safety issue, so check with Mr. Holmes.</li>'
+        '<li>Phone sensor apps (for example <i>phyphox</i>, free) can time, and measure acceleration, light, sound frequency and magnetic field. Slow-motion video works for fast motion.</li>'
         '<li>Something not listed? Run it through the Stage 1 feasibility check and bring it to Mr. Holmes.</li></ul></div>'
         + btns('area', areas, 'Topic') + btns('gear', gears, 'Needs')
         + '<input class="ia-search" type="search" placeholder="Search ideas, e.g. magnet, spring, sound" aria-label="Search ideas">'
@@ -61,10 +63,7 @@ def ia_tabs():
     out = []
     for k, (label, fname) in enumerate(TABS):
         body = _ideas_html() if fname is None else _read(fname)
-        if fname == 'resources.html':
-            body = (body.replace('href="#" data-drive', f'href="{html.escape(DRIVE_FOLDER)}" target="_blank" rel="noopener" data-drive') if DRIVE_FOLDER
-                    else body.replace('<a class="ia-btn" href="#" data-drive>Open the IA documents folder ↗</a>',
-                                      '<span class="ia-btn" aria-disabled="true">Folder link coming soon</span>'))
+        body = body.replace('{P1_00}', P1_00)
         if k == 0:
             body = '<style>' + _read('ia.css') + '</style>' + body
         out.append(dict(label=label, html=body))
