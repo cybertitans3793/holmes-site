@@ -50,9 +50,9 @@ def _ideas_html():
     return ('<div class="card"><h3>Topic ideas</h3>'
         '<p>Each idea reads <b>what you change → what you measure</b>. They are starting points, not finished questions: pick one, then make it yours with a specific system, range and measuring method. '
         'Your topic doesn’t need to be original, but your data, analysis and writing must be your own.</p>'
-        '<ul><li><b>Lab basics</b>: rulers, stands, masses, stopwatches, thermometers, hot plates. <b>Phone</b>: a phone sensor app or slow-motion video. '
+        '<ul><li><b>Lab basics</b>: rulers, stands, masses, stopwatches, thermometers, hot plates. <b>Phone</b>: a phone sensor app or slow-motion video, so it has to be done at home (no phones in school). '
         '<b>Buy</b>: needs a cheap item or two; students often buy their own materials. <b>Ask first</b>: needs special equipment or has a safety issue, so check with Mr. Holmes.</li>'
-        '<li>Phone sensor apps (for example <i>phyphox</i>, free) can time, and measure acceleration, light, sound frequency and magnetic field. Slow-motion video works for fast motion.</li>'
+        '<li>At home, phone sensor apps (for example <i>phyphox</i>, free) can time, and measure acceleration, light, sound frequency and magnetic field. Slow-motion video works for fast motion.</li>'
         '<li>Something not listed? Run it through the Stage 1 feasibility check and bring it to Mr. Holmes.</li></ul></div>'
         + btns('area', areas, 'Topic') + btns('gear', gears, 'Needs')
         + '<input class="ia-search" type="search" placeholder="Search ideas, e.g. magnet, spring, sound" aria-label="Search ideas">'
