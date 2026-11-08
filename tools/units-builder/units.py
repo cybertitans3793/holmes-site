@@ -174,7 +174,7 @@ SIMS = {
 
 UNITS = {
 # ------------------------------------------------------------------ AP PHYSICS 1
-'P1-00': {'course': 'AP Physics 1 / IB', 'num': '00', 'title': 'Measurement (IB)', 'tabs': [
+'P1-00': {'course': 'AP Physics 1 / IB', 'num': '00', 'title': 'Measurement (IB)', 'guide': 'guides/P1-00.html', 'tabs': [
     {'code': '', 'name': 'Reading Instruments', 'sim': 'meas', 'tasks': [
         '<b>Ruler.</b> Measure the pencil. Write it as (value ± uncertainty) with its percentage uncertainty. Why is the uncertainty ±0.1 cm and not ±0.05 cm?',
         'Use the <b>Short pencil</b> preset. The uncertainty stays the same: what happens to the percentage uncertainty? What does that tell you about measuring small things?',

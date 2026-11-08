@@ -81,7 +81,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
     <div class="uid"><div class="big" aria-hidden="true">00</div><div><div class="mono">AP Physics 1 / IB · P1-00</div><h1>Measurement (IB)</h1></div></div>
   </header>
   <nav class="views" id="views" aria-label="Choose a view">
-    <div class="vbtns"><button type="button" class="vbtn" data-view="explore" aria-pressed="false">Explore</button><button type="button" class="vbtn" data-view="practice" aria-pressed="false">Practice</button></div>
+    <div class="vbtns"><button type="button" class="vbtn" data-view="explore" aria-pressed="false">Explore</button><button type="button" class="vbtn" data-view="study" aria-pressed="false">Study</button><button type="button" class="vbtn" data-view="practice" aria-pressed="false">Practice</button></div>
     <a class="simsback mono" id="simsback" href="https://sites.google.com/fcps.org/holmes/ap-physics-1-ib/p1-00" target="_blank" rel="noopener" hidden>Sims for this unit ↗</a>
   </nav>
   <div class="view" id="v-explore">
@@ -100,7 +100,281 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
   </div>
   <p class="credits">Reading Instruments, Precision &amp; Accuracy, Propagating Uncertainties, Graphs &amp; Error Bars, Linearizing Data and Graph Maker are original.</p>
   </div>
+  <div class="view" id="v-study" hidden>
+<section class="guide" id="guide" aria-label="Study guide">
+<style>
+.guide{margin-top:28px}
+.guide .gtip{margin:0 0 16px;font-size:19px;line-height:1.45;max-width:1000px}
+.guide .ggrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-bottom:22px}
+.guide .gcard{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcard h3,.guide .gcheck h3,.guide .gsteps h3{margin:0 0 10px;font-size:20px;letter-spacing:-.01em}
+.guide .gcard ul{margin:0;padding-left:20px}
+.guide .gcard li{margin:0 0 7px}
+.guide .ib{display:inline-block;font-family:var(--f-mono);font-size:11px;font-weight:700;border:2px solid var(--ink);padding:0 5px;margin-left:4px;vertical-align:1px;background:var(--soft)}
+.guide table{border-collapse:collapse;width:100%;font-size:15px}
+.guide td{border-top:2px solid var(--ink);padding:6px 4px;vertical-align:top}
+.guide td:first-child{font-family:var(--f-mono);font-weight:700;white-space:nowrap;padding-right:12px}
+.guide td[colspan]{white-space:normal}
+.guide .gsub{font-family:var(--f-display);font-weight:400}
+.guide .gsteps{background:var(--soft);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px;margin-bottom:22px}
+.guide .gsteps ol{margin:0;padding-left:24px;columns:2 360px;column-gap:28px}
+.guide .gsteps li{margin:0 0 8px;break-inside:avoid}
+.guide h3.ghead{font-size:22px;margin:0 0 12px}
+.guide .gex{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:18px;margin-bottom:22px}
+.guide .ex{min-width:0;background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .ex h4{margin:0 0 6px;font-size:18px}
+.guide .ex .kind{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--hot);text-transform:uppercase;letter-spacing:.04em}
+.guide .ex p{margin:0 0 8px}
+.guide .work{font-size:16px;line-height:1.45;border-left:4px solid var(--hot);background:#fff;padding:6px 14px;margin:8px 0;overflow-x:auto}
+.guide .work math.eq{display:block;text-align:left;margin:8px 0;font-size:1.15em}
+@media (max-width:520px){.guide .work math.eq{font-size:1em}}
+.guide .work math.ans{font-weight:700}
+.guide .work .wt{margin:6px 0 2px}
+.guide .ex .take{margin:8px 0 0;font-weight:500}
+.guide .ex svg{float:right;margin:0 0 6px 12px}
+.guide .gcheck{background:var(--card);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 18px}
+.guide .gcheck>p{margin:-4px 0 12px;color:var(--muted)}
+.guide ol.q{margin:0;padding-left:26px}
+.guide ol.q>li{margin:0 0 14px}
+.guide details{margin-top:6px}
+.guide summary{cursor:pointer;display:inline-block;font-weight:700;border:2px solid var(--ink);padding:2px 10px;background:#fff;list-style:none}
+.guide summary::-webkit-details-marker{display:none}
+.guide summary:hover{background:var(--soft)}
+.guide details[open] summary{background:var(--ink);color:#fff}
+.guide details>div{border-left:4px solid var(--hot);padding:8px 12px;margin-top:8px;background:#fff}
+.guide .gpanel>.ggrid,.guide .gpanel>.gsteps,.guide .gpanel>.gex{margin-bottom:0}
+.guide .gpanel>.gsteps+.ggrid{margin-top:22px}
+.guide .gtabs{margin-bottom:18px}
+.guide .gnext{margin:16px 0 0;font-weight:700}
+.guide .gnext a{color:var(--ink)}
+body.present .guide{display:none}
+@media (max-width:520px){.guide .gtip{font-size:17px}.guide td:first-child{white-space:normal}.guide .ggrid,.guide .gex{grid-template-columns:1fr}.guide .ex svg{float:none;display:block;margin:0 auto 8px}}
+</style>
+<div class="simbar"><h2>Study guide</h2><span class="mono">Unit 0 · Measurement and uncertainties (IB)</span></div>
+<p class="gtip"><b>How to use this:</b> read the key ideas, then cover each worked example and try it yourself before reading the solution. Do the self-check questions on paper <i>before</i> you open the answers, mark the ones you miss, and come back to them in a day or two without looking. Rereading won't do much; answering questions will.</p>
+<div class="tabs gtabs" role="tablist" aria-label="Study guide sections">
+  <button class="tab" role="tab" type="button" aria-selected="true" aria-controls="g-ideas" id="gt-ideas">Key ideas</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-solve" id="gt-solve" tabindex="-1">How to solve</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-examples" id="gt-examples" tabindex="-1">Worked examples</button>
+  <button class="tab" role="tab" type="button" aria-selected="false" aria-controls="g-check" id="gt-check" tabindex="-1">Self-check</button>
+</div>
+<div class="gpanel" role="tabpanel" id="g-ideas" aria-labelledby="gt-ideas">
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Key ideas</h3>
+    <ul>
+      <li><b>SI base units:</b> metre (m), kilogram (kg), second (s), ampere (A), kelvin (K), mole (mol). Every other unit is built from these: a newton is kg m s<sup>−2</sup>, a joule is kg m<sup>2</sup> s<sup>−2</sup>.</li>
+      <li><b>Prefixes:</b> n (10<sup>−9</sup>), µ (10<sup>−6</sup>), m (10<sup>−3</sup>), c (10<sup>−2</sup>), k (10<sup>3</sup>), M (10<sup>6</sup>), G (10<sup>9</sup>). Write large and small numbers in scientific notation, e.g. 3.0 × 10<sup>8</sup> m s<sup>−1</sup>.</li>
+      <li><b>Order of magnitude:</b> the power of ten closest to a value. An estimate only needs to be right to within a factor of about ten.</li>
+      <li><b>Every measurement has an uncertainty</b>, written (value ± uncertainty) unit, e.g. (2.34 ± 0.01) s.</li>
+      <li><b>Reading uncertainty (class rules):</b> analogue scale, ± half the smallest division. A length on a ruler, ± one division, because you read both ends. Digital display, ± 1 in the last decimal place.</li>
+      <li><b>Repeated readings:</b> report the mean ± half the range. If half the range is smaller than the reading uncertainty, use the reading uncertainty.</li>
+      <li><b>The value and its uncertainty end at the same decimal place.</b> (2.34 ± 0.01) s, not (2.34 ± 0.005) s or (2.3 ± 0.01) s.</li>
+      <li><b>Random error</b> scatters readings both ways; repeating and averaging reduces its effect. <b>Systematic error</b> shifts every reading the same way (a zero error, a miscalibrated scale); repeats don't fix it. On a graph a zero error shows up as an unexpected intercept.</li>
+      <li><b>Precise</b> means readings agree with each other (small spread). <b>Accurate</b> means close to the true value. A result can be precise but not accurate.</li>
+      <li><b>Vectors</b> (displacement, velocity, force) have direction; <b>scalars</b> (mass, time, energy) don't. Add vectors tip to tail, or by components.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Equations</h3>
+    <table>
+      <tr><td>y = a ± b</td><td>Δy = Δa + Δb (add absolute uncertainties)</td></tr>
+      <tr><td>y = ab or a/b</td><td>Δy/y = Δa/a + Δb/b (add fractional uncertainties)</td></tr>
+      <tr><td>y = a<sup>n</sup></td><td>Δy/y = |n| Δa/a</td></tr>
+      <tr><td>% uncertainty</td><td>(Δx/x) × 100%</td></tr>
+      <tr><td>gradient</td><td>± (steepest − shallowest)/2</td></tr>
+      <tr><td>F<sub>x</sub> = F cos θ</td><td>component along the axis θ is measured from</td></tr>
+      <tr><td>F<sub>y</sub> = F sin θ</td><td>the other component</td></tr>
+      <tr><td>R = √(R<sub>x</sub><sup>2</sup> + R<sub>y</sub><sup>2</sup>)</td><td>size of the resultant; tan θ = R<sub>y</sub>/R<sub>x</sub></td></tr>
+    </table>
+  </div>
+  <div class="gcard">
+    <h3>Common mistakes</h3>
+    <ul>
+      <li>Rounding the uncertainty to one significant figure and then cutting the value to match. In this class the value and uncertainty simply end at the same decimal place.</li>
+      <li>Using ± half a division for a ruler length. You read two ends, so it's ± one division.</li>
+      <li>Adding absolute uncertainties when you multiply or divide. For products and quotients, add the <i>percentage</i> uncertainties.</li>
+      <li>Forgetting to double the percentage uncertainty for a squared quantity (T<sup>2</sup>, r<sup>2</sup>, v<sup>2</sup>).</li>
+      <li>Thinking more repeats fix a systematic error. They only reduce random error.</li>
+      <li>Forcing a best-fit line through the origin when the data and error bars don't support it.</li>
+      <li>Adding vector magnitudes directly. 3 N east plus 4 N north is 5 N, not 7 N.</li>
+    </ul>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-solve" aria-labelledby="gt-solve" hidden>
+<div class="gsteps">
+  <h3>How to report a result with its uncertainty</h3>
+  <ol>
+    <li><b>Find each reading uncertainty</b> from the instrument: half a division (analogue), one division (ruler length), or the last digit (digital).</li>
+    <li><b>If you repeated a reading,</b> take the mean and half the range; use the reading uncertainty instead if it is bigger.</li>
+    <li><b>Timing n cycles?</b> Divide the time and its uncertainty by n.</li>
+    <li><b>Work out the result</b> with the equation, keeping extra digits.</li>
+    <li><b>Propagate:</b> add absolute uncertainties for + and −; add percentage uncertainties for × and ÷; multiply by the power for a power.</li>
+    <li><b>Turn the percentage back into an absolute uncertainty,</b> then round so the value and the uncertainty end at the same decimal place. Add the unit.</li>
+  </ol>
+</div>
+<div class="ggrid">
+  <div class="gcard">
+    <h3>Graphs and gradients</h3>
+    <ul>
+      <li>Plot whatever makes the relationship a straight line (for a pendulum, T<sup>2</sup> against L).</li>
+      <li>Draw error bars, then the best-fit line, then the steepest and shallowest lines that still pass through every error bar.</li>
+      <li>Gradient uncertainty = (steepest − shallowest)/2. The same works for the intercept.</li>
+      <li>An intercept where the physics says there should be none points to a systematic error.</li>
+    </ul>
+  </div>
+  <div class="gcard">
+    <h3>Resolving vectors</h3>
+    <ul>
+      <li>Draw the vector and the angle. The side next to the angle uses cos; the side opposite uses sin.</li>
+      <li>Add all the x-components, then all the y-components.</li>
+      <li>Rebuild the resultant with Pythagoras, and find its direction with tan θ = R<sub>y</sub>/R<sub>x</sub>.</li>
+    </ul>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-examples" aria-labelledby="gt-examples" hidden>
+<div class="gex">
+  <div class="ex">
+    <div class="kind">Repeated readings</div>
+    <h4>Timing a pendulum</h4>
+    <p>A student times 10 swings of a pendulum three times: 15.6 s, 15.9 s and 15.7 s. Find the period with its uncertainty.</p>
+    <div class="work">
+      <p class="wt">Mean of the three timings for 10 swings:</p>
+      <math class="eq" display="block"><mrow><mover><mrow><mi>t</mi></mrow><mo stretchy="true">&#x000AF;</mo></mover><mo>&#x0003D;</mo><mfrac><mrow><mn>15.6</mn><mo>&#x0002B;</mo><mn>15.9</mn><mo>&#x0002B;</mo><mn>15.7</mn></mrow><mrow><mn>3</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>15.73</mn><mspace width="0.167em" /><mtext>s</mtext></mrow></math>
+      <p class="wt">Half the range (bigger than the ±0.1 s reading uncertainty):</p>
+      <math class="eq" display="block"><mrow><mi>&#x00394;</mi><mi>t</mi><mo>&#x0003D;</mo><mfrac><mrow><mn>15.9</mn><mo>&#x02212;</mo><mn>15.6</mn></mrow><mrow><mn>2</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0.15</mn><mspace width="0.167em" /><mtext>s</mtext></mrow></math>
+      <math class="eq ans" display="block"><mrow><msub><mi>t</mi><mrow><mn>10</mn></mrow></msub><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>15.7</mn><mspace width="0.167em" /><mi>&#x000B1;</mi><mspace width="0.167em" /><mn>0.2</mn><mo stretchy="false">&#x00029;</mo><mspace width="0.167em" /><mtext>s</mtext></mrow></math>
+      <p class="wt">Divide the time and its uncertainty by 10:</p>
+      <math class="eq ans" display="block"><mrow><mi>T</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1.57</mn><mspace width="0.167em" /><mi>&#x000B1;</mi><mspace width="0.167em" /><mn>0.02</mn><mo stretchy="false">&#x00029;</mo><mspace width="0.167em" /><mtext>s</mtext></mrow></math>
+    </div>
+    <p class="take">Half the range (0.15 s) is bigger than the stopwatch's ±0.1 s, so it sets the uncertainty. Timing 10 swings makes the uncertainty in one period 10 times smaller.</p>
+  </div>
 
+  <div class="ex">
+    <div class="kind">Sums and products</div>
+    <h4>A sheet of paper</h4>
+    <p>A sheet is measured with a ruler marked in millimetres: length (29.7 ± 0.1) cm and width (21.0 ± 0.1) cm. Find the perimeter and the area with their uncertainties.</p>
+    <div class="work">
+      <p class="wt">Perimeter: a sum, so add absolute uncertainties:</p>
+      <math class="eq" display="block"><mrow><mi>P</mi><mo>&#x0003D;</mo><mn>2</mn><mo stretchy="false">&#x00028;</mo><mn>29.7</mn><mo>&#x0002B;</mo><mn>21.0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>101.4</mn><mspace width="0.167em" /><mtext>cm</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><mi>&#x00394;</mi><mi>P</mi><mo>&#x0003D;</mo><mn>2</mn><mo stretchy="false">&#x00028;</mo><mn>0.1</mn><mo>&#x0002B;</mo><mn>0.1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0.4</mn><mspace width="0.167em" /><mtext>cm</mtext></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>P</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>101.4</mn><mspace width="0.167em" /><mi>&#x000B1;</mi><mspace width="0.167em" /><mn>0.4</mn><mo stretchy="false">&#x00029;</mo><mspace width="0.167em" /><mtext>cm</mtext></mrow></math>
+      <p class="wt">Area: a product, so add percentage uncertainties:</p>
+      <math class="eq" display="block"><mrow><mi>A</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>29.7</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>21.0</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>623.7</mn><mspace width="0.167em" /><msup><mtext>cm</mtext><mn>2</mn></msup></mrow></math>
+      <math class="eq" display="block"><mrow><mfrac><mrow><mi>&#x00394;</mi><mi>A</mi></mrow><mrow><mi>A</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>0.1</mn></mrow><mrow><mn>29.7</mn></mrow></mfrac><mo>&#x0002B;</mo><mfrac><mrow><mn>0.1</mn></mrow><mrow><mn>21.0</mn></mrow></mfrac></mrow></math>
+      <math class="eq" display="block"><mrow><mfrac><mrow><mi>&#x00394;</mi><mi>A</mi></mrow><mrow><mi>A</mi></mrow></mfrac><mo>&#x0003D;</mo><mn>0.34</mn><mi>&#x00025;</mi><mo>&#x0002B;</mo><mn>0.48</mn><mi>&#x00025;</mi><mo>&#x0003D;</mo><mn>0.81</mn><mi>&#x00025;</mi></mrow></math>
+      <math class="eq" display="block"><mrow><mi>&#x00394;</mi><mi>A</mi><mo>&#x0003D;</mo><mn>0.0081</mn><mo>&#x000D7;</mo><mn>623.7</mn><mo>&#x0003D;</mo><mn>5</mn><mspace width="0.167em" /><msup><mtext>cm</mtext><mn>2</mn></msup></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>A</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>624</mn><mspace width="0.167em" /><mi>&#x000B1;</mi><mspace width="0.167em" /><mn>5</mn><mo stretchy="false">&#x00029;</mo><mspace width="0.167em" /><msup><mtext>cm</mtext><mn>2</mn></msup></mrow></math>
+    </div>
+    <p class="take">For a sum, absolute uncertainties add. For a product, percentage uncertainties add. Both ruler readings are ± one division because each length needs two readings.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Powers</div>
+    <h4>g from a pendulum</h4>
+    <p>A pendulum has length L = (0.800 ± 0.001) m and period T = (1.79 ± 0.02) s. Find g = 4π<sup>2</sup>L/T<sup>2</sup> with its uncertainty.</p>
+    <div class="work">
+      <math class="eq" display="block"><mrow><mi>g</mi><mo>&#x0003D;</mo><mfrac><mrow><mn>4</mn><msup><mi>&#x003C0;</mi><mn>2</mn></msup><mi>L</mi></mrow><mrow><msup><mi>T</mi><mn>2</mn></msup></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>4</mn><msup><mi>&#x003C0;</mi><mn>2</mn></msup><mo stretchy="false">&#x00028;</mo><mn>0.800</mn><mo stretchy="false">&#x00029;</mo></mrow><mrow><mo stretchy="false">&#x00028;</mo><mn>1.79</mn><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup></mrow></mfrac><mo>&#x0003D;</mo><mn>9.86</mn><mspace width="0.167em" /><msup><mtext>m&#x000A0;s</mtext><mrow><mo>&#x02212;</mo><mn>2</mn></mrow></msup></mrow></math>
+      <p class="wt">Percentage uncertainties (T is squared, so its share doubles):</p>
+      <math class="eq" display="block"><mrow><mfrac><mrow><mi>&#x00394;</mi><mi>L</mi></mrow><mrow><mi>L</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>0.001</mn></mrow><mrow><mn>0.800</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0.13</mn><mi>&#x00025;</mi></mrow></math>
+      <math class="eq" display="block"><mrow><mfrac><mrow><mi>&#x00394;</mi><mi>T</mi></mrow><mrow><mi>T</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>0.02</mn></mrow><mrow><mn>1.79</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>1.12</mn><mi>&#x00025;</mi></mrow></math>
+      <math class="eq" display="block"><mrow><mfrac><mrow><mi>&#x00394;</mi><mi>g</mi></mrow><mrow><mi>g</mi></mrow></mfrac><mo>&#x0003D;</mo><mn>0.13</mn><mi>&#x00025;</mi><mo>&#x0002B;</mo><mn>2</mn><mo stretchy="false">&#x00028;</mo><mn>1.12</mn><mi>&#x00025;</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>2.4</mn><mi>&#x00025;</mi></mrow></math>
+      <math class="eq" display="block"><mrow><mi>&#x00394;</mi><mi>g</mi><mo>&#x0003D;</mo><mn>0.024</mn><mo>&#x000D7;</mo><mn>9.86</mn><mo>&#x0003D;</mo><mn>0.2</mn><mspace width="0.167em" /><msup><mtext>m&#x000A0;s</mtext><mrow><mo>&#x02212;</mo><mn>2</mn></mrow></msup></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>g</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>9.9</mn><mspace width="0.167em" /><mi>&#x000B1;</mi><mspace width="0.167em" /><mn>0.2</mn><mo stretchy="false">&#x00029;</mo><mspace width="0.167em" /><msup><mtext>m&#x000A0;s</mtext><mrow><mo>&#x02212;</mo><mn>2</mn></mrow></msup></mrow></math>
+    </div>
+    <p class="take">T is squared, so its 1.1% counts twice. The period is by far the biggest source of uncertainty, so that's the measurement to improve (time more swings).</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Gradient uncertainty</div>
+    <svg width="220" height="140" viewBox="0 0 220 140" aria-label="Five data points with error bars, a best-fit line, and steepest and shallowest lines through the error bars">
+      <line x1="34" y1="112" x2="206" y2="112" stroke="#111" stroke-width="2"/><line x1="34" y1="112" x2="34" y2="8" stroke="#111" stroke-width="2"/>
+      <line x1="65.3" y1="100.3" x2="65.3" y2="88.1" stroke="#111" stroke-width="1.5"/><line x1="62.3" y1="100.3" x2="68.3" y2="100.3" stroke="#111" stroke-width="1.5"/><line x1="62.3" y1="88.1" x2="68.3" y2="88.1" stroke="#111" stroke-width="1.5"/><circle cx="65.3" cy="94.2" r="2.5" fill="#111"/>
+      <line x1="96.5" y1="83.3" x2="96.5" y2="71.1" stroke="#111" stroke-width="1.5"/><line x1="93.5" y1="83.3" x2="99.5" y2="83.3" stroke="#111" stroke-width="1.5"/><line x1="93.5" y1="71.1" x2="99.5" y2="71.1" stroke="#111" stroke-width="1.5"/><circle cx="96.5" cy="77.2" r="2.5" fill="#111"/>
+      <line x1="127.8" y1="65.0" x2="127.8" y2="52.9" stroke="#111" stroke-width="1.5"/><line x1="124.8" y1="65.0" x2="130.8" y2="65.0" stroke="#111" stroke-width="1.5"/><line x1="124.8" y1="52.9" x2="130.8" y2="52.9" stroke="#111" stroke-width="1.5"/><circle cx="127.8" cy="59.0" r="2.5" fill="#111"/>
+      <line x1="159.1" y1="49.0" x2="159.1" y2="36.8" stroke="#111" stroke-width="1.5"/><line x1="156.1" y1="49.0" x2="162.1" y2="49.0" stroke="#111" stroke-width="1.5"/><line x1="156.1" y1="36.8" x2="162.1" y2="36.8" stroke="#111" stroke-width="1.5"/><circle cx="159.1" cy="42.9" r="2.5" fill="#111"/>
+      <line x1="190.4" y1="31.1" x2="190.4" y2="19.0" stroke="#111" stroke-width="1.5"/><line x1="187.4" y1="31.1" x2="193.4" y2="31.1" stroke="#111" stroke-width="1.5"/><line x1="187.4" y1="19.0" x2="193.4" y2="19.0" stroke="#111" stroke-width="1.5"/><circle cx="190.4" cy="25.0" r="2.5" fill="#111"/>
+      <line x1="49.6" y1="103.3" x2="202.9" y2="18.1" stroke="#ff6a2b" stroke-width="2"/>
+      <line x1="57.5" y1="105.3" x2="195.1" y2="15.9" stroke="#555" stroke-width="2" stroke-dasharray="4 3"/>
+      <line x1="49.6" y1="95.2" x2="202.9" y2="25.4" stroke="#555" stroke-width="2" stroke-dasharray="4 3"/>
+      <text x="172" y="128" font-size="10" font-family="IBM Plex Mono,monospace">x / cm</text><text x="38" y="14" font-size="10" font-family="IBM Plex Mono,monospace">F / N</text>
+      </svg>
+    <h4>A spring constant from a graph</h4>
+    <p>A student plots force F against extension x for a spring, with error bars. The best-fit line has gradient 4.0 N cm<sup>−1</sup>. The steepest and shallowest lines through all the error bars have gradients 4.4 and 3.6 N cm<sup>−1</sup>. Find k with its uncertainty, and its percentage uncertainty.</p>
+    <div class="work">
+      <p class="wt">The gradient of F against x is k:</p>
+      <math class="eq" display="block"><mrow><mi>&#x00394;</mi><mi>k</mi><mo>&#x0003D;</mo><mfrac><mrow><msub><mi>k</mi><mrow><mtext>steep</mtext></mrow></msub><mo>&#x02212;</mo><msub><mi>k</mi><mrow><mtext>shallow</mtext></mrow></msub></mrow><mrow><mn>2</mn></mrow></mfrac></mrow></math>
+      <math class="eq" display="block"><mrow><mi>&#x00394;</mi><mi>k</mi><mo>&#x0003D;</mo><mfrac><mrow><mn>4.4</mn><mo>&#x02212;</mo><mn>3.6</mn></mrow><mrow><mn>2</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>0.4</mn><mspace width="0.167em" /><msup><mtext>N&#x000A0;cm</mtext><mrow><mo>&#x02212;</mo><mn>1</mn></mrow></msup></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>k</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>4.0</mn><mspace width="0.167em" /><mi>&#x000B1;</mi><mspace width="0.167em" /><mn>0.4</mn><mo stretchy="false">&#x00029;</mo><mspace width="0.167em" /><msup><mtext>N&#x000A0;cm</mtext><mrow><mo>&#x02212;</mo><mn>1</mn></mrow></msup></mrow></math>
+      <math class="eq" display="block"><mrow><mfrac><mrow><mi>&#x00394;</mi><mi>k</mi></mrow><mrow><mi>k</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>0.4</mn></mrow><mrow><mn>4.0</mn></mrow></mfrac><mo>&#x0003D;</mo><mn>10</mn><mi>&#x00025;</mi></mrow></math>
+    </div>
+    <p class="take">F = kx, so the gradient is k. If the best-fit line had missed the origin, that would suggest a zero error in the extension readings, which a straight-line graph lets you spot.</p>
+  </div>
+
+  <div class="ex">
+    <div class="kind">Vectors</div>
+    <h4>Two forces on a crate</h4>
+    <p>Two ropes pull a crate along the floor: 20 N at 30° above the horizontal, and 10 N horizontally in the same direction. Find the size and direction of the resultant.</p>
+    <div class="work">
+      <p class="wt">Components of the 20 N force:</p>
+      <math class="eq" display="block"><mrow><msub><mi>F</mi><mi>x</mi></msub><mo>&#x0003D;</mo><mn>20</mn><mi>cos</mi><mspace width="0.167em" /><msup><mn>30</mn><mo>&#x02218;</mo></msup><mo>&#x0003D;</mo><mn>17.3</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>F</mi><mi>y</mi></msub><mo>&#x0003D;</mo><mn>20</mn><mi>sin</mi><mspace width="0.167em" /><msup><mn>30</mn><mo>&#x02218;</mo></msup><mo>&#x0003D;</mo><mn>10.0</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+      <p class="wt">Add the components:</p>
+      <math class="eq" display="block"><mrow><msub><mi>R</mi><mi>x</mi></msub><mo>&#x0003D;</mo><mn>17.3</mn><mo>&#x0002B;</mo><mn>10</mn><mo>&#x0003D;</mo><mn>27.3</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><msub><mi>R</mi><mi>y</mi></msub><mo>&#x0003D;</mo><mn>10.0</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><mi>R</mi><mo>&#x0003D;</mo><msqrt><mrow><msup><mn>27.3</mn><mn>2</mn></msup><mo>&#x0002B;</mo><msup><mn>10.0</mn><mn>2</mn></msup></mrow></msqrt></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>R</mi><mo>&#x0003D;</mo><mn>29</mn><mspace width="0.167em" /><mtext>N</mtext></mrow></math>
+      <math class="eq" display="block"><mrow><mi>&#x003B8;</mi><mo>&#x0003D;</mo><msup><mi>tan</mi><mspace width="0.167em" /><mrow><mo>&#x02212;</mo><mn>1</mn></mrow></msup><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mfrac><mrow><mn>10.0</mn></mrow><mrow><mn>27.3</mn></mrow></mfrac><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow></mrow></math>
+      <math class="eq ans" display="block"><mrow><mi>&#x003B8;</mi><mo>&#x0003D;</mo><msup><mn>20</mn><mo>&#x02218;</mo></msup><mtext>&#x000A0;above&#x000A0;the&#x000A0;horizontal</mtext></mrow></math>
+    </div>
+    <p class="take">Split each force into components, add the components, then rebuild the resultant. Adding the magnitudes (30 N) would be wrong because the forces point in different directions.</p>
+  </div>
+</div>
+</div>
+<div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
+<div class="gcheck">
+  <h3>Self-check</h3>
+  <p>Answer first, then open.</p>
+  <ol class="q">
+<li>A thermometer is marked every 1 °C. A reading is about 21.5 °C. How should you write it?
+      <details><summary>Answer</summary><div>(21.5 ± 0.5) °C. Analogue scale: ± half the smallest division, and the value ends at the same decimal place as the uncertainty.</div></details></li>
+    <li>A ruler marked in millimetres measures a pencil as 14.3 cm. What is the uncertainty, and why?
+      <details><summary>Answer</summary><div>± 0.1 cm (one division). You read both ends of the pencil, each ± half a division, so the length is ± one division: (14.3 ± 0.1) cm.</div></details></li>
+    <li>A digital balance reads 52.36 g. Write the reading with its uncertainty.
+      <details><summary>Answer</summary><div>(52.36 ± 0.01) g. A digital reading is ± 1 in the last decimal place.</div></details></li>
+    <li>Three timings are 2.31 s, 2.40 s and 2.35 s, on a stopwatch reading to 0.01 s. What do you report?
+      <details><summary>Answer</summary><div>Mean 2.353 s, half the range (2.40 − 2.31)/2 ≈ 0.05 s, which is bigger than ±0.01 s. Report (2.35 ± 0.05) s.</div></details></li>
+    <li>A = (4.0 ± 0.2) m and B = (2.0 ± 0.1) m. Find the uncertainty in A − B and in A × B.
+      <details><summary>Answer</summary><div>A − B = (2.0 ± 0.3) m: absolute uncertainties add, even when you subtract. A × B: 5% + 5% = 10%, so (8.0 ± 0.8) m<sup>2</sup>.</div></details></li>
+    <li>A radius has a 2% uncertainty. What is the percentage uncertainty in the area of the circle, πr<sup>2</sup>? In the volume of the sphere, (4/3)πr<sup>3</sup>?
+      <details><summary>Answer</summary><div>Area: 2 × 2% = 4%. Volume: 3 × 2% = 6%. Constants like π and 4/3 have no uncertainty.</div></details></li>
+    <li>An ammeter reads 0.02 A when no current flows, and every reading in the experiment includes this. What kind of error is it, and does repeating help?
+      <details><summary>Answer</summary><div>A systematic (zero) error. Repeating doesn't help, because every reading is shifted the same way. Subtract 0.02 A from each reading. On a graph it shows up as an unexpected intercept.</div></details></li>
+    <li>Results of g: 9.62, 9.63, 9.61 m s<sup>−2</sup>. Are they precise? Accurate?
+      <details><summary>Answer</summary><div>Precise: they agree closely with each other. Not accurate: they're all about 0.2 m s<sup>−2</sup> under 9.81, which suggests a systematic error.</div></details></li>
+    <li>Estimate the order of magnitude of the number of heartbeats in a human lifetime.
+      <details><summary>Answer</summary><div>About 70 beats per minute × 60 × 24 × 365 × 80 years ≈ 3 × 10<sup>9</sup>, so the order of magnitude is 10<sup>9</sup>.</div></details></li>
+    <li>A walker goes 3.0 km east and then 4.0 km north. What is the displacement?
+      <details><summary>Answer</summary><div>5.0 km at 53° north of east. √(3.0<sup>2</sup> + 4.0<sup>2</sup>) = 5.0 km, and tan θ = 4.0/3.0 gives θ = 53°. The distance walked is 7.0 km.</div></details></li>
+  </ol>
+</div>
+</div>
+<p class="gnext"><a href="#practice" data-view="practice">Practice questions for this unit →</a></p>
+<script>
+(function(){
+  var root=document.currentScript?document.currentScript.parentNode:document;
+  var tabs=[].slice.call(root.querySelectorAll('.gtabs .tab'));
+  function show(t){tabs.forEach(function(b){var on=b===t;b.setAttribute('aria-selected',on?'true':'false');b.tabIndex=on?0:-1;document.getElementById(b.getAttribute('aria-controls')).hidden=!on;});}
+  tabs.forEach(function(b,i){
+    b.addEventListener('click',function(){show(b);});
+    b.addEventListener('keydown',function(e){var k=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(k){var n=tabs[(i+k+tabs.length)%tabs.length];show(n);n.focus();e.preventDefault();}});
+  });
+})();
+</script>
+</section>
+  </div>
   <div class="view" id="v-practice" hidden>
   <section class="review" id="review">
     <div class="simbar"><h2>Practice questions</h2><a id="ropen" class="mono" href="https://script.google.com/a/macros/fcps.org/s/AKfycbzW6NpFGf5yjZ843WN0pDy-mzI0r1iCcBIuoJpMCEJeWwbUARiSnAC_lf2bWQeHWoGjHA/exec?unit=P1-00" target="_blank" rel="noopener">Open in a new tab ↗</a></div>
