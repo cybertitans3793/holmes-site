@@ -1,0 +1,544 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Internal Assessment</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&family=IBM+Plex+Sans:wght@400;600;700&display=swap">
+<style>
+:root{--paper:#f7f6f3;--ink:#111;--white:#fff;--orange:#ff6a2b;--peach:#fde1d6;--muted:#5e5a55;--line:#d9d5ce;--ok:#1f7a3d;--okbg:#dff2e4;--bad:#b3261e;--badbg:#fbe3e1;
+--display:"Space Grotesk","Helvetica Neue",Arial,sans-serif;--mono:"Space Mono",ui-monospace,Menlo,monospace;--body:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;display:flex;flex-direction:column}
+header{padding:18px 28px 0;background:var(--paper)}
+.kick{font-family:var(--mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--display);font-size:clamp(2rem,5vw,3.2rem);line-height:1;letter-spacing:-.03em;margin:.15em 0 .3em}
+nav{display:flex;flex-wrap:wrap;gap:8px;padding:6px 0 14px;border-bottom:2px solid var(--ink)}
+nav button{font-family:var(--display);font-weight:500;font-size:.98rem;border:2px solid var(--ink);background:var(--white);color:var(--ink);padding:7px 14px;cursor:pointer;box-shadow:3px 3px 0 var(--ink)}
+nav button small{font-family:var(--mono);font-size:.7rem;color:var(--muted);margin-left:6px}
+nav button[aria-selected=true]{background:var(--ink);color:var(--white);box-shadow:3px 3px 0 var(--orange)}
+nav button[aria-selected=true] small{color:#cfcac2}
+nav button:focus-visible,nav a:focus-visible,a.tile:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+nav a.navlink{font-family:var(--display);font-weight:500;font-size:.98rem;border:2px dashed var(--ink);background:var(--paper);color:var(--ink);padding:7px 14px;text-decoration:none}
+nav a.navlink:hover{background:var(--white);border-style:solid}
+a.tile{text-decoration:none}
+button.tile{display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start}
+main{flex:1;min-height:0;position:relative}
+.panel{position:absolute;inset:0;overflow:auto;padding:22px 28px 60px;display:none}
+.panel.on{display:block}
+.panel.frame{padding:0;overflow:hidden}
+.panel.frame iframe{border:0;width:100%;height:100%;display:block;background:var(--paper)}
+.wrap{max-width:860px}
+h2{font-family:var(--display);font-size:1.6rem;letter-spacing:-.02em;margin:0 0 .4em}
+h3{font-family:var(--display);font-size:1.2rem;margin:1.4em 0 .4em}
+.wrap>h3:first-child,.card>h3:first-child{margin-top:0}
+.tbl{overflow-x:auto}
+.card{background:var(--white);border:2px solid var(--ink);box-shadow:5px 5px 0 var(--ink);padding:20px 22px;margin:0 0 22px}
+table{border-collapse:collapse;width:100%;margin:8px 0;background:var(--white)}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{font-family:var(--mono);font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;background:#efede8}
+td:first-child b{font-family:var(--display)}
+ul{padding-left:22px}li{margin:6px 0}
+.muted{color:var(--muted);font-size:.9rem}
+.note{border-left:4px solid var(--orange);background:var(--peach);padding:10px 14px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:10px}
+.tile{display:block;text-align:left;font:inherit;background:var(--white);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:14px 16px;cursor:pointer;color:inherit}
+.tile .k{font-family:var(--mono);font-size:.72rem;color:var(--muted);letter-spacing:.06em}
+.tile b{display:block;font-family:var(--display);font-size:1.1rem;margin:4px 0}
+.tile:hover{box-shadow:4px 4px 0 var(--orange)}
+.ck{list-style:none;padding:0}.ck li{margin:8px 0}.ck input{margin-right:8px;transform:scale(1.15)}
+.bad,.good{border:2px solid;padding:12px 14px;margin:10px 0}.bad{border-color:var(--bad);background:var(--badbg)}.good{border-color:var(--ok);background:var(--okbg)}
+.bad h4,.good h4{margin:0 0 4px;font-family:var(--display)}
+.rq{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:10px}
+.rq label{display:grid;gap:4px;font-size:.92rem;color:var(--muted)}
+.rq input,textarea{font:inherit;color:var(--ink);padding:8px 10px;border:2px solid var(--ink);background:var(--white);width:100%}
+textarea{font-family:var(--mono);font-size:.9rem;min-height:9em}
+.out{margin-top:12px;font-size:1.05rem}
+canvas{width:100%;max-width:680px;height:auto;margin-top:12px;background:#fff;border:2px solid var(--ink)}
+@media (max-width:600px){header{padding:14px 16px 0}.panel{padding:16px 16px 50px}}
+</style></head><body>
+<header><div class="kick">Exam skills · IB Physics SL</div><h1>Internal Assessment</h1><nav role="tablist"><button role="tab" data-t="0" aria-selected="true">Start here</button><button role="tab" data-t="1" aria-selected="false">How it’s graded</button><button role="tab" data-t="2" aria-selected="false">Stages</button><button role="tab" data-t="3" aria-selected="false">Report template</button><button role="tab" data-t="4" aria-selected="false">Uncertainties & graphs</button><button role="tab" data-t="5" aria-selected="false">Topic ideas</button><button role="tab" data-t="6" aria-selected="false">Checklist</button><button role="tab" data-t="7" aria-selected="false">Examples</button></nav></header>
+<main><section class="panel on" data-p="0"><div class="wrap"><style>/* Extra styles for the IA page. Uses the Exam Skills page variables (exam.py CSS). */
+.ia-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:12px 0}
+.ia-facts div{border:2px solid var(--ink);background:var(--paper);padding:10px 12px}
+.ia-facts b{display:block;font-family:var(--display);font-size:1.6rem;line-height:1.1}
+.ia-facts span{font-size:.9rem;color:var(--muted)}
+.ia-gate{display:inline-block;font-family:var(--mono);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;background:var(--orange);color:var(--white);padding:2px 6px;margin-left:6px;vertical-align:middle}
+.ia-due{font-family:var(--mono);color:var(--muted)}
+.ia-btn{display:inline-block;font-family:var(--display);font-weight:500;font-size:.98rem;border:2px solid var(--ink);background:var(--ink);color:var(--white);padding:8px 14px;cursor:pointer;box-shadow:3px 3px 0 var(--orange);text-decoration:none}
+.ia-btn.ghost{background:var(--white);color:var(--ink);box-shadow:3px 3px 0 var(--ink)}
+.ia-btn[aria-disabled=true]{opacity:.55;cursor:default}
+.ia-btn:focus-visible,.ia-stagebar button:focus-visible,.ia-filters button:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+.card h3 small,.card h3 + small{font-family:var(--mono);font-size:.72rem;font-weight:400;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-left:8px}
+.card h4{font-family:var(--display);font-size:1.02rem;margin:1.1em 0 .3em}
+.ia-steps{padding-left:24px}.ia-steps li{margin:8px 0}.ia-steps ul{margin:4px 0}
+.ia-stagebar{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
+.ia-stagebar button{font-family:var(--display);font-weight:500;font-size:.95rem;border:2px solid var(--ink);background:var(--white);color:var(--ink);padding:6px 12px;cursor:pointer;box-shadow:3px 3px 0 var(--ink)}
+.ia-stagebar button[aria-selected=true]{background:var(--orange);color:var(--white);border-color:var(--ink)}
+.ia-stage{display:none}.ia-stage.on{display:block}
+.ia-tag{display:inline-block;font-family:var(--mono);font-size:.66rem;letter-spacing:.05em;text-transform:uppercase;padding:1px 5px;margin-left:4px;border:1.5px solid;vertical-align:middle}
+.ia-tag.ib{border-color:var(--ink);color:var(--ink)}
+.ia-tag.cl{border-color:var(--orange);color:#b54314}
+.ia-progress{font-family:var(--mono);font-size:.95rem}
+.ia-filters{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0 10px}
+.ia-filters .lab{font-family:var(--mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-right:4px;min-width:64px}
+.ia-filters button{font:inherit;font-size:.88rem;border:1.5px solid var(--ink);background:var(--white);color:var(--ink);padding:3px 10px;cursor:pointer}
+.ia-filters button[aria-pressed=true]{background:var(--ink);color:var(--white)}
+.ia-search{font:inherit;padding:7px 10px;border:2px solid var(--ink);background:var(--white);width:100%;max-width:420px;margin:4px 0 10px}
+.ia-ideas{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.ia-idea{background:var(--white);border:2px solid var(--ink);padding:12px 14px}
+.ia-idea .a{font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.ia-idea .q{font-family:var(--display);font-size:1.02rem;margin:4px 0 6px;line-height:1.3}
+.ia-idea .q i{font-style:normal;color:var(--orange)}
+.ia-idea p{margin:6px 0;font-size:.92rem}
+.ia-idea .n{color:var(--muted)}
+.ia-idea .g{margin-top:6px}
+.ia-idea .g span{display:inline-block;font-family:var(--mono);font-size:.66rem;text-transform:uppercase;letter-spacing:.04em;border:1px solid var(--line);background:var(--paper);padding:1px 5px;margin:2px 3px 0 0}
+.ia-count{font-family:var(--mono);font-size:.85rem;color:var(--muted)}
+.panel .wrap a:not(.tile):not(.ia-btn){color:var(--ink);text-decoration-color:var(--orange);text-decoration-thickness:2px;text-underline-offset:2px}
+</style><div class="card"><h3>What the IA is</h3>
+<p>The internal assessment (IA) is <b>one experiment you design, run and write up yourself</b>. You choose a question, collect your own data, analyse it and write a report of <b>at most 3,000 words</b>.</p>
+<div class="ia-facts">
+<div><b>20 %</b><span>of your IB Physics grade</span></div>
+<div><b>24 marks</b><span>4 criteria × 6 marks</span></div>
+<div><b>3,000</b><span>word limit</span></div>
+<div><b>~10 h</b><span>of class time in all</span></div></div>
+<ul>
+<li>Your data must be <b>numbers</b> (quantitative). Add written observations where they help.</li>
+<li>Most IAs in this class are hands-on experiments. A simulation or database is allowed, but it needs deeper analysis (for example, getting a physical constant from it), not just a graph of numbers.</li>
+<li>Your topic <b>does not have to be original</b>. Ideas from books, websites or the <a href="#" data-go="5">topic list</a> are fine. The data, analysis and writing must be yours.</li>
+<li>SL and HL use the same task and the same criteria.</li></ul></div>
+
+<div class="card"><h3>The six stages</h3>
+<p>You turn in each stage on Schoology. <b>Stages 1 and 2 need Mr. Holmes’s approval</b> before you move on: don’t collect data until your procedure is approved.</p>
+<div class="tbl"><table class="ia-tl">
+<tr><th>Stage</th><th>What you do</th><th>Where</th><th>Turn in</th><th>Due</th></tr>
+<tr><td><b>1 · Topic</b></td><td>Choose your question: independent variable (IV), dependent variable (DV), the system, and your objective</td><td>Homework</td><td>Topic form <span class="ia-gate">Approval</span></td><td class="ia-due">Nov 20</td></tr>
+<tr><td><b>2 · Procedure</b></td><td>Plan the variables, equipment, diagram, method and safety</td><td>Homework</td><td>Procedure <span class="ia-gate">Approval</span></td><td class="ia-due">TBA</td></tr>
+<tr><td><b>3 · Collect</b></td><td>Run the experiment and record raw data</td><td>Class</td><td>Raw data table</td><td class="ia-due">TBA</td></tr>
+<tr><td><b>4 · Analyse</b></td><td>Process data, uncertainties, graph, gradient</td><td>Class</td><td>Processed data and graph</td><td class="ia-due">TBA</td></tr>
+<tr><td><b>5 · Rough draft</b></td><td>Write the full report</td><td>Homework</td><td>Full draft + your checklist</td><td class="ia-due">TBA</td></tr>
+<tr><td><b>6 · Final draft</b></td><td>Act on feedback and submit</td><td>Homework</td><td>Final report</td><td class="ia-due">TBA</td></tr></table></div>
+<p class="note">Mr. Holmes reads and comments on <b>one</b> draft: your rough draft. The IB doesn’t allow teachers to edit your work, and the next version you hand in is your final. Use the feedback well.</p>
+<p><button class="ia-btn" data-go="2">Open the stage-by-stage guide →</button></p></div>
+
+<div class="card"><h3>Working in a group</h3>
+<p>You may work in a group of <b>up to three</b>. You can share the setup and help each other collect data, but:</p>
+<ul><li>Each person needs their <b>own research question</b>, with a different IV, or the same IV and a different DV.</li>
+<li>No two people may hand in the same raw data.</li>
+<li>Each person writes their <b>own report</b>: their own analysis, conclusion and evaluation. Group reports are not allowed.</li>
+<li>Tell Mr. Holmes who is in your group when you turn in Stage 1.</li></ul></div>
+
+<div class="card"><h3>Academic honesty</h3>
+<ul><li>Cite every source you use: websites, textbooks, class notes, and any tool that helped you, including AI tools.</li>
+<li>Your report is checked against your earlier stages and with plagiarism software.</li>
+<li>Asking for help is expected and is never penalised. Ask early.</li></ul></div>
+
+<h3>Go to</h3>
+<div class="tiles">
+<button class="tile" data-go="1"><span class="k">GRADING</span><b>How it’s marked</b>The four criteria in plain words, with tips and common mistakes.</button>
+<button class="tile" data-go="3"><span class="k">TEMPLATE</span><b>Report template</b>The headings to use, in order, and the format rules.</button>
+<button class="tile" data-go="4"><span class="k">TOOLS</span><b>Uncertainties and graphs</b>The class uncertainty rules, graphs, and where to practise.</button>
+<button class="tile" data-go="6"><span class="k">CHECK</span><b>Checklist</b>The same checklist Mr. Holmes marks your draft with.</button></div>
+</div></section><section class="panel" data-p="1"><div class="wrap"><div class="card"><h3>How the marking works</h3>
+<p>Your report is marked on <b>four criteria, each out of 6</b> (24 in all, each worth a quarter). Mr. Holmes marks it, then the IB checks a sample of the class’s marks (moderation).</p>
+<ul><li>For each criterion the marker picks the band that fits your work <b>best overall</b>. You don’t need every point in a band to get it, and a top band doesn’t mean perfect.</li>
+<li>Doing well on one criterion doesn’t carry over to the others. Each is judged on its own.</li>
+<li>The examiner can only reward what is <b>on the page</b>. If you thought about something but didn’t write it, it doesn’t count.</li></ul>
+<p class="note"><b>Watch the verbs.</b> The bands step up from <b>state</b> (just say it) to <b>describe</b> (say what, in detail) to <b>explain</b> (say what <i>and why</i>). A common way to lose marks is describing when the top band asks you to explain.</p></div>
+
+<div class="card ia-crit"><h3>Research design <small>6 marks</small></h3>
+<p><b>What it checks:</b> how well you explain your question and how you collected your data.</p>
+<div class="tbl"><table><tr><th>Marks</th><th>Your report…</th></tr>
+<tr><td><b>1–2</b></td><td>States the question with no context. Lists a few method decisions. Someone else couldn’t repeat it.</td></tr>
+<tr><td><b>3–4</b></td><td>Puts the question in a broad context. Describes the method decisions. Someone could repeat it, with a few gaps.</td></tr>
+<tr><td><b>5–6</b></td><td>Puts the question in a specific, fitting context. Explains the method decisions (why, not just what). Someone could repeat it exactly.</td></tr></table></div>
+<h4>What the IB means</h4>
+<ul><li><b>Context</b> = your question names the IV and DV, briefly describes the system you’re studying, and comes with the physics theory that applies.</li>
+<li><b>Method decisions</b> = how you measure the IV and DV; the range, interval and number of values; how many repeats; how precise your instruments are; which variables you control and how; and safety, ethical and environmental issues. For a simulation or database: why you chose it and how you picked the data.</li>
+<li><b>Repeatable</b> = specific materials and precise steps, with no padding or repetition.</li></ul>
+<h4>Tips</h4>
+<ul><li>For every variable, say how you changed or measured it, with what instrument, its units, and its limits.</li>
+<li>Justify your range and number of values: why this range, why this many?</li>
+<li>Always include safety, ethics and environment, even if it’s one sentence saying why there are no concerns and what precautions you took.</li></ul>
+<h4>Common mistakes</h4>
+<ul><li>Controls listed but not explained (no “how” or “why”).</li>
+<li>Two independent variables in one question.</li>
+<li>Theory that is about the topic in general, not about your relationship.</li></ul></div>
+
+<div class="card ia-crit"><h3>Data analysis <small>6 marks</small></h3>
+<p><b>What it checks:</b> how you record, process and present your data so that it answers your question.</p>
+<div class="tbl"><table><tr><th>Marks</th><th>Your report…</th></tr>
+<tr><td><b>1–2</b></td><td>Recording and processing is neither clear nor precise. Little sign of uncertainties. Processing has major gaps or errors.</td></tr>
+<tr><td><b>3–4</b></td><td>Clear <i>or</i> precise, but not both. Uncertainties are considered but with significant gaps or mistakes. Processing has significant gaps or errors.</td></tr>
+<tr><td><b>5–6</b></td><td>Both clear <i>and</i> precise. Uncertainties are handled properly. Processing is correct and relevant to the question.</td></tr></table></div>
+<h4>What the IB means</h4>
+<ul><li><b>Clear</b> = a reader can easily follow how you processed the data.</li>
+<li><b>Precise</b> = you follow the conventions: labelled tables and graphs, units, consistent decimal places and significant figures.</li>
+<li>A <b>major</b> problem stops you reaching a valid conclusion. A <b>significant</b> one still lets you conclude, but limits how far.</li></ul>
+<h4>Tips</h4>
+<ul><li>Uncertainties must show up in the raw table, the processed table, the graph and the final result, not just in a paragraph.</li>
+<li>Show one sample calculation for each kind of processing, including the uncertainty.</li>
+<li>Use the <a href="#" data-go="4">class uncertainty rules</a> and make your graph with the P1-00 Graph Maker.</li></ul>
+<h4>Common mistakes</h4>
+<ul><li>Axis labels with no units, or no error bars.</li>
+<li>A best-fit line forced through the origin when the physics doesn’t require it.</li>
+<li>No steepest and shallowest lines, so no uncertainty on the gradient.</li>
+<li>Processing that doesn’t lead back to the research question.</li></ul></div>
+
+<div class="card ia-crit"><h3>Conclusion <small>6 marks</small></h3>
+<p><b>What it checks:</b> how well you answer your question using your analysis and accepted physics.</p>
+<div class="tbl"><table><tr><th>Marks</th><th>Your report…</th></tr>
+<tr><td><b>1–2</b></td><td>States a conclusion that isn’t supported by the analysis. Only a surface comparison with accepted science.</td></tr>
+<tr><td><b>3–4</b></td><td>Describes a conclusion that isn’t fully consistent with the analysis. Makes some relevant comparison with accepted science.</td></tr>
+<tr><td><b>5–6</b></td><td>Justifies a conclusion that is fully consistent with the analysis, including its uncertainties. Justifies it through a relevant comparison with accepted science.</td></tr></table></div>
+<h4>What the IB means</h4>
+<ul><li><b>Fully consistent</b> means you interpret your processed data <i>with its uncertainties</i>.</li>
+<li><b>Accepted scientific context</b> = published values, textbooks, course notes, papers or reliable websites. Cite them so a reader could find them.</li></ul>
+<h4>Tips</h4>
+<ul><li>Answer the research question in your first sentence, with a number and its uncertainty.</li>
+<li>Say what the gradient and intercept mean physically, and compare them with theory or a published value. Is the accepted value inside your uncertainty range?</li>
+<li>Make every claim traceable to a number in your tables or graph.</li></ul>
+<h4>Common mistakes</h4>
+<ul><li>Restating results without interpreting them.</li>
+<li>No comparison with theory or a published value.</li>
+<li>Calling a high R² “proof”. It shows how well a line fits, not that your physics is right.</li></ul></div>
+
+<div class="card ia-crit"><h3>Evaluation <small>6 marks</small></h3>
+<p><b>What it checks:</b> how well you judge your method and how good your suggested improvements are.</p>
+<div class="tbl"><table><tr><th>Marks</th><th>Your report…</th></tr>
+<tr><td><b>1–2</b></td><td>States generic weaknesses. States realistic improvements.</td></tr>
+<tr><td><b>3–4</b></td><td>Describes specific weaknesses or limitations. Describes realistic improvements that match them.</td></tr>
+<tr><td><b>5–6</b></td><td>Explains the <b>relative impact</b> of specific weaknesses or limitations (which mattered most, and how they affected your result). Explains realistic improvements that match them.</td></tr></table></div>
+<h4>What the IB means</h4>
+<ul><li><b>Generic</b> = could be said about almost any experiment (“human error”, “more trials”, “better equipment”).</li>
+<li><b>Weaknesses</b> are about controlling variables, the precision of your measurements, or the spread in your data.</li>
+<li><b>Limitations</b> are about how far your conclusion reaches: the range of data you collected, the system you used, or the assumptions you made.</li></ul>
+<h4>Tips</h4>
+<ul><li>Aim for at least three specific weaknesses. For each: is it random or systematic, which way did it push your result, and how big was its effect compared with the others?</li>
+<li>Use your numbers: compare your percentage uncertainty with your percentage difference from the accepted value.</li>
+<li>Make each improvement specific and realistic in a school lab: what equipment or change, and how it would improve the data.</li></ul>
+<h4>Common mistakes</h4>
+<ul><li>Generic weaknesses and vague fixes (“be more careful”).</li>
+<li>Improvements that are really a new investigation, not a fix.</li>
+<li>Weaknesses that aren’t linked to any effect on the data.</li></ul></div>
+
+<div class="card"><h3>Also on the checklist</h3>
+<p>These aren’t part of the four criteria, but they are on <a href="#" data-go="6">the checklist</a>:</p>
+<ul><li>Under 3,000 words; title, candidate code and word count at the top; no name or school anywhere.</li>
+<li>Arial or Times New Roman 11, single spacing (or more), justified text, table text centred, page numbers.</li>
+<li>Method as numbered steps; strengths as well as weaknesses; for each improvement, how it would change the outcome.</li></ul></div>
+<p class="muted">Criteria summarised in our own words from the IB Physics guide, first assessment 2025, pp. 66–75. Tips adapted from GradePod (gradepod.com).</p>
+</div></section><section class="panel" data-p="2"><div class="wrap"><div class="ia-stagebar" role="tablist" aria-label="IA stages">
+<button data-st="0" aria-selected="true">1 · Topic</button><button data-st="1">2 · Procedure</button><button data-st="2">3 · Collect</button><button data-st="3">4 · Analyse</button><button data-st="4">5 · Rough draft</button><button data-st="5">6 · Final draft</button></div>
+
+<div class="ia-stage on" data-sp="0">
+<div class="card"><h3>Stage 1 · Topic <span class="ia-gate">Approval</span></h3>
+<p><b>Goal:</b> one independent variable, one dependent variable, a system to study, and a reason the physics predicts a relationship. <b>Homework.</b></p>
+<ol class="ia-steps">
+<li><b>Look for “how does <i>y</i> depend on <i>x</i>?”</b> These questions work best. Change one thing and measure one thing. Choose something with real physics to dig into: textbook labs everyone has done (a simple pendulum, a mass on a spring) are too easy to score well on. Browse the <a href="#" data-go="5">topic ideas</a> or adapt an experiment you liked.</li>
+<li><b>Find the physics.</b> Look for an equation linking your IV and DV. It tells you what to plot to get a straight line, and what the gradient means.</li>
+<li><b>Run the feasibility check</b> (below). If any answer is no, change the topic now. It’s much cheaper than changing it later.</li>
+<li><b>Write the question</b> with the research-question builder below. Include the range you plan to use and how you’ll measure the DV.</li>
+<li><b>State your objective:</b> what you expect to find, e.g. “find how T depends on L, and use the gradient to measure g”.</li></ol>
+<h4>Feasibility check</h4>
+<ul class="ck">
+<li><label><input type="checkbox"> I can get the materials. Buying a few cheap items is fine; ask Mr. Holmes about anything from the lab.</label></li>
+<li><label><input type="checkbox"> I can measure both variables with reasonable precision.</label></li>
+<li><label><input type="checkbox"> I can collect at least 5 values of the IV, with repeats, in the class time I have.</label></li>
+<li><label><input type="checkbox"> I can keep the other variables constant.</label></li>
+<li><label><input type="checkbox"> I understand the theory, or can with a bit of reading.</label></li>
+<li><label><input type="checkbox"> Anything I time by hand lasts more than a couple of seconds (or I’ll time several cycles, or use video or a phone sensor).</label></li></ul>
+<h4>Turn in</h4>
+<ul><li>Research question · IV with planned range · DV and how you’ll measure it · the system · your objective · one or two sentences of theory (with the equation) · group members, if any.</li></ul>
+<h4>Avoid</h4>
+<ul><li>Two IVs at once, or an IV you can’t set to chosen values.</li>
+<li>A question whose answer is obvious and has no physics to test, e.g. distance = speed × time.</li>
+<li>Categories instead of numbers (“different materials”). You want an IV you can set to 5 or more numerical values.</li></ul></div>
+<div class="card" id="rqb"><h3>Research question builder</h3><p class="muted">Fill in the boxes, then check the result against the research design criterion.</p>
+<div class="rq"><label>Independent variable (what you change)<input data-k="iv" placeholder="the length of a vibrating string"></label>
+<label>Range<input data-k="rg" placeholder="0.200 m to 0.800 m"></label>
+<label>Dependent variable (what you measure)<input data-k="dv" placeholder="its fundamental frequency"></label>
+<label>How you measure it<input data-k="how" placeholder="a phone frequency app"></label></div>
+<p class="out"><b>Your question:</b> <span data-out>…</span></p></div></div>
+
+<div class="ia-stage" data-sp="1">
+<div class="card"><h3>Stage 2 · Procedure <span class="ia-gate">Approval</span></h3>
+<p><b>Goal:</b> a plan detailed enough that another student could repeat it exactly. <b>Homework.</b> Don’t collect data until it’s approved.</p>
+<ol class="ia-steps">
+<li><b>Variables table.</b> IV: how you change it, the range, how many values, and the instrument and its uncertainty. DV: how you measure it, the instrument and its uncertainty, how many repeats. Controls: what each one is, <i>how</i> you keep it constant, and <i>why</i> it matters.</li>
+<li><b>Choose the range and values.</b> Use as wide a range as you practically can, with at least 5 values spread evenly and at least 3 repeats of each. More is better if time allows. Say why you chose them.</li>
+<li><b>Apparatus list,</b> with sizes, and the resolution of every measuring instrument.</li>
+<li><b>Labelled diagram</b> of the setup (Google Drawings works well).</li>
+<li><b>Method as numbered steps,</b> 10 at most. Be specific (“release from 10° marked on a protractor”) and skip the obvious (“gather the equipment”).</li>
+<li><b>Safety, ethics, environment.</b> Always address all three, even if briefly: hazards and precautions, any ethical issues, and disposal or waste.</li>
+<li><b>Do a quick trial run if you can.</b> It shows up problems while they’re still easy to fix.</li></ol>
+<div class="tbl"><table class="ia-vt"><tr><th>Variable</th><th>What</th><th>How (instrument, uncertainty)</th><th>Why / range</th></tr>
+<tr><td><b>IV</b></td><td>Vibrating length <i>L</i></td><td>Move the bridge; metre stick, ±0.001 m</td><td>0.200–0.800 m, 7 values 0.100 m apart: as wide as the monochord allows</td></tr>
+<tr><td><b>DV</b></td><td>Fundamental frequency <i>f</i></td><td>Phone frequency app, ±0.1 Hz; 3 plucks per length</td><td>The quantity the theory predicts</td></tr>
+<tr><td><b>Control</b></td><td>Tension</td><td>Same 2.000 kg hanging mass throughout</td><td><i>f</i> depends on √tension</td></tr>
+<tr><td><b>Control</b></td><td>String</td><td>Same string; mass per length measured once</td><td><i>f</i> depends on mass per length</td></tr></table></div>
+<p class="muted">Example rows for a string experiment. Your table will have your own variables.</p>
+<h4>Turn in</h4>
+<ul><li>Variables table · apparatus · labelled diagram · numbered method · safety, ethics and environment.</li></ul>
+<h4>Avoid</h4>
+<ul><li>Controls with no “how”.</li><li>Steps someone would have to guess at.</li><li>Forgetting to plan the uncertainty of each instrument.</li></ul></div></div>
+
+<div class="ia-stage" data-sp="2">
+<div class="card"><h3>Stage 3 · Collect data</h3>
+<p><b>Goal:</b> complete, honest raw data before the setup comes apart. <b>In class.</b></p>
+<ol class="ia-steps">
+<li><b>Prepare your raw data table first:</b> headings with quantity, unit and uncertainty, and a column for each repeat.</li>
+<li><b>Record every reading exactly as read,</b> to the instrument’s precision. Don’t average in your head and don’t round.</li>
+<li><b>Write down what you notice:</b> anything odd, anything that went wrong, anything you changed. These notes become your evaluation.</li>
+<li><b>Sketch a quick graph as you go.</b> A point off the trend can be re-measured now, not after the equipment is put away.</li>
+<li><b>Measure the fixed quantities you’ll need later</b> (masses, lengths, diameters). Measure them rather than trusting a label.</li>
+<li><b>Photograph the setup,</b> with no people’s faces in the photo.</li></ol>
+<h4>Before you leave</h4>
+<ul class="ck"><li><label><input type="checkbox"> Every IV value has all its repeats.</label></li>
+<li><label><input type="checkbox"> Repeats agree reasonably; any that don’t have been redone or noted.</label></li>
+<li><label><input type="checkbox"> I have the fixed measurements and photos I need.</label></li>
+<li><label><input type="checkbox"> My data is saved somewhere I can reach at home.</label></li></ul>
+<h4>Turn in</h4><ul><li>Your raw data table.</li></ul></div></div>
+
+<div class="ia-stage" data-sp="3">
+<div class="card"><h3>Stage 4 · Analyse</h3>
+<p><b>Goal:</b> turn raw data into a result with an uncertainty. <b>In class.</b></p>
+<ol class="ia-steps">
+<li><b>Processed data table:</b> means, uncertainties, and any calculated quantities (like 1/<i>L</i> or <i>T</i>²), each column with its quantity, unit and uncertainty.</li>
+<li><b>One sample calculation</b> for each kind of processing, including how the uncertainty was found.</li>
+<li><b>Straighten the graph.</b> Rearrange your equation into <i>y</i> = <i>mx</i> + <i>b</i> and plot what it says to plot.</li>
+<li><b>Graph:</b> labelled axes with units, error bars, a best-fit line, and steepest and shallowest lines.</li>
+<li><b>Gradient ± uncertainty</b> (and intercept). Work out the physical quantity the gradient stands for.</li>
+<li><b>Compare</b> with the theoretical or published value. Should the line pass through the origin? Does it?</li></ol>
+<p>All the rules are on the <a href="#" data-go="4">Uncertainties and graphs</a> tab. Make your graph with the <b>Graph Maker</b> in the P1-00 sims: it draws error bars, max and min lines and gives the gradient with its uncertainty, ready to paste into your report.</p>
+<h4>Turn in</h4><ul><li>Processed table · sample calculations · graph · gradient with its uncertainty.</li></ul></div></div>
+
+<div class="ia-stage" data-sp="4">
+<div class="card"><h3>Stage 5 · Rough draft</h3>
+<p><b>Goal:</b> a complete report. This is the one draft Mr. Holmes comments on, so make it as finished as you can. <b>Homework.</b></p>
+<ol class="ia-steps">
+<li><b>Use the <a href="#" data-go="3">report template</a></b> headings, in order. Your Stage 1–4 work goes straight into them.</li>
+<li><b>Write the conclusion:</b>
+<ul><li>Answer the question with your result and its uncertainty.</li>
+<li>Describe the relationship your graph shows.</li>
+<li>Say what the gradient and intercept mean.</li>
+<li>Compare with theory or a published value (cited): is it inside your uncertainty range? What is the percentage difference?</li>
+<li>Explain any anomalies.</li></ul></li>
+<li><b>Write the evaluation:</b>
+<ul><li>Strengths of your method.</li>
+<li>At least three specific weaknesses. For each: random or systematic, which way it pushed your result, and how big an effect compared with the others.</li>
+<li>Limitations: the range, the system, your assumptions.</li>
+<li>For each weakness, an improvement: what exactly you’d do (equipment or method), and how it would change the outcome.</li></ul></li>
+<li><b>Count your words</b> and put the number at the top.</li>
+<li><b>Go through the <a href="#" data-go="6">checklist</a></b> yourself before you submit.</li></ol>
+<h4>Turn in</h4><ul><li>The full draft. Go through the <a href="#" data-go="6">checklist</a> first.</li></ul></div></div>
+
+<div class="ia-stage" data-sp="5">
+<div class="card"><h3>Stage 6 · Final draft</h3>
+<p><b>Goal:</b> your final report. There’s no more feedback after this, and once it’s submitted to the IB it can’t be taken back. <b>Homework.</b></p>
+<ol class="ia-steps">
+<li><b>Act on every comment</b> from your rough draft. Mr. Holmes can advise but can’t edit, so the changes must be yours.</li>
+<li><b>Recheck your numbers:</b> every calculation, unit and decimal place.</li>
+<li><b>Word count:</b> under 3,000 and stated honestly.</li>
+<li><b>Anonymous:</b> no name, no school, no teacher’s name, and no faces in photos. Only your candidate code.</li>
+<li><b>Citations:</b> every source cited in the text and listed in the references.</li>
+<li><b>Clean up:</b> remove template prompts and notes to yourself. Save as a PDF.</li></ol>
+<h4>Turn in</h4><ul><li>The final report, as a PDF.</li></ul></div></div>
+</div></section><section class="panel" data-p="3"><div class="wrap"><div class="card"><h3>Use these headings, in this order</h3>
+<p>Following one clear structure makes it easy for the marker to find what each criterion asks for. There’s no cover page and no contents page.</p>
+<div class="tbl"><table class="ia-tpl">
+<tr><th>#</th><th>Heading</th><th>What goes in it</th></tr>
+<tr><td>1</td><td><b>Report details</b></td><td>Four lines at the top of page 1: title, your IB candidate code, group members’ codes (if any), word count.</td></tr>
+<tr><td>2</td><td><b>Introduction</b></td><td>About 150 words: what you investigated, why it matters or interests you, and a one-line overview of what you did. Be specific; skip “I am passionate about…”.</td></tr>
+<tr><td>3</td><td><b>Research question</b></td><td>On its own line: how does [IV, with range] affect [DV] for [system], measured with […]?</td></tr>
+<tr><td>4</td><td><b>Theory and hypothesis</b></td><td>Only the physics that links your variables. The equation, and what you will plot to get a straight line. A prediction, ideally mathematical. Cite your sources.</td></tr>
+<tr><td>5</td><td><b>Variables</b></td><td>Table: IV, DV and controls, each with how it’s changed, measured or kept constant, and why.</td></tr>
+<tr><td>6</td><td><b>Diagram</b></td><td>A labelled diagram clear enough to rebuild the setup from.</td></tr>
+<tr><td>7</td><td><b>Apparatus</b></td><td>List with sizes, and each measuring instrument’s resolution and uncertainty.</td></tr>
+<tr><td>8</td><td><b>Method</b></td><td>Numbered steps (10 at most), including how controls are kept constant. Then safety, ethics and environment.</td></tr>
+<tr><td>9</td><td><b>Raw data</b></td><td>Only what you measured, with the uncertainty in each heading and one sentence justifying it. Add written observations if useful.</td></tr>
+<tr><td>10</td><td><b>Processed data</b></td><td>A separate table of means, uncertainties and calculated quantities, then one sample calculation for each type.</td></tr>
+<tr><td>11</td><td><b>Graph</b></td><td>The linearised graph: title, labelled axes with units, error bars, best-fit line, steepest and shallowest lines, gradient ± uncertainty.</td></tr>
+<tr><td>12</td><td><b>Conclusion</b></td><td>The answer to your question, with numbers and uncertainties; the meaning of the gradient and intercept; comparison with theory or a published value; anomalies.</td></tr>
+<tr><td>13</td><td><b>Evaluation</b></td><td>Strengths; specific weaknesses and limitations with their relative impact; an improvement for each, and how it would change the outcome.</td></tr>
+<tr><td>14</td><td><b>References</b></td><td>Every source, in one consistent style (APA or Harvard), detailed enough for someone to find it.</td></tr></table></div></div>
+
+<div class="card"><h3>Format rules</h3>
+<ul>
+<li><b>Font:</b> Arial or Times New Roman, size 11. <b>Spacing:</b> single or larger. <b>Text:</b> justified.</li>
+<li><b>Page numbers</b> on every page.</li>
+<li><b>Tables:</b> text and numbers centred in the cells; every column heading has the quantity, unit and uncertainty.</li>
+<li><b>Anonymous:</b> no name and no school anywhere, only your candidate code.</li>
+<li><b>No appendices.</b> Anything that matters goes in the report; markers won’t look elsewhere.</li>
+<li><b>Length:</b> about 12 pages is typical.</li></ul></div>
+
+<div class="card"><h3>The 3,000-word limit</h3>
+<p><b>Not counted:</b> charts and diagrams, data tables, equations, formulas and calculations, citations and references, the bibliography, and headings. <b>Everything else counts.</b> State your word count honestly; it can be checked.</p></div>
+
+<p class="muted">Structure adapted from GradePod’s IB Physics IA structure guide; format rules from the class IA quick guide; word-count rules from the IB Physics guide (2025), p. 68.</p>
+</div></section><section class="panel" data-p="4"><div class="wrap"><div class="card"><h3>Class rules for uncertainty</h3>
+<div class="tbl"><table>
+<tr><th>Reading</th><th>Uncertainty</th><th>Example</th></tr>
+<tr><td><b>Analogue scale</b> (thermometer, protractor, meter)</td><td>± half the smallest division</td><td>(21.5 ± 0.5) °C</td></tr>
+<tr><td><b>Length on a ruler</b></td><td>± one smallest division: you read both ends, each ± half a division</td><td>(50.0 ± 0.1) cm</td></tr>
+<tr><td><b>Digital display</b> (stopwatch, balance, meter, app)</td><td>± 1 in the last decimal place</td><td>(2.34 ± 0.01) s</td></tr>
+<tr><td><b>Repeated readings</b></td><td>mean ± half the range</td><td>2.31, 2.40, 2.35 s → (2.35 ± 0.05) s</td></tr></table></div>
+<ul>
+<li>If half the range is smaller than the reading uncertainty (for example, all your repeats are the same), use the reading uncertainty.</li>
+<li>Timing <i>n</i> cycles? Divide both the time and its uncertainty by <i>n</i>.</li>
+<li>Put the uncertainty in each column heading, e.g. <b><i>t</i> / s (±0.01)</b>, with one sentence under the table saying where it comes from.</li></ul></div>
+
+<div class="card"><h3>Writing and processing results</h3>
+<ul>
+<li>A value and its uncertainty end at the <b>same decimal place</b> as the measurement: (2.34 ± 0.01) s, not (2.34 ± 0.005) s or (2.3 ± 0.01) s.</li>
+<li>Keep extra digits while you calculate. Round only the final answer.</li>
+<li>Propagate uncertainties with the rules in your <b>data booklet</b>, and show one sample calculation for each step.</li></ul></div>
+
+<div class="card"><h3>Graphs</h3>
+<ul>
+<li>Plot whatever makes your relationship a straight line.</li>
+<li>Label axes as quantity / unit, e.g. <i>t</i> / s.</li>
+<li>Error bars on every point, or a note saying they are too small to see.</li>
+<li>Don’t force the best-fit line through the origin unless the physics says it must.</li>
+<li>Gradient uncertainty = (steepest − shallowest) ÷ 2. The same goes for the intercept.</li>
+<li>Software is fine, but say what you used. R² is not an uncertainty.</li></ul></div>
+
+<div class="card"><h3>Outliers and errors</h3>
+<ul>
+<li><b>Outlier:</b> circle it, explain the likely cause, and re-measure if you can. You may leave it out of the fit if you say why.</li>
+<li><b>Random error</b> spreads readings both ways. Repeats reduce its effect.</li>
+<li><b>Systematic error</b> shifts every reading the same way. Repeats don’t fix it, and it often shows up as an unexpected intercept.</li>
+<li><b>Accepted value:</b> is it inside your ± range? If your percentage difference is much bigger than your percentage uncertainty, look for a systematic error.</li></ul></div>
+
+<div class="card"><h3>Practise, then graph your data</h3>
+<p>The <b>P1-00 Measurement</b> sims cover these skills: reading instruments, precision and accuracy, propagating uncertainties, graphs and error bars, and linearizing data.</p>
+<p>Use the <b>Graph Maker</b> there for your IA graph. Type in your data and uncertainties, and it draws the error bars, best-fit line and max and min lines, and gives the gradient and intercept with their uncertainties. Then copy the graph into your report.</p>
+<p><a class="ia-btn" href="https://sites.google.com/fcps.org/holmes/ap-physics-1-ib/p1-00" target="_blank" rel="noopener">Open the P1-00 sims ↗</a></p></div>
+</div></section><section class="panel" data-p="5"><div class="wrap"><div class="card"><h3>Topic ideas</h3><p>Each idea reads <b>what you change → what you measure</b>. They are starting points, not finished questions: pick one, then make it yours with a specific system, range and measuring method. Your topic doesn’t need to be original, but your data, analysis and writing must be your own.</p><ul><li><b>Lab basics</b>: rulers, stands, masses, stopwatches, thermometers, hot plates. <b>Phone</b>: a phone sensor app or slow-motion video. <b>Buy</b>: needs a cheap item or two; students often buy their own materials. <b>Ask first</b>: needs special equipment or has a safety issue, so check with Mr. Holmes.</li><li>Phone sensor apps (for example <i>phyphox</i>, free) can time, and measure acceleration, light, sound frequency and magnetic field. Slow-motion video works for fast motion.</li><li>Something not listed? Run it through the Stage 1 feasibility check and bring it to Mr. Holmes.</li></ul></div><div class="ia-filters" data-f="area"><span class="lab">Topic</span><button data-v="" aria-pressed="true">All</button><button data-v="Motion &amp; forces" aria-pressed="false">Motion &amp; forces</button><button data-v="Oscillations" aria-pressed="false">Oscillations</button><button data-v="Thermal" aria-pressed="false">Thermal</button><button data-v="Sound" aria-pressed="false">Sound</button><button data-v="Light" aria-pressed="false">Light</button><button data-v="Electricity &amp; magnetism" aria-pressed="false">Electricity &amp; magnetism</button><button data-v="Fluids" aria-pressed="false">Fluids</button></div><div class="ia-filters" data-f="gear"><span class="lab">Needs</span><button data-v="" aria-pressed="true">All</button><button data-v="Lab basics" aria-pressed="false">Lab basics</button><button data-v="Phone" aria-pressed="false">Phone</button><button data-v="Buy" aria-pressed="false">Buy</button><button data-v="Ask first" aria-pressed="false">Ask first</button></div><input class="ia-search" type="search" placeholder="Search ideas, e.g. magnet, spring, sound" aria-label="Search ideas"><p class="ia-count"></p><div class="ia-ideas"><div class="ia-idea" data-area="Motion &amp; forces" data-gear="Lab basics|Phone"><div class="a">Motion &amp; forces</div><div class="q">Mass of a stack of coffee filters <i>→</i> terminal velocity</div><p class="n">Film the fall and measure speed over the last part, or time a long drop.</p><div class="g"><span>Lab basics</span><span>Phone</span></div></div><div class="ia-idea" data-area="Motion &amp; forces" data-gear="Lab basics|Phone"><div class="a">Motion &amp; forces</div><div class="q">Canopy area of a paper parachute <i>→</i> terminal velocity</div><div class="g"><span>Lab basics</span><span>Phone</span></div></div><div class="ia-idea" data-area="Motion &amp; forces" data-gear="Lab basics|Buy"><div class="a">Motion &amp; forces</div><div class="q">Release height of a toy car on a ramp <i>→</i> distance it rolls along the floor</div><div class="g"><span>Lab basics</span><span>Buy</span></div></div><div class="ia-idea" data-area="Motion &amp; forces" data-gear="Lab basics|Phone"><div class="a">Motion &amp; forces</div><div class="q">Drop height of a ball <i>→</i> bounce height</div><div class="g"><span>Lab basics</span><span>Phone</span></div></div><div class="ia-idea" data-area="Motion &amp; forces" data-gear="Lab basics|Buy"><div class="a">Motion &amp; forces</div><div class="q">Temperature of a tennis or squash ball <i>→</i> bounce height (coefficient of restitution)</div><p class="n">Warm or cool balls in water; the temperature changes quickly once out, so be fast and consistent.</p><div class="g"><span>Lab basics</span><span>Buy</span></div></div><div class="ia-idea" data-area="Motion &amp; forces" data-gear="Buy"><div class="a">Motion &amp; forces</div><div class="q">Air pressure inside a ball <i>→</i> bounce height</div><p class="n">Needs a pump with a pressure gauge.</p><div class="g"><span>Buy</span></div></div><div class="ia-idea" data-area="Motion &amp; forces" data-gear="Lab basics"><div class="a">Motion &amp; forces</div><div class="q">Load hung on the end of a clamped ruler (cantilever) <i>→</i> deflection of the end</div><div class="g"><span>Lab basics</span></div></div><div class="ia-idea" data-area="Motion &amp; forces" data-gear="Lab basics"><div class="a">Motion &amp; forces</div><div class="q">Overhanging length of a clamped ruler <i>→</i> deflection of the end under a fixed load</div><div class="g"><span>Lab basics</span></div></div><div class="ia-idea" data-area="Motion &amp; forces" data-gear="Lab basics|Phone"><div class="a">Motion &amp; forces</div><div class="q">Overhanging length of a clamped ruler with a mass on the end <i>→</i> period of its vibration</div><div class="g"><span>Lab basics</span><span>Phone</span></div></div><div class="ia-idea" data-area="Motion &amp; forces" data-gear="Lab basics"><div class="a">Motion &amp; forces</div><div class="q">Span of a ruler supported at both ends <i>→</i> sag at the middle under a fixed load</div><div class="g"><span>Lab basics</span></div></div><div class="ia-idea" data-area="Motion &amp; forces" data-gear="Lab basics"><div class="a">Motion &amp; forces</div><div class="q">Drop height of a ball bearing <i>→</i> diameter of the crater in sand or flour</div><div class="g"><span>Lab basics</span></div></div><div class="ia-idea" data-area="Motion &amp; forces" data-gear="Lab basics|Buy"><div class="a">Motion &amp; forces</div><div class="q">Diameter of a funnel’s opening <i>→</i> time for sand or rice to drain out</div><div class="g"><span>Lab basics</span><span>Buy</span></div></div><div class="ia-idea" data-area="Oscillations" data-gear="Lab basics"><div class="a">Oscillations</div><div class="q">Release angle of a pendulum <i>→</i> period</div><div class="g"><span>Lab basics</span></div></div><div class="ia-idea" data-area="Oscillations" data-gear="Lab basics"><div class="a">Oscillations</div><div class="q">Separation of the two strings of a bifilar pendulum <i>→</i> period of twisting oscillations</div><div class="g"><span>Lab basics</span></div></div><div class="ia-idea" data-area="Oscillations" data-gear="Buy"><div class="a">Oscillations</div><div class="q">Number of coils of a hanging slinky <i>→</i> period of vertical oscillation</div><div class="g"><span>Buy</span></div></div><div class="ia-idea" data-area="Oscillations" data-gear="Lab basics|Buy"><div class="a">Oscillations</div><div class="q">Radius of a ball rolling inside a large curved bowl <i>→</i> period of small oscillations</div><div class="g"><span>Lab basics</span><span>Buy</span></div></div><div class="ia-idea" data-area="Oscillations" data-gear="Lab basics|Phone"><div class="a">Oscillations</div><div class="q">Area of a card attached to an oscillating mass on a spring <i>→</i> amplitude after a set number of oscillations (damping)</div><div class="g"><span>Lab basics</span><span>Phone</span></div></div><div class="ia-idea" data-area="Thermal" data-gear="Lab basics"><div class="a">Thermal</div><div class="q">Temperature difference between hot water and the room <i>→</i> rate of cooling</div><div class="g"><span>Lab basics</span></div></div><div class="ia-idea" data-area="Thermal" data-gear="Lab basics"><div class="a">Thermal</div><div class="q">Volume of water in a cup <i>→</i> rate of cooling</div><div class="g"><span>Lab basics</span></div></div><div class="ia-idea" data-area="Thermal" data-gear="Lab basics|Buy"><div class="a">Thermal</div><div class="q">Thickness of insulation (layers) around a container <i>→</i> rate of cooling</div><div class="g"><span>Lab basics</span><span>Buy</span></div></div><div class="ia-idea" data-area="Thermal" data-gear="Lab basics|Buy"><div class="a">Thermal</div><div class="q">Temperature of a viscous liquid (honey, oil, syrup) <i>→</i> time for a ball to fall a fixed distance through it</div><p class="n">Use a tall column so fall times are several seconds.</p><div class="g"><span>Lab basics</span><span>Buy</span></div></div><div class="ia-idea" data-area="Sound" data-gear="Phone|Buy"><div class="a">Sound</div><div class="q">Volume of water in a wine glass <i>→</i> frequency when tapped</div><div class="g"><span>Phone</span><span>Buy</span></div></div><div class="ia-idea" data-area="Sound" data-gear="Phone|Buy"><div class="a">Sound</div><div class="q">Length of the air column in a tube partly filled with water <i>→</i> resonant frequency</div><div class="g"><span>Phone</span><span>Buy</span></div></div><div class="ia-idea" data-area="Sound" data-gear="Phone"><div class="a">Sound</div><div class="q">Distance from a speaker <i>→</i> sound intensity level (dB)</div><p class="n">Work outdoors or in a large room; reflections spoil it.</p><div class="g"><span>Phone</span></div></div><div class="ia-idea" data-area="Light" data-gear="Phone"><div class="a">Light</div><div class="q">Distance from a small bulb <i>→</i> light intensity</div><p class="n">Use a phone light-sensor app in a dark room.</p><div class="g"><span>Phone</span></div></div><div class="ia-idea" data-area="Light" data-gear="Phone|Buy"><div class="a">Light</div><div class="q">Angle between two polarising filters <i>→</i> transmitted light intensity</div><div class="g"><span>Phone</span><span>Buy</span></div></div><div class="ia-idea" data-area="Light" data-gear="Phone|Buy"><div class="a">Light</div><div class="q">Number of sheets of plastic or glass <i>→</i> transmitted light intensity</div><div class="g"><span>Phone</span><span>Buy</span></div></div><div class="ia-idea" data-area="Light" data-gear="Ask first"><div class="a">Light</div><div class="q">Distance from a hair (or slit) to the screen <i>→</i> width of the central bright band</div><p class="n">Laser pointer: never point it at eyes. Ask before using one.</p><div class="g"><span>Ask first</span></div></div><div class="ia-idea" data-area="Light" data-gear="Buy|Ask first"><div class="a">Light</div><div class="q">Temperature of a small solar cell <i>→</i> output voltage</div><div class="g"><span>Buy</span><span>Ask first</span></div></div><div class="ia-idea" data-area="Light" data-gear="Buy|Ask first"><div class="a">Light</div><div class="q">Colour (wavelength) of an LED <i>→</i> voltage at which it starts to glow</div><div class="g"><span>Buy</span><span>Ask first</span></div></div><div class="ia-idea" data-area="Electricity &amp; magnetism" data-gear="Phone"><div class="a">Electricity &amp; magnetism</div><div class="q">Distance from a magnet <i>→</i> magnetic field strength</div><p class="n">A phone magnetometer app measures B. Subtract the background (Earth’s) field.</p><div class="g"><span>Phone</span></div></div><div class="ia-idea" data-area="Electricity &amp; magnetism" data-gear="Phone|Ask first"><div class="a">Electricity &amp; magnetism</div><div class="q">Current in a coil <i>→</i> magnetic field at its centre</div><div class="g"><span>Phone</span><span>Ask first</span></div></div><div class="ia-idea" data-area="Electricity &amp; magnetism" data-gear="Phone|Buy"><div class="a">Electricity &amp; magnetism</div><div class="q">Temperature of a magnet <i>→</i> field strength nearby</div><div class="g"><span>Phone</span><span>Buy</span></div></div><div class="ia-idea" data-area="Electricity &amp; magnetism" data-gear="Buy"><div class="a">Electricity &amp; magnetism</div><div class="q">Wall thickness (or material) of a copper or aluminium pipe <i>→</i> time for a strong magnet to fall through it</div><p class="n">Fall times of several seconds make hand timing workable.</p><div class="g"><span>Buy</span></div></div><div class="ia-idea" data-area="Electricity &amp; magnetism" data-gear="Ask first"><div class="a">Electricity &amp; magnetism</div><div class="q">Resistance in an RC circuit <i>→</i> time for the capacitor’s voltage to halve</div><p class="n">Large capacitors make times long enough to read a multimeter.</p><div class="g"><span>Ask first</span></div></div><div class="ia-idea" data-area="Electricity &amp; magnetism" data-gear="Ask first"><div class="a">Electricity &amp; magnetism</div><div class="q">Temperature of a battery <i>→</i> internal resistance</div><div class="g"><span>Ask first</span></div></div><div class="ia-idea" data-area="Electricity &amp; magnetism" data-gear="Ask first"><div class="a">Electricity &amp; magnetism</div><div class="q">Height a magnet falls through a coil <i>→</i> peak induced voltage</div><p class="n">Needs a data logger fast enough to catch the peak.</p><div class="g"><span>Ask first</span></div></div><div class="ia-idea" data-area="Fluids" data-gear="Lab basics|Buy"><div class="a">Fluids</div><div class="q">Time since a bottle started draining through a small hole <i>→</i> height of water left</div><div class="g"><span>Lab basics</span><span>Buy</span></div></div><div class="ia-idea" data-area="Fluids" data-gear="Lab basics|Buy"><div class="a">Fluids</div><div class="q">Inner diameter of a siphon tube <i>→</i> flow rate</div><div class="g"><span>Lab basics</span><span>Buy</span></div></div><div class="ia-idea" data-area="Fluids" data-gear="Phone"><div class="a">Fluids</div><div class="q">Drop height of a water droplet <i>→</i> rebound height from a water surface</div><div class="g"><span>Phone</span></div></div></div><p class="muted">Ideas adapted from GradePod’s “100 IB Physics IA ideas” and K. A. Tsokos’s <i>The Scientific Investigation</i>.</p></div></section><section class="panel" data-p="6"><div class="wrap"><div class="card"><h3>Draft checklist</h3>
+<p>This is the same checklist Mr. Holmes uses on your rough draft. Go through it yourself before you submit. Ticks are saved in this browser only. items come from the IB criteria or rules; items are class requirements.</p>
+<p class="ia-progress" data-progress></p>
+<button class="ia-btn ghost" data-ck-clear>Clear all ticks</button></div>
+
+<div class="card ia-ck"><h3>Formatting and logistics</h3><ul class="ck">
+<li><label><input type="checkbox" data-ck="f1"> The report is under the 3,000-word limit.</label></li>
+<li><label><input type="checkbox" data-ck="f2"> The title, IB candidate code and exact word count are at the start.</label></li>
+<li><label><input type="checkbox" data-ck="f3"> Text is justified.</label></li>
+<li><label><input type="checkbox" data-ck="f4"> Everything in table cells is centred.</label></li>
+<li><label><input type="checkbox" data-ck="f5"> Every page is numbered.</label></li></ul></div>
+
+<div class="card ia-ck"><h3>Research design</h3><ul class="ck">
+<li><label><input type="checkbox" data-ck="r1"> <b>Research question:</b> clearly names the independent and dependent variables (or two correlated variables).</label></li>
+<li><label><input type="checkbox" data-ck="r2"> <b>System:</b> briefly describes the system the question is about.</label></li>
+<li><label><input type="checkbox" data-ck="r3"> <b>Theory:</b> includes the theory and equations that apply directly to the question.</label></li>
+<li><label><input type="checkbox" data-ck="r4"> <b>Controls:</b> names each control variable and exactly how it is kept constant.</label></li>
+<li><label><input type="checkbox" data-ck="r5"> <b>Scope:</b> explains the choices of range, interval, number of repeats and precision.</label></li>
+<li><label><input type="checkbox" data-ck="r6"> <b>Steps:</b> the method is a list of precise steps.</label></li>
+<li><label><input type="checkbox" data-ck="r7"> <b>Clarity:</b> no unnecessary or repeated detail; someone could repeat the method from it.</label></li>
+<li><label><input type="checkbox" data-ck="r8"> <b>Safety, ethics, environment:</b> addressed explicitly, even for a “safe” lab.</label></li></ul></div>
+
+<div class="card ia-ck"><h3>Data analysis</h3><ul class="ck">
+<li><label><input type="checkbox" data-ck="d1"> <b>Presentation:</b> every graph, table and figure is properly labelled.</label></li>
+<li><label><input type="checkbox" data-ck="d2"> <b>Conventions:</b> correct units, decimal places and significant figures, used consistently.</label></li>
+<li><label><input type="checkbox" data-ck="d3"> <b>Uncertainties:</b> appear in the raw data, the tables, the graph and the final calculations.</label></li>
+<li><label><input type="checkbox" data-ck="d4"> <b>Processing shown:</b> the method for processing data and uncertainties is clear (sample calculations).</label></li>
+<li><label><input type="checkbox" data-ck="d5"> <b>Relevant and accurate:</b> the processing answers the research question, with no major errors or gaps.</label></li></ul></div>
+
+<div class="card ia-ck"><h3>Conclusion</h3><ul class="ck">
+<li><label><input type="checkbox" data-ck="c1"> <b>Direct answer:</b> the conclusion answers the research question and is fully supported by the analysis.</label></li>
+<li><label><input type="checkbox" data-ck="c2"> <b>Uses the processed data:</b> interprets results with their uncertainties (e.g. gradient and intercept).</label></li>
+<li><label><input type="checkbox" data-ck="c3"> <b>Scientific context:</b> compares the result with accepted science (textbooks, published values or papers).</label></li>
+<li><label><input type="checkbox" data-ck="c4"> <b>Citations:</b> sources are cited in enough detail to find them.</label></li></ul></div>
+
+<div class="card ia-ck"><h3>Evaluation</h3><ul class="ck">
+<li><label><input type="checkbox" data-ck="e1"> <b>Strengths:</b> discusses the real strengths of the investigation.</label></li>
+<li><label><input type="checkbox" data-ck="e2"> <b>Weaknesses:</b> explains the relative impact of specific weaknesses (control of variables, precision of measurement, spread in the data).</label></li>
+<li><label><input type="checkbox" data-ck="e3"> <b>Limitations:</b> explains the relative impact of limitations (range of data, the system, assumptions).</label></li>
+<li><label><input type="checkbox" data-ck="e4"> <b>Improvements, targeted:</b> realistic improvements that fix the weaknesses named.</label></li>
+<li><label><input type="checkbox" data-ck="e5"> <b>Improvements, detailed:</b> exactly how each would be done (e.g. what equipment and why it is better).</label></li>
+<li><label><input type="checkbox" data-ck="e6"> <b>Improvements, outcomes:</b> how each improvement would change the results or conclusion.</label></li></ul></div>
+</div></section><section class="panel" data-p="7"><div class="wrap"><div class="card"><h3>Weak and strong, side by side</h3>
+<p>All the examples come from one made-up investigation, so you can see how the parts connect: <b>how does the vibrating length of a string affect its fundamental frequency?</b> A monochord string is kept under constant tension by a 2.000 kg hanging mass, and the frequency is read from a phone app.</p></div>
+
+<div class="card"><h3>Research question <small>Research design</small></h3>
+<div class="bad"><h4>Weak</h4>“How does string length affect sound?”</div>
+<div class="good"><h4>Strong</h4>“How does the vibrating length of a steel monochord string (0.200 m to 0.800 m), held at a constant tension of 19.6 N, affect its fundamental frequency, measured with a phone frequency-analyser app?”</div>
+<p class="muted">The strong version names the IV with its range, the DV and how it is measured, and the system.</p></div>
+
+<div class="card"><h3>A control variable <small>Research design</small></h3>
+<div class="bad"><h4>Weak</h4>“Controlled variable: tension.”</div>
+<div class="good"><h4>Strong</h4>“Tension: kept constant by hanging the same 2.000 kg mass from the string over the pulley for every trial, so the tension is its weight, 19.6 N. This matters because the frequency depends on √(tension): a 1 % change in tension would change <i>f</i> by 0.5 %.”</div></div>
+
+<div class="card"><h3>A method step <small>Research design</small></h3>
+<div class="bad"><h4>Weak</h4>“Pluck the string and record the frequency.”</div>
+<div class="good"><h4>Strong</h4>“4. Pluck the string gently at its midpoint, hold the phone 10 cm above it, and record the frequency of the strongest peak once the reading is steady. Repeat three times for each length.”</div></div>
+
+<div class="card"><h3>Raw data heading and uncertainty <small>Data analysis</small></h3>
+<div class="bad"><h4>Weak</h4>Columns headed “Length” and “Frequency”, with lengths written as 0.2, 0.35, 0.500.</div>
+<div class="good"><h4>Strong</h4>Columns headed “Vibrating length <i>L</i> / m (±0.001)” and “Frequency <i>f</i> / Hz (±0.1)”, with every length to 3 decimal places. Under the table: “Length uncertainty is half the smallest division (0.5 mm) at each end of the metre stick, so ±1 mm; frequency uncertainty is the last decimal place the app displays.”</div></div>
+
+<div class="card"><h3>A sample calculation <small>Data analysis</small></h3>
+<div class="bad"><h4>Weak</h4>“1/<i>L</i> was calculated for each length.”</div>
+<div class="good"><h4>Strong</h4>“For <i>L</i> = (0.500 ± 0.001) m: 1/<i>L</i> = 2.000 m⁻¹. The percentage uncertainty in <i>L</i> is 0.001 ÷ 0.500 = 0.2 %, and taking the reciprocal (a power of −1) keeps it at 0.2 %, so 1/<i>L</i> = (2.000 ± 0.004) m⁻¹.”</div></div>
+
+<div class="card"><h3>Conclusion <small>Conclusion</small></h3>
+<div class="bad"><h4>Weak</h4>“As the string got shorter the frequency went up, so my hypothesis was correct and the experiment worked.”</div>
+<div class="good"><h4>Strong</h4>“The graph of <i>f</i> against 1/<i>L</i> is a straight line through all seven error bars, so the frequency is inversely proportional to the vibrating length, as <i>f</i> = (1/2<i>L</i>)√(<i>F</i>/<i>μ</i>) predicts. The gradient is (68.2 ± 1.0) m s⁻¹. Theory predicts ½√(<i>F</i>/<i>μ</i>) = (69.3 ± 0.3) m s⁻¹, using <i>F</i> = 19.6 N and <i>μ</i> = (1.02 ± 0.01) g m⁻¹ measured by weighing 1.000 m of the same string (Tsokos, 2023). The two ranges overlap (69.0 to 69.2 m s⁻¹), so the result is consistent with theory, but it sits about 1.6 % low and the intercept is +2.4 Hz instead of zero. Both suggest a small systematic error in the measured length (see Evaluation).”</div>
+<p class="muted">The strong version answers the question with numbers and uncertainties, explains what the gradient means, compares it with a cited prediction, and notices the intercept.</p></div>
+
+<div class="card"><h3>Evaluation: a weakness <small>Evaluation</small></h3>
+<div class="bad"><h4>Weak</h4>“There may have been human error in measuring, and background noise could have affected the app.”</div>
+<div class="good"><h4>Strong</h4>“The most significant weakness was the vibrating length. I measured between the inner edges of the two bridges, but the string touches each bridge at its rounded top, about 1–2 mm further out, so every length was slightly too short. This is a systematic error with a bigger effect on short lengths (3 mm is 1.5 % of 0.200 m but only 0.4 % of 0.800 m). It makes the points at large 1/<i>L</i> fall below the line, which lowers the gradient and gives a positive intercept, exactly what I found. By comparison, the app’s ±0.1 Hz is under 0.2 % of every reading, so its effect is negligible.”</div></div>
+
+<div class="card"><h3>Evaluation: an improvement <small>Evaluation</small></h3>
+<div class="bad"><h4>Weak</h4>“Use more accurate equipment and do more trials.”</div>
+<div class="good"><h4>Strong</h4>“Replace the rounded bridges with triangular knife-edge bridges, so the string has a sharp contact point, and measure the length between the two contact points. This removes the systematic shortfall in <i>L</i>, so I would expect the intercept to move towards zero and the gradient towards the predicted 69.3 m s⁻¹.”</div></div>
+
+<div class="card"><h3>Evaluation: a strength and a limitation <small>Evaluation</small></h3>
+<div class="good"><h4>Strength</h4>“Seven lengths over a fourfold range, with three repeats each, and a frequency reading precise to 0.1 Hz gave small error bars and a clear linear trend.”</div>
+<div class="good"><h4>Limitation</h4>“Only one string and one tension were tested, so the conclusion is confirmed only for 19.6 N and lengths of 0.200–0.800 m. The theory also assumes a perfectly flexible string; a real steel string’s stiffness slightly raises the frequency of very short lengths, so the relationship may not hold well below 0.200 m.”</div></div>
+<p class="muted">All examples are written for this page. None are from real student work.</p>
+</div></section></main>
+<script>
+const tabs=[...document.querySelectorAll('nav button')], panels=[...document.querySelectorAll('.panel')];
+function show(i){ tabs.forEach((b,k)=>b.setAttribute('aria-selected',k==i)); panels.forEach((p,k)=>p.classList.toggle('on',k==i));
+  try{ localStorage.setItem('xs-tab-'+document.title, i); }catch(e){} }
+tabs.forEach((b,i)=>b.onclick=()=>show(i));
+document.addEventListener('click',e=>{ const g=e.target.closest('[data-go]'); if(g) show(+g.dataset.go); });
+let start=0; try{ start=+localStorage.getItem('xs-tab-'+document.title)||0; }catch(e){}
+if(start>0 && start<tabs.length) show(start);
+/* IA page script. Runs inside the Exam Skills page shell (exam.py page()), which already handles
+   the top tabs and any [data-go] click. The gradient tool at the end is the one from exam.py's IA tab. */
+(function(){
+ const store={get(k){try{return localStorage.getItem(k);}catch(e){return null;}},set(k,v){try{localStorage.setItem(k,v);}catch(e){}},del(k){try{localStorage.removeItem(k);}catch(e){}}};
+
+ // in-page links to other tabs: stop the "#" jump (the page shell does the switch)
+ document.addEventListener('click',e=>{const a=e.target.closest('a[data-go]'); if(a) e.preventDefault();});
+
+ // stage switcher
+ const sb=[...document.querySelectorAll('.ia-stagebar button')], sp=[...document.querySelectorAll('.ia-stage')];
+ function stage(i){ sb.forEach((b,k)=>b.setAttribute('aria-selected',k==i)); sp.forEach((p,k)=>p.classList.toggle('on',k==i)); store.set('ia-stage',i); }
+ sb.forEach((b,i)=>b.onclick=()=>stage(i));
+ const s0=+store.get('ia-stage')||0; if(s0>0&&s0<sb.length) stage(s0);
+
+ // research question builder
+ const rq=document.getElementById('rqb');
+ if(rq){ const v=k=>{const i=rq.querySelector('[data-k='+k+']'); return (i.value||i.placeholder).trim();};
+  const upd=()=>{ rq.querySelector('[data-out]').textContent='How does '+v('iv')+' (from '+v('rg')+') affect '+v('dv')+', measured with '+v('how')+'?'; };
+  rq.querySelectorAll('input').forEach(i=>i.oninput=upd); upd(); }
+
+ // checklist: ticks saved in this browser
+ const cks=[...document.querySelectorAll('[data-ck]')], prog=document.querySelector('[data-progress]');
+ const showProg=()=>{ if(prog) prog.textContent=cks.filter(c=>c.checked).length+' of '+cks.length+' ticked'; };
+ cks.forEach(c=>{ c.checked=store.get('ia-ck-'+c.dataset.ck)==='1'; c.onchange=()=>{ c.checked?store.set('ia-ck-'+c.dataset.ck,'1'):store.del('ia-ck-'+c.dataset.ck); showProg(); }; });
+ const clr=document.querySelector('[data-ck-clear]');
+ if(clr) clr.onclick=()=>{ cks.forEach(c=>{c.checked=false; store.del('ia-ck-'+c.dataset.ck);}); showProg(); };
+ showProg();
+
+ // topic ideas filter
+ const ideas=[...document.querySelectorAll('.ia-idea')], cnt=document.querySelector('.ia-count'), q=document.querySelector('.ia-search');
+ const sel={area:'',gear:''};
+ function filt(){ const t=(q&&q.value||'').toLowerCase().trim(); let n=0;
+  ideas.forEach(d=>{ const ok=(!sel.area||d.dataset.area===sel.area)&&(!sel.gear||d.dataset.gear.split('|').includes(sel.gear))&&(!t||d.textContent.toLowerCase().includes(t)); d.hidden=!ok; if(ok)n++; });
+  if(cnt) cnt.textContent=n+' of '+ideas.length+' ideas shown'; }
+ document.querySelectorAll('.ia-filters').forEach(row=>{ const key=row.dataset.f;
+  row.querySelectorAll('button').forEach(b=>b.onclick=()=>{ sel[key]=b.dataset.v; row.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b)); filt(); }); });
+ if(q) q.oninput=filt; filt();
+})();
+
+</script></body></html>

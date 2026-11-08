@@ -13,7 +13,7 @@ from units import UNITS, SIMS
 import build
 
 problems = []
-EXAM_PAGES = ['EXAM-AP', 'EXAM-IB']
+EXAM_PAGES = ['EXAM-AP', 'EXAM-IB', 'EXAM-IA']
 
 # 1. every sim file named in units.py exists
 for k, s in SIMS.items():
