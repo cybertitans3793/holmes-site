@@ -1,7 +1,8 @@
 <div class="card"><h3>Class rules for uncertainty</h3>
 <div class="tbl"><table>
 <tr><th>Reading</th><th>Uncertainty</th><th>Example</th></tr>
-<tr><td><b>Analogue scale</b> (ruler, protractor, thermometer)</td><td>± half the smallest division</td><td>(500.0 ± 0.5) mm</td></tr>
+<tr><td><b>Analogue scale</b> (thermometer, protractor, meter)</td><td>± half the smallest division</td><td>(21.5 ± 0.5) °C</td></tr>
+<tr><td><b>Length on a ruler</b></td><td>± one smallest division: you read both ends, each ± half a division</td><td>(50.0 ± 0.1) cm</td></tr>
 <tr><td><b>Digital display</b> (stopwatch, balance, meter, app)</td><td>± 1 in the last decimal place</td><td>(2.34 ± 0.01) s</td></tr>
 <tr><td><b>Repeated readings</b></td><td>mean ± half the range</td><td>2.31, 2.40, 2.35 s → (2.35 ± 0.05) s</td></tr></table></div>
 <ul>
@@ -31,16 +32,7 @@
 <li><b>Systematic error</b> shifts every reading the same way. Repeats don’t fix it, and it often shows up as an unexpected intercept.</li>
 <li><b>Accepted value:</b> is it inside your ± range? If your percentage difference is much bigger than your percentage uncertainty, look for a systematic error.</li></ul></div>
 
-<div class="card"><h3>Practise first</h3>
+<div class="card"><h3>Practise, then graph your data</h3>
 <p>The <b>P1-00 Measurement</b> sims cover these skills: reading instruments, precision and accuracy, propagating uncertainties, graphs and error bars, and linearizing data.</p>
+<p>Use the <b>Graph Maker</b> there for your IA graph. Type in your data and uncertainties, and it draws the error bars, best-fit line and max and min lines, and gives the gradient and intercept with their uncertainties. Then copy the graph into your report.</p>
 <p><a class="ia-btn" href="{P1_00}" target="_blank" rel="noopener">Open the P1-00 sims ↗</a></p></div>
-
-<div class="card" id="gt"><h3>Gradient tool</h3><p class="muted">Check your own graph. Type one point per line: x, y, uncertainty in y. The tool draws the error bars, the best-fit line, and the steepest and shallowest lines through the first and last error bars, and gives the gradient with its uncertainty.</p>
-<textarea data-in rows="7" spellcheck="false">0.10, 0.23, 0.02
-0.20, 0.41, 0.02
-0.30, 0.62, 0.03
-0.40, 0.79, 0.03
-0.50, 1.02, 0.04
-0.60, 1.19, 0.04</textarea>
-<div class="rq"><label>x-axis label<input data-xl value="x / unit"></label><label>y-axis label<input data-yl value="y / unit"></label></div>
-<canvas data-c width="680" height="400"></canvas><p class="out" data-res></p></div>
