@@ -3,13 +3,15 @@
 The Sims web app serves them like unit pages (...exec?unit=EXAM-AP); the Site's Exam Skills > AP and IB
 pages embed those links. Text for the exam-format and task-verb/command-term sections is in exam/*.html.
 The four practice sets stay in the Review app (?unit=XS-AP, XS-AP-FRQ, XS-IB, XS-IB-1B) on their own Site pages.
+Also builds units/EXAM-PE.html, the Practice Exams page: one card per exam, linking to its timed sections in the Review app.
 Usage:  python3 exam.py [output folder]     (default: out/)"""
 import re, os, sys
 D = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, D)
 from site_links import SITE, REVIEW_APP
 XS = SITE + 'exam-skills/'   # the Site pages that hold the practice sets
-EXAMS = REVIEW_APP + '?unit=EXAMS'   # timed practice exams (Review app, FCPS sign-in); the exams themselves never go in this repo
+EXAMS = REVIEW_APP + '?unit=EXAMS'   # every open practice exam (Review app, FCPS sign-in)
+# The practice exams themselves (College Board / IB papers) live only in the Review app, never in this repo: this page only links to them.
 
 def split(html, mark):
     html = re.sub(r'<h3>What is in this section</h3>.*$', '', html, flags=re.S)
@@ -104,12 +106,10 @@ if(start>0 && start<tabs.length) show(start);
 ap_tabs = [
  dict(label='The exam', html='<div class="card">'+ap_exam+'</div><h3>Practice</h3><div class="tiles">'
    '<a class="tile" href="'+XS+'ap-multiple-choice" target="_blank" rel="noopener"><span class="k">MULTIPLE CHOICE ↗</span><b>Task verbs and question types</b>Tell the verbs apart and recognise each free-response type.</a>'
-   '<a class="tile" href="'+XS+'ap-free-response" target="_blank" rel="noopener"><span class="k">WRITTEN, SELF-MARKED ↗</span><b>Free-response practice</b>One task of each type. Write your answer, then mark it against the scoring points.</a>'
-   '<a class="tile" href="'+EXAMS+'" target="_blank" rel="noopener"><span class="k">TIMED, SCORED ↗</span><b>Practice exams</b>Full timed exam sections with an estimated AP score. Sign in with your FCPS account.</a></div>'),
+   '<a class="tile" href="'+XS+'ap-free-response" target="_blank" rel="noopener"><span class="k">WRITTEN, SELF-MARKED ↗</span><b>Free-response practice</b>One task of each type. Write your answer, then mark it against the scoring points.</a></div>'),
  dict(label='Task verbs', html='<div class="card">'+ap_terms+'</div>'),
  dict(label='Multiple-choice practice', href=XS + 'ap-multiple-choice'),
  dict(label='Free-response practice', href=XS + 'ap-free-response'),
- dict(label='Practice exams', href=EXAMS),
 ]
 
 # ---------------- IB ----------------
@@ -129,8 +129,48 @@ ib = page('Exam skills · IB Physics SL', 'IB exam skills', ib_tabs).replace('{I
 # Internal Assessment page (EXAM-IA): content owned by the IA chat in ia/ (see ia/ia_page.py)
 from ia.ia_page import ia_tabs, ia_js
 ia = page('Exam skills · IB Physics SL', 'Internal Assessment', ia_tabs()).replace('{IAJS}', ia_js())
+
+# ---------------- Practice exams (EXAM-PE) ----------------
+PE_CSS = r"""
+.pe-intro{font-size:1.08rem;max-width:760px;margin:0 0 16px}
+.exams{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;margin:8px 0 26px}
+.exam{background:var(--white);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.exam .k{font-family:var(--mono);font-size:.72rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.exam b{font-family:var(--display);font-size:1.15rem;line-height:1.2}
+.exam .older{font-size:.85rem;color:var(--muted)}
+.exam a{display:flex;justify-content:space-between;gap:8px;align-items:baseline;text-decoration:none;color:var(--ink);border:2px solid var(--ink);padding:8px 10px;font-family:var(--display);font-weight:500}
+.exam a small{font-family:var(--mono);font-size:.72rem;color:var(--muted);white-space:nowrap}
+.exam a:hover{background:var(--ink);color:var(--white)}.exam a:hover small{color:#cfcac2}
+.exam a:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+"""
+U = lambda code: REVIEW_APP + '?unit=' + code
+def exam_card(kick, name, parts, older=False):
+    links = ''.join(f'<a href="{U(c)}" target="_blank" rel="noopener"><span>{lab} ↗</span><small>{mins} min</small></a>' for lab, c, mins in parts)
+    o = '<span class="older">Older format (2022). The app explains the differences.</span>' if older else ''
+    return f'<div class="exam"><span class="k">{kick}</span><b>{name}</b>{o}{links}</div>'
+INTRO = ('<p class="pe-intro">Timed, scored practice exams. Choose <b>Timed</b> (like the real exam) or <b>Practice</b> mode (you can pause). '
+         'Free response is written on paper and scored with the official scoring guide.</p>'
+         '<p class="muted">Sign in with your FCPS account. A section shows “not open” until Mr. Holmes opens it.</p>')
+def ap_parts(code, mc, fr): return [('Multiple choice', code + '-MC', mc), ('Free response', code + '-FR', fr)]
+ap1 = (INTRO + '<h3>AP Physics 1</h3><p class="muted">Recommended order: Practice Exams 1, 2 and 3, then the 2022 exams.</p><div class="exams">'
+       + ''.join(exam_card(f'Exam {i} of 6', f'Practice Exam {i}', ap_parts(f'XS-AP1-PE{i}', 85, 95)) for i in (1, 2, 3))
+       + ''.join(exam_card(f'Exam {i+3} of 6', f'2022 Practice Exam {i}', ap_parts(f'XS-AP1-P22{L}', 90, 90), older=True) for i, L in ((1, 'A'), (2, 'B'), (3, 'C')))
+       + '</div>')
+ap2 = (INTRO + '<h3>AP Physics 2</h3><div class="exams">'
+       + ''.join(exam_card(f'Exam {i} of 3', f'Practice Exam {i}', ap_parts(f'XS-AP2-PE{i}', 85, 95)) for i in (1, 2, 3))
+       + '</div>')
+def ib_parts(code): return [('Paper 1 (1A + 1B)', code + '-P1', 90), ('Paper 2', code + '-P2', 90)]
+IB_SETS = [('Specimen', 'Specimen papers', 'XS-IB-SPEC')] + \
+          [('May 2025', f'May 2025 · TZ{t}', f'XS-IB-25M-TZ{t}') for t in (1, 2, 3)] + \
+          [('November 2025', f'November 2025 · TZ{t}', f'XS-IB-25N-TZ{t}') for t in (1, 3)] + \
+          [('May 2026', f'May 2026 · TZ{t}', f'XS-IB-26M-TZ{t}') for t in (1, 2, 3)]
+ibx = (INTRO + '<h3>IB Physics SL</h3><p class="muted">Paper 1 is 1A and 1B together (90 min). Paper 2 is 90 min.</p><div class="exams">'
+       + ''.join(exam_card(k, n, ib_parts(c)) for k, n, c in IB_SETS) + '</div>')
+pe_tabs = [dict(label='AP Physics 1', html=ap1), dict(label='AP Physics 2', html=ap2), dict(label='IB Physics SL', html=ibx),
+           dict(label='All open exams', href=EXAMS)]
+pe = page('Practice exams · AP Physics 1, AP Physics 2, IB Physics SL', 'Practice exams', pe_tabs).replace('{IAJS}', '').replace('</style>', PE_CSS + '</style>', 1)
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(D, 'out')
 os.makedirs(OUT, exist_ok=True)
-for name, text in (('EXAM-AP', ap), ('EXAM-IB', ib), ('EXAM-IA', ia)):
+for name, text in (('EXAM-AP', ap), ('EXAM-IB', ib), ('EXAM-IA', ia), ('EXAM-PE', pe)):
     with open(os.path.join(OUT, name + '.html'), 'w', encoding='utf-8') as f: f.write(text)
-print('Wrote EXAM-AP (%d), EXAM-IB (%d) and EXAM-IA (%d) to %s' % (len(ap), len(ib), len(ia), OUT))
+print('Wrote EXAM-AP (%d), EXAM-IB (%d), EXAM-IA (%d) and EXAM-PE (%d) to %s' % (len(ap), len(ib), len(ia), len(pe), OUT))
