@@ -8,12 +8,16 @@ Wiring (in exam.py, after page() is defined):
 
 ia_tabs() returns the same dicts page() already takes (label + html); the first tab carries ia.css.
 Tab order matters: the data-go="N" links inside the fragments count tabs from 0 in this order.
-Preview locally: python3 ia/preview.py  -> out/EXAM-IA.html (out/ is git-ignored)."""
+Preview locally: python3 ia/preview.py  -> out/EXAM-IA.html (out/ is git-ignored).
+
+Research question (Stages tab, Stage 1): by default the static builder (<!--RQB--> … <!--/RQB--> in stages.html).
+ia_tabs(rq_form=True) swaps it for the Review app's submit form (REVIEW_APP?unit=IA-RQ: IB students only, signed in,
+saved to the review Sheet's IA tab, shown on the review dashboard's IA tab). Turn it on only after that app version is deployed."""
 import html, json, os, sys
 
 D = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.dirname(D))
-from site_links import SITE, COURSE_FOLDER
+from site_links import SITE, COURSE_FOLDER, REVIEW_APP
 P1_00 = SITE + COURSE_FOLDER['P1'] + '/p1-00'   # the Measurement (IB) unit page: uncertainty and graphing sims
 
 TABS = [            # (label, file)  - keep in step with the data-go numbers in the fragments
@@ -59,11 +63,17 @@ def _ideas_html():
         + '<p class="ia-count"></p><div class="ia-ideas">' + cards + '</div>'
         '<p class="muted">Ideas adapted from GradePod’s “100 IB Physics IA ideas” and K. A. Tsokos’s <i>The Scientific Investigation</i>.</p>')
 
-def ia_tabs():
+RQ_FORM = ('<div class="card ia-rqform"><iframe title="Submit your research question" loading="lazy" '
+           'src="' + REVIEW_APP + '?unit=IA-RQ"></iframe></div>')
+
+def ia_tabs(rq_form=False):
     out = []
     for k, (label, fname) in enumerate(TABS):
         body = _ideas_html() if fname is None else _read(fname)
         body = body.replace('{P1_00}', P1_00)
+        if rq_form and '<!--RQB-->' in body:
+            a, b = body.index('<!--RQB-->'), body.index('<!--/RQB-->') + len('<!--/RQB-->')
+            body = body[:a] + RQ_FORM + body[b:]
         if k == 0:
             body = '<style>' + _read('ia.css') + '</style>' + body
         out.append(dict(label=label, html=body))

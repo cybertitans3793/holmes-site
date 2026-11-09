@@ -36,3 +36,5 @@
 .ia-idea .g span{display:inline-block;font-family:var(--mono);font-size:.66rem;text-transform:uppercase;letter-spacing:.04em;border:1px solid var(--line);background:var(--paper);padding:1px 5px;margin:2px 3px 0 0}
 .ia-count{font-family:var(--mono);font-size:.85rem;color:var(--muted)}
 .panel .wrap a:not(.tile):not(.ia-btn){color:var(--ink);text-decoration-color:var(--orange);text-decoration-thickness:2px;text-underline-offset:2px}
+.ia-rqform{padding:0;overflow:hidden}
+.ia-rqform iframe{display:block;width:100%;height:780px;border:0;background:var(--paper)}

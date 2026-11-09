@@ -12,10 +12,10 @@
  sb.forEach((b,i)=>b.onclick=()=>stage(i));
  const s0=+store.get('ia-stage')||0; if(s0>0&&s0<sb.length) stage(s0);
 
- // research question builder
+ // research question builder (static; the Review app's ?unit=IA-RQ form replaces it once wired: ia_tabs(rq_form=True))
  const rq=document.getElementById('rqb');
  if(rq){ const v=k=>{const i=rq.querySelector('[data-k='+k+']'); return (i.value||i.placeholder).trim();};
-  const upd=()=>{ rq.querySelector('[data-out]').textContent='How does '+v('iv')+' (from '+v('rg')+') affect '+v('dv')+', measured with '+v('how')+'?'; };
+  const upd=()=>{ rq.querySelector('[data-out]').textContent='How does '+v('iv')+' affect '+v('dv')+', measured with '+v('how')+'?'; };
   rq.querySelectorAll('input').forEach(i=>i.oninput=upd); upd(); }
 
  // checklist: ticks saved in this browser
