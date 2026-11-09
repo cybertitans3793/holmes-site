@@ -61,7 +61,7 @@ def _ideas_html():
         + btns('area', areas, 'Topic') + btns('gear', gears, 'Needs')
         + '<input class="ia-search" type="search" placeholder="Search ideas, e.g. magnet, spring, sound" aria-label="Search ideas">'
         + '<p class="ia-count"></p><div class="ia-ideas">' + cards + '</div>'
-        '<p class="muted">Ideas adapted from GradePod’s “100 IB Physics IA ideas” and K. A. Tsokos’s <i>The Scientific Investigation</i>.</p>')
+        '<p class="muted">Ideas adapted from GradePod’s “100 IB Physics IA ideas”, K. A. Tsokos’s <i>The Scientific Investigation</i> and Richard Walding’s “300 ideas for physics investigations”.</p>')
 
 RQ_FORM = ('<div class="card ia-rqform"><iframe title="Submit your research question" loading="lazy" '
            'src="' + REVIEW_APP + '?unit=IA-RQ"></iframe></div>')

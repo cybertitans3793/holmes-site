@@ -118,6 +118,218 @@
 "src": "T"
 },
 {
+"area": "Motion & forces",
+"iv": "Size of the vent hole in the top of a parachute",
+"dv": "Time to fall a fixed height",
+"gear": [
+"Lab basics"
+],
+"note": "Keep the canopy, strings and load the same; drop from the same height each time.",
+"src": "W"
+},
+{
+"area": "Motion & forces",
+"iv": "Diameter of an inflated balloon (total mass kept the same)",
+"dv": "Terminal velocity",
+"gear": [
+"Lab basics",
+"Phone"
+],
+"note": "Tape on small masses so every balloon weighs the same; film the last metre of the fall.",
+"src": "W"
+},
+{
+"area": "Motion & forces",
+"iv": "Height of each nut tied along a string",
+"dv": "Time until it hits a metal tray",
+"gear": [
+"Lab basics",
+"Phone"
+],
+"note": "Drop the whole string at once and record the clicks; read the times off the sound trace.",
+"src": "W"
+},
+{
+"area": "Motion & forces",
+"iv": "Total mass in an Atwood machine (same mass difference)",
+"dv": "Acceleration",
+"gear": [
+"Lab basics"
+],
+"note": "A light pulley helps; time a fixed drop distance.",
+"src": "W"
+},
+{
+"area": "Motion & forces",
+"iv": "Hanging mass pulling a trolley",
+"dv": "Angle of the water surface in a small tank riding on it",
+"gear": [
+"Lab basics",
+"Phone"
+],
+"note": "Photograph or film the tilted surface while the trolley speeds up.",
+"src": "W"
+},
+{
+"area": "Motion & forces",
+"iv": "Time a block is left resting on a surface",
+"dv": "Force (or slope angle) needed to start it sliding",
+"gear": [
+"Lab basics"
+],
+"note": "The effect is small, so measure the starting angle carefully and repeat a lot.",
+"src": "W"
+},
+{
+"area": "Motion & forces",
+"iv": "Temperature of a rubber eraser or block",
+"dv": "Friction force when dragged at steady speed",
+"gear": [
+"Lab basics"
+],
+"note": "Warm or cool it in a sealed bag in water, dry it, and test straight away.",
+"src": "W"
+},
+{
+"area": "Motion & forces",
+"iv": "Water content of sand (% by mass)",
+"dv": "Angle of repose of a poured pile",
+"gear": [
+"Lab basics"
+],
+"note": "Pour through a funnel at a fixed height and measure the height and base width of the cone.",
+"src": "W"
+},
+{
+"area": "Motion & forces",
+"iv": "Falling mass driving a string-wound gravity car",
+"dv": "Distance the car travels",
+"gear": [
+"Lab basics",
+"Buy"
+],
+"note": "Wind the string around the axle; keep the drop height the same.",
+"src": "W"
+},
+{
+"area": "Motion & forces",
+"iv": "Radius of the axle the string is wound on (gravity car)",
+"dv": "Top speed of the car",
+"gear": [
+"Buy",
+"Phone"
+],
+"note": "Wrap tape around the axle to make it thicker; film the car to find its top speed.",
+"src": "W"
+},
+{
+"area": "Motion & forces",
+"iv": "Depth a nail is hammered into wood",
+"dv": "Force needed to pull it out",
+"gear": [
+"Lab basics",
+"Ask first"
+],
+"note": "Pull it straight out with a spring balance or force sensor; use softwood and small nails.",
+"src": "W"
+},
+{
+"area": "Motion & forces",
+"iv": "Impact angle of a marble fired down a tube into flour",
+"dv": "Length-to-width ratio of the crater",
+"gear": [
+"Lab basics"
+],
+"note": "A thin layer of cocoa on top of the flour makes the crater edge easy to photograph.",
+"src": "W"
+},
+{
+"area": "Motion & forces",
+"iv": "Thickness of a foam crash cushion",
+"dv": "Peak deceleration of a trolley hitting it",
+"gear": [
+"Phone",
+"Buy"
+],
+"note": "A phone strapped to the trolley can record acceleration; release from the same height each time.",
+"src": "W"
+},
+{
+"area": "Motion & forces",
+"iv": "Diameter of a toy-car loop track",
+"dv": "Minimum release height for the car to complete the loop",
+"gear": [
+"Buy"
+],
+"note": "Raise the start height in small steps until it just makes it.",
+"src": "W"
+},
+{
+"area": "Motion & forces",
+"iv": "Pull-back distance of a small rubber-band launcher",
+"dv": "Range of a soft projectile",
+"gear": [
+"Lab basics",
+"Ask first"
+],
+"note": "Keep it desk-sized with a soft projectile (pom-pom, foam ball); safety glasses on, aimed away from people.",
+"src": "W"
+},
+{
+"area": "Motion & forces",
+"iv": "Counterweight mass of a desk-top trebuchet",
+"dv": "Range of a soft projectile",
+"gear": [
+"Lab basics",
+"Buy",
+"Ask first"
+],
+"note": "Desk-sized only, soft projectile; agree the design and testing area first.",
+"src": "W"
+},
+{
+"area": "Motion & forces",
+"iv": "Volume of water in a bottle rocket (same pump pressure)",
+"dv": "Time of flight",
+"gear": [
+"Buy",
+"Ask first"
+],
+"note": "Outdoors with an adult, launch pad and pump with a gauge; everyone stands well back.",
+"src": "W"
+},
+{
+"area": "Motion & forces",
+"iv": "Width of the base of a tall block",
+"dv": "Lowest push height at which it tips over instead of sliding",
+"gear": [
+"Lab basics"
+],
+"note": "Beyond SL content (torque): read up first. Push slowly and horizontally with a pencil.",
+"src": "W"
+},
+{
+"area": "Motion & forces",
+"iv": "Ratio of inner to outer radius of a spool",
+"dv": "Pulling angle at which it switches from rolling forward to backward",
+"gear": [
+"Lab basics",
+"Buy"
+],
+"note": "Beyond SL content (torque): read up first. Wind thread on cotton reels or taped-up spools.",
+"src": "W"
+},
+{
+"area": "Motion & forces",
+"iv": "Bounce number of a dropped ball",
+"dv": "Time between successive bounces",
+"gear": [
+"Phone"
+],
+"note": "Record the bounces with a sound app (phyphox has an acoustic stopwatch) and read off the gaps.",
+"src": "W"
+},
+{
 "area": "Oscillations",
 "iv": "Release angle of a pendulum",
 "dv": "Period",
@@ -165,6 +377,80 @@
 "src": "G"
 },
 {
+"area": "Oscillations",
+"iv": "Height of the coupling string between two pendulums",
+"dv": "Time for the swinging to swap from one pendulum to the other",
+"gear": [
+"Lab basics"
+],
+"note": "Hang two equal pendulums from a slack string; set one going and time the energy transfer.",
+"src": "W"
+},
+{
+"area": "Oscillations",
+"iv": "Mass added to a rolling platform holding two metronomes",
+"dv": "Time for the metronomes to synchronise",
+"gear": [
+"Buy",
+"Phone"
+],
+"note": "Start them out of step on a board resting on two cans; film to see when they lock together.",
+"src": "W"
+},
+{
+"area": "Oscillations",
+"iv": "Release angle of a pendulum",
+"dv": "Maximum tension in the string",
+"gear": [
+"Ask first"
+],
+"note": "Needs a force sensor and data logger.",
+"src": "W"
+},
+{
+"area": "Oscillations",
+"iv": "Length of the wire in a torsion pendulum",
+"dv": "Period of twisting oscillations",
+"gear": [
+"Lab basics"
+],
+"note": "Beyond SL content (rotation): read up first. A ln-ln graph finds the power.",
+"src": "W"
+},
+{
+"area": "Oscillations",
+"iv": "Gap between two aluminium plates either side of a swinging magnet",
+"dv": "Number of swings until the amplitude halves",
+"gear": [
+"Lab basics",
+"Buy",
+"Phone"
+],
+"note": "Beyond SL content (induction): read up first. Film the swings against a scale.",
+"src": "W"
+},
+{
+"area": "Oscillations",
+"iv": "Number of coils hanging below the point you hold a slinky",
+"dv": "Length of the hanging part",
+"gear": [
+"Buy"
+],
+"note": "Hold the slinky at different coils and let the rest hang; measure the stretched length.",
+"src": "W"
+},
+{
+"area": "Oscillations",
+"iv": "Tension in a stretched horizontal slinky",
+"dv": "Speed of a pulse along it",
+"gear": [
+"Buy",
+"Phone"
+],
+"note": "Change the stretch, measure the tension with a spring balance and film the pulse.",
+"src": "W"
+},
+{
 "area": "Thermal",
 "iv": "Temperature difference between hot water and the room",
 "dv": "Rate of cooling",
@@ -204,6 +490,133 @@
 "src": "G"
 },
 {
+"area": "Thermal",
+"iv": "Speed of the air from a fan (distance from the fan)",
+"dv": "Rate of cooling of a can of hot water",
+"gear": [
+"Lab basics"
+],
+"note": "Measure air speed with an anemometer app or move the fan further away.",
+"src": "W"
+},
+{
+"area": "Thermal",
+"iv": "Number of fins (aluminium strips) attached to a can of hot water",
+"dv": "Rate of cooling",
+"gear": [
+"Lab basics",
+"Buy"
+],
+"note": "Same water volume and starting temperature each time.",
+"src": "W"
+},
+{
+"area": "Thermal",
+"iv": "Starting temperature of water",
+"dv": "Time to freeze in a freezer",
+"gear": [
+"Lab basics"
+],
+"note": "At home; same container, volume and shelf position each time.",
+"src": "W"
+},
+{
+"area": "Thermal",
+"iv": "Length of a metal rod with one end in hot water",
+"dv": "Temperature rise at the far end after a fixed time",
+"gear": [
+"Lab basics"
+],
+"note": "Insulate the rod; tape a thermometer probe to the far end.",
+"src": "W"
+},
+{
+"area": "Thermal",
+"iv": "Thickness of a slab of potato or jelly",
+"dv": "Time for its centre to reach a set temperature",
+"gear": [
+"Lab basics"
+],
+"note": "Put a probe in the centre and heat on a hot plate or in hot water.",
+"src": "W"
+},
+{
+"area": "Thermal",
+"iv": "Salt concentration of water",
+"dv": "Specific heat capacity",
+"gear": [
+"Lab basics",
+"Ask first"
+],
+"note": "Use an electric heater with a joulemeter, or the method of mixtures.",
+"src": "W"
+},
+{
+"area": "Thermal",
+"iv": "Volume of water in an electric kettle",
+"dv": "Efficiency of heating",
+"gear": [
+"Lab basics",
+"Buy"
+],
+"note": "At home; a plug-in power meter gives the energy used. Work out the energy gained by the water.",
+"src": "W"
+},
+{
+"area": "Thermal",
+"iv": "Fraction of a lid painted black (or shade of grey)",
+"dv": "Temperature rise of air in a can under a lamp",
+"gear": [
+"Lab basics",
+"Ask first"
+],
+"note": "Same lamp distance and time; the lamp gets hot.",
+"src": "W"
+},
+{
+"area": "Thermal",
+"iv": "Number of holes in a closed painted can (model car)",
+"dv": "Temperature rise in sunlight or under a lamp",
+"gear": [
+"Lab basics",
+"Buy"
+],
+"note": "Seal a thermometer into the can with Blu-tack.",
+"src": "W"
+},
+{
+"area": "Thermal",
+"iv": "Number of clear plastic layers over a model solar water heater",
+"dv": "Temperature rise of the water",
+"gear": [
+"Lab basics",
+"Buy"
+],
+"note": "Run all tests at the same time of day, or under the same lamp.",
+"src": "W"
+},
+{
+"area": "Thermal",
+"iv": "Depth in a column of soil heated from the top",
+"dv": "Time delay before the temperature peaks",
+"gear": [
+"Lab basics",
+"Ask first"
+],
+"note": "Switch a heat lamp on and off and log temperatures at several depths.",
+"src": "W"
+},
+{
+"area": "Thermal",
+"iv": "Temperature of a hot plate",
+"dv": "Lifetime of a water drop on it",
+"gear": [
+"Ask first"
+],
+"note": "Supervised only: hot plate above 200 °C. Drop water from a pipette and film the drops.",
+"src": "W"
+},
+{
 "area": "Sound",
 "iv": "Volume of water in a wine glass",
 "dv": "Frequency when tapped",
@@ -232,6 +645,147 @@
 ],
 "note": "Work outdoors or in a large room; reflections spoil it.",
 "src": "G"
+},
+{
+"area": "Sound",
+"iv": "Air temperature in a long pipe",
+"dv": "Speed of sound (echo time)",
+"gear": [
+"Phone",
+"Buy"
+],
+"note": "Clap or click at the open end of a pipe closed at the far end; read the echo delay from a recording.",
+"src": "W"
+},
+{
+"area": "Sound",
+"iv": "Diameter of a pipe",
+"dv": "End correction",
+"gear": [
+"Phone",
+"Buy"
+],
+"note": "Find two resonant lengths for the same frequency in each pipe; tone-generator app as the source.",
+"src": "W"
+},
+{
+"area": "Sound",
+"iv": "Length of a metal rod struck on its end",
+"dv": "Frequency of the ring",
+"gear": [
+"Phone",
+"Buy"
+],
+"note": "Hold the rod at its middle; a spectrum app picks out the main frequency.",
+"src": "W"
+},
+{
+"area": "Sound",
+"iv": "Length of a xylophone-style bar (wood or metal)",
+"dv": "Frequency when struck",
+"gear": [
+"Phone",
+"Buy"
+],
+"note": "Support the bar on foam at about a quarter of its length from each end.",
+"src": "W"
+},
+{
+"area": "Sound",
+"iv": "Tension in a stretched string",
+"dv": "Fundamental frequency",
+"gear": [
+"Lab basics",
+"Phone"
+],
+"note": "Hang masses over a pulley to set the tension; use a frequency app.",
+"src": "W"
+},
+{
+"area": "Sound",
+"iv": "Volume of air in a bottle",
+"dv": "Frequency when you blow across the top",
+"gear": [
+"Phone"
+],
+"note": "Add water to change the air volume; measure the volume left each time.",
+"src": "W"
+},
+{
+"area": "Sound",
+"iv": "Number of towels or cushions in a small room or box",
+"dv": "Reverberation time",
+"gear": [
+"Phone"
+],
+"note": "Pop a balloon or clap and record how long the sound takes to die away.",
+"src": "W"
+},
+{
+"area": "Sound",
+"iv": "Thickness of a foam or fabric layer",
+"dv": "Drop in sound level through it",
+"gear": [
+"Phone",
+"Buy"
+],
+"note": "Tone app on one phone inside a box, sound meter app outside. Two phones needed.",
+"src": "W"
+},
+{
+"area": "Sound",
+"iv": "Frequency of a tone",
+"dv": "Sound level getting through a fixed barrier",
+"gear": [
+"Phone",
+"Buy"
+],
+"note": "Same set-up as the thickness idea; keep the speaker volume fixed.",
+"src": "W"
+},
+{
+"area": "Sound",
+"iv": "Frequency of a tone from two speakers",
+"dv": "Spacing between the quiet spots",
+"gear": [
+"Phone",
+"Buy"
+],
+"note": "Work outdoors or in a large room; walk a sound meter along a line in front of the speakers.",
+"src": "W"
+},
+{
+"area": "Sound",
+"iv": "Length of a string telephone",
+"dv": "Sound level at the far cup",
+"gear": [
+"Phone",
+"Buy"
+],
+"note": "Keep the string tight and the source tone fixed.",
+"src": "W"
+},
+{
+"area": "Sound",
+"iv": "Amplitude of a pendulum carrying a buzzer",
+"dv": "Largest change in frequency heard (Doppler shift)",
+"gear": [
+"Phone",
+"Buy"
+],
+"note": "Record with a spectrogram app placed in line with the swing.",
+"src": "W"
+},
+{
+"area": "Sound",
+"iv": "Rotation rate of a buzzer on a spinning arm",
+"dv": "Largest Doppler shift in frequency",
+"gear": [
+"Buy",
+"Ask first"
+],
+"note": "The arm must be guarded and the buzzer fixed firmly.",
+"src": "W"
 },
 {
 "area": "Light",
@@ -292,6 +846,90 @@
 "Ask first"
 ],
 "src": ""
+},
+{
+"area": "Light",
+"iv": "Angle between two mirrors",
+"dv": "Number of images you see",
+"gear": [
+"Lab basics"
+],
+"note": "Hinge two small mirrors with tape and stand an object between them.",
+"src": "W"
+},
+{
+"area": "Light",
+"iv": "Real depth of water in a tall container",
+"dv": "Apparent depth of a coin at the bottom",
+"gear": [
+"Lab basics"
+],
+"note": "Find the apparent depth by lining up a pin seen beside the container (no parallax).",
+"src": "W"
+},
+{
+"area": "Light",
+"iv": "Sugar (or salt) concentration of a solution",
+"dv": "Refractive index",
+"gear": [
+"Lab basics",
+"Ask first"
+],
+"note": "Use a ray box and a clear rectangular container; measure angles of incidence and refraction.",
+"src": "W"
+},
+{
+"area": "Light",
+"iv": "Depth (path length) of a sugar syrup between polarising filters",
+"dv": "Angle the light’s polarisation is rotated",
+"gear": [
+"Buy"
+],
+"note": "Rotate the second filter to the darkest position and read the angle.",
+"src": "W"
+},
+{
+"area": "Light",
+"iv": "Bend radius of a plastic optical fibre or acrylic rod",
+"dv": "Light intensity coming out the end",
+"gear": [
+"Phone",
+"Buy"
+],
+"note": "Bend it around jars of different sizes; phone light sensor in a dark room.",
+"src": "W"
+},
+{
+"area": "Light",
+"iv": "Angle of a small solar cell to a lamp",
+"dv": "Output power",
+"gear": [
+"Buy",
+"Ask first"
+],
+"note": "Measure V and I across a fixed resistor; keep the lamp distance fixed.",
+"src": "W"
+},
+{
+"area": "Light",
+"iv": "Mass of dust spread on a small solar cell",
+"dv": "Output power",
+"gear": [
+"Buy",
+"Ask first"
+],
+"note": "Sieve fine powder (flour, sand) evenly over a clear sheet laid on the cell.",
+"src": "W"
+},
+{
+"area": "Light",
+"iv": "Object distance from a magnifying lens",
+"dv": "Image magnification",
+"gear": [
+"Lab basics"
+],
+"note": "Use a lit object and a screen; measure image and object heights.",
+"src": "W"
 },
 {
 "area": "Electricity & magnetism",
@@ -363,6 +1001,180 @@
 "src": "G"
 },
 {
+"area": "Electricity & magnetism",
+"iv": "Distance between two magnets",
+"dv": "Force between them",
+"gear": [
+"Lab basics",
+"Buy"
+],
+"note": "Put one magnet on a digital scale and lower the other on a stand above it.",
+"src": "W"
+},
+{
+"area": "Electricity & magnetism",
+"iv": "Number of turns per metre of a stretched slinky carrying a current",
+"dv": "Magnetic field inside it",
+"gear": [
+"Phone",
+"Ask first"
+],
+"note": "Low-voltage supply only; measure the field with a phone magnetometer app and subtract the background.",
+"src": "W"
+},
+{
+"area": "Electricity & magnetism",
+"iv": "Current in two long parallel wires",
+"dv": "Force between them",
+"gear": [
+"Ask first"
+],
+"note": "Needs large currents from a low-voltage supply and a sensitive balance; only with Mr. Holmes.",
+"src": "W"
+},
+{
+"area": "Electricity & magnetism",
+"iv": "Length of a pencil line drawn on paper",
+"dv": "Its resistance",
+"gear": [
+"Lab basics",
+"Ask first"
+],
+"note": "Shade a thick, even line with a soft pencil and use a multimeter.",
+"src": "W"
+},
+{
+"area": "Electricity & magnetism",
+"iv": "Number of layers of pencil shading",
+"dv": "Resistance of the strip",
+"gear": [
+"Lab basics",
+"Ask first"
+],
+"note": "Same strip size and pencil each time; multimeter on the resistance range.",
+"src": "W"
+},
+{
+"area": "Electricity & magnetism",
+"iv": "Temperature of a coil of thin copper wire",
+"dv": "Its resistance",
+"gear": [
+"Lab basics",
+"Ask first"
+],
+"note": "Seal the coil in a bag or test tube in a water bath; use enough wire for a resistance of several ohms.",
+"src": "W"
+},
+{
+"area": "Electricity & magnetism",
+"iv": "Temperature difference between the two junctions of a thermocouple",
+"dv": "Voltage it produces",
+"gear": [
+"Lab basics",
+"Buy",
+"Ask first"
+],
+"note": "Twist copper and iron wires together; ice water and a water bath set the junction temperatures.",
+"src": "W"
+},
+{
+"area": "Electricity & magnetism",
+"iv": "Capacitance (or resistance) in a 555 timer circuit",
+"dv": "Flash period of an LED",
+"gear": [
+"Buy",
+"Ask first"
+],
+"note": "A cheap kit works; time many flashes and divide.",
+"src": "W"
+},
+{
+"area": "Electricity & magnetism",
+"iv": "Voltage across a small DC motor",
+"dv": "Rotation rate",
+"gear": [
+"Buy",
+"Ask first"
+],
+"note": "Count rotations with a slow-motion video of a marked shaft or a phone strobe app.",
+"src": "W"
+},
+{
+"area": "Electricity & magnetism",
+"iv": "Number of magnets stacked in a homopolar motor",
+"dv": "Spin rate",
+"gear": [
+"Buy",
+"Ask first"
+],
+"note": "The battery and wire get hot quickly, so run each test for a few seconds only.",
+"src": "W"
+},
+{
+"area": "Electricity & magnetism",
+"iv": "Layers of aluminium foil under a slope",
+"dv": "Time for a strong magnet to slide down it",
+"gear": [
+"Lab basics",
+"Buy"
+],
+"note": "Beyond SL content (induction): read up first. Compare with a plastic slope as a control.",
+"src": "W"
+},
+{
+"area": "Electricity & magnetism",
+"iv": "Gap between a magnet on a toy car and an aluminium ramp",
+"dv": "Time to roll down the ramp",
+"gear": [
+"Lab basics",
+"Buy"
+],
+"note": "Beyond SL content (induction): read up first. Change the gap with spacers under the magnet.",
+"src": "W"
+},
+{
+"area": "Electricity & magnetism",
+"iv": "Number of turns on a coil",
+"dv": "Peak voltage induced by a magnet spinning next to it",
+"gear": [
+"Buy",
+"Ask first"
+],
+"note": "Beyond SL content (induction): read up first. Needs a data logger or oscilloscope.",
+"src": "W"
+},
+{
+"area": "Electricity & magnetism",
+"iv": "Number of turns on the secondary coil of a low-voltage transformer",
+"dv": "Output voltage",
+"gear": [
+"Ask first"
+],
+"note": "Beyond SL content: read up first. Lab low-voltage AC supply only, never mains.",
+"src": "W"
+},
+{
+"area": "Electricity & magnetism",
+"iv": "Number of iron rods pushed into a coil on low-voltage AC",
+"dv": "Current through the coil",
+"gear": [
+"Ask first"
+],
+"note": "Beyond SL content (self-inductance): read up first. Lab low-voltage AC supply only.",
+"src": "W"
+},
+{
+"area": "Electricity & magnetism",
+"iv": "Distance between a model guitar pickup and a vibrating steel string",
+"dv": "Amplitude of the output signal",
+"gear": [
+"Buy",
+"Ask first"
+],
+"note": "Beyond SL content (induction): read up first. Needs an oscilloscope or data logger.",
+"src": "W"
+},
+{
 "area": "Fluids",
 "iv": "Time since a bottle started draining through a small hole",
 "dv": "Height of water left",
@@ -390,5 +1202,273 @@
 "Phone"
 ],
 "src": "G"
+},
+{
+"area": "Fluids",
+"iv": "Height of water above a hole in a bottle",
+"dv": "Horizontal range of the jet",
+"gear": [
+"Lab basics"
+],
+"note": "Keep the height of the hole above the landing surface the same.",
+"src": "W"
+},
+{
+"area": "Fluids",
+"iv": "Diameter of a hole in a bottle",
+"dv": "Time to drain a fixed volume",
+"gear": [
+"Lab basics",
+"Buy"
+],
+"note": "Drill or punch clean holes; time from the same starting level.",
+"src": "W"
+},
+{
+"area": "Fluids",
+"iv": "Length of a narrow tube draining a container",
+"dv": "Flow rate",
+"gear": [
+"Lab basics",
+"Buy"
+],
+"note": "Keep the water level in the container constant (top it up) and collect water for a fixed time.",
+"src": "W"
+},
+{
+"area": "Fluids",
+"iv": "Height difference between the two ends of a siphon",
+"dv": "Flow rate",
+"gear": [
+"Lab basics",
+"Buy"
+],
+"note": "Same tube throughout; measure the volume collected in a fixed time.",
+"src": "W"
+},
+{
+"area": "Fluids",
+"iv": "Diameter of the hole in a floating cup",
+"dv": "Time for the cup to fill and sink",
+"gear": [
+"Lab basics",
+"Buy"
+],
+"note": "Plastic plumbing caps drilled with different holes work well.",
+"src": "W"
+},
+{
+"area": "Fluids",
+"iv": "Diameter of a ball bearing",
+"dv": "Terminal velocity falling through syrup or glycerol",
+"gear": [
+"Lab basics",
+"Buy"
+],
+"note": "Use a tall column and time the fall between two marks low down.",
+"src": "W"
+},
+{
+"area": "Fluids",
+"iv": "Water added to honey or syrup (% by mass)",
+"dv": "Time for a ball to fall a fixed distance",
+"gear": [
+"Lab basics",
+"Buy"
+],
+"note": "Mix well and let bubbles rise out before timing.",
+"src": "W"
+},
+{
+"area": "Fluids",
+"iv": "Detergent concentration",
+"dv": "Mass of a water drop falling from a tube",
+"gear": [
+"Lab basics"
+],
+"note": "Weigh 20 drops at once to get the mass of one; same tube throughout.",
+"src": "W"
+},
+{
+"area": "Fluids",
+"iv": "Temperature of water",
+"dv": "Mass of a drop falling from a tube",
+"gear": [
+"Lab basics"
+],
+"note": "Weigh 20 drops at once; work quickly so the temperature stays steady.",
+"src": "W"
+},
+{
+"area": "Fluids",
+"iv": "Angle of attack of a card wing in front of a fan",
+"dv": "Lift force",
+"gear": [
+"Lab basics",
+"Buy"
+],
+"note": "Mount the wing on a digital scale and read the drop in reading.",
+"src": "W"
+},
+{
+"area": "Fluids",
+"iv": "Hanging mass towing a model boat across water",
+"dv": "Steady speed of the boat",
+"gear": [
+"Lab basics",
+"Buy"
+],
+"note": "Use a pulley at the edge of a long tub or bath; time a marked length.",
+"src": "W"
+},
+{
+"area": "Fluids",
+"iv": "Angle of a sail on a trolley in front of a fan",
+"dv": "Force pushing the trolley",
+"gear": [
+"Lab basics",
+"Buy"
+],
+"note": "Hold the trolley with a spring balance and read the force.",
+"src": "W"
+},
+{
+"area": "Energy",
+"iv": "Number of blades on a model wind turbine",
+"dv": "Output voltage across a fixed resistor",
+"gear": [
+"Buy",
+"Ask first"
+],
+"note": "A small motor works as the generator; keep the fan distance fixed.",
+"src": "W"
+},
+{
+"area": "Energy",
+"iv": "Blade angle (pitch) of a model wind turbine",
+"dv": "Output power",
+"gear": [
+"Buy",
+"Ask first"
+],
+"note": "Measure V across a fixed resistor and work out V²/R.",
+"src": "W"
+},
+{
+"area": "Energy",
+"iv": "Height water falls onto a model water wheel",
+"dv": "Time to lift a small mass a fixed height",
+"gear": [
+"Lab basics",
+"Buy"
+],
+"note": "Keep the flow rate steady; work out the output power from the lift.",
+"src": "W"
+},
+{
+"area": "Energy",
+"iv": "Number of steel balls behind the magnet in a magnetic “gun”",
+"dv": "Speed of the ball launched off the end",
+"gear": [
+"Buy",
+"Ask first"
+],
+"note": "Strong magnets pinch and the ball flies: safety glasses, aim at a soft stop. Film the launch.",
+"src": "W"
+},
+{
+"area": "Energy",
+"iv": "Mass on a rubber-band bungee cord",
+"dv": "Lowest point reached",
+"gear": [
+"Lab basics",
+"Phone"
+],
+"note": "Film against a ruler; drop from the same point each time.",
+"src": "W"
+},
+{
+"area": "Energy",
+"iv": "Volume of water heated in a microwave (fixed time)",
+"dv": "Temperature rise",
+"gear": [
+"Lab basics"
+],
+"note": "At home; stir before reading. Compare with the oven’s rated power.",
+"src": "W"
+},
+{
+"area": "Materials",
+"iv": "Number of craft sticks glued into a laminated beam",
+"dv": "Sag at the middle under a fixed load",
+"gear": [
+"Lab basics",
+"Buy"
+],
+"note": "Test the beam flat and on its edge as a second variable.",
+"src": "W"
+},
+{
+"area": "Materials",
+"iv": "Span between supports of a spaghetti strand",
+"dv": "Load needed to break it",
+"gear": [
+"Lab basics",
+"Buy"
+],
+"note": "Hang a cup at the middle and add rice or small masses slowly.",
+"src": "W"
+},
+{
+"area": "Materials",
+"iv": "Number of spaghetti strands in a bundle",
+"dv": "Load needed to break it",
+"gear": [
+"Lab basics",
+"Buy"
+],
+"note": "Tape the ends of the bundle; same span each time.",
+"src": "W"
+},
+{
+"area": "Materials",
+"iv": "Diameter of a rolled paper tube (same sheet of paper)",
+"dv": "Load needed to crush it",
+"gear": [
+"Lab basics"
+],
+"note": "Load the top slowly with masses on a board.",
+"src": "W"
+},
+{
+"area": "Materials",
+"iv": "Diameter of fishing line",
+"dv": "Load needed to break it",
+"gear": [
+"Lab basics",
+"Buy"
+],
+"note": "Same brand and length; protect feet and eyes, and stack masses low.",
+"src": "W"
+},
+{
+"area": "Materials",
+"iv": "Temperature of a rubber band",
+"dv": "Extension under a fixed load",
+"gear": [
+"Lab basics"
+],
+"note": "Hang it in a tall beaker of water at different temperatures.",
+"src": "W"
+},
+{
+"area": "Materials",
+"iv": "Maximum load on a rubber band",
+"dv": "Energy lost in one stretch-and-relax cycle",
+"gear": [
+"Lab basics"
+],
+"note": "Record extension while loading and unloading; the energy lost is the area between the two curves.",
+"src": "W"
 }
 ]
