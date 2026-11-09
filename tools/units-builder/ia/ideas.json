@@ -305,7 +305,7 @@
 "gear": [
 "Lab basics"
 ],
-"note": "Beyond SL content (torque): read up first. Push slowly and horizontally with a pencil.",
+"note": "Push slowly and horizontally with a pencil.",
 "src": "W"
 },
 {
@@ -316,7 +316,7 @@
 "Lab basics",
 "Buy"
 ],
-"note": "Beyond SL content (torque): read up first. Wind thread on cotton reels or taped-up spools.",
+"note": "Wind thread on cotton reels or taped-up spools.",
 "src": "W"
 },
 {
@@ -414,7 +414,7 @@
 "gear": [
 "Lab basics"
 ],
-"note": "Beyond SL content (rotation): read up first. A ln-ln graph finds the power.",
+"note": "A ln-ln graph finds the power.",
 "src": "W"
 },
 {
@@ -426,7 +426,7 @@
 "Buy",
 "Phone"
 ],
-"note": "Beyond SL content (induction): read up first. Film the swings against a scale.",
+"note": "Film the swings against a scale.",
 "src": "W"
 },
 {
@@ -1118,7 +1118,7 @@
 "Lab basics",
 "Buy"
 ],
-"note": "Beyond SL content (induction): read up first. Compare with a plastic slope as a control.",
+"note": "Compare with a plastic slope as a control.",
 "src": "W"
 },
 {
@@ -1129,7 +1129,7 @@
 "Lab basics",
 "Buy"
 ],
-"note": "Beyond SL content (induction): read up first. Change the gap with spacers under the magnet.",
+"note": "Change the gap with spacers under the magnet.",
 "src": "W"
 },
 {
@@ -1140,7 +1140,7 @@
 "Buy",
 "Ask first"
 ],
-"note": "Beyond SL content (induction): read up first. Needs a data logger or oscilloscope.",
+"note": "Needs a data logger or oscilloscope.",
 "src": "W"
 },
 {
@@ -1150,7 +1150,7 @@
 "gear": [
 "Ask first"
 ],
-"note": "Beyond SL content: read up first. Lab low-voltage AC supply only, never mains.",
+"note": "Lab low-voltage AC supply only, never mains.",
 "src": "W"
 },
 {
@@ -1160,7 +1160,7 @@
 "gear": [
 "Ask first"
 ],
-"note": "Beyond SL content (self-inductance): read up first. Lab low-voltage AC supply only.",
+"note": "Lab low-voltage AC supply only.",
 "src": "W"
 },
 {
@@ -1171,7 +1171,7 @@
 "Buy",
 "Ask first"
 ],
-"note": "Beyond SL content (induction): read up first. Needs an oscilloscope or data logger.",
+"note": "Needs an oscilloscope or data logger.",
 "src": "W"
 },
 {
