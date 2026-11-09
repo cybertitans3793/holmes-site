@@ -12,8 +12,13 @@ Preview locally: python3 ia/preview.py  -> out/EXAM-IA.html (out/ is git-ignored
 
 Research question (Stages tab, Stage 1): by default the static builder (<!--RQB--> … <!--/RQB--> in stages.html).
 ia_tabs(rq_form=True) swaps it for the Review app's submit form (REVIEW_APP?unit=IA-RQ: IB students only, signed in,
-saved to the review Sheet's IA tab, shown on the review dashboard's IA tab). Turn it on only after that app version is deployed."""
-import html, json, os, sys
+saved to the review Sheet's IA tab, shown on the review dashboard's IA tab). Turn it on only after that app version is deployed.
+
+Plan (Stages tab, Stage 2): ia_tabs(plan_form=True) puts the Review app's planner (REVIEW_APP?unit=IA-PLAN: IB only, drafts,
+diagram upload, per-section teacher notes, "Make my IA doc" once approved) after the Stage 2 step list (<!--PLANFORM-->).
+Wording that only fits one version sits between <!--PLAN-->…<!--/PLAN--> (kept only with the planner) and
+<!--NOPLAN-->…<!--/NOPLAN--> (kept only without it), in any tab. Turn it on only after that app version is deployed."""
+import html, json, os, re, sys
 
 D = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.dirname(D))
@@ -66,11 +71,21 @@ def _ideas_html():
 RQ_FORM = ('<div class="card ia-rqform"><iframe title="Submit your research question" loading="lazy" '
            'src="' + REVIEW_APP + '?unit=IA-RQ"></iframe></div>')
 
-def ia_tabs(rq_form=False):
+PLAN_FORM = ('<div class="card ia-planform"><iframe title="Your Stage 2 plan" loading="lazy" '
+             'src="' + REVIEW_APP + '?unit=IA-PLAN"></iframe></div>')
+
+def _plan_marks(body, plan_form):
+    keep, drop = ('PLAN', 'NOPLAN') if plan_form else ('NOPLAN', 'PLAN')
+    body = re.sub(r'<!--%s-->.*?<!--/%s-->' % (drop, drop), '', body, flags=re.S)
+    body = body.replace('<!--%s-->' % keep, '').replace('<!--/%s-->' % keep, '')
+    return body.replace('<!--PLANFORM-->', PLAN_FORM if plan_form else '')
+
+def ia_tabs(rq_form=False, plan_form=False):
     out = []
     for k, (label, fname) in enumerate(TABS):
         body = _ideas_html() if fname is None else _read(fname)
         body = body.replace('{P1_00}', P1_00)
+        body = _plan_marks(body, plan_form)
         if rq_form and '<!--RQB-->' in body:
             a, b = body.index('<!--RQB-->'), body.index('<!--/RQB-->') + len('<!--/RQB-->')
             body = body[:a] + RQ_FORM + body[b:]

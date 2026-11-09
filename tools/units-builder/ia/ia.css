@@ -38,3 +38,5 @@
 .panel .wrap a:not(.tile):not(.ia-btn){color:var(--ink);text-decoration-color:var(--orange);text-decoration-thickness:2px;text-underline-offset:2px}
 .ia-rqform{padding:0;overflow:hidden}
 .ia-rqform iframe{display:block;width:100%;height:780px;border:0;background:var(--paper)}
+.ia-planform{padding:0;overflow:hidden;margin:14px 0}
+.ia-planform iframe{display:block;width:100%;height:1100px;border:0;background:var(--paper)}
