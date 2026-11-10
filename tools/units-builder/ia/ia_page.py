@@ -27,45 +27,55 @@ P1_00 = SITE + COURSE_FOLDER['P1'] + '/p1-00'   # the Measurement (IB) unit page
 
 TABS = [            # (label, file)  - keep in step with the data-go numbers in the fragments
     ('Start here', 'start.html'),            # 0
-    ('How it’s graded', 'grading.html'),     # 1
-    ('Stages', 'stages.html'),               # 2
-    ('Report template', 'template.html'),    # 3
-    ('Uncertainties & graphs', 'uncertainty.html'),  # 4
-    ('Topic ideas', None),                   # 5  built from ideas.json
-    ('Checklist', 'checklist.html'),         # 6
-    ('Examples', 'examples.html'),           # 7
+    ('Stages', 'stages.html'),               # 1  each stage carries its own marking tips, examples and (Stage 5) the checklist
+    ('Reference', None),                     # 2  built by _reference(): mark bands, report template, uncertainties (data-ref 0, 1, 2)
+    ('Topic ideas', None),                   # 3  built from ideas.json
+]
+REFERENCE = [       # (title, file, one-line summary) - collapsed sections; [data-ref="N"] links open section N
+    ('How it’s marked', 'grading.html', 'The four criteria and their mark bands, in plain words.'),
+    ('Report template and format rules', 'template.html', 'The headings in order, format rules and the word limit.'),
+    ('Uncertainties and graphs', 'uncertainty.html', 'Class uncertainty rules, writing results, graphs, outliers.'),
 ]
 
 def _read(name):
     with open(os.path.join(D, name), encoding='utf-8') as f:
         return f.read()
 
+def _reference():
+    out = '<p class="muted">Look things up here. Each section opens when you click it.</p>'
+    for k, (title, fname, blurb) in enumerate(REFERENCE):
+        out += (f'<details class="ia-ref" data-refsec="{k}"><summary><b>{title}</b><span>{blurb}</span></summary>'
+                f'<div class="ia-ref-body">{_read(fname)}</div></details>')
+    return out
+
 def _ideas_html():
     ideas = json.loads(_read('ideas.json'))
     areas = sorted({i['area'] for i in ideas}, key=lambda a: [x['area'] for x in ideas].index(a))
     gears = ['Lab basics', 'Phone', 'Buy', 'Ask first']
     e = html.escape
-    btns = lambda key, vals, label: (f'<div class="ia-filters" data-f="{key}"><span class="lab">{label}</span>'
-        f'<button data-v="" aria-pressed="true">All</button>'
-        + ''.join(f'<button data-v="{e(v)}" aria-pressed="false">{e(v)}</button>' for v in vals) + '</div>')
-    cards = ''
-    for i in ideas:
-        note = f'<p class="n">{e(i["note"])}</p>' if i.get('note') else ''
-        cards += (f'<div class="ia-idea" data-area="{e(i["area"])}" data-gear="{e("|".join(i["gear"]))}">'
-                  f'<div class="a">{e(i["area"])}</div>'
-                  f'<div class="q">{e(i["iv"])} <i>→</i> {e(i["dv"][0].lower() + i["dv"][1:])}</div>'
-                  f'{note}'
-                  f'<div class="g">' + ''.join(f'<span>{e(g)}</span>' for g in i['gear']) + '</div></div>')
+    btns = (f'<div class="ia-filters" data-f="gear"><span class="lab">Needs</span>'
+            f'<button data-v="" aria-pressed="true">Anything</button>'
+            + ''.join(f'<button data-v="{e(v)}" aria-pressed="false">{e(v)}</button>' for v in gears) + '</div>')
+    groups = ''
+    for a in areas:
+        cards = ''
+        for i in [x for x in ideas if x['area'] == a]:
+            note = f'<p class="n">{e(i["note"])}</p>' if i.get('note') else ''
+            cards += (f'<div class="ia-idea" data-gear="{e("|".join(i["gear"]))}">'
+                      f'<div class="q">{e(i["iv"])} <i>→</i> {e(i["dv"][0].lower() + i["dv"][1:])}</div>'
+                      f'{note}'
+                      f'<div class="g">' + ''.join(f'<span>{e(g)}</span>' for g in i['gear']) + '</div></div>')
+        n = cards.count('class="ia-idea"')
+        groups += (f'<details class="ia-area" data-area="{e(a)}"><summary><b>{e(a)}</b> <span class="c" data-n="{n}">{n} ideas</span></summary>'
+                   f'<div class="ia-ideas">{cards}</div></details>')
     return ('<div class="card"><h3>Topic ideas</h3>'
-        '<p>Each idea reads <b>what you change → what you measure</b>. They are starting points, not finished questions: pick one, then make it yours with a specific system, range and measuring method. '
-        'Your topic doesn’t need to be original, but your data, analysis and writing must be your own.</p>'
-        '<ul><li><b>Lab basics</b>: rulers, stands, masses, stopwatches, thermometers, hot plates. <b>Phone</b>: a phone sensor app or slow-motion video, so it has to be done at home (no phones in school). '
-        '<b>Buy</b>: needs a cheap item or two; students often buy their own materials. <b>Ask first</b>: needs special equipment or has a safety issue, so check with Mr. Holmes.</li>'
-        '<li>At home, phone sensor apps (for example <i>phyphox</i>, free) can time, and measure acceleration, light, sound frequency and magnetic field. Slow-motion video works for fast motion.</li>'
-        '<li>Something not listed? Run it through the Stage 1 feasibility check and bring it to Mr. Holmes.</li></ul></div>'
-        + btns('area', areas, 'Topic') + btns('gear', gears, 'Needs')
+        '<p>Each idea reads <b>what you change → what you measure</b>. They are starting points: pick one, then make it yours with a specific system and measuring method. '
+        'Open a topic to browse it, or search.</p>'
+        '<p class="muted"><b>Lab basics</b>: rulers, stands, masses, stopwatches, thermometers. <b>Phone</b>: a sensor app (e.g. <i>phyphox</i>, free) or slow-motion video, so done at home. '
+        '<b>Buy</b>: a cheap item or two. <b>Ask first</b>: special equipment or a safety issue. Something not listed? Run it through the Stage 1 feasibility check.</p></div>'
+        + btns
         + '<input class="ia-search" type="search" placeholder="Search ideas, e.g. magnet, spring, sound" aria-label="Search ideas">'
-        + '<p class="ia-count"></p><div class="ia-ideas">' + cards + '</div>'
+        + '<p class="ia-count"></p>' + groups +
         '<p class="muted">Ideas adapted from GradePod’s “100 IB Physics IA ideas”, K. A. Tsokos’s <i>The Scientific Investigation</i> and Richard Walding’s “300 ideas for physics investigations”.</p>')
 
 RQ_FORM = ('<div class="card ia-rqform"><iframe title="Submit your research question" loading="lazy" '
@@ -83,7 +93,7 @@ def _plan_marks(body, plan_form):
 def ia_tabs(rq_form=False, plan_form=False):
     out = []
     for k, (label, fname) in enumerate(TABS):
-        body = _ideas_html() if fname is None else _read(fname)
+        body = _read(fname) if fname else (_reference() if label == 'Reference' else _ideas_html())
         body = body.replace('{P1_00}', P1_00)
         body = _plan_marks(body, plan_form)
         if rq_form and '<!--RQB-->' in body:
