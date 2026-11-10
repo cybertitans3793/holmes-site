@@ -86,9 +86,18 @@
 <li><label><input type="checkbox"> Repeats agree reasonably; any that don’t have been redone or noted.</label></li>
 <li><label><input type="checkbox"> I have the fixed measurements and photos I need.</label></li>
 <li><label><input type="checkbox"> My data is saved somewhere I can reach at home.</label></li></ul></div>
-<details class="card ia-ex"><summary>Example: raw data headings and uncertainty</summary>
-<div class="bad"><h4>Weak</h4>Columns headed “Length” and “Frequency”, with lengths written as 0.2, 0.35, 0.500.</div>
-<div class="good"><h4>Strong</h4>Columns headed “Vibrating length <i>L</i> / m (±0.001)” and “Frequency <i>f</i> / Hz (±0.1)”, with every length to 3 decimal places. Under the table: “Length uncertainty is half the smallest division (0.5 mm) at each end of the metre stick, so ±1 mm; frequency uncertainty is the last decimal place the app displays.”</div></details>
+<details class="card ia-ex"><summary>Example: a raw data table</summary>
+<div class="bad"><h4>Weak</h4>
+<div class="tbl"><table class="ia-data"><tr><th>Length</th><th>Frequency</th></tr>
+<tr><td>0.2</td><td>342</td></tr><tr><td>0.3</td><td>229.13</td></tr><tr><td>0.40</td><td>172.3</td></tr><tr><td>0.500</td><td>137.9</td></tr></table></div>
+<p>No units or uncertainties in the headings, decimal places all over the place, only averages (the repeats are gone), and no table number or title.</p></div>
+<div class="good"><h4>Strong</h4>
+<p class="ia-cap"><b>Table 1.</b> Fundamental frequency of the string at each vibrating length (tension 19.6 N).</p>
+<div class="tbl"><table class="ia-data"><tr><th rowspan="2">Vibrating length <i>L</i> / m<br>(±0.001)</th><th colspan="3">Frequency <i>f</i> / Hz (±0.1)</th></tr>
+<tr><th>Trial 1</th><th>Trial 2</th><th>Trial 3</th></tr>
+<tr><td>0.200</td><td>342.3</td><td>342.1</td><td>342.1</td></tr><tr><td>0.300</td><td>228.4</td><td>229.6</td><td>229.4</td></tr><tr><td>0.400</td><td>172.1</td><td>172.4</td><td>172.3</td></tr><tr><td>0.500</td><td>137.7</td><td>138.2</td><td>137.8</td></tr><tr><td>0.600</td><td>114.9</td><td>114.8</td><td>115.2</td></tr><tr><td>0.700</td><td>98.6</td><td>98.8</td><td>98.5</td></tr><tr><td>0.800</td><td>86.4</td><td>86.1</td><td>86.6</td></tr></table></div>
+<p>Under the table: “Length uncertainty is half the smallest division (0.5 mm) at each end of the metre stick, so ±0.001 m. Frequency uncertainty is the last decimal place the app displays.”</p>
+<p class="muted">Only what you measured, every reading as read. Means and 1/<i>L</i> go in your processed table (Stage 4).</p></div></details>
 <p class="ia-nav"><button class="ia-btn ghost" data-stage="3">Next: Stage 4 · Analyse →</button></p></div>
 
 <div class="ia-stage" data-sp="3">
@@ -111,7 +120,13 @@
 <p class="muted"><a href="#" data-go="2" data-ref="0">Full mark bands</a></p></div>
 <details class="card ia-ex"><summary>Example: a sample calculation</summary>
 <div class="bad"><h4>Weak</h4>“1/<i>L</i> was calculated for each length.”</div>
-<div class="good"><h4>Strong</h4>“For <i>L</i> = (0.500 ± 0.001) m: 1/<i>L</i> = 2.000 m⁻¹. The percentage uncertainty in <i>L</i> is 0.001 ÷ 0.500 = 0.2 %, and taking the reciprocal (a power of −1) keeps it at 0.2 %, so 1/<i>L</i> = (2.000 ± 0.004) m⁻¹.”</div></details>
+<div class="good"><h4>Strong</h4>
+<p>For <i>L</i> = (0.500 ± 0.001) m, from Table 1:</p>
+<math display="block"><mfrac><mn>1</mn><mi>L</mi></mfrac><mo>=</mo><mfrac><mn>1</mn><mrow><mn>0.500</mn><mtext>&#160;m</mtext></mrow></mfrac><mo>=</mo><mn>2.000</mn><mtext>&#160;</mtext><msup><mtext>m</mtext><mrow><mo>−</mo><mn>1</mn></mrow></msup></math>
+<math display="block"><mfrac><mrow><mi mathvariant="normal">Δ</mi><mi>L</mi></mrow><mi>L</mi></mfrac><mo>=</mo><mfrac><mn>0.001</mn><mn>0.500</mn></mfrac><mo>=</mo><mn>0.2</mn><mo>%</mo></math>
+<p>Taking the reciprocal (a power of −1) keeps the percentage uncertainty the same, 0.2 %:</p>
+<math display="block"><mi mathvariant="normal">Δ</mi><mrow><mo>(</mo><mfrac><mn>1</mn><mi>L</mi></mfrac><mo>)</mo></mrow><mo>=</mo><mn>0.002</mn><mo>×</mo><mn>2.000</mn><mtext>&#160;</mtext><msup><mtext>m</mtext><mrow><mo>−</mo><mn>1</mn></mrow></msup><mo>=</mo><mn>0.004</mn><mtext>&#160;</mtext><msup><mtext>m</mtext><mrow><mo>−</mo><mn>1</mn></mrow></msup></math>
+<math display="block"><mfrac><mn>1</mn><mi>L</mi></mfrac><mo>=</mo><mo stretchy="false">(</mo><mn>2.000</mn><mo>±</mo><mn>0.004</mn><mo stretchy="false">)</mo><mtext>&#160;</mtext><msup><mtext>m</mtext><mrow><mo>−</mo><mn>1</mn></mrow></msup></math></div></details>
 <p class="ia-nav"><button class="ia-btn ghost" data-stage="4">Next: Stage 5 · Rough draft →</button></p></div>
 
 <div class="ia-stage" data-sp="4">
@@ -140,8 +155,8 @@
 <details class="card ia-ex"><summary>Examples: conclusion, weakness, improvement, limitation</summary>
 <h4>Conclusion</h4>
 <div class="bad"><h4>Weak</h4>“As the string got shorter the frequency went up, so my hypothesis was correct and the experiment worked.”</div>
-<div class="good"><h4>Strong</h4>“The graph of <i>f</i> against 1/<i>L</i> is a straight line through all seven error bars, so the frequency is inversely proportional to the vibrating length, as <i>f</i> = (1/2<i>L</i>)√(<i>F</i>/<i>μ</i>) predicts. The gradient is (68.2 ± 1.0) m s⁻¹. Theory predicts ½√(<i>F</i>/<i>μ</i>) = (69.3 ± 0.3) m s⁻¹, using <i>F</i> = 19.6 N and <i>μ</i> = (1.02 ± 0.01) g m⁻¹ measured by weighing 1.000 m of the same string (Tsokos, 2023). The two ranges overlap (69.0 to 69.2 m s⁻¹), so the result is consistent with theory, but it sits about 1.6 % low and the intercept is +2.4 Hz instead of zero. Both suggest a small systematic error in the measured length (see Evaluation).”</div>
-<p class="muted">It answers with numbers and uncertainties, explains the gradient, compares with a cited prediction, and notices the intercept.</p>
+<div class="good"><h4>Strong</h4>“The graph of <i>f</i> against 1/<i>L</i> is a straight line through all seven error bars, so the frequency is inversely proportional to the vibrating length, as the standing-wave equation predicts (Tsokos, 2023):<math display="block"><mi>f</mi><mo>=</mo><mfrac><mn>1</mn><mrow><mn>2</mn><mi>L</mi></mrow></mfrac><msqrt><mfrac><mi>F</mi><mi>μ</mi></mfrac></msqrt></math>The gradient is (68.2 ± 0.6) m s⁻¹. Theory predicts a gradient of<math display="block"><mfrac><mn>1</mn><mn>2</mn></mfrac><msqrt><mfrac><mi>F</mi><mi>μ</mi></mfrac></msqrt><mo>=</mo><mo stretchy="false">(</mo><mn>69.3</mn><mo>±</mo><mn>0.3</mn><mo stretchy="false">)</mo><mtext>&#160;m&#160;s</mtext><msup><mtext></mtext><mrow><mo>−</mo><mn>1</mn></mrow></msup></math>using <i>F</i> = 19.6 N and <i>μ</i> = (1.02 ± 0.01) g m⁻¹, measured by weighing 1.000 m of the same string. My result is 1.6 % below the prediction, which is more than its 0.9 % uncertainty, and the two ranges just miss each other (up to 68.8 m s⁻¹ against from 69.0 m s⁻¹). The intercept is +1.3 Hz instead of zero. Both point to a small systematic error in the measured length (see Evaluation).”</div>
+<p class="muted">It answers with numbers and uncertainties, explains the gradient, compares with a cited prediction, says what the gap means, and notices the intercept.</p>
 <h4>A weakness</h4>
 <div class="bad"><h4>Weak</h4>“There may have been human error in measuring, and background noise could have affected the app.”</div>
 <div class="good"><h4>Strong</h4>“The most significant weakness was the vibrating length. I measured between the inner edges of the two bridges, but the string touches each bridge at its rounded top, about 1–2 mm further out, so every length was slightly too short. This is a systematic error with a bigger effect on short lengths (3 mm is 1.5 % of 0.200 m but only 0.4 % of 0.800 m). It makes the points at large 1/<i>L</i> fall below the line, which lowers the gradient and gives a positive intercept, exactly what I found. By comparison, the app’s ±0.1 Hz is under 0.2 % of every reading, so its effect is negligible.”</div>

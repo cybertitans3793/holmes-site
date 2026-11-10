@@ -86,3 +86,9 @@ details[open].ia-ex > summary::before,details[open].ia-more > summary::before,.i
  .ia-tl .w,.ia-tl .t{grid-column:1 / span 2;grid-row:auto}
  .ia-tl .t{color:var(--muted)}
 }
+.ia-data{background:var(--white);font-size:.92rem;margin:6px 0}
+.ia-data th,.ia-data td{text-align:center;padding:4px 10px}
+.ia-data th{text-transform:none;letter-spacing:0;font-family:var(--body,inherit);font-size:.85rem}
+.ia-cap{font-size:.92rem;margin:4px 0}
+.ia-ex math[display=block]{margin:8px 0;font-size:1.1rem}
+.ia-ex math{font-size:1.05em}
