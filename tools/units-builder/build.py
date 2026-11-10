@@ -143,7 +143,11 @@ const SIMS = {{
   function select() {{
     const t = UNIT.tabs[cur];
     if (ifr && ifr.dataset.ready && t.select) ifr.contentWindow.postMessage({{ select: t.select, modes: t.modes || null }}, '*');
+    if (document.body.classList.contains('present')) big(true);
   }}
+  // Projector layout: template sims switch to bigger text when sent {{big:true}}; older sims ignore it.
+  // Sent only by Present mode, so a student's own A+ choice is left alone otherwise.
+  function big(on) {{ if (ifr && ifr.dataset.ready) ifr.contentWindow.postMessage({{ big: on }}, '*'); }}
   $('fs').onclick = () => {{
     if (document.fullscreenElement) document.exitFullscreen();
     else if (frame.requestFullscreen) frame.requestFullscreen().catch(() => {{}});
@@ -175,6 +179,7 @@ body.present .main{flex:1;min-height:0;flex-wrap:nowrap;align-items:stretch}
 body.present .simcard{flex:1;display:flex;flex-direction:column;min-height:0;box-shadow:none}
 body.present .simbar h2{font-size:22px}
 body.present .simbar button{font-size:15px;padding:9px 14px}
+body.present #v-explore{flex:1;min-height:0;display:flex;flex-direction:column}
 body.present .frame{flex:1;aspect-ratio:auto!important;min-height:0}
 body.present .try{display:none;flex:0 0 340px;overflow:auto}
 body.present.tasks .try{display:block}
@@ -188,6 +193,7 @@ PRESENT_JS = """
   const setPresent = on => {
     document.body.classList.toggle('present', on); document.body.classList.remove('tasks');
     pres.textContent = on ? 'Exit present' : 'Present'; ptasks.hidden = !on;
+    big(on);
   };
   pres.onclick = () => {
     const on = !document.body.classList.contains('present'); if (on && window.HOLMES) HOLMES.view('explore'); setPresent(on);

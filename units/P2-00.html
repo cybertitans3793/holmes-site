@@ -408,7 +408,11 @@ const SIMS = {
   function select() {
     const t = UNIT.tabs[cur];
     if (ifr && ifr.dataset.ready && t.select) ifr.contentWindow.postMessage({ select: t.select, modes: t.modes || null }, '*');
+    if (document.body.classList.contains('present')) big(true);
   }
+  // Projector layout: template sims switch to bigger text when sent {big:true}; older sims ignore it.
+  // Sent only by Present mode, so a student's own A+ choice is left alone otherwise.
+  function big(on) { if (ifr && ifr.dataset.ready) ifr.contentWindow.postMessage({ big: on }, '*'); }
   $('fs').onclick = () => {
     if (document.fullscreenElement) document.exitFullscreen();
     else if (frame.requestFullscreen) frame.requestFullscreen().catch(() => {});
