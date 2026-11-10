@@ -40,3 +40,49 @@
 .ia-rqform iframe{display:block;width:100%;height:780px;border:0;background:var(--paper)}
 .ia-planform{padding:0;overflow:hidden;margin:14px 0}
 .ia-planform iframe{display:block;width:100%;height:1100px;border:0;background:var(--paper)}
+/* 2026-11-10 restructure: next-step box, stage list, marking boxes, examples, reference sections, grouped ideas */
+.ia-next{border-width:3px;box-shadow:5px 5px 0 var(--orange)}
+.ia-next .k{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.ia-next-h{font-family:var(--display);font-size:1.45rem;font-weight:700;margin:4px 0 2px;line-height:1.2}
+.ia-next-d{font-family:var(--mono);margin:0 0 12px}
+.ia-next-d:empty{display:none}
+.ia-tl{list-style:none;padding:0;margin:8px 0}
+.ia-tl li{display:grid;grid-template-columns:150px 1fr 190px 64px;gap:4px 14px;align-items:baseline;padding:10px 8px;border-top:1.5px solid var(--line)}
+.ia-tl li:last-child{border-bottom:1.5px solid var(--line)}
+.ia-tl li.now{background:var(--paper);outline:2.5px solid var(--orange);outline-offset:-2px}
+.ia-tl b{font-family:var(--display)}
+.ia-tl .ia-gate{margin-left:0}
+.ia-tl li > b + .ia-gate{grid-column:1;grid-row:2;justify-self:start}
+.ia-tl .w{grid-column:2;grid-row:1 / span 2}
+.ia-tl .t{grid-column:3;grid-row:1 / span 2;font-size:.92rem}
+.ia-tl .d{grid-column:4;grid-row:1;font-family:var(--mono);text-align:right}
+.ia-meta{font-family:var(--mono);font-size:.85rem;margin:-4px 0 10px}
+.ia-mark{border-left:6px solid var(--orange)}
+.ia-mark h3{font-size:1.1rem}
+details.card > summary,.ia-how > summary{cursor:pointer;font-family:var(--display);font-weight:500}
+details.ia-ex > summary::before,details.ia-more > summary::before,.ia-ref > summary::before,.ia-area > summary::before{content:'▸ ';color:var(--orange)}
+details[open].ia-ex > summary::before,details[open].ia-more > summary::before,.ia-ref[open] > summary::before,.ia-area[open] > summary::before{content:'▾ '}
+.ia-ex .bad,.ia-ex .good{margin:8px 0}
+.ia-how{margin:6px 0}
+.ia-how p{font-size:.94rem}
+.ia-nav{margin:6px 0 4px}
+.ia-ref{border:2px solid var(--ink);background:var(--white);margin:0 0 12px}
+.ia-ref > summary{padding:12px 14px;cursor:pointer;list-style:none}
+.ia-ref > summary b{font-family:var(--display);font-size:1.12rem}
+.ia-ref > summary span{display:block;color:var(--muted);font-size:.9rem;margin-left:1.1em}
+.ia-ref-body{padding:0 12px 4px;background:var(--paper);border-top:2px solid var(--ink)}
+.ia-ref-body .card{margin-top:12px}
+.ia-area{border:2px solid var(--ink);background:var(--white);margin:0 0 10px}
+.ia-area > summary{padding:10px 14px;cursor:pointer;list-style:none}
+.ia-area > summary b{font-family:var(--display);font-size:1.05rem}
+.ia-area .c{font-family:var(--mono);font-size:.78rem;color:var(--muted);margin-left:6px}
+.ia-area .ia-ideas{padding:0 12px 12px}
+.ia-ref > summary::-webkit-details-marker,.ia-area > summary::-webkit-details-marker{display:none}
+@media (max-width:640px){
+ .ia-tl li{grid-template-columns:1fr auto;gap:2px 10px}
+ .ia-tl li > b{grid-column:1;grid-row:1}
+ .ia-tl .d{grid-column:2;grid-row:1}
+ .ia-tl li > b + .ia-gate{grid-column:1 / span 2;grid-row:2}
+ .ia-tl .w,.ia-tl .t{grid-column:1 / span 2;grid-row:auto}
+ .ia-tl .t{color:var(--muted)}
+}
