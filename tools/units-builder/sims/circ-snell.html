@@ -8,7 +8,7 @@
 html,body{margin:0;height:100%;overflow:hidden;background:#fff;font-family:"Space Grotesk",system-ui,sans-serif;color:#111}
 #app{position:absolute;left:0;top:0;width:1000px;height:640px;transform-origin:0 0;padding:10px 14px 12px;box-sizing:border-box;
   display:grid;grid-template-columns:600px 1fr;grid-template-rows:34px 330px 1fr;gap:10px 14px}
-#bar{grid-column:1/-1;display:flex;gap:16px;align-items:center;flex-wrap:nowrap;overflow:hidden}
+#bar{grid-column:1/-1;padding-right:48px;display:flex;gap:16px;align-items:center;flex-wrap:nowrap;overflow:hidden}
 .seg{display:flex;align-items:center}
 .seg .lab{font:700 12px "IBM Plex Mono",monospace;margin-right:8px;text-transform:uppercase}
 .seg button{white-space:nowrap;font:700 14px "Space Grotesk",sans-serif;padding:6px 11px;border:2px solid #111;background:#fff;color:#111;cursor:pointer}
@@ -52,6 +52,16 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 #dbl{font-size:12.5px;line-height:1.35;margin-top:2px}
 #dbl b{font-weight:700}
 .hint{font:500 11px "IBM Plex Mono",monospace;color:#4a4a4a}
+/* Projector layout ("Big"): smaller design box, so everything scales up when fitted; graph and presets hidden */
+#bigbtn{position:absolute;top:10px;right:14px;z-index:2;font:700 13px "IBM Plex Mono",monospace;padding:5px 9px;border:2px solid #111;background:#fff;color:#111;cursor:pointer}
+#bigbtn[aria-pressed="true"]{background:#111;color:#fff}
+body.big #bigbtn{top:8px;right:10px}
+body.big #app{width:760px;height:480px;grid-template-columns:400px 1fr;grid-template-rows:auto 220px 1fr;gap:8px 12px;padding:8px 10px 10px}
+body.big #bar{flex-wrap:wrap;row-gap:4px}
+body.big #cv{width:400px;height:220px}
+body.big #work{grid-column:2;grid-row:2/4}
+body.big #ctl{grid-column:1;grid-row:3;grid-template-columns:1fr 1fr;gap:2px 12px;overflow:hidden}
+body.big #gcard,body.big #presets,body.big #bar .hint{display:none}
 </style></head><body>
 <div id="app">
   <div id="bar"></div>
@@ -68,7 +78,12 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 // ---------------- shared frame ----------------
 const $ = id => document.getElementById(id);
 const G10 = 10, PI = Math.PI, DEG = PI / 180;
-function fit(){ const s = Math.min(innerWidth / 1000, innerHeight / 640); $('app').style.transform = 'scale(' + s + ')'; }
+function fit(){ const big = document.body.classList.contains('big'), W = big ? 760 : 1000, H = big ? 480 : 640, s = Math.min(innerWidth / W, innerHeight / H); $('app').style.transform = 'scale(' + s + ')'; }
+// Projector layout: toggled by the Big button, remembered on this computer, and switched on by the unit page in Present mode ({big:true}).
+let BIG_SAVED = false; try { BIG_SAVED = localStorage.getItem('holmesBig') === '1'; } catch (e) {}
+function setBig(on, save){ document.body.classList.toggle('big', !!on); const b = document.getElementById('bigbtn'); if (b){ b.setAttribute('aria-pressed', String(!!on)); b.textContent = on ? 'A−' : 'A+'; b.title = on ? 'Normal layout' : 'Projector layout: bigger text, graph hidden'; }
+  if (save) try { localStorage.setItem('holmesBig', on ? '1' : '0'); } catch (e) {} fit(); }
+if (BIG_SAVED) document.body.classList.add('big');
 addEventListener('resize', fit); fit();
 
 function fnum(x){ const r = fnum0(x); return typeof r === 'string' ? r.replace(/^-/, '−') : r; }
@@ -122,6 +137,8 @@ function bar(){
     group(o.label, o.choices, S.opt[o.id], id => { S.opt[o.id] = id; S.anim = {}; setup(); });
   });
   if (!SIM.noGraph) b.appendChild(tip);
+  if (!$('bigbtn')){ const bb = document.createElement('button'); bb.id = 'bigbtn'; bb.type = 'button'; bb.onclick = () => setBig(!document.body.classList.contains('big'), true); $('app').appendChild(bb); }
+  setBig(document.body.classList.contains('big'), false);
   if (b.scrollWidth > b.clientWidth + 1) tip.remove();
   if (b.scrollWidth > b.clientWidth + 1) b.querySelectorAll('.seg button').forEach(x => { x.style.fontSize = '13px'; x.style.padding = '6px 8px'; });
 }
@@ -323,6 +340,6 @@ window.APP = { select(name, only){ if (!SIM.modes) return; if (!SIM._all) SIM._a
   SIM.modes = only && only.length ? SIM._all.filter(m => only.includes(m.id) || only.includes(m.label)) : SIM._all.slice(); if (!SIM.modes.length) SIM.modes = SIM._all.slice();
   const m = SIM.modes.find(m => m.label === name || m.id === name) || SIM.modes.find(m => m.id === S.mode) || SIM.modes[0];
   if (m.id !== S.mode || SIM.modes.map(m => m.id).join() !== before){ S.mode = m.id; S.anim = {}; setup(); } } };
-addEventListener('message', e => { const d = e.data; if (d && d.select) try { APP.select(d.select, d.modes); } catch (er) {} });
+addEventListener('message', e => { const d = e.data; if (d && d.select) try { APP.select(d.select, d.modes); } catch (er) {} if (d && typeof d.big === 'boolean') setBig(d.big || BIG_SAVED, false); });
 </script>
 </body></html>
