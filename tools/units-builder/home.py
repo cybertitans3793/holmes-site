@@ -47,8 +47,7 @@ main{max-width:1200px;margin:0 auto;padding:30px 16px 40px}
 .wordmark{font:700 clamp(48px,9vw,120px)/1 'Space Grotesk',sans-serif;letter-spacing:-0.03em;color:#111;text-shadow:0.05em 0.05em 0 #ff6a2b}
 .brand .cap{margin-top:.5em;font:500 16px 'IBM Plex Mono',monospace;letter-spacing:0.2em;color:#444}
 @media (max-width:560px){.brand{flex-direction:column;align-items:flex-start;gap:10px}.brand .cap{font-size:13px}}
-.kicker{font:700 13px var(--f-mono);letter-spacing:.02em}
-h1{margin:8px 0 26px;font-size:clamp(48px,8vw,76px);line-height:.9;letter-spacing:-.04em;font-weight:700}
+h1{margin:0 0 26px;font-size:clamp(48px,8vw,76px);line-height:.9;letter-spacing:-.04em;font-weight:700}
 .cards{display:flex;flex-wrap:wrap;gap:22px;align-items:flex-start}
 .card{flex:1 1 300px;min-width:0;border:3px solid var(--ink);background:#fff;box-shadow:6px 6px 0 var(--ink)}
 .card.hot{box-shadow:8px 8px 0 var(--hot)}
@@ -75,7 +74,6 @@ h2{margin:12px 0 0;font-size:26px;line-height:1.05;letter-spacing:-.02em}
 <body>
 <main>
 <header class="brand"><svg class="hwmark" viewBox="0 0 100 100" width="120" height="120" aria-hidden="true" focusable="false"><rect x="14" y="18" width="15" height="64" fill="#111"/><rect x="57" y="18" width="15" height="64" fill="#111"/><line x1="29" y1="50" x2="80" y2="50" stroke="#ff6a2b" stroke-width="9"/><polygon points="77,37 97,50 77,63" fill="#ff6a2b"/></svg><div><div class="wordmark">holmework</div><div class="cap">PHYSICS · URBANA HS</div></div></header>
-<div class="kicker">MR. HOLMES · URBANA HIGH SCHOOL · PHYSICS</div>
 <h1>Pick your class.</h1>
 <div class="cards">
 {cards}

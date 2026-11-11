@@ -72,13 +72,17 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
 .rbtn[aria-pressed="true"]{background:var(--ink);color:var(--bg);box-shadow:inset 0 -4px 0 var(--hot)}
 .rbtn:focus-visible{outline:3px solid var(--hot);outline-offset:2px}
 
+/* holmework mark at the start of the page's top line (branding.md job 4) */
+.hwmark{width:28px;height:28px;flex:none;vertical-align:middle}
+.uhead .mono{display:flex;align-items:center;gap:8px}
+
 
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="uhead">
-    <div class="uid"><div class="big" aria-hidden="true">07</div><div><div class="mono">Algebra-Based Physics · AB-07</div><h1>Current Electricity &amp; Magnetism</h1></div></div>
+    <div class="uid"><div class="big" aria-hidden="true">07</div><div><div class="mono"><svg class="hwmark" viewBox="0 0 100 100" width="28" height="28" aria-hidden="true" focusable="false"><rect x="14" y="18" width="15" height="64" fill="#111"/><rect x="57" y="18" width="15" height="64" fill="#111"/><line x1="29" y1="50" x2="80" y2="50" stroke="#ff6a2b" stroke-width="9"/><polygon points="77,37 97,50 77,63" fill="#ff6a2b"/></svg><span>Algebra-Based Physics · AB-07</span></div><h1>Current Electricity &amp; Magnetism</h1></div></div>
   </header>
   <nav class="views" id="views" aria-label="Choose a view">
     <div class="vbtns"><button type="button" class="vbtn" data-view="explore" aria-pressed="false">Explore</button><button type="button" class="vbtn" data-view="study" aria-pressed="false">Study</button><button type="button" class="vbtn" data-view="practice" aria-pressed="false">Practice</button></div>

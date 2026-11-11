@@ -11,8 +11,12 @@
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 "Space Grotesk",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
 main{max-width:1200px;margin:0 auto;padding:30px 16px 40px}
-.kicker{font:700 13px var(--f-mono);letter-spacing:.02em}
-h1{margin:8px 0 26px;font-size:clamp(48px,8vw,76px);line-height:.9;letter-spacing:-.04em;font-weight:700}
+.brand{display:flex;align-items:center;gap:clamp(14px,2.5vw,28px);margin:0 0 26px}
+.brand .hwmark{width:clamp(72px,11vw,120px);height:auto;flex:none}
+.wordmark{font:700 clamp(48px,9vw,120px)/1 'Space Grotesk',sans-serif;letter-spacing:-0.03em;color:#111;text-shadow:0.05em 0.05em 0 #ff6a2b}
+.brand .cap{margin-top:.5em;font:500 16px 'IBM Plex Mono',monospace;letter-spacing:0.2em;color:#444}
+@media (max-width:560px){.brand{flex-direction:column;align-items:flex-start;gap:10px}.brand .cap{font-size:13px}}
+h1{margin:0 0 26px;font-size:clamp(48px,8vw,76px);line-height:.9;letter-spacing:-.04em;font-weight:700}
 .cards{display:flex;flex-wrap:wrap;gap:22px;align-items:flex-start}
 .card{flex:1 1 300px;min-width:0;border:3px solid var(--ink);background:#fff;box-shadow:6px 6px 0 var(--ink)}
 .card.hot{box-shadow:8px 8px 0 var(--hot)}
@@ -38,7 +42,7 @@ h2{margin:12px 0 0;font-size:26px;line-height:1.05;letter-spacing:-.02em}
 </head>
 <body>
 <main>
-<div class="kicker">MR. HOLMES · URBANA HIGH SCHOOL · PHYSICS</div>
+<header class="brand"><svg class="hwmark" viewBox="0 0 100 100" width="120" height="120" aria-hidden="true" focusable="false"><rect x="14" y="18" width="15" height="64" fill="#111"/><rect x="57" y="18" width="15" height="64" fill="#111"/><line x1="29" y1="50" x2="80" y2="50" stroke="#ff6a2b" stroke-width="9"/><polygon points="77,37 97,50 77,63" fill="#ff6a2b"/></svg><div><div class="wordmark">holmework</div><div class="cap">PHYSICS · URBANA HS</div></div></header>
 <h1>Pick your class.</h1>
 <div class="cards">
 <section class="card"><div class="top"><div class="line"><div class="big">AB</div><div class="meta">8 UNITS<br>9TH GRADE</div></div><h2>Algebra-Based Physics</h2></div><nav class="list" aria-label="Algebra-Based Physics units"><a class="row" href="https://sites.google.com/fcps.org/holmes/algebra-based-physics/ab-01" target="_blank" rel="noopener"><span class="code">AB-01</span><span class="nm">Kinematics</span></a><a class="row" href="https://sites.google.com/fcps.org/holmes/algebra-based-physics/ab-02" target="_blank" rel="noopener"><span class="code">AB-02</span><span class="nm">Newton’s Laws</span></a><a class="row" href="https://sites.google.com/fcps.org/holmes/algebra-based-physics/ab-03" target="_blank" rel="noopener"><span class="code">AB-03</span><span class="nm">Circular Motion &amp; Gravity</span></a><a class="row" href="https://sites.google.com/fcps.org/holmes/algebra-based-physics/ab-04" target="_blank" rel="noopener"><span class="code">AB-04</span><span class="nm">Work &amp; Energy &amp; Stars</span></a><a class="row" href="https://sites.google.com/fcps.org/holmes/algebra-based-physics/ab-05" target="_blank" rel="noopener"><span class="code">AB-05</span><span class="nm">Momentum</span></a><a class="row" href="https://sites.google.com/fcps.org/holmes/algebra-based-physics/ab-06" target="_blank" rel="noopener"><span class="code">AB-06</span><span class="nm">Electrostatics</span></a><a class="row" href="https://sites.google.com/fcps.org/holmes/algebra-based-physics/ab-07" target="_blank" rel="noopener"><span class="code">AB-07</span><span class="nm">Current Electricity &amp; Magnetism</span></a><a class="row" href="https://sites.google.com/fcps.org/holmes/algebra-based-physics/ab-08" target="_blank" rel="noopener"><span class="code">AB-08</span><span class="nm">Waves &amp; Earth’s Interior</span></a><a class="row hw" href="https://sites.google.com/fcps.org/holmes/algebra-based-physics/homework" target="_blank" rel="noopener"><span class="code">HW</span><span class="nm">Homework</span><span class="arr">→</span></a></nav></section>
