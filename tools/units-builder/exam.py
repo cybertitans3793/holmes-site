@@ -31,7 +31,8 @@ CSS = r'''
 *{box-sizing:border-box}html,body{margin:0;height:100%}
 body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;display:flex;flex-direction:column}
 header{padding:18px 28px 0;background:var(--paper)}
-.kick{font-family:var(--mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.hwmark{width:28px;height:28px;flex:none}
+.kick{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 h1{font-family:var(--display);font-size:clamp(2rem,5vw,3.2rem);line-height:1;letter-spacing:-.03em;margin:.15em 0 .3em}
 nav{display:flex;flex-wrap:wrap;gap:8px;padding:6px 0 14px;border-bottom:2px solid var(--ink)}
 nav button{font-family:var(--display);font-weight:500;font-size:.98rem;border:2px solid var(--ink);background:var(--white);color:var(--ink);padding:7px 14px;cursor:pointer;box-shadow:3px 3px 0 var(--ink)}
@@ -90,7 +91,7 @@ def page(kick, title, tabs):
     return f'''<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>{title}</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&family=IBM+Plex+Sans:wght@400;600;700&display=swap">
 <style>{CSS}</style></head><body>
-<header><div class="kick">{kick}</div><h1>{title}</h1><nav role="tablist">{nav}</nav></header>
+<header><div class="kick"><svg class="hwmark" viewBox="0 0 100 100" width="28" height="28" aria-hidden="true" focusable="false"><rect x="14" y="18" width="15" height="64" fill="#111"/><rect x="57" y="18" width="15" height="64" fill="#111"/><line x1="29" y1="50" x2="80" y2="50" stroke="#ff6a2b" stroke-width="9"/><polygon points="77,37 97,50 77,63" fill="#ff6a2b"/></svg><span>{kick}</span></div><h1>{title}</h1><nav role="tablist">{nav}</nav></header>
 <main>{panels}</main>
 <script>
 const tabs=[...document.querySelectorAll('nav button')], panels=[...document.querySelectorAll('.panel')];

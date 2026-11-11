@@ -82,7 +82,7 @@ PAGE = """<!doctype html>
 <body>
 <div class="wrap">
   <header class="uhead">
-    <div class="uid"><div class="big" aria-hidden="true">{num}</div><div><div class="mono">{course} · {uid}</div><h1>{title}</h1></div></div>
+    <div class="uid"><div class="big" aria-hidden="true">{num}</div><div><div class="mono"><svg class="hwmark" viewBox="0 0 100 100" width="28" height="28" aria-hidden="true" focusable="false"><rect x="14" y="18" width="15" height="64" fill="#111"/><rect x="57" y="18" width="15" height="64" fill="#111"/><line x1="29" y1="50" x2="80" y2="50" stroke="#ff6a2b" stroke-width="9"/><polygon points="77,37 97,50 77,63" fill="#ff6a2b"/></svg><span>{course} · {uid}</span></div><h1>{title}</h1></div></div>
   </header>
 {views_nav}
   <div class="view" id="v-explore">
@@ -314,7 +314,7 @@ COMING = """<!doctype html>
 <body>
 <div class="wrap">
   <header class="uhead">
-    <div class="uid"><div class="big" aria-hidden="true">{num}</div><div><div class="mono">{course} · {uid}</div><h1>{title}</h1></div></div>
+    <div class="uid"><div class="big" aria-hidden="true">{num}</div><div><div class="mono"><svg class="hwmark" viewBox="0 0 100 100" width="28" height="28" aria-hidden="true" focusable="false"><rect x="14" y="18" width="15" height="64" fill="#111"/><rect x="57" y="18" width="15" height="64" fill="#111"/><line x1="29" y1="50" x2="80" y2="50" stroke="#ff6a2b" stroke-width="9"/><polygon points="77,37 97,50 77,63" fill="#ff6a2b"/></svg><span>{course} · {uid}</span></div><h1>{title}</h1></div></div>
   </header>
 {views_nav}
   <div class="view" id="v-explore"><section class="soon"><h2>Sims for this unit are on the way.</h2><p>{note}</p></section></div>
