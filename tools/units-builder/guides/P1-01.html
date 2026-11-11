@@ -39,6 +39,16 @@
 .guide summary:hover{background:var(--soft)}
 .guide details[open] summary{background:var(--ink);color:#fff}
 .guide details>div{border-left:4px solid var(--hot);padding:8px 12px;margin-top:8px;background:#fff}
+.guide .gmore{margin-top:4px}
+.guide .gmore h3{margin:0 0 4px}
+.guide .gmuted{margin:0 0 10px;font-size:14px;opacity:.75}
+.guide details.ex{margin:0 0 14px}
+.guide details.ex>summary{display:block;border:0;padding:0;background:none;color:inherit;font-weight:inherit}
+.guide details.ex[open]>summary{background:none;color:inherit}
+.guide details.ex>summary h4{margin:2px 0 0}
+.guide details.ex>summary h4::before{content:'▸ ';color:var(--hot)}
+.guide details.ex[open]>summary h4::before{content:'▾ '}
+.guide details.ex>div.exbody{border-left:0;padding:0;margin-top:10px;background:none}
 .guide .gpanel>.ggrid,.guide .gpanel>.gsteps,.guide .gpanel>.gex{margin-bottom:0}
 .guide .gpanel>.gsteps+.ggrid{margin-top:22px}
 .guide .gtabs{margin-bottom:18px}
@@ -96,6 +106,9 @@ body.present .guide{display:none}
       <li>Drawing a “force of motion” or “force of the throw” on a free-body diagram after the object has left your hand. Only draw forces from things touching it, plus gravity.</li>
       <li>Assuming the normal force always equals mg. It equals mg only when nothing else pushes or pulls vertically and the object isn't accelerating up or down.</li>
       <li>Calling mass and weight the same thing. A 2 kg book weighs 20 N.</li>
+      <li>Thinking friction always points backward, against the motion. It opposes <b>sliding</b> between the surfaces: friction on your shoes and on a car's tires is what pushes you forward.</li>
+      <li>Averaging the speeds to get the average speed. Use total distance ÷ total time. The plain average of the speeds only works when equal <i>times</i> are spent at each speed.</li>
+      <li>Adding air resistance when the problem doesn't mention it. Leave it out unless the problem says it matters.</li>
     </ul>
   </div>
 </div>
@@ -214,6 +227,74 @@ body.present .guide{display:none}
     </div>
     <p class="take">The table pushes as hard as it needs to so the book doesn't sink into it. Pull up on the book instead and the normal force gets smaller.</p>
   </div>
+</div>
+<div class="gmore">
+  <h3>More examples</h3>
+  <p class="gmuted">Click an example to open it.</p>
+  <details class="ex">
+    <summary><span class="kind">Average speed</span><h4>Average speed isn't the average of the speeds</h4></summary>
+    <div class="exbody">
+    <p>A cyclist rides 12 km out at 24 km/h, then 12 km back home against the wind at 8 km/h. What is her average speed for the whole ride?</p>
+    <div class="work">
+      <p class="wt">Find the time for each half:</p>
+<math class="eq" display="block"><mrow><msub><mi>t</mi><mn>1</mn></msub><mo>=</mo><mfrac><mrow><mn>12</mn><mspace width="0.167em"/><mtext>km</mtext></mrow><mrow><mn>24</mn><mspace width="0.167em"/><mtext>km/h</mtext></mrow></mfrac><mo>=</mo><mn>0.50</mn><mspace width="0.167em"/><mtext>h</mtext></mrow></math>
+<math class="eq" display="block"><mrow><msub><mi>t</mi><mn>2</mn></msub><mo>=</mo><mfrac><mrow><mn>12</mn><mspace width="0.167em"/><mtext>km</mtext></mrow><mrow><mn>8</mn><mspace width="0.167em"/><mtext>km/h</mtext></mrow></mfrac><mo>=</mo><mn>1.5</mn><mspace width="0.167em"/><mtext>h</mtext></mrow></math>
+      <p class="wt">Total distance over total time:</p>
+<math class="eq" display="block"><mrow><msub><mtext>speed</mtext><mtext>avg</mtext></msub><mo>=</mo><mfrac><mi>d</mi><mrow><mi>&#x394;</mi><mi>t</mi></mrow></mfrac><mo>=</mo><mfrac><mrow><mn>24</mn><mspace width="0.167em"/><mtext>km</mtext></mrow><mrow><mn>2.0</mn><mspace width="0.167em"/><mtext>h</mtext></mrow></mfrac></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mtext>speed</mtext><mtext>avg</mtext></msub><mo>=</mo><mn>12</mn><mspace width="0.167em"/><mtext>km/h</mtext></mrow></math>
+    </div>
+    <p class="take">Averaging 24 and 8 gives 16 km/h, which is wrong. She spends three times as long at the slow speed, so the average is pulled toward 8 km/h. The plain average of the speeds works only when equal <b>times</b> (not equal distances) are spent at each speed.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Catching up</span><h4>A car chasing a bus</h4></summary>
+    <div class="exbody">
+    <p>A bus passes a gas station at a steady 15 m/s. Four seconds later, a car passes the same station at a steady 25 m/s, going the same way. When and where does the car catch the bus?</p>
+    <div class="work">
+      <p class="wt">Method 1: one equation per vehicle. Start the clock (t = 0) when the bus passes the station, with x = 0 at the station. The car starts 4.0 s late, so its clock is t − 4.0:</p>
+<math class="eq" display="block"><mrow><msub><mi>x</mi><mtext>bus</mtext></msub><mo>=</mo><mn>15</mn><mi>t</mi></mrow></math>
+<math class="eq" display="block"><mrow><msub><mi>x</mi><mtext>car</mtext></msub><mo>=</mo><mn>25</mn><mo stretchy="false">(</mo><mi>t</mi><mo>&#x2212;</mo><mn>4.0</mn><mo stretchy="false">)</mo></mrow></math>
+      <p class="wt">Set the positions equal:</p>
+<math class="eq" display="block"><mrow><mn>15</mn><mi>t</mi><mo>=</mo><mn>25</mn><mi>t</mi><mo>&#x2212;</mo><mn>100</mn><mspace width="0.278em"/><mo>&#x2192;</mo><mspace width="0.278em"/><mn>10</mn><mi>t</mi><mo>=</mo><mn>100</mn></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>t</mi><mo>=</mo><mn>10</mn><mspace width="0.167em"/><mtext>s</mtext></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>x</mi><mo>=</mo><mn>15</mn><mo stretchy="false">(</mo><mn>10</mn><mo stretchy="false">)</mo><mo>=</mo><mn>150</mn><mspace width="0.167em"/><mtext>m</mtext></mrow></math>
+      <p class="wt">Method 2: ride along with the bus. When the car passes the station, the bus is 15 × 4.0 = 60 m ahead. In the bus's frame the car closes that gap at 25 − 15 = 10 m/s:</p>
+<math class="eq" display="block"><mrow><mi>&#x394;</mi><mi>t</mi><mo>=</mo><mfrac><mrow><mn>60</mn><mspace width="0.167em"/><mtext>m</mtext></mrow><mrow><mn>10</mn><mspace width="0.167em"/><mtext>m/s</mtext></mrow></mfrac><mo>=</mo><mn>6.0</mn><mspace width="0.167em"/><mtext>s</mtext></mrow></math>
+      <p class="wt">That's 6.0 s after the car passes the station, which is t = 10 s, and the car has gone 25 × 6.0 = 150 m.</p>
+    </div>
+    <p class="take">Chasing in the same direction, the gap closes at the <b>difference</b> of the speeds; heading toward each other, it closes at the sum. Both methods give the same answer; the second is quicker once you see the head start.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Equilibrium · friction</span><h4>Leaning against a wall</h4></summary>
+    <div class="exbody">
+    <svg width="170" height="130" viewBox="0 0 170 130" aria-label="Free-body diagram of a person leaning on a wall to the left: floor normal force up, weight down, wall pushes right, floor friction points left toward the wall">
+      <line x1="10" y1="8" x2="10" y2="122" stroke="#111" stroke-width="3"/>
+      <line x1="10" y1="20" x2="3" y2="27" stroke="#111"/><line x1="10" y1="40" x2="3" y2="47" stroke="#111"/><line x1="10" y1="60" x2="3" y2="67" stroke="#111"/><line x1="10" y1="80" x2="3" y2="87" stroke="#111"/><line x1="10" y1="100" x2="3" y2="107" stroke="#111"/>
+      <text x="16" y="120" font-size="10" font-family="IBM Plex Mono,monospace">wall</text>
+      <circle cx="96" cy="66" r="6" fill="#111"/>
+      <line x1="96" y1="60" x2="96" y2="20" stroke="#111" stroke-width="3"/><polygon points="91,22 101,22 96,13" fill="#111"/>
+      <text x="102" y="22" font-size="11" font-family="IBM Plex Mono,monospace">F<tspan baseline-shift="sub" font-size="8">N,floor</tspan></text>
+      <line x1="96" y1="72" x2="96" y2="112" stroke="#111" stroke-width="3"/><polygon points="91,110 101,110 96,119" fill="#111"/>
+      <text x="102" y="118" font-size="11" font-family="IBM Plex Mono,monospace">mg</text>
+      <line x1="102" y1="66" x2="128" y2="66" stroke="#111" stroke-width="3"/><polygon points="126,61 126,71 135,66" fill="#111"/>
+      <text x="110" y="50" font-size="11" font-family="IBM Plex Mono,monospace">F<tspan baseline-shift="sub" font-size="8">wall</tspan></text>
+      <line x1="90" y1="66" x2="64" y2="66" stroke="#ff6a2b" stroke-width="3"/><polygon points="66,61 66,71 57,66" fill="#ff6a2b"/>
+      <text x="64" y="84" font-size="11" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">f</text>
+    </svg>
+    <p>A 70 kg person stands with her feet out from a wall and leans on it with her hands. The wall pushes straight out on her hands with 150 N, and she doesn't move. Find the floor's normal force on her and the friction force from the floor, with its direction.</p>
+    <div class="work">
+      <p class="wt">Forces on her: weight down, floor's normal force up, the wall's push away from the wall, and friction from the floor along the floor. At rest, so ΣF = 0 in each direction.</p>
+      <p class="wt">Vertical:</p>
+<math class="eq" display="block"><mrow><msub><mi>F</mi><mrow><mi>N</mi><mo>,</mo><mtext>floor</mtext></mrow></msub><mo>=</mo><mi>m</mi><mi>g</mi><mo>=</mo><mo stretchy="false">(</mo><mn>70</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>10</mn><mo stretchy="false">)</mo></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>F</mi><mrow><mi>N</mi><mo>,</mo><mtext>floor</mtext></mrow></msub><mo>=</mo><mn>700</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+      <p class="wt">Horizontal:</p>
+<math class="eq" display="block"><mrow><mi>f</mi><mo>=</mo><msub><mi>F</mi><mtext>wall</mtext></msub></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>f</mi><mo>=</mo><mn>150</mn><mspace width="0.167em"/><mtext>N</mtext><mo>,</mo><mspace width="0.278em"/><mtext>toward the wall</mtext></mrow></math>
+    </div>
+    <p class="take">Nothing is moving, yet there's friction. The wall's push would make her feet slide away from the wall, so friction points <b>toward</b> the wall to stop that. Friction opposes sliding (or the way things would slide), not “the motion.” On a slick floor that can't supply 150 N, her feet slide out.</p>
+    </div>
+  </details>
 </div>
 </div>
 <div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
