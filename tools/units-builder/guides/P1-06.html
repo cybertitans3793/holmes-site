@@ -39,6 +39,16 @@
 .guide summary:hover{background:var(--soft)}
 .guide details[open] summary{background:var(--ink);color:#fff}
 .guide details>div{border-left:4px solid var(--hot);padding:8px 12px;margin-top:8px;background:#fff}
+.guide .gmore{margin-top:4px}
+.guide .gmore h3{margin:0 0 4px}
+.guide .gmuted{margin:0 0 10px;font-size:14px;opacity:.75}
+.guide details.ex{margin:0 0 14px}
+.guide details.ex>summary{display:block;border:0;padding:0;background:none;color:inherit;font-weight:inherit}
+.guide details.ex[open]>summary{background:none;color:inherit}
+.guide details.ex>summary h4{margin:2px 0 0}
+.guide details.ex>summary h4::before{content:'▸ ';color:var(--hot)}
+.guide details.ex[open]>summary h4::before{content:'▾ '}
+.guide details.ex>div.exbody{border-left:0;padding:0;margin-top:10px;background:none}
 .guide .gpanel>.ggrid,.guide .gpanel>.gsteps,.guide .gpanel>.gex{margin-bottom:0}
 .guide .gpanel>.gsteps+.ggrid{margin-top:22px}
 .guide .gtabs{margin-bottom:18px}
@@ -102,6 +112,8 @@ body.present .guide{display:none}
       <li>Measuring a spring's x from the wrong place. It's the stretch or compression from natural length, not the spring's total length.</li>
       <li>Using the applied force F when finding friction on an angled pull. Pulling up at an angle <b>reduces</b> the normal force, so N = mg − F sinθ.</li>
       <li>Saying energy is “lost.” It's transferred out of the system or turned into thermal energy; the total is conserved.</li>
+      <li>Setting KE = 0 at the top of a projectile's path. Only the vertical velocity is zero there; the horizontal part keeps going.</li>
+      <li>Treating momentum as a kind of energy. Momentum is a vector, conserved for different reasons (unit 7), and it never goes in an energy equation.</li>
     </ul>
   </div>
 </div>
@@ -133,6 +145,7 @@ body.present .guide{display:none}
     <h3>Which forces do work?</h3>
     <ul>
       <li>Ask whether the force has a part along the motion. If not, its work is zero.</li>
+      <li>The sign: <b>positive</b> when the force has a part along the motion (gravity on the way down), <b>negative</b> when it's against the motion (friction; gravity on the way up), <b>zero</b> at 90° (the normal force on a roller coaster).</li>
       <li>Static friction on a rolling wheel or a walking foot does no work: the contact point doesn't slide.</li>
       <li>Gravity on a circular orbit does no work: the force stays at 90° to the velocity, so the speed stays constant.</li>
     </ul>
@@ -241,6 +254,72 @@ body.present .guide{display:none}
     </div>
     <p class="take">At constant speed the kinetic energy isn't changing: all 15 kW goes into thermal energy in the air and tires. Air resistance grows with speed, so driving faster needs much more power.</p>
   </div>
+</div>
+<div class="gmore">
+  <h3>More examples</h3>
+  <p class="gmuted">Click an example to open it.</p>
+  <details class="ex">
+    <summary><span class="kind">Two-object system with friction</span><h4>A cart pulled by a hanging mass</h4></summary>
+    <div class="exbody">
+    <svg width="170" height="110" viewBox="0 0 170 110" aria-label="Cart on a table pulled by a string over a pulley to a hanging mass">
+      <line x1="4" y1="40" x2="140" y2="40" stroke="#111" stroke-width="2"/><line x1="140" y1="40" x2="140" y2="108" stroke="#111" stroke-width="2"/>
+      <rect x="30" y="16" width="44" height="24" fill="#fff" stroke="#111" stroke-width="2"/>
+      <text x="40" y="33" font-size="11" font-family="IBM Plex Mono,monospace">2.0</text>
+      <circle cx="146" cy="34" r="6" fill="#fff" stroke="#111" stroke-width="2"/>
+      <line x1="74" y1="28" x2="146" y2="28" stroke="#ff6a2b" stroke-width="2"/><line x1="152" y1="34" x2="152" y2="70" stroke="#ff6a2b" stroke-width="2"/>
+      <rect x="142" y="70" width="20" height="20" fill="#fff" stroke="#111" stroke-width="2"/>
+      <text x="108" y="84" font-size="11" font-family="IBM Plex Mono,monospace">0.50</text>
+    </svg>
+    <p>A 2.0 kg cart sits on a table (μ<sub>k</sub> = 0.20). A string runs over a light, frictionless pulley to a 0.50 kg hanging mass. Released from rest, how fast are they moving after the hanging mass has fallen 0.80 m?</p>
+    <div class="work">
+      <p class="wt">System: cart + hanging mass + Earth + table. Both objects move together, so they share one speed v. Only the hanging mass changes height.</p>
+<math class="eq" display="block"><mrow><msub><mi>m</mi><mtext>hang</mtext></msub><mi>g</mi><mi>d</mi><mo>=</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mo stretchy="false">(</mo><msub><mi>m</mi><mtext>cart</mtext></msub><mo>+</mo><msub><mi>m</mi><mtext>hang</mtext></msub><mo stretchy="false">)</mo><msup><mi>v</mi><mn>2</mn></msup><mo>+</mo><msub><mi>μ</mi><mi>k</mi></msub><msub><mi>m</mi><mtext>cart</mtext></msub><mi>g</mi><mi>d</mi></mrow></math>
+      <p class="wt">GPE lost by the hanging mass, and thermal energy from friction on the cart:</p>
+<math class="eq" display="block"><mrow><mo stretchy="false">(</mo><mn>0.50</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>10</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>0.80</mn><mo stretchy="false">)</mo><mo>=</mo><mn>4.0</mn><mspace width="0.167em"/><mtext>J</mtext><mspace width="1em"/><mo stretchy="false">(</mo><mn>0.20</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>2.0</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>10</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>0.80</mn><mo stretchy="false">)</mo><mo>=</mo><mn>3.2</mn><mspace width="0.167em"/><mtext>J</mtext></mrow></math>
+<math class="eq" display="block"><mrow><mn>4.0</mn><mo>&#x2212;</mo><mn>3.2</mn><mo>=</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mo stretchy="false">(</mo><mn>2.5</mn><mo stretchy="false">)</mo><msup><mi>v</mi><mn>2</mn></msup><mspace width="0.278em"/><mo>&#x2192;</mo><mspace width="0.278em"/><msup><mi>v</mi><mn>2</mn></msup><mo>=</mo><mn>0.64</mn></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>v</mi><mo>=</mo><mn>0.80</mn><mspace width="0.167em"/><mtext>m/s</mtext></mrow></math>
+    </div>
+    <p class="take">The falling mass pays for everything: the kinetic energy of <b>both</b> objects and the friction on the cart. A common slip is giving all the kinetic energy to the hanging mass alone. The string's tension does no net work on this system: it pulls the cart forward and the hanging mass back by the same amount.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Spring + gravity</span><h4>A mass let go on a vertical spring</h4></summary>
+    <div class="exbody">
+    <svg width="120" height="130" viewBox="0 0 120 130" aria-label="Mass hanging from a vertical spring, three positions marked">
+      <line x1="10" y1="6" x2="70" y2="6" stroke="#111" stroke-width="3"/>
+      <polyline points="40,6 40,14 30,20 50,28 30,36 50,44 30,52 50,60 40,66 40,72" fill="none" stroke="#111" stroke-width="2"/>
+      <rect x="28" y="72" width="24" height="18" fill="#fff" stroke="#111" stroke-width="2"/>
+      <line x1="62" y1="72" x2="110" y2="72" stroke="#111" stroke-dasharray="3 3"/><text x="74" y="69" font-size="9" font-family="IBM Plex Mono,monospace">start</text>
+      <line x1="62" y1="96" x2="110" y2="96" stroke="#ff6a2b" stroke-dasharray="3 3"/><text x="74" y="93" font-size="9" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">equil.</text>
+      <line x1="62" y1="120" x2="110" y2="120" stroke="#111" stroke-dasharray="3 3"/><text x="74" y="117" font-size="9" font-family="IBM Plex Mono,monospace">lowest</text>
+    </svg>
+    <p>A 0.40 kg mass is hooked onto the end of a hanging spring (k = 80 N/m) while the spring is unstretched, then let go. How far down does it go before it stops? How fast is it moving as it passes the equilibrium point?</p>
+    <div class="work">
+      <p class="wt">System: mass + spring + Earth. Measure x downward from the start (the spring's natural length). Going down x, the mass loses mgx of GPE and the spring gains ½kx².</p>
+      <p class="wt">Lowest point: at rest again, so</p>
+<math class="eq" display="block"><mrow><mi>m</mi><mi>g</mi><mi>x</mi><mo>=</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mi>k</mi><msup><mi>x</mi><mn>2</mn></msup><mspace width="0.278em"/><mo>&#x2192;</mo><mspace width="0.278em"/><mi>x</mi><mo>=</mo><mfrac><mrow><mn>2</mn><mi>m</mi><mi>g</mi></mrow><mi>k</mi></mfrac><mo>=</mo><mfrac><mrow><mn>2</mn><mo stretchy="false">(</mo><mn>0.40</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>10</mn><mo stretchy="false">)</mo></mrow><mn>80</mn></mfrac></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>x</mi><mtext>lowest</mtext></msub><mo>=</mo><mn>0.10</mn><mspace width="0.167em"/><mtext>m</mtext></mrow></math>
+      <p class="wt">Equilibrium is where the forces balance: kx = mg, so x = mg/k = 0.050 m. There:</p>
+<math class="eq" display="block"><mrow><mi>m</mi><mi>g</mi><mi>x</mi><mo>=</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mi>k</mi><msup><mi>x</mi><mn>2</mn></msup><mo>+</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mi>m</mi><msup><mi>v</mi><mn>2</mn></msup></mrow></math>
+<math class="eq" display="block"><mrow><mn>0.20</mn><mspace width="0.167em"/><mtext>J</mtext><mo>=</mo><mn>0.10</mn><mspace width="0.167em"/><mtext>J</mtext><mo>+</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mo stretchy="false">(</mo><mn>0.40</mn><mo stretchy="false">)</mo><msup><mi>v</mi><mn>2</mn></msup><mspace width="0.278em"/><mo>&#x2192;</mo><mspace width="0.278em"/><msup><mi>v</mi><mn>2</mn></msup><mo>=</mo><mn>0.50</mn></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>v</mi><mo>=</mo><mn>0.71</mn><mspace width="0.167em"/><mtext>m/s</mtext></mrow></math>
+    </div>
+    <p class="take">It overshoots: the lowest point (0.10 m) is <b>twice</b> the equilibrium stretch (0.050 m), and it's fastest at equilibrium, where the forces balance. Equilibrium isn't where it stops.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Energy in two dimensions</span><h4>A projectile’s highest point</h4></summary>
+    <div class="exbody">
+    <p>A ball is kicked from the ground at 20 m/s, 30° above the horizontal. Ignoring air resistance, how high does it go?</p>
+    <div class="work">
+      <p class="wt">System: ball + Earth. At the top only the <b>vertical</b> velocity is zero; the horizontal part never changes:</p>
+<math class="eq" display="block"><mrow><msub><mi>v</mi><mtext>top</mtext></msub><mo>=</mo><msub><mi>v</mi><mn>0</mn></msub><mi>cos</mi><mn>30</mn><mo>°</mo><mo>=</mo><mn>17.3</mn><mspace width="0.167em"/><mtext>m/s</mtext></mrow></math>
+<math class="eq" display="block"><mrow><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mi>m</mi><msubsup><mi>v</mi><mn>0</mn><mn>2</mn></msubsup><mo>=</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mi>m</mi><msubsup><mi>v</mi><mtext>top</mtext><mn>2</mn></msubsup><mo>+</mo><mi>m</mi><mi>g</mi><mi>h</mi><mspace width="0.278em"/><mo>&#x2192;</mo><mspace width="0.278em"/><mi>h</mi><mo>=</mo><mfrac><mrow><msubsup><mi>v</mi><mn>0</mn><mn>2</mn></msubsup><mo>&#x2212;</mo><msubsup><mi>v</mi><mtext>top</mtext><mn>2</mn></msubsup></mrow><mrow><mn>2</mn><mi>g</mi></mrow></mfrac><mo>=</mo><mfrac><mrow><mn>400</mn><mo>&#x2212;</mo><mn>300</mn></mrow><mn>20</mn></mfrac></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>h</mi><mo>=</mo><mn>5.0</mn><mspace width="0.167em"/><mtext>m</mtext></mrow></math>
+    </div>
+    <p class="take">Setting KE = 0 at the top gives 20 m, four times too high. Only the vertical part of the velocity reaches zero. Energy can’t tell you the direction of the velocity, so you still need to find v<sub>x</sub> from the launch angle.</p>
+    </div>
+  </details>
 </div>
 
 </div>
