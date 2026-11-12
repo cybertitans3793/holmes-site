@@ -177,6 +177,7 @@ function calcWith(over){ const v = Object.assign({}, S.v, over || {}); return SI
 function update(){
   S.ivs.forEach(d => { $('val-' + d.id).innerHTML = d.show ? d.show(S.v[d.id]) : fnum(S.v[d.id]) + (d.unit ? '&nbsp;' + d.unit : ''); });
   S.d = calcWith();
+  if (SIM.graphHidden && !SIM.noGraph) $('gcard').style.visibility = SIM.graphHidden(S.v, S.mode, S.opt) ? 'hidden' : '';
   $('work').innerHTML = '<div class="wt"><span>Show the work</span><span class="hint">' + (SIM.hint || 'g = 10 m/s²') + '</span></div>' + (SIM.strip ? SIM.strip(SIM.work(S.v, S.d, S.mode, S.opt)) : SIM.work(S.v, S.d, S.mode, S.opt));
   document.querySelectorAll('input[name=gx]').forEach(r => r.checked = (r.value === S.gx));
   graph();

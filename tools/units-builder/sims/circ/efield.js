@@ -5,10 +5,18 @@ function charges(v, mode){ const s = (v.s || 12) / 100;
   if (mode === 'two') return [[-s / 2, 0, v.q1], [s / 2, 0, v.q2]];
   const h = s * Math.sqrt(3) / 2; return [[-s / 2, -h / 3, v.q1], [s / 2, -h / 3, v.q2], [0, 2 * h / 3, v.q3]]; }
 function fieldAt(Q, x, y){ let Ex = 0, Ey = 0; const parts = Q.map(([cx, cy, q]) => { const dx = x - cx, dy = y - cy, r2 = dx * dx + dy * dy, r = Math.sqrt(r2), E = K * q * 1e-9 / r2; const ex = E * dx / r, ey = E * dy / r; Ex += ex; Ey += ey; return { r, E: Math.abs(E), ex, ey, q }; }); return { Ex, Ey, E: Math.hypot(Ex, Ey), parts }; }
+// Predict-then-reveal state: shared by work() and draw(); resets whenever the charge setup or the option changes.
+const EF = { key: '', rev: false, btn: null };
+function efHidden(v, mode, opt){ const k = mode + (opt && opt.pr) + [v.q1, v.q2, v.q3, v.s].join(); if (k !== EF.key){ EF.key = k; EF.rev = false; } return !!opt && opt.pr === 'predict' && !EF.rev; }
+cv.style.touchAction = 'manipulation';
+cv.addEventListener('pointerdown', e => { const b = EF.btn; if (!b) return; const r = cv.getBoundingClientRect(), x = (e.clientX - r.left) / r.width * 600, y = (e.clientY - r.top) / r.height * 330;
+  if (x >= b[0] && x <= b[0] + b[2] && y >= b[1] && y <= b[1] + b[3]){ EF.rev = true; EF.btn = null; update(); } });
 const SIM = {
   title: 'Electric Fields',
   hint: 'k = 8.99×10⁹ N·m²/C² · 1 nC = 10⁻⁹ C',
   modes: [{ id: 'one', label: 'One charge' }, { id: 'two', label: 'Two charges' }, { id: 'three', label: 'Three charges' }],
+  graphHidden: (v, mode, opt) => efHidden(v, mode, opt),
+  opts: [{ id: 'pr', label: 'View', modes: ['one', 'two', 'three'], choices: [['show', 'Show field'], ['predict', 'Predict first']] }],
   ivs(mode){
     const q = (id, lab, val) => ({ id, sym: 'q<sub>' + id[1] + '</sub>', symText: id, label: lab, unit: 'nC', min: -10, max: 10, step: 0.5, val });
     const p = [{ id: 'px', sym: 'x<sub>P</sub>', symText: 'xP', label: 'Point P: x', unit: 'cm', min: -18, max: 18, step: 0.5, val: mode === 'one' ? 8 : 0 },
@@ -26,7 +34,11 @@ const SIM = {
     return { Q, ...f, ang: Math.atan2(f.Ey, f.Ex) / DEG, nul };
   },
   dvs(){ return [{ id: 'E', name: 'Field strength at P', short: 'E', sym: 'E<sub>P</sub>', unit: 'N/C', f: d => d.E }, { id: 'Ex', name: 'x-component at P', short: 'Ex', sym: 'E<sub>x</sub>', unit: 'N/C', f: d => d.Ex }, { id: 'Ey', name: 'y-component at P', short: 'Ey', sym: 'E<sub>y</sub>', unit: 'N/C', f: d => d.Ey }]; },
-  work(v, d, mode){
+  work(v, d, mode, opt){
+    if (efHidden(v, mode, opt)){ const rr = d.parts.map((p, i) => { const k = '<mn>' + (i + 1) + '</mn>'; return TEX`r_${k} = ${M.n(p.r * 100, 'cm')}`; }).join('');
+      return '<h4>Predict first</h4><p class="st">The field is hidden. Look at the charges and point P, then decide: which way does E point at P? Is it strong or weak?</p>' +
+        '<p class="st">Rules: E points <b>away</b> from + charges and <b>toward</b> − charges. Each charge gives:</p>' + TEX`E = \frac{k\,|q|}{r^2}` + '<p class="st">Distances from P:</p>' + rr +
+        '<p class="note">Click <b>Reveal field</b> on the picture to check your prediction.</p>'; }
     const rows = d.parts.map((p, i) => { const k = '<mn>' + (i + 1) + '</mn>';
       return '<p class="st"><b>From q<sub>' + (i + 1) + '</sub></b> (' + p.q + ' nC), pointing ' + (p.q > 0 ? 'away from' : 'toward') + ' it:</p>' +
         TEX`r_${k} = ${M.n(p.r * 100, 'cm')}` + TEX`E_${k} = \frac{k\,|q_${k}|}{r_${k}^2}` +
@@ -42,29 +54,33 @@ const SIM = {
   },
   draw(v, d, mode, opt, t, dt, A){
     const X = x => 195 + 900 * x, Y = y => 165 - 900 * y;   // 9 px per cm
-    const key = mode + [v.q1, v.q2, v.q3, v.s].join();
+    const hide = efHidden(v, mode, opt), key = mode + [v.q1, v.q2, v.q3, v.s].join() + (hide ? 'h' : '');
     if (!A.img || A.key !== key){ A.key = key; const oc = document.createElement('canvas'); oc.width = 760; oc.height = 600; const o = oc.getContext('2d'); o.setTransform(2, 0, 0, 2, 0, 0);
       o.fillStyle = '#fff'; o.fillRect(10, 30, 375, 275);
       // vector map
-      for (let gx = 25; gx < 380; gx += 26) for (let gy = 42; gy < 300; gy += 26){ const f = fieldAt(d.Q, (gx - 195) / 900, (165 - gy) / 900); if (!isFinite(f.E) || d.Q.some(([cx, cy]) => Math.hypot(gx - X(cx), gy - Y(cy)) < 14)) continue; const L = Math.min(11, 2.2 * Math.log10(1 + f.E / 20)), ux = f.Ex / f.E, uy = -f.Ey / f.E; o.strokeStyle = '#c9c9c9'; o.fillStyle = '#c9c9c9'; o.lineWidth = 1.2; o.beginPath(); o.moveTo(gx - ux * L, gy - uy * L); o.lineTo(gx + ux * L, gy + uy * L); o.stroke(); o.beginPath(); o.moveTo(gx + ux * L, gy + uy * L); o.lineTo(gx + ux * L - ux * 4 - uy * 3, gy + uy * L - uy * 4 + ux * 3); o.lineTo(gx + ux * L - ux * 4 + uy * 3, gy + uy * L - uy * 4 - ux * 3); o.fill(); }
+      if (!hide) for (let gx = 25; gx < 380; gx += 26) for (let gy = 42; gy < 300; gy += 26){ const f = fieldAt(d.Q, (gx - 195) / 900, (165 - gy) / 900); if (!isFinite(f.E) || d.Q.some(([cx, cy]) => Math.hypot(gx - X(cx), gy - Y(cy)) < 14)) continue; const L = Math.min(11, 2.2 * Math.log10(1 + f.E / 20)), ux = f.Ex / f.E, uy = -f.Ey / f.E; o.strokeStyle = '#c9c9c9'; o.fillStyle = '#c9c9c9'; o.lineWidth = 1.2; o.beginPath(); o.moveTo(gx - ux * L, gy - uy * L); o.lineTo(gx + ux * L, gy + uy * L); o.stroke(); o.beginPath(); o.moveTo(gx + ux * L, gy + uy * L); o.lineTo(gx + ux * L - ux * 4 - uy * 3, gy + uy * L - uy * 4 + ux * 3); o.lineTo(gx + ux * L - ux * 4 + uy * 3, gy + uy * L - uy * 4 - ux * 3); o.fill(); }
       // field lines
       const tot = d.Q.reduce((a, c) => a + c[2], 0), fromPos = d.Q.some(c => c[2] > 0) ? 1 : -1;
-      d.Q.forEach(([cx, cy, q]) => { if (q * fromPos <= 0) return; const n = Math.max(4, Math.round(3.2 * Math.abs(q))); for (let k = 0; k < n; k++){ const a = 2 * PI * (k + 0.5) / n; let x = X(cx) + 12 * Math.cos(a), y = Y(cy) + 12 * Math.sin(a); o.strokeStyle = '#7a3fb0'; o.lineWidth = 1.3; o.beginPath(); o.moveTo(x, y); let mid = null;
+      if (!hide) d.Q.forEach(([cx, cy, q]) => { if (q * fromPos <= 0) return; const n = Math.max(4, Math.round(3.2 * Math.abs(q))); for (let k = 0; k < n; k++){ const a = 2 * PI * (k + 0.5) / n; let x = X(cx) + 12 * Math.cos(a), y = Y(cy) + 12 * Math.sin(a); o.strokeStyle = '#7a3fb0'; o.lineWidth = 1.3; o.beginPath(); o.moveTo(x, y); let mid = null;
         for (let st = 0; st < 900; st++){ const f = fieldAt(d.Q, (x - 195) / 900, (165 - y) / 900); if (!isFinite(f.E) || f.E === 0) break; const ux = fromPos * f.Ex / f.E, uy = -fromPos * f.Ey / f.E; x += 2 * ux; y += 2 * uy; o.lineTo(x, y); if (st === 40) mid = [x, y, ux, uy]; if (x < 10 || x > 385 || y < 30 || y > 305) break; if (d.Q.some(([qx, qy]) => Math.hypot(x - X(qx), y - Y(qy)) < 9)) break; }
         o.stroke(); if (mid){ const [mx, my, ux, uy] = mid; o.fillStyle = '#7a3fb0'; o.beginPath(); o.moveTo(mx + ux * 5, my + uy * 5); o.lineTo(mx - uy * 4, my + ux * 4); o.lineTo(mx + uy * 4, my - ux * 4); o.fill(); } } });
       A.img = oc; }
     ctx.drawImage(A.img, 0, 0, 760, 600, 0, 0, 380, 300);
     ctx.strokeStyle = '#111'; ctx.lineWidth = 2; ctx.strokeRect(10, 30, 375, 275);
-    panelTitle('FIELD MAP (gray arrows) + FIELD LINES (purple)', 10, 18);
+    panelTitle(hide ? 'FIELD HIDDEN: PREDICT FIRST' : 'FIELD MAP (gray arrows) + FIELD LINES (purple)', 10, 18);
     d.Q.forEach(([cx, cy, q], i) => { ctx.fillStyle = q > 0 ? '#ff6a2b' : q < 0 ? '#1546d6' : '#bbb'; ctx.beginPath(); ctx.arc(X(cx), Y(cy), 9, 0, 7); ctx.fill(); ctx.strokeStyle = '#111'; ctx.lineWidth = 1.5; ctx.stroke(); text(q > 0 ? '+' : q < 0 ? '−' : '0', X(cx), Y(cy) + 5, { align: 'center', font: '700 13px "Space Grotesk",sans-serif', col: '#fff' }); text('q' + (i + 1), X(cx) + 11, Y(cy) - 9, { font: '700 10px "IBM Plex Mono",monospace' }); });
-    if (mode === 'two' && d.nul !== null){ ctx.strokeStyle = '#1e7d45'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(X(d.nul), Y(0), 6, 0, 7); ctx.stroke(); text('E = 0', X(d.nul) - 14, Y(0) + 20, { font: '700 10px "IBM Plex Mono",monospace', col: '#1e7d45' }); }
+    if (!hide && mode === 'two' && d.nul !== null){ ctx.strokeStyle = '#1e7d45'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(X(d.nul), Y(0), 6, 0, 7); ctx.stroke(); text('E = 0', X(d.nul) - 14, Y(0) + 20, { font: '700 10px "IBM Plex Mono",monospace', col: '#1e7d45' }); }
     // probe
     const px = X(v.px / 100), py = Y(v.py / 100), sc = E => Math.min(70, 14 * Math.log10(1 + E / 50));
-    if (isFinite(d.E)){ const cols = ['#c43a00', '#1546d6', '#1e7d45']; d.parts.forEach((p, i) => { const L = sc(p.E), m = Math.hypot(p.ex, p.ey) || 1; arrow(px, py, px + L * p.ex / m, py - L * p.ey / m, cols[i], null, { w: 2, head: 6, dash: [4, 3] }); });
+    if (!hide && isFinite(d.E)){ const cols = ['#c43a00', '#1546d6', '#1e7d45']; d.parts.forEach((p, i) => { const L = sc(p.E), m = Math.hypot(p.ex, p.ey) || 1; arrow(px, py, px + L * p.ex / m, py - L * p.ey / m, cols[i], null, { w: 2, head: 6, dash: [4, 3] }); });
       const L = sc(d.E); arrow(px, py, px + L * d.Ex / d.E, py - L * d.Ey / d.E, '#111', 'E', { w: 3.5 }); }
     ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(px, py, 4, 0, 7); ctx.fill(); text('P', px - 12, py - 6, { font: '700 12px "Space Grotesk",sans-serif' });
-    text('E at P = ' + fplain(d.E) + ' N/C', 14, 320, { font: '700 12px "Space Grotesk",sans-serif' });
+    text(hide ? 'Which way does E point at P?' : 'E at P = ' + fplain(d.E) + ' N/C', 14, 320, { font: '700 12px "Space Grotesk",sans-serif' });
     panelTitle('AT POINT P', 395, 18);
+    if (hide){ EF.btn = [255, 276, 124, 26]; ctx.fillStyle = '#ff6a2b'; ctx.fillRect(255, 276, 124, 26); ctx.strokeStyle = '#111'; ctx.lineWidth = 2; ctx.strokeRect(255, 276, 124, 26); text('Reveal field', 317, 294, { align: 'center', font: '700 13px "Space Grotesk",sans-serif' });
+      d.parts.forEach((p, i) => text('r from q' + (i + 1) + ': ' + fplain(p.r * 100) + ' cm', 400, 54 + i * 20, { font: '600 11px "IBM Plex Mono",monospace', col: ['#c43a00', '#1546d6', '#1e7d45'][i] }));
+      text('field values hidden', 400, 54 + d.parts.length * 20 + 6, { font: '700 13px "Space Grotesk",sans-serif' }); text('predict, then Reveal', 400, 300, { font: '600 10px "IBM Plex Mono",monospace', col: '#4a4a4a' }); return; }
+    EF.btn = null;
     d.parts.forEach((p, i) => text('from q' + (i + 1) + ': ' + fplain(p.E) + ' N/C', 400, 54 + i * 20, { font: '600 11px "IBM Plex Mono",monospace', col: ['#c43a00', '#1546d6', '#1e7d45'][i] }));
     text('net: ' + fplain(d.E) + ' N/C', 400, 54 + d.parts.length * 20 + 6, { font: '700 13px "Space Grotesk",sans-serif' });
     text('at ' + fplain(d.ang) + '° from +x', 400, 74 + d.parts.length * 20 + 6, { font: '600 11px "IBM Plex Mono",monospace', col: '#4a4a4a' });
