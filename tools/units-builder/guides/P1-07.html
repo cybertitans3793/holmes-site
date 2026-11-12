@@ -39,6 +39,16 @@
 .guide summary:hover{background:var(--soft)}
 .guide details[open] summary{background:var(--ink);color:#fff}
 .guide details>div{border-left:4px solid var(--hot);padding:8px 12px;margin-top:8px;background:#fff}
+.guide .gmore{margin-top:4px}
+.guide .gmore h3{margin:0 0 4px}
+.guide .gmuted{margin:0 0 10px;font-size:14px;opacity:.75}
+.guide details.ex{margin:0 0 14px}
+.guide details.ex>summary{display:block;border:0;padding:0;background:none;color:inherit;font-weight:inherit}
+.guide details.ex[open]>summary{background:none;color:inherit}
+.guide details.ex>summary h4{margin:2px 0 0}
+.guide details.ex>summary h4::before{content:'▸ ';color:var(--hot)}
+.guide details.ex[open]>summary h4::before{content:'▾ '}
+.guide details.ex>div.exbody{border-left:0;padding:0;margin-top:10px;background:none}
 .guide .gpanel>.ggrid,.guide .gpanel>.gsteps,.guide .gpanel>.gex{margin-bottom:0}
 .guide .gpanel>.gsteps+.ggrid{margin-top:22px}
 .guide .gtabs{margin-bottom:18px}
@@ -96,6 +106,9 @@ body.present .guide{display:none}
       <li>Thinking the bigger object gets the bigger change in momentum. In a collision the changes are equal and opposite; the lighter object gets the bigger change in <i>velocity</i>.</li>
       <li>Adding momenta in 2D as plain numbers. They're vectors: split them into components.</li>
       <li>Mixing up impulse (N·s) and force (N). Impulse is force × time.</li>
+      <li>Saying a braking car's momentum “turned into heat.” Kinetic energy can become thermal energy; momentum can't. Friction hands it to the road and Earth.</li>
+      <li>Thinking “inelastic” means the objects stick. It only means kinetic energy was lost; sticking together is the extreme case, perfectly inelastic.</li>
+      <li>Giving Δp/Δt as the force asked for. It's the <b>net</b> force; if the question asks for one force (an airbag, the floor), take the others out using the free-body diagram.</li>
     </ul>
   </div>
 </div>
@@ -224,6 +237,102 @@ body.present .guide{display:none}
     <p class="take">Each direction keeps its own momentum. The wreck heads mostly east because the east-moving car brought more momentum.</p>
   </div>
 </div>
+<div class="gmore">
+  <h3>More examples</h3>
+  <p class="gmuted">Click an example to open it.</p>
+  <details class="ex">
+    <summary><span class="kind">Impulse, then one force</span><h4>An airbag and a seatbelt</h4></summary>
+    <div class="exbody">
+    <svg width="196" height="96" viewBox="0 0 196 96" aria-label="Free-body diagram of the dummy: seatbelt and airbag forces both point backward, motion is forward">
+      <rect x="126" y="30" width="36" height="40" fill="#fff" stroke="#111" stroke-width="2"/>
+      <line x1="126" y1="40" x2="40" y2="40" stroke="#111" stroke-width="3"/><polygon points="42,35 32,40 42,45" fill="#111"/>
+      <text x="40" y="33" font-size="10" font-family="IBM Plex Mono,monospace">belt 4500 N</text>
+      <line x1="126" y1="60" x2="40" y2="60" stroke="#ff6a2b" stroke-width="3"/><polygon points="42,55 32,60 42,65" fill="#ff6a2b"/>
+      <text x="40" y="78" font-size="10" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">airbag ?</text>
+      <line x1="128" y1="14" x2="176" y2="14" stroke="#111" stroke-width="1.5"/><polygon points="174,10 182,14 174,18" fill="#111"/>
+      <text x="128" y="9" font-size="9" font-family="IBM Plex Mono,monospace">motion</text>
+    </svg>
+    <p>In a crash test, a 60 kg dummy moving forward at 15 m/s is brought to rest in 0.12 s by the seatbelt and the airbag pushing on it together. The seatbelt's average force on the dummy is 4500 N. What is the airbag's average force on it?</p>
+    <div class="work">
+      <p class="wt">System: the dummy. Take + as forward. The impulse–momentum theorem gives the <b>net</b> force:</p>
+<math class="eq" display="block"><mrow><msub><mi>F</mi><mtext>net</mtext></msub><mo>=</mo><mfrac><mrow><mi>Δ</mi><mi>p</mi></mrow><mrow><mi>Δ</mi><mi>t</mi></mrow></mfrac><mo>=</mo><mfrac><mrow><mo stretchy="false">(</mo><mn>60</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>0</mn><mo>&#x2212;</mo><mn>15</mn><mo stretchy="false">)</mo></mrow><mn>0.12</mn></mfrac></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>F</mi><mtext>net</mtext></msub><mo>=</mo><mo>&#x2212;</mo><mn>7500</mn><mspace width="0.167em"/><mtext>N</mtext><mtext>&#xA0;(backward)</mtext></mrow></math>
+      <p class="wt">That is the total of both pushes, which both point backward. The weight and the seat's upward push are vertical and cancel, so they don't enter:</p>
+<math class="eq" display="block"><mrow><msub><mi>F</mi><mtext>belt</mtext></msub><mo>+</mo><msub><mi>F</mi><mtext>bag</mtext></msub><mo>=</mo><mn>7500</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+<math class="eq" display="block"><mrow><msub><mi>F</mi><mtext>bag</mtext></msub><mo>=</mo><mn>7500</mn><mo>&#x2212;</mo><mn>4500</mn></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>F</mi><mtext>bag</mtext></msub><mo>=</mo><mn>3000</mn><mspace width="0.167em"/><mtext>N</mtext><mtext>&#xA0;backward</mtext></mrow></math>
+    </div>
+    <p class="take">Δp/Δt gives the net force, not the force from any one object; 7500 N is not the answer. Find the net force first, then split it up with the free-body diagram. When the motion is vertical, the weight is one of the other forces you have to account for.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Collision from graphs</span><h4>Reading a collision off position–time graphs</h4></summary>
+    <div class="exbody">
+    <svg width="240" height="160" viewBox="0 0 240 160" aria-label="Position-time graphs of two carts; the collision lasts from 1.0 to 1.2 seconds">
+      <rect x="89" y="22" width="11" height="116" fill="#fde1d6"/>
+      <path d="M34 123.5H210M34 109H210M34 94.5H210M34 80H210M34 65.5H210M34 51H210M34 36.5H210M34 22H210M89 138V22M144 138V22M199 138V22" stroke="#ccc" stroke-width="1" fill="none"/>
+      <line x1="34" y1="138" x2="212" y2="138" stroke="#111" stroke-width="2"/><line x1="34" y1="138" x2="34" y2="18" stroke="#111" stroke-width="2"/>
+      <path d="M34 138L89 94.5C92.7 91.6 96.3 96.4 100 97.4L199 123.5" fill="none" stroke="#111" stroke-width="2.5"/>
+      <path d="M34 80L89 80C92.7 80 96.3 76.1 100 74.2L199 22" fill="none" stroke="#ff6a2b" stroke-width="2.5"/>
+      <text x="30" y="141" font-size="9" font-family="IBM Plex Mono,monospace" text-anchor="end">0</text><text x="30" y="112" font-size="9" font-family="IBM Plex Mono,monospace" text-anchor="end">0.4</text><text x="30" y="83" font-size="9" font-family="IBM Plex Mono,monospace" text-anchor="end">0.8</text><text x="30" y="54" font-size="9" font-family="IBM Plex Mono,monospace" text-anchor="end">1.2</text><text x="30" y="25" font-size="9" font-family="IBM Plex Mono,monospace" text-anchor="end">1.6</text>
+      <text x="89" y="150" font-size="9" font-family="IBM Plex Mono,monospace" text-anchor="middle">1</text><text x="144" y="150" font-size="9" font-family="IBM Plex Mono,monospace" text-anchor="middle">2</text><text x="199" y="150" font-size="9" font-family="IBM Plex Mono,monospace" text-anchor="middle">3</text>
+      <text x="2" y="10" font-size="9" font-family="IBM Plex Mono,monospace">x (m)</text><text x="210" y="158" font-size="9" font-family="IBM Plex Mono,monospace">t (s)</text>
+      <text x="150" y="102" font-size="10" font-family="IBM Plex Mono,monospace">cart 1</text><text x="150" y="74" font-size="10" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">cart 2</text>
+    </svg>
+    <p>The graph shows the positions of two carts on a level track. Cart 1 (0.40 kg) rolls toward cart 2, which is at rest. Magnets on their bumpers push them apart during the shaded 0.20 s. Find (a) the mass of cart 2, (b) whether the collision is elastic, and (c) the average force each cart exerts on the other.</p>
+    <div class="work">
+      <p class="wt">Velocities are slopes. Take + as the way cart 1 starts, and read only the straight parts outside the shaded band:</p>
+<math class="eq" display="block"><mrow><msub><mi>v</mi><mrow><mn>1</mn><mi>i</mi></mrow></msub><mo>=</mo><mfrac><mn>0.60</mn><mn>1.0</mn></mfrac><mo>=</mo><mo>+</mo><mn>0.60</mn><mspace width="0.167em"/><mtext>m/s</mtext></mrow></math>
+<math class="eq" display="block"><mrow><msub><mi>v</mi><mrow><mn>1</mn><mi>f</mi></mrow></msub><mo>=</mo><mfrac><mrow><mn>0.20</mn><mo>&#x2212;</mo><mn>0.40</mn></mrow><mrow><mn>3</mn><mo>&#x2212;</mo><mn>2</mn></mrow></mfrac><mo>=</mo><mo>&#x2212;</mo><mn>0.20</mn><mspace width="0.167em"/><mtext>m/s</mtext></mrow></math>
+<math class="eq" display="block"><mrow><msub><mi>v</mi><mrow><mn>2</mn><mi>f</mi></mrow></msub><mo>=</mo><mfrac><mrow><mn>1.60</mn><mo>&#x2212;</mo><mn>1.20</mn></mrow><mrow><mn>3</mn><mo>&#x2212;</mo><mn>2</mn></mrow></mfrac><mo>=</mo><mo>+</mo><mn>0.40</mn><mspace width="0.167em"/><mtext>m/s</mtext></mrow></math>
+      <p class="wt">(a) Momentum before = momentum after:</p>
+<math class="eq" display="block"><mrow><mo stretchy="false">(</mo><mn>0.40</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>0.60</mn><mo stretchy="false">)</mo><mo>=</mo><mo stretchy="false">(</mo><mn>0.40</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mo>&#x2212;</mo><mn>0.20</mn><mo stretchy="false">)</mo><mo>+</mo><msub><mi>m</mi><mn>2</mn></msub><mo stretchy="false">(</mo><mn>0.40</mn><mo stretchy="false">)</mo></mrow></math>
+<math class="eq" display="block"><mrow><mn>0.24</mn><mo>=</mo><mo>&#x2212;</mo><mn>0.08</mn><mo>+</mo><mn>0.40</mn><msub><mi>m</mi><mn>2</mn></msub></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>m</mi><mn>2</mn></msub><mo>=</mo><mn>0.80</mn><mspace width="0.167em"/><mtext>kg</mtext></mrow></math>
+      <p class="wt">(b) Kinetic energy before and after:</p>
+<math class="eq" display="block"><mrow><msub><mi>K</mi><mtext>before</mtext></msub><mo>=</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mo stretchy="false">(</mo><mn>0.40</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>0.60</mn><msup><mo stretchy="false">)</mo><mn>2</mn></msup><mo>=</mo><mn>0.072</mn><mspace width="0.167em"/><mtext>J</mtext></mrow></math>
+<math class="eq" display="block"><mrow><msub><mi>K</mi><mtext>after</mtext></msub><mo>=</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mo stretchy="false">(</mo><mn>0.40</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>0.20</mn><msup><mo stretchy="false">)</mo><mn>2</mn></msup><mo>+</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mo stretchy="false">(</mo><mn>0.80</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>0.40</mn><msup><mo stretchy="false">)</mo><mn>2</mn></msup></mrow></math>
+<math class="eq" display="block"><mrow><msub><mi>K</mi><mtext>after</mtext></msub><mo>=</mo><mn>0.008</mn><mo>+</mo><mn>0.064</mn><mo>=</mo><mn>0.072</mn><mspace width="0.167em"/><mtext>J</mtext></mrow></math>
+<math class="eq ans" display="block"><mrow><mtext>K&#xA0;is&#xA0;unchanged:&#xA0;elastic</mtext></mrow></math>
+      <p class="wt">(c) Force on cart 1 = its change in momentum ÷ the contact time:</p>
+<math class="eq" display="block"><mrow><msub><mi>F</mi><mn>1</mn></msub><mo>=</mo><mfrac><mrow><mo stretchy="false">(</mo><mn>0.40</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mo>&#x2212;</mo><mn>0.20</mn><mo>&#x2212;</mo><mn>0.60</mn><mo stretchy="false">)</mo></mrow><mn>0.20</mn></mfrac><mo>=</mo><mo>&#x2212;</mo><mn>1.6</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+<math class="eq ans" display="block"><mrow><mn>1.6</mn><mspace width="0.167em"/><mtext>N</mtext><mtext>&#xA0;on&#xA0;each&#xA0;cart,&#xA0;in&#xA0;opposite&#xA0;directions</mtext></mrow></math>
+    </div>
+    <p class="take">Cart 1 bounces back, so its slope after is negative. Drop that sign and m₂ comes out as 0.40 kg. Cart 2 gains +0.32 kg·m/s, exactly what cart 1 loses, so the forces on the two carts are equal and opposite (3rd law).</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">External force on a system</span><h4>Two carts joined by a spring, pulled by a hand</h4></summary>
+    <div class="exbody">
+    <svg width="220" height="70" viewBox="0 0 220 70" aria-label="A 3.0 kg cart joined by a spring to a 1.0 kg cart, which is pulled to the right with 2.0 N">
+      <line x1="4" y1="56" x2="216" y2="56" stroke="#111" stroke-width="2"/>
+      <rect x="10" y="22" width="50" height="30" fill="#fff" stroke="#111" stroke-width="2"/><circle cx="22" cy="53" r="3" fill="#111"/><circle cx="48" cy="53" r="3" fill="#111"/>
+      <text x="16" y="41" font-size="10" font-family="IBM Plex Mono,monospace">3.0 kg</text>
+      <polyline points="60,37 66,37 70,29 78,45 86,29 94,45 102,29 106,37 112,37" fill="none" stroke="#111" stroke-width="2"/>
+      <rect x="112" y="26" width="46" height="26" fill="#fff" stroke="#111" stroke-width="2"/><circle cx="120" cy="53" r="3" fill="#111"/><circle cx="150" cy="53" r="3" fill="#111"/>
+      <text x="115" y="43" font-size="10" font-family="IBM Plex Mono,monospace">1.0 kg</text>
+      <line x1="158" y1="37" x2="204" y2="37" stroke="#ff6a2b" stroke-width="3"/><polygon points="202,32 212,37 202,42" fill="#ff6a2b"/>
+      <text x="168" y="28" font-size="10" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">2.0 N</text>
+    </svg>
+    <p>A 3.0 kg cart and a 1.0 kg cart are joined by a spring on a frictionless track, both at rest. A hand starts pulling the 1.0 kg cart with a steady 2.0 N, and the carts surge back and forth relative to each other as they go. (a) What is the acceleration of the center of mass? (b) How fast is the center of mass moving after 4.0 s? (c) At one instant the 1.0 kg cart's acceleration is 1.4 m/s². What is the 3.0 kg cart's acceleration then?</p>
+    <div class="work">
+      <p class="wt">System: both carts and the spring. The spring's pushes and pulls on the two carts are a 3rd-law pair inside the system, so they cancel. The only outside horizontal force is the hand:</p>
+<math class="eq" display="block"><mrow><msub><mi>a</mi><mtext>cm</mtext></msub><mo>=</mo><mfrac><msub><mi>F</mi><mtext>ext</mtext></msub><msub><mi>M</mi><mtext>total</mtext></msub></mfrac><mo>=</mo><mfrac><mn>2.0</mn><mn>4.0</mn></mfrac></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>a</mi><mtext>cm</mtext></msub><mo>=</mo><mn>0.50</mn><mspace width="0.167em"/><msup><mtext>m/s</mtext><mn>2</mn></msup></mrow></math>
+      <p class="wt">(b) The hand's impulse becomes the system's total momentum:</p>
+<math class="eq" display="block"><mrow><msub><mi>F</mi><mtext>ext</mtext></msub><mi>Δ</mi><mi>t</mi><mo>=</mo><msub><mi>M</mi><mtext>total</mtext></msub><msub><mi>v</mi><mtext>cm</mtext></msub></mrow></math>
+<math class="eq" display="block"><mrow><mo stretchy="false">(</mo><mn>2.0</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>4.0</mn><mo stretchy="false">)</mo><mo>=</mo><mo stretchy="false">(</mo><mn>4.0</mn><mo stretchy="false">)</mo><msub><mi>v</mi><mtext>cm</mtext></msub></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>v</mi><mtext>cm</mtext></msub><mo>=</mo><mn>2.0</mn><mspace width="0.167em"/><mtext>m/s</mtext></mrow></math>
+      <p class="wt">(c) Call the 1.0 kg cart A and the 3.0 kg cart B. At every instant their mass × acceleration must add up to the external force:</p>
+<math class="eq" display="block"><mrow><msub><mi>m</mi><mi>A</mi></msub><msub><mi>a</mi><mi>A</mi></msub><mo>+</mo><msub><mi>m</mi><mi>B</mi></msub><msub><mi>a</mi><mi>B</mi></msub><mo>=</mo><msub><mi>F</mi><mtext>ext</mtext></msub></mrow></math>
+<math class="eq" display="block"><mrow><mo stretchy="false">(</mo><mn>1.0</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>1.4</mn><mo stretchy="false">)</mo><mo>+</mo><mo stretchy="false">(</mo><mn>3.0</mn><mo stretchy="false">)</mo><msub><mi>a</mi><mi>B</mi></msub><mo>=</mo><mn>2.0</mn></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>a</mi><mi>B</mi></msub><mo>=</mo><mn>0.20</mn><mspace width="0.167em"/><msup><mtext>m/s</mtext><mn>2</mn></msup></mrow></math>
+      <p class="wt">Check with each cart's FBD: the spring pulls the 1.0 kg cart back with 2.0 − 1.4 = 0.60 N and the 3.0 kg cart forward with 0.60 N, and (3.0)(0.20) = 0.60 N.</p>
+    </div>
+    <p class="take">Each cart speeds up and slows down as the spring stretches and squashes, but the center of mass speeds up smoothly at 0.50 m/s², as if all 4.0 kg were one cart pulled by 2.0 N. Internal forces only pass momentum between the carts; only an external force changes the total.</p>
+    </div>
+  </details>
+</div>
 </div>
 <div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
 <div class="gcheck">
@@ -252,6 +361,10 @@ body.present .guide{display:none}
       <details><summary>Answer</summary><div>The bullet sticks in the block: that collision is perfectly inelastic, and most of the kinetic energy turns into thermal energy and deforming the block. Momentum is conserved during the hit; energy is only conserved during the swing afterward.</div></details></li>
     <li>How can a rocket speed up in space, where there's nothing to push against?
       <details><summary>Answer</summary><div>It pushes its exhaust gas backward, and the gas pushes the rocket forward (3rd law). The backward momentum of the exhaust equals the forward momentum the rocket gains, so total momentum stays the same.</div></details></li>
+    <li><b>Who's right?</b> A steady 2.0 N force pushes a 1.0 kg cart and, separately, a 4.0 kg cart, each from rest across the same 1.0 m of frictionless track. Ana: “They end up with the same kinetic energy, but the 4.0 kg cart has more momentum.” Ben: “Same push, so the same momentum, and the faster 1.0 kg cart has more kinetic energy.”
+      <details><summary>Answer</summary><div>Ana. Kinetic energy gained is force × <i>distance</i>: (2.0)(1.0) = 2.0 J for both. Momentum gained is force × <i>time</i>, and the heavy cart takes longer to cover the meter (2.0 s vs. 1.0 s), so it gets 4.0 kg·m/s to the light cart's 2.0. Ben's answer would be right if the force acted for the same <i>time</i>: then the momenta match, and the light cart gets more kinetic energy (K = p²/2m).</div></details></li>
+    <li>A cart's momentum–time graph is a straight line from +6.0 kg·m/s to −4.0 kg·m/s over 0.50 s. What is the net force on it? What is the net force at the instant its momentum is zero?
+      <details><summary>Answer</summary><div>The slope of p–t is the net force: (−4.0 − 6.0)/0.50 = −20 N, the same all the way through because the line is straight. At p = 0 the force is still −20 N: that's the instant the cart turns around, not a moment with no force.</div></details></li>
   </ol>
 </div>
 </div>
