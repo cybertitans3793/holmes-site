@@ -108,6 +108,9 @@ body.present .guide{display:none}
       <li>Writing N = mg over a hill, in a dip or in a loop. N = mg only when nothing accelerates vertically: over a crest N &lt; mg, in a dip N &gt; mg.</li>
       <li>Assuming a bigger circle always means a smaller centripetal acceleration. At the same speed, yes (v²/r); on something that turns as one piece, like a merry-go-round, the outer rider has the same period, moves faster and needs <b>more</b> (4π²r/T²).</li>
       <li>Saying a pendulum has zero acceleration at the end of its swing. Its speed is zero for an instant, but gravity's part along the path, g sin θ, is not.</li>
+      <li>Writing N = mg cos θ on a banked curve. That is the ramp result, where the acceleration runs along the slope. On a banked curve the acceleration is horizontal, so N cos θ = mg and N is <b>more</b> than mg.</li>
+      <li>Putting the orbiting object's mass into v = √(GM/r) or the T²-vs-r³ slope. M is always the mass being orbited; the satellite's or moon's own mass cancels.</li>
+      <li>Assuming a bigger planet has weaker surface gravity because you are farther from its center. Its mass grows too: at the same density, mass goes as r³, so g = GM/r² grows in proportion to r.</li>
     </ul>
   </div>
 </div>
@@ -300,6 +303,101 @@ body.present .guide{display:none}
     <p class="take">Here friction is vertical and holds you up, while the normal force does the turning. The mass cancels, so every rider is equally safe: for a 70 kg rider N = 1750 N, so friction can reach 700 N, exactly the weight. A slipperier wall or a smaller drum needs faster spinning. Spinning faster than the minimum raises N, but friction stays at mg.</p>
     </div>
   </details>
+  <details class="ex">
+    <summary><span class="kind">Banked curve</span><h4>Tilting the road so no friction is needed</h4></summary>
+    <div class="exbody">
+    <svg width="170" height="112" viewBox="0 0 170 112" aria-label="Cross-section of a banked road rising toward the outside of the curve: normal force perpendicular to the road, tilted toward the center; weight straight down; acceleration horizontal toward the center">
+      <line x1="15" y1="100" x2="162" y2="44" stroke="#111" stroke-width="2"/>
+      <line x1="15" y1="100" x2="70" y2="100" stroke="#111" stroke-dasharray="3 3"/>
+      <text x="52" y="97" font-size="10" font-family="IBM Plex Mono,monospace">θ</text>
+      <rect x="72" y="58" width="32" height="14" fill="#fff" stroke="#111" stroke-width="2" transform="rotate(-20.8 88 72)"/>
+      <line x1="85.5" y1="65.5" x2="72" y2="30" stroke="#111" stroke-width="3"/><polygon points="76.7,28.2 67.3,31.8 69.2,22.5" fill="#111"/>
+      <line x1="92" y1="64" x2="92" y2="94" stroke="#111" stroke-width="3"/><polygon points="87,94 97,94 92,102" fill="#111"/>
+      <line x1="58" y1="70" x2="30" y2="70" stroke="#ff6a2b" stroke-width="3"/><polygon points="30,65 30,75 22,70" fill="#ff6a2b"/>
+      <text x="57" y="26" font-size="11" font-family="IBM Plex Mono,monospace">N</text>
+      <text x="98" y="98" font-size="11" font-family="IBM Plex Mono,monospace">mg</text>
+      <text x="38" y="64" font-size="11" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">a</text>
+    </svg>
+    <p>Engineers want cars to take a curve of radius 60 m at 15 m/s even on an icy day, with no help from friction. At what angle θ should the road be banked? What normal force does the road exert on a 1500 kg car taking the curve at that speed?</p>
+    <div class="work">
+      <p class="wt">With no friction, only two forces act: mg straight down and N perpendicular to the road. The car moves in a <b>horizontal</b> circle, so its acceleration is horizontal, toward the center. Use horizontal and vertical axes, not axes along the slope. N tilts toward the center, so it splits into N cos θ (up) and N sin θ (toward the center).</p>
+<math class="eq" display="block"><mrow><mtext>vertical:&#xA0;</mtext><mi>N</mi><mi>cos</mi><mi>θ</mi><mo>=</mo><mi>m</mi><mi>g</mi></mrow></math>
+<math class="eq" display="block"><mrow><mtext>toward center:&#xA0;</mtext><mi>N</mi><mi>sin</mi><mi>θ</mi><mo>=</mo><mfrac><mrow><mi>m</mi><msup><mi>v</mi><mn>2</mn></msup></mrow><mi>r</mi></mfrac></mrow></math>
+      <p class="wt">Divide the second equation by the first; N and m cancel:</p>
+<math class="eq" display="block"><mrow><mi>tan</mi><mi>θ</mi><mo>=</mo><mfrac><msup><mi>v</mi><mn>2</mn></msup><mrow><mi>g</mi><mi>r</mi></mrow></mfrac><mo>=</mo><mfrac><mrow><mo stretchy="false">(</mo><mn>15</mn><msup><mo stretchy="false">)</mo><mn>2</mn></msup></mrow><mrow><mo stretchy="false">(</mo><mn>10</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>60</mn><mo stretchy="false">)</mo></mrow></mfrac><mo>=</mo><mn>0.375</mn></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>θ</mi><mo>&#x2248;</mo><mn>21</mn><mo>°</mo></mrow></math>
+<math class="eq" display="block"><mrow><mi>N</mi><mo>=</mo><mfrac><mrow><mi>m</mi><mi>g</mi></mrow><mrow><mi>cos</mi><mi>θ</mi></mrow></mfrac><mo>=</mo><mfrac><mrow><mo stretchy="false">(</mo><mn>1500</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>10</mn><mo stretchy="false">)</mo></mrow><mrow><mi>cos</mi><mn>20.6</mn><mo>°</mo></mrow></mfrac></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>N</mi><mo>&#x2248;</mo><mn>16</mn><mspace width="0.167em"/><mn>000</mn><mspace width="0.167em"/><mtext>N</mtext><mspace width="0.5em"/><mtext>(more than mg = 15 000 N)</mtext></mrow></math>
+      <p class="wt">Check: N sin θ = (16 020)(0.351) ≈ 5600 N, and mv²/r = (1500)(15²)/60 = 5625 N. ✓</p>
+    </div>
+    <p class="take">On a banked curve the normal force does the turning: its sideways part is the centripetal force. Because the acceleration is horizontal, N is <b>bigger</b> than mg, not mg cos θ as on a ramp. The mass cancels, so every car (and truck) gets the same “design speed”; only v and r set the angle. Slower than 15 m/s, the car would slide down the bank unless friction holds it; faster, it would slide up and out.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Orbit data → mass</span><h4>Weighing a planet with its moons (T² vs r³)</h4></summary>
+    <div class="exbody">
+    <svg width="176" height="138" viewBox="0 0 176 138" aria-label="Graph of period squared against orbit radius cubed for four moons: the points lie on a straight line through the origin">
+      <line x1="30" y1="112" x2="164" y2="112" stroke="#111" stroke-width="2"/>
+      <line x1="30" y1="112" x2="30" y2="8" stroke="#111" stroke-width="2"/>
+      <line x1="30" y1="112" x2="160" y2="13" stroke="#ff6a2b" stroke-width="2"/>
+      <circle cx="32" cy="110.5" r="3.5" fill="#111"/><circle cx="45.6" cy="100.2" r="3.5" fill="#111"/>
+      <circle cx="82.7" cy="71.9" r="3.5" fill="#111"/><circle cx="155" cy="17" r="3.5" fill="#111"/>
+      <text x="4" y="16" font-size="11" font-family="IBM Plex Mono,monospace">T²</text>
+      <text x="142" y="128" font-size="11" font-family="IBM Plex Mono,monospace">r³</text>
+      <text x="22" y="126" font-size="9" font-family="IBM Plex Mono,monospace">0</text>
+      <text x="96" y="58" font-size="9" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">slope</text>
+    </svg>
+    <p>A space probe tracks four moons in circular orbits around a distant planet:</p>
+    <table>
+      <tr><td>r (× 10⁸ m)</td><td>2.0 · 4.0 · 6.0 · 8.0</td></tr>
+      <tr><td>T (× 10⁵ s)</td><td>0.97 · 2.75 · 5.06 · 7.79</td></tr>
+    </table>
+    <p>Show that T² is proportional to r³, and use a graph to find the planet's mass.</p>
+    <div class="work">
+      <p class="wt">Start from physics, not from the data. Gravity is the centripetal force, and v = 2πr/T for a circle:</p>
+<math class="eq" display="block"><mrow><mfrac><mrow><mi>G</mi><mi>M</mi><mi>m</mi></mrow><msup><mi>r</mi><mn>2</mn></msup></mfrac><mo>=</mo><mfrac><mrow><mi>m</mi><msup><mi>v</mi><mn>2</mn></msup></mrow><mi>r</mi></mfrac><mo>=</mo><mfrac><mrow><mi>m</mi><mo stretchy="false">(</mo><mn>2</mn><mi>π</mi><mi>r</mi><mo>/</mo><mi>T</mi><msup><mo stretchy="false">)</mo><mn>2</mn></msup></mrow><mi>r</mi></mfrac></mrow></math>
+      <p class="wt">Put the two things you measured (T and r) on one side and the constants on the other:</p>
+<math class="eq" display="block"><mrow><mfrac><msup><mi>T</mi><mn>2</mn></msup><msup><mi>r</mi><mn>3</mn></msup></mfrac><mo>=</mo><mfrac><mrow><mn>4</mn><msup><mi>π</mi><mn>2</mn></msup></mrow><mrow><mi>G</mi><mi>M</mi></mrow></mfrac></mrow></math>
+      <p class="wt">So a graph of T² (y-axis) against r³ (x-axis) should be a straight line through the origin with slope 4π²/GM. Square and cube the data: r³ = 8, 64, 216, 512 (× 10²⁴ m³) and T² = 0.94, 7.56, 25.6, 60.7 (× 10¹⁰ s²). The points do lie on a line through the origin. Slope from the origin to the last point:</p>
+<math class="eq" display="block"><mrow><mtext>slope</mtext><mo>=</mo><mfrac><mrow><mn>60.7</mn><mo>&#xD7;</mo><msup><mn>10</mn><mn>10</mn></msup><mspace width="0.167em"/><msup><mtext>s</mtext><mn>2</mn></msup></mrow><mrow><mn>512</mn><mo>&#xD7;</mo><msup><mn>10</mn><mn>24</mn></msup><mspace width="0.167em"/><msup><mtext>m</mtext><mn>3</mn></msup></mrow></mfrac><mo>=</mo><mn>1.19</mn><mo>&#xD7;</mo><msup><mn>10</mn><mrow><mo>&#x2212;</mo><mn>15</mn></mrow></msup><mspace width="0.167em"/><msup><mtext>s</mtext><mn>2</mn></msup><mo>/</mo><msup><mtext>m</mtext><mn>3</mn></msup></mrow></math>
+      <p class="wt">Set the slope equal to what the equation says it stands for:</p>
+<math class="eq" display="block"><mrow><mi>M</mi><mo>=</mo><mfrac><mrow><mn>4</mn><msup><mi>π</mi><mn>2</mn></msup></mrow><mrow><mi>G</mi><mo>&#xB7;</mo><mtext>slope</mtext></mrow></mfrac></mrow></math>
+<math class="eq" display="block"><mrow><mi>M</mi><mo>=</mo><mfrac><mn>39.5</mn><mrow><mo stretchy="false">(</mo><mn>6.67</mn><mo>&#xD7;</mo><msup><mn>10</mn><mrow><mo>&#x2212;</mo><mn>11</mn></mrow></msup><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>1.19</mn><mo>&#xD7;</mo><msup><mn>10</mn><mrow><mo>&#x2212;</mo><mn>15</mn></mrow></msup><mo stretchy="false">)</mo></mrow></mfrac></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>M</mi><mo>&#x2248;</mo><mn>5.0</mn><mo>&#xD7;</mo><msup><mn>10</mn><mn>26</mn></msup><mspace width="0.167em"/><mtext>kg</mtext></mrow></math>
+    </div>
+    <p class="take">A plot of T against r curves, so you can't read a constant off it. Rearrange the equation until the two measured quantities sit on one side; that tells you what to graph, and the other side tells you what the slope means. Every moon gives the same slope because the moons' masses cancel: the line measures the planet being orbited, never the moons. For a body whose mass is already known, the same slope gives G instead.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Adding gravitational pulls</span><h4>Where Earth's and the Moon's pulls cancel</h4></summary>
+    <div class="exbody">
+    <svg width="180" height="78" viewBox="0 0 180 78" aria-label="Earth on the left, Moon on the right, a spacecraft between them pulled toward each by equal and opposite forces; distance x to Earth and d minus x to the Moon; not to scale">
+      <circle cx="22" cy="32" r="16" fill="#fff" stroke="#111" stroke-width="2"/>
+      <circle cx="166" cy="32" r="6" fill="#fff" stroke="#111" stroke-width="2"/>
+      <text x="10" y="35" font-size="8" font-family="IBM Plex Mono,monospace">Earth</text>
+      <text x="154" y="52" font-size="8" font-family="IBM Plex Mono,monospace">Moon</text>
+      <circle cx="128" cy="32" r="4" fill="#111"/>
+      <line x1="124" y1="32" x2="104" y2="32" stroke="#ff6a2b" stroke-width="3"/><polygon points="104,27 104,37 96,32" fill="#ff6a2b"/>
+      <line x1="132" y1="32" x2="146" y2="32" stroke="#111" stroke-width="3"/><polygon points="146,27 146,37 154,32" fill="#111"/>
+      <text x="92" y="22" font-size="10" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">F<tspan font-size="8" dy="3">E</tspan></text>
+      <text x="136" y="22" font-size="10" font-family="IBM Plex Mono,monospace">F<tspan font-size="8" dy="3">M</tspan></text>
+      <line x1="22" y1="58" x2="128" y2="58" stroke="#111"/><line x1="128" y1="62" x2="166" y2="62" stroke="#111"/>
+      <text x="70" y="72" font-size="10" font-family="IBM Plex Mono,monospace">x</text>
+      <text x="134" y="76" font-size="10" font-family="IBM Plex Mono,monospace">d − x</text>
+    </svg>
+    <p>Earth's mass is 81 times the Moon's, and their centers are 3.84 × 10⁸ m apart. A spacecraft travels straight from Earth toward the Moon. At what distance from Earth's center is the net gravitational force on it zero?</p>
+    <div class="work">
+      <p class="wt">The point must lie between them, where the two pulls point opposite ways. Call its distance from Earth's center x, so it is d − x from the Moon's. Set the two pulls equal (the spacecraft's mass m cancels):</p>
+<math class="eq" display="block"><mrow><mfrac><mrow><mi>G</mi><msub><mi>M</mi><mi>E</mi></msub><mi>m</mi></mrow><msup><mi>x</mi><mn>2</mn></msup></mfrac><mo>=</mo><mfrac><mrow><mi>G</mi><msub><mi>M</mi><mi>M</mi></msub><mi>m</mi></mrow><mrow><mo stretchy="false">(</mo><mi>d</mi><mo>&#x2212;</mo><mi>x</mi><msup><mo stretchy="false">)</mo><mn>2</mn></msup></mrow></mfrac></mrow></math>
+<math class="eq" display="block"><mrow><mo>&#x2192;</mo><mspace width="0.278em"/><mfrac><msup><mi>x</mi><mn>2</mn></msup><mrow><mo stretchy="false">(</mo><mi>d</mi><mo>&#x2212;</mo><mi>x</mi><msup><mo stretchy="false">)</mo><mn>2</mn></msup></mrow></mfrac><mo>=</mo><mfrac><msub><mi>M</mi><mi>E</mi></msub><msub><mi>M</mi><mi>M</mi></msub></mfrac><mo>=</mo><mn>81</mn></mrow></math>
+      <p class="wt">Take the square root of both sides:</p>
+<math class="eq" display="block"><mrow><mfrac><mi>x</mi><mrow><mi>d</mi><mo>&#x2212;</mo><mi>x</mi></mrow></mfrac><mo>=</mo><mn>9</mn><mspace width="0.278em"/><mo>&#x2192;</mo><mspace width="0.278em"/><mi>x</mi><mo>=</mo><mn>9</mn><mi>d</mi><mo>&#x2212;</mo><mn>9</mn><mi>x</mi><mspace width="0.278em"/><mo>&#x2192;</mo><mspace width="0.278em"/><mi>x</mi><mo>=</mo><mfrac><mn>9</mn><mn>10</mn></mfrac><mi>d</mi></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>x</mi><mo>=</mo><mn>0.9</mn><mo stretchy="false">(</mo><mn>3.84</mn><mo>&#xD7;</mo><msup><mn>10</mn><mn>8</mn></msup><mo stretchy="false">)</mo><mo>&#x2248;</mo><mn>3.5</mn><mo>&#xD7;</mo><msup><mn>10</mn><mn>8</mn></msup><mspace width="0.167em"/><mtext>m</mtext></mrow></math>
+      <p class="wt">That is 9 times as far from Earth as from the Moon (about 3.8 × 10⁷ m from the Moon's center).</p>
+    </div>
+    <p class="take">Pulls from two bodies add as vectors, so “zero net force” means equal sizes in opposite directions. Because force goes as 1/r², the distances compare as the <b>square root</b> of the mass ratio: 9, not 81. The balance point sits much closer to the lighter body. Anywhere nearer Earth, Earth's pull wins; past it, the spacecraft is pulled toward the Moon.</p>
+    </div>
+  </details>
 </div>
 
 </div>
@@ -332,6 +430,16 @@ body.present .guide{display:none}
       <details><summary>Answer</summary><div>Jordan. Friction is the inward force, so μ<sub>s</sub>mg = mv²/r and v<sub>max</sub> = √(μ<sub>s</sub>gr). The time for a half circle is t = πr/v = π√(r/(μ<sub>s</sub>g)), which grows with r: doubling r doubles the distance but raises the top speed only by √2. Inside: v ≈ 12.6 m/s, t ≈ 5.0 s. Outside: v ≈ 17.9 m/s, t ≈ 7.0 s. Maya is right that the kart is faster on the outside, but faster doesn't mean sooner here.</div></details></li>
     <li>A 0.20 kg ball on a 0.50 m string swings in a horizontal circle, with the string at 30° from vertical. Find the radius of the circle, the tension and the ball's speed.
       <details><summary>Answer</summary><div>The radius is r = L sin 30° = 0.25 m, not the string length. Vertical (no acceleration): T cos 30° = mg, so T = 2.0/0.866 ≈ 2.3 N. Inward: T sin 30° = mv²/r, so 1.15 = (0.20)v²/0.25, v² ≈ 1.44 and v ≈ 1.2 m/s. The tension does two jobs: its vertical part holds the ball up and its horizontal part turns it.</div></details></li>
+    <li>A planet is made of the same rock as Earth (same density) but has twice Earth's radius. What is the gravitational field strength at its surface?
+      <details><summary>Answer</summary><div>20 N/kg. Same density means mass goes as volume, r³: twice the radius gives 2³ = 8 times the mass. Then g = GM/r² changes by 8/2² = 2, so g = 2 × 10 = 20 N/kg. At the same density, surface gravity is proportional to the radius.</div></details></li>
+    <li>“Weigh” Earth: use g = 10 N/kg at the surface, Earth's radius 6.4 × 10⁶ m and G to find Earth's mass.
+      <details><summary>Answer</summary><div>At the surface g = GM/R², so M = gR²/G = (10)(6.4 × 10⁶)²/(6.67 × 10⁻¹¹) ≈ 6.1 × 10²⁴ kg. Measuring G in a lab (with two lead balls) is what made this possible: g and R had been known long before.</div></details></li>
+    <li>A ring-shaped space station of radius 90 m spins so that astronauts standing on the inside of the outer wall feel their normal weight (an inward acceleration of 10 m/s²). How long should one turn take? Which force pushes the astronauts toward the center?
+      <details><summary>Answer</summary><div>a<sub>c</sub> = 4π²r/T², so T = 2π√(r/a<sub>c</sub>) = 2π√(90/10) = 2π(3) ≈ 19 s per turn (about 3 turns per minute). The floor (the outer wall) pushes them inward with a normal force; that push is what they feel as weight. Their heads, closer to the center, have a smaller r and feel slightly less.</div></details></li>
+    <li><b>Who's right?</b> Riley says the Moon pulls harder on Earth than the Sun does, because the Moon is about 400 times closer and it is the Moon that raises the tides. Sam says the Sun pulls harder, because it is so much more massive. Use the Sun's mass 2.0 × 10³⁰ kg at 1.5 × 10¹¹ m and the Moon's mass 7.3 × 10²² kg at 3.8 × 10⁸ m. Who's right?
+      <details><summary>Answer</summary><div>Sam. In F = GMm/r², Earth's mass and G are the same in both, so compare M/r². The Sun has 2.0 × 10³⁰ / 7.3 × 10²² ≈ 2.7 × 10⁷ times the mass; its distance is (1.5 × 10¹¹)/(3.8 × 10⁸) ≈ 395 times as large, which divides the force by 395² ≈ 1.6 × 10⁵. Net: the Sun pulls about 2.7 × 10⁷ / 1.6 × 10⁵ ≈ 180 times harder (3.6 × 10²² N against 2.0 × 10²⁰ N with Earth's mass 6.0 × 10²⁴ kg). Riley's reasoning about distance is right, but the mass ratio wins. That pull is what keeps Earth in orbit around the Sun.</div></details></li>
+    <li><b>Who's right?</b> A curve is banked for 15 m/s, using tan θ = v²/(gr). On an icy day a car takes it at only 10 m/s. Ana says it will slide down the bank, toward the inside. Ben says it will slide up and out, because at any speed the car is pushed outward. Who's right? Point to the step in the derivation that tells you.
+      <details><summary>Answer</summary><div>Ana. With no friction, the vertical equation N cos θ = mg fixes N, so the inward part N sin θ = mg tan θ is the same at any speed. At 10 m/s the car needs only mv²/r, which is less than mg tan θ: the inward push is too big, so the car curves in tighter than the road and slides down the bank. (At the design speed the two match exactly; faster, the inward push is too small and the car drifts up and out.) Nothing pushes the car outward; Ben is describing a centrifugal force, which isn't a real force.</div></details></li>
   </ol>
 </div>
 </div>
