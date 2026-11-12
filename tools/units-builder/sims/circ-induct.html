@@ -251,15 +251,19 @@ function loop(ts){ const dt = Math.min(0.05, (ts - (last || ts)) / 1000); last =
 const SIM = {
   title: 'Induction',
   hint: 'Φ = BA cos θ · ε = −NΔΦ/Δt · ⊗ = B into the page',
-  modes: [{ id: 'rail', label: 'Rod on rails' }, { id: 'loop', label: 'Loop through a field' }, { id: 'drop', label: 'Magnet through a coil' }, { id: 'gen', label: 'Generator (Extension)' }],
+  modes: [{ id: 'rail', label: 'Rod on rails' }, { id: 'loop', label: 'Loop through a field' }, { id: 'drop', label: 'Magnet through a coil' }, { id: 'lenz', label: 'Lenz’s law explorer' }, { id: 'gen', label: 'Generator (Extension)' }],
+  opts: [{ id: 'pole', label: 'Pole at loop', modes: ['lenz'], choices: [['N', 'N'], ['S', 'S']] }],
   ivs(mode){
+    if (mode === 'lenz') return [{ id: 'v', sym: 'v', symText: 'v', label: 'Magnet velocity (+ toward)', unit: 'm/s', min: -2, max: 2, step: 0.1, val: 1, graph: true }, { id: 'R', sym: 'R', symText: 'R', label: 'Resistance of the loop', unit: 'Ω', min: 0.5, max: 5, step: 0.5, val: 1 }];
     if (mode === 'drop') return [{ id: 'h', sym: 'h', symText: 'h', label: 'Drop height above the coil', unit: 'cm', min: 8, max: 100, step: 1, val: 30, graph: true }, { id: 'n', sym: 'n', symText: 'n', label: 'Number of stacked magnets', unit: '', min: 1, max: 3, step: 1, val: 1, show: x => String(x) }];
     if (mode === 'loop') return [{ id: 'B', sym: 'B', symText: 'B', label: 'Field strength', unit: 'T', min: 0.1, max: 2, step: 0.05, val: 0.5 }, { id: 'a', sym: 'a', symText: 'a', label: 'Side of the square loop', unit: 'cm', min: 5, max: 20, step: 0.5, val: 10 }, { id: 'w', sym: 'w', symText: 'w', label: 'Width of the field region', unit: 'cm', min: 10, max: 40, step: 1, val: 25 }, { id: 'v', sym: 'v', symText: 'v', label: 'Loop speed', unit: 'm/s', min: 0.1, max: 2, step: 0.05, val: 0.5, graph: true }];
     if (mode === 'gen') return [{ id: 'N', sym: 'N', symText: 'N', label: 'Turns', unit: '', min: 1, max: 500, step: 1, val: 100, show: x => x.toFixed(0) }, { id: 'B', sym: 'B', symText: 'B', label: 'Field strength', unit: 'T', min: 0.01, max: 1, step: 0.01, val: 0.2 }, { id: 'A', sym: 'A', symText: 'A', label: 'Coil area', unit: 'cm²', min: 10, max: 400, step: 10, val: 100 }, { id: 'f', sym: 'f', symText: 'f', label: 'Rotation frequency', unit: 'Hz', min: 0.2, max: 60, step: 0.1, val: 1, graph: true }];
     return [{ id: 'B', sym: 'B', symText: 'B', label: 'Field strength (into page)', unit: 'T', min: 0.1, max: 2, step: 0.05, val: 0.5 }, { id: 'L', sym: 'L', symText: 'L', label: 'Rod length (rail spacing)', unit: 'm', min: 0.1, max: 1, step: 0.05, val: 0.4 }, { id: 'v', sym: 'v', symText: 'v', label: 'Rod speed (to the right)', unit: 'm/s', min: 0.5, max: 10, step: 0.5, val: 4, graph: true }, { id: 'R', sym: 'R', symText: 'R', label: 'Resistance of the circuit', unit: 'Ω', min: 0.5, max: 20, step: 0.5, val: 2 }];
   },
-  presets: [{ label: 'Double the speed', mode: 'rail', v: { v: 8 } }, { label: 'Narrow field', mode: 'loop', v: { w: 10 } }, { label: 'Double the frequency', mode: 'gen', v: { f: 2 } }],
-  calc(v, mode){
+  presets: [{ label: 'Double the speed', mode: 'rail', v: { v: 8 } }, { label: 'Narrow field', mode: 'loop', v: { w: 10 } }, { label: 'Double the frequency', mode: 'gen', v: { f: 2 } }, { label: 'N pole toward', mode: 'lenz', opt: { pole: 'N' }, v: { v: 1 } }, { label: 'N pole away', mode: 'lenz', opt: { pole: 'N' }, v: { v: -1 } }, { label: 'S pole toward', mode: 'lenz', opt: { pole: 'S' }, v: { v: 1 } }],
+  calc(v, mode, opt){
+    if (mode === 'lenz'){ const sB = opt.pole === 'S' ? -1 : 1, sv = Math.abs(v.v) < 0.05 ? 0 : Math.sign(v.v), ch = sB * sv, emf = 0.01 * Math.abs(v.v) * (sv ? 1 : 0), I = emf / v.R;
+      return { sB, sv, ch, ccw: ch > 0, indN: ch > 0, repel: sv > 0, emf, I, mag: opt.pole === 'S' ? 'S' : 'N' }; }
     if (mode === 'drop'){ const a = 0.015, h = v.h / 100, g = 10, Phi0 = 200 * 0.05 * v.n * PI * a * a, P = z => Phi0 / Math.pow(1 + (z / a) * (z / a), 1.5), dP = z => -3 * Phi0 * z / (a * a) / Math.pow(1 + (z / a) * (z / a), 2.5);
       const z0 = Math.min(h, 4 * a), pts = []; for (let i = 0; i <= 400; i++){ const z = z0 - (z0 + 4 * a) * i / 400, t = Math.sqrt(2 * (h - z) / g), e = -dP(z) * g * t; pts.push([t, e, z]); }
       const t0 = pts[0][0]; pts.forEach(p => p[0] -= t0); let p1 = 0, p2 = 0; pts.forEach(([, e]) => { if (e > p1) p1 = e; if (e < p2) p2 = e; });
@@ -270,12 +274,26 @@ const SIM = {
     return { emf, I, F, P, Pr: I * I * v.R };
   },
   dvs(mode){
+    if (mode === 'lenz') return [{ id: 'emf', name: 'Induced emf', short: 'ε', sym: 'ε', unit: 'mV', f: d => d.emf * 1000 }, { id: 'I', name: 'Induced current', short: 'I', sym: 'I', unit: 'mA', f: d => d.I * 1000 }];
     if (mode === 'drop') return [{ id: 'pk', name: 'Peak emf (second pulse)', short: 'ε_peak', sym: 'ε<sub>peak</sub>', unit: 'V', f: d => d.pk }, { id: 'vc', name: 'Speed through the coil', short: 'v', sym: 'v', unit: 'm/s', f: d => d.vc }];
     if (mode === 'loop') return [{ id: 'emf', name: 'emf while entering or leaving', short: 'ε', sym: 'ε', unit: 'V', f: d => d.emf }];
     if (mode === 'gen') return [{ id: 'peak', name: 'Peak emf', short: 'ε₀', sym: 'ε<sub>0</sub>', unit: 'V', f: d => d.peak }];
     return [{ id: 'emf', name: 'Induced emf', short: 'ε', sym: 'ε', unit: 'V', f: d => d.emf }, { id: 'I', name: 'Current', short: 'I', sym: 'I', unit: 'A', f: d => d.I }, { id: 'F', name: 'Force needed to keep it moving', short: 'F', sym: 'F', unit: 'N', f: d => d.F }, { id: 'P', name: 'Power you supply', short: 'P', sym: 'P', unit: 'W', f: d => d.P }];
   },
   work(v, d, mode){
+    if (mode === 'lenz'){ const m = d.mag, oth = m === 'N' ? 'S' : 'N', toward = d.sv > 0, away = d.sv < 0, bdir = d.sB > 0 ? 'away from the magnet' : 'toward the magnet';
+      const h1 = '<h4>1 · Field of the magnet through the loop</h4><p class="st">Field lines leave an <b>N</b> pole and enter an <b>S</b> pole. The ' + m + ' pole faces the loop, so the field through the loop points <b>' + bdir + '</b>.</p>';
+      if (!d.sv) return h1 + '<h4>2 · Is the flux changing?</h4><p class="st">The magnet is <b>still</b>, so the flux through the loop is constant: ΔΦ = 0.</p>' + ("<math class=\"ans\" display=\"block\"><mrow><mi>&#x003B5;</mi><mo>&#x0003D;</mo><mo>&#x02212;</mo><mfrac><mrow><mi>&#x00394;</mi><mi>&#x003A6;</mi></mrow><mrow><mi>&#x00394;</mi><mi>t</mi></mrow></mfrac><mo>&#x0003D;</mo><mn>0</mn></mrow></math>") + '<p class="st">No change in flux → <b>no emf, no current</b>, no force on the magnet. (A steady magnet next to a loop does nothing.)</p><p class="note">Slide the velocity away from 0 to see the loop fight the change.</p>';
+      const inc = toward, ibd = d.sB * d.sv > 0 ? 'toward the magnet' : 'away from the magnet', face = d.indN ? 'N' : 'S', cur = d.ccw ? 'counterclockwise' : 'clockwise';
+      const k = 0.01, emfV = d.emf;
+      return h1 + '<h4>2 · Is the flux increasing or decreasing?</h4><p class="st">The magnet moves <b>' + (toward ? 'toward' : 'away from') + '</b> the loop, so the field through it gets <b>' + (inc ? 'stronger' : 'weaker') + '</b>: the flux is <b>' + (inc ? 'increasing' : 'decreasing') + '</b>.</p>' +
+      '<h4>3 · The induced field opposes the change</h4><p class="st">' + (inc ? 'Flux is increasing, so the loop makes a field <b>opposite</b> to the magnet’s' : 'Flux is decreasing, so the loop makes a field in the <b>same direction</b> as the magnet’s, to keep it up') + ': the induced B inside the loop points <b>' + ibd + '</b>.</p>' +
+      '<h4>4 · Right-hand rule gives the current</h4><p class="st">Point your right thumb along the induced B (' + ibd + '). Your fingers curl <b>' + cur + '</b> as seen from the magnet’s side. So the current goes <b>' + cur + '</b>.</p>' +
+      '<h4>5 · Force on the magnet</h4><p class="st">The field leaving the loop’s magnet-side face means that face is an <b>' + face + '</b> pole (induced B points ' + ibd + '). The magnet’s ' + m + ' pole faces it: ' + (face === m ? 'like poles → <b>repel</b>.' : 'opposite poles → <b>attract</b>.') + '</p><div class="ok">The loop ' + (toward ? 'pushes the approaching magnet back' : 'pulls the leaving magnet back') + ': it resists the motion. That is Lenz’s law.</div>' +
+      '<h4>6 · How big? ε = −ΔΦ/Δt</h4><p class="st">The minus sign is the opposing direction. For the size: faster motion → faster flux change → bigger emf. Suppose each metre of motion changes the flux by 0.010 Wb:</p>' +
+      ("<math display=\"block\"><mrow><mrow><mo stretchy=\"true\" fence=\"true\" form=\"prefix\">&#x0007C;</mo><mfrac><mrow><mi>&#x00394;</mi><mi>&#x003A6;</mi></mrow><mrow><mi>&#x00394;</mi><mi>t</mi></mrow></mfrac><mo stretchy=\"true\" fence=\"true\" form=\"postfix\">&#x0007C;</mo></mrow><mo>&#x0003D;</mo><mo stretchy=\"false\">&#x00028;</mo><mn>0.010</mn><mspace width=\"0.167em\" /><mtext>Wb/m</mtext><mo stretchy=\"false\">&#x00029;</mo><mspace width=\"0.167em\" /><mo stretchy=\"false\" lspace=\"0\" rspace=\"0\">&#x0007C;</mo><mi>v</mi><mo stretchy=\"false\" lspace=\"0\" rspace=\"0\">&#x0007C;</mo></mrow></math>") + ("<math display=\"block\"><mrow><mi>&#x003B5;</mi><mo>&#x0003D;</mo><mo stretchy=\"false\">&#x00028;</mo><mn>0.010</mn><mspace width=\"0.167em\" /><mtext>Wb/m</mtext><mo stretchy=\"false\">&#x00029;</mo><mo stretchy=\"false\">&#x00028;</mo>" + (M.n(Math.abs(v.v), 'm/s')) + "<mo stretchy=\"false\">&#x00029;</mo></mrow></math>") + ("<math class=\"ans\" display=\"block\"><mrow><mi>&#x003B5;</mi><mo>&#x0003D;</mo>" + (M.n(emfV, 'V')) + "</mrow></math>") +
+      ("<math display=\"block\"><mrow><mi>I</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>&#x003B5;</mi></mrow><mrow><mi>R</mi></mrow></mfrac></mrow></math>") + ("<math display=\"block\"><mrow><mi>I</mi><mo>&#x0003D;</mo><mfrac><mrow>" + (M.n(emfV, 'V')) + "</mrow><mrow>" + (M.iv('R')) + "</mrow></mfrac></mrow></math>") + ("<math class=\"ans\" display=\"block\"><mrow><mi>I</mi><mo>&#x0003D;</mo>" + (M.n(d.I, 'A')) + "</mrow></math>") +
+      '<p class="note">Double the speed → double ε and I. Switch the pole facing the loop: the current <i>reverses</i> but the magnet is still pushed back (approaching) or pulled back (leaving).</p>'; }
     if (mode === 'drop') return '<h4>1 · Falling into the coil: flux goes up</h4><p class="st">As the magnet comes closer, more field passes through the coil. Changing flux → an emf (Faraday). First pulse:</p>' + ("<math class=\"ans\" display=\"block\"><mrow><msub><mi>&#x003B5;</mi><mn>1</mn></msub><mo>&#x0003D;</mo>" + (M.n(d.p1, 'V')) + "</mrow></math>") +
       '<h4>2 · Falling out: flux goes down</h4><p class="st">Leaving, the flux decreases, so the emf has the <b>opposite sign</b> (Lenz). It is <b>taller and narrower</b> because the magnet is moving faster by then. Second pulse:</p>' + ("<math class=\"ans\" display=\"block\"><mrow><msub><mi>&#x003B5;</mi><mn>2</mn></msub><mo>&#x0003D;</mo>" + (M.n(d.p2, 'V')) + "</mrow></math>") +
       '<h4>3 · Same area under both pulses</h4><p class="st">Area under an emf–time pulse = ΔΦ. The flux rises to Φ<sub>max</sub> and falls back by the same amount, so both pulses have the same area: a faster pulse must be taller and thinner.</p>' +
@@ -301,6 +319,47 @@ const SIM = {
   },
   draw(v, d, mode, opt, t, dt, A){
     const cross = (x0, y0, x1, y1) => { ctx.strokeStyle = 'rgba(122,63,176,0.35)'; ctx.lineWidth = 1.2; for (let x = x0 + 12; x < x1; x += 26) for (let y = y0 + 12; y < y1; y += 26){ ctx.beginPath(); ctx.moveTo(x - 4, y - 4); ctx.lineTo(x + 4, y + 4); ctx.moveTo(x + 4, y - 4); ctx.lineTo(x - 4, y + 4); ctx.stroke(); } };
+    if (mode === 'lenz'){
+      const cy = 150, cxL = 300, R = 58, mw = 80, mh = 34, lo = 110, hi = 235;
+      if (A.p === undefined || A.reset) A.p = 0; if (A.ph === undefined) A.ph = 0;
+      A.p = (A.p + Math.abs(v.v) * 0.3 * dt) % 1; const mx = d.sv ? lo + (hi - lo) * (d.sv > 0 ? A.p : 1 - A.p) : 170, gap = cxL - mx, str = 1 / Math.pow(1 + (gap / 70) * (gap / 70), 1.5);
+      panelTitle('MAGNET AND A WIRE LOOP (side view)', 10, 18);
+      text('looking this way →', 12, 36, { font: '600 10px "IBM Plex Mono",monospace', col: '#4a4a4a' }); text('(“seen from the magnet”)', 12, 48, { font: '600 10px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+      ctx.strokeStyle = '#ccc'; ctx.lineWidth = 1; ctx.setLineDash([4, 4]); ctx.beginPath(); ctx.moveTo(12, cy); ctx.lineTo(385, cy); ctx.stroke(); ctx.setLineDash([]);
+      // loop: 3-D circle in the y–z plane, viewed obliquely. alpha increases counterclockwise as seen from the magnet (looking +x, viewer's right = toward the reader).
+      const P = a => [cxL + 0.4 * R * Math.cos(a), cy - R * Math.sin(a)];
+      const half = (a0, a1, col, w) => { ctx.strokeStyle = col; ctx.lineWidth = w; ctx.beginPath(); for (let i = 0; i <= 40; i++){ const [x, y] = P(a0 + (a1 - a0) * i / 40); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.stroke(); };
+      half(PI / 2, 3 * PI / 2, 'rgba(196,122,58,0.5)', 3.5);
+      // magnet (pole facing the loop is on its right)
+      const m = d.mag, right = m === 'N' ? '#e2453c' : '#1546d6', left = m === 'N' ? '#1546d6' : '#e2453c', lr = m === 'N' ? 'S' : 'N';
+      ctx.fillStyle = left; ctx.fillRect(mx - mw, cy - mh / 2, mw / 2, mh); ctx.fillStyle = right; ctx.fillRect(mx - mw / 2, cy - mh / 2, mw / 2, mh); ctx.strokeStyle = '#111'; ctx.lineWidth = 1.8; ctx.strokeRect(mx - mw, cy - mh / 2, mw, mh);
+      text(lr, mx - mw * 0.75, cy + 6, { align: 'center', font: '700 17px "Space Grotesk",sans-serif', col: '#fff' }); text(m, mx - mw * 0.25, cy + 6, { align: 'center', font: '700 17px "Space Grotesk",sans-serif', col: '#fff' });
+      // external field arrows through the loop (purple)
+      const La = 16 + 44 * str; [-40, 0, 40].forEach(oy => { const x0 = cxL - d.sB * La / 2, x1 = cxL + d.sB * La / 2; arrow(x0, cy + oy, x1, cy + oy, '#7a3fb0', null, { w: 2.5, head: 7 }); });
+      // induced field arrows (green), opposite to the change
+      if (d.sv){ const dirI = -d.sB * d.sv, Li = 14 + 22 * Math.min(1, Math.abs(v.v) / 2); [-20, 20].forEach(oy => arrow(cxL - dirI * Li / 2, cy + oy, cxL + dirI * Li / 2, cy + oy, '#1e7d45', null, { w: 2.5, head: 7 })); }
+      // front half of loop, then animated current arrows
+      half(-PI / 2, PI / 2, '#c47a3a', 5.5);
+      if (d.sv){ const dir = d.ccw ? 1 : -1; A.ph += dir * dt * (0.7 + 1.1 * Math.abs(v.v)); for (let k = 0; k < 6; k++){ const a = A.ph + k * PI / 3, [x, y] = P(a), tx = -0.4 * R * Math.sin(a) * dir, ty = -R * Math.cos(a) * dir, tl = Math.hypot(tx, ty), ux = tx / tl, uy = ty / tl, sz = 6;
+          ctx.fillStyle = '#c43a00'; ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(x + ux * sz, y + uy * sz); ctx.lineTo(x - ux * sz - uy * sz * 0.7, y - uy * sz + ux * sz * 0.7); ctx.lineTo(x - ux * sz + uy * sz * 0.7, y - uy * sz - ux * sz * 0.7); ctx.closePath(); ctx.stroke(); ctx.fill(); } }
+      text('loop', cxL + 22, cy - R + 4, { font: '700 11px "Space Grotesk",sans-serif', col: '#c47a3a' });
+      // velocity and force on the magnet
+      if (d.sv){ const vl = 22 + 16 * Math.abs(v.v), xm = mx - mw / 2; arrow(xm - d.sv * vl / 2, cy - mh / 2 - 22, xm + d.sv * vl / 2, cy - mh / 2 - 22, COL.V, null, { w: 3, head: 8 }); text('v', xm, cy - mh / 2 - 30, { align: 'center', font: '700 12px "Space Grotesk",sans-serif', col: COL.V });
+        const fl = 26 + 10 * Math.abs(v.v), fdir = d.repel ? -1 : 1; arrow(xm - fdir * fl / 2, cy + mh / 2 + 26, xm + fdir * fl / 2, cy + mh / 2 + 26, COL.F, null, { w: 3.5, head: 9 }); text('F on magnet: ' + (d.repel ? 'repel' : 'attract'), xm, cy + mh / 2 + 48, { align: 'center', font: '700 12px "Space Grotesk",sans-serif', col: COL.F }); }
+      else text('magnet at rest: no emf, no force', 170, cy + mh / 2 + 30, { align: 'center', font: '700 12px "Space Grotesk",sans-serif', col: '#4a4a4a' });
+      // legend
+      [['#7a3fb0', 'B of the magnet'], ['#1e7d45', 'induced B'], ['#c43a00', 'induced current']].forEach(([c, l], i) => { ctx.fillStyle = c; ctx.fillRect(12 + i * 118, 295, 10, 10); text(l, 26 + i * 118, 304, { font: '600 11px "Space Grotesk",sans-serif' }); });
+      panelTitle('LENZ CHECK', 395, 18);
+      const row = (i, lab, val, col) => { text(lab, 397, 40 + i * 33, { font: '600 10px "Space Grotesk",sans-serif', col: '#4a4a4a' }); text(val, 397, 56 + i * 33, { font: '700 13px "Space Grotesk",sans-serif', col: col || '#111' }); };
+      row(0, 'Magnet’s B through the loop', d.sB > 0 ? 'away from the magnet' : 'toward the magnet', '#7a3fb0');
+      row(1, 'Flux through the loop', d.sv > 0 ? 'increasing' : d.sv < 0 ? 'decreasing' : 'not changing', '#111');
+      row(2, 'Induced B inside the loop', d.sv ? (d.sB * d.sv > 0 ? 'toward the magnet' : 'away from the magnet') : '— none', '#1e7d45');
+      row(3, 'Induced current (seen from magnet)', d.sv ? (d.ccw ? 'counterclockwise' : 'clockwise') : '— none', '#c43a00');
+      row(4, 'Loop face toward the magnet', d.sv ? (d.indN ? 'N pole' : 'S pole') : '— none', '#111');
+      row(5, 'Force on the magnet', d.sv ? (d.repel ? 'repel (pushed back)' : 'attract (pulled back)') : '— none', '#c43a00');
+      row(6, 'emf  ε = −ΔΦ/Δt', fplain(d.emf * 1000) + ' mV', '#111'); row(7, 'Current  I = ε/R', fplain(d.I * 1000) + ' mA', '#111');
+      return;
+    }
     if (mode === 'drop'){
       panelTitle('MAGNET FALLING THROUGH A COIL', 10, 18);
       const coilY = 230, cmpx = 3.2, topY = Math.max(36, coilY - v.h * cmpx * 0.6), T = Math.sqrt(2 * (v.h / 100 + 0.1) / 10) * 3 + 0.6;
