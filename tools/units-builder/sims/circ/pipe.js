@@ -1,5 +1,24 @@
 // Pipe Flow: continuity A1v1 = A2v2 and Bernoulli's equation for a pipe that narrows and rises.
 const RHO = 1000, P1 = 2.0e5;
+function drawBars(v, d){
+  panelTitle('ENERGY PER VOLUME (Pa)', 395, 18);
+  if (d.bad){ text('P₂ < 0: impossible,', 400, 60, { font: '700 12px "Space Grotesk",sans-serif', col: '#c43a00' }); text('so no bars to draw.', 400, 76, { font: '600 12px "Space Grotesk",sans-serif', col: '#c43a00' }); return; }
+  const h = [Math.max(0, -v.dy), Math.max(0, v.dy)], P = [P1, d.P2], K = [0.5 * RHO * v.v1 * v.v1, 0.5 * RHO * d.v2 * d.v2], U = [RHO * G10 * h[0], RHO * G10 * h[1]];
+  const Pref = Math.min(P[0], P[1]), tot = P[0] + K[0] + U[0], base = 40, bot = 225, span = 130, s = span / Math.max(tot - Pref, 1);
+  const cols = ['#c43a00', '#1546d6', '#1e7d45'], xs = [440, 525], bw = 48;
+  xs.forEach((x, i) => {
+    const hp = base + (P[i] - Pref) * s, hk = K[i] * s, hu = U[i] * s; let y = bot;
+    [[hp, cols[0]], [hk, cols[1]], [hu, cols[2]]].forEach(([hh, c]) => { if (hh > 0.3){ ctx.fillStyle = c; ctx.fillRect(x, y - hh, bw, hh); ctx.strokeStyle = '#fff'; ctx.lineWidth = 1; ctx.strokeRect(x, y - hh, bw, hh); y -= hh; } });
+    // break marks on the pressure bar
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(x - 2, bot - 20); ctx.lineTo(x + bw / 3, bot - 26); ctx.lineTo(x + 2 * bw / 3, bot - 14); ctx.lineTo(x + bw + 2, bot - 20); ctx.stroke();
+    text('at ' + (i + 1), x + bw / 2, bot + 14, { align: 'center', font: '700 11px "IBM Plex Mono",monospace' });
+  });
+  const yt = bot - (base + (tot - Pref) * s); ctx.strokeStyle = '#111'; ctx.lineWidth = 1.2; ctx.setLineDash([4, 3]); ctx.beginPath(); ctx.moveTo(430, yt); ctx.lineTo(580, yt); ctx.stroke(); ctx.setLineDash([]);
+  text('same total: ' + fplain(tot) + ' Pa', 430, yt - 5, { font: '600 10px "IBM Plex Mono",monospace' });
+  const rows = [['P', cols[0], P], ['½ρv²', cols[1], K], ['ρgh', cols[2], U]];
+  rows.forEach(([l, c, q], r) => { const y = 258 + r * 14; text(l, 398, y, { font: '700 10px "IBM Plex Mono",monospace', col: c }); text(fplain(q[0]), 505, y, { align: 'right', font: '600 10px "IBM Plex Mono",monospace' }); text(fplain(q[1]), 585, y, { align: 'right', font: '600 10px "IBM Plex Mono",monospace' }); });
+  text('P bar is cut short (zigzag).', 398, 306, { font: '500 9px "IBM Plex Mono",monospace', col: '#4a4a4a' }); text('h is measured from the lower point.', 398, 318, { font: '500 9px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+}
 const SIM = {
   title: 'Pipe Flow',
   hint: 'water, P₁ = 2.0×10⁵ Pa',
@@ -8,6 +27,7 @@ const SIM = {
     { id: 'A1', sym: 'A<sub>1</sub>', symText: 'A1', label: 'Wide part area', unit: 'cm²', min: 10, max: 100, step: 1, val: 40 },
     { id: 'A2', sym: 'A<sub>2</sub>', symText: 'A2', label: 'Narrow part area', unit: 'cm²', min: 2, max: 100, step: 1, val: 10, graph: true },
     { id: 'dy', sym: 'Δy', symText: 'Δy', label: 'Height of part 2 above part 1', unit: 'm', min: -5, max: 5, step: 0.1, val: 2 }]; },
+  opts: [{ id: 'bars', label: 'Bernoulli bars', choices: [['off', 'Off'], ['on', 'Energy bars']] }],
   presets: [{ label: 'Level pipe', v: { dy: 0 } }, { label: 'Same width, uphill', v: { A2: 40, dy: 3 } }, { label: 'Half the area', v: { A1: 40, A2: 20, dy: 0 } }],
   calc(v){
     const v2 = v.v1 * v.A1 / v.A2, Q = v.A1 * 1e-4 * v.v1, dK = 0.5 * RHO * (v2 * v2 - v.v1 * v.v1), dU = RHO * G10 * v.dy, P2 = P1 - dK - dU;
@@ -17,7 +37,11 @@ const SIM = {
     { id: 'P2', name: 'Pressure in part 2', short: 'P2', sym: 'P<sub>2</sub>', unit: 'Pa', f: d => d.P2 },
     { id: 'v2', name: 'Speed in part 2', short: 'v2', sym: 'v<sub>2</sub>', unit: 'm/s', f: d => d.v2 },
     { id: 'Q', name: 'Volume flow rate', short: 'Q', sym: 'Q', unit: 'm³/s', f: d => d.Q }]; },
-  work(v, d){
+  work(v, d, mode, opt){
+    const h1 = Math.max(0, -v.dy), h2 = Math.max(0, v.dy), E = P1 + 0.5 * RHO * v.v1 * v.v1 + RHO * G10 * h1, K1 = 0.5 * RHO * v.v1 * v.v1, K2 = 0.5 * RHO * d.v2 * d.v2, U1 = RHO * G10 * h1, U2 = RHO * G10 * h2;
+    const bars = (opt && opt.bars === 'on' && !d.bad) ? '<h4>3 · The energy bars</h4><p class="st">Each bar adds up to the same total (energy per volume). Height h is measured from the lower of the two points:</p>' +
+      TEX`P_1 + \tfrac{1}{2}\rho v_1^2 + \rho g h_1 = ${M.n(P1)} + ${M.n(K1)} + ${M.n(U1)}` + TEXA`\text{total} = ${M.n(E, 'Pa')}` +
+      TEX`P_2 + \tfrac{1}{2}\rho v_2^2 + \rho g h_2 = ${M.n(d.P2)} + ${M.n(K2)} + ${M.n(U2)}` + TEXA`\text{total} = ${M.n(d.P2 + K2 + U2, 'Pa')}` : '';
     return '<h4>1 · Continuity: the same volume passes every point each second</h4>' +
       TEX`Q = A_1 v_1` + TEX`Q = (${M.n(v.A1 * 1e-4, 'm²')})(${M.iv('v1')})` + TEXA`Q = ${M.n(d.Q, 'm³/s')}` + TEX`Q = ${M.n(d.L, 'L/min')}` +
       TEX`A_1 v_1 = A_2 v_2` + TEX`v_2 = v_1\,\frac{A_1}{A_2}` + TEX`v_2 = ${M.iv('v1')} \times ${M.n(v.A1 / v.A2)}` + TEXA`v_2 = ${M.n(d.v2, 'm/s')}` +
@@ -26,7 +50,7 @@ const SIM = {
       TEX`P_2 = P_1 - \frac{1}{2}\rho\left(v_2^2 - v_1^2\right) - \rho g\,\Delta y` + TEX`P_2 = 2.0\times10^{5}\,\text{Pa} - ${M.p(d.dK)} - ${M.p(d.dU)}` + TEXA`P_2 = ${M.n(d.P2, 'Pa')}` +
       (d.bad ? '<div class="bad">That’s below zero: impossible. The water can’t be pushed up and sped up this much with only 2.0×10⁵ Pa behind it.</div>' : '') +
       '<p class="note">Where the fluid is faster, the pressure is lower (at the same height). Going uphill also costs pressure: ρgΔy = ' + H.n(d.dU, 'Pa') + '.</p>' +
-      '<p class="note">Common mistake: “narrow pipe → water squeezed → higher pressure.” The opposite is true for steady flow.</p>';
+      '<p class="note">Common mistake: “narrow pipe → water squeezed → higher pressure.” The opposite is true for steady flow.</p>' + bars;
   },
   draw(v, d, mode, opt, t, dt, A){
     if (A.t === undefined || A.reset) A.t = 0; A.t += dt;
@@ -45,6 +69,7 @@ const SIM = {
     pc(70, y1, h1, P1, '1'); pc(300, y2, h2, d.P2, '2');
     text('v₁ = ' + fplain(v.v1) + ' m/s', 30, y1 + h1 / 2 + 18, { font: '600 10px "IBM Plex Mono",monospace' }); text('v₂ = ' + fplain(d.v2) + ' m/s', 250, Math.min(300, y2 + h2 / 2 + 18), { font: '600 10px "IBM Plex Mono",monospace' });
     text(d.bad ? 'P₂ < 0: impossible' : 'P₂ = ' + fplain(d.P2) + ' Pa', 12, 318, { font: '700 12px "Space Grotesk",sans-serif', col: d.bad ? '#c43a00' : '#111' });
+    if (opt && opt.bars === 'on') return drawBars(v, d);
     panelTitle('BERNOULLI BUDGET (Pa)', 395, 18);
     const items = [['P₁', P1, '#c43a00'], ['½ρv₁²', 0.5 * RHO * v.v1 * v.v1, '#1546d6'], ['P₂', Math.max(d.P2, 0), '#c43a00'], ['½ρv₂²', 0.5 * RHO * d.v2 * d.v2, '#1546d6'], ['ρgΔy', Math.max(d.dU, 0), '#1e7d45']];
     const mx = Math.max(...items.map(i => i[1]), 1);
