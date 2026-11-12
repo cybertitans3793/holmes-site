@@ -7,13 +7,56 @@ const SY = o => (o && o.sym) === 'ib'
   : { ib: false, L: 'L', m: 'm', a: 'a', pd: 'ΔD', pdS: 'ΔD', yb: 'y<sub>max</sub>', ybName: 'y_max (m = 1)', yd: 'y<sub>min</sub>' };
 const SYNOTE = '<p class="note"><b>AP ↔ IB symbols</b> (same physics): order <b>m ↔ n</b> · slits-to-screen <b>L ↔ D</b> · slit width <b>a ↔ b</b> · path length difference <b>ΔD ↔ “path difference”</b> · AP y<sub>max</sub> = distance from the centre to the m-th bright fringe; IB s = spacing between neighbouring fringes (same number for m = 1). Slit separation is <b>d</b> in both.</p>';
 const sinc2 = x => Math.abs(x) < 1e-9 ? 1 : Math.pow(Math.sin(x) / x, 2);
+// Overlay ('Compare all three'): double slit, single slit and an N-slit grating with the SAME wavelength, slit width b and spacing d, on one intensity graph.
+const OVC = { dbl: '#1546d6', sgl: '#c43a00', grt: '#1e7d45' };
+function ovCalc(v){
+  const lam = v.lam * 1e-9, d = v.od * 1e-6, b = v.ob * 1e-6, D = v.D, N = Math.round(v.oN), s = lam * D / d, y1 = lam * D / b, W = Math.min(1.6 * y1, 8 * s);
+  const sn = y => Math.sin(Math.atan(y / D)), be = y => PI * b * sn(y) / lam, de = y => PI * d * sn(y) / lam;
+  return { ov: true, lam, d, b, D, N, s, y1, wC: 2 * y1, W,
+    Is: y => sinc2(be(y)), Id: y => Math.pow(Math.cos(de(y)), 2) * sinc2(be(y)),
+    Ig: y => { const x = de(y), sx = Math.sin(x), r = Math.abs(sx) < 1e-9 ? 1 : Math.pow(Math.sin(N * x) / (N * sx), 2); return r * sinc2(be(y)); } };
+}
+function ovWork(v, d, opt){ const Y = SY(opt), mm = '<mi>' + Y.m + '</mi>', LL = '<mi>' + Y.L + '</mi>', aa = '<mi>' + Y.a + '</mi>',
+    ymax = Y.ib ? '<mi>s</mi>' : '<msub><mi>y</mi><mtext>max</mtext></msub>', y1 = Y.ib ? '<msub><mi>y</mi><mn>1</mn></msub>' : '<msub><mi>y</mi><mtext>min</mtext></msub>';
+  return '<h4>1 · Double slit and grating: bright where the path difference is a whole number of wavelengths</h4>' + TEX`d\,\sin\theta = ${mm}\lambda` + TEX`${ymax} = \frac{\lambda ${LL}}{d}` + TEX`${ymax} = \frac{(${M.iv('lam')})(${M.iv('D')})}{${M.iv('od')}}` + TEXA`${ymax} = ${M.n(d.s * 1e3, 'mm')}` +
+    '<p class="st">The grating has the same spacing d, so its peaks sit in the <b>same places</b>. With more slits the peaks get much <b>narrower</b> and dark gaps open between them.</p>' +
+    '<h4>2 · Single slit: first dark fringe</h4>' + TEX`${y1} = \frac{\lambda ${LL}}{${aa}}` + TEX`${y1} = \frac{(${M.iv('lam')})(${M.iv('D')})}{${M.iv('ob')}}` + TEXA`${y1} = ${M.n(d.y1 * 1e3, 'mm')}` + '<p class="st">The central maximum is twice as wide as the others:</p>' + TEXA`w = 2\,${y1} = ${M.n(d.wC * 1e3, 'mm')}` +
+    '<h4>3 · What to compare</h4><p class="st">The single-slit curve (orange) is the <b>envelope</b>: the double-slit and grating peaks can’t be taller than it, and a peak is missing where the envelope reaches zero.</p>' +
+    '<p class="note">Each curve is scaled so its tallest peak is 1 (relative intensity). A real grating passes far more light than two slits. Try more slits in the grating: the peaks stay put and get sharper.</p>' + SYNOTE; }
+function ovDraw(v, d, opt){
+  const Y = SY(opt), mono = '"IBM Plex Mono",monospace', x0 = 46, x1 = 380, yT = 34, yB = 252, W = d.W, X = y => x0 + (y + W) / (2 * W) * (x1 - x0), I = f => yB - f * (yB - yT);
+  panelTitle('INTENSITY ON THE SCREEN: THREE PATTERNS, SAME λ', 10, 18);
+  ctx.strokeStyle = '#ddd'; ctx.lineWidth = 1; [0.5, 1].forEach(f => { ctx.beginPath(); ctx.moveTo(x0, I(f)); ctx.lineTo(x1, I(f)); ctx.stroke(); });
+  ctx.strokeStyle = '#111'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(x0, yT - 6); ctx.lineTo(x0, yB); ctx.lineTo(x1, yB); ctx.stroke();
+  [['0', 0], ['0.5', 0.5], ['1', 1]].forEach(([t_, f]) => text(t_, x0 - 5, I(f) + 3, { align: 'right', font: '500 9px ' + mono, col: '#4a4a4a' }));
+  const tk = [-W, -W / 2, 0, W / 2, W]; tk.forEach(y => { ctx.beginPath(); ctx.moveTo(X(y), yB); ctx.lineTo(X(y), yB + 4); ctx.stroke(); text(fplain(y * 1e3), X(y), yB + 15, { align: 'center', font: '500 9px ' + mono, col: '#4a4a4a' }); });
+  text('position on the screen (mm)', (x0 + x1) / 2, yB + 28, { align: 'center', font: '500 10px ' + mono, col: '#4a4a4a' });
+  ctx.save(); ctx.translate(12, (yT + yB) / 2); ctx.rotate(-PI / 2); text('relative intensity', 0, 0, { align: 'center', font: '500 10px ' + mono, col: '#4a4a4a' }); ctx.restore();
+  ctx.save(); ctx.beginPath(); ctx.rect(x0, yT - 6, x1 - x0, yB - yT + 8); ctx.clip();
+  const NP = Math.round((x1 - x0) * 3), curve = (f, col, w) => { ctx.strokeStyle = col; ctx.lineWidth = w; ctx.lineJoin = 'round'; ctx.beginPath(); for (let i = 0; i <= NP; i++){ const y = -W + 2 * W * i / NP, px = X(y), py = I(f(y)); i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); } ctx.stroke(); };
+  curve(d.Is, OVC.sgl, 2.6); curve(d.Id, OVC.dbl, 1.6); curve(d.Ig, OVC.grt, 1.8);
+  ctx.restore();
+  const lg = [[OVC.sgl, 'Single slit (' + Y.a + ')'], [OVC.dbl, 'Double slit (d)'], [OVC.grt, 'Grating, N = ' + d.N + ' (d)']];
+  lg.forEach(([c, t_], i) => { const lx = 18 + i * 120; ctx.strokeStyle = c; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(lx, 312); ctx.lineTo(lx + 16, 312); ctx.stroke(); text(t_, lx + 21, 316, { font: '700 11px "Space Grotesk",sans-serif', col: c }); });
+  panelTitle('WHAT TO NOTICE', 395, 18);
+  [[Y.ybName.replace('(m = 1)', '') + ' (d, grating)', fplain(d.s * 1e3) + ' mm'], ['central max width 2' + (Y.ib ? 'y₁' : 'yₘᵢₙ'), fplain(d.wC * 1e3) + ' mm'], ['slits lit (grating)', String(d.N)]].forEach(([a, b], i) => { text(a, 400, 44 + i * 30, { font: '600 11px "Space Grotesk",sans-serif', col: '#4a4a4a' }); text(b, 590, 44 + i * 30 + 14, { align: 'right', font: '700 13px ' + mono }); });
+  const nt = ['Same d: double slit and grating', 'peaks sit at the same spots.', '', 'More slits: sharper peaks,', 'dark gaps between them.', '', 'The single slit sets the', 'envelope (smaller ' + Y.a + ' = wider).'];
+  nt.forEach((t_, i) => text(t_, 400, 158 + i * 15, { font: '600 11px "Space Grotesk",sans-serif', col: '#111' }));
+}
 const SIM = {
   title: 'Interference & Diffraction',
   hint: 'AP: m, L, a, ΔD · IB: n, D, b, path diff.',
   modes: [{ id: 'two', label: 'Two speakers' }, { id: 'double', label: 'Double slit' }, { id: 'single', label: 'Single slit' }, { id: 'grating', label: 'Grating' }],
-  opts: [{ id: 'sym', label: 'Symbols', choices: [['ap', 'AP'], ['ib', 'IB']] }, { id: 'pat', label: 'Slits', modes: ['single'], choices: [['one', 'One slit'], ['two', 'Two slits of this width']] },
-    { id: 'src', label: 'Light', modes: ['grating'], choices: [['mono', 'One wavelength'], ['white', 'White light']] }],
+  opts: [{ id: 'sym', label: 'Symbols', choices: [['ap', 'AP'], ['ib', 'IB']] }, { id: 'pat', label: 'Slits', modes: ['single'], choices: [['one', 'One slit'], ['two', 'Two slits']] },
+    { id: 'src', label: 'Light', modes: ['grating'], choices: [['mono', 'One wavelength'], ['white', 'White light']] },
+    { id: 'ov', label: '', modes: ['double', 'single', 'grating'], choices: [['off', 'One pattern'], ['on', 'Compare all three']] }],
   ivs(mode, opt){
+    if (mode !== 'two' && opt && opt.ov === 'on') return [
+      { id: 'lam', sym: 'λ', symText: 'λ', label: 'Wavelength of the laser', unit: 'nm', min: 400, max: 700, step: 5, val: 633 },
+      { id: 'od', sym: 'd', symText: 'd', label: 'Slit separation (2 slits, grating)', unit: 'μm', min: 100, max: 500, step: 5, val: 250, graph: true },
+      { id: 'ob', sym: SY(opt).a, symText: SY(opt).a, label: 'Slit width (all three)', unit: 'μm', min: 10, max: 80, step: 1, val: 40 },
+      { id: 'oN', sym: 'N', symText: 'N', label: 'Slits lit in the grating', unit: '', min: 3, max: 20, step: 1, val: 8, show: x => String(Math.round(x)) },
+      { id: 'D', sym: SY(opt).L, symText: SY(opt).L, label: 'Slits to screen', unit: 'm', min: 0.5, max: 3, step: 0.05, val: 2 }];
     if (mode === 'two') return [
       { id: 'f', sym: 'f', symText: 'f', label: 'Frequency of both speakers (in phase)', unit: 'Hz', min: 100, max: 800, step: 1, val: 343 },
       { id: 'd', sym: 'd', symText: 'd', label: 'Speaker separation', unit: 'm', min: 0.5, max: 3, step: 0.05, val: 2 },
@@ -29,8 +72,10 @@ const SIM = {
     if (mode === 'single' && (opt && opt.pat) === 'two') a.push({ id: 'ds', sym: 'd', symText: 'd', label: 'Slit separation', unit: 'μm', min: 100, max: 800, step: 5, val: 300 });
     return a;
   },
-  presets: [{ label: 'Quiet spot', mode: 'two', v: { f: 343, d: 2, y: 1.55 } }, { label: 'Red vs blue laser', mode: 'double', v: { lam: 450 } }, { label: 'Narrower slit', mode: 'single', v: { b: 30 } }, { label: 'CD tracks (625/mm)', mode: 'grating', v: { N: 625 } }],
+  presets: [{ label: 'Quiet spot', mode: 'two', v: { f: 343, d: 2, y: 1.55 } }, { label: 'Red vs blue laser', mode: 'double', opt: { ov: 'off' }, v: { lam: 450 } }, { label: 'Narrower slit', mode: 'single', opt: { ov: 'off' }, v: { b: 30 } }, { label: 'CD tracks (625/mm)', mode: 'grating', opt: { ov: 'off' }, v: { N: 625 } },
+    { label: 'Compare the three', mode: 'double', opt: { ov: 'on' }, v: {} }, { label: 'Many more slits', mode: 'grating', opt: { ov: 'on' }, v: { oN: 20 } }],
   calc(v, mode, opt){
+    if (mode !== 'two' && opt.ov === 'on') return ovCalc(v);
     if (mode === 'two'){ const lam = 343 / v.f, D = 6, r1 = Math.hypot(D, v.y - v.d / 2), r2 = Math.hypot(D, v.y + v.d / 2), pd = Math.abs(r1 - r2), n = pd / lam, I = Math.pow(Math.cos(PI * n), 2);
       return { lam, D, r1, r2, pd, n, I }; }
     if (mode === 'grating'){ const dg = 1e-3 / v.N, white = (opt.src || 'mono') === 'white', lam = v.lam * 1e-9, nmax = Math.floor(dg / lam), ords = [];
@@ -41,12 +86,14 @@ const SIM = {
     return { b, two, ds, y1, th1, wC: 2 * y1, sF: two ? lam * v.D / ds : NaN, I: y => { const th = Math.atan(y / v.D); return sinc2(PI * b * Math.sin(th) / lam) * (two ? Math.pow(Math.cos(PI * ds * Math.sin(th) / lam), 2) : 1); }, W: 0.08 };
   },
   dvs(mode, opt){ const Y = SY(opt);
+    if (mode !== 'two' && opt.ov === 'on') return [{ id: 's', name: Y.ib ? 'Fringe spacing s (double slit, grating)' : 'Distance to 1st bright fringe y_max', short: Y.ib ? 's' : 'y_max', sym: Y.yb, unit: 'mm', f: d => d.s * 1e3 }, { id: 'wC', name: 'Width of the single-slit central maximum', short: 'w', sym: 'w', unit: 'mm', f: d => d.wC * 1e3 }];
     if (mode === 'two') return [{ id: 'n', name: 'Path difference in wavelengths', short: Y.ib ? 'Δ/λ' : 'ΔD/λ', sym: Y.ib ? 'Δ/λ' : 'ΔD/λ', unit: '', f: d => d.n }, { id: 'I', name: 'Loudness (fraction of max)', short: 'I', sym: 'I', unit: '', f: d => d.I }];
     if (mode === 'grating') return [{ id: 'th1', name: 'Angle of the 1st-order maximum', short: 'θ₁', sym: 'θ<sub>1</sub>', unit: '°', f: d => d.th1 }, { id: 'nm', name: 'Highest order you can see', short: Y.m + '_max', sym: Y.m + '<sub>max</sub>', unit: '', f: d => d.nmax }];
     if (mode === 'double') return [{ id: 's', name: Y.ib ? 'Fringe spacing s' : 'Distance to 1st bright fringe y_max', short: Y.ib ? 's' : 'y_max', sym: Y.yb, unit: 'mm', f: d => d.s * 1e3 }];
     return [{ id: 'y1', name: 'Distance to the first dark fringe', short: Y.ib ? 'y₁' : 'y_min', sym: Y.yd, unit: 'mm', f: d => d.y1 * 1e3 }, { id: 'th', name: 'Angle to the first minimum', short: 'θ', sym: 'θ', unit: '°', f: d => d.th1 }];
   },
-  work(v, d, mode, opt){ const Y = SY(opt), m = Y.m, P = Y.ib ? 'path difference' : 'ΔD';
+  work(v, d, mode, opt){ if (mode !== 'two' && opt.ov === 'on') return ovWork(v, d, opt);
+    const Y = SY(opt), m = Y.m, P = Y.ib ? 'path difference' : 'ΔD';
     const mm = '<mi>' + Y.m + '</mi>', LL = '<mi>' + Y.L + '</mi>', aa = '<mi>' + Y.a + '</mi>', mmax = '<msub><mi>' + Y.m + '</mi><mtext>max</mtext></msub>',
       PD = Y.ib ? '<mtext>path difference</mtext>' : '<mrow><mi mathvariant="normal">Δ</mi><mi>D</mi></mrow>',
       ymax = Y.ib ? '<mi>s</mi>' : '<msub><mi>y</mi><mtext>max</mtext></msub>', y1 = Y.ib ? '<msub><mi>y</mi><mn>1</mn></msub>' : '<msub><mi>y</mi><mtext>min</mtext></msub>',
@@ -81,6 +128,7 @@ const SIM = {
       '<p class="note">Careful: for one slit, ' + Y.a + ' sin θ = ' + m + 'λ gives <b>dark</b> fringes; for two slits, d sin θ = ' + m + 'λ gives <b>bright</b> ones. Narrower slit → wider pattern.</p>' + SYNOTE;
   },
   draw(v, d, mode, opt, t, dt, A){
+    if (mode !== 'two' && opt.ov === 'on') return ovDraw(v, d, opt);
     if (mode === 'two'){
       panelTitle('TWO SPEAKERS IN A GYM (TOP VIEW)', 10, 18);
       const PX = 40, x0 = 40, yc = 165, key = v.f + ',' + v.d;
