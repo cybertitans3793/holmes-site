@@ -39,6 +39,16 @@
 .guide summary:hover{background:var(--soft)}
 .guide details[open] summary{background:var(--ink);color:#fff}
 .guide details>div{border-left:4px solid var(--hot);padding:8px 12px;margin-top:8px;background:#fff}
+.guide .gmore{margin-top:4px}
+.guide .gmore h3{margin:0 0 4px}
+.guide .gmuted{margin:0 0 10px;font-size:14px;opacity:.75}
+.guide details.ex{margin:0 0 14px}
+.guide details.ex>summary{display:block;border:0;padding:0;background:none;color:inherit;font-weight:inherit}
+.guide details.ex[open]>summary{background:none;color:inherit}
+.guide details.ex>summary h4{margin:2px 0 0}
+.guide details.ex>summary h4::before{content:'▸ ';color:var(--hot)}
+.guide details.ex[open]>summary h4::before{content:'▾ '}
+.guide details.ex>div.exbody{border-left:0;padding:0;margin-top:10px;background:none}
 .guide .gpanel>.ggrid,.guide .gpanel>.gsteps,.guide .gpanel>.gex{margin-bottom:0}
 .guide .gpanel>.gsteps+.ggrid{margin-top:22px}
 .guide .gtabs{margin-bottom:18px}
@@ -111,6 +121,9 @@ body.present .guide{display:none}
       <li>Thinking faster-moving fluid has higher pressure. At the same height it's the opposite.</li>
       <li>Treating diameter like area. Half the diameter means a quarter of the area, so four times the speed.</li>
       <li>Mixing g/cm³ and kg/m³. Convert to kg/m³ before using SI equations.</li>
+      <li>Saying suction “pulls.” Removing air doesn't pull anything: the higher air pressure outside pushes.</li>
+      <li>Using one density for layered liquids. Add ρgh for each layer: P = P₀ + ρ₁gh₁ + ρ₂gh₂.</li>
+      <li>Thinking the buoyant force keeps growing as a fully underwater object goes deeper. It grows only while more of the object goes under.</li>
     </ul>
   </div>
 </div>
@@ -242,6 +255,93 @@ body.present .guide{display:none}
     <p class="take">Both points are open to the air, so the pressures cancel. The water leaves as fast as if it had fallen 0.80 m. A hole deeper down squirts faster.</p>
   </div>
 </div>
+<div class="gmore">
+  <h3>More examples</h3>
+  <p class="gmuted">Click an example to open it.</p>
+  <details class="ex">
+    <summary><span class="kind">Buoyancy from a graph</span><h4>Lowering a block into water</h4></summary>
+    <div class="exbody">
+    <svg width="200" height="124" viewBox="0 0 200 124" aria-label="Tension versus depth: flat at 22 newtons, falls in a straight line to 14 newtons between depth 0 and 0.16 meters, then flat">
+      <line x1="30" y1="8" x2="30" y2="100" stroke="#111" stroke-width="2"/><line x1="30" y1="100" x2="196" y2="100" stroke="#111" stroke-width="2"/>
+      <text x="34" y="12" font-size="9" font-family="IBM Plex Mono,monospace">T (N)</text><text x="160" y="94" font-size="9" font-family="IBM Plex Mono,monospace">d (m)</text>
+      <line x1="30" y1="23" x2="70" y2="23" stroke="#ff6a2b" stroke-width="2.5"/><line x1="70" y1="23" x2="134" y2="51" stroke="#ff6a2b" stroke-width="2.5"/><line x1="134" y1="51" x2="192" y2="51" stroke="#ff6a2b" stroke-width="2.5"/>
+      <line x1="30" y1="51" x2="134" y2="51" stroke="#111" stroke-dasharray="3 3"/>
+      <line x1="70" y1="23" x2="70" y2="100" stroke="#111" stroke-dasharray="3 3"/><line x1="134" y1="51" x2="134" y2="100" stroke="#111" stroke-dasharray="3 3"/>
+      <text x="10" y="26" font-size="9" font-family="IBM Plex Mono,monospace">22</text><text x="10" y="54" font-size="9" font-family="IBM Plex Mono,monospace">14</text>
+      <text x="67" y="112" font-size="9" font-family="IBM Plex Mono,monospace">0</text><text x="122" y="112" font-size="9" font-family="IBM Plex Mono,monospace">0.16</text>
+    </svg>
+    <p>A metal block hangs from a force sensor on a string and is lowered slowly into a tank of water. The graph shows the tension T against the depth d of the block's bottom below the surface (negative d is still above the water). Find the block's mass, volume, density and height.</p>
+    <div class="work">
+      <p class="wt">System: the block. Forces: T and F<sub>b</sub> up, mg down. Lowered slowly, so ΣF = 0 and T = mg − F<sub>b</sub>.</p>
+      <p class="wt">In the air (left plateau), F<sub>b</sub> = 0:</p>
+<math class="eq" display="block"><mrow><mi>m</mi><mi>g</mi><mo>=</mo><mn>22</mn><mspace width="0.167em"/><mtext>N</mtext><mspace width="0.278em"/><mo>→</mo><mspace width="0.278em"/><mi>m</mi><mo>=</mo><mn>2.2</mn><mspace width="0.167em"/><mtext>kg</mtext></mrow></math>
+      <p class="wt">Fully underwater (right plateau):</p>
+<math class="eq" display="block"><mrow><msub><mi>F</mi><mi>b</mi></msub><mo>=</mo><mn>22</mn><mo>−</mo><mn>14</mn><mo>=</mo><mn>8.0</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+<math class="eq" display="block"><mrow><mi>V</mi><mo>=</mo><mfrac><msub><mi>F</mi><mi>b</mi></msub><mrow><msub><mi>ρ</mi><mtext>water</mtext></msub><mi>g</mi></mrow></mfrac><mo>=</mo><mfrac><mn>8.0</mn><mrow><mo stretchy="false">(</mo><mn>1000</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>10</mn><mo stretchy="false">)</mo></mrow></mfrac></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>V</mi><mo>=</mo><mn>8.0</mn><mo>×</mo><msup><mn>10</mn><mrow><mo>−</mo><mn>4</mn></mrow></msup><mspace width="0.167em"/><msup><mtext>m</mtext><mn>3</mn></msup></mrow></math>
+<math class="eq" display="block"><mrow><mi>ρ</mi><mo>=</mo><mfrac><mi>m</mi><mi>V</mi></mfrac><mo>=</mo><mfrac><mn>2.2</mn><mrow><mn>8.0</mn><mo>×</mo><msup><mn>10</mn><mrow><mo>−</mo><mn>4</mn></mrow></msup></mrow></mfrac></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>ρ</mi><mo>=</mo><mn>2750</mn><mspace width="0.167em"/><msup><mtext>kg/m</mtext><mn>3</mn></msup></mrow></math>
+      <p class="wt">The tension falls only while more of the block is going under, from d = 0 to d = 0.16 m:</p>
+<math class="eq ans" display="block"><mrow><mtext>height</mtext><mo>=</mo><mn>0.16</mn><mspace width="0.167em"/><mtext>m</mtext></mrow></math>
+    </div>
+    <p class="take">Once the block is all the way under, the graph goes flat: the buoyant force doesn't change with depth. The straight slope means the block has the same cross-section all the way up (A = V/height = 5.0 × 10⁻³ m²); a ball would give a curve that's steepest halfway in.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Two liquids that don't mix</span><h4>Oil floating on water</h4></summary>
+    <div class="exbody">
+    <svg width="190" height="124" viewBox="0 0 190 124" aria-label="Absolute pressure versus depth: 100 kilopascals at the surface, 104 at 0.50 meters, 112 at 1.30 meters; the line is steeper below 0.50 meters">
+      <line x1="34" y1="8" x2="34" y2="104" stroke="#111" stroke-width="2"/><line x1="34" y1="104" x2="186" y2="104" stroke="#111" stroke-width="2"/>
+      <text x="38" y="12" font-size="9" font-family="IBM Plex Mono,monospace">P (kPa)</text>
+      <line x1="34" y1="104" x2="84" y2="76" stroke="#111" stroke-width="2.5"/><line x1="84" y1="76" x2="164" y2="20" stroke="#ff6a2b" stroke-width="2.5"/>
+      <line x1="84" y1="76" x2="84" y2="104" stroke="#111" stroke-dasharray="3 3"/><line x1="164" y1="20" x2="164" y2="104" stroke="#111" stroke-dasharray="3 3"/>
+      <line x1="34" y1="76" x2="84" y2="76" stroke="#111" stroke-dasharray="3 3"/><line x1="34" y1="20" x2="164" y2="20" stroke="#111" stroke-dasharray="3 3"/>
+      <text x="6" y="107" font-size="9" font-family="IBM Plex Mono,monospace">100</text><text x="6" y="79" font-size="9" font-family="IBM Plex Mono,monospace">104</text><text x="6" y="23" font-size="9" font-family="IBM Plex Mono,monospace">112</text>
+      <text x="72" y="116" font-size="9" font-family="IBM Plex Mono,monospace">0.50</text><text x="152" y="116" font-size="9" font-family="IBM Plex Mono,monospace">1.30</text>
+      <text x="40" y="87" font-size="9" font-family="IBM Plex Mono,monospace">oil</text><text x="104" y="98" font-size="9" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">water</text>
+    </svg>
+    <p>A tank holds a layer of oil floating on water. A pressure probe is lowered from the top surface to the bottom, and the graph shows the absolute pressure against depth (in meters). Find the oil's density, how thick each layer is, and the gauge pressure at the bottom.</p>
+    <div class="work">
+      <p class="wt">In one liquid, P = P₀ + ρgh is a straight line with slope ρg. The kink at 0.50 m is the boundary: 0.50 m of oil, then 1.30 − 0.50 = 0.80 m of water.</p>
+<math class="eq" display="block"><mrow><msub><mtext>slope</mtext><mtext>oil</mtext></msub><mo>=</mo><mfrac><mrow><mn>104</mn><mspace width="0.167em"/><mn>000</mn><mo>−</mo><mn>100</mn><mspace width="0.167em"/><mn>000</mn></mrow><mn>0.50</mn></mfrac><mo>=</mo><mn>8000</mn><mspace width="0.167em"/><mtext>Pa/m</mtext></mrow></math>
+<math class="eq" display="block"><mrow><msub><mi>ρ</mi><mtext>oil</mtext></msub><mo>=</mo><mfrac><mtext>slope</mtext><mi>g</mi></mfrac><mo>=</mo><mfrac><mn>8000</mn><mn>10</mn></mfrac></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>ρ</mi><mtext>oil</mtext></msub><mo>=</mo><mn>800</mn><mspace width="0.167em"/><msup><mtext>kg/m</mtext><mn>3</mn></msup></mrow></math>
+      <p class="wt">Check the lower part: (112 000 − 104 000)/0.80 = 10 000 Pa/m, so ρ = 1000 kg/m³. That's water. Gauge pressure at the bottom: each layer adds its own ρgh.</p>
+<math class="eq" display="block"><mrow><msub><mi>P</mi><mtext>gauge</mtext></msub><mo>=</mo><mo stretchy="false">(</mo><mn>800</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>10</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>0.50</mn><mo stretchy="false">)</mo><mo>+</mo><mo stretchy="false">(</mo><mn>1000</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>10</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>0.80</mn><mo stretchy="false">)</mo></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>P</mi><mtext>gauge</mtext></msub><mo>=</mo><mn>1.2</mn><mo>×</mo><msup><mn>10</mn><mn>4</mn></msup><mspace width="0.167em"/><mtext>Pa</mtext></mrow></math>
+    </div>
+    <p class="take">The line is steeper in the denser liquid, and the denser liquid is always on the bottom. The intercept is the air pressure on the top surface. If the tank were all water, the bottom would read 13 kPa gauge: the lighter oil adds less pressure per meter.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Flow rate + projectile</span><h4>How far does the hose reach?</h4></summary>
+    <div class="exbody">
+    <svg width="170" height="84" viewBox="0 0 170 84" aria-label="Horizontal nozzle 0.80 meters above the ground; the stream curves down and lands 2.0 meters away">
+      <line x1="4" y1="64" x2="166" y2="64" stroke="#111" stroke-width="2"/>
+      <rect x="4" y="18" width="16" height="8" fill="#fff" stroke="#111" stroke-width="2"/>
+      <path d="M20 22 Q 70 22 120 64" fill="none" stroke="#ff6a2b" stroke-width="2.5"/>
+      <line x1="12" y1="26" x2="12" y2="64" stroke="#111" stroke-dasharray="3 3"/>
+      <text x="16" y="50" font-size="9" font-family="IBM Plex Mono,monospace">0.80 m</text>
+      <line x1="20" y1="74" x2="120" y2="74" stroke="#111"/><text x="62" y="83" font-size="9" font-family="IBM Plex Mono,monospace">x</text>
+    </svg>
+    <p>A hose fills a 10 L bucket (0.010 m³) in 25 s. Its nozzle opening has an area of 0.80 cm² and the hose itself 2.0 cm². You hold the nozzle level, 0.80 m above the ground. How fast does the water leave, how far away does it land, and what is the gauge pressure in the hose just behind the nozzle?</p>
+    <div class="work">
+      <p class="wt">Flow rate, the volume per second, is the same in the hose and the nozzle:</p>
+<math class="eq" display="block"><mrow><mi>Q</mi><mo>=</mo><mfrac><mi>V</mi><mi>t</mi></mfrac><mo>=</mo><mfrac><mn>0.010</mn><mn>25</mn></mfrac><mo>=</mo><mn>4.0</mn><mo>×</mo><msup><mn>10</mn><mrow><mo>−</mo><mn>4</mn></mrow></msup><mspace width="0.167em"/><msup><mtext>m</mtext><mn>3</mn></msup><mtext>/s</mtext></mrow></math>
+<math class="eq" display="block"><mrow><msub><mi>v</mi><mtext>nozzle</mtext></msub><mo>=</mo><mfrac><mi>Q</mi><mi>A</mi></mfrac><mo>=</mo><mfrac><mrow><mn>4.0</mn><mo>×</mo><msup><mn>10</mn><mrow><mo>−</mo><mn>4</mn></mrow></msup></mrow><mrow><mn>8.0</mn><mo>×</mo><msup><mn>10</mn><mrow><mo>−</mo><mn>5</mn></mrow></msup></mrow></mfrac></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>v</mi><mtext>nozzle</mtext></msub><mo>=</mo><mn>5.0</mn><mspace width="0.167em"/><mtext>m/s</mtext></mrow></math>
+      <p class="wt">After it leaves, each bit of water is a horizontal projectile. Fall time from 0.80 m:</p>
+<math class="eq" display="block"><mrow><mn>0.80</mn><mo>=</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mo stretchy="false">(</mo><mn>10</mn><mo stretchy="false">)</mo><msup><mi>t</mi><mn>2</mn></msup><mspace width="0.278em"/><mo>→</mo><mspace width="0.278em"/><mi>t</mi><mo>=</mo><mn>0.40</mn><mspace width="0.167em"/><mtext>s</mtext></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>x</mi><mo>=</mo><mi>v</mi><mi>t</mi><mo>=</mo><mo stretchy="false">(</mo><mn>5.0</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>0.40</mn><mo stretchy="false">)</mo><mo>=</mo><mn>2.0</mn><mspace width="0.167em"/><mtext>m</mtext></mrow></math>
+      <p class="wt">In the hose: v = Q/A = 4.0 × 10⁻⁴ / 2.0 × 10⁻⁴ = 2.0 m/s. Bernoulli from the hose (1) to just outside the nozzle (2), same height, P₂ = P<sub>atm</sub>:</p>
+<math class="eq" display="block"><mrow><msub><mi>P</mi><mn>1</mn></msub><mo>−</mo><msub><mi>P</mi><mtext>atm</mtext></msub><mo>=</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mi>ρ</mi><mrow><mo>(</mo><msubsup><mi>v</mi><mn>2</mn><mn>2</mn></msubsup><mo>−</mo><msubsup><mi>v</mi><mn>1</mn><mn>2</mn></msubsup><mo>)</mo></mrow></mrow></math>
+<math class="eq" display="block"><mrow><msub><mi>P</mi><mn>1</mn></msub><mo>−</mo><msub><mi>P</mi><mtext>atm</mtext></msub><mo>=</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mo stretchy="false">(</mo><mn>1000</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>25</mn><mo>−</mo><mn>4.0</mn><mo stretchy="false">)</mo></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>P</mi><mtext>gauge</mtext></msub><mo>=</mo><mn>1.05</mn><mo>×</mo><msup><mn>10</mn><mn>4</mn></msup><mspace width="0.167em"/><mtext>Pa</mtext></mrow></math>
+    </div>
+    <p class="take">A bucket and a clock give you the flow rate, and the flow rate plus the opening's area gives the speed. Once the water is out, it's just a projectile. The extra pressure in the hose is what speeds the water up as it squeezes into the nozzle.</p>
+    </div>
+  </details>
+</div>
 </div>
 <div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
 <div class="gcheck">
@@ -270,6 +370,10 @@ body.present .guide{display:none}
       <details><summary>Answer</summary><div>Air pressure holds up a column with ρgh = P<sub>atm</sub>: h = 1.0 × 10⁵/(1000 × 10) = 10 m. Mercury is 13.6 times denser, so a mercury barometer needs only about 0.76 m.</div></details></li>
     <li>You pump more air into a tire without changing its temperature. Use the particle model to explain why the pressure goes up.
       <details><summary>Answer</summary><div>More air particles in the same space means more collisions with the tire walls every second, so a bigger force on each area of wall.</div></details></li>
+    <li>A suction-cup lifter for glass has a round cup of radius 4.0 cm. If all the air under the cup were removed, what is the heaviest sheet of glass it could hold up?
+      <details><summary>Answer</summary><div>A = π(0.040)² = 5.0 × 10⁻³ m². With no air under the cup, only the outside air pushes, with F = P<sub>atm</sub>A = (1.0 × 10⁵)(5.0 × 10⁻³) = 5.0 × 10² N, enough for about 50 kg of glass. The cup doesn't pull: the air outside pushes the cup and glass together. A real lifter leaves some air under the cup, so it holds less.</div></details></li>
+    <li><b>Who's right?</b> A plastic bottle has a small hole in its side, and water squirts out from 0.20 m below the water's surface. You screw the cap on and the stream stops. Ana says: “It stops because the trapped air is now at the same pressure as the air outside.” Ben says: “It stops because the trapped air is now below air pressure, about 2 kPa below.” Who's right?
+      <details><summary>Answer</summary><div>Ben. The water stops when the pressure at the hole equals the outside air pressure. The hole is 0.20 m below the surface, so the trapped air must be lower by ρgh = (1000)(10)(0.20) = 2.0 × 10³ Pa: a gauge pressure of −2.0 kPa. If Ana were right, the hole would be at P<sub>atm</sub> + 2.0 kPa and the water would keep squirting. A few drops leave after you cap it, so the trapped air spreads out and its pressure drops until the flow stops.</div></details></li>
     <li><span class="ib">IB</span> Two spheres of the same material fall slowly through oil at terminal velocity. One has twice the radius of the other. How do their terminal velocities compare?
       <details><summary>Answer</summary><div>Weight minus buoyancy goes as r³ (it's 8 times bigger), but Stokes drag 6πηrv goes only as r. At terminal velocity they balance, so v ∝ r²: the bigger sphere falls 4 times as fast.</div></details></li>
   </ol>
