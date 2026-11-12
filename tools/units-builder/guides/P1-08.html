@@ -39,6 +39,16 @@
 .guide summary:hover{background:var(--soft)}
 .guide details[open] summary{background:var(--ink);color:#fff}
 .guide details>div{border-left:4px solid var(--hot);padding:8px 12px;margin-top:8px;background:#fff}
+.guide .gmore{margin-top:4px}
+.guide .gmore h3{margin:0 0 4px}
+.guide .gmuted{margin:0 0 10px;font-size:14px;opacity:.75}
+.guide details.ex{margin:0 0 14px}
+.guide details.ex>summary{display:block;border:0;padding:0;background:none;color:inherit;font-weight:inherit}
+.guide details.ex[open]>summary{background:none;color:inherit}
+.guide details.ex>summary h4{margin:2px 0 0}
+.guide details.ex>summary h4::before{content:'▸ ';color:var(--hot)}
+.guide details.ex[open]>summary h4::before{content:'▾ '}
+.guide details.ex>div.exbody{border-left:0;padding:0;margin-top:10px;background:none}
 .guide .gpanel>.ggrid,.guide .gpanel>.gsteps,.guide .gpanel>.gex{margin-bottom:0}
 .guide .gpanel>.gsteps+.ggrid{margin-top:22px}
 .guide .gtabs{margin-bottom:18px}
@@ -104,6 +114,9 @@ body.present .guide{display:none}
       <li>Setting the two tensions on a massive pulley equal.</li>
       <li>Saying kinetic energy is conserved when a skater pulls her arms in. Angular momentum is conserved; kinetic energy goes up.</li>
       <li>Drawing all the forces at the center of an object. For torque, draw each force where it acts.</li>
+      <li>Pointing friction down the ramp on a rolling object. It points up the ramp whether the object rolls down or up, and it's static friction, so it turns no energy into thermal energy.</li>
+      <li>Using conservation of linear momentum when something hits a pivoted object. The pivot pushes during the hit; only angular momentum about the pivot is conserved.</li>
+      <li>Saying an object moving in a straight line has no angular momentum. About a point off its path it has L = mvr<sub>⊥</sub>, and that stays constant.</li>
     </ul>
   </div>
 </div>
@@ -256,6 +269,98 @@ body.present .guide{display:none}
     <p class="take">The same 4.0 N on a hoop of the same mass and radius would give half the angular acceleration, because a hoop's I is twice as big.</p>
   </div>
 </div>
+<div class="gmore">
+  <h3>More examples</h3>
+  <p class="gmuted">Click an example to open it.</p>
+  <details class="ex">
+    <summary><span class="kind">Angular momentum in a collision</span><h4>Clay sticks to a hanging rod</h4></summary>
+    <div class="exbody">
+    <svg width="160" height="130" viewBox="0 0 160 130" aria-label="Rod hanging from a pivot at its top; a lump of clay moves toward its bottom end">
+      <line x1="90" y1="6" x2="130" y2="6" stroke="#111" stroke-width="3"/>
+      <rect x="96" y="10" width="8" height="100" fill="#fde1d6" stroke="#111" stroke-width="2"/>
+      <circle cx="100" cy="12" r="4" fill="#111"/>
+      <text x="108" y="64" font-size="10" font-family="IBM Plex Mono,monospace">3.0 kg</text>
+      <text x="108" y="78" font-size="10" font-family="IBM Plex Mono,monospace">1.0 m</text>
+      <circle cx="14" cy="104" r="6" fill="#fff" stroke="#111" stroke-width="2"/>
+      <line x1="24" y1="104" x2="80" y2="104" stroke="#ff6a2b" stroke-width="2"/><polygon points="80,99 80,109 88,104" fill="#ff6a2b"/>
+      <text x="28" y="96" font-size="10" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">6.0 m/s</text>
+      <text x="4" y="124" font-size="10" font-family="IBM Plex Mono,monospace">0.50 kg</text>
+    </svg>
+    <p>A uniform rod (3.0 kg, 1.0 m long, I = ⅓ML²) hangs at rest from a frictionless pivot at its top end. A 0.50 kg lump of clay moving horizontally at 6.0 m/s hits the bottom end and sticks. Find the angular velocity just after the hit, and how much kinetic energy is lost.</p>
+    <div class="work">
+      <p class="wt">System: rod + clay. The pivot pushes on the rod during the hit, so linear momentum isn't conserved. But that force acts at the pivot, so it has no torque about it: angular momentum about the pivot is conserved.</p>
+      <p class="wt">Before: only the clay moves, in a straight line that passes r<sub>⊥</sub> = 1.0 m below the pivot:</p>
+<math class="eq" display="block"><mrow><msub><mi>L</mi><mi>i</mi></msub><mo>=</mo><mi>m</mi><mi>v</mi><msub><mi>r</mi><mo>⊥</mo></msub><mo>=</mo><mo stretchy="false">(</mo><mn>0.50</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>6.0</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>1.0</mn><mo stretchy="false">)</mo><mo>=</mo><mn>3.0</mn><mspace width="0.167em"/><msup><mtext>kg·m</mtext><mn>2</mn></msup><mtext>/s</mtext></mrow></math>
+      <p class="wt">After: the rod and the clay at its end turn together:</p>
+<math class="eq" display="block"><mrow><msub><mi>I</mi><mi>f</mi></msub><mo>=</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>3</mn></mfrac></mstyle><mi>M</mi><msup><mi>L</mi><mn>2</mn></msup><mo>+</mo><mi>m</mi><msup><mi>L</mi><mn>2</mn></msup><mo>=</mo><mn>1.0</mn><mo>+</mo><mn>0.50</mn><mo>=</mo><mn>1.5</mn><mspace width="0.167em"/><msup><mtext>kg·m</mtext><mn>2</mn></msup></mrow></math>
+<math class="eq" display="block"><mrow><mi>ω</mi><mo>=</mo><mfrac><msub><mi>L</mi><mi>i</mi></msub><msub><mi>I</mi><mi>f</mi></msub></mfrac><mo>=</mo><mfrac><mn>3.0</mn><mn>1.5</mn></mfrac></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>ω</mi><mo>=</mo><mn>2.0</mn><mspace width="0.167em"/><mtext>rad/s</mtext></mrow></math>
+      <p class="wt">Kinetic energy before and after:</p>
+<math class="eq" display="block"><mrow><msub><mi>K</mi><mi>i</mi></msub><mo>=</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mo stretchy="false">(</mo><mn>0.50</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>6.0</mn><msup><mo stretchy="false">)</mo><mn>2</mn></msup><mo>=</mo><mn>9.0</mn><mspace width="0.167em"/><mtext>J</mtext></mrow></math>
+<math class="eq" display="block"><mrow><msub><mi>K</mi><mi>f</mi></msub><mo>=</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mo stretchy="false">(</mo><mn>1.5</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>2.0</mn><msup><mo stretchy="false">)</mo><mn>2</mn></msup><mo>=</mo><mn>3.0</mn><mspace width="0.167em"/><mtext>J</mtext></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>K</mi><mi>i</mi></msub><mo>&#x2212;</mo><msub><mi>K</mi><mi>f</mi></msub><mo>=</mo><mn>9.0</mn><mo>&#x2212;</mo><mn>3.0</mn><mo>=</mo><mn>6.0</mn><mspace width="0.167em"/><mtext>J</mtext></mrow></math>
+    </div>
+    <p class="take">Only L about the pivot carries through the hit. Kinetic energy isn't conserved (it's a sticky collision), and neither is linear momentum: it's 3.0 kg·m/s before, but after, the rod's center (moving at 1.0 m/s) and the clay (2.0 m/s) carry 4.0 kg·m/s. The difference is the pivot's push.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Static equilibrium with a hinge</span><h4>A sign on a hinged beam held by a cable</h4></summary>
+    <div class="exbody">
+    <svg width="170" height="140" viewBox="0 0 170 140" aria-label="Horizontal beam hinged to a wall, held by a cable at 30 degrees from its far end, with a sign hanging from the end">
+      <line x1="8" y1="4" x2="8" y2="136" stroke="#111" stroke-width="3"/>
+      <rect x="10" y="91" width="140" height="8" fill="#fde1d6" stroke="#111" stroke-width="2"/>
+      <circle cx="13" cy="95" r="4" fill="#111"/>
+      <line x1="148" y1="91" x2="10" y2="11" stroke="#ff6a2b" stroke-width="2"/>
+      <text x="62" y="35" font-size="11" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">T</text>
+      <text x="104" y="86" font-size="10" font-family="IBM Plex Mono,monospace">30°</text>
+      <line x1="146" y1="99" x2="146" y2="112" stroke="#111" stroke-width="2"/>
+      <rect x="124" y="112" width="42" height="18" fill="#fff" stroke="#111" stroke-width="2"/>
+      <text x="128" y="125" font-size="10" font-family="IBM Plex Mono,monospace">300 N</text>
+      <text x="16" y="114" font-size="10" font-family="IBM Plex Mono,monospace">4.0 m, 200 N</text>
+    </svg>
+    <p>A uniform 4.0 m beam weighing 200 N is hinged to a wall and held level by a cable that runs from its far end up to the wall, at 30° above the beam. A 300 N sign hangs from the far end. Find the cable's tension and the force from the hinge.</p>
+    <div class="work">
+      <p class="wt">Pivot at the hinge, so the hinge's unknown force has no torque. Counterclockwise = +. The beam's weight acts at its center (2.0 m), and only the cable's perpendicular part, T sin30°, turns the beam:</p>
+<math class="eq" display="block"><mrow><mi>T</mi><mi>sin</mi><mn>30</mn><mo>°</mo><mo stretchy="false">(</mo><mn>4.0</mn><mo stretchy="false">)</mo><mo>&#x2212;</mo><mn>200</mn><mo stretchy="false">(</mo><mn>2.0</mn><mo stretchy="false">)</mo><mo>&#x2212;</mo><mn>300</mn><mo stretchy="false">(</mo><mn>4.0</mn><mo stretchy="false">)</mo><mo>=</mo><mn>0</mn></mrow></math>
+<math class="eq ans" display="block"><mrow><mn>2.0</mn><mi>T</mi><mo>=</mo><mn>1600</mn><mspace width="0.278em"/><mo>&#x2192;</mo><mspace width="0.278em"/><mi>T</mi><mo>=</mo><mn>800</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+      <p class="wt">Horizontal forces: the cable pulls the beam toward the wall, so the hinge must push it away from the wall:</p>
+<math class="eq" display="block"><mrow><mi>H</mi><mo>=</mo><mi>T</mi><mi>cos</mi><mn>30</mn><mo>°</mo><mo>=</mo><mo stretchy="false">(</mo><mn>800</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>0.866</mn><mo stretchy="false">)</mo></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>H</mi><mo>=</mo><mn>690</mn><mspace width="0.167em"/><mtext>N away from the wall</mtext></mrow></math>
+      <p class="wt">Vertical forces:</p>
+<math class="eq" display="block"><mrow><mi>V</mi><mo>+</mo><mi>T</mi><mi>sin</mi><mn>30</mn><mo>°</mo><mo>=</mo><mn>200</mn><mo>+</mo><mn>300</mn><mspace width="0.278em"/><mo>&#x2192;</mo><mspace width="0.278em"/><mi>V</mi><mo>+</mo><mn>400</mn><mo>=</mo><mn>500</mn></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>V</mi><mo>=</mo><mn>100</mn><mspace width="0.167em"/><mtext>N up</mtext></mrow></math>
+    </div>
+    <p class="take">The hinge force is neither along the beam nor straight up, so give it two unknowns (H and V) and use ΣF<sub>x</sub> = 0 and ΣF<sub>y</sub> = 0 after the torques. The cable pulls with 800 N to hold up only 500 N, because a shallow cable has a short lever arm.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Forces and torques together</span><h4>A cylinder rolling down a ramp</h4></summary>
+    <div class="exbody">
+    <svg width="170" height="108" viewBox="0 0 170 108" aria-label="Solid cylinder rolling down a 30 degree ramp, with static friction at the contact point pointing up the ramp">
+      <polygon points="4,100 160,100 160,10" fill="#fff" stroke="#111" stroke-width="2"/>
+      <circle cx="74" cy="41" r="16" fill="#fde1d6" stroke="#111" stroke-width="2"/><circle cx="74" cy="41" r="2.5" fill="#111"/>
+      <line x1="82" y1="55" x2="96.7" y2="46.5" stroke="#ff6a2b" stroke-width="3"/><polygon points="102.8,43 98.7,50 94.7,43" fill="#ff6a2b"/>
+      <text x="100" y="35" font-size="11" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">f</text>
+      <text x="34" y="96" font-size="10" font-family="IBM Plex Mono,monospace">30°</text>
+      <text x="12" y="34" font-size="10" font-family="IBM Plex Mono,monospace">2.0 kg</text>
+    </svg>
+    <p>A 2.0 kg solid cylinder (I = ½mR²) rolls without slipping down a 30° ramp. Find its acceleration and the friction force on it. What's the smallest coefficient of static friction that lets it roll without slipping?</p>
+    <div class="work">
+      <p class="wt">Two equations, used together. Along the ramp (down = +):</p>
+<math class="eq" display="block"><mrow><mi>m</mi><mi>g</mi><mi>sin</mi><mn>30</mn><mo>°</mo><mo>&#x2212;</mo><mi>f</mi><mo>=</mo><mi>m</mi><mi>a</mi></mrow></math>
+      <p class="wt">About the center: gravity acts at the center and the normal force points through it, so only friction makes a torque. Rolling without slipping, α = a/R:</p>
+<math class="eq" display="block"><mrow><mi>f</mi><mi>R</mi><mo>=</mo><mrow><mo>(</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mi>m</mi><msup><mi>R</mi><mn>2</mn></msup><mo>)</mo></mrow><mfrac><mi>a</mi><mi>R</mi></mfrac><mspace width="0.278em"/><mo>&#x2192;</mo><mspace width="0.278em"/><mi>f</mi><mo>=</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mi>m</mi><mi>a</mi></mrow></math>
+      <p class="wt">Put that into the first equation:</p>
+<math class="eq" display="block"><mrow><mi>m</mi><mi>g</mi><mi>sin</mi><mn>30</mn><mo>°</mo><mo>=</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>3</mn><mn>2</mn></mfrac></mstyle><mi>m</mi><mi>a</mi><mspace width="0.278em"/><mo>&#x2192;</mo><mspace width="0.278em"/><mi>a</mi><mo>=</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>2</mn><mn>3</mn></mfrac></mstyle><mo stretchy="false">(</mo><mn>10</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>0.50</mn><mo stretchy="false">)</mo></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>a</mi><mo>=</mo><mn>3.3</mn><mspace width="0.167em"/><msup><mtext>m/s</mtext><mn>2</mn></msup></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>f</mi><mo>=</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mo stretchy="false">(</mo><mn>2.0</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>3.3</mn><mo stretchy="false">)</mo><mo>=</mo><mn>3.3</mn><mspace width="0.167em"/><mtext>N up the ramp</mtext></mrow></math>
+      <p class="wt">Static friction can be at most μ<sub>s</sub>N, with N = mg cos30° = 17.3 N:</p>
+<math class="eq ans" display="block"><mrow><msub><mi>μ</mi><mi>s</mi></msub><mo>&#x2265;</mo><mfrac><mn>3.3</mn><mn>17.3</mn></mfrac><mo>=</mo><mn>0.19</mn></mrow></math>
+    </div>
+    <p class="take">Friction points <b>up</b> the ramp: it's the only force with a torque about the center, so it's what spins the cylinder faster. It's static friction (the contact point doesn't slide), so no energy is lost, and the energy method gives the same answer. A frictionless block would speed up at 5.0 m/s²; the cylinder gets less because part of the work goes into spinning. Rolling <i>up</i> the ramp, friction still points up the ramp: there it's slowing the spin.</p>
+    </div>
+  </details>
+</div>
 </div>
 <div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
 <div class="gcheck">
@@ -284,6 +389,10 @@ body.present .guide{display:none}
       <details><summary>Answer</summary><div>At those two points the velocity is perpendicular to the line to the Sun, so mvr is the same at both. One-quarter the distance means 4 times the speed.</div></details></li>
     <li>A thin rod 1.0 m long has mass 3.0 kg and I<sub>cm</sub> = <sup>1</sup>/<sub>12</sub>ML² about its center. Find its rotational inertia about one end.
       <details><summary>Answer</summary><div>I<sub>cm</sub> = (3.0)(1.0)²/12 = 0.25 kg·m². The end is d = 0.50 m from the center: I = 0.25 + (3.0)(0.50)² = 1.0 kg·m² (which matches ⅓ML²).</div></details></li>
+    <li><b>Who's right?</b> A bike chain runs from the 10 cm front chainring (turned by the pedals) to a 4.0 cm rear sprocket fixed to the back wheel. Ana says: “The chain links them, so the sprocket turns at the same angular velocity as the chainring.” Ben says: “The chain gives both rims the same speed, so the smaller sprocket turns faster.” Who's right? If you pedal at 1.0 rev/s, how fast does a back wheel of radius 0.35 m carry the bike?
+      <details><summary>Answer</summary><div>Ben. Every link of the chain moves at the same speed, so the two rims share v = rω, not ω. The sprocket's radius is 0.4 times the chainring's, so it turns 2.5 times as fast: 2.5 rev/s. The back wheel is on the sprocket's axle, so it shares the sprocket's ω: 2.5 × 2π = 15.7 rad/s, and v = rω = (0.35)(15.7) ≈ 5.5 m/s. Linked by a chain or belt: same rim speed. On the same axle: same ω.</div></details></li>
+    <li>A uniform 4.0 m board weighing 120 N lies on a table with 1.5 m sticking out past the edge. A 50 N cat walks out along the overhanging part. How far past the edge can it go before the board tips? Where does the table push on the board at that moment?
+      <details><summary>Answer</summary><div>Just as it starts to tip, the board lifts off everywhere except the table's edge, so the table's whole force (120 + 50 = 170 N) acts at the edge. Take torques about the edge. The board's weight acts at its center, 2.0 − 1.5 = 0.50 m back from the edge: 50x = 120(0.50), so x = 1.2 m, 0.30 m short of the end.</div></details></li>
   </ol>
 </div>
 </div>
