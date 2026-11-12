@@ -241,7 +241,7 @@ UNITS = {
         '<b>Turn around.</b> The force points backward the whole time. When is the cart moving forward? When does it turn around, and what does the x–t graph look like there?',
         'Double the mass. Which graphs change, and by what factor?',
         'Make the cart end at x = 0 at 9 s. Describe your forces and explain using areas under the v–t graph.']},
-    {'code': '', 'name': 'Elevator Scale', 'sim': 'elevator', 'tasks': [
+    {'code': '', 'name': 'Elevator Scale', 'sim': 'elevator', 'modes': ['up', 'down', 'snap'], 'select': 'Ride up', 'tasks': [
         'Draw the free-body diagram of a person on a scale in an elevator. Which force does the scale read?',
         '<b>Ride up.</b> Predict whether the scale reads more, less or the same as mg while starting, cruising and stopping. Then check each.',
         'Find two different parts of a ride (up or down) where the scale reads <i>more</i> than mg. What do they have in common?',
@@ -289,7 +289,7 @@ UNITS = {
         '<b>Land straight across.</b> Find the angle to aim upstream so the boat lands directly opposite. Why does it take longer?',
         'Make the current faster than the boat. Can the boat still land straight across? Why not?',
         '<b>Plane.</b> A plane flies at 500 km/h with a 100 km/h crosswind. Which heading gets it due north, and what is its ground speed?']},
-    {'code': '', 'name': 'Projectiles', 'sim': 'proj', 'tasks': [
+    {'code': '', 'name': 'Projectiles', 'sim': 'proj', 'modes': ['horiz', 'level', 'height', 'target'], 'select': 'Off a cliff', 'tasks': [
         '<b>Off a cliff.</b> A ball rolls off a 45 m cliff at 10 m/s. Find the time in the air and how far out it lands. Compare its fall time with the grey dropped ball.',
         'Double the launch speed. What happens to the time in the air and to the distance? Use the ×2 line to check.',
         '<b>Level ground.</b> Show that 30° and 60° give the same range. Which angle gives the most range, and which stays in the air longer?',
@@ -298,7 +298,7 @@ UNITS = {
         '<b>Hit the target.</b> A target is 30 m away and 5 m up. Find the launch speed needed at 45°, then find an angle that needs less.']},
 ]},
 'P1-05': {'course': 'AP Physics 1 / IB', 'num': '05', 'title': 'Circular Motion and Gravity', 'guide': 'guides/P1-05.html', 'tabs': [
-    {'code': '', 'name': 'Car on a Curve', 'sim': 'curve', 'tasks': [
+    {'code': '', 'name': 'Car on a Curve', 'sim': 'curve', 'modes': ['flat', 'bank'], 'select': 'Flat road (friction)', 'tasks': [
         '<b>Predict, then check.</b> If the car’s speed doubles, by what factor does the friction force it needs change? Write your prediction, then read the ×2 line under the graph. Justify it with a<sub>c</sub> = v²/r.',
         '<b>Claim.</b> A student says a heavier car is more likely to skid because it needs more force to turn. Use steps 3–5 to explain why the fastest safe speed does not depend on mass.',
         'Graph <i>F needed</i> vs <i>v</i>. Where the curve crosses the dashed f<sub>s,max</sub> line, read the speed. Compare it with v<sub>max</sub> in step 5.',
@@ -310,7 +310,7 @@ UNITS = {
         '<b>Coaster loop.</b> What speed at the top makes riders feel weightless (N = 0)? What speed at the bottom makes them feel 3 g’s?',
         '<b>Car over a hill.</b> Graph N vs v. In a sentence, explain why the car “gets light” at the top, then find the speed where it leaves the road.',
         '<b>Spot the error.</b> A student writes “at the top of the loop, the centripetal force and gravity both act on the car, so N + mg + F<sub>c</sub> = 0.” Use the free-body diagram to explain what’s wrong.']},
-    {'code': '', 'name': 'Conical Pendulum', 'sim': 'conical', 'tasks': [
+    {'code': '', 'name': 'Conical Pendulum', 'sim': 'conical', 'modes': ['cone'], 'select': 'Conical pendulum', 'tasks': [
         'Draw the free-body diagram on paper before you look. Then check: which part of the tension supplies the centripetal force? Which part holds the bob up?',
         'Change only the mass. What happens to the speed and the period? Point to the step in the work where m cancels.',
         'Graph T vs θ. Explain why the tension shoots up as θ approaches 90°. Could the string ever be exactly horizontal?',
@@ -385,7 +385,7 @@ UNITS = {
         '<b>Pendulum Lab</b> (Energy screen). Compare the speed at the bottom for two different release heights.']},
 ]},
 'P1-07': {'course': 'AP Physics 1 / IB', 'num': '07', 'title': 'Impulse and Momentum', 'guide': 'guides/P1-07.html', 'tabs': [
-    {'code': '', 'name': 'Crash Test', 'sim': 'crash', 'tasks': [
+    {'code': '', 'name': 'Crash Test', 'sim': 'crash', 'modes': ['stop', 'bounce'], 'select': 'Car stops dead', 'tasks': [
         '<b>Predict, then check.</b> A crumple zone doubles the collision time. What happens to the impulse? To the average force? Use the ×2 line to check both.',
         '<b>Claim.</b> A student says the crumple zone reduces the car’s change in momentum. Use steps 1–2 to explain what it really changes.',
         'Switch to “bounces back.” Explain why bouncing off the wall makes the force bigger, even though the car ends up moving slower than it started.',
@@ -444,7 +444,7 @@ UNITS = {
         'U-tube: add the second liquid. Measure both heights above the boundary and find the second liquid’s density.',
         'Gas tank manometer: read the height difference and find the gas’s gauge pressure. Is it more or less than air pressure?',
         'Siphon: raise the top of the tube. Why can’t a water siphon work over a top higher than about 10 m?']},
-    {'code': '', 'name': 'Floating & Sinking', 'sim': 'float', 'tasks': [
+    {'code': '', 'name': 'Floating & Sinking', 'sim': 'float', 'modes': ['float', 'tied', 'sink'], 'select': 'Floating', 'tasks': [
         '<b>Floating.</b> Show that the fraction under the surface is ρ<sub>obj</sub>/ρ<sub>fluid</sub>. What fraction of an ice cube is under water?',
         'Move a floating block from fresh water to salt water. Does the buoyant force change? Does the fraction under the surface?',
         '<b>Tied under.</b> A 2.0 L block (600 kg/m³) is held under by a string tied to the bottom. Draw the free-body diagram and find the tension.',
@@ -651,7 +651,7 @@ UNITS = {
         '<b>Absorption:</b> white light passes through cool hydrogen. Which colours go missing, and why the same ones as in emission?',
         '<b>Energy-level diagram:</b> list every photon the mystery atom can emit after reaching n = 4. Which has the longest wavelength?',
         '<span style="color:#8a8a8a;font-weight:700">Extension</span> Send in a 6.0 eV photon, then a 6.0 eV electron. Why does only one of them excite the atom?']},
-    {'code': '', 'name': 'Photoelectric Effect', 'sim': 'photo', 'tasks': [
+    {'code': '', 'name': 'Photoelectric Effect', 'sim': 'photo', 'modes': ['tube'], 'select': 'Photoelectric tube', 'tasks': [
         'Shine bright red light on sodium. What happens? Now dim UV. Explain using photons.',
         'Find the threshold frequency for each metal. Which metals work with visible light?',
         'Graph K<sub>max</sub> vs f for zinc. What do the slope and the intercepts tell you?',
@@ -664,7 +664,7 @@ UNITS = {
         'Calculate the energy from one U-235 fission. How many times more energy per kilogram than gasoline?',
         'Compare D–T fusion with U-235 fission per kilogram. Which releases more?',
         '<b>Beta-plus:</b> pick ¹⁸F → ¹⁸O + e⁺ + ν. Why does Q need an extra 2m<sub>e</sub>c² (1.022 MeV) subtracted when you use atomic masses?']},
-    {'code': '', 'name': 'Radioactive Decay', 'sim': 'decay', 'tasks': [
+    {'code': '', 'name': 'Radioactive Decay', 'sim': 'decay', 'modes': ['half', 'types', 'date', 'pen'], 'select': 'Half-life', 'tasks': [
         'Watch the sample. Can you predict which nucleus decays next? How well does the sample follow the curve? Try N₀ = 100.',
         'After 3 half-lives, what fraction is left? What is the activity compared with the start?',
         't½ = 6.0 h. Find λ in s⁻¹ and the activity of 10¹⁵ nuclei.',
@@ -803,7 +803,7 @@ UNITS.update({
         '<b>Leftover glow:</b> what color did the universe glow at 380,000 years? Why can’t we see that glow with our eyes today?']},
 ]},
 'AB-05': {'course': AB, 'num': '05', 'title': 'Momentum', 'review': '05-R', 'guide': 'guides/AB-05.html', 'tabs': [
-    {'code': '', 'name': 'Crash Test', 'sim': 'crash', 'tasks': ['A car hits a wall. Find the change in momentum and the impulse.', 'Make the crash last longer (an airbag or crumple zone). What happens to the force?', 'Car bounces back: why is the impulse bigger than when it stops dead?']},
+    {'code': '', 'name': 'Crash Test', 'sim': 'crash', 'modes': ['stop', 'bounce'], 'select': 'Car stops dead', 'tasks': ['A car hits a wall. Find the change in momentum and the impulse.', 'Make the crash last longer (an airbag or crumple zone). What happens to the force?', 'Car bounces back: why is the impulse bigger than when it stops dead?']},
     {'code': '', 'name': 'Collision Carts', 'sim': 'ab-carts', 'tasks': [
         '<b>Hit and stick:</b> two carts stick together. Find their speed after the collision.',
         '<b>Rebound:</b> check the total momentum before and after. Is it the same?',
@@ -947,7 +947,7 @@ UNITS.update({
         'With the same torque, which spins up faster: beads in close or at the ends? Explain using τ = Iα.',
         '<b>Shapes.</b> Rank the hoop, disk, hollow sphere and solid sphere by I (same M and R). Explain the ranking by where the mass is.',
         'Why is a rod’s I about one end 4 times its I about the center?']},
-    {'code': '', 'name': 'Massive Pulley', 'sim': 'mpulley', 'tasks': [
+    {'code': '', 'name': 'Massive Pulley', 'sim': 'mpulley', 'modes': ['spool', 'atwood', 'table'], 'select': 'Hanging from a spool', 'tasks': [
         '<b>Spool.</b> A 1 kg mass hangs from a string wrapped on a 2 kg disk pulley. Find a and T. Why is T less than mg?',
         'Change the pulley radius. Does a change? Does α? Explain using I = ½MR² and a = Rα.',
         '<b>Atwood.</b> Show that the tensions on the two sides are different. Which is bigger, and what does the difference do?',
@@ -967,7 +967,7 @@ UNITS.update({
         'In all three, explain why there is no outside torque.']},
 ]},
 'P1-10': {'course': 'AP Physics 1 / IB', 'num': '10', 'title': 'Simple Harmonic Motion', 'guide': 'guides/P1-10.html', 'tabs': [
-    {'code': '', 'name': 'Mass on a Spring', 'sim': 'shm', 'tasks': [
+    {'code': '', 'name': 'Mass on a Spring', 'sim': 'shm', 'modes': ['horiz', 'vert', 'space'], 'select': 'Horizontal', 'tasks': [
         '<b>Predict, then check.</b> What happens to the period if you double the amplitude? If you make the mass 4× bigger? Use the ×2 line.',
         'Where in the motion is the speed biggest? The acceleration? The force? Use the x, v and a graphs to justify each answer.',
         'A 1.0 kg block on a 40 N/m spring is pulled 0.15 m and released. Find T, v<sub>max</sub> and a<sub>max</sub>, then check.',
@@ -1039,7 +1039,7 @@ UNITS.update({
         '<b>Series:</b> same capacitors. Find C<sub>eq</sub>, the charge, and the voltage on each. Which capacitor gets the bigger voltage? Why?',
         'Why is C<sub>eq</sub> bigger than either capacitor in parallel, but smaller in series? Compare with resistors.',
         'Make the capacitors equal. What happens to the voltages in series?']},
-    {'code': '03-8', 'name': 'RC Circuits', 'sim': 'rc', 'tasks': [
+    {'code': '03-8', 'name': 'RC Circuits', 'sim': 'rc', 'modes': ['chg', 'dis', 'fork'], 'select': 'Charging', 'tasks': [
         'Charging: what are the current and the capacitor voltage at t = 0? After a long time? Explain each.',
         'Find τ = RC. Double C: does it charge faster or slower? Does the final charge change? Sketch q, V<sub>C</sub> and I against t, then check.',
         'Double R. What happens to the time constant, the starting current and the final charge?',
@@ -1063,7 +1063,7 @@ UNITS.update({
         'Record θ for I = 0.5, 1.0, 1.5, 2.0 and 2.5 A at r = 2.0 cm. Graph tan θ against I.',
         'Use the slope to find Earth’s field: B<sub>Earth</sub> = μ₀/(2πr × slope). Compare with 2 × 10⁻⁵ T.',
         'Move the compass farther from the wire. What happens to the slope of your graph? Why?']},
-    {'code': '03-11', 'name': 'Charges in Magnetic Fields', 'sim': 'bforce', 'tasks': [
+    {'code': '03-11', 'name': 'Charges in Magnetic Fields', 'sim': 'bforce', 'modes': ['circ', 'sel', 'spec', 'hall'], 'select': 'Circular motion', 'tasks': [
         'A proton moves in a circle. Why doesn’t its speed change? How much work does the magnetic force do?',
         'Double the speed. What happens to the radius? To the period?',
         'Switch to an electron with the same speed. Which way does it circle? Why is its radius so much smaller?',
@@ -1108,7 +1108,7 @@ UNITS.update({
         'Send the pulse into a heavier string, then a lighter one. Which pulse is wider? Why?',
         '<b>Beats:</b> a 256 Hz fork and a guitar string give 4 beats per second. What two frequencies could the string have? How can you tell which?',
         '<b>Coherence:</b> why do two flashlights never make a steady interference pattern, but two speakers on one amplifier do?']},
-    {'code': '04-3', 'name': 'Refraction & TIR', 'sim': 'snell', 'tasks': [
+    {'code': '04-3', 'name': 'Refraction & TIR', 'sim': 'snell', 'modes': ['refr', 'fiber'], 'select': 'Snell’s law', 'tasks': [
         'Light goes from air into water at 40°. Find θ₂, v₂ and λ₂. Which ones change and which don’t?',
         'Watch the wavefronts as they cross the boundary. Use them to explain why the ray bends.',
         'Find the critical angle for glass to air. Then go past it. Where does the light go?',
