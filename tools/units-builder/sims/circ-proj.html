@@ -251,8 +251,12 @@ function loop(ts){ const dt = Math.min(0.05, (ts - (last || ts)) / 1000); last =
 // Projectiles: horizontal launch, angled launch on level ground, angled launch from a height, and hitting a target.
 const SIM = {
   title: 'Projectiles',
-  modes: [{ id: 'horiz', label: 'Off a cliff' }, { id: 'level', label: 'Level ground' }, { id: 'height', label: 'From a height' }, { id: 'target', label: 'Hit the target' }],
-  ivs(mode){
+  modes: [{ id: 'horiz', label: 'Off a cliff' }, { id: 'level', label: 'Level ground' }, { id: 'height', label: 'From a height' }, { id: 'target', label: 'Hit the target' }, { id: 'dh', label: 'Launcher lab: D² vs H' }],
+  opts: [{ id: 'vk', label: 'Launch speed', modes: ['dh'], choices: [['shown', 'v₀ shown'], ['mystery', 'Mystery v₀']] }],
+  ivs(mode, opt){
+    if (mode === 'dh'){ const my = (opt && opt.vk) === 'mystery'; return [
+      { id: 'H', sym: 'H', symText: 'H', label: 'Table height', unit: 'm', min: 0.3, max: 2, step: 0.05, val: 1, graph: true }].concat(my ? [] : [
+      { id: 'vl', sym: 'v<sub>0</sub>', symText: 'v0', label: 'Launch speed (horizontal)', unit: 'm/s', min: 1, max: 5, step: 0.1, val: 3 }]); }
     if (mode === 'horiz') return [
       { id: 'v0', sym: 'v<sub>0</sub>', symText: 'v0', label: 'Launch speed (horizontal)', unit: 'm/s', min: 0, max: 30, step: 0.5, val: 10, graph: true },
       { id: 'h', sym: 'h', symText: 'h', label: 'Cliff height', unit: 'm', min: 5, max: 100, step: 1, val: 45 }];
@@ -268,8 +272,9 @@ const SIM = {
       { id: 'D', sym: 'D', symText: 'D', label: 'Target distance', unit: 'm', min: 5, max: 80, step: 1, val: 30 },
       { id: 'yT', sym: 'y<sub>T</sub>', symText: 'yT', label: 'Target height (− = below)', unit: 'm', min: -20, max: 30, step: 0.5, val: 5 }];
   },
-  presets: [{ label: 'Complementary angles', mode: 'level', v: { th: 60 } }, { label: '45°', mode: 'level', v: { th: 45 } }, { label: 'Thrown down', mode: 'height', v: { th: -30 } }, { label: 'Just drop it', mode: 'horiz', v: { v0: 0 } }],
-  calc(v, mode){
+  presets: [{ label: 'Complementary angles', mode: 'level', v: { th: 60 } }, { label: '45°', mode: 'level', v: { th: 45 } }, { label: 'Thrown down', mode: 'height', v: { th: -30 } }, { label: 'Just drop it', mode: 'horiz', v: { v0: 0 } }, { label: 'Lab: low table', mode: 'dh', v: { H: 0.5 } }, { label: 'Lab: high table', mode: 'dh', v: { H: 1.8 } }],
+  calc(v, mode, opt){
+    if (mode === 'dh'){ const my = (opt && opt.vk) === 'mystery', v0 = my ? DH_MYSTERY : v.vl, t = Math.sqrt(2 * v.H / G10), D = v0 * t; return { dh: true, mystery: my, v0, H: v.H, t, D, D2: D * D, slope: 2 * v0 * v0 / G10 }; }
     let v0, th, h = 0, ok = true;
     if (mode === 'horiz'){ v0 = v.v0; th = 0; h = v.h; }
     else if (mode === 'level'){ v0 = v.v0; th = v.th; }
@@ -284,6 +289,10 @@ const SIM = {
     return { v0, th, h, vx, vy, T, R, yEnd, vyEnd, vEnd, angEnd, tTop, yMax, pos, ok, R90: mode === 'level' ? v0 * v0 * Math.sin(2 * (90 - th) * DEG) / G10 : NaN };
   },
   dvs(mode){
+    if (mode === 'dh') return [
+      { id: 'D2', name: 'D² (landing distance squared)', short: 'D²', sym: 'D²', unit: 'm²', f: d => d.D2 },
+      { id: 'D', name: 'Landing distance D', short: 'D', sym: 'D', unit: 'm', f: d => d.D },
+      { id: 't', name: 'Time of fall', short: 't', sym: 't', unit: 's', f: d => d.t }];
     const l = [
       { id: 'R', name: 'Horizontal distance (range)', short: 'R', sym: 'R', unit: 'm', f: d => d.R },
       { id: 'T', name: 'Time in the air', short: 't', sym: 't', unit: 's', f: d => d.T },
@@ -292,7 +301,8 @@ const SIM = {
     if (mode === 'target') l.unshift({ id: 'v0', name: 'Launch speed needed', short: 'v0', sym: 'v<sub>0</sub>', unit: 'm/s', f: d => d.v0 });
     return l;
   },
-  work(v, d, mode){
+  work(v, d, mode, opt){
+    if (mode === 'dh') return workDH(v, d, opt);
     if (mode === 'target' && !d.ok) return '<div class="bad">At ' + H.iv('th') + ' the launch line points below the target, so no speed can reach it. Aim higher.</div>';
     const iv0 = mode === 'target' ? M.n(d.v0, 'm/s') : M.iv('v0'), ith = mode === 'horiz' ? '<mrow><mn>0</mn><mo>°</mo></mrow>' : M.iv('th');
     let h = '<h4>1 · Split the launch velocity into components</h4>' +
@@ -356,6 +366,106 @@ const SIM = {
     text('t = ' + fplain(tt) + ' s   x = ' + fplain(p[0]) + ' m   y = ' + fplain(p[1]) + ' m', 12, 322, { font: '600 11px "IBM Plex Mono",monospace', col: '#4a4a4a' });
   }
 };
+
+const _baseDraw = SIM.draw;
+SIM.draw = function(v, d, mode, opt, t, dt, A){
+  if (mode === 'dh') return drawDH(v, d, opt, t, dt, A);
+  return _baseDraw.apply(this, arguments);
+};
+
+// ---------- Launcher lab: D² vs H ----------
+const DH_MYSTERY = 3.4;
+const OPF = '"Space Grotesk",sans-serif', OPM = '"IBM Plex Mono",monospace';
+const DHS = window._dh = window._dh || { pts: [], msg: '', msgT: -9, btn: [], cur: null };
+function btnDraw(x, y, w, h, label, hot){ DHS.btn.push({ x, y, w, h, label }); ctx.save(); ctx.fillStyle = hot ? '#ff6a2b' : '#fff'; ctx.strokeStyle = '#111'; ctx.lineWidth = 2; ctx.fillRect(x, y, w, h); ctx.strokeRect(x, y, w, h); ctx.restore(); text(label, x + w / 2, y + h / 2 + 4.5, { align: 'center', font: '700 12px ' + OPF, col: hot ? '#fff' : '#111' }); }
+function dhRecord(){ const v = S.v, d = S.d; if (!d || !d.dh) return;
+  const k = DHS.pts.findIndex(p => Math.abs(p.H - v.H) < 0.001);
+  if (k >= 0) DHS.pts[k] = { H: v.H, D: d.D, v0: d.v0 }; else if (DHS.pts.length >= 8){ DHS.msg = 'Table full: clear it first'; DHS.msgT = S.t; return update(); } else DHS.pts.push({ H: v.H, D: d.D, v0: d.v0 });
+  DHS.msg = 'Recorded H = ' + fplain(v.H) + ' m, D = ' + fplain(d.D) + ' m'; DHS.msgT = S.t; update(); }
+function dhClear(){ DHS.pts.length = 0; DHS.msg = 'Table cleared'; DHS.msgT = S.t; update(); }
+const DHACT = { 'Record point': () => S.mode === 'dh' && dhRecord(), 'Clear table': () => S.mode === 'dh' && dhClear() };
+(function(){ const pos = e => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) / r.width * 600, (e.clientY - r.top) / r.height * 330]; };
+  const hit = e => { const [x, y] = pos(e); return DHS.btn.find(b => x >= b.x && x <= b.x + b.w && y >= b.y && y <= b.y + b.h); };
+  cv.addEventListener('pointerdown', e => { const b = hit(e); if (b && DHACT[b.label]){ DHACT[b.label](); e.preventDefault(); } });
+  cv.addEventListener('pointermove', e => { cv.style.cursor = S.mode === 'dh' && hit(e) ? 'pointer' : ''; });
+  document.addEventListener('keydown', e => { if (e.ctrlKey || e.metaKey || e.altKey || S.mode !== 'dh') return; const k = e.key.toLowerCase(); if (k === 'r') dhRecord(); else if (k === 'c') dhClear(); }); })();
+// best-fit line through the origin: y = m x
+function fitOrigin(pts){ let sxy = 0, sxx = 0; pts.forEach(([x, y]) => { sxy += x * y; sxx += x * x; }); return sxx > 1e-12 ? sxy / sxx : null; }
+function niceMax(x, list){ return list.find(n => n >= x) || Math.ceil(x); }
+
+function workDH(v, d, opt){
+  const pts = DHS.pts, n = pts.length;
+  let h = '<h4>1 · Time to fall off the table</h4><p class="st">Launched horizontally, so it starts with no downward speed. The fall height is H:</p>' +
+    ("<math display=\"block\"><mrow><mi>H</mi><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac><mi>g</mi><msup><mi>t</mi><mn>2</mn></msup></mrow></math>") + ("<math display=\"block\"><mrow><mi>t</mi><mo>&#x0003D;</mo><msqrt><mrow><mfrac><mrow><mn>2</mn><mi>H</mi></mrow><mrow><mi>g</mi></mrow></mfrac></mrow></msqrt></mrow></math>") + ("<math display=\"block\"><mrow><mi>t</mi><mo>&#x0003D;</mo><msqrt><mrow><mfrac><mrow><mn>2</mn><mo stretchy=\"false\">&#x00028;</mo>" + (M.iv('H')) + "<mo stretchy=\"false\">&#x00029;</mo></mrow><mrow><mn>10</mn><mspace width=\"0.167em\" /><msup><mtext>m/s</mtext><mn>2</mn></msup></mrow></mfrac></mrow></msqrt></mrow></math>") + ("<math class=\"ans\" display=\"block\"><mrow><mi>t</mi><mo>&#x0003D;</mo>" + (M.n(d.t, 's')) + "</mrow></math>") +
+    '<h4>2 · Distance across the floor</h4><p class="st">Horizontal speed stays constant:</p>' + ("<math display=\"block\"><mrow><mi>D</mi><mo>&#x0003D;</mo><msub><mi>v</mi><mn>0</mn></msub><mspace width=\"0.167em\" /><mi>t</mi></mrow></math>") +
+    (d.mystery ? '<p class="st">The launch speed v₀ is hidden. You measure D with the ruler: ' + H.n(d.D, 'm') + '.</p>'
+      : ("<math display=\"block\"><mrow><mi>D</mi><mo>&#x0003D;</mo><mo stretchy=\"false\">&#x00028;</mo>" + (M.iv('vl')) + "<mo stretchy=\"false\">&#x00029;</mo><mo stretchy=\"false\">&#x00028;</mo>" + (M.n(d.t)) + "<mo stretchy=\"false\">&#x00029;</mo></mrow></math>") + ("<math class=\"ans\" display=\"block\"><mrow><mi>D</mi><mo>&#x0003D;</mo>" + (M.n(d.D, 'm')) + "</mrow></math>")) +
+    '<h4>3 · Square it to get a straight line</h4>' + ("<math display=\"block\"><mrow><msup><mi>D</mi><mn>2</mn></msup><mo>&#x0003D;</mo><msubsup><mi>v</mi><mn>0</mn><mn>2</mn></msubsup><mspace width=\"0.167em\" /><msup><mi>t</mi><mn>2</mn></msup><mo>&#x0003D;</mo><msubsup><mi>v</mi><mn>0</mn><mn>2</mn></msubsup><mspace width=\"0.167em\" /><mfrac><mrow><mn>2</mn><mi>H</mi></mrow><mrow><mi>g</mi></mrow></mfrac></mrow></math>") + ("<math class=\"ans\" display=\"block\"><mrow><msup><mi>D</mi><mn>2</mn></msup><mo>&#x0003D;</mo><mrow><mo stretchy=\"true\" fence=\"true\" form=\"prefix\">&#x00028;</mo><mfrac><mrow><mn>2</mn><msubsup><mi>v</mi><mn>0</mn><mn>2</mn></msubsup></mrow><mrow><mi>g</mi></mrow></mfrac><mo stretchy=\"true\" fence=\"true\" form=\"postfix\">&#x00029;</mo></mrow><mi>H</mi></mrow></math>") +
+    '<p class="st">That is y = m·x with y = D², x = H. A line through the origin with slope 2v₀²/g.</p>' +
+    (d.mystery ? '' : ("<math display=\"block\"><mrow><mtext>slope</mtext><mo>&#x0003D;</mo><mfrac><mrow><mn>2</mn><msubsup><mi>v</mi><mn>0</mn><mn>2</mn></msubsup></mrow><mrow><mi>g</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>2</mn><mo stretchy=\"false\">&#x00028;</mo>" + (M.iv('vl')) + "<msup><mo stretchy=\"false\">&#x00029;</mo><mn>2</mn></msup></mrow><mrow><mn>10</mn><mspace width=\"0.167em\" /><msup><mtext>m/s</mtext><mn>2</mn></msup></mrow></mfrac></mrow></math>") + ("<math class=\"ans\" display=\"block\"><mrow><mtext>slope</mtext><mo>&#x0003D;</mo>" + (M.n(d.slope, 'm')) + "</mrow></math>")) +
+    '<h4>4 · Your data</h4>';
+  if (n < 2) return h + '<p class="st">Change H and use <b>Record point</b> on the picture (or press R) at 4 or more heights. Points so far: ' + n + '.</p>';
+  const m = fitOrigin(pts.map(p => [p.H, p.D * p.D]));
+  if (!m) return h + '<p class="st">Use different heights.</p>';
+  const v0 = Math.sqrt(m * G10 / 2), mixed = pts.some(p => Math.abs(p.v0 - pts[0].v0) > 1e-9);
+  h += '<p class="st">Best-fit line through the origin for your ' + n + ' points:</p>' + ("<math class=\"ans\" display=\"block\"><mrow><mtext>slope</mtext><mo>&#x0003D;</mo>" + (M.n(m, 'm')) + "</mrow></math>") +
+    '<h4>5 · Launch speed from the slope</h4>' + ("<math display=\"block\"><mrow><mtext>slope</mtext><mo>&#x0003D;</mo><mfrac><mrow><mn>2</mn><msubsup><mi>v</mi><mn>0</mn><mn>2</mn></msubsup></mrow><mrow><mi>g</mi></mrow></mfrac></mrow></math>") + ("<math display=\"block\"><mrow><msub><mi>v</mi><mn>0</mn></msub><mo>&#x0003D;</mo><msqrt><mrow><mfrac><mrow><mtext>slope</mtext><mo>&#x000B7;</mo><mi>g</mi></mrow><mrow><mn>2</mn></mrow></mfrac></mrow></msqrt></mrow></math>") + ("<math display=\"block\"><mrow><msub><mi>v</mi><mn>0</mn></msub><mo>&#x0003D;</mo><msqrt><mrow><mfrac><mrow><mo stretchy=\"false\">&#x00028;</mo>" + (M.n(m)) + "<mo stretchy=\"false\">&#x00029;</mo><mo stretchy=\"false\">&#x00028;</mo><mn>10</mn><mo stretchy=\"false\">&#x00029;</mo></mrow><mrow><mn>2</mn></mrow></mfrac></mrow></msqrt></mrow></math>") + ("<math class=\"ans\" display=\"block\"><mrow><msub><mi>v</mi><mn>0</mn></msub><mo>&#x0003D;</mo>" + (M.n(v0, 'm/s')) + "</mrow></math>");
+  if (mixed) h += '<div class="bad">You changed the launch speed between points, so they do not lie on one line. Clear the table and keep v₀ the same.</div>';
+  else h += d.mystery ? '<p class="note">Switch Launch speed to “v₀ shown” to see how close you got.</p>' : '<p class="note">The launcher’s real v₀ is ' + H.n(d.v0, 'm/s') + ': your slope is off by ' + fnum(Math.abs(v0 - d.v0) / d.v0 * 100) + '%.</p>';
+  return h;
+}
+function drawDH(v, d, opt, t, dt, A){
+  DHS.btn = []; DHS.cur = { v, d };
+  if (A.t === undefined || A.reset) A.t = 0; A.t += dt;
+  panelTitle('LAUNCHER LAB: BALL OFF A TABLE EDGE', 10, 18);
+  const sc = 85, x0 = 70, gy = 262, X = m => x0 + m * sc, Y = m => gy - m * sc;
+  // floor + ruler
+  ctx.fillStyle = '#e6dccb'; ctx.fillRect(0, gy, 385, 4);
+  ctx.fillStyle = '#f4e9b8'; ctx.strokeStyle = '#111'; ctx.lineWidth = 1.5; ctx.fillRect(x0, gy + 4, 3.5 * sc, 18); ctx.strokeRect(x0, gy + 4, 3.5 * sc, 18);
+  ctx.lineWidth = 1; for (let c = 0; c <= 35; c++){ const lh = c % 10 === 0 ? 9 : c % 5 === 0 ? 7 : 4; ctx.beginPath(); ctx.moveTo(X(c / 10), gy + 4); ctx.lineTo(X(c / 10), gy + 4 + lh); ctx.stroke(); if (c % 5 === 0) text(c % 10 === 0 ? String(c / 10) : '', X(c / 10), gy + 20, { align: 'center', font: '500 9px ' + OPM }); }
+  text('m', X(3.5) + 4, gy + 18, { font: '500 9px ' + OPM, col: '#4a4a4a' });
+  // table
+  const ty = Y(v.H); ctx.fillStyle = '#b89a6a'; ctx.fillRect(10, ty, x0 - 10, gy - ty); ctx.fillStyle = '#7a5c30'; ctx.fillRect(10, ty - 5, x0 - 10 + 4, 7);
+  ctx.strokeStyle = '#111'; ctx.lineWidth = 1; ctx.strokeRect(10, ty - 5, x0 - 10 + 4, gy - ty + 5);
+  // H dimension
+  ctx.strokeStyle = '#1546d6'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(x0 + 14, ty); ctx.lineTo(x0 + 14, gy); ctx.stroke(); [[ty, 1], [gy, -1]].forEach(([yy, sg]) => { ctx.beginPath(); ctx.moveTo(x0 + 10, yy + sg * 6); ctx.lineTo(x0 + 14, yy); ctx.lineTo(x0 + 18, yy + sg * 6); ctx.stroke(); });
+  text('H = ' + fplain(v.H) + ' m', 38, (ty + gy) / 2 + 4, { align: 'center', font: '700 11px ' + OPF, col: '#fff' });
+  // launcher at the edge
+  ctx.fillStyle = '#333'; ctx.fillRect(x0 - 26, ty - 14, 26, 9);
+  // landing mark
+  const lxm = X(d.D); ctx.strokeStyle = '#c43a00'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(lxm - 5, gy - 5); ctx.lineTo(lxm + 5, gy + 5); ctx.moveTo(lxm + 5, gy - 5); ctx.lineTo(lxm - 5, gy + 5); ctx.stroke();
+  // ball (animated, loops)
+  const T = d.t, cyc = T + 1.2, tt = Math.min(A.t % cyc, T), pos = s => [d.v0 * s, v.H - 5 * s * s];
+  ctx.strokeStyle = 'rgba(255,106,43,0.35)'; ctx.lineWidth = 1.5; ctx.beginPath(); for (let k = 0; k <= 60; k++){ const p = pos(T * k / 60); k ? ctx.lineTo(X(p[0]), Y(p[1])) : ctx.moveTo(X(p[0]), Y(p[1])); } ctx.stroke();
+  for (let s = 0; s <= tt + 1e-9; s += 0.05){ const p = pos(s); ctx.fillStyle = '#ffb38f'; ctx.beginPath(); ctx.arc(X(p[0]), Y(p[1]), 2.5, 0, 7); ctx.fill(); }
+  const p = pos(tt); ctx.fillStyle = '#ff6a2b'; ctx.strokeStyle = '#111'; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(X(p[0]), Y(p[1]) - 0, 6, 0, 7); ctx.fill(); ctx.stroke();
+  // D dimension on the floor
+  ctx.strokeStyle = '#c43a00'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(x0, gy - 8); ctx.lineTo(lxm, gy - 8); ctx.stroke(); text('D = ' + fplain(d.D) + ' m', (x0 + lxm) / 2, gy - 12, { align: 'center', font: '700 12px ' + OPF, col: '#c43a00' });
+  text(d.mystery ? 'v₀ = ? (hidden)' : 'v₀ = ' + fplain(d.v0) + ' m/s', 380, 18 + 14, { align: 'right', font: '700 12px ' + OPM, col: '#4a4a4a' });
+  text('t = ' + fplain(d.t) + ' s', 380, 18 + 28, { align: 'right', font: '600 11px ' + OPM, col: '#4a4a4a' });
+  // buttons
+  btnDraw(14, 294, 96, 26, 'Record point', S.t - DHS.msgT < 0.25); btnDraw(118, 294, 90, 26, 'Clear table', false);
+  if (S.t - DHS.msgT < 3.5) text(DHS.msg, 216, 311, { font: '600 10.5px ' + OPF, col: '#4a4a4a' }); else text('keys: R record, C clear', 216, 311, { font: '500 10px ' + OPM, col: '#8a8a8a' });
+  // data table
+  panelTitle('DATA TABLE', 395, 18);
+  [['H (m)', 458], ['D (m)', 525], ['D² (m²)', 592]].forEach(([a, x]) => text(a, x, 33, { align: 'right', font: '700 10px ' + OPM, col: '#4a4a4a' }));
+  ctx.strokeStyle = '#111'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(396, 37); ctx.lineTo(596, 37); ctx.stroke();
+  DHS.pts.forEach((q, i) => { const y = 49 + i * 12; text(String(i + 1), 400, y, { font: '500 10px ' + OPM, col: '#8a8a8a' }); text(fplain(q.H), 458, y, { align: 'right', font: '600 11px ' + OPM }); text(q.D.toFixed(2), 525, y, { align: 'right', font: '600 11px ' + OPM }); text((q.D * q.D).toFixed(2), 592, y, { align: 'right', font: '600 11px ' + OPM }); });
+  if (!DHS.pts.length) text('(empty: record a point)', 400, 53, { font: '500 10.5px ' + OPF, col: '#8a8a8a' });
+  // plot D² vs H
+  const q2 = DHS.pts.map(q => [q.H, q.D * q.D]), m = fitOrigin(q2);
+  const ymax = niceMax(Math.max(1, ...q2.map(a => a[1]), d.D2) * 1.05, [1, 2, 4, 6, 8, 10, 12]);
+  const px0 = 428, px1 = 584, py0 = 292, py1 = 196, PX = x => px0 + x / 2 * (px1 - px0), PY = y => py0 - y / ymax * (py0 - py1);
+  panelTitle('D² (m²) vs H (m)', 395, 180);
+  ctx.strokeStyle = '#111'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(px0, py1 - 4); ctx.lineTo(px0, py0); ctx.lineTo(px1 + 4, py0); ctx.stroke();
+  [0, 1, 2].forEach(x => { text(String(x), PX(x), py0 + 12, { align: 'center', font: '500 9px ' + OPM, col: '#4a4a4a' }); ctx.strokeStyle = '#e3e0d6'; ctx.beginPath(); ctx.moveTo(PX(x), py0); ctx.lineTo(PX(x), py1); ctx.stroke(); });
+  [0, ymax / 2, ymax].forEach(y => { text(fplain(y), px0 - 4, PY(y) + 3, { align: 'right', font: '500 9px ' + OPM, col: '#4a4a4a' }); ctx.strokeStyle = '#e3e0d6'; ctx.beginPath(); ctx.moveTo(px0, PY(y)); ctx.lineTo(px1, PY(y)); ctx.stroke(); });
+  text('H (m)', px1 + 2, py0 + 24, { align: 'right', font: '700 10px ' + OPF });
+  if (m !== null){ ctx.save(); ctx.beginPath(); ctx.rect(px0, py1 - 4, px1 - px0 + 4, py0 - py1 + 4); ctx.clip(); ctx.strokeStyle = '#1546d6'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(PX(0), PY(0)); ctx.lineTo(PX(2), PY(2 * m)); ctx.stroke(); ctx.restore();
+    text('slope = ' + fplain(m) + ' m', 395, 150, { font: '600 11px ' + OPF, col: '#1546d6' }); text('v₀ = √(slope·g/2) ≈ ' + fplain(Math.sqrt(m * G10 / 2)) + ' m/s', 395, 164, { font: '700 11.5px ' + OPF, col: '#1546d6' }); }
+  q2.forEach(([x, y]) => { ctx.fillStyle = '#ff6a2b'; ctx.strokeStyle = '#111'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(PX(x), PY(y), 3.8, 0, 7); ctx.fill(); ctx.stroke(); });
+  if (m === null) text(DHS.pts.length ? 'need 2+ points for a line' : 'points will appear here', (px0 + px1) / 2, 245, { align: 'center', font: '500 10.5px ' + OPF, col: '#8a8a8a' });
+}
 
 
 
