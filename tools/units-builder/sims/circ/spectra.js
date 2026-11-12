@@ -5,6 +5,41 @@ function wlRGB(l){ let r = 0, g = 0, b = 0; if (l < 440){ r = (440 - l) / 60; b 
 const rgb = l => 'rgb(' + wlRGB(l).join(',') + ')';
 const MYST = [-12.0, -7.0, -4.5, -2.0]; // mystery atom levels (eV)
 const region = l => l < 380 ? 'ultraviolet' : l > 750 ? 'infrared' : 'visible';
+// Click-to-emit: click an upper level, then a lower level (or the same level again to drop to n = 1); a photon flies off.
+const SPK = { mode: null, sel: null, jump: null, ph: null, lv: [], hooked: false };
+function spkFire(up, lo){
+  const a = SPK.lv.find(l => l.n === up), b = SPK.lv.find(l => l.n === lo); if (!a || !b) return;
+  const dE = a.E - b.E; SPK.sel = null; SPK.jump = { mode: SPK.mode, up, lo, Eu: a.E, El: b.E, dE, lam: HC / dE }; SPK.ph = { age: 0 };
+  if (SPK.mode === 'emit'){ S.v.hi = up; S.v.lo = lo; S.store['emit:hi'] = up; S.store['emit:lo'] = lo; ['hi', 'lo'].forEach(k => { const r = $('r-' + k); if (r) r.value = S.v[k]; }); }
+  update();
+}
+function spkHit(e){ const r = cv.getBoundingClientRect(), x = (e.clientX - r.left) * 600 / r.width, y = (e.clientY - r.top) * 330 / r.height; if (SPK.mode !== 'myst' && SPK.mode !== 'emit') return null;
+  let best = null; SPK.lv.forEach(l => { const dy = Math.abs(y - l.y); if (x > 40 && x < 330 && dy < 9 && (!best || dy < best.dy)) best = { n: l.n, dy }; }); return best ? best.n : null; }
+function spkHook(){
+  if (SPK.hooked) return; SPK.hooked = true; cv.style.touchAction = 'manipulation';
+  cv.addEventListener('pointerdown', e => { const n = spkHit(e); if (n === null){ SPK.sel = null; return; }
+    if (SPK.sel === null){ if (n > 1) SPK.sel = n; return; }
+    if (n === SPK.sel) return spkFire(n, 1);
+    if (n < SPK.sel) return spkFire(SPK.sel, n);
+    SPK.sel = n; });
+  cv.addEventListener('pointermove', e => { cv.style.cursor = spkHit(e) !== null ? 'pointer' : 'default'; });
+}
+function spkFrame(mode, dt){ spkHook(); if (SPK.mode !== mode){ SPK.mode = mode; SPK.sel = null; SPK.jump = null; SPK.ph = null; } SPK.lv = []; if (SPK.ph) SPK.ph.age += dt; }
+// level click targets, the picked level, the prompt and the flying photon
+function spkOverlay(Yof, levels, yJump, xs, mid){
+  SPK.lv = levels.map(([n, E]) => ({ n, E, y: Yof(E) }));
+  const F = '"Space Grotesk",sans-serif', Mo = '"IBM Plex Mono",monospace';
+  if (SPK.sel !== null){ const l = SPK.lv.find(q => q.n === SPK.sel); ctx.strokeStyle = '#ff6a2b'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(60, l.y); ctx.lineTo(260, l.y); ctx.stroke(); ctx.fillStyle = '#ff6a2b'; ctx.beginPath(); ctx.arc(yJump, l.y, 6, 0, 7); ctx.fill(); }
+  text(SPK.sel !== null ? 'n = ' + SPK.sel + ' picked: click a lower level (same level again = drop to n = 1)' : 'Click a level, then a lower level, to emit a photon', 140, 318, { font: '600 10px ' + F, col: '#c43a00' });
+  const j = SPK.jump; if (!j || j.mode !== SPK.mode) return;
+  if (SPK.mode === 'myst'){ arrow(yJump, SPK.lv.find(q => q.n === j.up).y, yJump, SPK.lv.find(q => q.n === j.lo).y - 2, '#111', null, { w: 2.5, head: 7 }); }
+  const ph = SPK.ph; if (!ph) return; const x = xs + 110 * ph.age, vis = j.lam >= 380 && j.lam <= 750, col = vis ? rgb(j.lam) : j.lam < 380 ? '#7a3fb0' : '#8a1a1a', tag = j.lam < 380 ? 'UV ' : j.lam > 750 ? 'IR ' : '';
+  if (x - 56 > 384) return;
+  ctx.save(); ctx.beginPath(); ctx.rect(0, 0, 384, 330); ctx.clip(); ctx.strokeStyle = col; ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.setLineDash(vis ? [] : [5, 3]); ctx.beginPath();
+  for (let i = 0; i <= 56; i++){ const px = x - 56 + i, py = mid + 6 * Math.sin(i * 0.6 + ph.age * 14); i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); } ctx.stroke(); ctx.setLineDash([]);
+  { const lt = tag + fplain(j.lam) + ' nm'; ctx.font = '700 11px ' + F; ctx.textAlign = 'center'; ctx.lineJoin = 'round'; ctx.lineWidth = 4; ctx.strokeStyle = '#fbfbfb'; ctx.strokeText(lt, x - 28, mid + (SPK.mode === 'emit' ? 24 : -14)); }
+  text(tag + fplain(j.lam) + ' nm', x - 28, mid + (SPK.mode === 'emit' ? 24 : -14), { align: 'center', font: '700 11px ' + F, col: vis ? '#111' : col }); ctx.restore();
+}
 const SIM = {
   title: 'Atomic Spectra',
   hint: 'E = hf = hc/λ · hc = 1240 eV·nm',
@@ -31,9 +66,11 @@ const SIM = {
   },
   work(v, d, mode){
     if (mode === 'myst'){
-      const sub = n => '<mn>' + n + '</mn>';
+      const sub = n => '<mn>' + n + '</mn>', J = SPK.jump && SPK.jump.mode === 'myst' ? SPK.jump : null;
+      const mine = J ? '<h4>Your photon: n = ' + J.up + ' → ' + J.lo + '</h4>' + TEX`\Delta E = E_${sub(J.up)} - E_${sub(J.lo)}` + TEX`\Delta E = ${M.p(J.Eu)} - ${M.p(J.El)}` + TEXA`\Delta E = ${M.n(J.dE, 'eV')}` +
+        TEX`\lambda = \frac{hc}{\Delta E}` + TEX`\lambda = \frac{1240\,\text{eV}\cdot\text{nm}}{${M.n(J.dE, 'eV')}}` + TEXA`\lambda = ${M.n(J.lam, 'nm')}` + '<p class="st">That is ' + region(J.lam) + ' light.</p>' : '<p class="st">Click a level on the diagram, then a lower level, to send out a photon and see its energy and wavelength here.</p>';
       const list = '<p class="st">Gaps from the ground state, and the ionization energy:</p>' + d.gaps.map((g, i) => TEX`E_{1 \to ${sub(i + 2)}} = ${M.n(g, 'eV')}`).join('') + TEX`E_{\text{ion}} = ${M.n(d.ion, 'eV')}`;
-      let s = '<h4>1 · What can the atom absorb?</h4>' + list;
+      let s = mine + '<h4>1 · What can the atom absorb?</h4>' + list;
       if (d.el) s += '<p class="st">An <b>electron</b> can give up <i>part</i> of its energy, so it excites the atom to the highest level it can reach and keeps the rest: ' + (d.up === 'ion' ? '<b>ionized</b>.</p>' + TEXA`K_{\text{left}} = ${M.n(d.left, 'eV')}` : d.up ? 'up to n = <b>' + (d.up + 1) + '</b>.</p>' + TEXA`K_{\text{left}} = ${M.n(d.left, 'eV')}` : 'not enough for any jump; it bounces off with all ' + H.iv('E') + '.</p>');
       else s += '<p class="st">A <b>photon</b> is all or nothing: it is absorbed only if its energy matches a gap exactly. ' + (d.up === 'ion' ? 'Above the ionization energy: <b>ionized</b>, the electron leaves with:</p>' + TEXA`K_{\text{left}} = ${M.n(d.left, 'eV')}` : d.up ? 'Match! The atom jumps to n = <b>' + (d.up + 1) + '</b>.</p>' : 'No match → the photon passes straight through.</p>');
       if (d.emits.length) s += '<h4>2 · Photons it can then emit</h4>' + d.emits.map(([a, b, e, l]) => '<p class="st"><b>' + a + '→' + b + '</b> (' + region(l) + '):</p>' + TEX`E = ${M.n(e, 'eV')}` + TEXA`\lambda = ${M.n(l, 'nm')}`).join('') + '<p class="note">FRQ classic: from level k there are k(k−1)/2 possible downward jumps.</p>';
@@ -50,7 +87,8 @@ const SIM = {
       TEX`f = \frac{E}{h}` + TEX`f = \frac{${M.n(d.dE * 1.6e-19, 'J')}}{6.63\times10^{-34}\,\text{J}\cdot\text{s}}` + TEXA`f = ${M.n(d.f, 'Hz')}` +
       '<p class="note">' + (abs ? 'Absorption: white light passes through cool hydrogen gas. Photons with exactly this energy lift electrons from n = ' + d.lo + ' to n = ' + d.hi + ', so this colour is missing — a dark line. Dark lines in the Sun’s spectrum tell us what the Sun is made of (helium was discovered this way).' : 'Emission: hot or electrically excited gas. The electron drops from n = ' + d.hi + ' to n = ' + d.lo + ' and emits one photon. ' + d.series + ' series. Every element has its own pattern of lines — a fingerprint. Neon signs and street lights glow with their gases’ lines.') + '</p>';
   },
-  draw(v, d, mode, opt){
+  draw(v, d, mode, opt, t, dt){
+    spkFrame(mode, dt || 0);
     const lvl = (E, Emin, y0, y1) => y1 - (y1 - y0) * (E - Emin) / (0 - Emin);
     if (mode === 'myst'){
       panelTitle('MYSTERY ATOM: ENERGY-LEVEL DIAGRAM', 10, 18);
@@ -66,6 +104,10 @@ const SIM = {
       text('380 nm', 400, 94, { font: '500 9px "IBM Plex Mono",monospace' }); text('750 nm', 585, 94, { align: 'right', font: '500 9px "IBM Plex Mono",monospace' });
       d.emits.slice(0, 6).forEach(([a, b, e, l], k) => text(a + '→' + b + '  ' + fplain(l) + ' nm ' + (region(l) === 'visible' ? '' : '(' + region(l).slice(0, 5) + '.)'), 400, 116 + k * 18, { font: '600 11px "IBM Plex Mono",monospace' }));
       if (!d.emits.length) text(d.up === 'ion' ? 'electron removed' : 'nothing emitted', 400, 116, { font: '600 11px "IBM Plex Mono",monospace', col: '#8a8a8a' });
+      const J = SPK.jump && SPK.jump.mode === 'myst' ? SPK.jump : null; spkOverlay(Y, MYST.map((E, i) => [i + 1, E]), 120, 135, J ? (Y(J.Eu) + Y(J.El)) / 2 : 0);
+      panelTitle('YOUR PHOTON (CLICK THE DIAGRAM)', 395, 232);
+      (J ? [['jump', J.up + ' → ' + J.lo], ['ΔE', fplain(J.dE) + ' eV'], ['λ = hc/ΔE', fplain(J.lam) + ' nm' + (region(J.lam) === 'visible' ? '' : ' (' + region(J.lam).slice(0, 5) + '.)')]] : []).forEach(([a, b], i) => { text(a, 400, 254 + i * 20, { font: '600 11px "Space Grotesk",sans-serif', col: '#4a4a4a' }); text(b, 590, 254 + i * 20, { align: 'right', font: '700 12px "IBM Plex Mono",monospace' }); });
+      if (!J) text('none yet', 400, 254, { font: '600 11px "IBM Plex Mono",monospace', col: '#8a8a8a' });
       return;
     }
     panelTitle(mode === 'abs' ? 'ABSORPTION: ELECTRON JUMPS UP' : 'EMISSION: ELECTRON DROPS DOWN', 10, 18);
@@ -73,6 +115,7 @@ const SIM = {
     for (let n = 1; n <= 7; n++){ const E = -13.6 / (n * n), on = n === d.hi || n === d.lo; ctx.strokeStyle = on ? '#111' : '#bbb'; ctx.lineWidth = on ? 2.5 : 1.5; ctx.beginPath(); ctx.moveTo(60, Y(E)); ctx.lineTo(260, Y(E)); ctx.stroke(); if (n <= 4 || on) { text('n = ' + n, 54, Y(E) + 4, { align: 'right', font: '600 10px "Space Grotesk",sans-serif' }); text(E.toFixed(2) + ' eV', 266, Y(E) + 4, { font: '500 9px "IBM Plex Mono",monospace' }); } }
     const col = d.lam >= 380 && d.lam <= 750 ? rgb(d.lam) : '#8a8a8a';
     if (mode === 'abs') arrow(150, Y(d.Elo), 150, Y(d.Ehi) + 2, '#111', null, { w: 3 }); else arrow(150, Y(d.Ehi), 150, Y(d.Elo) - 2, '#111', null, { w: 3 });
+    if (mode === 'emit') spkOverlay(Y, [1, 2, 3, 4, 5, 6, 7].map(n => [n, -13.6 / (n * n)]), 100, 285, (Y(d.Ehi) + Y(d.Elo)) / 2);
     ctx.strokeStyle = col; ctx.lineWidth = 2.5; ctx.beginPath(); const yy = (Y(d.Ehi) + Y(d.Elo)) / 2; for (let i = 0; i <= 60; i++){ const x = mode === 'abs' ? 70 + i : 160 + i, y = yy + 6 * Math.sin(i * 0.6); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.stroke();
     text(fplain(d.lam) + ' nm', mode === 'abs' ? 70 : 165, yy + 22, { font: '700 12px "Space Grotesk",sans-serif', col: col === '#8a8a8a' ? '#4a4a4a' : '#111' });
     panelTitle(mode === 'abs' ? 'WHITE LIGHT THROUGH H GAS' : 'GLOWING H GAS', 395, 18);
