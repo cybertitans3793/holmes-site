@@ -39,6 +39,16 @@
 .guide summary:hover{background:var(--soft)}
 .guide details[open] summary{background:var(--ink);color:#fff}
 .guide details>div{border-left:4px solid var(--hot);padding:8px 12px;margin-top:8px;background:#fff}
+.guide .gmore{margin-top:4px}
+.guide .gmore h3{margin:0 0 4px}
+.guide .gmuted{margin:0 0 10px;font-size:14px;opacity:.75}
+.guide details.ex{margin:0 0 14px}
+.guide details.ex>summary{display:block;border:0;padding:0;background:none;color:inherit;font-weight:inherit}
+.guide details.ex[open]>summary{background:none;color:inherit}
+.guide details.ex>summary h4{margin:2px 0 0}
+.guide details.ex>summary h4::before{content:'▸ ';color:var(--hot)}
+.guide details.ex[open]>summary h4::before{content:'▾ '}
+.guide details.ex>div.exbody{border-left:0;padding:0;margin-top:10px;background:none}
 .guide .gpanel>.ggrid,.guide .gpanel>.gsteps,.guide .gpanel>.gex{margin-bottom:0}
 .guide .gtabs{margin-bottom:18px}
 .guide .gnext{margin:16px 0 0;font-weight:700}
@@ -95,6 +105,9 @@ body.present .guide{display:none}
       <li>Using the height above the surface as r. Gravity's r is measured from the planet's center.</li>
       <li>Forgetting to square: 3× the distance gives <sup>1</sup>/<sub>9</sub> the force, not ⅓.</li>
       <li>Plugging in rpm or revolutions per second as if it were a speed. Find T in seconds first.</li>
+      <li>Writing N = mg over a hill, in a dip or in a loop. N = mg only when nothing accelerates vertically: over a crest N &lt; mg, in a dip N &gt; mg.</li>
+      <li>Assuming a bigger circle always means a smaller centripetal acceleration. At the same speed, yes (v²/r); on something that turns as one piece, like a merry-go-round, the outer rider has the same period, moves faster and needs <b>more</b> (4π²r/T²).</li>
+      <li>Saying a pendulum has zero acceleration at the end of its swing. Its speed is zero for an instant, but gravity's part along the path, g sin θ, is not.</li>
     </ul>
   </div>
 </div>
@@ -191,6 +204,103 @@ body.present .guide{display:none}
     <p class="take">The satellite's mass m cancels. Only Earth's mass and the orbit radius matter, and a bigger orbit means a slower speed and a longer period.</p>
   </div>
 </div>
+<div class="gmore">
+  <h3>More examples</h3>
+  <p class="gmuted">Click an example to open it.</p>
+  <details class="ex">
+    <summary><span class="kind">Speeding up on a circle</span><h4>A pendulum partway through its swing</h4></summary>
+    <div class="exbody">
+    <svg width="130" height="118" viewBox="0 0 130 118" aria-label="Pendulum bob with the string at 30 degrees from vertical: centripetal acceleration toward the pivot, tangential acceleration along the path, total acceleration between them">
+      <line x1="30" y1="8" x2="70" y2="8" stroke="#111" stroke-width="3"/>
+      <line x1="50" y1="8" x2="50" y2="64" stroke="#111" stroke-dasharray="3 3"/>
+      <path d="M10,94 A95,95 0 0 0 111,81" fill="none" stroke="#111" stroke-width="1.5" stroke-dasharray="4 4"/>
+      <line x1="50" y1="8" x2="97.5" y2="90.3" stroke="#111" stroke-width="1.5"/>
+      <text x="53" y="60" font-size="9" font-family="IBM Plex Mono,monospace">30°</text>
+      <circle cx="97.5" cy="90.3" r="6" fill="#111"/>
+      <line x1="104" y1="87" x2="92" y2="66" stroke="#111" stroke-width="3"/><polygon points="95,64 88,68 88,59" fill="#111"/>
+      <line x1="98" y1="90" x2="77" y2="102" stroke="#111" stroke-width="3"/><polygon points="75,99 79,106 70,106" fill="#111"/>
+      <line x1="98" y1="90" x2="62" y2="81" stroke="#ff6a2b" stroke-width="3"/><polygon points="63,77 60,85 54,79" fill="#ff6a2b"/>
+      <text x="104" y="66" font-size="11" font-family="IBM Plex Mono,monospace">a<tspan font-size="8" dy="3">c</tspan></text>
+      <text x="54" y="114" font-size="11" font-family="IBM Plex Mono,monospace">a<tspan font-size="8" dy="3">t</tspan></text>
+      <text x="42" y="80" font-size="11" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">a</text>
+    </svg>
+    <p>A 0.20 kg bob hangs on a 1.25 m string. On its way down, when the string is 30° from vertical, the bob moves at 2.5 m/s. Find the tension in the string and the bob's acceleration (size and direction).</p>
+    <div class="work">
+      <p class="wt">Use two directions: along the string (toward the pivot, which is the center) and along the path. Tension lies along the string. Gravity splits into mg cos 30° pointing away from the center and mg sin 30° along the path.</p>
+      <p class="wt">Along the string, toward the center positive:</p>
+<math class="eq" display="block"><mrow><mi>T</mi><mo>&#x2212;</mo><mi>m</mi><mi>g</mi><mi>cos</mi><mn>30</mn><mo>°</mo><mo>=</mo><mfrac><mrow><mi>m</mi><msup><mi>v</mi><mn>2</mn></msup></mrow><mi>r</mi></mfrac></mrow></math>
+<math class="eq" display="block"><mrow><mi>T</mi><mo>=</mo><mo stretchy="false">(</mo><mn>0.20</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>10</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>0.866</mn><mo stretchy="false">)</mo><mo>+</mo><mfrac><mrow><mo stretchy="false">(</mo><mn>0.20</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>2.5</mn><msup><mo stretchy="false">)</mo><mn>2</mn></msup></mrow><mn>1.25</mn></mfrac></mrow></math>
+<math class="eq" display="block"><mrow><mi>T</mi><mo>=</mo><mn>1.73</mn><mo>+</mo><mn>1.0</mn></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>T</mi><mo>&#x2248;</mo><mn>2.7</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+      <p class="wt">Along the path only gravity acts, so it speeds the bob up. The two parts of the acceleration:</p>
+<math class="eq" display="block"><mrow><msub><mi>a</mi><mi>t</mi></msub><mo>=</mo><mi>g</mi><mi>sin</mi><mn>30</mn><mo>°</mo><mo>=</mo><mn>5.0</mn><mspace width="0.167em"/><msup><mtext>m/s</mtext><mn>2</mn></msup></mrow></math>
+<math class="eq" display="block"><mrow><msub><mi>a</mi><mi>c</mi></msub><mo>=</mo><mfrac><msup><mi>v</mi><mn>2</mn></msup><mi>r</mi></mfrac><mo>=</mo><mfrac><mrow><mo stretchy="false">(</mo><mn>2.5</mn><msup><mo stretchy="false">)</mo><mn>2</mn></msup></mrow><mn>1.25</mn></mfrac><mo>=</mo><mn>5.0</mn><mspace width="0.167em"/><msup><mtext>m/s</mtext><mn>2</mn></msup></mrow></math>
+<math class="eq" display="block"><mrow><mi>a</mi><mo>=</mo><msqrt><mrow><msubsup><mi>a</mi><mi>t</mi><mn>2</mn></msubsup><mo>+</mo><msubsup><mi>a</mi><mi>c</mi><mn>2</mn></msubsup></mrow></msqrt><mo>=</mo><msqrt><mrow><msup><mn>5.0</mn><mn>2</mn></msup><mo>+</mo><msup><mn>5.0</mn><mn>2</mn></msup></mrow></msqrt></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>a</mi><mo>&#x2248;</mo><mn>7.1</mn><mspace width="0.167em"/><msup><mtext>m/s</mtext><mn>2</mn></msup></mrow></math>
+      <p class="wt">The two parts are equal, so <b>a</b> points 45° between the string (toward the pivot) and the path (forward and down).</p>
+    </div>
+    <p class="take">The acceleration does <b>not</b> point at the center: its center part turns the bob, its path part speeds it up. Tension is more than mg cos θ because part of it does the turning. At the end of the swing the speed is zero for an instant, so a<sub>c</sub> = 0 and T = mg cos θ, but a<sub>t</sub> = g sin θ is still there.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Apparent weight</span><h4>A car over the crest of a hill</h4></summary>
+    <div class="exbody">
+    <svg width="170" height="100" viewBox="0 0 170 100" aria-label="Car on top of a rounded hill: normal force up, weight down, acceleration down toward the center below">
+      <path d="M5,95 A100,100 0 0 1 165,95" fill="none" stroke="#111" stroke-width="2"/>
+      <rect x="68" y="36" width="34" height="14" fill="#fff" stroke="#111" stroke-width="2"/>
+      <circle cx="75" cy="52" r="3" fill="#111"/><circle cx="95" cy="52" r="3" fill="#111"/>
+      <line x1="78" y1="36" x2="78" y2="22" stroke="#111" stroke-width="3"/><polygon points="73,22 83,22 78,14" fill="#111"/>
+      <line x1="92" y1="50" x2="92" y2="76" stroke="#111" stroke-width="3"/><polygon points="87,76 97,76 92,84" fill="#111"/>
+      <line x1="40" y1="30" x2="40" y2="44" stroke="#ff6a2b" stroke-width="3"/><polygon points="35,44 45,44 40,52" fill="#ff6a2b"/>
+      <text x="84" y="24" font-size="11" font-family="IBM Plex Mono,monospace">N</text>
+      <text x="99" y="82" font-size="11" font-family="IBM Plex Mono,monospace">mg</text>
+      <text x="28" y="44" font-size="11" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">a</text>
+    </svg>
+    <p>A 1000 kg car drives over the top of a hill at 15 m/s. The top of the hill is curved with a radius of 40 m. What normal force does the road exert on the car? How fast could the car go before it leaves the road?</p>
+    <div class="work">
+      <p class="wt">The center of the curve is <b>below</b> the car, so call down positive. Gravity points toward the center; the normal force points away:</p>
+<math class="eq" display="block"><mrow><mi>m</mi><mi>g</mi><mo>&#x2212;</mo><mi>N</mi><mo>=</mo><mfrac><mrow><mi>m</mi><msup><mi>v</mi><mn>2</mn></msup></mrow><mi>r</mi></mfrac></mrow></math>
+<math class="eq" display="block"><mrow><mi>N</mi><mo>=</mo><mo stretchy="false">(</mo><mn>1000</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>10</mn><mo stretchy="false">)</mo><mo>&#x2212;</mo><mfrac><mrow><mo stretchy="false">(</mo><mn>1000</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>15</mn><msup><mo stretchy="false">)</mo><mn>2</mn></msup></mrow><mn>40</mn></mfrac></mrow></math>
+<math class="eq" display="block"><mrow><mi>N</mi><mo>=</mo><mn>10</mn><mspace width="0.167em"/><mn>000</mn><mo>&#x2212;</mo><mn>5625</mn></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>N</mi><mo>&#x2248;</mo><mn>4400</mn><mspace width="0.167em"/><mtext>N</mtext><mspace width="0.5em"/><mtext>(0.44 of its weight)</mtext></mrow></math>
+      <p class="wt">The car leaves the road when the road no longer needs to push: N = 0, and gravity alone supplies the inward force.</p>
+<math class="eq" display="block"><mrow><mi>m</mi><mi>g</mi><mo>=</mo><mfrac><mrow><mi>m</mi><msubsup><mi>v</mi><mtext>max</mtext><mn>2</mn></msubsup></mrow><mi>r</mi></mfrac><mspace width="0.278em"/><mo>&#x2192;</mo><mspace width="0.278em"/><msub><mi>v</mi><mtext>max</mtext></msub><mo>=</mo><msqrt><mrow><mi>g</mi><mi>r</mi></mrow></msqrt><mo>=</mo><msqrt><mrow><mo stretchy="false">(</mo><mn>10</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>40</mn><mo stretchy="false">)</mo></mrow></msqrt></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>v</mi><mtext>max</mtext></msub><mo>=</mo><mn>20</mn><mspace width="0.167em"/><mtext>m/s</mtext></mrow></math>
+    </div>
+    <p class="take">Over a crest N &lt; mg, so the riders feel lighter (here 0.44 of their weight). Driving faster or over a sharper crest (smaller r) lowers N until the car leaves the road and becomes a projectile; the mass cancels. In a dip it's the other way round: the center is above, N − mg = mv²/r, and at the same speed and radius N ≈ 15 600 N, so riders feel 1.56 times heavier.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Friction holds you up</span><h4>The spinning rotor ride</h4></summary>
+    <div class="exbody">
+    <svg width="150" height="130" viewBox="0 0 150 130" aria-label="Side view of a rotor ride: rider against the wall, normal force from the wall points in toward the axis, friction up, weight down, floor dropped away">
+      <line x1="14" y1="6" x2="14" y2="112" stroke="#111" stroke-width="3"/><line x1="136" y1="6" x2="136" y2="112" stroke="#111" stroke-width="3"/>
+      <line x1="75" y1="6" x2="75" y2="106" stroke="#111" stroke-dasharray="3 3"/>
+      <text x="40" y="16" font-size="9" font-family="IBM Plex Mono,monospace">axis</text>
+      <line x1="14" y1="124" x2="136" y2="124" stroke="#111" stroke-dasharray="6 4"/>
+      <text x="18" y="119" font-size="9" font-family="IBM Plex Mono,monospace">floor gone</text>
+      <rect x="118" y="40" width="16" height="46" fill="#fff" stroke="#111" stroke-width="2"/>
+      <line x1="118" y1="62" x2="94" y2="62" stroke="#ff6a2b" stroke-width="3"/><polygon points="94,57 94,67 86,62" fill="#ff6a2b"/>
+      <line x1="126" y1="40" x2="126" y2="22" stroke="#111" stroke-width="3"/><polygon points="121,22 131,22 126,14" fill="#111"/>
+      <line x1="126" y1="86" x2="126" y2="104" stroke="#111" stroke-width="3"/><polygon points="121,104 131,104 126,112" fill="#111"/>
+      <text x="92" y="55" font-size="11" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">N</text>
+      <text x="111" y="24" font-size="11" font-family="IBM Plex Mono,monospace">f</text>
+      <text x="104" y="106" font-size="11" font-family="IBM Plex Mono,monospace">mg</text>
+    </svg>
+    <p>On a rotor ride, people stand against the inside wall of a drum of radius 2.5 m. Once it spins fast enough, the floor drops away. The coefficient of static friction between a rider and the wall is 0.40. What is the slowest speed that keeps riders from sliding down, and the longest period that gives it?</p>
+    <div class="work">
+      <p class="wt">The center is on the drum's axis, straight in from the rider. The wall's normal force points inward: it is the only inward force. Static friction from the wall points up, and nothing accelerates vertically.</p>
+<math class="eq" display="block"><mrow><mtext>vertical:&#xA0;</mtext><msub><mi>f</mi><mi>s</mi></msub><mo>=</mo><mi>m</mi><mi>g</mi><mspace width="1em"/><mtext>inward:&#xA0;</mtext><mi>N</mi><mo>=</mo><mfrac><mrow><mi>m</mi><msup><mi>v</mi><mn>2</mn></msup></mrow><mi>r</mi></mfrac></mrow></math>
+      <p class="wt">At the slowest speed, friction is at its maximum, f<sub>s</sub> = μ<sub>s</sub>N:</p>
+<math class="eq" display="block"><mrow><mi>m</mi><mi>g</mi><mo>=</mo><msub><mi>μ</mi><mi>s</mi></msub><mfrac><mrow><mi>m</mi><msup><mi>v</mi><mn>2</mn></msup></mrow><mi>r</mi></mfrac><mspace width="0.278em"/><mo>&#x2192;</mo><mspace width="0.278em"/><mi>v</mi><mo>=</mo><msqrt><mfrac><mrow><mi>g</mi><mi>r</mi></mrow><msub><mi>μ</mi><mi>s</mi></msub></mfrac></msqrt><mo>=</mo><msqrt><mfrac><mrow><mo stretchy="false">(</mo><mn>10</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>2.5</mn><mo stretchy="false">)</mo></mrow><mn>0.40</mn></mfrac></msqrt></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>v</mi><mo>&#x2248;</mo><mn>7.9</mn><mspace width="0.167em"/><mtext>m/s</mtext></mrow></math>
+<math class="eq" display="block"><mrow><mi>T</mi><mo>=</mo><mfrac><mrow><mn>2</mn><mi>π</mi><mi>r</mi></mrow><mi>v</mi></mfrac><mo>=</mo><mfrac><mrow><mn>2</mn><mi>π</mi><mo stretchy="false">(</mo><mn>2.5</mn><mo stretchy="false">)</mo></mrow><mn>7.9</mn></mfrac></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>T</mi><mo>&#x2248;</mo><mn>2.0</mn><mspace width="0.167em"/><mtext>s per turn</mtext></mrow></math>
+    </div>
+    <p class="take">Here friction is vertical and holds you up, while the normal force does the turning. The mass cancels, so every rider is equally safe: for a 70 kg rider N = 1750 N, so friction can reach 700 N, exactly the weight. A slipperier wall or a smaller drum needs faster spinning. Spinning faster than the minimum raises N, but friction stays at mg.</p>
+    </div>
+  </details>
+</div>
 
 </div>
 <div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
@@ -218,6 +328,10 @@ body.present .guide{display:none}
       <details><summary>Answer</summary><div>Closest to the Sun. Kepler's 2nd law: the line from the Sun sweeps equal areas in equal times, so where that line is short the comet must cover more distance in the same time.</div></details></li>
     <li>Astronauts on the space station, about 400 km up, float around the cabin. Is gravity zero up there? Explain why they float.
       <details><summary>Answer</summary><div>No. 400 km is small compared with Earth's 6400 km radius, so gravity there is still about 90% of its surface value. The astronauts float because they and the station are in free fall together, both moving in the same orbit, so nothing pushes on them.</div></details></li>
+    <li><b>Who's right?</b> A go-kart takes a half-circle turn on a flat track, as fast as its tires allow without sliding (μ<sub>s</sub> = 0.80). Maya says the wide outside line (r = 40 m) gets around the turn sooner, because the kart can go faster there. Jordan says the tight inside line (r = 20 m) is sooner. Who's right?
+      <details><summary>Answer</summary><div>Jordan. Friction is the inward force, so μ<sub>s</sub>mg = mv²/r and v<sub>max</sub> = √(μ<sub>s</sub>gr). The time for a half circle is t = πr/v = π√(r/(μ<sub>s</sub>g)), which grows with r: doubling r doubles the distance but raises the top speed only by √2. Inside: v ≈ 12.6 m/s, t ≈ 5.0 s. Outside: v ≈ 17.9 m/s, t ≈ 7.0 s. Maya is right that the kart is faster on the outside, but faster doesn't mean sooner here.</div></details></li>
+    <li>A 0.20 kg ball on a 0.50 m string swings in a horizontal circle, with the string at 30° from vertical. Find the radius of the circle, the tension and the ball's speed.
+      <details><summary>Answer</summary><div>The radius is r = L sin 30° = 0.25 m, not the string length. Vertical (no acceleration): T cos 30° = mg, so T = 2.0/0.866 ≈ 2.3 N. Inward: T sin 30° = mv²/r, so 1.15 = (0.20)v²/0.25, v² ≈ 1.44 and v ≈ 1.2 m/s. The tension does two jobs: its vertical part holds the ball up and its horizontal part turns it.</div></details></li>
   </ol>
 </div>
 </div>
