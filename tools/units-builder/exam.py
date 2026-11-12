@@ -10,7 +10,7 @@ D = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, D)
 from site_links import SITE, REVIEW_APP
 XS = SITE + 'exam-skills/'   # Site pages under Exam Skills (IB Paper 1B practice, the IA page)
-PE_PAGE = SITE + 'practice-exams'   # the Practice Exams Site page (embeds EXAM-PE)
+PE_PAGE = SITE + 'exam-skills/practice-exams'   # the Practice Exams Site page (embeds EXAM-PE)
 EXAMS = REVIEW_APP + '?unit=EXAMS'   # every open practice exam (Review app, FCPS sign-in)
 # The practice exams themselves (College Board / IB papers) live only in the Review app, never in this repo: this page only links to them.
 
