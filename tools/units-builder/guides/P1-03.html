@@ -39,6 +39,16 @@
 .guide summary:hover{background:var(--soft)}
 .guide details[open] summary{background:var(--ink);color:#fff}
 .guide details>div{border-left:4px solid var(--hot);padding:8px 12px;margin-top:8px;background:#fff}
+.guide .gmore{margin-top:4px}
+.guide .gmore h3{margin:0 0 4px}
+.guide .gmuted{margin:0 0 10px;font-size:14px;opacity:.75}
+.guide details.ex{margin:0 0 14px}
+.guide details.ex>summary{display:block;border:0;padding:0;background:none;color:inherit;font-weight:inherit}
+.guide details.ex[open]>summary{background:none;color:inherit}
+.guide details.ex>summary h4{margin:2px 0 0}
+.guide details.ex>summary h4::before{content:'▸ ';color:var(--hot)}
+.guide details.ex[open]>summary h4::before{content:'▾ '}
+.guide details.ex>div.exbody{border-left:0;padding:0;margin-top:10px;background:none}
 .guide .gpanel>.ggrid,.guide .gpanel>.gsteps,.guide .gpanel>.gex{margin-bottom:0}
 .guide .gpanel>.gsteps+.ggrid{margin-top:22px}
 .guide .gtabs{margin-bottom:18px}
@@ -92,6 +102,9 @@ body.present .guide{display:none}
       <li>Setting a hanging mass's string tension equal to mg when the system is accelerating.</li>
       <li>Using the system's total mass to find a force on just one object, or the other way round.</li>
       <li>Including internal forces in the system's ΣF. They cancel.</li>
+      <li>Thinking the “reaction” comes after the “action.” Both forces come from one interaction and exist at the same instant; neither causes the other.</li>
+      <li>Assuming the center of mass must be inside the object. For a ring, an L-shape or a bent-over high jumper, it's in the empty space.</li>
+      <li>Thinking moving the origin moves the center of mass. It changes the number you get for x<sub>cm</sub>, not where the center of mass actually is.</li>
     </ul>
   </div>
 </div>
@@ -208,6 +221,89 @@ body.present .guide{display:none}
     <p class="take">It's closer to the heavier mass. If the rod were thrown, it would spin, but the center of mass would follow a smooth path, as if all 5.0 kg were there.</p>
   </div>
 </div>
+<div class="gmore">
+  <h3>More examples</h3>
+  <p class="gmuted">Click an example to open it.</p>
+  <details class="ex">
+    <summary><span class="kind">Choosing the subsystem</span><h4>Lifting a stack of hanging blocks</h4></summary>
+    <div class="exbody">
+    <svg width="120" height="160" viewBox="0 0 120 160" aria-label="Three blocks hanging one below another on ropes A, B and C, pulled upward">
+      <line x1="55" y1="4" x2="55" y2="30" stroke="#111" stroke-width="2"/><text x="61" y="20" font-size="11" font-family="IBM Plex Mono,monospace">A</text>
+      <rect x="30" y="30" width="50" height="30" fill="#fff" stroke="#111" stroke-width="2"/><text x="35" y="49" font-size="11" font-family="IBM Plex Mono,monospace">4.0 kg</text>
+      <line x1="55" y1="60" x2="55" y2="78" stroke="#111" stroke-width="2"/><text x="61" y="73" font-size="11" font-family="IBM Plex Mono,monospace">B</text>
+      <rect x="32" y="78" width="46" height="26" fill="#fff" stroke="#111" stroke-width="2"/><text x="37" y="95" font-size="10" font-family="IBM Plex Mono,monospace">3.0 kg</text>
+      <line x1="55" y1="104" x2="55" y2="122" stroke="#111" stroke-width="2"/><text x="61" y="117" font-size="11" font-family="IBM Plex Mono,monospace">C</text>
+      <rect x="34" y="122" width="42" height="22" fill="#fff" stroke="#111" stroke-width="2"/><text x="37" y="137" font-size="10" font-family="IBM Plex Mono,monospace">1.0 kg</text>
+      <line x1="102" y1="112" x2="102" y2="66" stroke="#ff6a2b" stroke-width="3"/><polygon points="97,68 107,68 102,58" fill="#ff6a2b"/>
+      <text x="98" y="128" font-size="11" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">a</text>
+    </svg>
+    <p>Three blocks hang one below another: 4.0 kg on top, 3.0 kg in the middle, 1.0 kg at the bottom. Rope A pulls the top block up, rope B joins the top and middle blocks, and rope C joins the middle and bottom blocks. Rope A is pulled so the whole stack speeds up upward at 2.0 m/s². Find the tension in each rope.</p>
+    <div class="work">
+      <p class="wt">To find a rope's tension, choose a system that the rope pulls on from outside: everything <b>below</b> it. + is up. For any such system, T − m<sub>below</sub>g = m<sub>below</sub>a:</p>
+<math class="eq" display="block"><mrow><mi>T</mi><mo>=</mo><msub><mi>m</mi><mtext>below</mtext></msub><mo stretchy="false">(</mo><mi>g</mi><mo>+</mo><mi>a</mi><mo stretchy="false">)</mo><mo>=</mo><msub><mi>m</mi><mtext>below</mtext></msub><mo stretchy="false">(</mo><mn>12</mn><mspace width="0.167em"/><msup><mtext>m/s</mtext><mn>2</mn></msup><mo stretchy="false">)</mo></mrow></math>
+      <p class="wt">Rope A holds all three blocks (8.0 kg), rope B the bottom two (4.0 kg), rope C only the bottom block (1.0 kg):</p>
+<math class="eq ans" display="block"><mrow><msub><mi>T</mi><mi>A</mi></msub><mo>=</mo><mo stretchy="false">(</mo><mn>8.0</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>12</mn><mo stretchy="false">)</mo><mo>=</mo><mn>96</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>T</mi><mi>B</mi></msub><mo>=</mo><mo stretchy="false">(</mo><mn>4.0</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>12</mn><mo stretchy="false">)</mo><mo>=</mo><mn>48</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>T</mi><mi>C</mi></msub><mo>=</mo><mo stretchy="false">(</mo><mn>1.0</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>12</mn><mo stretchy="false">)</mo><mo>=</mo><mn>12</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+      <p class="wt">Check with the top block alone (A pulls up, B and its 40 N weight pull down): 96 − 48 − 40 = 8 N = (4.0)(2.0) ✓</p>
+    </div>
+    <p class="take">The top rope carries the most, because it has to accelerate everything below it. Every tension is <b>more</b> than the weight it holds up, since the stack is speeding up upward. At constant velocity they'd be 80 N, 40 N and 10 N.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Friction on a system</span><h4>Measuring friction with a hanging mass</h4></summary>
+    <div class="exbody">
+    <svg width="170" height="110" viewBox="0 0 170 110" aria-label="A 4.0 kg block on a rough table tied over a pulley to a hanging 2.0 kg mass">
+      <line x1="4" y1="40" x2="140" y2="40" stroke="#111" stroke-width="2"/><line x1="140" y1="40" x2="140" y2="108" stroke="#111" stroke-width="2"/>
+      <rect x="30" y="16" width="44" height="24" fill="#fff" stroke="#111" stroke-width="2"/>
+      <text x="36" y="33" font-size="11" font-family="IBM Plex Mono,monospace">4.0</text>
+      <circle cx="150" cy="34" r="6" fill="#fff" stroke="#111" stroke-width="2"/>
+      <line x1="74" y1="28" x2="150" y2="28" stroke="#111" stroke-width="1.5"/><line x1="156" y1="34" x2="156" y2="66" stroke="#111" stroke-width="1.5"/>
+      <rect x="145" y="66" width="22" height="22" fill="#fff" stroke="#111" stroke-width="2"/>
+      <text x="146" y="81" font-size="10" font-family="IBM Plex Mono,monospace">2.0</text>
+      <text x="14" y="58" font-size="11" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">μk = ?</text>
+    </svg>
+    <p>In a lab, a 4.0 kg block on a table is tied by a string over a pulley to a hanging 2.0 kg mass. Released from rest, the hanging mass falls 0.80 m in 1.0 s. Find the coefficient of kinetic friction between the block and the table, and the tension in the string.</p>
+    <div class="work">
+      <p class="wt">First the acceleration, from rest at constant a:</p>
+<math class="eq" display="block"><mrow><mi>d</mi><mo>=</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mi>a</mi><msup><mi>t</mi><mn>2</mn></msup><mspace width="0.278em"/><mo>&#x2192;</mo><mspace width="0.278em"/><mi>a</mi><mo>=</mo><mfrac><mrow><mn>2</mn><mo stretchy="false">(</mo><mn>0.80</mn><mo stretchy="false">)</mo></mrow><msup><mrow><mo stretchy="false">(</mo><mn>1.0</mn><mo stretchy="false">)</mo></mrow><mn>2</mn></msup></mfrac><mo>=</mo><mn>1.6</mn><mspace width="0.167em"/><msup><mtext>m/s</mtext><mn>2</mn></msup></mrow></math>
+      <p class="wt">Both masses as one system, + along the string. The hanging weight pulls forward and the table's friction on the block pulls back; both are <b>external</b>. The tension is internal and drops out:</p>
+<math class="eq" display="block"><mrow><msub><mi>m</mi><mtext>hang</mtext></msub><mi>g</mi><mo>&#x2212;</mo><msub><mi>&#x3BC;</mi><mi>k</mi></msub><msub><mi>m</mi><mtext>block</mtext></msub><mi>g</mi><mo>=</mo><msub><mi>m</mi><mtext>total</mtext></msub><mi>a</mi></mrow></math>
+<math class="eq" display="block"><mrow><mn>20</mn><mo>&#x2212;</mo><msub><mi>&#x3BC;</mi><mi>k</mi></msub><mo stretchy="false">(</mo><mn>40</mn><mo stretchy="false">)</mo><mo>=</mo><mo stretchy="false">(</mo><mn>6.0</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>1.6</mn><mo stretchy="false">)</mo><mo>=</mo><mn>9.6</mn></mrow></math>
+<math class="eq" display="block"><mrow><msub><mi>&#x3BC;</mi><mi>k</mi></msub><mo>=</mo><mfrac><mrow><mn>20</mn><mo>&#x2212;</mo><mn>9.6</mn></mrow><mn>40</mn></mfrac><mo>=</mo><mfrac><mn>10.4</mn><mn>40</mn></mfrac></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>&#x3BC;</mi><mi>k</mi></msub><mo>=</mo><mn>0.26</mn></mrow></math>
+      <p class="wt">The hanging mass alone (its weight down, tension up):</p>
+<math class="eq ans" display="block"><mrow><mi>T</mi><mo>=</mo><msub><mi>m</mi><mtext>hang</mtext></msub><mo stretchy="false">(</mo><mi>g</mi><mo>&#x2212;</mo><mi>a</mi><mo stretchy="false">)</mo><mo>=</mo><mo stretchy="false">(</mo><mn>2.0</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>8.4</mn><mo stretchy="false">)</mo><mo>=</mo><mn>17</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+      <p class="wt">Check with the block: 16.8 − 10.4 = 6.4 N = (4.0)(1.6) ✓</p>
+    </div>
+    <p class="take">Friction acts on only one object, but it's still an outside force on the system, so it goes into ΣF<sub>ext</sub>. This is how you measure μ<sub>k</sub> in the lab: time the fall, then let Newton's second law do the rest. And if the table's greatest static friction, μ<sub>s</sub>m<sub>block</sub>g, were 20 N or more, the block would never start moving.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Center of mass in 2D</span><h4>The center of mass of an L-shape</h4></summary>
+    <div class="exbody">
+    <svg width="190" height="185" viewBox="0 0 190 185" aria-label="L-shape made of a 3.0 kg board along the x-axis and a 2.0 kg upright board at its left end; the center of mass is in the empty corner">
+      <rect x="20" y="115" width="150" height="50" fill="#fff" stroke="#111" stroke-width="2"/>
+      <rect x="20" y="15" width="50" height="100" fill="#fff" stroke="#111" stroke-width="2"/>
+      <circle cx="95" cy="140" r="2.5" fill="#111"/><text x="104" y="145" font-size="11" font-family="IBM Plex Mono,monospace">3.0 kg</text>
+      <circle cx="45" cy="65" r="2.5" fill="#111"/><text x="27" y="92" font-size="10" font-family="IBM Plex Mono,monospace">2.0 kg</text>
+      <circle cx="75" cy="110" r="3.5" fill="#ff6a2b"/><text x="83" y="104" font-size="11" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">cm</text>
+      <text x="16" y="179" font-size="10" font-family="IBM Plex Mono,monospace">0</text>
+      <text x="150" y="179" font-size="10" font-family="IBM Plex Mono,monospace">0.60 m</text>
+    </svg>
+    <p>An L-shape is made of two uniform boards, each 0.20 m thick. A 3.0 kg board, 0.60 m long, lies along the x-axis with its corner at the origin. A 2.0 kg board, 0.40 m tall, stands on its left end. Find the center of mass.</p>
+    <div class="work">
+      <p class="wt">Replace each uniform board by a point mass at its own center: the flat board's center is at (0.30 m, 0.10 m); the upright board's is at (0.10 m, 0.40 m). Then do x and y separately:</p>
+<math class="eq" display="block"><mrow><msub><mi>x</mi><mrow><mi>c</mi><mi>m</mi></mrow></msub><mo>=</mo><mfrac><mrow><mo stretchy="false">(</mo><mn>3.0</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>0.30</mn><mo stretchy="false">)</mo><mo>+</mo><mo stretchy="false">(</mo><mn>2.0</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>0.10</mn><mo stretchy="false">)</mo></mrow><mrow><mn>5.0</mn></mrow></mfrac></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>x</mi><mrow><mi>c</mi><mi>m</mi></mrow></msub><mo>=</mo><mn>0.22</mn><mspace width="0.167em"/><mtext>m</mtext></mrow></math>
+<math class="eq" display="block"><mrow><msub><mi>y</mi><mrow><mi>c</mi><mi>m</mi></mrow></msub><mo>=</mo><mfrac><mrow><mo stretchy="false">(</mo><mn>3.0</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>0.10</mn><mo stretchy="false">)</mo><mo>+</mo><mo stretchy="false">(</mo><mn>2.0</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>0.40</mn><mo stretchy="false">)</mo></mrow><mrow><mn>5.0</mn></mrow></mfrac></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>y</mi><mrow><mi>c</mi><mi>m</mi></mrow></msub><mo>=</mo><mn>0.22</mn><mspace width="0.167em"/><mtext>m</mtext></mrow></math>
+    </div>
+    <p class="take">The flat board only reaches y = 0.20 m and the upright one only reaches x = 0.20 m, so (0.22 m, 0.22 m) is in the empty corner of the L, outside both boards. The center of mass doesn't have to be inside the material: think of a ring, a boomerang, or a high jumper arched over the bar.</p>
+    </div>
+  </details>
+</div>
+
 </div>
 <div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
 <div class="gcheck">
@@ -234,6 +330,10 @@ body.present .guide{display:none}
       <details><summary>Answer</summary><div>300 N. A rope pulled with 300 N at each end has 300 N tension, not 600 N, just as a rope tied to a wall and pulled with 300 N would.</div></details></li>
     <li>When you drop a ball, Earth pulls it down. Does the ball pull Earth up? Why don't we notice?
       <details><summary>Answer</summary><div>Yes, with exactly the same force. Earth's mass is so enormous that its acceleration is far too tiny to notice.</div></details></li>
+    <li>Two carts collide on a level, frictionless track. Motion sensors show that during the collision the 0.50 kg cart has an acceleration of 0.90 m/s² to the left, while the other cart's acceleration is 0.30 m/s² to the right. What is the mass of the other cart?
+      <details><summary>Answer</summary><div>1.5 kg. The carts push on each other with equal and opposite forces (a third-law pair), so m<sub>1</sub>a<sub>1</sub> = m<sub>2</sub>a<sub>2</sub> in size: (0.50)(0.90) = m<sub>2</sub>(0.30), so m<sub>2</sub> = 0.45/0.30 = 1.5 kg. The cart with one third of the acceleration has three times the mass.</div></details></li>
+    <li><b>Who's right?</b> A 4.0 kg mass and a 1.0 kg mass hang on either side of a pulley and are let go. Student A: “The string pulls harder on the 4.0 kg side. It has to hold up the heavier mass, so that tension is 40 N.” Student B: “The tension is the same on both sides, and it's somewhere between 10 N and 40 N.”
+      <details><summary>Answer</summary><div>Student B. One ideal string over an ideal pulley has one tension. The 4.0 kg mass speeds up downward, so the string pulls up on it with less than its 40 N weight; the 1.0 kg mass speeds up upward, so the string pulls up with more than its 10 N weight. Working it out: a = (40 − 10)/5.0 = 6.0 m/s² and T = (1.0)(10 + 6.0) = 16 N. Student A's 40 N would leave the heavy mass with no net force, so it couldn't accelerate.</div></details></li>
   </ol>
 </div>
 </div>
