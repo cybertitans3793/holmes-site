@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<!--
+  The Moving Man (lite): an original rewrite inspired by PhET Interactive Simulations' The Moving Man
+  (University of Colorado Boulder, phet.colorado.edu) and the OpenStax version. Written from scratch; no code copied.
+  One self-contained file: plain HTML/CSS/JS, inline SVG art, WebAudio-synthesized sounds, no outside requests.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>The Moving Man</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{--navy:#21366b;--pos:#2575ba;--vel:#cd2520;--acc:#349e34;--panel:#ededed;--ink:#333}
+html,body{margin:0;height:100%;overflow:hidden;background:#fff}
+body{font:14px/1.42857 "Helvetica Neue",Helvetica,Arial,sans-serif;color:var(--ink);-webkit-tap-highlight-color:transparent}
+*,*::before,*::after{box-sizing:border-box}
+button{font:inherit;cursor:pointer}
+#stage{position:absolute;left:0;top:0;width:980px;height:772px;transform-origin:0 0}
+.app{position:absolute;left:10px;top:10px;width:960px;height:752px}
+/* tabs */
+.tabs{position:relative;height:37px;padding-left:30px;border-bottom:2px solid var(--navy);font-size:0;user-select:none;-webkit-user-select:none}
+.tab{display:inline-block;height:35px;padding:8px 10px 0 12px;margin-right:3px;font-size:14px;background:var(--panel);color:var(--navy);cursor:pointer;vertical-align:top}
+.tab::after{content:"+";font-weight:700;margin-left:5px}
+.tab.on{background:var(--navy);color:var(--panel)}
+.tab.on::after{content:"\2013"}
+.snd{position:absolute;right:30px;top:4px;width:28px;height:28px;border:0;border-radius:50%;background:var(--panel);color:var(--navy);padding:0;display:flex;align-items:center;justify-content:center}
+.snd svg{width:14px;height:14px}
+.sim{position:absolute;left:0;top:37px;width:960px;height:715px;display:none}
+.sim.on{display:block}
+/* scene */
+.scene-view{position:absolute;left:0;top:0;width:960px;height:334px;overflow:hidden;z-index:2}
+.compact .scene-view{height:174px}
+.scene{position:absolute;left:0;top:0;width:960px;height:300px;background:linear-gradient(#81c8ff,#fff)}
+.compact .scene{height:140px;background:linear-gradient(#81c8ff -114%,#fff 100%)}
+.clouds{position:absolute;left:0;top:0;width:960px;height:300px}
+.compact .clouds{display:none}
+.cloud{position:absolute;cursor:default;overflow:visible}
+.clouds.moving .cloud{left:0!important;animation:drift 60s linear infinite}
+.clouds.moving .c2{animation-duration:100s;animation-delay:-40s}.clouds.moving .c3{animation-duration:80s;animation-delay:-30s}
+.clouds.moving .c4{animation-duration:72s;animation-delay:-50s}.clouds.moving .c5{animation-duration:80s;animation-delay:-10s}
+@keyframes drift{0%{margin-left:130%}100%{margin-left:-30%}}
+.clock{position:absolute;left:80px;top:7px;z-index:40;font-size:18px;color:#004b79;display:none}
+.compact .clock{display:block}
+.clock .t{display:inline-block;min-width:35px;text-align:right;margin-right:5px}
+.tree{position:absolute;left:75px;bottom:0;width:109px;height:100px;z-index:30}
+.house{position:absolute;right:80px;bottom:-8px;width:100px;height:88px;z-index:30}
+.men{position:absolute;left:40px;width:880px;bottom:0;height:140px}
+.man{position:absolute;left:0;bottom:0;width:50px;height:113px;margin-left:-25px;z-index:70;cursor:ew-resize;touch-action:none}
+.man svg{position:absolute;left:0;top:0;width:50px;height:113px;display:none}
+.man .st{display:block}
+.man.walk .st{display:none}.man.walk .wk{display:block}
+.man.right .wk{transform:scaleX(-1)}
+.arrow{position:absolute;left:25px;height:30px;opacity:.8;overflow:hidden;display:none;pointer-events:none}
+.arrow.vel{bottom:-9px}.arrow.acc{bottom:-25px}
+.arrow i{position:absolute;bottom:9px;height:12px;width:100%}
+.arrow b{position:absolute;bottom:0;width:0;height:0;border-top:15px solid transparent;border-bottom:15px solid transparent}
+.arrow.vel i{background:var(--vel)}.arrow.acc i{background:var(--acc)}
+.arrow.r i{right:19px}.arrow.r b{right:0;border-left:20px solid}
+.arrow.l i{left:19px}.arrow.l b{left:0;border-right:20px solid}
+.arrow.vel b{border-left-color:var(--vel);border-right-color:var(--vel)}
+.arrow.acc b{border-left-color:var(--acc);border-right-color:var(--acc)}
+.arrow.r b{border-right:0}.arrow.l b{border-left:0}
+.walls{position:absolute;left:0;right:0;top:100px;bottom:0;overflow:hidden}
+.compact .walls{top:0}
+.wall{position:absolute;bottom:0;width:30px;height:140px;z-index:80;transition:bottom 1s}
+.wall svg.brick{position:absolute;left:0;top:0;width:30px;height:140px}
+.wall.l{left:0}.wall.r{right:0}.wall.l svg.brick{border-top-right-radius:2px}.wall.r svg.brick{border-top-left-radius:2px}
+.wall button{position:absolute;left:4px;padding:0;border:0;background:none;width:19px;height:31px;display:flex;align-items:center;justify-content:center}
+.wall .hide{bottom:0;color:#ececec;filter:drop-shadow(0 0 3px #000)}
+.wall .hide:hover{color:gold}
+.wall .show{top:-30px;color:#595959;display:none}
+.wall.off{bottom:-140px}
+.wall.off .show{display:flex}
+.wall button svg{width:17px;height:20px}
+.ruler{position:absolute;left:0;bottom:0;width:960px;height:34px;background:var(--panel);border-top:4px solid #595959;color:#777;z-index:60;user-select:none;-webkit-user-select:none}
+.ruler span{position:absolute;top:6px;width:44px;margin-left:-22px;text-align:center}
+.ruler i{position:absolute;top:0;width:2px;height:4px;background:#777;margin-left:-1px}
+.ruler .lab{left:492px;top:6px;width:auto;margin:0}
+/* controls */
+.ctl{position:absolute;left:0;top:334px;width:960px;height:248px;background:var(--panel)}
+.compact .ctl{top:164px;height:406px;z-index:1}
+.vc{position:absolute;left:330px;width:300px;height:76px}
+.vc.p{color:var(--pos)}.vc.v{color:var(--vel)}.vc.a{color:var(--acc)}
+.vc .name{position:absolute;left:0;top:12px;padding-top:6px;font-size:16px;font-weight:700;white-space:nowrap}
+.vc .drv{display:none;width:14px;height:14px;vertical-align:-1px;margin-left:3px}
+.vc.driving .drv{display:inline-block}
+.ig{position:absolute;right:0;top:12px;width:120px;height:34px;display:flex}
+.ig input{flex:1;min-width:0;height:34px;border:1px solid #ccc;border-right:0;border-radius:4px 0 0 4px;padding:6px 12px;font:inherit;color:#555;background:#fff;box-shadow:inset 0 1px 1px rgba(0,0,0,.075);outline:none}
+.ig input:focus{border-color:#66afe9;box-shadow:inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6)}
+.ig span{padding:6px 12px;background:#dcdcdc;border:1px solid #ccc;border-radius:0 4px 4px 0;line-height:20px;white-space:nowrap}
+.ig sup{font-size:10.5px;line-height:0;position:relative;top:-.5em;vertical-align:baseline}
+.ig.ex{width:150px;display:none}
+.ig.ex.err input{color:var(--vel)}
+.vc.expr .ig.val{display:none}.vc.expr .ig.ex{display:flex}
+.fbtn{position:absolute;left:320px;top:11px;border:0;background:none;padding:0;color:inherit;font-weight:700;white-space:nowrap;height:31px;display:flex;align-items:center}
+.fbtn:hover{opacity:.8}
+.fbtn .f{font-size:20px;margin:0 4px}
+.fbtn svg{width:12px;height:12px;margin:0 4px 0 2px}
+.fbtn.drop{display:none}.vc.expr .fbtn.use{display:none}.vc.expr .fbtn.drop{display:flex}
+.help{position:absolute;right:158px;top:17px;border:0;background:none;padding:0;color:inherit;display:none;width:16px;height:16px}
+.help svg{width:16px;height:16px}
+.vc.expr .help{display:block}
+.chk{position:absolute;left:320px;top:20px;padding-left:26px;line-height:16px;font-weight:700;cursor:pointer;user-select:none;-webkit-user-select:none;white-space:nowrap}
+.chk::before{content:"";position:absolute;left:0;top:0;width:16px;height:16px;border:2px solid currentColor;background:#fff}
+.chk::after{content:"";position:absolute;left:8px;top:8px;width:0;height:0;background:currentColor;transform:rotate(90deg);transition:all .2s ease}
+.chk.on::after{width:14px;height:14px;margin:-7px 0 0 -7px;transform:none}
+/* sliders */
+.sl{position:absolute;touch-action:none;cursor:pointer}
+.sl .tr{position:absolute;background:currentColor}
+.sl .tk{position:absolute;background:currentColor}
+.sl .hd{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px}
+.sl .hd::after{content:"";position:absolute;left:50%;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:#fff;border:2px solid currentColor;transition:all .2s ease}
+.sl.act .hd::after{width:26px;height:26px;margin:-13px 0 0 -13px}
+.sl.h{height:26px}.sl.h .tr{left:0;right:0;top:12px;height:2px}.sl.h .tk{left:50%;top:7px;width:2px;height:12px;margin-left:-1px}.sl.h .hd{top:13px}
+.sl.v{width:26px}.sl.v .tr{top:0;bottom:0;left:12px;width:2px}.sl.v .tk{top:50%;left:7px;height:2px;width:12px;margin-top:-1px}.sl.v .hd{left:13px}
+.sl.dis{color:#aaa!important;cursor:not-allowed}.sl.dis .hd::after{background:#dfdfdf}
+.vc .sl.h{left:0;top:46px;width:300px}
+/* compact (charts) variable controls */
+.compact .vc{left:30px;width:150px;height:auto}
+.compact .vc .name{top:12px;padding-top:0}
+.compact .ig{left:0;right:auto;top:40px}
+.compact .fbtn{left:0;top:75px}
+.compact .chk{left:0;top:84px}
+.compact .help{right:auto;left:123px;top:9px}
+.compact .vc.expr ~ .sl{display:none}
+/* graphs */
+.row{position:absolute;left:0;width:960px;overflow:visible}
+.rc{position:absolute;left:0;top:10px;width:960px;overflow:hidden}
+.row.col .rc{display:none}
+.htitle{position:absolute;left:30px;top:10px;font-size:16px;font-weight:700;opacity:.5;cursor:pointer;display:none;z-index:50;user-select:none;-webkit-user-select:none}
+.htitle:hover{opacity:.7}
+.row.col .htitle{display:block}
+.rbtn{position:absolute;left:934px;top:14px;width:16px;height:25px;border:0;background:none;padding:0;color:#888;z-index:50;display:flex;align-items:center}
+.rbtn:hover{color:inherit;opacity:.8}
+.rbtn svg{width:14px;height:14px}
+.row .rbtn.show{display:none}.row.col .rbtn.show{display:flex}.row.col .rbtn.hidebtn{display:none}
+.gw{position:absolute;left:220px;width:710px;border:1px solid #bbb}
+.gw canvas{position:absolute;left:0;top:0;display:block}
+.yn{position:absolute;left:180px;width:40px;height:20px;padding-right:6px;text-align:right;font-size:10px;color:#888;pointer-events:none}
+.ytk{position:absolute;left:216px;width:4px;height:1px;background:#bbb}
+.zb{position:absolute;width:17px;height:22px;border:0;background:none;padding:0;color:#888;display:flex;align-items:center;justify-content:center}
+.zb:hover{opacity:.8}
+.zb svg{width:16px;height:16px}
+.xax{position:absolute;left:220px;width:710px;height:40px;font-size:10px;color:#888;display:none}
+.xax span{position:absolute;top:6px;width:71px;margin-left:-35.5px;text-align:center}
+.xax i{position:absolute;top:0;width:1px;height:4px;background:#bbb}
+.xax .xl{position:absolute;left:0;right:0;top:20px;line-height:20px;text-align:center;font-size:12px;font-weight:700}
+.xax .zb{top:19px}
+.pts{position:absolute;left:1px;top:0;bottom:0;z-index:5;display:none;touch-action:none;cursor:ew-resize}
+.pts .ph{position:absolute;top:0;bottom:0;width:4px;margin-left:-2px;background:rgba(80,80,80,.5)}
+.pts.act .ph{background:rgba(33,54,107,.6)}
+/* playback bar */
+.pb{position:absolute;left:0;top:592px;width:960px;height:62px;background:var(--panel);text-align:center;user-select:none;-webkit-user-select:none;padding:10px}
+.compact .pb{top:580px}
+.pbtn{position:absolute;border:0;border-radius:50%;background:#ccc;color:var(--navy);padding:0;display:flex;align-items:center;justify-content:center;outline:none}
+.pbtn:hover{opacity:.9}.pbtn:active{background:var(--navy);color:#fff}
+.pbtn.sm{width:28px;height:28px;top:18px}.pbtn.lg{width:42px;height:42px;top:10px}
+.pbtn svg{width:14px;height:14px}.pbtn.lg svg{width:16px;height:16px}
+.pbtn.play,.pbtn.pause,.pbtn.rec{display:none}
+.sim:not(.playing):not(.recmode) .pbtn.play,.sim.playing .pbtn.pause,.sim.recmode:not(.playing) .pbtn.rec{display:flex}
+#intro .pbtn.play{animation:beacon 2s infinite}
+@keyframes beacon{0%,100%{opacity:1;color:#21366b}50%{opacity:.5;color:#8099d8}}
+.nbtn{position:absolute;top:15px;height:32px;padding:6px 12px;border:0;border-radius:4px;background:#ccc;color:var(--navy);font-weight:500;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.nbtn:hover{opacity:.9}.nbtn:active{background:var(--navy);color:#fff}
+.nbtn svg{width:13px;height:13px}
+.radio{position:absolute;top:24px;padding-left:26px;line-height:16px;font-weight:700;cursor:pointer;color:#333}
+.radio::before{content:"";position:absolute;left:0;top:0;width:16px;height:16px;border:2px solid #333;border-radius:50%;background:#fff}
+.radio::after{content:"";position:absolute;left:8px;top:8px;width:0;height:0;border-radius:50%;background:var(--navy);transition:all .2s ease}
+.radio.on::after{width:14px;height:14px;margin:-7px 0 0 -7px}
+.speed{position:absolute;right:143px;top:18px;display:flex;align-items:center;color:#777}
+.speed label{margin:0 8px}
+.speed .sl{position:relative;width:140px;color:#aaa}
+.speed .sl .hd::after{background:var(--navy);border:0;width:12px;height:12px}
+.speed .sl.act .hd::after{width:26px;height:26px}
+.speed .sl .tk{display:none}
+.recmode .speed{display:none}
+.credit{position:absolute;right:16px;top:670px;font-size:11px;color:#b5b5b5;text-align:right}
+.compact .credit{top:658px}
+/* dialogs */
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:flex-start;justify-content:center}
+.ov.on{display:flex}
+.dlg{margin-top:90px;background:#fff;border-radius:6px;box-shadow:0 5px 15px rgba(0,0,0,.5);width:420px;max-height:600px;overflow:auto}
+.dlg.wide{width:600px;margin-top:30px}
+.dlg h4{margin:0;padding:15px;border-bottom:1px solid #e5e5e5;font-size:18px;font-weight:500}
+.dlg .bd{padding:15px}
+.dlg .ft{padding:12px 15px;border-top:1px solid #e5e5e5;text-align:right}
+.dlg .ft button{margin-left:6px;padding:6px 12px;border:1px solid #ccc;border-radius:4px;background:#fff}
+.dlg .ft button.ok{background:var(--navy);border-color:var(--navy);color:#fff}
+.dlg code,.dlg td:first-child{font-family:Menlo,Monaco,Consolas,"Courier New",monospace}
+.dlg code{background:#f5f5f5;padding:1px 4px;border-radius:3px;color:#c7254e}
+.dlg table{border-collapse:collapse;width:100%}
+.dlg td,.dlg th{text-align:left;padding:5px 8px;border-top:1px solid #ddd}
+.dlg .ie{color:#aaa;font-family:Menlo,Monaco,Consolas,monospace}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="app">
+    <div class="tabs"><div class="tab on" data-t="intro">Introduction</div><div class="tab" data-t="charts">Charts</div>
+      <button class="snd" title="Low effect volume (click to raise)"></button></div>
+    <section class="sim on" id="intro"></section>
+    <section class="sim compact" id="charts"></section>
+  </div>
+  <div class="ov" id="confirm"><div class="dlg"><div class="bd" style="padding:20px 15px">Are you sure you want to reset everything?</div>
+    <div class="ft"><button class="no">Cancel</button><button class="ok">OK</button></div></div></div>
+  <div class="ov" id="fhelp"><div class="dlg wide"><h4>About Custom Functions</h4><div class="bd">
+    <p>You can type an expression for <em>position</em> as a function of <em>time</em>, <code>t</code> (in seconds).</p>
+    <p><b>Examples:</b></p>
+    <ul><li><span class="ie">x(t) = </span><code>3 * t + 2</code></li><li><span class="ie">x(t) = </span><code>2*sin(t)</code></li>
+    <li><span class="ie">x(t) = </span><code>pow(t,2)</code> or <code>t^2</code></li><li><span class="ie">x(t) = </span><code>7*pow(sin(t),2)</code></li><li><span class="ie">x(t) = </span><code>sqrt(t * 4)</code></li></ul>
+    <p>Type only the right-hand side. Multiplication must be written out: <code>3 * t</code>, not <code>3t</code>.</p>
+    <table><tr><th>Function</th><th>Meaning</th></tr>
+    <tr><td>abs(x)</td><td>absolute value</td></tr><tr><td>sin(x), cos(x), tan(x)</td><td>trig functions (radians)</td></tr>
+    <tr><td>asin(x), acos(x), atan(x)</td><td>inverse trig functions</td></tr><tr><td>exp(x)</td><td>e to the power x</td></tr>
+    <tr><td>log(x)</td><td>natural logarithm</td></tr><tr><td>pow(x, y)</td><td>x to the power y</td></tr><tr><td>sqrt(x)</td><td>square root</td></tr>
+    <tr><td>PI, E</td><td>the constants &pi; and e</td></tr></table></div>
+    <div class="ft"><button class="ok">Close</button></div></div></div>
+</div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <pattern id="bricks" width="30" height="14" patternUnits="userSpaceOnUse">
+      <rect width="30" height="14" fill="#cdbdb4"/>
+      <rect x="0" y="0.5" width="13" height="6" fill="#a8423a"/><rect x="14" y="0.5" width="13" height="6" fill="#b85a4a"/><rect x="28" y="0.5" width="2" height="6" fill="#983a33"/>
+      <rect x="0" y="7.5" width="6" height="6" fill="#bb5f50"/><rect x="7" y="7.5" width="13" height="6" fill="#9c3b34"/><rect x="21" y="7.5" width="9" height="6" fill="#ad4b3f"/>
+    </pattern>
+    <g id="cloudShape" fill="#fff"><rect x="0" y="0" width="200" height="60" rx="30"/>
+      <ellipse cx="60" cy="25" rx="50" ry="40" transform="rotate(30 60 25)"/><circle cx="125" cy="5" r="60"/></g>
+  </defs>
+</svg>
+
+<script>
+(function () {
+'use strict';
+
+/* ---------------- icons (inline SVG) ---------------- */
+var IC = {
+  play: '<svg viewBox="0 0 16 16"><path fill="currentColor" d="M3 1.5v13l11-6.5z"/></svg>',
+  pause: '<svg viewBox="0 0 16 16"><path fill="currentColor" d="M3 2h3.6v12H3zM9.4 2H13v12H9.4z"/></svg>',
+  rew: '<svg viewBox="0 0 16 16"><path fill="currentColor" d="M2 2h2.2v12H2zM4.2 8 9 3v10zM9 8l5-5v10z"/></svg>',
+  rec: '<svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5" fill="currentColor"/></svg>',
+  step: '<svg viewBox="0 0 16 16"><path fill="currentColor" d="M3 2.5v11L10.5 8zM10.8 2.5H13v11h-2.2z"/></svg>',
+  hist: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3.2 5.2A5.6 5.6 0 1 1 2.5 9"/><path fill="currentColor" stroke="none" d="M1 2.6v4.2h4.2z"/><path d="M8 4.6v3.6l2.4 1.6"/></svg>',
+  volOff: '<svg viewBox="0 0 16 16"><path fill="currentColor" d="M2 5.5h3L9 2v12L5 10.5H2z"/></svg>',
+  volLow: '<svg viewBox="0 0 16 16"><path fill="currentColor" d="M1 5.5h3L8 2v12l-4-3.5H1z"/><path d="M10.5 5.5a3.4 3.4 0 0 1 0 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+  volHigh: '<svg viewBox="0 0 16 16"><path fill="currentColor" d="M0 5.5h3L7 2v12l-4-3.5H0z"/><path d="M9.3 5.6a3.2 3.2 0 0 1 0 4.8M11.3 3.6a6 6 0 0 1 0 8.8M13.3 1.8a8.6 8.6 0 0 1 0 12.4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+  caretDown: '<svg viewBox="0 0 17 20"><rect x="1" y="2.5" width="15" height="15" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path fill="currentColor" d="M4.5 7.5h8l-4 5z"/></svg>',
+  caretUp: '<svg viewBox="0 0 17 20"><rect x="1" y="2.5" width="15" height="15" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path fill="currentColor" d="M4.5 12.5h8l-4-5z"/></svg>',
+  zin: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="6.5" cy="6.5" r="5"/><path d="M10.2 10.2 15 15" stroke-width="2.6" stroke-linecap="round"/><path d="M4.2 6.5h4.6M6.5 4.2v4.6"/></svg>',
+  zout: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="6.5" cy="6.5" r="5"/><path d="M10.2 10.2 15 15" stroke-width="2.6" stroke-linecap="round"/><path d="M4.2 6.5h4.6"/></svg>',
+  togUp: '<svg viewBox="0 0 14 14"><rect x="1" y="1" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path fill="currentColor" d="M3.8 9h6.4L7 5z"/></svg>',
+  togDown: '<svg viewBox="0 0 14 14"><rect x="1" y="1" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path fill="currentColor" d="M3.8 5h6.4L7 9z"/></svg>',
+  close: '<svg viewBox="0 0 12 12"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>',
+  q: '<svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="7.5" fill="currentColor"/><path d="M5.8 6.1a2.3 2.3 0 1 1 3.3 2c-.7.4-1.1.8-1.1 1.6" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><circle cx="8" cy="12.2" r="1.1" fill="#fff"/></svg>',
+  compass: '<svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.6" fill="none" stroke="currentColor" stroke-width="1.8"/><path fill="currentColor" d="M10.8 5.2 9.2 9.2 5.2 10.8 6.8 6.8z"/><circle cx="8" cy="8" r=".9" fill="#fff"/></svg>'
+};
+
+/* ---------------- art ---------------- */
+var SKIN = '#d29a74', HAIR = '#3a2415', SUIT = '#141414';
+var MAN_STAND = '<svg class="st" viewBox="0 0 150 339" preserveAspectRatio="none">' +
+  '<path fill="#0d0d0d" d="M46 196h29l-2 122H50zM76 196h29l-3 122H79z"/>' +
+  '<path fill="#050505" d="M40 330c0-9 6-14 14-14h18c3 0 4 6 3 12-1 5-5 7-12 7H44c-3 0-4-2-4-5zM79 316h18c9 0 15 5 15 14 0 3-2 5-5 5H88c-7 0-10-2-11-7-1-6-1-12 2-12z"/>' +
+  '<path fill="none" stroke="' + SUIT + '" stroke-width="19" stroke-linejoin="round" stroke-linecap="round" d="M47 99 20 148l25 18M103 99l27 49-25 18"/>' +
+  '<path fill="' + SUIT + '" d="M44 90q31-10 62 0l2 60-3 50H45l-3-50z"/>' +
+  '<path fill="#f4f4f4" d="M63 88h24l-12 52z"/><path fill="none" stroke="#3a3a3a" stroke-width="2" d="M61 90l14 50 14-50"/>' +
+  '<circle cx="75" cy="152" r="2.4" fill="#333"/><circle cx="75" cy="168" r="2.4" fill="#333"/>' +
+  '<ellipse cx="46" cy="166" rx="9" ry="7" fill="' + SKIN + '"/><ellipse cx="104" cy="166" rx="9" ry="7" fill="' + SKIN + '"/>' +
+  '<path fill="' + SKIN + '" d="M68 66h14v24H68z"/>' +
+  '<ellipse cx="75" cy="44" rx="15" ry="21" fill="' + SKIN + '"/>' +
+  '<path fill="' + HAIR + '" d="M58 40c-2-16 6-26 17-26 12 0 20 9 17 26-3-7-6-11-9-12-6 3-14 3-20 0-2 3-4 7-5 12z"/>' +
+  '<path fill="' + HAIR + '" d="M61 48c1 10 6 18 14 19 8-1 13-9 14-19-3 5-7 6-14 6s-11-1-14-6z"/>' +
+  '<rect x="61" y="38" width="28" height="7" rx="3" fill="#0a0a0a"/></svg>';
+var MAN_WALK = '<svg class="wk" viewBox="0 0 150 339" preserveAspectRatio="none">' +
+  '<path fill="none" stroke="#101010" stroke-width="29" stroke-linejoin="round" stroke-linecap="round" d="M84 180l20 72 10 66"/>' +
+  '<path fill="none" stroke="#0d0d0d" stroke-width="29" stroke-linejoin="round" stroke-linecap="round" d="M62 180 44 252 24 312"/>' +
+  '<path fill="#050505" d="M8 328c0-8 7-13 15-14l13 2c4 2 5 7 4 12-1 3-4 5-8 5H13c-3 0-5-2-5-5zM98 322l16-4c9 0 16 6 18 13 0 3-2 5-5 5h-24c-4 0-7-2-7-6 0-4 0-7 2-8z"/>' +
+  '<path fill="none" stroke="' + SUIT + '" stroke-width="16" stroke-linejoin="round" stroke-linecap="round" d="M100 70l16 52 18 30"/>' +
+  '<path fill="' + SUIT + '" d="M52 62q28-10 54 0l4 64-6 64H50l-4-64z"/>' +
+  '<path fill="#e8e8e8" d="M56 60l9-3 3 34z"/>' +
+  '<path fill="none" stroke="' + SUIT + '" stroke-width="16" stroke-linejoin="round" stroke-linecap="round" d="M60 70 14 104 18 52"/>' +
+  '<circle cx="62" cy="122" r="2.6" fill="#333"/>' +
+  '<path fill="' + SKIN + '" d="M10 54l-2-14 3-1 3 9 1-14 3 0 1 13 2-12 3 1-1 13 3-8 3 1-3 14c-2 6-13 6-16-2z"/>' +
+  '<path fill="' + SKIN + '" d="M128 146c6 2 11 8 14 13l-3 2-4-4 2 9-3 1-3-8-1 9-3 0 0-9-3 7-3-1 2-10c0-6 2-8 5-9z"/>' +
+  '<path fill="' + SKIN + '" d="M68 44h16v18H68z"/>' +
+  '<path fill="' + SKIN + '" d="M58 30c0-11 7-19 17-19s16 8 16 19c0 11-6 20-15 20-5 0-9-2-12-5l-5-1 2-5-3-2 3-4c-2-1-3-2-3-3z"/>' +
+  '<path fill="' + HAIR + '" d="M60 22c2-10 10-15 19-14 10 1 17 10 15 22-1 6-4 11-8 13 1-7-1-12-4-14-2 4-6 5-9 4 0-4-2-7-5-7-3 0-6-2-8-4z"/>' +
+  '<path fill="' + HAIR + '" d="M58 36c1 7 6 14 14 14 4 0 7-3 8-7-4 1-9 0-12-3-3 1-7-1-10-4z"/>' +
+  '<path fill="none" stroke="#222" stroke-width="2" d="M57 27h9"/></svg>';
+var TREE = '<svg viewBox="0 0 109 100"><path fill="#d9a35a" stroke="#2b2b2b" stroke-width="2" d="M37 100c3-14 5-28 10-40 3-7 10-13 18-17l5 4c-7 5-12 10-13 17l2-1c-3 12-4 24-2 37z"/>' +
+  '<path fill="#bf8740" d="M44 100c1-12 3-25 7-35l3 1c-3 11-4 22-3 34z"/>' +
+  '<path fill="#49a52a" stroke="#203a14" stroke-width="2.4" stroke-linejoin="round" d="M6 34c-3-9 4-16 12-18 3-7 12-11 20-8 7-6 19-7 27-2 9-2 19 1 23 8 9 1 17 7 17 15 6 4 4 13-1 16 1 7-5 12-12 11-4 6-13 8-19 4-6 5-16 6-22 1-7 4-17 3-21-3-8 2-16-2-17-9-6-2-8-9-7-15z"/>' +
+  '<path fill="#7fd04c" d="M20 20c6-6 16-8 24-5 8-4 18-3 25 1-6 2-11 5-13 9-8-3-18-3-25 1-3-3-7-5-11-6zM70 22c7-2 15 0 19 5-5 0-9 2-11 4-2-4-5-7-8-9z"/>' +
+  '<path fill="#2f7d1b" opacity=".55" d="M10 40c8 6 20 8 30 5 10 6 24 6 34 1 8 4 18 4 25-1-1 5-5 9-11 9-4 6-13 8-19 4-6 5-16 6-22 1-7 4-17 3-21-3-8 2-14-2-16-8z"/></svg>';
+var HOUSE = '<svg viewBox="0 0 100 88"><path fill="#a7a5da" stroke="#222" stroke-width="2.5" d="M12 44h76v42H12z"/>' +
+  '<path fill="#f5f5e4" stroke="#222" stroke-width="2" d="M17 52h22v14H17zM61 52h22v14H61z"/><path stroke="#5a7a4a" stroke-width="1.4" d="M24 52v14M31 52v14M17 59h22M68 52v14M75 52v14M61 59h22"/>' +
+  '<path fill="#7d4a1f" stroke="#222" stroke-width="2" d="M44 54h12v32H44z"/>' +
+  '<path fill="#ffd21f" stroke="#222" stroke-width="2.6" stroke-linejoin="round" d="M6 6c30-3 58-3 88 0 1 6-1 14 3 20 2 7 2 14 1 22-14-5-32-6-48-6s-34 1-48 6c-1-8-1-15 1-22 4-6 2-14 3-20z"/>' +
+  '<path fill="none" stroke="#fff6c4" stroke-width="2.4" stroke-linecap="round" opacity=".9" d="M22 12c-2 8-3 18-2 28M36 11c-2 9-2 19-1 29M50 11v29M64 11c2 9 2 19 1 29M78 12c2 8 3 18 2 28"/>' +
+  '<path fill="#f0a000" opacity=".5" d="M8 30c26-7 58-7 84 0l1 14c-14-4-30-5-44-5s-30 1-42 5z"/></svg>';
+function cloudSvg(left, top, s, flip, op, cls) {
+  // a 200x60 cloud, scaled about its centre like a CSS transform
+  return '<svg class="cloud ' + cls + '" style="left:' + left + 'px;top:' + top + 'px;opacity:' + op + ';transform:scale(' + (flip ? -s : s) + ',' + s + ')" width="200" height="60" viewBox="0 0 200 60" overflow="visible"><use href="#cloudShape"/></svg>';
+}
+var CLOUDS = cloudSvg(700, 50, .5, 0, 1, 'c1') + cloudSvg(80, 40, .3, 0, .7, 'c2') + cloudSvg(0, 30, .4, 1, .9, 'c3') +
+  cloudSvg(500, 20.5, .35, 1, .85, 'c4') + cloudSvg(800, -20, .4, 0, .9, 'c5');
+var BRICK = '<svg class="brick" viewBox="0 0 30 140"><rect width="30" height="140" fill="url(#bricks)"/><rect x="0" y="0" width="30" height="140" fill="none" stroke="#7a2a24" stroke-width=".6" opacity=".5"/></svg>';
+
+/* ---------------- sound (WebAudio, synthesized) ---------------- */
+var volume = 0.2, actx = null, noiseBuf = null;
+function audio() {
+  try {
+    if (!actx) { var C = window.AudioContext || window.webkitAudioContext; if (!C) return null; actx = new C(); }
+    if (actx.state === 'suspended') actx.resume();
+  } catch (e) { return null; }
+  return actx;
+}
+function playCrash() {
+  var a = audio(); if (!a || volume <= 0) return;
+  var t = a.currentTime;
+  if (!noiseBuf) { noiseBuf = a.createBuffer(1, a.sampleRate * 0.4 | 0, a.sampleRate); var d = noiseBuf.getChannelData(0); for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; }
+  var n = a.createBufferSource(); n.buffer = noiseBuf;
+  var lp = a.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.setValueAtTime(1800, t); lp.frequency.exponentialRampToValueAtTime(300, t + .3);
+  var g = a.createGain(); g.gain.setValueAtTime(volume * 1.2, t); g.gain.exponentialRampToValueAtTime(0.001, t + .35);
+  n.connect(lp); lp.connect(g); g.connect(a.destination); n.start(t); n.stop(t + .4);
+  var o = a.createOscillator(); o.type = 'sine'; o.frequency.setValueAtTime(110, t); o.frequency.exponentialRampToValueAtTime(45, t + .2);
+  var g2 = a.createGain(); g2.gain.setValueAtTime(volume * 1.5, t); g2.gain.exponentialRampToValueAtTime(0.001, t + .25);
+  o.connect(g2); g2.connect(a.destination); o.start(t); o.stop(t + .3);
+}
+function playGrunt() {
+  var a = audio(); if (!a || volume <= 0) return;
+  var t = a.currentTime + .05, f0 = 120 + Math.random() * 60, dur = .18 + Math.random() * .12;
+  var o = a.createOscillator(); o.type = 'sawtooth'; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f0 * .65, t + dur);
+  var bp = a.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 550 + Math.random() * 300; bp.Q.value = 3;
+  var g = a.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(volume * 1.6, t + .03); g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+  o.connect(bp); bp.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + .05);
+}
+
+/* ---------------- model: data series ---------------- */
+// kind 'size' keeps the last `lim` points; kind 'time' ignores points later than `lim` seconds.
+function Series(kind, lim) { this.kind = kind; this.lim = lim; this.data = []; }
+Series.prototype = {
+  add: function (v, t) {
+    var p = (v && typeof v === 'object') ? { value: v.value, time: v.time } : { value: v, time: t };
+    if (this.kind === 'time' && !(p.time <= this.lim)) return;
+    this.data.push(p);
+    if (this.kind === 'size') while (this.data.length > this.lim) this.data.shift();
+  },
+  size: function () { return this.data.length; },
+  range: function (a, b) { var r = []; for (var i = Math.max(a, 0); i <= b && i < this.data.length; i++) r.push(this.data[i]); return r; },
+  last: function () { return this.data.length ? this.data[this.data.length - 1] : null; },
+  mid: function () { return this.data.length ? this.data[Math.floor(this.data.length / 2)] : null; },
+  clear: function () { this.data = []; },
+  clearAfter: function (t) { this.data = this.data.filter(function (p) { return p.time < t; }); },
+  set: function (d) { this.data = d; }
+};
+// least-squares slope of value vs time
+function slope(pts) {
+  var n = pts.length, sx = 0, sy = 0, sxy = 0, sxx = 0;
+  for (var i = 0; i < n; i++) { var x = pts[i].time, y = pts[i].value; sx += x; sy += y; sxy += x * y; sxx += x * x; }
+  var m = (sxy - sx * sy / n) / (sxx - sx * sx / n);
+  return isFinite(m) ? m : 0;
+}
+function centredDerivs(s) {
+  var out = [];
+  for (var i = 0; i < s.size(); i++) out.push({ value: slope(s.range(i - 1, i + 1)), time: s.data[i].time });
+  return out;
+}
+
+/* ---------------- model: the man ---------------- */
+var BY_POS = 0, BY_VEL = 1, BY_ACC = 2;
+function Man(sim, noRec) {
+  this.sim = sim;
+  this.position = 0; this.velocity = 0; this.acceleration = 0; this.mode = BY_POS;
+  this.mouse = new Series('size', 6);
+  this.pM = new Series('size', 6); this.vM = new Series('size', 6); this.aM = new Series('size', 6);
+  var k = noRec ? 'size' : 'time', l = noRec ? 6 : 20;
+  this.pG = new Series(k, l); this.vG = new Series(k, l); this.aG = new Series(k, l);
+  this.times = []; this.mousePos = 0; this.time = 0; this.hit = { position: 0, collided: false };
+}
+Man.prototype = {
+  all: function () { return [this.mouse, this.pM, this.vM, this.aM, this.pG, this.vG, this.aG]; },
+  clear: function () {
+    this.time = 0; this.times = []; this.setMouse(this.position);
+    this.all().forEach(function (s) { s.clear(); });
+    this.sim.graphsDirty = true;
+  },
+  clearAfter: function (t) { this.times = []; this.all().forEach(function (s) { s.clearAfter(t); }); this.sim.graphsDirty = true; },
+  state: function () { return { position: this.position, velocity: this.velocity, acceleration: this.acceleration, mode: this.mode }; },
+  apply: function (t, s) {
+    this.time = t; this.times = [];
+    this.position = s.position; this.velocity = s.velocity; this.acceleration = s.acceleration; this.mode = s.mode;
+    this.setMouse(this.position);
+  },
+  // clamp to the walls; returns one shared result object (later calls overwrite it)
+  clamp: function (x) {
+    var r = this.hit, h = this.sim.half; r.position = x; r.collided = false;
+    if (this.sim.walls) { if (x < -h) { r.position = -h; r.collided = true; } else if (x > h) { r.position = h; r.collided = true; } }
+    return r;
+  },
+  atWall: function (x) { return x === -this.sim.half || x === this.sim.half; },
+  setMouse: function (x) {
+    if (this.mousePos !== x) { this.mousePos = this.clamp(x).position; if (this.sim.paused) this.position = this.mousePos; }
+  },
+  pointAt: function (s, t, now) {
+    for (var i = 0; i < s.size(); i++) if (s.data[i].time === t) return { value: s.data[i].value, time: now };
+    var l = s.last(); return { value: l ? l.value : 0, time: now };
+  },
+  timeAgo: function (n) { var i = this.times.length - 1 - n; if (i < 0) i = this.times.length - 1; return this.times[i]; },
+  update: function (t, dt) {
+    this.time = t; this.times.push(t); if (this.times.length > 10) this.times.shift();
+    if (this.mode === BY_POS) this.fromPos(t, dt); else if (this.mode === BY_VEL) this.fromVel(t, dt); else this.fromAcc(t, dt);
+  },
+  fromPos: function (t) {
+    var old = this.position, x, raw, sim = this.sim;
+    if (sim.formula) {
+      raw = sim.evalFormula(t); x = this.clamp(raw).position; this.setMouse(x); this.mouse.add(x, t); this.pM.add(x, t);
+    } else {
+      this.mouse.add(this.clamp(this.mousePos).position, t);
+      var pts = this.mouse.range(this.mouse.size() - 4, this.mouse.size()), sum = 0;
+      for (var i = 0; i < pts.length; i++) sum += pts[i].value;
+      raw = pts.length ? sum / pts.length : 0; x = this.clamp(raw).position; this.pM.add(x, t);
+    }
+    this.vM.set(centredDerivs(this.pM)); this.aM.set(centredDerivs(this.vM));
+    var t1 = this.timeAgo(1), t2 = this.timeAgo(2);
+    this.pG.add(x, t); this.vG.add(this.pointAt(this.vM, t1, t)); this.aG.add(this.pointAt(this.aM, t2, t));
+    this.position = x;
+    var v = this.vG.last() ? this.vG.last().value : 0; if (Math.abs(v) < 1e-6) v = 0; this.velocity = v;
+    var a = this.aG.last() ? this.aG.last().value : 0; if (Math.abs(a) < 1e-6) a = 0; this.acceleration = a;
+    if (!this.atWall(old) && this.atWall(this.position)) sim.collide();
+  },
+  fromVel: function (t, dt) {
+    this.mouse.clear(); this.vM.add(this.velocity, t); this.vG.add(this.velocity, t);
+    this.aM.set(centredDerivs(this.vM)); var m = this.aM.mid(); if (m) this.aG.add(m);
+    var r = this.clamp(this.position + this.velocity * dt);
+    this.pM.add(r.position, t); this.pG.add(r.position, t); this.setMouse(r.position); this.position = r.position;
+    var a = this.aG.last() ? this.aG.last().value : 0; if (Math.abs(a) < 1e-6) a = 0; this.acceleration = a;
+    if (r.collided) { this.velocity = 0; this.sim.collide(); }
+  },
+  fromAcc: function (t, dt) {
+    this.mouse.clear();
+    var v1 = this.velocity + this.acceleration * dt, vAvg = (this.velocity + v1) / 2;
+    var r = this.clamp(this.position + vAvg * dt);
+    if (r.collided) { this.mode = BY_VEL; this.velocity = v1; this.update(t - dt, dt); return; }
+    this.aM.add(this.acceleration, t); this.aG.add(this.acceleration, t);
+    this.vG.add(v1, t); this.vM.add(v1, t);
+    this.pG.add(r.position, t); this.pM.add(r.position, t);
+    this.setMouse(r.position); this.position = r.position; this.velocity = v1;
+    if (r.collided) { this.velocity = 0; this.acceleration = 0; }
+  }
+};
+
+/* ---------------- model: simulation (time, recording, playback) ---------------- */
+function Sim(noRec) {
+  this.noRec = !!noRec; this.paused = true; this.time = 0; this.timeScale = 1;
+  this.walls = true; this.half = 10; this.furthest = 0; this.maxTime = 20;
+  this.recording = !noRec; this.speed = 1; this.history = []; this.hTimes = null; this.formula = null;
+  this.man = new Man(this, noRec); this.onCollide = null; this.graphsDirty = true;
+}
+Sim.prototype = {
+  step: function (ms) {
+    if (this.paused) return;
+    var dt = ms / 1000 * this.timeScale; this.time += dt;
+    if (this.recording) { this.man.update(this.time, dt); this.history.push({ time: this.time, walls: this.walls, man: this.man.state() }); this.furthest = this.time; }
+    else if (this.noRec) this.man.update(this.time, dt);
+    else { this.applyPlayback(); if (this.time >= this.furthest) this.pause(); }
+  },
+  play: function () { if (!this.recording) this.prepPlayback(); this.paused = false; },
+  pause: function () { this.paused = true; },
+  collide: function () { if (this.onCollide) this.onCollide(); },
+  evalFormula: function (t) { try { var v = this.formula(t); return isFinite(v) ? v : 0; } catch (e) { return 0; } },
+  rewind: function () { this.time = 0; if (this.recording) this.resetHistory(); },
+  prepPlayback: function () { this.history.sort(function (a, b) { return a.time - b.time; }); this.hTimes = this.history.map(function (h) { return h.time; }); },
+  resetHistory: function () { this.history = []; this.hTimes = null; this.time = 0; this.furthest = 0; this.man.clear(); },
+  clearAfter: function (t) {
+    this.history = this.history.filter(function (h) { return h.time < t; }); this.hTimes = null; this.furthest = t; this.man.clearAfter(t);
+  },
+  record: function () { this.pause(); this.clearAfter(this.time); this.timeScale = this.speed; this.recording = true; },
+  stopRecording: function () { this.pause(); this.time = 0; this.recording = false; this.timeScale = 1; },
+  playingBack: function () { return !this.recording && !this.noRec; },
+  setSpeed: function (s) { this.speed = s; if (!this.recording) this.timeScale = s; },
+  closest: function (t) {
+    var a = this.hTimes; if (!a || !a.length) return null;
+    var lo = 0, hi = a.length - 1;
+    while (hi - lo > 1) { var m = (lo + hi) >> 1; if (a[m] < t) lo = m; else hi = m; }
+    return this.history[Math.abs(a[lo] - t) <= Math.abs(a[hi] - t) ? lo : hi];
+  },
+  applyPlayback: function () { var s = this.closest(this.time); if (s) { this.walls = s.walls; this.man.apply(this.time, s.man); } },
+  setPlaybackTime: function (t) { this.time = t; if (!this.hTimes) this.prepPlayback(); this.applyPlayback(); }
+};
+
+/* ---------------- expression parser: position as a function of t ---------------- */
+function compile(src) {
+  var s = String(src), i = 0;
+  function ws() { while (i < s.length && /\s/.test(s[i])) i++; }
+  function fail() { throw new Error('bad expression'); }
+  function expr() { var f = term(); for (;;) { ws(); var c = s[i]; if (c === '+' || c === '-') { i++; f = bin(c, f, term()); } else return f; } }
+  function term() { var f = unary(); for (;;) { ws(); var c = s[i]; if (c === '*' || c === '/') { i++; f = bin(c, f, unary()); } else return f; } }
+  function unary() { ws(); if (s[i] === '-') { i++; var g = unary(); return function (t) { return -g(t); }; } if (s[i] === '+') { i++; return unary(); } return power(); }
+  function power() { var b = atom(); ws(); if (s[i] === '^') { i++; var e = unary(); return function (t) { return Math.pow(b(t), e(t)); }; } return b; }
+  function bin(op, a, b) {
+    if (op === '+') return function (t) { return a(t) + b(t); };
+    if (op === '-') return function (t) { return a(t) - b(t); };
+    if (op === '*') return function (t) { return a(t) * b(t); };
+    return function (t) { return a(t) / b(t); };
+  }
+  function atom() {
+    ws(); var c = s[i], m;
+    if (c === '(') { i++; var e = expr(); ws(); if (s[i] !== ')') fail(); i++; return e; }
+    m = /^(\d+\.?\d*|\.\d+)(e[+-]?\d+)?/i.exec(s.slice(i));
+    if (m) { i += m[0].length; var n = parseFloat(m[0]); return function () { return n; }; }
+    m = /^[A-Za-z_][A-Za-z0-9_]*/.exec(s.slice(i));
+    if (!m) fail();
+    var id = m[0]; i += id.length; ws();
+    if (s[i] === '(') {
+      var fn = Math[id.toLowerCase()]; if (typeof fn !== 'function') fail();
+      i++; var args = []; ws();
+      if (s[i] !== ')') { for (;;) { args.push(expr()); ws(); if (s[i] === ',') { i++; continue; } break; } }
+      if (s[i] !== ')') fail(); i++;
+      return function (t) { return fn.apply(Math, args.map(function (g) { return g(t); })); };
+    }
+    if (id === 't') return function (t) { return t; };
+    if (typeof Math[id] === 'number' && id === id.toUpperCase()) { var k = Math[id]; return function () { return k; }; }
+    fail();
+  }
+  var f = expr(); ws(); if (i < s.length) fail();
+  if (typeof f(0) !== 'number') fail();
+  return f;
+}
+
+/* ---------------- widgets ---------------- */
+function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
+function fmt(v) { return (Math.round(v * 100) / 100).toFixed(2); }
+
+// slider: o = {min,max,vertical,mid (value at 50%, optional),onSlide}
+function Slider(o) {
+  var self = this; this.o = o; this.v = 0; this.dis = false;
+  var e = this.el = el('div', 'sl ' + (o.vertical ? 'v' : 'h'), '<div class="tr"></div><div class="tk"></div><div class="hd"></div>');
+  this.hd = e.querySelector('.hd');
+  function fromEvent(ev) {
+    var r = e.getBoundingClientRect(), f = o.vertical ? 1 - (ev.clientY - r.top) / r.height : (ev.clientX - r.left) / r.width;
+    f = Math.max(0, Math.min(1, f));
+    var v = self.fromFrac(f); v = Math.round(v * 100) / 100; self.set(v); o.onSlide(v);
+  }
+  e.addEventListener('pointerdown', function (ev) {
+    if (self.dis) return; ev.preventDefault();
+    try { e.setPointerCapture(ev.pointerId); } catch (x) {}
+    e.classList.add('act'); fromEvent(ev);
+    function mv(ev2) { fromEvent(ev2); }
+    function up() { e.classList.remove('act'); e.removeEventListener('pointermove', mv); e.removeEventListener('pointerup', up); e.removeEventListener('pointercancel', up); }
+    e.addEventListener('pointermove', mv); e.addEventListener('pointerup', up); e.addEventListener('pointercancel', up);
+  });
+}
+Slider.prototype = {
+  toFrac: function (v) {
+    var o = this.o, f;
+    if (o.mid != null) f = v <= o.mid ? .5 * (v - o.min) / (o.mid - o.min) : .5 + .5 * (v - o.mid) / (o.max - o.mid);
+    else f = (v - o.min) / (o.max - o.min);
+    return Math.max(0, Math.min(1, f));
+  },
+  fromFrac: function (f) {
+    var o = this.o;
+    if (o.mid != null) return f <= .5 ? o.min + (o.mid - o.min) * f * 2 : o.mid + (o.max - o.mid) * (f - .5) * 2;
+    return o.min + (o.max - o.min) * f;
+  },
+  set: function (v) {
+    this.v = v; var f = this.toFrac(v);
+    if (this.o.vertical) this.hd.style.top = (100 - f * 100) + '%'; else this.hd.style.left = (f * 100) + '%';
+  },
+  clamp: function (v) { return Math.max(this.o.min, Math.min(this.o.max, v)); },
+  disable: function (d) { this.dis = d; this.el.classList.toggle('dis', d); }
+};
+
+function confirmReset(cb) {
+  var ov = document.getElementById('confirm'); ov.classList.add('on');
+  function done(ok) { ov.classList.remove('on'); ov.querySelector('.ok').onclick = ov.querySelector('.no').onclick = null; if (ok) cb(); }
+  ov.querySelector('.ok').onclick = function () { done(true); };
+  ov.querySelector('.no').onclick = function () { done(false); };
+}
+document.querySelector('#fhelp .ok').onclick = function () { document.getElementById('fhelp').classList.remove('on'); };
+
+/* ---------------- graph (Charts tab) ---------------- */
+function Graph(view, row, o) {
+  // o: {color, half (half of y span), series, xaxis}
+  this.view = view; this.sim = view.sim; this.o = o; this.maxSpan = 2 * o.half; this.span = this.maxSpan;
+  this.timeSpan = 20; this.top = 0; this.h = 100; this.showX = false;
+  var c = this.root = el('div', 'gbox'); row.appendChild(c);
+  this.gw = el('div', 'gw'); c.appendChild(this.gw);
+  this.cv = el('canvas'); this.gw.appendChild(this.cv); this.ctx = this.cv.getContext('2d');
+  this.ylab = el('div'); c.appendChild(this.ylab);
+  var self = this;
+  this.zi = el('button', 'zb', IC.zin); this.zi.title = 'Zoom in'; this.zo = el('button', 'zb', IC.zout); this.zo.title = 'Zoom out';
+  c.appendChild(this.zi); c.appendChild(this.zo);
+  this.zi.onclick = function () { var s = self.span - self.maxSpan / 8; if (s > 1) { self.span = s; self.labels(); } };
+  this.zo.onclick = function () { self.span = Math.min(self.span + self.maxSpan / 8, self.maxSpan); self.labels(); };
+  this.xax = el('div', 'xax'); c.appendChild(this.xax);
+  // playback scrubber
+  this.pts = el('div', 'pts', '<div class="ph"></div>'); this.gw.appendChild(this.pts); this.ph = this.pts.firstChild;
+  this.pts.addEventListener('pointerdown', function (ev) {
+    ev.preventDefault(); try { self.pts.setPointerCapture(ev.pointerId); } catch (x) {}
+    self.pts.classList.add('act'); scrub(ev);
+    function mv(e2) { scrub(e2); }
+    function up() { self.pts.classList.remove('act'); self.pts.removeEventListener('pointermove', mv); self.pts.removeEventListener('pointerup', up); self.pts.removeEventListener('pointercancel', up); }
+    self.pts.addEventListener('pointermove', mv); self.pts.addEventListener('pointerup', up); self.pts.addEventListener('pointercancel', up);
+  });
+  function scrub(ev) {
+    var r = self.pts.getBoundingClientRect(), max = Math.min(self.sim.furthest, self.timeSpan);
+    var f = r.width > 0 ? Math.max(0, Math.min(1, (ev.clientX - r.left) / r.width)) : 0;
+    self.sim.setPlaybackTime(Math.round(f * max * 100) / 100);
+  }
+}
+Graph.prototype = {
+  layout: function (top, h, showX) {
+    this.top = top; this.h = h; this.showX = showX;
+    this.gw.style.top = top + 'px'; this.gw.style.height = h + 'px';
+    this.zi.style.left = this.zo.style.left = '934px';
+    this.zi.style.top = (top + h / 2 - 22) + 'px'; this.zo.style.top = (top + h / 2 + 5) + 'px';
+    this.xax.style.top = (top + h) + 'px'; this.xax.style.display = showX ? 'block' : 'none';
+    this.W = 708; this.H = h - 2;
+    this.labels(); this.sizeCanvas();
+  },
+  sizeCanvas: function () {
+    var k = (window.devicePixelRatio || 1) * (window.stageScale || 1);
+    k = Math.max(1, Math.min(k, 4));
+    this.cv.style.width = this.W + 'px'; this.cv.style.height = this.H + 'px';
+    this.cv.width = Math.round(this.W * k); this.cv.height = Math.round(this.H * k); this.k = k;
+  },
+  labels: function () {
+    var h = this.h, html = '', i, n = 4, half = this.span / 2;
+    for (i = 0; i <= n; i++) {
+      var y = this.top + h * i / n, v = half - this.span * i / n;
+      html += '<div class="yn" style="top:' + (y - 7) + 'px">' + v.toFixed(1) + '</div><div class="ytk" style="top:' + (i === n ? y - 1 : y) + 'px"></div>';
+    }
+    this.ylab.innerHTML = html;
+    var x = '', ts = this.timeSpan;
+    for (i = 0; i <= 10; i++) {
+      var px = 710 * i / 10, lab = (ts * i / 10).toFixed(1);
+      x += '<span style="left:' + (i === 10 ? px - 1.5 : px) + 'px">' + lab + '</span>' + (i === 0 || i === 10 ? '' : '<i style="left:' + px + 'px"></i>');
+    }
+    x += '<div class="xl">time (sec)</div>';
+    this.xax.innerHTML = x;
+    var zi = el('button', 'zb', IC.zin), zo = el('button', 'zb', IC.zout), v = this.view;
+    zi.title = 'Zoom in'; zo.title = 'Zoom out';
+    zi.style.left = (710 - 72 - 17) + 'px'; zo.style.left = (710 - 48 - 17) + 'px';
+    zi.onclick = function () { v.zoomX(-2); }; zo.onclick = function () { v.zoomX(2); };
+    this.xax.appendChild(zi); this.xax.appendChild(zo);
+  },
+  draw: function () {
+    var c = this.ctx, W = this.W, H = this.H, k = this.k;
+    c.setTransform(k, 0, 0, k, 0, 0);
+    c.fillStyle = '#fff'; c.fillRect(0, 0, W, H);
+    c.beginPath();
+    var dy = Math.round((H + 2) / 4), dx = Math.round((W + 2) / 10), i;
+    for (i = 1; i <= 3; i++) { c.moveTo(0, dy * i - .5); c.lineTo(W, dy * i - .5); }
+    for (i = 1; i <= 9; i++) { c.moveTo(dx * i - .5, 0); c.lineTo(dx * i - .5, H); }
+    c.lineWidth = 1; c.strokeStyle = '#ddd'; c.stroke();
+    var d = this.o.series().data; if (!d.length) return;
+    var rx = W / this.timeSpan, ry = H / this.span;
+    c.beginPath();
+    for (i = 0; i < d.length; i++) {
+      var x = i === 0 ? -1 : d[i].time * rx, y = H / 2 - d[i].value * ry;
+      if (i === 0) c.moveTo(x, y); else c.lineTo(x, y);
+    }
+    c.lineWidth = 3; c.lineJoin = 'round'; c.strokeStyle = this.o.color; c.stroke();
+  },
+  update: function () {
+    this.draw();
+    var pb = this.sim.playingBack();
+    this.pts.style.display = pb ? 'block' : 'none';
+    if (pb) {
+      var rx = this.W / this.timeSpan, max = Math.min(this.sim.furthest, this.timeSpan);
+      this.pts.style.width = (rx * max) + 'px';
+      this.ph.style.left = (Math.min(this.sim.time, max) * rx) + 'px';
+    }
+  }
+};
+
+/* ---------------- a tab (Introduction or Charts) ---------------- */
+var VARS = [
+  { k: 'p', key: 'position', name: 'Position', units: 'm', color: 'var(--pos)', col: '#2575BA', half: 10, range: 10 },
+  { k: 'v', key: 'velocity', name: 'Velocity', units: 'm/s', color: 'var(--vel)', col: '#CD2520', half: 12, range: 16 },
+  { k: 'a', key: 'acceleration', name: 'Acceleration', units: 'm/s<sup>2</sup>', color: 'var(--acc)', col: '#349E34', half: 60, range: 60 }
+];
+
+function View(root, charts) {
+  this.root = root; this.charts = charts; this.build();
+}
+View.prototype = {
+  build: function () {
+    var self = this, root = this.root, charts = this.charts;
+    var sim = this.sim = new Sim(!charts);
+    sim.onCollide = function () { playCrash(); playGrunt(); };
+    this.dragging = false; this.shown = {}; this.vec = { v: false, a: false };
+    root.innerHTML = '';
+    root.classList.toggle('recmode', charts); root.classList.remove('playing');
+
+    // ---- scene
+    var sv = el('div', 'scene-view'); root.appendChild(sv);
+    var sc = el('div', 'scene'); sv.appendChild(sc);
+    var clouds = el('div', 'clouds', CLOUDS); sc.appendChild(clouds);
+    var hit = {};
+    clouds.querySelectorAll('.cloud').forEach(function (c) {
+      c.addEventListener('click', function () { hit[c.getAttribute('class')] = 1; if (Object.keys(hit).length >= 5) clouds.classList.add('moving'); });
+    });
+    this.clock = el('div', 'clock', '<span class="t">0.0</span>sec'); sc.appendChild(this.clock); this.clockT = this.clock.firstChild;
+    sc.appendChild(el('div', 'tree', TREE)); sc.appendChild(el('div', 'house', HOUSE));
+    var men = this.men = el('div', 'men'); sc.appendChild(men);
+    var man = this.manEl = el('div', 'man', MAN_STAND + MAN_WALK + '<div class="arrow vel"><i></i><b></b></div><div class="arrow acc"><i></i><b></b></div>');
+    man.title = 'Drag the man';
+    men.appendChild(man);
+    this.arrV = man.querySelector('.arrow.vel'); this.arrA = man.querySelector('.arrow.acc');
+    var walls = el('div', 'walls'); sc.appendChild(walls);
+    this.wallEls = [];
+    ['l', 'r'].forEach(function (s) {
+      var w = el('div', 'wall ' + s, BRICK + '<button class="hide" title="Hide Walls">' + IC.caretDown + '</button><button class="show" title="Show Walls">' + IC.caretUp + '</button>');
+      w.querySelector('.hide').onclick = function () { sim.walls = false; };
+      w.querySelector('.show').onclick = function () { sim.walls = true; };
+      walls.appendChild(w); self.wallEls.push(w);
+    });
+    var ruler = el('div', 'ruler'), rh = '';
+    for (var i = -10; i <= 10; i++) {
+      var x = 40 + (i + 10) * 44;
+      rh += '<i style="left:' + x + 'px"></i>' + (i % 2 ? '' : '<span style="left:' + x + 'px">' + i + '</span>');
+    }
+    ruler.innerHTML = rh + '<span class="lab">meters</span>'; sv.appendChild(ruler);
+
+    // man dragging
+    man.addEventListener('pointerdown', function (ev) {
+      ev.preventDefault(); audio();
+      try { man.setPointerCapture(ev.pointerId); } catch (x) {}
+      self.dragging = true;
+      if (!sim.noRec && !sim.recording) { sim.record(); self.syncMode(); }
+      if (sim.paused) sim.play();
+      function mv(e2) {
+        var r = men.getBoundingClientRect(), f = (e2.clientX - r.left) / r.width;
+        sim.man.setMouse(f * 20 - 10); sim.man.mode = BY_POS;
+      }
+      function up() { self.dragging = false; man.removeEventListener('pointermove', mv); man.removeEventListener('pointerup', up); man.removeEventListener('pointercancel', up); }
+      man.addEventListener('pointermove', mv); man.addEventListener('pointerup', up); man.addEventListener('pointercancel', up);
+    });
+
+    // ---- variable controls
+    var ctl = el('div', 'ctl'); root.appendChild(ctl);
+    this.ctl = ctl; this.vc = {}; this.inp = {}; this.sl = {}; this.rows = [];
+    VARS.forEach(function (V, idx) {
+      var host = ctl, row = null;
+      if (charts) {
+        row = el('div', 'row ' + V.k + 'row');
+        row.innerHTML = '<div class="rc"></div><div class="htitle" style="color:' + V.color + '" title="Click to show">(' + V.name + ' Hidden)</div>' +
+          '<button class="rbtn hidebtn" title="Click to hide">' + IC.togUp + '</button><button class="rbtn show" title="Click to show">' + IC.togDown + '</button>';
+        ctl.appendChild(row); host = row.firstChild;
+        row.querySelector('.hidebtn').onclick = function () { row.classList.add('col'); self.layoutRows(); };
+        row.querySelector('.show').onclick = row.querySelector('.htitle').onclick = function () { row.classList.remove('col'); self.opening = row; self.layoutRows(); self.lastOpened = row; };
+        self.rows.push(row);
+      }
+      var vc = el('div', 'vc ' + V.k);
+      if (!charts) vc.style.top = (idx * 76) + 'px';
+      var h = '<div class="name">' + V.name + '<span class="drv">' + IC.compass + '</span></div>' +
+        '<div class="ig val"><input type="text" value="0.00" aria-label="' + V.name + '"><span>' + V.units + '</span></div>';
+      if (V.k === 'p') h += '<div class="ig ex"><input type="text" value="7 * sin(t) + 2" aria-label="Position function of t"><span>m</span></div>' +
+        '<button class="help" title="Help with Expressions">' + IC.q + '</button>' +
+        '<button class="fbtn use"><span class="f">&fnof;</span>Use Function</button><button class="fbtn drop">' + IC.close + 'Drop Function</button>';
+      else h += '<div class="chk">Show Vector</div>';
+      vc.innerHTML = h; host.appendChild(vc);
+      self.vc[V.k] = vc;
+      var inp = self.inp[V.k] = vc.querySelector('.ig.val input');
+      var range = charts ? V.range : 10;
+      var s = self.sl[V.k] = new Slider({ min: -range, max: range, vertical: charts, onSlide: function (v) { self.input(V.k, v, 'slider'); } });
+      s.el.style.color = V.color; s.set(0);
+      if (charts) { host.appendChild(s.el); s.el.style.left = '166px'; } else vc.appendChild(s.el);
+      inp.addEventListener('input', function () { var v = parseFloat(inp.value); if (!isNaN(v)) self.input(V.k, v, 'text'); });
+      inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') inp.blur(); });
+      // like the original: the box is linked to its slider, so it shows values clamped to the slider's range
+      inp.addEventListener('change', function () { var v = parseFloat(inp.value); if (!isNaN(v)) inp.value = fmt(s.clamp(v)); });
+      if (V.k !== 'p') {
+        var chk = vc.querySelector('.chk');
+        chk.onclick = function () { self.vec[V.k] = !self.vec[V.k]; chk.classList.toggle('on', self.vec[V.k]); };
+      } else {
+        var exIn = vc.querySelector('.ig.ex input'), exG = vc.querySelector('.ig.ex');
+        var apply = function () {
+          try { sim.formula = compile(exIn.value); sim.man.mode = BY_POS; if (sim.noRec) sim.resetHistory(); exG.classList.remove('err'); }
+          catch (e) { exG.classList.add('err'); }
+        };
+        vc.querySelector('.fbtn.use').onclick = function () { vc.classList.add('expr'); s.disable(true); apply(); };
+        vc.querySelector('.fbtn.drop').onclick = function () { vc.classList.remove('expr'); s.disable(false); sim.formula = null; };
+        exIn.addEventListener('input', apply);
+        vc.querySelector('.help').onclick = function () { document.getElementById('fhelp').classList.add('on'); };
+      }
+      if (charts) {
+        self.graphs = self.graphs || [];
+        self.graphs.push(new Graph(self, host, { color: V.col, half: V.half, series: function () { return sim.man[V.k + 'G']; } }));
+      }
+    });
+
+    // ---- playback bar
+    var pb = el('div', 'pb'); root.appendChild(pb);
+    function btn(cls, title, icon, x, size) { var b = el('button', 'pbtn ' + size + ' ' + cls, icon); b.title = title; b.style.left = x + 'px'; pb.appendChild(b); return b; }
+    if (!charts) {
+      btn('play', 'Resume', IC.play, 459, 'lg').onclick = function () { audio(); sim.play(); };
+      btn('pause', 'Pause', IC.pause, 459, 'lg').onclick = function () { sim.pause(); };
+    } else {
+      var clr = el('button', 'nbtn', IC.hist + 'Clear'); clr.title = 'Clear Recorded'; clr.style.left = '15px'; pb.appendChild(clr);
+      clr.onclick = function () { sim.pause(); sim.resetHistory(); };
+      this.rRec = el('div', 'radio on', 'Record'); this.rRec.style.left = '170px'; pb.appendChild(this.rRec);
+      this.rPlay = el('div', 'radio', 'Playback'); this.rPlay.style.left = '264px'; pb.appendChild(this.rPlay);
+      this.rRec.onclick = function () { if (!sim.recording) { sim.record(); self.syncMode(); } };
+      this.rPlay.onclick = function () { if (sim.recording) { sim.stopRecording(); self.syncMode(); } };
+      btn('rew', 'Rewind', IC.rew, 424, 'sm').onclick = function () { sim.pause(); sim.rewind(); };
+      btn('play', 'Resume', IC.play, 455, 'lg').onclick = function () { audio(); sim.play(); };
+      btn('pause', 'Pause', IC.pause, 455, 'lg').onclick = function () { sim.pause(); };
+      btn('rec', 'Record', IC.rec, 455, 'lg').onclick = function () { audio(); sim.play(); };
+      btn('stp', 'Step', IC.step, 501, 'sm').onclick = function () { sim.play(); setTimeout(function () { sim.pause(); }, 33); };
+      var sp = el('div', 'speed', '<label>Slow</label><span class="slh"></span><label>Fast</label>'); pb.appendChild(sp);
+      var spd = new Slider({ min: .2, mid: 1, max: 4, onSlide: function (v) { sim.setSpeed(v); } });
+      spd.set(1); sp.replaceChild(spd.el, sp.querySelector('.slh'));
+    }
+    var rs = el('button', 'nbtn', 'Reset All'); rs.title = 'Reset All'; rs.style.right = '15px'; pb.appendChild(rs);
+    rs.onclick = function () { confirmReset(function () { self.reset(); }); };
+    root.appendChild(el('div', 'credit', 'Based on <i>The Moving Man</i> by PhET Interactive Simulations,<br>University of Colorado Boulder, and the OpenStax version'));
+
+    if (charts) { this.layoutRows(); this.syncMode(); }
+    this.render(true);
+  },
+  reset: function () {
+    var wasPlaying = !this.sim.paused;
+    this.build();
+    if (wasPlaying) this.sim.play();
+  },
+  zoomX: function (d) {
+    var ts = Math.max(2, Math.min(20, this.graphs[0].timeSpan + d));
+    this.graphs.forEach(function (g) { g.timeSpan = ts; g.labels(); });
+  },
+  syncMode: function () {
+    var rec = this.sim.recording;
+    this.root.classList.toggle('recmode', rec);
+    if (this.rRec) { this.rRec.classList.toggle('on', rec); this.rPlay.classList.toggle('on', !rec); }
+  },
+  layoutRows: function () {
+    var rows = this.rows, open = rows.filter(function (r) { return !r.classList.contains('col'); });
+    var nCol = rows.length - open.length, p = open.length ? (480 - nCol * 60) / open.length : 0, top = 0;
+    var lastOpen = open.length ? rows.indexOf(open[open.length - 1]) : -1;
+    for (var i = 0; i < rows.length; i++) {
+      var r = rows[i], h = r.classList.contains('col') ? 60 : p;
+      r.style.top = top + 'px'; r.style.height = h + 'px';
+      var rc = r.firstChild; rc.style.height = (h - 10) + 'px';
+      var box = this.vc[VARS[i].k], sl = this.sl[VARS[i].k], bh = h - 60;
+      box.style.top = (10 + bh / 2 - 54) + 'px';
+      sl.el.style.top = '10px'; sl.el.style.height = bh + 'px';
+      this.graphs[i].layout(10, bh, i === lastOpen);
+      top += h - 40;
+    }
+  },
+  // a value typed or slid by the user
+  input: function (k, v, src) {
+    var m = this.sim.man;
+    if (k === 'p') { m.mode = BY_POS; m.setMouse(v); }
+    else if (k === 'v') { m.mode = BY_VEL; m.velocity = v; }
+    else { m.mode = BY_ACC; m.acceleration = v; }
+    this.shown[k] = m[VARS.filter(function (x) { return x.k === k; })[0].key];
+    if (src === 'slider') this.inp[k].value = fmt(v); else this.sl[k].set(v);
+  },
+  show: function (k, v) {
+    this.shown[k] = v;
+    this.inp[k].value = fmt(this.sl[k].clamp(v));
+    this.sl[k].set(v);
+  },
+  render: function (force) {
+    var sim = this.sim, m = sim.man;
+    if (force || m.position !== this.lastP) {
+      if (force || m.mode !== BY_POS || this.dragging || sim.playingBack()) this.show('p', m.position);
+      this.lastP = m.position;
+    }
+    if (force || m.velocity !== this.lastV) { if (force || this.shown.v !== m.velocity) this.show('v', m.velocity); this.lastV = m.velocity; }
+    if (force || m.acceleration !== this.lastA) { if (force || this.shown.a !== m.acceleration) this.show('a', m.acceleration); this.lastA = m.acceleration; }
+    if (force || m.mode !== this.lastMode) {
+      this.lastMode = m.mode;
+      for (var i = 0; i < 3; i++) this.vc[VARS[i].k].classList.toggle('driving', m.mode === i);
+    }
+    // man
+    var px = (m.position + sim.half) / (2 * sim.half) * 880;
+    this.manEl.style.transform = 'translateX(' + px + 'px)';
+    var st = m.velocity > .1 ? 2 : m.velocity < -.1 ? 1 : 0;
+    this.manEl.classList.toggle('walk', st !== 0); this.manEl.classList.toggle('right', st === 2);
+    this.arrow(this.arrV, this.vec.v, m.velocity * .2 * 44);
+    this.arrow(this.arrA, this.vec.a, m.acceleration * .8 * 44);
+    this.wallEls.forEach(function (w) { w.classList.toggle('off', !sim.walls); });
+    this.root.classList.toggle('playing', !sim.paused);
+    this.clockT.textContent = sim.time.toFixed(1);
+    if (this.charts) {
+      if (this.graphs[0].k !== Math.max(1, Math.min((window.devicePixelRatio || 1) * (window.stageScale || 1), 4))) this.graphs.forEach(function (g) { g.sizeCanvas(); });
+      this.graphs.forEach(function (g) { g.update(); });
+    }
+  },
+  arrow: function (a, on, w) {
+    if (!on) { a.style.display = 'none'; return; }
+    a.style.display = 'block'; a.style.width = Math.abs(w) + 'px';
+    a.classList.toggle('r', w > 0); a.classList.toggle('l', !(w > 0));
+    a.style.left = w > 0 ? '25px' : (25 - Math.abs(w)) + 'px';
+  },
+  frame: function (ms) {
+    try { this.sim.step(ms); } catch (e) { /* keep the loop alive */ }
+    this.render(false);
+  }
+};
+
+/* ---------------- app: tabs, sound, scaling, loop ---------------- */
+var views = { intro: new View(document.getElementById('intro'), false), charts: new View(document.getElementById('charts'), true) };
+var active = 'intro';
+document.querySelectorAll('.tab').forEach(function (t) {
+  t.onclick = function () {
+    if (t.dataset.t === active) return;
+    active = t.dataset.t;
+    document.querySelectorAll('.tab').forEach(function (u) { u.classList.toggle('on', u === t); });
+    document.querySelectorAll('.sim').forEach(function (s) { s.classList.toggle('on', s.id === active); });
+  };
+});
+var snd = document.querySelector('.snd'), level = 1;
+var SND = [[0, IC.volOff, 'Mute effect volume (click to raise)'], [.2, IC.volLow, 'Low effect volume (click to raise)'], [.8, IC.volHigh, 'High effect volume (click to mute)']];
+function setSnd() { volume = SND[level][0]; snd.innerHTML = SND[level][1]; snd.title = SND[level][2]; }
+snd.onclick = function () { level = (level + 1) % 3; setSnd(); if (volume) audio(); };
+setSnd();
+
+var stage = document.getElementById('stage');
+function fit() {
+  var w = window.innerWidth, h = window.innerHeight, s = Math.min(w / 980, h / 772);
+  if (!(s > 0)) s = 1;
+  window.stageScale = s;
+  stage.style.transform = 'scale(' + s + ')';
+  stage.style.left = Math.max(0, (w - 980 * s) / 2) + 'px';
+  stage.style.top = Math.max(0, (h - 772 * s) / 2) + 'px';
+}
+fit(); window.addEventListener('resize', fit);
+
+var last = null;
+function loop(now) {
+  var dt = last == null ? 0 : now - last; last = now;
+  if (dt > 0 && dt < 333) views[active].frame(dt); else views[active].render(false);
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+// for automated checks
+window.__mm = { views: views };
+})();
+</script>
+</body>
+</html>
