@@ -109,6 +109,10 @@ body.present .guide{display:none}
       <li>Thinking a negative acceleration means slowing down. It only means a points in the − direction: something moving in the − direction with a negative a is speeding up.</li>
       <li>Setting static friction equal to μ<sub>s</sub>F<sub>N</sub> every time. That's the most it can be; on a box that isn't sliding, static friction is only as big as it needs to be.</li>
       <li>Thinking something is in free fall only while it's falling. A ball on its way up, or at the top, is in free fall too: gravity is the only force, so a = g downward the whole time it's in the air.</li>
+      <li>Reading acceleration off the <i>value</i> of a v–t graph instead of its slope. A graph that's high and flat means fast, with zero acceleration.</li>
+      <li>Thinking a chaser catches up when the speeds become equal. Equal speeds is when the gap is biggest; it catches up when the displacements (the areas under the v–t graphs) are equal.</li>
+      <li>Thinking a rocket or a tossed object starts falling the moment the push stops. It keeps moving up, slowing at g, until v = 0.</li>
+      <li>Dividing x by t to get the speed at that instant. For something speeding up, x/t is the average velocity; from rest at constant a, the final speed is twice that.</li>
     </ul>
   </div>
 </div>
@@ -349,6 +353,111 @@ body.present .guide{display:none}
     <p class="take">She's moving down but accelerating <b>up</b>, so the net force points up and the lines pull with three times her 700 N weight. Find a from the motion first, then put it into ΣF = ma. Changing which way is + between steps is fine, as long as you say so and keep the signs straight.</p>
     </div>
   </details>
+  <details class="ex">
+    <summary><span class="kind">Graphs · catching up</span><h4>A police car chases a speeder</h4></summary>
+    <div class="exbody">
+    <svg width="200" height="126" viewBox="0 0 200 126" aria-label="Velocity-time graph: the speeder's line is flat at 24 m/s; the police car's line rises from zero to 48 m/s at 16 s. The triangle under the police line and the rectangle under the speeder's line have equal areas.">
+      <rect x="24" y="59" width="160" height="45" fill="#e2e2e2" stroke="none"/>
+      <polygon points="24,104 184,14 184,104" fill="#fde1d6" fill-opacity=".8" stroke="none"/>
+      <line x1="24" y1="104" x2="192" y2="104" stroke="#111" stroke-width="2"/><line x1="24" y1="6" x2="24" y2="104" stroke="#111" stroke-width="2"/>
+      <line x1="104" y1="59" x2="104" y2="104" stroke="#111" stroke-dasharray="2 3"/>
+      <line x1="24" y1="59" x2="184" y2="59" stroke="#111" stroke-width="3"/>
+      <line x1="24" y1="104" x2="184" y2="14" stroke="#ff6a2b" stroke-width="3"/>
+      <text x="4" y="63" font-size="10" font-family="IBM Plex Mono,monospace">24</text>
+      <text x="4" y="18" font-size="10" font-family="IBM Plex Mono,monospace">48</text>
+      <text x="28" y="12" font-size="10" font-family="IBM Plex Mono,monospace">v (m/s)</text>
+      <text x="101" y="116" font-size="10" font-family="IBM Plex Mono,monospace">8</text>
+      <text x="178" y="116" font-size="10" font-family="IBM Plex Mono,monospace">16</text>
+      <text x="122" y="124" font-size="10" font-family="IBM Plex Mono,monospace">t (s)</text>
+      <text x="30" y="54" font-size="9" font-family="IBM Plex Mono,monospace">speeder</text>
+      <text x="96" y="40" font-size="9" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">police</text>
+    </svg>
+    <p>A speeder passes a parked police car at a steady 24 m/s. At that instant the police car starts from rest and speeds up at 3.0 m/s². How long does it take to catch the speeder, how fast is it going then, and how far has it gone? When is the gap between them biggest?</p>
+    <div class="work">
+      <p class="wt">They start at the same place, so the police car catches up when both have the same displacement: equal areas under their v–t graphs. Speeder (rectangle) and police (triangle, with v = at):</p>
+<math class="eq" display="block"><mrow><mn>24</mn><mi>t</mi><mo>=</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mo stretchy="false">(</mo><mn>3.0</mn><mo stretchy="false">)</mo><msup><mi>t</mi><mn>2</mn></msup></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>t</mi><mo>=</mo><mfrac><mrow><mn>2</mn><mo stretchy="false">(</mo><mn>24</mn><mo stretchy="false">)</mo></mrow><mn>3.0</mn></mfrac><mo>=</mo><mn>16</mn><mspace width="0.167em"/><mtext>s</mtext></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>v</mi><mtext>police</mtext></msub><mo>=</mo><mi>a</mi><mi>t</mi><mo>=</mo><mo stretchy="false">(</mo><mn>3.0</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>16</mn><mo stretchy="false">)</mo><mo>=</mo><mn>48</mn><mspace width="0.167em"/><mtext>m/s</mtext></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>&#x394;</mi><mi>x</mi><mo>=</mo><mo stretchy="false">(</mo><mn>24</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>16</mn><mo stretchy="false">)</mo><mo>=</mo><mn>384</mn><mspace width="0.167em"/><mtext>m</mtext></mrow></math>
+      <p class="wt">The gap grows while the speeder is faster and shrinks once the police car is faster, so it's biggest when the speeds are equal:</p>
+<math class="eq" display="block"><mrow><mn>3.0</mn><mi>t</mi><mo>=</mo><mn>24</mn><mspace width="0.278em"/><mo>&#x2192;</mo><mspace width="0.278em"/><mi>t</mi><mo>=</mo><mn>8.0</mn><mspace width="0.167em"/><mtext>s</mtext></mrow></math>
+<math class="eq ans" display="block"><mrow><mtext>gap</mtext><mo>=</mo><mo stretchy="false">(</mo><mn>24</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>8.0</mn><mo stretchy="false">)</mo><mo>&#x2212;</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mo stretchy="false">(</mo><mn>3.0</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>8.0</mn><msup><mo stretchy="false">)</mo><mn>2</mn></msup><mo>=</mo><mn>96</mn><mspace width="0.167em"/><mtext>m</mtext></mrow></math>
+    </div>
+    <p class="take">Equal speeds (8.0 s) is <b>not</b> when it catches up; that's when it's farthest behind. A triangle has the same area as a rectangle of the same width only if it's twice as tall, so a chaser starting from rest always arrives at twice the target's speed.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Segmented motion · vertical</span><h4>A model rocket's flight</h4></summary>
+    <div class="exbody">
+    <p>A 0.40 kg model rocket lifts off from the ground. Its engine gives it a steady upward acceleration of 20 m/s² for 3.0 s, then burns out. Find the engine's thrust, the rocket's maximum height, and how fast it's going when it hits the ground. (Ignore air resistance and the mass of the burned fuel.)</p>
+    <div class="work">
+      <p class="wt">Thrust, with up = +, while the engine burns:</p>
+<math class="eq" display="block"><mrow><msub><mi>F</mi><mtext>thrust</mtext></msub><mo>&#x2212;</mo><mi>m</mi><mi>g</mi><mo>=</mo><mi>m</mi><mi>a</mi></mrow></math>
+<math class="eq" display="block"><mrow><msub><mi>F</mi><mtext>thrust</mtext></msub><mo>=</mo><mi>m</mi><mo stretchy="false">(</mo><mi>g</mi><mo>+</mo><mi>a</mi><mo stretchy="false">)</mo><mo>=</mo><mn>0.40</mn><mo stretchy="false">(</mo><mn>10</mn><mo>+</mo><mn>20</mn><mo stretchy="false">)</mo></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>F</mi><mtext>thrust</mtext></msub><mo>=</mo><mn>12</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+      <p class="wt">Part 1 (engine on, from rest):</p>
+<math class="eq" display="block"><mrow><msub><mi>v</mi><mn>1</mn></msub><mo>=</mo><mo stretchy="false">(</mo><mn>20</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>3.0</mn><mo stretchy="false">)</mo><mo>=</mo><mn>60</mn><mspace width="0.167em"/><mtext>m/s</mtext></mrow></math>
+<math class="eq" display="block"><mrow><mi>&#x394;</mi><msub><mi>y</mi><mn>1</mn></msub><mo>=</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mo stretchy="false">(</mo><mn>20</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>3.0</mn><msup><mo stretchy="false">)</mo><mn>2</mn></msup><mo>=</mo><mn>90</mn><mspace width="0.167em"/><mtext>m</mtext></mrow></math>
+      <p class="wt">Part 2 (engine off, still going up, a = −10 m/s², until v = 0, which takes 60/10 = 6.0 s):</p>
+<math class="eq" display="block"><mrow><mi>&#x394;</mi><msub><mi>y</mi><mn>2</mn></msub><mo>=</mo><mfrac><mrow><msup><mn>0</mn><mn>2</mn></msup><mo>&#x2212;</mo><mo stretchy="false">(</mo><mn>60</mn><msup><mo stretchy="false">)</mo><mn>2</mn></msup></mrow><mrow><mn>2</mn><mo stretchy="false">(</mo><mo>&#x2212;</mo><mn>10</mn><mo stretchy="false">)</mo></mrow></mfrac><mo>=</mo><mn>180</mn><mspace width="0.167em"/><mtext>m</mtext></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>y</mi><mtext>max</mtext></msub><mo>=</mo><mn>90</mn><mo>+</mo><mn>180</mn><mo>=</mo><mn>270</mn><mspace width="0.167em"/><mtext>m</mtext></mrow></math>
+      <p class="wt">Part 3 (falling from rest at 270 m):</p>
+<math class="eq" display="block"><mrow><msup><mi>v</mi><mn>2</mn></msup><mo>=</mo><mn>0</mn><mo>+</mo><mn>2</mn><mo stretchy="false">(</mo><mn>10</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>270</mn><mo stretchy="false">)</mo><mo>=</mo><mn>5400</mn></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>v</mi><mo>&#x2248;</mo><mn>73</mn><mspace width="0.167em"/><mtext>m/s</mtext><mspace width="0.278em"/><mtext>downward</mtext></mrow></math>
+    </div>
+    <p class="take">The rocket doesn't start falling when the engine stops: it's moving up at 60 m/s and coasts twice as high again. Each part has its own acceleration (+20, then −10 m/s²), and the velocity at the end of one part starts the next. It lands faster than 60 m/s because it falls from 270 m, not from 90 m.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Graph → forces</span><h4>The string goes slack</h4></summary>
+    <div class="exbody">
+    <svg width="190" height="112" viewBox="0 0 190 112" aria-label="Velocity-time graph: a straight line rising from zero to 3.0 m/s at 1.5 s, then a straight line falling to zero at 2.5 s.">
+      <polygon points="24,90 114,30 174,90" fill="#fde1d6" stroke="none"/>
+      <line x1="24" y1="90" x2="182" y2="90" stroke="#111" stroke-width="2"/><line x1="24" y1="6" x2="24" y2="90" stroke="#111" stroke-width="2"/>
+      <line x1="24" y1="30" x2="114" y2="30" stroke="#111" stroke-dasharray="2 3"/>
+      <polyline points="24,90 114,30 174,90" fill="none" stroke="#ff6a2b" stroke-width="3"/>
+      <text x="0" y="34" font-size="10" font-family="IBM Plex Mono,monospace">3.0</text>
+      <text x="28" y="12" font-size="10" font-family="IBM Plex Mono,monospace">v (m/s)</text>
+      <text x="104" y="103" font-size="10" font-family="IBM Plex Mono,monospace">1.5</text>
+      <text x="164" y="103" font-size="10" font-family="IBM Plex Mono,monospace">2.5</text>
+      <text x="56" y="86" font-size="9" font-family="IBM Plex Mono,monospace">pulled</text>
+      <text x="124" y="86" font-size="9" font-family="IBM Plex Mono,monospace">slack</text>
+    </svg>
+    <p>A horizontal string pulls a 2.0 kg block from rest across a table. At 1.5 s the string goes slack and the block slides to a stop. The block's velocity is graphed. Find the coefficient of kinetic friction and the tension in the string.</p>
+    <div class="work">
+      <p class="wt">Read the two accelerations off the slopes:</p>
+<math class="eq" display="block"><mrow><msub><mi>a</mi><mn>1</mn></msub><mo>=</mo><mfrac><mn>3.0</mn><mn>1.5</mn></mfrac><mo>=</mo><mo>+</mo><mn>2.0</mn><mspace width="0.167em"/><msup><mtext>m/s</mtext><mn>2</mn></msup></mrow></math>
+<math class="eq" display="block"><mrow><msub><mi>a</mi><mn>2</mn></msub><mo>=</mo><mfrac><mrow><mn>0</mn><mo>&#x2212;</mo><mn>3.0</mn></mrow><mrow><mn>2.5</mn><mo>&#x2212;</mo><mn>1.5</mn></mrow></mfrac><mo>=</mo><mo>&#x2212;</mo><mn>3.0</mn><mspace width="0.167em"/><msup><mtext>m/s</mtext><mn>2</mn></msup></mrow></math>
+      <p class="wt">Start with the slack part: friction is the only horizontal force, so it alone causes a<sub>2</sub>:</p>
+<math class="eq" display="block"><mrow><msub><mi>f</mi><mi>k</mi></msub><mo>=</mo><mi>m</mi><mo stretchy="false" lspace="0" rspace="0">|</mo><msub><mi>a</mi><mn>2</mn></msub><mo stretchy="false" lspace="0" rspace="0">|</mo><mo>=</mo><mo stretchy="false">(</mo><mn>2.0</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>3.0</mn><mo stretchy="false">)</mo><mo>=</mo><mn>6.0</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>&#x3BC;</mi><mi>k</mi></msub><mo>=</mo><mfrac><msub><mi>f</mi><mi>k</mi></msub><mrow><mi>m</mi><mi>g</mi></mrow></mfrac><mo>=</mo><mfrac><mn>6.0</mn><mn>20</mn></mfrac><mo>=</mo><mn>0.30</mn></mrow></math>
+      <p class="wt">The same friction acts while it's pulled (same block, same surface, still sliding):</p>
+<math class="eq" display="block"><mrow><msub><mi>F</mi><mi>T</mi></msub><mo>&#x2212;</mo><msub><mi>f</mi><mi>k</mi></msub><mo>=</mo><mi>m</mi><msub><mi>a</mi><mn>1</mn></msub></mrow></math>
+<math class="eq" display="block"><mrow><msub><mi>F</mi><mi>T</mi></msub><mo>=</mo><mo stretchy="false">(</mo><mn>2.0</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>2.0</mn><mo stretchy="false">)</mo><mo>+</mo><mn>6.0</mn></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>F</mi><mi>T</mi></msub><mo>=</mo><mn>10</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+    </div>
+    <p class="take">Solve the part with fewer forces first: once the string is slack, the slope of the graph measures friction directly. The tension (10 N) is more than the net force (4.0 N), because part of it goes into cancelling friction. The area gives the slide: ½(2.5)(3.0) = 3.75 m in all.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Data · finding a</span><h4>Acceleration from a table of positions</h4></summary>
+    <div class="exbody">
+    <p>A cart is released from rest on a sloped track, and a motion sensor records its position:</p>
+    <div style="overflow-x:auto"><table style="max-width:420px">
+      <tr><td>t (s)</td><td>0</td><td>0.50</td><td>1.00</td><td>1.50</td><td>2.00</td></tr>
+      <tr><td>x (m)</td><td>0</td><td>0.15</td><td>0.60</td><td>1.35</td><td>2.40</td></tr>
+    </table></div>
+    <p>Is the acceleration constant? If so, find it, and find the cart's speed at 2.00 s.</p>
+    <div class="work">
+      <p class="wt">Doubling the time (0.50 → 1.00 s, or 1.00 → 2.00 s) multiplies x by 4, so x ∝ t²: a quadratic, which is what constant acceleration from rest gives, x = ½at². Graph x against t² and you get a straight line through the origin with slope ½a:</p>
+<math class="eq" display="block"><mrow><mtext>slope</mtext><mo>=</mo><mfrac><mrow><mn>2.40</mn><mspace width="0.167em"/><mtext>m</mtext></mrow><mrow><mn>4.00</mn><mspace width="0.167em"/><msup><mtext>s</mtext><mn>2</mn></msup></mrow></mfrac><mo>=</mo><mn>0.60</mn><mspace width="0.167em"/><msup><mtext>m/s</mtext><mn>2</mn></msup><mo>=</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mi>a</mi></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>a</mi><mo>=</mo><mn>1.2</mn><mspace width="0.167em"/><msup><mtext>m/s</mtext><mn>2</mn></msup></mrow></math>
+      <p class="wt">Speed at 2.00 s:</p>
+<math class="eq ans" display="block"><mrow><mi>v</mi><mo>=</mo><mi>a</mi><mi>t</mi><mo>=</mo><mo stretchy="false">(</mo><mn>1.2</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>2.00</mn><mo stretchy="false">)</mo><mo>=</mo><mn>2.4</mn><mspace width="0.167em"/><mtext>m/s</mtext></mrow></math>
+    </div>
+    <p class="take">Not 2.40/2.00 = 1.2 m/s: that's the <b>average</b> velocity. Starting from rest with constant a, the final speed is twice the average. Another check on the data: the distance covered in each half-second (0.15, 0.45, 0.75, 1.05 m) grows by the same 0.30 m every time, which only happens when the acceleration is constant. With real, scattered data, the x vs t² graph is the better tool, since its best-fit slope uses every point.</p>
+    </div>
+  </details>
 </div>
 </div>
 <div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
@@ -380,6 +489,16 @@ body.present .guide{display:none}
       <details><summary>Answer</summary><div>Yes. The net force sets the acceleration, not the velocity. The ball is moving right and slowing down (and will eventually turn around if the force keeps acting).</div></details></li>
     <li><b>Who's right?</b> A car braking steadily stops in 25 m from 20 m/s. Ana says that from 40 m/s, with the same braking, it needs 50 m. Ben says it needs 100 m. Who's right, and why?
       <details><summary>Answer</summary><div>Ben. Stopping from speed v with a steady deceleration a, v² = 2aΔx, so Δx = v²/(2a): the distance goes with the <b>square</b> of the speed. Twice the speed gives 2² = 4 times the distance, 4 × 25 = 100 m. Ana forgot that the faster car covers more ground each second <i>and</i> takes twice as long to stop, so the two factors of 2 multiply. (Here a = 8.0 m/s².)</div></details></li>
+    <li>A 50 kg student stands on a scale in an elevator. With up = +, the elevator's velocity goes steadily from 0 to 4.0 m/s in the first 2.0 s, stays at 4.0 m/s until 10 s, then drops steadily to 0 at 12 s. What does the scale read in each part, and how high does the elevator go?
+      <details><summary>Answer</summary><div>The slopes give a = +2.0, 0 and −2.0 m/s². F<sub>N</sub> = m(g + a): 50(12) = 600 N, then 50(10) = 500 N, then 50(8.0) = 400 N. Height = area = ½(2.0)(4.0) + (8.0)(4.0) + ½(2.0)(4.0) = 4 + 32 + 4 = 40 m. While it moves at constant speed the scale reads her ordinary weight, even though she's moving.</div></details></li>
+    <li>At one instant, the air resistance on a falling skydiver is 30% of her weight. What is her acceleration? Do you need her mass?
+      <details><summary>Answer</summary><div>7.0 m/s² downward, and no. With down = +: mg − 0.30mg = ma, so a = 0.70g = 7.0 m/s². The mass cancels.</div></details></li>
+    <li>A driver going 20 m/s sees a hazard. It takes her 0.80 s to react before braking, and the car then slows at 5.0 m/s². How far does the car go from the moment she sees the hazard?
+      <details><summary>Answer</summary><div>Two segments. Reacting (constant speed): 20 × 0.80 = 16 m. Braking: 0 = 20² + 2(−5.0)Δx, so Δx = 40 m. Total 56 m. The reaction distance is easy to forget because the car hasn't started slowing yet.</div></details></li>
+    <li>A ball dropped from rest passes a sensor 0.80 m below the release point at 4.0 m/s. How fast is it going 3.2 m below the release point?
+      <details><summary>Answer</summary><div>8.0 m/s. From rest, v² = 2gΔx, so v ∝ √Δx: 4 times the distance gives √4 = 2 times the speed. (Check: √(2 × 10 × 3.2) = 8.0 m/s.)</div></details></li>
+    <li><b>Who's right?</b> Two movers can't lift a 900 N couch, so they slide it across the floor (μ<sub>k</sub> = 0.40) while pulling up on it with 300 N in total. Maya says lifting still helps. Leo says it does nothing, because the couch never leaves the floor. Who's right, and why?
+      <details><summary>Answer</summary><div>Maya. Vertically the couch doesn't accelerate, so F<sub>N</sub> + 300 = 900 and F<sub>N</sub> = 600 N instead of 900 N. Friction depends on the normal force, not the weight: f<sub>k</sub> = 0.40 × 600 = 240 N instead of 360 N. The upward pull doesn't have to lift the couch to help; it only has to make the floor push up less.</div></details></li>
   </ol>
 </div>
 </div>
