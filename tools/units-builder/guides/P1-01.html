@@ -109,6 +109,9 @@ body.present .guide{display:none}
       <li>Thinking friction always points backward, against the motion. It opposes <b>sliding</b> between the surfaces: friction on your shoes and on a car's tires is what pushes you forward.</li>
       <li>Averaging the speeds to get the average speed. Use total distance ÷ total time. The plain average of the speeds only works when equal <i>times</i> are spent at each speed.</li>
       <li>Adding air resistance when the problem doesn't mention it. Leave it out unless the problem says it matters.</li>
+      <li>Thinking two objects side by side are going the same speed. Same position (crossing x–t lines) is not same velocity (equal slopes).</li>
+      <li>Using the average speed for a whole trip as the speed at one instant when the speed changes. For the speed at an instant, use a short stretch where the motion is steady, or the slope of the x–t graph right there.</li>
+      <li>Writing x = x<sub>0</sub> + vt for a leg that starts later. Use x = x<sub>0</sub> + v(t − t<sub>0</sub>), where t − t<sub>0</sub> is the time since that leg began.</li>
     </ul>
   </div>
 </div>
@@ -295,6 +298,147 @@ body.present .guide{display:none}
     <p class="take">Nothing is moving, yet there's friction. The wall's push would make her feet slide away from the wall, so friction points <b>toward</b> the wall to stop that. Friction opposes sliding (or the way things would slide), not “the motion.” On a slick floor that can't supply 150 N, her feet slide out.</p>
     </div>
   </details>
+  <details class="ex">
+    <summary><span class="kind">Motion diagram</span><h4>Side by side isn't the same speed</h4></summary>
+    <div class="exbody">
+    <svg width="290" height="104" viewBox="0 0 290 104" style="float:none;display:block;margin:0 0 8px" aria-label="Motion diagram: cart A dots evenly spaced 1 m apart from 0 to 5 m; cart B dots at 0, 0.2, 0.8, 1.8, 3.2 and 5.0 m, getting farther apart">
+      <text x="2" y="29" font-size="12" font-family="IBM Plex Mono,monospace" font-weight="700">A</text>
+      <circle cx="30" cy="25" r="4" fill="#111"/><circle cx="80" cy="25" r="4" fill="#111"/><circle cx="130" cy="25" r="4" fill="#111"/><circle cx="180" cy="25" r="4" fill="#111"/><circle cx="230" cy="25" r="4" fill="#111"/><circle cx="280" cy="25" r="4" fill="#111"/>
+      <text x="2" y="59" font-size="12" font-family="IBM Plex Mono,monospace" font-weight="700" fill="#ff6a2b">B</text>
+      <circle cx="30" cy="55" r="4" fill="#ff6a2b"/><circle cx="40" cy="55" r="4" fill="#ff6a2b"/><circle cx="70" cy="55" r="4" fill="#ff6a2b"/><circle cx="120" cy="55" r="4" fill="#ff6a2b"/><circle cx="190" cy="55" r="4" fill="#ff6a2b"/><circle cx="280" cy="55" r="4" fill="#ff6a2b"/>
+      <line x1="30" y1="78" x2="280" y2="78" stroke="#111" stroke-width="2"/>
+      <line x1="30" y1="74" x2="30" y2="82" stroke="#111"/><line x1="80" y1="74" x2="80" y2="82" stroke="#111"/><line x1="130" y1="74" x2="130" y2="82" stroke="#111"/><line x1="180" y1="74" x2="180" y2="82" stroke="#111"/><line x1="230" y1="74" x2="230" y2="82" stroke="#111"/><line x1="280" y1="74" x2="280" y2="82" stroke="#111"/>
+      <text x="27" y="96" font-size="10" font-family="IBM Plex Mono,monospace">0</text><text x="77" y="96" font-size="10" font-family="IBM Plex Mono,monospace">1</text><text x="127" y="96" font-size="10" font-family="IBM Plex Mono,monospace">2</text><text x="177" y="96" font-size="10" font-family="IBM Plex Mono,monospace">3</text><text x="227" y="96" font-size="10" font-family="IBM Plex Mono,monospace">4</text><text x="250" y="96" font-size="10" font-family="IBM Plex Mono,monospace">5 m</text>
+    </svg>
+    <p>A strobe picture shows two carts on side-by-side tracks, with a dot every 0.50 s. Both are at the 0 mark at t = 0. Cart A's dots are 1.0 m apart. Cart B's dots are at 0, 0.2, 0.8, 1.8, 3.2 and 5.0 m. Find A's velocity. When are the carts side by side again? During which interval do they have the same average velocity? Which is faster when they're side by side?</p>
+    <div class="work">
+      <p class="wt">A's dots are evenly spaced, so it has constant velocity:</p>
+<math class="eq ans" display="block"><mrow><msub><mi>v</mi><mi>A</mi></msub><mo>=</mo><mfrac><mrow><mn>1.0</mn><mspace width="0.167em"/><mtext>m</mtext></mrow><mrow><mn>0.50</mn><mspace width="0.167em"/><mtext>s</mtext></mrow></mfrac><mo>=</mo><mn>2.0</mn><mspace width="0.167em"/><mtext>m/s</mtext></mrow></math>
+      <p class="wt">B's gaps are 0.2, 0.6, 1.0, 1.4 and 1.8 m: they grow, so B is speeding up. Both carts' last dots are at 5.0 m, five intervals in:</p>
+<math class="eq ans" display="block"><mrow><mi>t</mi><mo>=</mo><mn>5</mn><mo>&#x00D7;</mo><mn>0.50</mn><mspace width="0.167em"/><mtext>s</mtext><mo>=</mo><mn>2.5</mn><mspace width="0.167em"/><mtext>s</mtext><mo>,</mo><mspace width="0.278em"/><mi>x</mi><mo>=</mo><mn>5.0</mn><mspace width="0.167em"/><mtext>m</mtext></mrow></math>
+      <p class="wt">Same average velocity means the same gap. B's third gap (t = 1.0 s to 1.5 s) is 1.0 m, the same as A's:</p>
+<math class="eq ans" display="block"><mrow><msub><mi>v</mi><mrow><mi>B</mi><mo>,</mo><mtext>avg</mtext></mrow></msub><mo>=</mo><mfrac><mrow><mn>1.0</mn><mspace width="0.167em"/><mtext>m</mtext></mrow><mrow><mn>0.50</mn><mspace width="0.167em"/><mtext>s</mtext></mrow></mfrac><mo>=</mo><mn>2.0</mn><mspace width="0.167em"/><mtext>m/s</mtext></mrow></math>
+      <p class="wt">In the last interval, B's gap is 1.8 m:</p>
+<math class="eq ans" display="block"><mrow><msub><mi>v</mi><mrow><mi>B</mi><mo>,</mo><mtext>avg</mtext></mrow></msub><mo>=</mo><mfrac><mrow><mn>1.8</mn><mspace width="0.167em"/><mtext>m</mtext></mrow><mrow><mn>0.50</mn><mspace width="0.167em"/><mtext>s</mtext></mrow></mfrac><mo>=</mo><mn>3.6</mn><mspace width="0.167em"/><mtext>m/s</mtext><mo>&gt;</mo><mn>2.0</mn><mspace width="0.167em"/><mtext>m/s</mtext></mrow></math>
+    </div>
+    <p class="take">Same <b>place</b> (dots lined up, x–t lines crossing) is not the same <b>speed</b> (equal gaps, equal slopes). When B matches A's speed, A is as far ahead as it ever gets (1.2 m); B only draws level later, when it's already going faster.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Data · average vs instantaneous</span><h4>Timers along a bike path</h4></summary>
+    <div class="exbody">
+    <p>Students with stopwatches stand at every 10 m mark along a straight bike path. They all start their watches when a cyclist starts from rest at the 0 m mark, and each stops their watch as she passes.</p>
+    <div style="overflow-x:auto;margin:0 0 8px"><table style="width:auto">
+      <tr><td>x (m)</td><td>0</td><td>10</td><td>20</td><td>30</td><td>40</td><td>50</td><td>60</td></tr>
+      <tr><td>t (s)</td><td>0</td><td>2.8</td><td>4.0</td><td>5.1</td><td>6.0</td><td>7.0</td><td>8.0</td></tr>
+    </table></div>
+    <p>Find her average speed over the 60 m and her speed as she passes the 50 m mark. Why are they different?</p>
+    <div class="work">
+      <p class="wt">Average speed uses the whole run:</p>
+<math class="eq ans" display="block"><mrow><msub><mtext>speed</mtext><mtext>avg</mtext></msub><mo>=</mo><mfrac><mrow><mn>60</mn><mspace width="0.167em"/><mtext>m</mtext></mrow><mrow><mn>8.0</mn><mspace width="0.167em"/><mtext>s</mtext></mrow></mfrac><mo>=</mo><mn>7.5</mn><mspace width="0.167em"/><mtext>m/s</mtext></mrow></math>
+      <p class="wt">Time for each 10 m: 2.8, 1.2, 1.1, 0.9, 1.0, 1.0 s. It stops shrinking after about 20 m, so from there on she rides at a steady speed; the small ups and downs are reaction-time scatter. Use the widest steady stretch, 20 m to 60 m:</p>
+<math class="eq ans" display="block"><mrow><mi>v</mi><mo>=</mo><mfrac><mrow><mn>60</mn><mo>&#x2212;</mo><mn>20</mn></mrow><mrow><mn>8.0</mn><mo>&#x2212;</mo><mn>4.0</mn></mrow></mfrac><mo>=</mo><mn>10</mn><mspace width="0.167em"/><mtext>m/s</mtext></mrow></math>
+      <p class="wt">The first 10 m took 2.8 s (an average of only 3.6 m/s) because she started from rest. That slow start drags the whole-run average below her steady speed.</p>
+    </div>
+    <p class="take">The average speed for a trip is not the speed at a given instant when the speed changes. For the speed at an instant, use data from where the motion is steady (or the slope of the x–t graph right there), and spread the points out so timing errors matter less.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Distance vs displacement</span><h4>A robot's path on a grid</h4></summary>
+    <div class="exbody">
+    <svg width="200" height="120" viewBox="0 0 200 120" aria-label="Path on a 10 m grid: 40 m east, 30 m north, then 80 m west; a dashed orange displacement arrow goes from the start up and to the left to the end, 50 m">
+      <g stroke="#111" stroke-opacity=".18">
+        <line x1="20" y1="25" x2="180" y2="25"/><line x1="20" y1="45" x2="180" y2="45"/><line x1="20" y1="65" x2="180" y2="65"/><line x1="20" y1="85" x2="180" y2="85"/>
+        <line x1="20" y1="25" x2="20" y2="85"/><line x1="40" y1="25" x2="40" y2="85"/><line x1="60" y1="25" x2="60" y2="85"/><line x1="80" y1="25" x2="80" y2="85"/><line x1="100" y1="25" x2="100" y2="85"/><line x1="120" y1="25" x2="120" y2="85"/><line x1="140" y1="25" x2="140" y2="85"/><line x1="160" y1="25" x2="160" y2="85"/><line x1="180" y1="25" x2="180" y2="85"/>
+      </g>
+      <polyline points="100,85 180,85 180,25 26,25" fill="none" stroke="#111" stroke-width="3"/><polygon points="28,20 28,30 19,25" fill="#111"/>
+      <line x1="100" y1="85" x2="27" y2="30" stroke="#ff6a2b" stroke-width="3" stroke-dasharray="6 4"/><polygon points="20,25 32,26 26,34" fill="#ff6a2b"/>
+      <circle cx="100" cy="85" r="4" fill="#111"/>
+      <text x="86" y="100" font-size="10" font-family="IBM Plex Mono,monospace">start</text>
+      <text x="8" y="16" font-size="10" font-family="IBM Plex Mono,monospace">end</text>
+      <text x="34" y="77" font-size="10" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">50 m</text>
+      <text x="6" y="114" font-size="9" font-family="IBM Plex Mono,monospace">squares = 10 m</text>
+      <text x="168" y="14" font-size="10" font-family="IBM Plex Mono,monospace">N&#x2191;</text>
+    </svg>
+    <p>A delivery robot starts at the origin. It drives 40 m east in 8.0 s, then 30 m north in 6.0 s, waits 16 s, then drives 80 m west in 20 s. Find its distance, displacement, average speed and average velocity. Where is it at t = 40 s?</p>
+    <div class="work">
+      <p class="wt">Distance adds every leg:</p>
+<math class="eq" display="block"><mrow><mi>d</mi><mo>=</mo><mn>40</mn><mo>+</mo><mn>30</mn><mo>+</mo><mn>80</mn><mo>=</mo><mn>150</mn><mspace width="0.167em"/><mtext>m</mtext></mrow></math>
+      <p class="wt">It ends at x = 40 − 80 = −40 m, y = 30 m. The displacement is the straight arrow from start to end:</p>
+<math class="eq ans" display="block"><mrow><mtext>displacement</mtext><mo>=</mo><msqrt><mrow><msup><mn>40</mn><mn>2</mn></msup><mo>+</mo><msup><mn>30</mn><mn>2</mn></msup></mrow></msqrt><mo>=</mo><mn>50</mn><mspace width="0.167em"/><mtext>m</mtext></mrow></math>
+      <p class="wt">That's 50 m toward the northwest (up and to the left on the grid).</p>
+      <p class="wt">Total time: 8.0 + 6.0 + 16 + 20 = 50 s (the wait counts).</p>
+<math class="eq ans" display="block"><mrow><msub><mtext>speed</mtext><mtext>avg</mtext></msub><mo>=</mo><mfrac><mrow><mn>150</mn><mspace width="0.167em"/><mtext>m</mtext></mrow><mrow><mn>50</mn><mspace width="0.167em"/><mtext>s</mtext></mrow></mfrac><mo>=</mo><mn>3.0</mn><mspace width="0.167em"/><mtext>m/s</mtext></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>v</mi><mtext>avg</mtext></msub><mo>=</mo><mfrac><mrow><mn>50</mn><mspace width="0.167em"/><mtext>m</mtext></mrow><mrow><mn>50</mn><mspace width="0.167em"/><mtext>s</mtext></mrow></mfrac><mo>=</mo><mn>1.0</mn><mspace width="0.167em"/><mtext>m/s</mtext></mrow></math>
+      <p class="wt">The average velocity points the same way as the displacement: northwest.</p>
+      <p class="wt">At t = 40 s it has been on the west leg (which began at t = 30 s) for 10 s, at 80 m ÷ 20 s = 4.0 m/s:</p>
+<math class="eq ans" display="block"><mrow><mi>x</mi><mo>=</mo><mn>40</mn><mo>&#x2212;</mo><mo stretchy="false">(</mo><mn>4.0</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>10</mn><mo stretchy="false">)</mo><mo>=</mo><mn>0</mn><mo>,</mo><mspace width="0.278em"/><mi>y</mi><mo>=</mo><mn>30</mn><mspace width="0.167em"/><mtext>m</mtext></mrow></math>
+    </div>
+    <p class="take">Distance counts every meter driven; displacement only cares where it started and ended. Legs at right angles combine with the Pythagorean theorem, not by adding. Waiting adds time but no distance, so it lowers both averages.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Position equations</span><h4>One equation per leg of a trip</h4></summary>
+    <div class="exbody">
+    <svg width="196" height="124" viewBox="0 0 196 124" aria-label="Velocity-time graph: 4.0 m/s from 0 to 150 s (area 600 m), zero from 150 to 180 s, 7.5 m/s from 180 to 300 s (area 900 m)">
+      <rect x="25" y="60" width="75" height="40" fill="#ff6a2b" fill-opacity=".15"/><rect x="115" y="25" width="60" height="75" fill="#ff6a2b" fill-opacity=".15"/>
+      <line x1="25" y1="100" x2="188" y2="100" stroke="#111" stroke-width="2"/><line x1="25" y1="100" x2="25" y2="8" stroke="#111" stroke-width="2"/>
+      <line x1="25" y1="60" x2="100" y2="60" stroke="#ff6a2b" stroke-width="3"/><line x1="100" y1="100" x2="115" y2="100" stroke="#ff6a2b" stroke-width="3"/><line x1="115" y1="25" x2="175" y2="25" stroke="#ff6a2b" stroke-width="3"/>
+      <text x="12" y="64" font-size="10" font-family="IBM Plex Mono,monospace">4</text><text x="2" y="29" font-size="10" font-family="IBM Plex Mono,monospace">7.5</text>
+      <text x="90" y="112" font-size="10" font-family="IBM Plex Mono,monospace">150</text><text x="163" y="112" font-size="10" font-family="IBM Plex Mono,monospace">300</text>
+      <text x="44" y="84" font-size="10" font-family="IBM Plex Mono,monospace">600 m</text><text x="128" y="66" font-size="10" font-family="IBM Plex Mono,monospace">900 m</text>
+      <text x="30" y="12" font-size="10" font-family="IBM Plex Mono,monospace">v (m/s)</text><text x="160" y="122" font-size="10" font-family="IBM Plex Mono,monospace">t (s)</text>
+    </svg>
+    <p>A student bikes to school along a straight road. She rides at 4.0 m/s for 150 s, waits 30 s at a light, then rides downhill at 7.5 m/s until she reaches school, 1500 m from home. Write her position equation for each leg. When does she arrive, and where is she at t = 240 s?</p>
+    <div class="work">
+      <p class="wt">Each leg has the form x = x<sub>0</sub> + v(t − t<sub>0</sub>), where x<sub>0</sub> is where that leg starts and t<sub>0</sub> is when. Home is x = 0.</p>
+      <p class="wt">Leg 1 (0 to 150 s), ending at 4.0 × 150 = 600 m:</p>
+<math class="eq" display="block"><mrow><mi>x</mi><mo>=</mo><mn>4.0</mn><mi>t</mi></mrow></math>
+      <p class="wt">Leg 2 (150 to 180 s), stopped:</p>
+<math class="eq" display="block"><mrow><mi>x</mi><mo>=</mo><mn>600</mn><mspace width="0.167em"/><mtext>m</mtext></mrow></math>
+      <p class="wt">Leg 3 (from 180 s):</p>
+<math class="eq" display="block"><mrow><mi>x</mi><mo>=</mo><mn>600</mn><mo>+</mo><mn>7.5</mn><mo stretchy="false">(</mo><mi>t</mi><mo>&#x2212;</mo><mn>180</mn><mo stretchy="false">)</mo></mrow></math>
+      <p class="wt">Arrival: set x = 1500 m in leg 3.</p>
+<math class="eq" display="block"><mrow><mn>1500</mn><mo>=</mo><mn>600</mn><mo>+</mo><mn>7.5</mn><mo stretchy="false">(</mo><mi>t</mi><mo>&#x2212;</mo><mn>180</mn><mo stretchy="false">)</mo><mspace width="0.278em"/><mo>&#x2192;</mo><mspace width="0.278em"/><mi>t</mi><mo>&#x2212;</mo><mn>180</mn><mo>=</mo><mn>120</mn></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>t</mi><mo>=</mo><mn>300</mn><mspace width="0.167em"/><mtext>s</mtext></mrow></math>
+      <p class="wt">At t = 240 s she's on leg 3:</p>
+<math class="eq ans" display="block"><mrow><mi>x</mi><mo>=</mo><mn>600</mn><mo>+</mo><mn>7.5</mn><mo stretchy="false">(</mo><mn>60</mn><mo stretchy="false">)</mo><mo>=</mo><mn>1050</mn><mspace width="0.167em"/><mtext>m</mtext></mrow></math>
+      <p class="wt">Check with the velocity–time graph: the areas are 4.0 × 150 = 600 m and 7.5 × 120 = 900 m, which add to 1500 m. Her average speed is 1500 m ÷ 300 s = 5.0 m/s.</p>
+    </div>
+    <p class="take">The t − t<sub>0</sub> is the time since that leg began. Writing 600 + 7.5t instead would put her at 2400 m at t = 240 s, past the school. The area under the v–t graph is a quick check on the equations.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Equilibrium · spring and string</span><h4>Two blocks hanging from a spring</h4></summary>
+    <div class="exbody">
+    <svg width="180" height="140" viewBox="0 0 180 140" aria-label="Spring from the ceiling holds block A, and block B hangs from A by a string. Free-body diagram of A: spring force up, weight and string tension down">
+      <line x1="10" y1="8" x2="80" y2="8" stroke="#111" stroke-width="3"/>
+      <line x1="20" y1="8" x2="14" y2="2" stroke="#111"/><line x1="35" y1="8" x2="29" y2="2" stroke="#111"/><line x1="50" y1="8" x2="44" y2="2" stroke="#111"/><line x1="65" y1="8" x2="59" y2="2" stroke="#111"/><line x1="80" y1="8" x2="74" y2="2" stroke="#111"/>
+      <polyline points="45,8 45,14 37,18 53,24 37,30 53,36 37,42 45,46 45,52" fill="none" stroke="#111" stroke-width="2"/>
+      <rect x="29" y="52" width="32" height="24" fill="#111"/><text x="40" y="68" font-size="11" font-family="IBM Plex Mono,monospace" fill="#fff">A</text>
+      <line x1="45" y1="76" x2="45" y2="104" stroke="#111" stroke-width="2"/>
+      <rect x="35" y="104" width="20" height="18" fill="#111"/><text x="41" y="117" font-size="11" font-family="IBM Plex Mono,monospace" fill="#fff">B</text>
+      <text x="96" y="134" font-size="10" font-family="IBM Plex Mono,monospace">forces on A</text>
+      <circle cx="130" cy="64" r="6" fill="#111"/>
+      <line x1="130" y1="58" x2="130" y2="20" stroke="#ff6a2b" stroke-width="3"/><polygon points="125,22 135,22 130,13" fill="#ff6a2b"/>
+      <text x="136" y="22" font-size="11" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">F<tspan baseline-shift="sub" font-size="8">s</tspan></text>
+      <line x1="126" y1="70" x2="126" y2="102" stroke="#111" stroke-width="3"/><polygon points="121,100 131,100 126,109" fill="#111"/>
+      <text x="90" y="106" font-size="11" font-family="IBM Plex Mono,monospace">m<tspan baseline-shift="sub" font-size="8">A</tspan>g</text>
+      <line x1="135" y1="70" x2="135" y2="84" stroke="#111" stroke-width="3"/><polygon points="130,82 140,82 135,91" fill="#111"/>
+      <text x="141" y="90" font-size="11" font-family="IBM Plex Mono,monospace">F<tspan baseline-shift="sub" font-size="8">T</tspan></text>
+    </svg>
+    <p>A spring (k = 150 N/m) hangs from the ceiling. Block A (2.0 kg) hangs from the spring, and block B (1.0 kg) hangs from A by a light string. Everything is at rest. Find the tension in the string and how far the spring is stretched.</p>
+    <div class="work">
+      <p class="wt">Start with B: it has only two forces, the string pulling up and its weight. At rest, so they balance:</p>
+<math class="eq ans" display="block"><mrow><msub><mi>F</mi><mi>T</mi></msub><mo>=</mo><msub><mi>m</mi><mi>B</mi></msub><mi>g</mi><mo>=</mo><mo stretchy="false">(</mo><mn>1.0</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>10</mn><mo stretchy="false">)</mo><mo>=</mo><mn>10</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+      <p class="wt">Now A: the spring pulls up; its weight and the string pull down.</p>
+<math class="eq" display="block"><mrow><msub><mi>F</mi><mi>s</mi></msub><mo>=</mo><msub><mi>m</mi><mi>A</mi></msub><mi>g</mi><mo>+</mo><msub><mi>F</mi><mi>T</mi></msub><mo>=</mo><mn>20</mn><mo>+</mo><mn>10</mn><mo>=</mo><mn>30</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+      <p class="wt">(Or treat A and B as one object: the string is inside it, so F<sub>s</sub> = (3.0)(10) = 30 N straight away.) Then the stretch:</p>
+<math class="eq ans" display="block"><mrow><mi>x</mi><mo>=</mo><mfrac><msub><mi>F</mi><mi>s</mi></msub><mi>k</mi></mfrac><mo>=</mo><mfrac><mrow><mn>30</mn><mspace width="0.167em"/><mtext>N</mtext></mrow><mrow><mn>150</mn><mspace width="0.167em"/><mtext>N/m</mtext></mrow></mfrac><mo>=</mo><mn>0.20</mn><mspace width="0.167em"/><mtext>m</mtext></mrow></math>
+    </div>
+    <p class="take">Start with the object that has the fewest unknown forces. The string pulls down on A with the same 10 N it pulls up on B, and the spring holds up everything below it, so it stretches more than A alone would make it.</p>
+    </div>
+  </details>
 </div>
 </div>
 <div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
@@ -324,6 +468,16 @@ body.present .guide{display:none}
       <details><summary>Answer</summary><div>Back in the passenger's hand. The ball keeps the train's forward velocity, so it moves along with the train. Someone beside the track sees it follow a curved path (a parabola), moving forward the whole time.</div></details></li>
     <li>A ball is thrown upward. Draw the free-body diagram while it's on its way up, ignoring air resistance.
       <details><summary>Answer</summary><div>Just one arrow: its weight, straight down. The “force of the throw” ended when it left your hand. It keeps going up because of its velocity (inertia), not because of a force pushing it up.</div></details></li>
+    <li>In a motion diagram, the dots for a cart moving to the right get closer and closer together. Describe its motion.
+      <details><summary>Answer</summary><div>It's moving in the + direction and slowing down. Each gap is the distance covered in the same time, so shrinking gaps mean a shrinking speed; the velocity is positive but getting smaller.</div></details></li>
+    <li>A velocity–time graph is +3.0 m/s from t = 0 to 4.0 s, then −2.0 m/s from 4.0 s to 7.0 s. Find the displacement and the distance.
+      <details><summary>Answer</summary><div>Areas: (3.0)(4.0) = +12 m and (−2.0)(3.0) = −6.0 m. Displacement = 12 − 6.0 = +6.0 m. Distance counts both as positive: 12 + 6.0 = 18 m.</div></details></li>
+    <li>In a timing lab, every student starts their stopwatch 0.5 s late, so every time in the table is 0.5 s too small. Does this change the speed you get from the slope of the x–t graph?
+      <details><summary>Answer</summary><div>No. Every point shifts left by the same 0.5 s, so the line moves but keeps the same slope. Only the intercept is off. That's one reason to take the speed from the slope of a best-fit line rather than from a single x ÷ t.</div></details></li>
+    <li>Two runners race 30 m out and 30 m back, each running 6.0 m/s relative to the surface under their feet. One runs on the floor; the other runs on a moving walkway that carries her 2.0 m/s in the “out” direction. Who wins?
+      <details><summary>Answer</summary><div>The one on the floor. Floor: 60 ÷ 6.0 = 10 s. Walkway: out at 6.0 + 2.0 = 8.0 m/s takes 30 ÷ 8.0 = 3.75 s, back at 6.0 − 2.0 = 4.0 m/s takes 30 ÷ 4.0 = 7.5 s, for 11.25 s in all. Her speeds 8.0 and 4.0 average to 6.0, but she spends twice as long at the slow speed.</div></details></li>
+    <li><b>Who's right?</b> You drag a box across the floor at a steady speed with a rope. Maya says, “To keep it moving, you have to pull harder than friction, or the box would stop.” Theo says, “Your pull is equal to friction.” Who's right?
+      <details><summary>Answer</summary><div>Theo. Steady speed in a straight line means the net force is zero (Newton's 1st law), so the rope's pull and friction are equal and opposite. If you pulled harder than friction, the box would speed up. You only need extra pull to <i>get</i> it going faster, not to keep it moving.</div></details></li>
   </ol>
 </div>
 </div>
