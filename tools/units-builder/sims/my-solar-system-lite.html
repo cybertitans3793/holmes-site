@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<!--
+  My Solar System (lite): an original rewrite inspired by PhET Interactive Simulations' My Solar System
+  (University of Colorado Boulder, phet.colorado.edu) and the OpenStax version. Written from scratch; no code copied.
+  Physics follows the original's published model: G = 10000 (arbitrary units), fixed-step velocity-Verlet,
+  10 ms frames, momentum-conserving merge when accelerations get too large. Self-contained: no outside files.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Solar System</title>
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#fff}
+*,*:before,*:after{box-sizing:border-box}
+#stage{position:absolute;left:0;top:0;width:800px;height:600px;transform-origin:0 0;overflow:hidden;
+  font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:14px;line-height:20px;color:#333;background:#fff;
+  -webkit-user-select:none;user-select:none}
+button,input{font:inherit;color:inherit;margin:0}
+button{cursor:pointer}
+button:focus{outline:none}
+button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:2px solid #9fc0ff;outline-offset:1px}
+svg{display:inline-block;vertical-align:middle}
+
+/* tab strip */
+#tabs{position:absolute;left:0;top:10px;width:800px;height:37px;padding-left:30px;border-bottom:2px solid #21366b}
+#tabs .tab{display:inline-block;padding:7px 17px 7px 12px;background:#21366b;color:#ededed;line-height:20px;height:35px}
+#helpWrap{position:absolute;top:1px;right:30px}
+.round{border:none;border-radius:50%;padding:0;text-align:center}
+#helpBtn{width:28px;height:28px;background:#ededed;color:#21366b;font-weight:700;font-size:15px;line-height:28px}
+#helpBtn:hover{opacity:.9}
+#helpBtn:active{background:#21366b;color:#fff}
+
+/* scene */
+#sim{position:absolute;left:0;top:47px;width:800px;height:553px;overflow:hidden}
+#cv{position:absolute;left:0;top:0;width:800px;height:553px;display:block;touch-action:none}
+
+/* initial settings table */
+#settings{position:absolute;top:20px;left:20px;color:rgba(255,255,255,.86)}
+#settings.disabled{opacity:.5}
+#settings.disabled:after{content:"";position:absolute;left:0;top:0;right:0;bottom:0}
+#settings table{border-collapse:separate;border-spacing:2px}
+#settings th{text-align:center;font-weight:700;padding:0}
+#settings td{padding:0}
+#settings td:first-child{padding-right:6px;white-space:nowrap}
+#settings sub{font-size:75%;line-height:0;position:relative;bottom:-.25em}
+#settings input{width:48px;height:22px;padding:0 5px;border:1px solid rgba(0,0,0,.22);border-radius:4px;color:#000;text-align:right;
+  box-shadow:inset 0 1px 1px rgba(0,0,0,.075);-moz-appearance:textfield;-webkit-user-select:text;user-select:text}
+#settings input.mass{width:71px}
+#settings input::-webkit-inner-spin-button,#settings input::-webkit-outer-spin-button{-webkit-appearance:none;display:none}
+#settings input:focus{outline:none;border-color:#66afe9;box-shadow:inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6)}
+.linkbtn{background:none;border:none;padding:0;margin-left:6px;opacity:.7;color:rgba(255,255,255,.86)}
+.linkbtn:hover{opacity:1}
+.rm .txt{display:none}
+.rm:hover .txt{display:inline}
+.addrow td{text-align:center}
+
+/* preset picker */
+#presetWrap{position:absolute;left:383px;top:20px;color:rgba(255,255,255,.86)}
+#presetWrap>label{display:block;font-weight:700;margin-bottom:5px}
+#presetBtn{height:34px;padding:6px 12px;border:1px solid rgba(0,0,0,.1);border-radius:4px;background:rgba(255,255,255,.4);color:#333;white-space:nowrap}
+#presetBtn .caret{display:inline-block;width:0;height:0;margin-left:0;vertical-align:middle;border-top:4px solid;border-right:4px solid transparent;border-left:4px solid transparent}
+#presetMenu{display:none;position:absolute;left:0;top:62px;z-index:20;min-width:165px;padding:5px 0;margin:0;list-style:none;background:#fff;
+  border:1px solid rgba(0,0,0,.15);border-radius:4px;box-shadow:0 6px 12px rgba(0,0,0,.175)}
+#presetMenu.open{display:block}
+#presetMenu button{display:block;width:100%;text-align:left;border:none;background:none;padding:3px 20px;line-height:20px;color:#333;white-space:nowrap}
+#presetMenu button:hover,#presetMenu button:focus{background:#f5f5f5}
+#presetMenu button.sel{background:#21366b;color:#fff}
+
+/* view options */
+#viewOpts{position:absolute;top:20px;right:20px;padding:15px;background:rgba(255,255,255,.4);box-shadow:0 0 11px rgba(0,0,0,.13)}
+#viewOpts h2{font-size:16px;font-weight:400;line-height:17.6px;color:rgba(34,34,34,.8);margin:0 0 7px;padding-bottom:4px;border-bottom:1px solid rgba(0,0,0,.09)}
+.chk{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.chk+label{display:inline-block;position:relative;padding-left:26px;margin-bottom:12px;line-height:16px;font-weight:700;cursor:pointer}
+.chk+label:last-child{margin-bottom:0}
+.chk+label:before{content:"";position:absolute;top:0;left:0;width:16px;height:16px;background:rgba(255,255,255,.18);border:2px solid #333}
+.chk:checked+label:after{content:"";position:absolute;top:8px;left:8px;width:14px;height:14px;margin:-7px 0 0 -7px;background:#21366b}
+.chk:focus-visible+label:before{outline:2px solid #9fc0ff}
+
+/* zoom */
+#zoom{position:absolute;bottom:82px;right:20px;color:#fff}
+#zoom button{background:none;border:1px solid transparent;padding:0;opacity:.5;color:#fff;width:21px;height:24px}
+#zoom button:hover{opacity:.8}
+
+/* playback bar */
+#play{position:absolute;bottom:5px;left:0;width:800px;height:62px;padding:10px;background:rgba(255,255,255,.3);text-align:center}
+#speedWrap{position:absolute;left:100px;top:0;height:100%;padding-top:18px;color:#bbb;white-space:nowrap}
+#speedWrap span.l{vertical-align:middle;margin:0 8px}
+#speed{position:relative;display:inline-block;vertical-align:middle;width:140px;height:2px;margin:12px 0;background:#aaa;cursor:pointer;touch-action:none}
+#speed .tick{position:absolute;top:-1px;width:4px;height:4px;margin-left:-1px;background:#aaa;border-radius:50%}
+#speed .hdl{position:absolute;top:-12px;width:26px;height:26px;margin-left:-12px;cursor:w-resize}
+#speed .hdl.anim{transition:left .3s}
+#speed .hdl:after{content:"";position:absolute;left:50%;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:#222;border:2px solid #aaa;
+  transition:width .2s,height .2s,margin .2s}
+#speed .hdl.active:after{width:26px;height:26px;margin:-13px 0 0 -13px}
+.pbtn{display:inline-block;vertical-align:middle;background:rgba(0,0,0,.54);color:#fff;width:28px;height:28px}
+.pbtn:hover{opacity:.9}
+.pbtn:active{background:#fff;color:rgba(0,0,0,.54)}
+.pbtn.big{width:42px;height:42px}
+#pauseBtn{display:none}
+#stage.playing #pauseBtn{display:inline-block}
+#stage.playing #playBtn{display:none}
+#timeWrap{position:absolute;top:0;right:273px;line-height:62px;color:#bbb}
+#time{display:inline-block;width:50px;text-align:right;color:#fff}
+
+/* tape measure */
+#tape{display:none;position:absolute;left:0;top:0;z-index:5}
+#tape.on{display:block}
+#tapeLine{position:absolute;left:0;top:-1px;height:0;border-top:2px dotted #ededed;transform-origin:0 50%}
+.th{position:absolute;width:20px;height:20px;margin:-11px 0 0 -11px;border-radius:50%;cursor:crosshair;touch-action:none}
+.th:before{content:"";position:absolute;left:3px;right:3px;top:50%;margin-top:-1px;border-top:2px solid #ededed}
+.th:after{content:"";position:absolute;top:3px;bottom:3px;left:50%;margin-left:-1px;border-left:2px solid #ededed}
+.th.drag{background:rgba(229,229,229,.7)}
+#tapeHit{position:absolute;left:0;top:-6px;height:12px;transform-origin:0 50%;cursor:move;touch-action:none}
+#tip{display:none;position:absolute;z-index:6;padding:3px 7px;background:rgba(229,229,229,.85);color:#222;font-size:12px;line-height:16px;white-space:nowrap;pointer-events:none}
+#tapeLabel{position:absolute;top:12px;left:0;padding:4px 8px;background:rgba(229,229,229,.7);white-space:nowrap;color:#333}
+
+/* help */
+#help{display:none;position:absolute;left:0;top:0;width:800px;height:600px;z-index:50;background:rgba(0,0,0,.5);overflow:auto}
+#help.open{display:block}
+#help .dlg{width:600px;margin:30px auto;background:#fff;border:1px solid rgba(0,0,0,.2);border-radius:6px;box-shadow:0 5px 15px rgba(0,0,0,.5);-webkit-user-select:text;user-select:text}
+#help .hd{padding:15px;border-bottom:1px solid #e5e5e5;position:relative}
+#help h4{margin:0;font-size:18px;font-weight:500;line-height:1.42857}
+#help .x{position:absolute;right:15px;top:15px;background:none;border:none;font-size:21px;font-weight:700;line-height:1;color:#000;opacity:.2;padding:0}
+#help .x:hover{opacity:.5}
+#help .bd{padding:15px;font-size:15.4px;line-height:22px}
+#help li{margin:20px 0}
+#help .math{font-family:monaco,Consolas,"Lucida Console",monospace;margin:8px 0 0 112px}
+#help sub,#help sup{font-size:75%;line-height:0;position:relative}
+#help sub{bottom:-.25em}#help sup{top:-.5em}
+#help .ft{padding:15px;text-align:right;border-top:1px solid #e5e5e5}
+#help .ft button{padding:6px 12px;border:1px solid #ccc;border-radius:4px;background:#fff;color:#333}
+#help .ft button:hover{background:#e6e6e6}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="tabs"><span class="tab">My Solar System</span><div id="helpWrap"><button id="helpBtn" class="round" title="Help" aria-label="Help">?</button></div></div>
+  <div id="sim">
+    <canvas id="cv" aria-label="Solar system view: drag bodies, or the V circles to set velocity"></canvas>
+
+    <div id="settings">
+      <table>
+        <thead><tr><th></th><th>mass</th><th>x</th><th>y</th><th>v<sub>x</sub></th><th>v<sub>y</sub></th><td></td></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+
+    <div id="presetWrap">
+      <label id="presetLab">Preset:</label>
+      <button id="presetBtn" aria-haspopup="listbox" aria-labelledby="presetLab presetBtn"><span id="presetTxt">Select preset</span> <span class="caret"></span></button>
+      <div id="presetMenu" role="listbox"></div>
+    </div>
+
+    <div id="viewOpts">
+      <h2>View Options</h2>
+      <input type="checkbox" class="chk" id="optCenter" checked><label for="optCenter">System Centered</label><br>
+      <input type="checkbox" class="chk" id="optTrace" checked><label for="optTrace">Show Traces</label><br>
+      <input type="checkbox" class="chk" id="optGrid"><label for="optGrid">Show Grid</label><br>
+      <input type="checkbox" class="chk" id="optTape"><label for="optTape">Tape Measure</label>
+    </div>
+
+    <div id="zoom">
+      <button id="zoomIn" aria-label="Zoom in"><svg width="20" height="20" viewBox="0 0 20 20"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M12.6 12.6l5.4 5.4" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/><path d="M8 4.8v6.4M4.8 8h6.4" stroke="currentColor" stroke-width="1.8"/></svg></button>
+      <button id="zoomOut" aria-label="Zoom out"><svg width="20" height="20" viewBox="0 0 20 20"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M12.6 12.6l5.4 5.4" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/><path d="M4.8 8h6.4" stroke="currentColor" stroke-width="1.8"/></svg></button>
+    </div>
+
+    <div id="play">
+      <div id="speedWrap"><span class="l">Accurate</span><div id="speed" role="slider" tabindex="0" aria-label="Speed" aria-valuemin="0" aria-valuemax="10" aria-valuenow="7"><div class="hdl" id="speedHdl"></div></div><span class="l">Fast</span></div>
+      <button class="pbtn round" id="rewindBtn" title="Rewind to beginning" aria-label="Rewind to beginning"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M1.5 1.5h2v11h-2zM3.5 7L8.5 1.8v10.4zM8.5 7l5-5.2v10.4z" fill="currentColor"/></svg></button>
+      <button class="pbtn round big" id="playBtn" title="Resume" aria-label="Play"><svg width="16" height="16" viewBox="0 0 16 16" style="margin-left:3px"><path d="M2 1l13 7-13 7z" fill="currentColor"/></svg></button>
+      <button class="pbtn round big" id="pauseBtn" title="Pause" aria-label="Pause"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M2 1h4.5v14H2zM9.5 1H14v14H9.5z" fill="currentColor"/></svg></button>
+      <div id="timeWrap"><span>Time: </span><span id="time">0.0</span></div>
+    </div>
+
+    <div id="tip"></div>
+    <div id="tape"><div id="tapeLine"></div><div id="tapeHit"></div><div class="th" id="tapeA"></div><div class="th" id="tapeB"></div><div id="tapeLabel"></div></div>
+  </div>
+
+  <div id="help" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+    <div class="dlg">
+      <div class="hd"><button class="x" id="helpX" aria-label="Close">&times;</button><h4 id="helpTitle">Help</h4></div>
+      <div class="bd"><ul>
+        <li>Make your own solar system by dragging bodies and the V symbol (V for velocity) or by typing into the initial settings table in the upper-left corner of the simulation.</li>
+        <li>Distances, masses, and times are in arbitrary units. Invent your own!</li>
+        <li>Keep masses less than a few thousand or risk strange results.</li>
+        <li>For current position and velocity of a specific body, press the pause button and mouse over (or tap and hold) the body.</li>
+        <li>When <em>System Centered</em> is checked, the system's center-of-mass motion is removed.</li>
+        <li>This simulation uses a fixed-timestep velocity-Verlet algorithm to integrate trajectories:
+          <p class="math">x<sub>n+1</sub> = x<sub>n</sub> + v<sub>n</sub>&Delta;t + (1/2)a<sub>n</sub>&Delta;t<sup>2</sup></p>
+          <p class="math">v<sub>n+1</sub> = v<sub>n</sub> + (1/2)(a<sub>n+1</sub> + a<sub>n</sub>)&Delta;t</p>
+          Unlike Runge-Kutta, the Verlet algorithm conserves energy in oscillatory systems, producing stable orbits. As with any fixed-timestep algorithm, Verlet produces unphysical results when bodies get too close and the resulting accelerations are too large. To prevent this, bodies that get too close are fused in a momentum-conserving collision.</li>
+      </ul></div>
+      <div class="ft"><button id="helpClose">Close</button></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+/* ---------------- constants ---------------- */
+var COLORS = ['#E8AE1A', '#D86565', '#3C8282', '#50AD50'];
+var MAXB = 4, MINB = 2, MIN_MASS = 1e-6, G = 10000, FRAME_MS = 10;
+var DT_LIST = [0.0005, 0.00075, 0.0011, 0.0017, 0.0025, 0.004, 0.006, 0.01, 0.015, 0.025, 0.04];
+var N_LIST  = [25, 20, 16, 12, 10, 8, 6, 5, 4, 3, 2];
+var W = 800, H = 553;                         // scene size in layout px
+var OX = Math.round(W / 2), OY = Math.round(H / 2);
+var GRID = 100, ZMIN = 0.3, ZMAX = 2;
+
+// [mass, x, y, vx, vy]
+var START = [[200,0,0,0,-1],[10,142,0,0,140],[0,166,0,0,74],[0,-84,0,0,-133]];
+var PRESETS = [
+  ['Sun and planet',      [[200,0,0,0,0],[10,150,0,0,120]]],
+  ['Sun, planet, moon',   [[200,0,0,0,0],[10,160,0,0,120],[0,140,0,0,53]]],
+  ['Sun, planet, comet',  [[200,0,0,0,0],[1,150,0,0,120],[0,-220,130,-15,-28]]],
+  ['Binary star, planet', [[150,-100,0,0,-60],[120,100,0,0,50],[0,-50,0,0,120]]],
+  ['Trojan asteroids',    [[200,0,0,0,0],[5,150,0,0,119],[0,75,-130,103,60],[0,75,130,-103,60]]],
+  ['Four-star ballet',    [[120,-100,100,-50,-50],[120,100,100,-50,50],[120,100,-100,50,50],[120,-100,-100,50,-50]]],
+  ['Slingshot',           [[200,1,0,0,-1],[10,131,55,-55,115],[0,-6,-128,83,0]]],
+  ['Double slingshot',    [[200,0,0,0,-1],[5,0,-112,134,0],[4,186,-5,1,111],[0,70,72,-47,63]]],
+  ['Hyperbolics',         [[250,-50,-25,0,0],[0,300,50,-120,0],[0,300,120,-120,0],[0,300,190,-120,0]]],
+  ['Ellipses',            [[250,-200,0,0,0],[0,-115,0,0,151],[0,50,0,0,60],[0,220,0,0,37]]],
+  ['Double double',       [[60,-115,-3,0,-154],[70,102,0,1,150],[55,-77,-2,-1,42],[62,135,0,-1,-52]]]
+];
+
+/* ---------------- model ---------------- */
+function clampMass(m){ return m < MIN_MASS ? MIN_MASS : m; }
+function makeBody(d){
+  var m = clampMass(d[0]);
+  return { mass:m, initMass:m, initX:d[1], initY:d[2], initVX:d[3], initVY:d[4],
+    px:d[1], py:d[2], vx:d[3], vy:d[4], ax:0, ay:0, pax:0, pay:0, dead:false };
+}
+function resetBody(b){
+  b.mass = clampMass(b.initMass); b.px = b.initX; b.py = b.initY; b.vx = b.initVX; b.vy = b.initVY; b.dead = false;
+}
+
+var S = {
+  bodies:[], n:2, dt:0.009, steps:4, speed:7, acc:0, time:0, maxAccel:0,
+  cmRemoved:false, vcx:0, vcy:0, hit:false, paused:true, started:false, centered:true,
+  fx:[], fy:[], onCollide:null
+};
+
+function initForces(){
+  S.fx = []; S.fy = [];
+  for (var i = 0; i < MAXB; i++){ S.fx.push([0,0,0,0]); S.fy.push([0,0,0,0]); }
+}
+function computeAccels(){
+  var n = S.n, B = S.bodies, i, j;
+  for (i = 0; i < n; i++) for (j = i + 1; j < n; j++){
+    var a = B[i], b = B[j];
+    var k = G * a.mass * b.mass, dx = b.px - a.px, dy = b.py - a.py;
+    var r2 = dx * dx + dy * dy, r = Math.sqrt(r2), f = k / (r2 * r);
+    S.fx[i][j] = f * dx; S.fy[i][j] = f * dy;
+    S.fx[j][i] = -S.fx[i][j]; S.fy[j][i] = -S.fy[i][j];
+  }
+  for (i = 0; i < n; i++){
+    var bi = B[i], m = bi.mass;
+    bi.ax = 0; bi.ay = 0;
+    for (j = 0; j < n; j++){
+      bi.ax += S.fx[i][j] / m; bi.ay += S.fy[i][j] / m;
+      var al = Math.sqrt(bi.ax * bi.ax + bi.ay * bi.ay);
+      if (al > S.maxAccel){ S.maxAccel = al; if (S.maxAccel * S.dt > 150) S.hit = true; }
+    }
+  }
+}
+function verletStep(){
+  var t = S.dt, B = S.bodies, i, b;
+  S.time += t;
+  for (i = 0; i < S.n; i++){
+    b = B[i];
+    if (b.dead) continue;
+    b.px = b.px + b.vx * t + 0.5 * b.ax * t * t;
+    b.py = b.py + b.vy * t + 0.5 * b.ay * t * t;
+    b.pax = b.ax; b.pay = b.ay;
+  }
+  computeAccels();
+  for (i = 0; i < S.n; i++){
+    b = B[i];
+    b.vx = b.vx + 0.5 * (b.ax + b.pax) * t;
+    b.vy = b.vy + 0.5 * (b.ay + b.pay) * t;
+  }
+  if (S.hit){
+    var p = closestPair();
+    merge(p[0], p[1]);
+    S.hit = false;
+  }
+}
+function closestPair(){
+  var best = 1e4, out = [];
+  for (var i = 0; i < S.n; i++) for (var j = i + 1; j < S.n; j++){
+    var dx = S.bodies[j].px - S.bodies[i].px, dy = S.bodies[j].py - S.bodies[i].py;
+    var d = Math.sqrt(dx * dx + dy * dy);
+    if (d < best){ best = d; out[0] = i; out[1] = j; }
+  }
+  return out;
+}
+function merge(i, j){
+  pause();
+  var a = S.bodies[i], b = S.bodies[j];
+  if (!a || !b || a.dead || b.dead) return;     // like the original, stays paused in this odd case
+  var M = a.mass + b.mass;
+  var vx = 1 / M * (a.mass * a.vx + b.mass * b.vx), vy = 1 / M * (a.mass * a.vy + b.mass * b.vy);
+  var x = 1 / M * (a.mass * a.px + b.mass * b.px), y = 1 / M * (a.mass * a.py + b.mass * b.py);
+  var big = Math.max(a.mass, b.mass), keep, gone;
+  if (big == a.mass){ keep = a; gone = b; } else { keep = b; gone = a; }
+  keep.mass = M; keep.px = x; keep.py = y; keep.vx = vx; keep.vy = vy;
+  gone.mass = MIN_MASS; gone.px = 3000; gone.py = 0; gone.vx = 10; gone.vy = 0; gone.dead = true;
+  if (S.onCollide) S.onCollide(x, y);
+  computeAccels();
+  S.maxAccel = 0;
+  play();
+}
+function stepFrame(){ for (var k = 0; k < S.steps; k++) verletStep(); }
+function advance(ms){
+  if (S.paused) return;
+  S.acc += ms;
+  while (S.acc >= FRAME_MS){ stepFrame(); S.acc -= FRAME_MS; }
+}
+function setCMVelocity(){
+  var m = 0, px = 0, py = 0;
+  for (var i = 0; i < S.n; i++){ var b = S.bodies[i]; m += b.mass; px += b.mass * b.initVX; py += b.mass * b.initVY; }
+  S.vcx = px / m; S.vcy = py / m;
+}
+function removeCM(){
+  if (S.cmRemoved) return;
+  for (var i = 0; i < S.n; i++){ S.bodies[i].vx -= S.vcx; S.bodies[i].vy -= S.vcy; }
+  S.cmRemoved = true;
+}
+function play(){
+  computeAccels();
+  S.time += S.dt;
+  if (S.centered && !S.cmRemoved) removeCM();
+  S.started = true; S.paused = false;
+  if (ui) ui.state();
+}
+function pause(){ S.paused = true; if (ui) ui.state(); }
+function resetSim(){
+  for (var i = 0; i < S.n; i++) resetBody(S.bodies[i]);
+  S.maxAccel = 0; S.time = 0; S.cmRemoved = false; S.started = false;
+}
+function loadBodies(list){
+  pause();
+  S.n = list.length;
+  S.bodies = list.map(makeBody);
+  initForces(); computeAccels(); resetSim(); setCMVelocity();
+}
+function setSpeed(k){
+  if (k < 0 || k >= DT_LIST.length) return;
+  S.speed = k;
+  if (S.paused){ S.maxAccel = 0; S.dt = DT_LIST[k]; S.steps = N_LIST[k]; }
+  else { pause(); S.maxAccel = 0; S.dt = DT_LIST[k]; S.steps = N_LIST[k]; play(); }
+}
+
+/* ---------------- view ---------------- */
+var stage = document.getElementById('stage');
+var cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+var tcv = document.createElement('canvas'), tctx = tcv.getContext('2d');
+var zoom = 1.2, fit = 1, pr = 1, TR = 2;
+var showTraces = true, showGrid = false;
+var traces = [];      // per body: {x,y} last trace point in view px
+var booms = [];
+var ui = null;
+
+function vx(x){ return OX + x * zoom; }
+function vy(y){ return OY - y * zoom; }
+
+function layout(){
+  var iw = window.innerWidth, ih = window.innerHeight;
+  fit = Math.min(iw / 800, ih / 600) || 1;
+  stage.style.transform = 'scale(' + fit + ')';
+  stage.style.left = Math.max(0, (iw - 800 * fit) / 2) + 'px';
+  stage.style.top = Math.max(0, (ih - 600 * fit) / 2) + 'px';
+  pr = Math.min(4, Math.max(1, (window.devicePixelRatio || 1) * fit));
+  cv.width = Math.round(W * pr); cv.height = Math.round(H * pr);
+}
+function initTraceCanvas(){
+  TR = Math.min(3, Math.max(2, Math.ceil((window.devicePixelRatio || 1) * fit)));
+  tcv.width = W * TR; tcv.height = H * TR;
+}
+function clearTraces(){
+  tctx.setTransform(1,0,0,1,0,0);
+  tctx.clearRect(0, 0, tcv.width, tcv.height);
+  traces = S.bodies.map(function(b){ return { x:vx(b.px), y:vy(b.py) }; });
+}
+function addTracePoints(){
+  tctx.setTransform(TR,0,0,TR,0,0);
+  tctx.lineWidth = 3; tctx.lineCap = 'round';
+  for (var i = 0; i < S.bodies.length; i++){
+    var b = S.bodies[i], t = traces[i];
+    if (!t || b.dead) continue;
+    var x = vx(b.px), y = vy(b.py);
+    tctx.strokeStyle = COLORS[i];
+    tctx.beginPath(); tctx.moveTo(t.x, t.y); tctx.lineTo(x, y); tctx.stroke();
+    t.x = x; t.y = y;
+  }
+}
+function bodyRadius(b){ return (2.5 * Math.pow(b.mass, 1/3) + 6) * zoom / 2; }
+
+// burst outline: alternating long/short spikes, fixed shape
+var BURST = [1,.55,.86,.5,.95,.6,.8,.48,1,.58,.9,.5,.84,.56,.97,.52,.88,.6,.92,.5,.82,.57];
+function burstPath(c, r){
+  c.beginPath();
+  for (var k = 0; k < BURST.length; k++){
+    var a = k / BURST.length * Math.PI * 2, rr = r * BURST[k];
+    if (k) c.lineTo(Math.cos(a) * rr, Math.sin(a) * rr); else c.moveTo(rr, 0);
+  }
+  c.closePath();
+}
+function drawBoom(o){
+  var f = o.t / 1, e = f < 0.65 ? f / 0.65 : 1 - (f - 0.65) / 0.35;
+  var d = (40 + 20 * e) * zoom;
+  ctx.save();
+  ctx.globalAlpha = f < 0.65 ? 1 : Math.max(0, e);
+  ctx.translate(vx(o.x), vy(o.y)); ctx.rotate(o.rot);
+  burstPath(ctx, d * 0.48); ctx.fillStyle = '#CC4A06'; ctx.fill();
+  burstPath(ctx, d * 0.30); ctx.fillStyle = '#FFC200'; ctx.fill();
+  ctx.restore();
+}
+
+function draw(){
+  ctx.setTransform(pr,0,0,pr,0,0);
+  var g = ctx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, '#21366b'); g.addColorStop(0.95, '#0a0f1d'); g.addColorStop(1, '#0a0f1d');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+  if (showGrid){
+    var gs = GRID * zoom, x0 = OX % gs, y0 = OY % gs, k;
+    ctx.strokeStyle = 'rgba(255,255,255,0.1)'; ctx.lineWidth = 1; ctx.beginPath();
+    for (k = x0; k <= W; k += gs){ ctx.moveTo(k, 0); ctx.lineTo(k, H); }
+    for (k = y0; k <= H; k += gs){ ctx.moveTo(0, k); ctx.lineTo(W, k); }
+    ctx.stroke();
+  }
+  if (showTraces) ctx.drawImage(tcv, 0, 0, W, H);
+
+  for (var i = 0; i < S.bodies.length; i++){
+    var b = S.bodies[i];
+    if (b.dead) continue;
+    var cx = vx(b.px), cy = vy(b.py);
+    if (!S.started){
+      var tx = b.initVX * zoom, ty = -b.initVY * zoom;
+      // velocity marker
+      ctx.save(); ctx.translate(cx, cy);
+      ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.lineWidth = 4;
+      ctx.beginPath(); ctx.arc(tx, ty, 20, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.font = '28px Arial';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+      ctx.fillText('V', tx, ty + 28 * 0.4 + 0.5);
+      // arrow
+      var len = Math.sqrt(tx * tx + ty * ty), sc = 1;
+      if (len < 17){ sc = len / 17; len = 17; }
+      ctx.rotate(Math.atan2(ty, tx)); ctx.scale(sc, sc);
+      ctx.fillStyle = '#cd2520';
+      ctx.fillRect(0, -2.5, len - 17, 5);
+      ctx.beginPath(); ctx.moveTo(len, 0); ctx.lineTo(len - 17, 8.5); ctx.lineTo(len - 17, -8.5); ctx.closePath(); ctx.fill();
+      ctx.restore();
+    }
+    ctx.fillStyle = COLORS[i];
+    ctx.beginPath(); ctx.arc(cx, cy, bodyRadius(b), 0, Math.PI * 2); ctx.fill();
+  }
+  for (var j = 0; j < booms.length; j++) drawBoom(booms[j]);
+}
+
+S.onCollide = function(x, y){ booms.push({ x:x, y:y, t:0, rot:Math.random() * Math.PI * 2 }); };
+
+/* ---------------- controls ---------------- */
+var $ = function(id){ return document.getElementById(id); };
+var rows = $('rows'), FIELDS = ['mass','pos-x','pos-y','vel-x','vel-y'], KEYS = ['initMass','initX','initY','initVX','initVY'];
+
+function buildRows(){
+  var h = '';
+  for (var i = 0; i < MAXB; i++){
+    h += '<tr data-i="' + i + '"><td>Body ' + (i + 1) + '</td>';
+    for (var f = 0; f < 5; f++)
+      h += '<td><input type="number" class="' + FIELDS[f] + '" data-f="' + f + '" aria-label="Body ' + (i + 1) + ' ' + ['mass','x','y','vx','vy'][f] + '" style="background-color:' + COLORS[i] + '"></td>';
+    h += '<td><button class="linkbtn rm" style="display:none" aria-label="remove body">' + circleIcon(false) + ' <span class="txt">remove body</span></button></td></tr>';
+  }
+  h += '<tr class="addrow"><td></td><td colspan="5"><button class="linkbtn" id="addBtn">' + circleIcon(true) + ' add body</button></td><td></td></tr>';
+  rows.innerHTML = h;
+}
+function circleIcon(plus){
+  var bar = plus ? 'M6.9 3.6h2.2v3.3h3.3v2.2H9.1v3.3H6.9V9.1H3.6V6.9h3.3z' : 'M3.6 6.9h8.8v2.2H3.6z';
+  return '<svg width="13" height="13" viewBox="0 0 16 16" style="vertical-align:-1px"><path fill="currentColor" fill-rule="evenodd" d="M8 .5a7.5 7.5 0 1 1 0 15 7.5 7.5 0 0 1 0-15z' + bar + '"/></svg>';
+}
+function fmt(v){ return String(v); }
+function fillInputs(){
+  var trs = rows.querySelectorAll('tr[data-i]');
+  for (var i = 0; i < MAXB; i++){
+    var tr = trs[i], b = S.bodies[i];
+    tr.style.display = i < S.n ? '' : 'none';
+    tr.querySelector('.rm').style.display = (S.n > MINB && i === S.n - 1) ? '' : 'none';
+    if (!b) continue;
+    var ins = tr.querySelectorAll('input');
+    var vals = [b.mass, b.initX, b.initY, b.initVX, b.initVY];
+    for (var f = 0; f < 5; f++) if (document.activeElement !== ins[f]) ins[f].value = fmt(vals[f]);
+  }
+  rows.querySelector('.addrow').style.display = S.n < MAXB ? '' : 'none';
+}
+function editInit(i, f, val){
+  var b = S.bodies[i];
+  if (!b || isNaN(val)) return;
+  if (f === 0){ b.initMass = val; b.mass = clampMass(val); }
+  else if (f === 1){ b.initX = val; b.px = val; }
+  else if (f === 2){ b.initY = val; b.py = val; }
+  else if (f === 3){ b.initVX = val; b.vx = val; }
+  else { b.initVY = val; b.vy = val; }
+  if (f === 0 || f >= 3){
+    if (S.cmRemoved){ for (var k = 0; k < S.n; k++){ S.bodies[k].vx += S.vcx; S.bodies[k].vy += S.vcy; } S.cmRemoved = false; setCMVelocity(); removeCM(); }
+    else setCMVelocity();
+  }
+}
+rows.addEventListener('input', function(e){
+  var t = e.target; if (t.tagName !== 'INPUT') return;
+  editInit(+t.closest('tr').dataset.i, +t.dataset.f, parseFloat(t.value));
+});
+rows.addEventListener('change', function(e){
+  var t = e.target; if (t.tagName !== 'INPUT') return;
+  editInit(+t.closest('tr').dataset.i, +t.dataset.f, parseFloat(t.value));
+  fillInputs();
+});
+rows.addEventListener('keydown', function(e){
+  var t = e.target; if (t.tagName !== 'INPUT' || e.key !== 'Enter') return;
+  var i = +t.closest('tr').dataset.i, nx = rows.querySelector('tr[data-i="' + (i + 1) + '"]');
+  if (nx && nx.style.display !== 'none') nx.querySelectorAll('input')[+t.dataset.f].focus(); else t.blur();
+});
+rows.addEventListener('click', function(e){
+  var bt = e.target.closest('button'); if (!bt) return;
+  if (bt.id === 'addBtn'){ if (S.n < MAXB) changeCount(S.n + 1); }
+  else if (bt.classList.contains('rm')){ if (S.n > MINB) changeCount(S.n - 1); }
+});
+function changeCount(n){
+  loadBodies(START.slice(0, n));
+  setPresetLabel(-1);
+  afterLoad();
+}
+function afterLoad(){
+  booms = []; clearTraces(); fillInputs(); ui.state();
+}
+
+// preset dropdown
+var pMenu = $('presetMenu'), pBtn = $('presetBtn'), curPreset = -1;
+(function(){
+  var h = '<button data-p="-1" class="sel" role="option">Select preset</button>';
+  PRESETS.forEach(function(p, k){ h += '<button data-p="' + k + '" role="option">' + p[0] + '</button>'; });
+  pMenu.innerHTML = h;
+})();
+function setPresetLabel(k){
+  curPreset = k;
+  $('presetTxt').textContent = k < 0 ? 'Select preset' : PRESETS[k][0];
+  [].forEach.call(pMenu.children, function(b){ b.classList.toggle('sel', +b.dataset.p === k); });
+}
+function openMenu(o){ pMenu.classList.toggle('open', o); pBtn.setAttribute('aria-expanded', o ? 'true' : 'false'); if (o){ var s = pMenu.querySelector('.sel'); if (s) s.focus(); } }
+pBtn.addEventListener('click', function(e){ e.stopPropagation(); openMenu(!pMenu.classList.contains('open')); });
+pMenu.addEventListener('click', function(e){
+  var b = e.target.closest('button'); if (!b) return;
+  e.stopPropagation();
+  var k = +b.dataset.p;
+  openMenu(false); pBtn.focus();
+  if (k < 0) return;
+  setPresetLabel(k);
+  loadBodies(PRESETS[k][1]);
+  afterLoad();
+});
+pMenu.addEventListener('keydown', function(e){
+  var items = [].slice.call(pMenu.children), i = items.indexOf(document.activeElement);
+  if (e.key === 'ArrowDown'){ e.preventDefault(); items[Math.min(items.length - 1, i + 1)].focus(); }
+  else if (e.key === 'ArrowUp'){ e.preventDefault(); items[Math.max(0, i - 1)].focus(); }
+  else if (e.key === 'Escape'){ openMenu(false); pBtn.focus(); }
+});
+document.addEventListener('click', function(){ openMenu(false); });
+
+// view options
+$('optCenter').addEventListener('change', function(){ S.centered = this.checked; });
+$('optTrace').addEventListener('change', function(){ showTraces = this.checked; if (showTraces) clearTraces(); });
+$('optGrid').addEventListener('change', function(){ showGrid = this.checked; });
+$('optTape').addEventListener('change', function(){ $('tape').classList.toggle('on', this.checked); });
+
+// zoom
+function setZoom(z){
+  zoom = z; clearTraces(); updateTape();
+}
+$('zoomIn').addEventListener('click', function(){ var z = zoom + 0.4; if (z < ZMAX) setZoom(z); });
+$('zoomOut').addEventListener('click', function(){ var z = zoom - 0.4; if (z > ZMIN) setZoom(z); });
+
+// playback
+$('playBtn').addEventListener('click', function(){ if (!S.started) clearTraces(); play(); });
+$('pauseBtn').addEventListener('click', function(){ pause(); });
+$('rewindBtn').addEventListener('click', function(){
+  pause(); resetSim(); afterLoad();
+});
+
+// speed slider
+var spd = $('speed'), hdl = $('speedHdl');
+(function(){ for (var k = 0; k <= 10; k++){ var t = document.createElement('div'); t.className = 'tick'; t.style.left = (k * 10) + '%'; spd.insertBefore(t, hdl); } })();
+function showSpeed(k, anim){
+  hdl.classList.toggle('anim', !!anim);
+  hdl.style.left = (k * 10) + '%';
+  spd.setAttribute('aria-valuenow', k);
+}
+function speedFromX(clientX){
+  var r = spd.getBoundingClientRect();
+  return Math.max(0, Math.min(10, Math.round((clientX - r.left) / r.width * 10)));
+}
+function slideTo(k, anim){ showSpeed(k, anim); if (k !== S.speed) setSpeed(k); }
+spd.addEventListener('pointerdown', function(e){
+  e.preventDefault();
+  var onH = e.target === hdl;
+  if (!onH) slideTo(speedFromX(e.clientX), true);
+  hdl.classList.add('active');
+  spd.setPointerCapture(e.pointerId);
+  var mv = function(ev){ slideTo(speedFromX(ev.clientX), false); };
+  var up = function(){ hdl.classList.remove('active'); spd.removeEventListener('pointermove', mv); spd.removeEventListener('pointerup', up); spd.removeEventListener('pointercancel', up); };
+  spd.addEventListener('pointermove', mv); spd.addEventListener('pointerup', up); spd.addEventListener('pointercancel', up);
+});
+spd.addEventListener('keydown', function(e){
+  var k = S.speed;
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') k--; else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') k++; else return;
+  e.preventDefault(); slideTo(Math.max(0, Math.min(10, k)), true);
+});
+
+// help
+function helpOpen(o){ $('help').classList.toggle('open', o); if (o){ $('help').scrollTop = 0; $('helpClose').focus({preventScroll:true}); } else $('helpBtn').focus(); }
+$('helpBtn').addEventListener('click', function(){ helpOpen(true); });
+$('helpX').addEventListener('click', function(){ helpOpen(false); });
+$('helpClose').addEventListener('click', function(){ helpOpen(false); });
+$('help').addEventListener('click', function(e){ if (e.target === this) helpOpen(false); });
+document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && $('help').classList.contains('open')) helpOpen(false); });
+
+/* tape measure */
+var tape = { ax: 0.2 * W, ay: 0.58 * H, bx: 0.464 * W, by: 0.58 * H };
+function updateTape(){
+  var dx = tape.bx - tape.ax, dy = tape.by - tape.ay, L = Math.sqrt(dx * dx + dy * dy), ang = Math.atan2(dy, dx);
+  $('tape').style.transform = 'translate(' + tape.ax + 'px,' + tape.ay + 'px)';
+  var rot = 'rotate(' + ang + 'rad)';
+  $('tapeLine').style.width = L + 'px'; $('tapeLine').style.transform = rot;
+  $('tapeHit').style.width = L + 'px'; $('tapeHit').style.transform = rot;
+  $('tapeA').style.left = '0px'; $('tapeA').style.top = '0px';
+  $('tapeB').style.left = dx + 'px'; $('tapeB').style.top = dy + 'px';
+  $('tapeLabel').textContent = (L / zoom).toFixed(0) + ' ';
+}
+function out(x, y){ return x < 0 || y < 0 || x > W || y > H; }
+function tapeDrag(el, which){
+  el.addEventListener('pointerdown', function(e){
+    e.preventDefault(); e.stopPropagation();
+    el.setPointerCapture(e.pointerId); el.classList.add('drag');
+    var lx = e.clientX, ly = e.clientY;
+    var mv = function(ev){
+      var dx = (ev.clientX - lx) / fit, dy = (ev.clientY - ly) / fit; lx = ev.clientX; ly = ev.clientY;
+      if (which !== 'b' && which !== 'all' && !out(tape.ax + dx, tape.ay + dy)){ tape.ax += dx; tape.ay += dy; }
+      if (which === 'b' && !out(tape.bx + dx, tape.by + dy)){ tape.bx += dx; tape.by += dy; }
+      if (which === 'all' && !out(tape.ax + dx, tape.ay + dy) && !out(tape.bx + dx, tape.by + dy)){ tape.ax += dx; tape.ay += dy; tape.bx += dx; tape.by += dy; }
+      updateTape();
+    };
+    var up = function(){ el.classList.remove('drag'); el.removeEventListener('pointermove', mv); el.removeEventListener('pointerup', up); el.removeEventListener('pointercancel', up); };
+    el.addEventListener('pointermove', mv); el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
+  });
+}
+tapeDrag($('tapeA'), 'a'); tapeDrag($('tapeB'), 'b'); tapeDrag($('tapeHit'), 'all');
+
+/* dragging bodies and velocity markers */
+var drag = null;
+function scenePt(e){
+  var r = cv.getBoundingClientRect();
+  return { x:(e.clientX - r.left) * W / r.width, y:(e.clientY - r.top) * H / r.height };
+}
+function pick(p){
+  if (S.started) return null;
+  for (var i = S.n - 1; i >= 0; i--){
+    var b = S.bodies[i]; if (b.dead) continue;
+    var cx = vx(b.px), cy = vy(b.py);
+    var r = bodyRadius(b);
+    if ((p.x - cx) * (p.x - cx) + (p.y - cy) * (p.y - cy) <= r * r) return { i:i, kind:'body', ox:p.x - cx, oy:p.y - cy };
+    var mx = cx + b.initVX * zoom, my = cy - b.initVY * zoom;
+    if ((p.x - mx) * (p.x - mx) + (p.y - my) * (p.y - my) <= 400) return { i:i, kind:'vel', ox:p.x - mx, oy:p.y - my };
+  }
+  return null;
+}
+cv.addEventListener('pointerdown', function(e){
+  var p = scenePt(e), h = pick(p); if (!h) return;
+  e.preventDefault(); drag = h; cv.setPointerCapture(e.pointerId);
+});
+cv.addEventListener('pointermove', function(e){
+  var p = scenePt(e);
+  if (!drag){ var h = pick(p); cv.style.cursor = h ? (h.kind === 'body' ? 'move' : 'pointer') : ''; hoverTip(p); return; }
+  var b = S.bodies[drag.i]; if (!b || S.started){ drag = null; return; }
+  if (drag.kind === 'body'){
+    editInit(drag.i, 1, Math.round((p.x - drag.ox - OX) / zoom));
+    editInit(drag.i, 2, Math.round((OY - (p.y - drag.oy)) / zoom));
+  } else {
+    var cx = vx(b.px), cy = vy(b.py);
+    editInit(drag.i, 3, Math.round((p.x - drag.ox - cx) / zoom));
+    editInit(drag.i, 4, Math.round(-(p.y - drag.oy - cy) / zoom));
+  }
+  fillInputs();
+});
+// paused: hovering a body shows its current position and velocity (as the help text describes)
+function hoverTip(p){
+  var tip = $('tip'), hit = -1;
+  if (S.paused && S.started) for (var i = S.n - 1; i >= 0 && hit < 0; i--){
+    var b = S.bodies[i]; if (b.dead) continue;
+    var dx = p.x - vx(b.px), dy = p.y - vy(b.py), r = Math.max(bodyRadius(b), 8);
+    if (dx * dx + dy * dy <= r * r) hit = i;
+  }
+  if (hit < 0){ tip.style.display = 'none'; return; }
+  var q = S.bodies[hit], f = function(v){ return (Math.round(v * 10) / 10).toFixed(1); };
+  tip.textContent = 'x: ' + f(q.px) + '  y: ' + f(q.py) + '  vx: ' + f(q.vx) + '  vy: ' + f(q.vy);
+  tip.style.display = 'block';
+  tip.style.left = Math.min(W - tip.offsetWidth - 4, p.x + 14) + 'px'; tip.style.top = Math.max(4, p.y - 28) + 'px';
+}
+cv.addEventListener('pointerleave', function(){ $('tip').style.display = 'none'; });
+function endDrag(){ if (drag){ drag = null; clearTraces(); } }
+cv.addEventListener('pointerup', endDrag); cv.addEventListener('pointercancel', endDrag);
+
+/* ---------------- ui state + loop ---------------- */
+ui = {
+  state: function(){
+    stage.classList.toggle('playing', !S.paused);
+    if (!S.paused) $('tip').style.display = 'none';
+    $('settings').classList.toggle('disabled', S.started);
+    [].forEach.call(rows.querySelectorAll('input,button'), function(el){ el.tabIndex = S.started ? -1 : 0; });
+  }
+};
+
+var last = Date.now();
+function frame(){
+  var now = Date.now(), ms = now - last; last = now;
+  if (ms < 0 || ms > 1000) ms = 0;            // tab was hidden: skip the gap
+  advance(ms);
+  if (!S.paused){
+    addTracePoints();
+    for (var k = booms.length - 1; k >= 0; k--){ booms[k].t += ms / 1000; if (booms[k].t > 1) booms.splice(k, 1); }
+  }
+  $('time').textContent = S.time.toFixed(1);
+  draw();
+  requestAnimationFrame(frame);
+}
+
+window.addEventListener('resize', function(){ layout(); });
+
+buildRows();
+loadBodies(START.slice(0, 2));
+layout(); initTraceCanvas(); clearTraces();
+fillInputs(); ui.state(); showSpeed(7); updateTape();
+requestAnimationFrame(frame);
+
+// small read-only hook for testing
+window.MSSLite = { sim:S, presets:PRESETS, load:function(k){ loadBodies(PRESETS[k][1]); setPresetLabel(k); afterLoad(); },
+  play:play, pause:pause, advance:advance, stepFrame:stepFrame, setSpeed:setSpeed };
+})();
+</script>
+</body>
+</html>
