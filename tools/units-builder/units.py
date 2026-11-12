@@ -1215,3 +1215,131 @@ UNITS.update({
 })
 for k in ('AB-05', 'AB-07'):
     UNITS[k]['note'] = 'Check back soon.'
+
+
+# ---------------------------------------------------------------------------
+# 2026-11-12 sims hand-off (Teaching project: claude/site/handoff-new-sims-2026-11-12.md):
+# new sims, new tabs for the new modes, and new tasks on existing tabs.
+# The 14 existing tabs whose sims gained modes are pinned in place above.
+# ---------------------------------------------------------------------------
+for _k, _credit in (('energybars', 'Energy Bar Charts is original.'), ('shmmatch', 'SHM Graph Matcher is original.'),
+                    ('fricpull', 'Friction Pull is original.'),
+                    ('photogate', 'Photogate Ramp and Ruler-Drop Reaction Timer are original.'), ('rulerdrop', ''),
+                    ('landscape', 'Potential Landscape is original.')):
+    SIMS[_k] = {'file': 'sims/circ-' + _k + '.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': _credit}
+
+def _tab(uid, after, code, name, sim, modes, select, tasks):
+    tabs = UNITS[uid]['tabs']
+    i = [t['name'] for t in tabs].index(after)
+    tabs.insert(i + 1, {'code': code, 'name': name, 'sim': sim, 'modes': modes, 'select': select, 'tasks': tasks})
+
+def _task(uid, name, task):
+    [t for t in UNITS[uid]['tabs'] if t['name'] == name][0]['tasks'].append(task)
+
+# ---- AP 1 ----
+_tab('P1-02', 'Moving Man', '', 'Photogate Ramp', 'photogate', ['one', 'two'], 'One gate: v² = 2ad', [
+    'One gate: set w = 10 cm and d = 0.2 m. Compare v = w/Δt with the true speed. Switch to the skinny flag (1 cm) and compare again. Which flag is better, and why?',
+    'One gate, 20°: record five gate distances. Is v² vs d a straight line? Halve the slope to get a and compare with g sin θ.',
+    'Record points at 10° and at 30°. How does the slope change, and why?',
+    'Two gates: put gate 1 at 0.3 m and gate 2 at 0.9 m. Work out a = Δv/T by hand, then check the sim. Why is it slightly off g sin θ?'])
+_tab('P1-02', 'Photogate Ramp', '', 'Ruler-Drop Reaction Timer', 'rulerdrop', ['game', 'table'], 'Catch the ruler', [
+    'Do 5 catches (Start, then Space or <b>Catch!</b>). What are your mean and range?',
+    'Why doesn’t the ruler fall the same distance every time, even for the same person?',
+    'Conversion view: where on the ruler is 0.20 s? Double d. Does t double? Why not?'])
+_tab('P1-02', 'Elevator Scale', '', 'Elevator from a v–t Graph', 'elevator', ['vt'], 'From a v–t graph', [
+    'Up trip: slide through all three segments. In which segment does the scale read more than your weight? Why?',
+    'Down trip: you are moving down the whole time, but at t = 7 s you feel heavier. Find the slope there and explain.',
+    'Bumpy trip: predict the scale reading at t = 4 s from the slope alone, then check.'])
+_tab('P1-03', 'Box on a Truck', '', 'Friction Pull', 'fricpull', ['ramp', 'speedup'], 'Pull ramp', [
+    'Pull ramp: read F_peak and F_plateau off the trace and calculate μs and μk. Check them against the sliders.',
+    'Make the block heavier. What happens to the peak and to the plateau? Why?',
+    'Constant pull: find the smallest pull that gets the block moving. Then try pulls just above and well above μk·mg and compare the accelerations.'])
+_task('P1-03', 'Pulleys', 'Atwood, <b>Whole system</b>: find a without using T, then find T from one mass. Why does the tension cancel in the system view?')
+_tab('P1-04', 'Projectiles', '', 'Launcher Lab (D² vs H)', 'proj', ['dh'], 'Launcher lab: D² vs H', [
+    'Record D at five table heights. Find v₀ from the slope of D² vs H.',
+    'Switch to <b>Mystery v₀</b> and measure the hidden launch speed.',
+    'Why is D² vs H a straight line through the origin when D vs H is a curve?'])
+_tab('P1-05', 'Car on a Curve', '', 'Steering Car', 'curve', ['steer'], 'Steering car: aₜ, a_c', [
+    'Circle, gas at 0: which way does the total acceleration point? Press the gas: which way does it tilt? Now brake.',
+    'S-bend: the speed is constant, so why is the car still accelerating? Watch a_c flip sides.',
+    'Speed up on a curve: compare the straight with the curve. What does a_c do when the car enters the curve?'])
+_tab('P1-05', 'Conical Pendulum', '', 'Whirligig Lab', 'conical', ['whirl'], 'Whirligig lab', [
+    'Record five hanging masses M at a fixed stopper mass and radius. Find the stopper’s mass from the slope of Mg vs v².',
+    'Double r and predict the new slope before you record.',
+    'Why does a heavier hanging mass make the stopper go around faster?'])
+_tab('P1-06', 'Energy Track', '', 'Energy Bar Charts', 'energybars', ['build'], 'Build the bar chart', [
+    'Scenario 1 (dropped ball): build the chart, then press <b>Check</b>. How many blocks of Ug turn into K?',
+    'Scenario 5: the system is the ball only. Why is there no Ug bar, and why is W negative?',
+    'Scenario 4: the car ends with less K + Ug than it started with. Which bar holds the missing energy?'])
+_tab('P1-06', 'Energy Bar Charts', '', 'Choose the System', 'energybars', ['system'], 'Choose the system', [
+    'Dart only: why do the two work bars cancel? Now tick Earth. What happened to the gravity bar, and what appeared in the final chart?',
+    'Tick all three objects. Where did the work go? Compare with the dart-only chart. Which total stayed the same?'])
+_tab('P1-07', 'Crash Test', '', 'Same Impulse, Different Force', 'crash', ['ft'], 'Same impulse, different force', [
+    'Set the airbag time to 0.10 s. How many times bigger is the wall force than the airbag force? Check it against Δt_airbag/Δt_wall.',
+    'Double the car’s mass. What happens to J, to each force, and to the ratio?',
+    'At 15 m/s, find the airbag time that keeps the passenger under 20 g. Why are the two shaded areas equal?'])
+_tab('P1-08', 'Massive Pulley', '', 'Spinning Platform (lab)', 'mpulley', ['platform'], 'Falling mass spins a platform (lab)', [
+    'Drop the 0.2 kg mass from 0.8 m and press <b>Record</b> 5 times. Why is the measured I a bit different each run?',
+    'Switch to “+ ring”. Compare the fall time and I with the platform alone. Where does the extra I come from?',
+    'Use T, not mg, to find the torque. How far off is I if you use mg instead?'])
+_task('P1-08', 'Rolling Race', 'Select the hoop and watch the bars. At the bottom, which object has the most energy moving forward, and which has the most spinning?')
+_tab('P1-09', 'Floating & Sinking', '', 'Where Buoyancy Comes From', 'float', ['arrows'], 'Where buoyancy comes from', [
+    'Slide the block from 0.3 m to 2 m deep. Which forces grow and which stays the same?',
+    'Switch Arrows to ρgh. Why do the side arrows cancel?',
+    'Switch the liquid from water to oil. Predict F_net before looking.'])
+_task('P1-09', 'Pipe Flow', 'Turn on <b>Energy bars</b> and raise Δy from 0 to 3 m. Which part grows and which shrinks? Does the total change?')
+_tab('P1-10', 'Mass on a Spring', '', 'Spring Lab: T² vs m', 'shm', ['lab'], 'Lab: T² vs m', [
+    'Time 10 oscillations for at least 5 masses and record each. Find k from the slope of T² vs m.',
+    'Switch to “k shown” and compare. What is your percent difference?',
+    'Why do we graph T² instead of T?'])
+_tab('P1-10', 'SHM & the Circle', '', 'SHM Graph Matcher', 'shmmatch', ['xt', 'vt'], 'Match x–t', [
+    'Level 1: read A from the peak height and T from peak to peak, then match the target. Press <b>New target</b> and repeat.',
+    'Level 2: the target starts in the middle. Which start matches? How does the ghost mass help you tell?',
+    'Level 3: find T from the graph, then pick m and k that give it. Find a second (m, k) pair that also works. What must m/k equal?',
+    'Match v–t / a–t: where is the mass when v = 0? Where is it when a is at its maximum?'])
+
+# ---- AP 2 ----
+_tab('P2-02', 'Electric Potential', '02-6', 'Potential Landscape', 'landscape', ['side', 'top'], 'Side view (hillside)', [
+    'Side view, + marble: release it at several places. Where does it speed up? Is V going up or down there? Then switch to the − marble and compare.',
+    'Side view: start the marble at the same V on either side of a hill. Predict where it stops, then check the ΔU and ½mv² readouts.',
+    'Top view, dipole: release the marble in different places. Does its trail ever cross a band edge at a slant? Where is it fastest, and where are the bands closest together?',
+    'Top view: use the Three charges preset. Predict the trail from (0, −8) before you let go.',
+    'Top view: release a + marble and a − marble from the same spot. Do their trails go the same way? What happens to V and to KE for each?'])
+_task('P2-02', 'Electric Fields', 'Switch View to <b>Predict first</b>. Sketch the field at P (direction and rough size), then press <b>Reveal field</b> to check. Move a charge and try again.')
+_tab('P2-03', 'RC Circuits', '03-8', 'Bulb & Capacitor', 'rc', ['bulb'], 'Bulb and capacitor', [
+    'Series: press Play from 0. Describe the bulb’s brightness over time. Why does it go out even though the battery is still connected?',
+    'Switch to “In parallel with bulb”. Before pressing Play, predict the bulb at t = 0 and a long time later. Why is it dark at first?',
+    'Series: double C. What changes about how long the bulb stays lit? What about the final Q?',
+    'Parallel: raise R1. Why is the final brightness lower than with the battery straight across the bulb?'])
+_tab('P2-03', 'Charges in Magnetic Fields', '03-12', 'Current Balance', 'bforce', ['balance'], 'Current balance', [
+    'Set I = 2 A. Reverse the current, then reverse B instead, then reverse both. Predict the scale reading each time.',
+    'Double L, then double I. What happens to Δm each time?',
+    '<b>Lab rehearsal:</b> record Δm at five currents. Plot F = (Δm)g against I and use the slope to find B (B = slope / L).'])
+_tab('P2-03', 'Induction', '03-13', 'Lenz’s Law', 'induct', ['lenz'], 'Lenz’s law explorer', [
+    'Set N pole, velocity +1 m/s. Predict the current direction and whether the loop pushes or pulls the magnet, then check the right panel.',
+    'Keep N and flip the velocity to −1 m/s. What changed? Why does the loop now pull the magnet?',
+    'Switch to the S pole and push it toward the loop. The current reverses but the force doesn’t. Explain using the loop’s induced pole.',
+    'Set the velocity to 0. Why is there no current even though the magnet is right next to the loop?',
+    'Double the speed, then double R. What happens to ε and to I?'])
+_tab('P2-04', 'Refraction & TIR', '04-3', 'Semicircular Dish (lab)', 'snell', ['dish'], 'Semicircular dish (lab)', [
+    'Acrylic, ray enters the curved side: raise θ₁ from 0°. When does the refracted ray skim along the flat face and then vanish? Compare with the critical angle readout.',
+    'Record 6 or more angles and look at the sin θ graph. Which axis is which, and what does the slope equal?',
+    'Mystery dish: find n two ways, from the slope and from the critical angle (n = 1/sin θ_c). Do they agree?'])
+_task('P2-04', 'Single Slit & Gratings', 'Turn on <b>Compare all three</b>. The double slit and grating have the same d: where are their bright peaks compared with each other? Raise N: what happens to the width of the grating’s peaks?')
+_tab('P2-04', 'Lenses', '04-11', 'Optics Bench (lab)', 'optics', ['bench'], 'Optics bench (lab)', [
+    'With f shown, set sₒ = 28 cm. Slide the screen until the image is sharp and press <b>Record point</b>. Repeat for four more sₒ. What are the slope and intercept of 1/sᵢ vs 1/sₒ, and what does the intercept tell you?',
+    'Switch to <b>Mystery lens</b> and find its focal length from your recorded points only. Then switch back to check.',
+    'Put sₒ = 9 cm with f = 12 cm. Why can’t you get a sharp image on the screen? Where would you have to look?'])
+_tab('P2-04', 'Optics Bench (lab)', '04-11', 'Can You Make This Image?', 'optics', ['challenge'], 'Can you make this image?', [
+    'Level 1: make a real, inverted image twice as big with a converging lens, then with a concave mirror. Where is the object each time, in terms of f?',
+    'Level 2: make a virtual, upright, half-size image. Which optics can’t do it, and why?',
+    'Press <b>New target</b> three times and solve each one. Write down the optic and sₒ you used.'])
+_tab('P2-05', 'Photoelectric Effect', '', 'Photon Stream', 'photo', ['stream'], 'Photon stream', [
+    'Set the second beam to 400 nm and P = 20 mW. Which beam has more photons per second?',
+    'Which beam ejects electrons from sodium? Why does the red beam fail even though it has more photons?',
+    'Double P. What changes about the photons, and what doesn’t?'])
+_task('P2-05', 'Atomic Spectra', 'In the energy-level diagram, click n = 4, then n = 2. Read ΔE and λ in the work panel. Is the photon visible? Try other pairs: which gives the longest wavelength?')
+_tab('P2-05', 'Radioactive Decay', '', 'Decay Chain', 'decay', ['chain'], 'Decay chain walker', [
+    'Start at U-238 and choose only α steps. What are A and Z after 3 α? Is that nuclide on the real series?',
+    'Reach Pb-206 your own way. How many α and how many β⁻ did you use? Why can’t you get there with fewer α?',
+    'Press β⁻ at U-238. Why is Np-238 not on the real series? Turn on “Real chain” to compare.'])
