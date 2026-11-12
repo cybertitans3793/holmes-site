@@ -105,6 +105,8 @@ body.present .guide{display:none}
       <li>Thinking the “reaction” comes after the “action.” Both forces come from one interaction and exist at the same instant; neither causes the other.</li>
       <li>Assuming the center of mass must be inside the object. For a ring, an L-shape or a bent-over high jumper, it's in the empty space.</li>
       <li>Thinking moving the origin moves the center of mass. It changes the number you get for x<sub>cm</sub>, not where the center of mass actually is.</li>
+      <li>Saying the winning side of a tug-of-war pulls harder on the rope. A light rope pulls both ends equally; the winner is the side the floor pushes harder.</li>
+      <li>Using the constant-acceleration equations when the net force changes as things move, like a rope sliding off a table. They only work when a is constant.</li>
     </ul>
   </div>
 </div>
@@ -302,6 +304,115 @@ body.present .guide{display:none}
     <p class="take">The flat board only reaches y = 0.20 m and the upright one only reaches x = 0.20 m, so (0.22 m, 0.22 m) is in the empty corner of the L, outside both boards. The center of mass doesn't have to be inside the material: think of a ring, a boomerang, or a high jumper arched over the bar.</p>
     </div>
   </details>
+  <details class="ex">
+    <summary><span class="kind">Object vs system</span><h4>Who wins a tug-of-war?</h4></summary>
+    <div class="exbody">
+    <svg width="200" height="95" viewBox="0 0 200 95" aria-label="An 80 kg adult on the left and a 30 kg child on the right pull a rope; both slide toward the adult">
+      <line x1="4" y1="80" x2="196" y2="80" stroke="#111" stroke-width="2"/>
+      <rect x="20" y="20" width="36" height="60" fill="#fff" stroke="#111" stroke-width="2"/><text x="23" y="55" font-size="10" font-family="IBM Plex Mono,monospace">80 kg</text>
+      <rect x="150" y="44" width="34" height="36" fill="#fff" stroke="#111" stroke-width="2"/><text x="152" y="66" font-size="10" font-family="IBM Plex Mono,monospace">30 kg</text>
+      <line x1="56" y1="50" x2="150" y2="50" stroke="#111" stroke-width="1.5"/>
+      <text x="70" y="42" font-size="10" font-family="IBM Plex Mono,monospace">T = 150 N</text>
+      <line x1="130" y1="66" x2="80" y2="66" stroke="#ff6a2b" stroke-width="3"/><polygon points="82,61 82,71 72,66" fill="#ff6a2b"/>
+      <text x="100" y="78" font-size="11" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">a</text>
+    </svg>
+    <p>An 80 kg adult and a 30 kg child have a tug-of-war on a gym floor. The rope's tension is 150 N, and the adult is winning: both people slide toward the adult's side with an acceleration of 0.50 m/s². Find the floor's friction force on each person. Then judge two claims. Claim 1: “The adult wins because he pulls harder on the rope.” Claim 2: “The adult wins because the floor pushes him harder than it pushes the child.”</p>
+    <div class="work">
+      <p class="wt">+ is toward the adult's side. The child alone: the rope pulls her forward with 150 N, and the floor's friction pushes back on her feet:</p>
+<math class="eq" display="block"><mrow><mi>T</mi><mo>&#x2212;</mo><msub><mi>f</mi><mtext>child</mtext></msub><mo>=</mo><msub><mi>m</mi><mtext>child</mtext></msub><mi>a</mi></mrow></math>
+<math class="eq" display="block"><mrow><mn>150</mn><mo>&#x2212;</mo><msub><mi>f</mi><mtext>child</mtext></msub><mo>=</mo><mo stretchy="false">(</mo><mn>30</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>0.50</mn><mo stretchy="false">)</mo></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>f</mi><mtext>child</mtext></msub><mo>=</mo><mn>135</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+      <p class="wt">The adult alone: the rope pulls him backward (toward the child) with 150 N, and the floor pushes his feet forward:</p>
+<math class="eq" display="block"><mrow><msub><mi>f</mi><mtext>adult</mtext></msub><mo>&#x2212;</mo><mi>T</mi><mo>=</mo><msub><mi>m</mi><mtext>adult</mtext></msub><mi>a</mi></mrow></math>
+<math class="eq" display="block"><mrow><msub><mi>f</mi><mtext>adult</mtext></msub><mo>&#x2212;</mo><mn>150</mn><mo>=</mo><mo stretchy="false">(</mo><mn>80</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>0.50</mn><mo stretchy="false">)</mo></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>f</mi><mtext>adult</mtext></msub><mo>=</mo><mn>190</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+      <p class="wt">Check with the whole system (adult + rope + child). The rope's pulls are internal and drop out; only the two friction forces are external: 190 − 135 = 55 N = (110)(0.50) ✓</p>
+    </div>
+    <p class="take">Claim 1 is wrong: a light rope pulls both people with the same 150 N, so neither one pulls harder on it. Claim 2 is right. Looking at the system makes it clear: the only outside horizontal forces are the floor's pushes, so the side with more grip wins. That's why a tug-of-war on ice is so hard to win.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Ratio reasoning</span><h4>A runner tied to a box</h4></summary>
+    <div class="exbody">
+    <svg width="200" height="90" viewBox="0 0 200 90" aria-label="A 60 kg runner pulls a 40 kg box with a rope; ahead of the box is a rough patch of floor">
+      <line x1="4" y1="70" x2="196" y2="70" stroke="#111" stroke-width="2"/>
+      <rect x="50" y="70" width="70" height="6" fill="#ccc" stroke="#111" stroke-width="1"/><text x="64" y="88" font-size="9" font-family="IBM Plex Mono,monospace">rough</text>
+      <rect x="10" y="44" width="34" height="26" fill="#fff" stroke="#111" stroke-width="2"/><text x="17" y="61" font-size="10" font-family="IBM Plex Mono,monospace">40</text>
+      <line x1="44" y1="54" x2="130" y2="40" stroke="#111" stroke-width="1.5"/>
+      <rect x="130" y="16" width="26" height="54" fill="#fff" stroke="#111" stroke-width="2"/><text x="134" y="47" font-size="10" font-family="IBM Plex Mono,monospace">60</text>
+      <line x1="158" y1="64" x2="182" y2="64" stroke="#ff6a2b" stroke-width="3"/><polygon points="180,59 180,69 190,64" fill="#ff6a2b"/>
+      <text x="160" y="56" font-size="10" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">120 N</text>
+    </svg>
+    <p>A 60 kg runner is tied by a long, slack rope to a 40 kg box on a smooth floor. The ground pushes the runner forward with a steady 120 N. (1) Before the rope goes tight, what is the runner's acceleration? (2) The rope goes tight and the runner drags the box. Find the new acceleration. (3) The box then slides onto a rough patch, where friction on it is 30 N. Find the acceleration and the rope tension in parts 2 and 3.</p>
+    <div class="work">
+      <p class="wt">(1) The runner alone:</p>
+<math class="eq ans" display="block"><mrow><msub><mi>a</mi><mn>1</mn></msub><mo>=</mo><mfrac><mn>120</mn><mn>60</mn></mfrac><mo>=</mo><mn>2.0</mn><mspace width="0.167em"/><msup><mtext>m/s</mtext><mn>2</mn></msup></mrow></math>
+      <p class="wt">(2) Runner + box as one system. The same 120 N outside push now accelerates 100 kg, so the acceleration drops by the factor 60/100:</p>
+<math class="eq ans" display="block"><mrow><msub><mi>a</mi><mn>2</mn></msub><mo>=</mo><mo stretchy="false">(</mo><mn>2.0</mn><mo stretchy="false">)</mo><mfrac><mn>60</mn><mn>100</mn></mfrac><mo>=</mo><mn>1.2</mn><mspace width="0.167em"/><msup><mtext>m/s</mtext><mn>2</mn></msup></mrow></math>
+      <p class="wt">(3) Same mass, but the net outside force falls from 120 N to 120 − 30 = 90 N, a factor of 3/4:</p>
+<math class="eq ans" display="block"><mrow><msub><mi>a</mi><mn>3</mn></msub><mo>=</mo><mo stretchy="false">(</mo><mn>1.2</mn><mo stretchy="false">)</mo><mfrac><mn>3</mn><mn>4</mn></mfrac><mo>=</mo><mn>0.90</mn><mspace width="0.167em"/><msup><mtext>m/s</mtext><mn>2</mn></msup></mrow></math>
+      <p class="wt">Tension: use the box alone, since the rope is an outside force on it.</p>
+<math class="eq ans" display="block"><mrow><mtext>Part&#xA0;2:</mtext><mspace width="0.278em"/><mi>T</mi><mo>=</mo><mo stretchy="false">(</mo><mn>40</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>1.2</mn><mo stretchy="false">)</mo><mo>=</mo><mn>48</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+<math class="eq ans" display="block"><mrow><mtext>Part&#xA0;3:</mtext><mspace width="0.278em"/><mi>T</mi><mo>&#x2212;</mo><mn>30</mn><mo>=</mo><mo stretchy="false">(</mo><mn>40</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>0.90</mn><mo stretchy="false">)</mo><mspace width="0.278em"/><mo>&#x2192;</mo><mspace width="0.278em"/><mi>T</mi><mo>=</mo><mn>66</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+      <p class="wt">Check part 3 with the runner: 120 − 66 = 54 N = (60)(0.90) ✓</p>
+    </div>
+    <p class="take">Ratios do the work: more mass with the same net force scales a down by the mass ratio; less net force with the same mass scales it down by the force ratio. Notice the surprise in part 3: the system slows its speeding-up, yet the rope pulls <b>harder</b>, because now it has to fight the friction on the box as well.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Internal vs external</span><h4>A train with friction on every car</h4></summary>
+    <div class="exbody">
+    <svg width="210" height="80" viewBox="0 0 210 80" aria-label="Three train cars of 1000, 2000 and 3000 kg joined by couplings 2 and 1, pulled to the right with 9000 N">
+      <line x1="4" y1="60" x2="206" y2="60" stroke="#111" stroke-width="2"/>
+      <rect x="6" y="36" width="40" height="24" fill="#fff" stroke="#111" stroke-width="2"/><text x="10" y="52" font-size="10" font-family="IBM Plex Mono,monospace">1000</text>
+      <line x1="46" y1="48" x2="58" y2="48" stroke="#111" stroke-width="2"/><text x="44" y="30" font-size="10" font-family="IBM Plex Mono,monospace">T₂</text>
+      <rect x="58" y="32" width="46" height="28" fill="#fff" stroke="#111" stroke-width="2"/><text x="66" y="50" font-size="10" font-family="IBM Plex Mono,monospace">2000</text>
+      <line x1="104" y1="48" x2="116" y2="48" stroke="#111" stroke-width="2"/><text x="102" y="26" font-size="10" font-family="IBM Plex Mono,monospace">T₁</text>
+      <rect x="116" y="28" width="52" height="32" fill="#fff" stroke="#111" stroke-width="2"/><text x="127" y="48" font-size="10" font-family="IBM Plex Mono,monospace">3000</text>
+      <line x1="168" y1="44" x2="196" y2="44" stroke="#ff6a2b" stroke-width="3"/><polygon points="194,39 194,49 204,44" fill="#ff6a2b"/>
+      <text x="166" y="76" font-size="10" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">9000 N</text>
+    </svg>
+    <p>An engine pulls three cars (3000 kg, 2000 kg and 1000 kg, in that order) with 9000 N. Each car feels rolling friction equal to 0.020 times its weight. Find the acceleration, the tension T<sub>1</sub> in the coupling behind the first car, and T<sub>2</sub> in the coupling behind the second car.</p>
+    <div class="work">
+      <p class="wt">All three cars as one system. The couplings are internal; the outside forces are the 9000 N pull and the friction on all 6000 kg, (0.020)(60 000) = 1200 N:</p>
+<math class="eq" display="block"><mrow><mi>a</mi><mo>=</mo><mfrac><mrow><mn>9000</mn><mo>&#x2212;</mo><mn>1200</mn></mrow><mn>6000</mn></mfrac></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>a</mi><mo>=</mo><mn>1.3</mn><mspace width="0.167em"/><msup><mtext>m/s</mtext><mn>2</mn></msup></mrow></math>
+      <p class="wt">For T<sub>1</sub>, choose the last two cars (3000 kg): T<sub>1</sub> is now external, along with their 600 N of friction:</p>
+<math class="eq" display="block"><mrow><msub><mi>T</mi><mn>1</mn></msub><mo>&#x2212;</mo><mn>600</mn><mo>=</mo><mo stretchy="false">(</mo><mn>3000</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>1.3</mn><mo stretchy="false">)</mo></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>T</mi><mn>1</mn></msub><mo>=</mo><mn>4500</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+      <p class="wt">For T<sub>2</sub>, choose the last car alone (1000 kg, 200 N of friction):</p>
+<math class="eq" display="block"><mrow><msub><mi>T</mi><mn>2</mn></msub><mo>&#x2212;</mo><mn>200</mn><mo>=</mo><mo stretchy="false">(</mo><mn>1000</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>1.3</mn><mo stretchy="false">)</mo></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>T</mi><mn>2</mn></msub><mo>=</mo><mn>1500</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+      <p class="wt">Check with the first car alone: 9000 − 4500 − 600 = 3900 N = (3000)(1.3) ✓</p>
+    </div>
+    <p class="take">A coupling's tension is internal to the whole train but external to the cars behind it, so pick the system that puts it on the outside. Here T<sub>1</sub> is 3000/6000 = ½ of the 9000 N and T<sub>2</sub> is 1000/6000 = ⅙ of it, exactly as if there were no friction: when friction is proportional to each car's weight, each coupling's share is just the fraction of the mass behind it.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Changing force</span><h4>A heavy rope sliding off a table</h4></summary>
+    <div class="exbody">
+    <svg width="180" height="120" viewBox="0 0 180 120" aria-label="A rope lies on a frictionless table with a length y hanging over the edge">
+      <line x1="4" y1="40" x2="130" y2="40" stroke="#111" stroke-width="2"/><line x1="130" y1="40" x2="130" y2="116" stroke="#111" stroke-width="2"/>
+      <line x1="40" y1="36" x2="134" y2="36" stroke="#111" stroke-width="4"/>
+      <line x1="134" y1="36" x2="134" y2="96" stroke="#111" stroke-width="4"/>
+      <line x1="146" y1="36" x2="146" y2="96" stroke="#ff6a2b" stroke-width="1.5"/><line x1="141" y1="36" x2="151" y2="36" stroke="#ff6a2b" stroke-width="1.5"/><line x1="141" y1="96" x2="151" y2="96" stroke="#ff6a2b" stroke-width="1.5"/>
+      <text x="154" y="70" font-size="11" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">y</text>
+      <text x="44" y="28" font-size="10" font-family="IBM Plex Mono,monospace">2.0 kg, 1.0 m</text>
+    </svg>
+    <p>A uniform 2.0 kg rope, 1.0 m long, lies on a frictionless table with part of it hanging over a smooth edge. Find the rope's acceleration when 0.25 m hangs over, and when 0.50 m does. Find the tension in the rope at the edge in each case.</p>
+    <div class="work">
+      <p class="wt">The whole rope as the system. The table's normal force balances the weight of the part lying on it, so the only unbalanced outside force is the weight of the hanging part, (y/L)Mg:</p>
+<math class="eq" display="block"><mrow><mfrac><mi>y</mi><mi>L</mi></mfrac><mi>M</mi><mi>g</mi><mo>=</mo><mi>M</mi><mi>a</mi><mspace width="0.278em"/><mo>&#x2192;</mo><mspace width="0.278em"/><mi>a</mi><mo>=</mo><mfrac><mi>y</mi><mi>L</mi></mfrac><mi>g</mi></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>y</mi><mo>=</mo><mn>0.25</mn><mspace width="0.167em"/><mtext>m:</mtext><mspace width="0.278em"/><mi>a</mi><mo>=</mo><mo stretchy="false">(</mo><mn>0.25</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>10</mn><mo stretchy="false">)</mo><mo>=</mo><mn>2.5</mn><mspace width="0.167em"/><msup><mtext>m/s</mtext><mn>2</mn></msup></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>y</mi><mo>=</mo><mn>0.50</mn><mspace width="0.167em"/><mtext>m:</mtext><mspace width="0.278em"/><mi>a</mi><mo>=</mo><mo stretchy="false">(</mo><mn>0.50</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>10</mn><mo stretchy="false">)</mo><mo>=</mo><mn>5.0</mn><mspace width="0.167em"/><msup><mtext>m/s</mtext><mn>2</mn></msup></mrow></math>
+      <p class="wt">For the tension at the edge, choose the part still on the table. The rope at the edge is the only horizontal force on it:</p>
+<math class="eq ans" display="block"><mrow><mi>y</mi><mo>=</mo><mn>0.25</mn><mspace width="0.167em"/><mtext>m:</mtext><mspace width="0.278em"/><mi>T</mi><mo>=</mo><mo stretchy="false">(</mo><mn>1.5</mn><mspace width="0.167em"/><mtext>kg</mtext><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>2.5</mn><mo stretchy="false">)</mo><mo>=</mo><mn>3.8</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>y</mi><mo>=</mo><mn>0.50</mn><mspace width="0.167em"/><mtext>m:</mtext><mspace width="0.278em"/><mi>T</mi><mo>=</mo><mo stretchy="false">(</mo><mn>1.0</mn><mspace width="0.167em"/><mtext>kg</mtext><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>5.0</mn><mo stretchy="false">)</mo><mo>=</mo><mn>5.0</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+      <p class="wt">Check at y = 0.25 m with the hanging part (0.50 kg, 5.0 N weight): 5.0 − 3.75 = 1.25 N = (0.50)(2.5) ✓</p>
+    </div>
+    <p class="take">As more rope goes over, the pulling force grows, so the acceleration isn't constant: it rises in a straight line with y, up to g when the last bit leaves the table. That means the constant-acceleration equations don't apply, and a v–t graph of the rope curves upward. Choosing the system is still the key: the whole rope gives a, and part of the rope gives the tension.</p>
+    </div>
+  </details>
 </div>
 
 </div>
@@ -334,6 +445,16 @@ body.present .guide{display:none}
       <details><summary>Answer</summary><div>1.5 kg. The carts push on each other with equal and opposite forces (a third-law pair), so m<sub>1</sub>a<sub>1</sub> = m<sub>2</sub>a<sub>2</sub> in size: (0.50)(0.90) = m<sub>2</sub>(0.30), so m<sub>2</sub> = 0.45/0.30 = 1.5 kg. The cart with one third of the acceleration has three times the mass.</div></details></li>
     <li><b>Who's right?</b> A 4.0 kg mass and a 1.0 kg mass hang on either side of a pulley and are let go. Student A: “The string pulls harder on the 4.0 kg side. It has to hold up the heavier mass, so that tension is 40 N.” Student B: “The tension is the same on both sides, and it's somewhere between 10 N and 40 N.”
       <details><summary>Answer</summary><div>Student B. One ideal string over an ideal pulley has one tension. The 4.0 kg mass speeds up downward, so the string pulls up on it with less than its 40 N weight; the 1.0 kg mass speeds up upward, so the string pulls up with more than its 10 N weight. Working it out: a = (40 − 10)/5.0 = 6.0 m/s² and T = (1.0)(10 + 6.0) = 16 N. Student A's 40 N would leave the heavy mass with no net force, so it couldn't accelerate.</div></details></li>
+    <li><b>Who's right?</b> A 5.0 kg cart sits on a frictionless track with a string tied to it. Student A: “Pulling the string with my hand at 50 N gives the cart the same acceleration as hanging a 50 N weight from the string over a pulley.” Student B: “The hanging weight gives a smaller acceleration.”
+      <details><summary>Answer</summary><div>Student B. With the hand, the cart is the only thing being accelerated: a = 50/5.0 = 10 m/s². With the hanging weight (5.0 kg), the same 50 N has to accelerate both masses: a = 50/10 = 5.0 m/s². The tension is then only (5.0)(5.0) = 25 N, not 50 N, because the hanging mass is speeding up downward.</div></details></li>
+    <li>A 10 kg cart on a frictionless table is tied over a pulley to a hanging 0.50 kg mass. A student says the cart is too heavy to move. Is she right? And could a big enough hanging mass make the acceleration bigger than g?
+      <details><summary>Answer</summary><div>No to both. With no friction, any hanging mass gives an unbalanced force on the system: a = (0.50)(10)/10.5 = 0.48 m/s². And a = m<sub>hang</sub>g/(m<sub>hang</sub> + m<sub>cart</sub>) is always less than g, since the hanging weight has to accelerate the cart as well as itself.</div></details></li>
+    <li>A driver brakes hard and her seat belt holds her in place. Take the system to be car + driver. Which of these forces are internal and which are external: the seat belt on the driver, the road's friction on the tires, the driver on the seat belt? Which one slows the system?
+      <details><summary>Answer</summary><div>The seat belt on the driver and the driver on the seat belt are a third-law pair inside the system, so they're internal and cancel. The road's friction on the tires is external, and it's the only one that can slow the car + driver system. (Choose the driver alone as the system and the belt's force becomes external: that's what slows her.)</div></details></li>
+    <li>A 60 kg person stands at one end of a 90 kg raft floating on still water (ignore the water's drag). She walks 4.5 m along the raft to the other end. How far does she move relative to the shore, and how far does the raft move?
+      <details><summary>Answer</summary><div>Her push on the raft and the raft's push on her are internal, so the center of mass stays put. She moves forward d<sub>p</sub> and the raft moves back d<sub>r</sub>, with d<sub>p</sub> + d<sub>r</sub> = 4.5 m and 60d<sub>p</sub> = 90d<sub>r</sub>. So the raft moves 1.8 m back and she moves 2.7 m forward relative to the shore. The lighter object moves farther.</div></details></li>
+    <li>A 0.15 kg yo-yo falls as its string unrolls, and video shows its acceleration is 2.0 m/s². The string runs up over a pulley to a counterweight. What counterweight mass would stay perfectly still while the yo-yo falls?
+      <details><summary>Answer</summary><div>0.12 kg. The yo-yo alone: mg − T = ma, so T = (0.15)(10 − 2.0) = 1.2 N. A counterweight at rest needs T = its weight, so its mass is 1.2/10 = 0.12 kg, less than the yo-yo's, because the string pulls the falling yo-yo with less than its weight.</div></details></li>
   </ol>
 </div>
 </div>
