@@ -39,6 +39,16 @@
 .guide summary:hover{background:var(--soft)}
 .guide details[open] summary{background:var(--ink);color:#fff}
 .guide details>div{border-left:4px solid var(--hot);padding:8px 12px;margin-top:8px;background:#fff}
+.guide .gmore{margin-top:4px}
+.guide .gmore h3{margin:0 0 4px}
+.guide .gmuted{margin:0 0 10px;font-size:14px;opacity:.75}
+.guide details.ex{margin:0 0 14px}
+.guide details.ex>summary{display:block;border:0;padding:0;background:none;color:inherit;font-weight:inherit}
+.guide details.ex[open]>summary{background:none;color:inherit}
+.guide details.ex>summary h4{margin:2px 0 0}
+.guide details.ex>summary h4::before{content:'▸ ';color:var(--hot)}
+.guide details.ex[open]>summary h4::before{content:'▾ '}
+.guide details.ex>div.exbody{border-left:0;padding:0;margin-top:10px;background:none}
 .guide .gpanel>.ggrid,.guide .gpanel>.gsteps,.guide .gpanel>.gex{margin-bottom:0}
 .guide .gpanel>.gsteps+.ggrid{margin-top:22px}
 .guide .gtabs{margin-bottom:18px}
@@ -96,6 +106,9 @@ body.present .guide{display:none}
       <li>Using only the biggest force in ΣF = ma. It's the <b>net</b> force: add all of them with signs.</li>
       <li>Using μ<sub>s</sub> for something that's already sliding, or μ<sub>k</sub> for something that hasn't started.</li>
       <li>Thinking heavier objects fall faster. Without air resistance, a bigger weight is pulling a bigger mass, and the acceleration comes out the same.</li>
+      <li>Thinking a negative acceleration means slowing down. It only means a points in the − direction: something moving in the − direction with a negative a is speeding up.</li>
+      <li>Setting static friction equal to μ<sub>s</sub>F<sub>N</sub> every time. That's the most it can be; on a box that isn't sliding, static friction is only as big as it needs to be.</li>
+      <li>Thinking something is in free fall only while it's falling. A ball on its way up, or at the top, is in free fall too: gravity is the only force, so a = g downward the whole time it's in the air.</li>
     </ul>
   </div>
 </div>
@@ -117,6 +130,10 @@ body.present .guide{display:none}
   <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;border-top:2px solid var(--ink);padding:10px 0">
     <div style="flex:1 1 220px;min-width:0"><b>Slowing down (+)</b><br>x keeps rising but flattens out. v falls to zero. a is negative.</div>
     <div style="display:flex;gap:6px;flex:0 1 384px;min-width:0"><svg viewBox="0 0 124 88" style="flex:1 1 0;min-width:0;max-width:124px;height:auto" role="img" aria-label="Slowing down (+): x–t graph"><line x1="16" y1="72" x2="118" y2="72" stroke="#111" stroke-width="1.5"/><line x1="16" y1="6" x2="16" y2="72" stroke="#111" stroke-width="1.5"/><text x="2" y="18" font-size="14" font-style="italic" font-family="serif">x</text><text x="112" y="86" font-size="14" font-style="italic" font-family="serif">t</text><polyline points="16.0,72.0 18.5,69.2 21.0,66.4 23.5,63.7 26.0,61.1 28.5,58.5 31.0,56.0 33.5,53.6 36.0,51.3 38.5,49.0 41.0,46.8 43.5,44.7 46.0,42.6 48.5,40.6 51.0,38.7 53.5,36.9 56.0,35.1 58.5,33.4 61.0,31.8 63.5,30.3 66.0,28.8 68.5,27.4 71.0,26.1 73.5,24.8 76.0,23.6 78.5,22.5 81.0,21.5 83.5,20.5 86.0,19.6 88.5,18.8 91.0,18.0 93.5,17.3 96.0,16.7 98.5,16.2 101.0,15.7 103.5,15.3 106.0,15.0 108.5,14.7 111.0,14.5 113.5,14.4 116.0,14.4" fill="none" stroke="#ff6a2b" stroke-width="3"/></svg><svg viewBox="0 0 124 88" style="flex:1 1 0;min-width:0;max-width:124px;height:auto" role="img" aria-label="Slowing down (+): v–t graph"><line x1="16" y1="40" x2="118" y2="40" stroke="#111" stroke-width="1.5"/><line x1="16" y1="6" x2="16" y2="72" stroke="#111" stroke-width="1.5"/><text x="2" y="18" font-size="14" font-style="italic" font-family="serif">v</text><text x="112" y="54" font-size="14" font-style="italic" font-family="serif">t</text><polyline points="16.0,13.0 18.5,13.7 21.0,14.4 23.5,15.0 26.0,15.7 28.5,16.4 31.0,17.1 33.5,17.7 36.0,18.4 38.5,19.1 41.0,19.8 43.5,20.4 46.0,21.1 48.5,21.8 51.0,22.4 53.5,23.1 56.0,23.8 58.5,24.5 61.0,25.1 63.5,25.8 66.0,26.5 68.5,27.2 71.0,27.9 73.5,28.5 76.0,29.2 78.5,29.9 81.0,30.6 83.5,31.2 86.0,31.9 88.5,32.6 91.0,33.2 93.5,33.9 96.0,34.6 98.5,35.3 101.0,36.0 103.5,36.6 106.0,37.3 108.5,38.0 111.0,38.6 113.5,39.3 116.0,40.0" fill="none" stroke="#ff6a2b" stroke-width="3"/></svg><svg viewBox="0 0 124 88" style="flex:1 1 0;min-width:0;max-width:124px;height:auto" role="img" aria-label="Slowing down (+): a–t graph"><line x1="16" y1="40" x2="118" y2="40" stroke="#111" stroke-width="1.5"/><line x1="16" y1="6" x2="16" y2="72" stroke="#111" stroke-width="1.5"/><text x="2" y="18" font-size="14" font-style="italic" font-family="serif">a</text><text x="112" y="54" font-size="14" font-style="italic" font-family="serif">t</text><polyline points="16.0,58.0 18.5,58.0 21.0,58.0 23.5,58.0 26.0,58.0 28.5,58.0 31.0,58.0 33.5,58.0 36.0,58.0 38.5,58.0 41.0,58.0 43.5,58.0 46.0,58.0 48.5,58.0 51.0,58.0 53.5,58.0 56.0,58.0 58.5,58.0 61.0,58.0 63.5,58.0 66.0,58.0 68.5,58.0 71.0,58.0 73.5,58.0 76.0,58.0 78.5,58.0 81.0,58.0 83.5,58.0 86.0,58.0 88.5,58.0 91.0,58.0 93.5,58.0 96.0,58.0 98.5,58.0 101.0,58.0 103.5,58.0 106.0,58.0 108.5,58.0 111.0,58.0 113.5,58.0 116.0,58.0" fill="none" stroke="#ff6a2b" stroke-width="3"/></svg></div>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;border-top:2px solid var(--ink);padding:10px 0">
+    <div style="flex:1 1 220px;min-width:0"><b>Speeding up (−)</b><br>From rest: x curves down (getting steeper). v drops below zero, moving away from it. a is negative and constant: here negative a means speeding up.</div>
+    <div style="display:flex;gap:6px;flex:0 1 384px;min-width:0"><svg viewBox="0 0 124 88" style="flex:1 1 0;min-width:0;max-width:124px;height:auto" role="img" aria-label="Speeding up (−): x–t graph"><line x1="16" y1="72" x2="118" y2="72" stroke="#111" stroke-width="1.5"/><line x1="16" y1="6" x2="16" y2="72" stroke="#111" stroke-width="1.5"/><text x="2" y="18" font-size="14" font-style="italic" font-family="serif">x</text><text x="112" y="86" font-size="14" font-style="italic" font-family="serif">t</text><polyline points="16.0,14.4 18.5,14.4 21.0,14.5 23.5,14.7 26.0,15.0 28.5,15.3 31.0,15.7 33.5,16.2 36.0,16.7 38.5,17.3 41.0,18.0 43.5,18.8 46.0,19.6 48.5,20.5 51.0,21.5 53.5,22.5 56.0,23.6 58.5,24.8 61.0,26.1 63.5,27.4 66.0,28.8 68.5,30.3 71.0,31.8 73.5,33.4 76.0,35.1 78.5,36.9 81.0,38.7 83.5,40.6 86.0,42.6 88.5,44.7 91.0,46.8 93.5,49.0 96.0,51.3 98.5,53.6 101.0,56.0 103.5,58.5 106.0,61.1 108.5,63.7 111.0,66.4 113.5,69.2 116.0,72.0" fill="none" stroke="#ff6a2b" stroke-width="3"/></svg><svg viewBox="0 0 124 88" style="flex:1 1 0;min-width:0;max-width:124px;height:auto" role="img" aria-label="Speeding up (−): v–t graph"><line x1="16" y1="40" x2="118" y2="40" stroke="#111" stroke-width="1.5"/><line x1="16" y1="6" x2="16" y2="72" stroke="#111" stroke-width="1.5"/><text x="2" y="18" font-size="14" font-style="italic" font-family="serif">v</text><text x="112" y="54" font-size="14" font-style="italic" font-family="serif">t</text><polyline points="16.0,40.0 18.5,40.7 21.0,41.4 23.5,42.0 26.0,42.7 28.5,43.4 31.0,44.0 33.5,44.7 36.0,45.4 38.5,46.1 41.0,46.8 43.5,47.4 46.0,48.1 48.5,48.8 51.0,49.5 53.5,50.1 56.0,50.8 58.5,51.5 61.0,52.1 63.5,52.8 66.0,53.5 68.5,54.2 71.0,54.9 73.5,55.5 76.0,56.2 78.5,56.9 81.0,57.5 83.5,58.2 86.0,58.9 88.5,59.6 91.0,60.2 93.5,60.9 96.0,61.6 98.5,62.3 101.0,63.0 103.5,63.6 106.0,64.3 108.5,65.0 111.0,65.7 113.5,66.3 116.0,67.0" fill="none" stroke="#ff6a2b" stroke-width="3"/></svg><svg viewBox="0 0 124 88" style="flex:1 1 0;min-width:0;max-width:124px;height:auto" role="img" aria-label="Speeding up (−): a–t graph"><line x1="16" y1="40" x2="118" y2="40" stroke="#111" stroke-width="1.5"/><line x1="16" y1="6" x2="16" y2="72" stroke="#111" stroke-width="1.5"/><text x="2" y="18" font-size="14" font-style="italic" font-family="serif">a</text><text x="112" y="54" font-size="14" font-style="italic" font-family="serif">t</text><polyline points="16.0,58.0 18.5,58.0 21.0,58.0 23.5,58.0 26.0,58.0 28.5,58.0 31.0,58.0 33.5,58.0 36.0,58.0 38.5,58.0 41.0,58.0 43.5,58.0 46.0,58.0 48.5,58.0 51.0,58.0 53.5,58.0 56.0,58.0 58.5,58.0 61.0,58.0 63.5,58.0 66.0,58.0 68.5,58.0 71.0,58.0 73.5,58.0 76.0,58.0 78.5,58.0 81.0,58.0 83.5,58.0 86.0,58.0 88.5,58.0 91.0,58.0 93.5,58.0 96.0,58.0 98.5,58.0 101.0,58.0 103.5,58.0 106.0,58.0 108.5,58.0 111.0,58.0 113.5,58.0 116.0,58.0" fill="none" stroke="#ff6a2b" stroke-width="3"/></svg></div>
   </div>
   <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;border-top:2px solid var(--ink);padding:10px 0">
     <div style="flex:1 1 220px;min-width:0"><b>Thrown straight up (up = +)</b><br>x rises and falls back. v goes from + through zero to −. a = −g the whole time, even at the top.</div>
@@ -250,6 +267,89 @@ body.present .guide{display:none}
     <p class="take">The 20 m/s at the end of part 1 is the starting speed for parts 2 and 3. Each part gets its own acceleration.</p>
   </div>
 </div>
+<div class="gmore">
+  <h3>More examples</h3>
+  <p class="gmuted">Click an example to open it.</p>
+  <details class="ex">
+    <summary><span class="kind">Graphs · turning around</span><h4>A velocity graph that crosses zero</h4></summary>
+    <div class="exbody">
+    <svg width="200" height="126" viewBox="0 0 200 126" aria-label="Velocity-time graph: flat at +6 m/s from 0 to 3 s, straight line down through zero at 4.5 s to −6 m/s at 6 s, straight line back up to zero at 9 s. Area above the axis is shaded orange, area below is shaded gray.">
+      <polygon points="24,62 24,20 78,20 105,62" fill="#fde1d6" stroke="none"/>
+      <polygon points="105,62 132,104 186,62" fill="#e2e2e2" stroke="none"/>
+      <line x1="24" y1="62" x2="192" y2="62" stroke="#111" stroke-width="2"/><line x1="24" y1="6" x2="24" y2="112" stroke="#111" stroke-width="2"/>
+      <line x1="24" y1="104" x2="132" y2="104" stroke="#111" stroke-dasharray="2 3"/>
+      <polyline points="24,20 78,20 132,104 186,62" fill="none" stroke="#ff6a2b" stroke-width="3"/>
+      <text x="4" y="24" font-size="10" font-family="IBM Plex Mono,monospace">+6</text>
+      <text x="4" y="108" font-size="10" font-family="IBM Plex Mono,monospace">−6</text>
+      <text x="28" y="12" font-size="10" font-family="IBM Plex Mono,monospace">v (m/s)</text>
+      <text x="75" y="74" font-size="10" font-family="IBM Plex Mono,monospace">3</text>
+      <text x="129" y="56" font-size="10" font-family="IBM Plex Mono,monospace">6</text>
+      <text x="183" y="56" font-size="10" font-family="IBM Plex Mono,monospace">9</text>
+      <text x="150" y="120" font-size="10" font-family="IBM Plex Mono,monospace">t (s)</text>
+      <text x="44" y="48" font-size="14" font-weight="700" font-family="IBM Plex Mono,monospace">+</text>
+      <text x="138" y="80" font-size="14" font-weight="700" font-family="IBM Plex Mono,monospace">−</text>
+    </svg>
+    <p>An object starts at x = 0. Its velocity is +6.0 m/s for 3.0 s, then changes steadily to −6.0 m/s at 6.0 s, then changes steadily back to zero at 9.0 s (see the graph). Find the acceleration in each part, the farthest the object gets from the start, its final position, and the total distance it travels.</p>
+    <div class="work">
+      <p class="wt">Acceleration is the slope of each straight piece. The first piece is flat, so a = 0 there.</p>
+<math class="eq" display="block"><mrow><msub><mi>a</mi><mn>2</mn></msub><mo>=</mo><mfrac><mrow><mo>&#x2212;</mo><mn>6.0</mn><mo>&#x2212;</mo><mn>6.0</mn></mrow><mrow><mn>6.0</mn><mo>&#x2212;</mo><mn>3.0</mn></mrow></mfrac><mo>=</mo><mo>&#x2212;</mo><mn>4.0</mn><mspace width="0.167em"/><msup><mtext>m/s</mtext><mn>2</mn></msup></mrow></math>
+<math class="eq" display="block"><mrow><msub><mi>a</mi><mn>3</mn></msub><mo>=</mo><mfrac><mrow><mn>0</mn><mo>&#x2212;</mo><mo stretchy="false">(</mo><mo>&#x2212;</mo><mn>6.0</mn><mo stretchy="false">)</mo></mrow><mrow><mn>9.0</mn><mo>&#x2212;</mo><mn>6.0</mn></mrow></mfrac><mo>=</mo><mo>+</mo><mn>2.0</mn><mspace width="0.167em"/><msup><mtext>m/s</mtext><mn>2</mn></msup></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>a</mi><mo>=</mo><mn>0</mn><mo>,</mo><mspace width="0.278em"/><mo>&#x2212;</mo><mn>4.0</mn><mo>,</mo><mspace width="0.278em"/><mo>+</mo><mn>2.0</mn><mspace width="0.167em"/><msup><mtext>m/s</mtext><mn>2</mn></msup></mrow></math>
+      <p class="wt">The middle piece is one straight line, so a = −4.0 m/s² the whole time, even at t = 4.5 s, where v passes through zero. Until then the object moves in the + direction, so that's its farthest point. Displacement is the area:</p>
+<math class="eq" display="block"><mrow><msub><mi>x</mi><mtext>max</mtext></msub><mo>=</mo><mo stretchy="false">(</mo><mn>6.0</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>3.0</mn><mo stretchy="false">)</mo><mo>+</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mo stretchy="false">(</mo><mn>1.5</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>6.0</mn><mo stretchy="false">)</mo><mo>=</mo><mn>18</mn><mo>+</mo><mn>4.5</mn></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>x</mi><mtext>max</mtext></msub><mo>=</mo><mn>22.5</mn><mspace width="0.167em"/><mtext>m</mtext><mspace width="0.278em"/><mtext>at</mtext><mspace width="0.278em"/><mi>t</mi><mo>=</mo><mn>4.5</mn><mspace width="0.167em"/><mtext>s</mtext></mrow></math>
+      <p class="wt">After 4.5 s the area is below the axis, so it counts negative:</p>
+<math class="eq" display="block"><mrow><msub><mi>x</mi><mtext>final</mtext></msub><mo>=</mo><mn>22.5</mn><mo>&#x2212;</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mo stretchy="false">(</mo><mn>1.5</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>6.0</mn><mo stretchy="false">)</mo><mo>&#x2212;</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mo stretchy="false">(</mo><mn>3.0</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>6.0</mn><mo stretchy="false">)</mo></mrow></math>
+<math class="eq" display="block"><mrow><msub><mi>x</mi><mtext>final</mtext></msub><mo>=</mo><mn>22.5</mn><mo>&#x2212;</mo><mn>4.5</mn><mo>&#x2212;</mo><mn>9.0</mn></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>x</mi><mtext>final</mtext></msub><mo>=</mo><mn>9.0</mn><mspace width="0.167em"/><mtext>m</mtext></mrow></math>
+      <p class="wt">Distance counts every area as positive:</p>
+<math class="eq ans" display="block"><mrow><mi>d</mi><mo>=</mo><mn>18</mn><mo>+</mo><mn>4.5</mn><mo>+</mo><mn>4.5</mn><mo>+</mo><mn>9.0</mn><mo>=</mo><mn>36</mn><mspace width="0.167em"/><mtext>m</mtext></mrow></math>
+    </div>
+    <p class="take">The object is farthest out where v crosses zero, not at the graph's lowest point, and v = 0 there doesn't mean a = 0. The x–t graph is a straight rising line to 3.0 s, a curve that flattens to a peak at 4.5 s, a curve bending down more and more steeply until 6.0 s, then a curve that flattens out at x = 9.0 m.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Friction · static or kinetic?</span><h4>Same box, two pushes</h4></summary>
+    <div class="exbody">
+    <p>A 20 kg box rests on a floor with μ<sub>s</sub> = 0.50 and μ<sub>k</sub> = 0.30. You push it horizontally with (a) 80 N, then (b) 130 N. Find the friction force and the box's acceleration each time.</p>
+    <div class="work">
+      <p class="wt">First find the most that static friction can hold:</p>
+<math class="eq" display="block"><mrow><msub><mi>F</mi><mi>N</mi></msub><mo>=</mo><mi>m</mi><mi>g</mi><mo>=</mo><mo stretchy="false">(</mo><mn>20</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>10</mn><mo stretchy="false">)</mo><mo>=</mo><mn>200</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+<math class="eq" display="block"><mrow><msub><mi>f</mi><mrow><mi>s</mi><mo>,</mo><mtext>max</mtext></mrow></msub><mo>=</mo><msub><mi>&#x3BC;</mi><mi>s</mi></msub><msub><mi>F</mi><mi>N</mi></msub><mo>=</mo><mo stretchy="false">(</mo><mn>0.50</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>200</mn><mo stretchy="false">)</mo><mo>=</mo><mn>100</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+      <p class="wt">(a) 80 N is less than 100 N, so the box doesn't move. Static friction pushes back just as hard as you push:</p>
+<math class="eq ans" display="block"><mrow><msub><mi>f</mi><mi>s</mi></msub><mo>=</mo><mn>80</mn><mspace width="0.167em"/><mtext>N</mtext><mo>,</mo><mspace width="0.278em"/><mi>a</mi><mo>=</mo><mn>0</mn></mrow></math>
+      <p class="wt">(b) 130 N is more than 100 N, so the box breaks loose and kinetic friction takes over:</p>
+<math class="eq" display="block"><mrow><msub><mi>f</mi><mi>k</mi></msub><mo>=</mo><msub><mi>&#x3BC;</mi><mi>k</mi></msub><msub><mi>F</mi><mi>N</mi></msub><mo>=</mo><mo stretchy="false">(</mo><mn>0.30</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>200</mn><mo stretchy="false">)</mo><mo>=</mo><mn>60</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+<math class="eq" display="block"><mrow><mi>a</mi><mo>=</mo><mfrac><mrow><mi>&#x3A3;</mi><mi>F</mi></mrow><mi>m</mi></mfrac><mo>=</mo><mfrac><mrow><mn>130</mn><mo>&#x2212;</mo><mn>60</mn></mrow><mn>20</mn></mfrac></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>f</mi><mi>k</mi></msub><mo>=</mo><mn>60</mn><mspace width="0.167em"/><mtext>N</mtext><mo>,</mo><mspace width="0.278em"/><mi>a</mi><mo>=</mo><mn>3.5</mn><mspace width="0.167em"/><msup><mtext>m/s</mtext><mn>2</mn></msup></mrow></math>
+    </div>
+    <p class="take">Check f<sub>s,max</sub> first, before you write ΣF = ma. A box that doesn't slide gets only as much static friction as it needs (80 N here, not 100 N). A box that slides gets kinetic friction, which is less than the static maximum, so once it breaks loose it speeds up.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Kinematics → force</span><h4>The parachute opens</h4></summary>
+    <div class="exbody">
+    <svg width="110" height="112" viewBox="0 0 110 112" aria-label="Free-body diagram of the skydiver: tension up, three times as long as the weight arrow pointing down">
+      <circle cx="36" cy="74" r="6" fill="#111"/>
+      <line x1="36" y1="68" x2="36" y2="16" stroke="#ff6a2b" stroke-width="3"/><polygon points="31,18 41,18 36,9" fill="#ff6a2b"/>
+      <text x="44" y="22" font-size="11" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">F<tspan baseline-shift="sub" font-size="8">T</tspan></text>
+      <line x1="36" y1="80" x2="36" y2="92" stroke="#111" stroke-width="3"/><polygon points="31,90 41,90 36,99" fill="#111"/>
+      <text x="44" y="98" font-size="11" font-family="IBM Plex Mono,monospace">mg</text>
+    </svg>
+    <p>A 70 kg skydiver falling at 45 m/s opens her parachute and slows steadily to 5.0 m/s over a distance of 50 m. Find her acceleration and the tension in the parachute lines. (Ignore air resistance on her body; the lines are the only upward force.)</p>
+    <div class="work">
+      <p class="wt">No time is given, so use the equation without t. Take down = + (the way she's moving):</p>
+<math class="eq" display="block"><mrow><mi>a</mi><mo>=</mo><mfrac><mrow><msup><mi>v</mi><mn>2</mn></msup><mo>&#x2212;</mo><msubsup><mi>v</mi><mn>0</mn><mn>2</mn></msubsup></mrow><mrow><mn>2</mn><mi>&#x394;</mi><mi>x</mi></mrow></mfrac><mo>=</mo><mfrac><mrow><mo stretchy="false">(</mo><mn>5.0</mn><msup><mo stretchy="false">)</mo><mn>2</mn></msup><mo>&#x2212;</mo><mo stretchy="false">(</mo><mn>45</mn><msup><mo stretchy="false">)</mo><mn>2</mn></msup></mrow><mrow><mn>2</mn><mo stretchy="false">(</mo><mn>50</mn><mo stretchy="false">)</mo></mrow></mfrac></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>a</mi><mo>=</mo><mo>&#x2212;</mo><mn>20</mn><mspace width="0.167em"/><msup><mtext>m/s</mtext><mn>2</mn></msup><mo>,</mo><mspace width="0.278em"/><mtext>so 20 m/s² upward</mtext></mrow></math>
+      <p class="wt">Now the forces on her. Switch to up = +, the way she accelerates:</p>
+<math class="eq" display="block"><mrow><msub><mi>F</mi><mi>T</mi></msub><mo>&#x2212;</mo><mi>m</mi><mi>g</mi><mo>=</mo><mi>m</mi><mi>a</mi></mrow></math>
+<math class="eq" display="block"><mrow><msub><mi>F</mi><mi>T</mi></msub><mo>=</mo><mi>m</mi><mo stretchy="false">(</mo><mi>g</mi><mo>+</mo><mi>a</mi><mo stretchy="false">)</mo><mo>=</mo><mn>70</mn><mo stretchy="false">(</mo><mn>10</mn><mo>+</mo><mn>20</mn><mo stretchy="false">)</mo></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>F</mi><mi>T</mi></msub><mo>=</mo><mn>2100</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+    </div>
+    <p class="take">She's moving down but accelerating <b>up</b>, so the net force points up and the lines pull with three times her 700 N weight. Find a from the motion first, then put it into ΣF = ma. Changing which way is + between steps is fine, as long as you say so and keep the signs straight.</p>
+    </div>
+  </details>
+</div>
 </div>
 <div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
 <div class="gcheck">
@@ -278,6 +378,8 @@ body.present .guide{display:none}
       <details><summary>Answer</summary><div>The net force is zero (constant velocity), so air resistance is exactly equal to her weight.</div></details></li>
     <li>A ball moves to the right while the net force on it points to the left. Is that possible? What is the ball doing?
       <details><summary>Answer</summary><div>Yes. The net force sets the acceleration, not the velocity. The ball is moving right and slowing down (and will eventually turn around if the force keeps acting).</div></details></li>
+    <li><b>Who's right?</b> A car braking steadily stops in 25 m from 20 m/s. Ana says that from 40 m/s, with the same braking, it needs 50 m. Ben says it needs 100 m. Who's right, and why?
+      <details><summary>Answer</summary><div>Ben. Stopping from speed v with a steady deceleration a, v² = 2aΔx, so Δx = v²/(2a): the distance goes with the <b>square</b> of the speed. Twice the speed gives 2² = 4 times the distance, 4 × 25 = 100 m. Ana forgot that the faster car covers more ground each second <i>and</i> takes twice as long to stop, so the two factors of 2 multiply. (Here a = 8.0 m/s².)</div></details></li>
   </ol>
 </div>
 </div>
