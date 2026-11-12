@@ -39,6 +39,16 @@
 .guide summary:hover{background:var(--soft)}
 .guide details[open] summary{background:var(--ink);color:#fff}
 .guide details>div{border-left:4px solid var(--hot);padding:8px 12px;margin-top:8px;background:#fff}
+.guide .gmore{margin-top:4px}
+.guide .gmore h3{margin:0 0 4px}
+.guide .gmuted{margin:0 0 10px;font-size:14px;opacity:.75}
+.guide details.ex{margin:0 0 14px}
+.guide details.ex>summary{display:block;border:0;padding:0;background:none;color:inherit;font-weight:inherit}
+.guide details.ex[open]>summary{background:none;color:inherit}
+.guide details.ex>summary h4{margin:2px 0 0}
+.guide details.ex>summary h4::before{content:'▸ ';color:var(--hot)}
+.guide details.ex[open]>summary h4::before{content:'▾ '}
+.guide details.ex>div.exbody{border-left:0;padding:0;margin-top:10px;background:none}
 .guide .gpanel>.ggrid,.guide .gpanel>.gsteps,.guide .gpanel>.gex{margin-bottom:0}
 .guide .gpanel>.gsteps+.ggrid{margin-top:22px}
 .guide .gtabs{margin-bottom:18px}
@@ -99,6 +109,9 @@ body.present .guide{display:none}
       <li>Using F<sub>N</sub> = mg on a slope, or for an angled pull.</li>
       <li>Adding the sizes of vectors that point different ways: 3 N east plus 4 N north is 5 N, not 7 N.</li>
       <li>Aiming a boat straight across and expecting it to land straight across. The current carries it downstream.</li>
+      <li>Trusting tan⁻¹ when the x-component is negative. The calculator gives an angle in the wrong quadrant, so sketch the vector: (−3, 4) points at 127°, not −53°.</li>
+      <li>Getting the time to reach a wall (or any horizontal distance) from the vertical equations. It comes from the horizontal motion: t = x ÷ v<sub>x</sub>.</li>
+      <li>Thinking the longer rope pulls harder. Only the angles matter: the rope closer to vertical carries more tension.</li>
     </ul>
   </div>
 </div>
@@ -232,6 +245,104 @@ body.present .guide{display:none}
     <p class="take">The current doesn't change the crossing time, because it's perpendicular to the boat's heading. It only moves the landing point downstream.</p>
   </div>
 </div>
+<div class="gmore">
+  <h3>More examples</h3>
+  <p class="gmuted">Click an example to open it.</p>
+  <details class="ex">
+    <summary><span class="kind">Pulling at an angle · friction</span><h4>Dragging a box with a slanted rope</h4></summary>
+    <div class="exbody">
+    <svg width="170" height="130" viewBox="0 0 170 130" aria-label="Free-body diagram of a box: normal force up, weight down, friction to the left, and the 50 N rope pull up and to the right at 37 degrees with its components dashed">
+      <rect x="70" y="58" width="30" height="24" fill="#fff" stroke="#111" stroke-width="2"/>
+      <line x1="85" y1="58" x2="85" y2="28" stroke="#111" stroke-width="3"/><polygon points="80,30 90,30 85,21" fill="#111"/>
+      <text x="91" y="30" font-size="11" font-family="IBM Plex Mono,monospace">F<tspan baseline-shift="sub" font-size="8">N</tspan></text>
+      <line x1="85" y1="82" x2="85" y2="112" stroke="#111" stroke-width="3"/><polygon points="80,110 90,110 85,119" fill="#111"/>
+      <text x="91" y="120" font-size="11" font-family="IBM Plex Mono,monospace">mg</text>
+      <line x1="70" y1="70" x2="40" y2="70" stroke="#111" stroke-width="3"/><polygon points="42,65 42,75 33,70" fill="#111"/>
+      <text x="40" y="62" font-size="11" font-family="IBM Plex Mono,monospace">f</text>
+      <line x1="100" y1="70" x2="140" y2="70" stroke="#ff6a2b" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <line x1="140" y1="70" x2="140" y2="40" stroke="#ff6a2b" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <line x1="100" y1="70" x2="133" y2="45" stroke="#ff6a2b" stroke-width="3"/><polygon points="135.8,49.4 129.8,41.4 140,40" fill="#ff6a2b"/>
+      <text x="124" y="32" font-size="11" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">50 N</text>
+      <text x="108" y="84" font-size="10" font-family="IBM Plex Mono,monospace">37°</text>
+    </svg>
+    <p>An 8.0 kg box sits on a level floor (μ<sub>k</sub> = 0.40). You pull it with a rope at 50 N, 37° above the horizontal. Find its acceleration. (cos37° = 0.80, sin37° = 0.60)</p>
+    <div class="work">
+      <p class="wt">Axes: x along the floor, y straight up. Split the pull:</p>
+<math class="eq" display="block"><mrow><msub><mi>F</mi><mi>x</mi></msub><mo>=</mo><mn>50</mn><mo stretchy="false">(</mo><mn>0.80</mn><mo stretchy="false">)</mo><mo>=</mo><mn>40</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+<math class="eq" display="block"><mrow><msub><mi>F</mi><mi>y</mi></msub><mo>=</mo><mn>50</mn><mo stretchy="false">(</mo><mn>0.60</mn><mo stretchy="false">)</mo><mo>=</mo><mn>30</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+      <p class="wt">Vertical first, because nothing accelerates up or down (ΣF<sub>y</sub> = 0):</p>
+<math class="eq" display="block"><mrow><msub><mi>F</mi><mi>N</mi></msub><mo>+</mo><msub><mi>F</mi><mi>y</mi></msub><mo>=</mo><mi>m</mi><mi>g</mi><mspace width="0.278em"/><mo>&#x2192;</mo><mspace width="0.278em"/><msub><mi>F</mi><mi>N</mi></msub><mo>=</mo><mn>80</mn><mo>&#x2212;</mo><mn>30</mn><mo>=</mo><mn>50</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+<math class="eq" display="block"><mrow><msub><mi>f</mi><mi>k</mi></msub><mo>=</mo><msub><mi>&#x3BC;</mi><mi>k</mi></msub><msub><mi>F</mi><mi>N</mi></msub><mo>=</mo><mo stretchy="false">(</mo><mn>0.40</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>50</mn><mo stretchy="false">)</mo><mo>=</mo><mn>20</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+      <p class="wt">Horizontal (ΣF<sub>x</sub> = ma):</p>
+<math class="eq" display="block"><mrow><mi>a</mi><mo>=</mo><mfrac><mrow><msub><mi>F</mi><mi>x</mi></msub><mo>&#x2212;</mo><msub><mi>f</mi><mi>k</mi></msub></mrow><mi>m</mi></mfrac><mo>=</mo><mfrac><mrow><mn>40</mn><mo>&#x2212;</mo><mn>20</mn></mrow><mn>8.0</mn></mfrac></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>a</mi><mo>=</mo><mn>2.5</mn><mspace width="0.167em"/><msup><mtext>m/s</mtext><mn>2</mn></msup></mrow></math>
+    </div>
+    <p class="take">Get F<sub>N</sub> from the direction with no acceleration before you touch friction. Using μmg = 32 N for friction gives 1.0 m/s², less than half the right answer: the rope's upward part lifts some of the box's weight off the floor, so the floor pushes up less and friction is smaller.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Equilibrium · unequal ropes</span><h4>A lantern held by a level rope and a slanted rope</h4></summary>
+    <div class="exbody">
+    <svg width="170" height="105" viewBox="0 0 170 105" aria-label="A lantern hangs from a knot. One rope runs level from the knot to a wall on the left; the other runs up and to the right to the ceiling at 37 degrees above horizontal">
+      <line x1="10" y1="16" x2="10" y2="96" stroke="#111" stroke-width="3"/>
+      <line x1="10" y1="30" x2="3" y2="37" stroke="#111"/><line x1="10" y1="50" x2="3" y2="57" stroke="#111"/><line x1="10" y1="70" x2="3" y2="77" stroke="#111"/>
+      <line x1="110" y1="10" x2="166" y2="10" stroke="#111" stroke-width="3"/>
+      <line x1="120" y1="10" x2="127" y2="3" stroke="#111"/><line x1="140" y1="10" x2="147" y2="3" stroke="#111"/><line x1="160" y1="10" x2="167" y2="3" stroke="#111"/>
+      <line x1="10" y1="50" x2="100" y2="50" stroke="#ff6a2b" stroke-width="2"/>
+      <line x1="100" y1="50" x2="153" y2="10" stroke="#ff6a2b" stroke-width="2"/>
+      <line x1="100" y1="50" x2="100" y2="70" stroke="#111" stroke-width="2"/>
+      <rect x="91" y="70" width="18" height="24" fill="#fde1d6" stroke="#111" stroke-width="2"/>
+      <circle cx="100" cy="50" r="3" fill="#111"/>
+      <text x="40" y="44" font-size="11" font-family="IBM Plex Mono,monospace">T<tspan baseline-shift="sub" font-size="8">2</tspan></text>
+      <text x="108" y="24" font-size="11" font-family="IBM Plex Mono,monospace">T<tspan baseline-shift="sub" font-size="8">1</tspan></text>
+      <text x="118" y="54" font-size="10" font-family="IBM Plex Mono,monospace">37°</text>
+      <text x="114" y="88" font-size="10" font-family="IBM Plex Mono,monospace">9.0 kg</text>
+    </svg>
+    <p>A 9.0 kg lantern hangs from a knot. Rope 2 runs level from the knot to a wall. Rope 1 runs from the knot up to the ceiling at 37° above the horizontal. Find both tensions.</p>
+    <div class="work">
+      <p class="wt">Forces on the knot: T<sub>1</sub> up and to the right, T<sub>2</sub> to the left, and the lantern's weight (90 N) down. The knot is at rest, so ΣF<sub>x</sub> = 0 and ΣF<sub>y</sub> = 0.</p>
+      <p class="wt">Vertical first: only rope 1 has an upward part, so it holds up all the weight.</p>
+<math class="eq" display="block"><mrow><msub><mi>T</mi><mn>1</mn></msub><mi>sin</mi><mspace width="0.167em"/><msup><mn>37</mn><mo>&#x2218;</mo></msup><mo>=</mo><mi>m</mi><mi>g</mi><mspace width="0.278em"/><mo>&#x2192;</mo><mspace width="0.278em"/><msub><mi>T</mi><mn>1</mn></msub><mo>=</mo><mfrac><mn>90</mn><mn>0.60</mn></mfrac></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>T</mi><mn>1</mn></msub><mo>=</mo><mn>150</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+      <p class="wt">Horizontal: rope 2 cancels rope 1's sideways pull.</p>
+<math class="eq" display="block"><mrow><msub><mi>T</mi><mn>2</mn></msub><mo>=</mo><msub><mi>T</mi><mn>1</mn></msub><mi>cos</mi><mspace width="0.167em"/><msup><mn>37</mn><mo>&#x2218;</mo></msup><mo>=</mo><mo stretchy="false">(</mo><mn>150</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>0.80</mn><mo stretchy="false">)</mo></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>T</mi><mn>2</mn></msub><mo>=</mo><mn>120</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+    </div>
+    <p class="take">With unequal ropes, solve the direction where only one unknown appears first. Both tensions are bigger than the 90 N weight. Lower rope 1's anchor so it slants at 30° and <b>both</b> grow: T<sub>1</sub> = 180 N and T<sub>2</sub> = 156 N.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Launch at an angle · different heights</span><h4>A ball thrown upward off a cliff</h4></summary>
+    <div class="exbody">
+    <svg width="210" height="122" viewBox="0 0 210 122" aria-label="Ball thrown up at an angle from the top of a 20 m cliff; its path rises, peaks, and falls past the cliff's height to the ground">
+      <rect x="4" y="50" width="36" height="60" fill="#fde1d6" stroke="#111" stroke-width="2"/>
+      <line x1="4" y1="110" x2="206" y2="110" stroke="#111" stroke-width="2"/>
+      <polyline points="40,50 44,46 48,42 52,38 56,34 60,31 64,28 68,26 72,24 76,22 80,20 84,19 88,18 92,17 96,16 100,16 104,16 108,17 112,18 116,19 120,20 124,22 128,24 132,26 136,28 140,31 144,34 148,38 152,42 156,46 160,50 164,55 168,60 172,65 176,70 180,76 184,82 188,89 192,96 196,103 200,110" fill="none" stroke="#ff6a2b" stroke-width="3" stroke-dasharray="5 4"/>
+      <line x1="40" y1="50" x2="170" y2="50" stroke="#111" stroke-width="1" stroke-dasharray="2 3"/>
+      <circle cx="40" cy="50" r="5" fill="#111"/>
+      <text x="4" y="12" font-size="10" font-family="IBM Plex Mono,monospace">25 m/s at 37°</text>
+      <text x="8" y="84" font-size="10" font-family="IBM Plex Mono,monospace">20 m</text>
+    </svg>
+    <p>From the edge of a 20 m cliff, a ball is thrown at 25 m/s, 37° above the horizontal. How long is it in the air, how far from the base of the cliff does it land, and how fast is it going when it lands? (cos37° = 0.80, sin37° = 0.60)</p>
+    <div class="work">
+      <p class="wt">Split the launch velocity:</p>
+<math class="eq" display="block"><mrow><msub><mi>v</mi><mi>x</mi></msub><mo>=</mo><mn>25</mn><mo stretchy="false">(</mo><mn>0.80</mn><mo stretchy="false">)</mo><mo>=</mo><mn>20</mn><mspace width="0.167em"/><mtext>m/s</mtext></mrow></math>
+<math class="eq" display="block"><mrow><msub><mi>v</mi><mrow><mn>0</mn><mi>y</mi></mrow></msub><mo>=</mo><mn>25</mn><mo stretchy="false">(</mo><mn>0.60</mn><mo stretchy="false">)</mo><mo>=</mo><mn>15</mn><mspace width="0.167em"/><mtext>m/s</mtext></mrow></math>
+      <p class="wt">Vertical, with up as + and y = 0 at the ground. The ball starts at y = 20 m and lands at y = 0:</p>
+<math class="eq" display="block"><mrow><mn>0</mn><mo>=</mo><mn>20</mn><mo>+</mo><mn>15</mn><mi>t</mi><mo>&#x2212;</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mo stretchy="false">(</mo><mn>10</mn><mo stretchy="false">)</mo><msup><mi>t</mi><mn>2</mn></msup><mspace width="0.278em"/><mo>&#x2192;</mo><mspace width="0.278em"/><msup><mi>t</mi><mn>2</mn></msup><mo>&#x2212;</mo><mn>3</mn><mi>t</mi><mo>&#x2212;</mo><mn>4</mn><mo>=</mo><mn>0</mn></mrow></math>
+      <p class="wt">This factors as (t − 4)(t + 1) = 0. Throw away the negative root:</p>
+<math class="eq ans" display="block"><mrow><mi>t</mi><mo>=</mo><mn>4.0</mn><mspace width="0.167em"/><mtext>s</mtext></mrow></math>
+      <p class="wt">No quadratic? Split at the top instead: 15/10 = 1.5 s up to a peak 11.25 m above the cliff (31.25 m above the ground), then a drop from rest: 31.25 = ½(10)t², so t = 2.5 s. Total 4.0 s.</p>
+      <p class="wt">Horizontal (constant speed):</p>
+<math class="eq ans" display="block"><mrow><mi>x</mi><mo>=</mo><msub><mi>v</mi><mi>x</mi></msub><mi>t</mi><mo>=</mo><mo stretchy="false">(</mo><mn>20</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>4.0</mn><mo stretchy="false">)</mo><mo>=</mo><mn>80</mn><mspace width="0.167em"/><mtext>m</mtext></mrow></math>
+      <p class="wt">Landing: v<sub>y</sub> = 15 − (10)(4.0) = −25 m/s, and v<sub>x</sub> is still 20 m/s:</p>
+<math class="eq" display="block"><mrow><mi>v</mi><mo>=</mo><msqrt><mrow><msup><mn>20</mn><mn>2</mn></msup><mo>+</mo><msup><mn>25</mn><mn>2</mn></msup></mrow></msqrt></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>v</mi><mo>=</mo><mn>32</mn><mspace width="0.167em"/><mtext>m/s</mtext><mo>,</mo><mspace width="0.278em"/><mtext>51° below the horizontal</mtext></mrow></math>
+    </div>
+    <p class="take">“Double the time to the top” only works when the ball lands at the height it started from. Here that gives 3.0 s, which is when the ball is back at cliff height, still 20 m up. When the heights differ, use the full y equation or split the flight at the top.</p>
+    </div>
+  </details>
+</div>
 </div>
 <div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
 <div class="gcheck">
@@ -264,6 +375,10 @@ body.present .guide{display:none}
       <details><summary>Answer</summary><div>Along the string, the hanging weight (30 N) pulls one way and the block's weight component down the slope (2.0 × 10 × sin30° = 10 N) pulls the other. The hanging mass wins: a = (30 − 10)/(2.0 + 3.0) = 4.0 m/s², with the block moving up the slope.</div></details></li>
     <li><span class="ib">IB</span> How does air resistance change a projectile's path compared with the no-air parabola?
       <details><summary>Answer</summary><div>It doesn't go as high or as far. Its horizontal speed decreases during the flight, and the path is no longer symmetric: it comes down more steeply than it went up.</div></details></li>
+    <li><b>Who's right?</b> A car speeds up from rest in a straight line. An ornament hanging from the mirror swings back and holds steady at 20° from vertical. Ana says: “The car's acceleration is g tan20°, and a heavier ornament would hang at the same 20°.” Ben says: “Gravity pulls a heavier ornament harder, so it would hang closer to vertical.” Who's right, and how fast is the car going after 5.0 s?
+      <details><summary>Answer</summary><div>Ana. The ornament accelerates with the car, so the string's vertical part balances the weight (T cosθ = mg) and its horizontal part gives the acceleration (T sinθ = ma). Divide the two: tanθ = a/g, so a = g tan20° = 10 × 0.364 = 3.6 m/s². The mass cancels: a heavier ornament has more weight but needs more force to accelerate, by the same factor. After 5.0 s from rest, v = at = 18 m/s. (At a steady speed, the ornament would hang straight down.)</div></details></li>
+    <li>In the box-dragging example on the Worked examples tab (8.0 kg, μ<sub>k</sub> = 0.40, 50 N rope), you raise the rope to 53° and keep pulling with 50 N. Does the acceleration go up or down? (cos53° = 0.60, sin53° = 0.80)
+      <details><summary>Answer</summary><div>Down. Now F<sub>x</sub> = 30 N and F<sub>y</sub> = 40 N, so F<sub>N</sub> = 80 − 40 = 40 N and friction = 0.40 × 40 = 16 N. a = (30 − 16)/8.0 ≈ 1.8 m/s², less than 2.5 m/s². A steeper rope cuts friction, but it also gives up forward pull, and here the lost pull (10 N) is more than the friction saved (4 N). Whether a steeper pull helps depends on μ: it helps only when the friction saved beats the forward pull lost.</div></details></li>
   </ol>
 </div>
 </div>
