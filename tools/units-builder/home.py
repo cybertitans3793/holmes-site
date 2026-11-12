@@ -78,7 +78,7 @@ h2{margin:12px 0 0;font-size:26px;line-height:1.05;letter-spacing:-.02em}
 <div class="cards">
 {cards}
 </div>
-<p class="foot">Each unit page has its sims and things to try, plus practice questions where they’re ready. Homework is at the bottom of each class.</p>
+<p class="foot">Each unit page has three parts: Explore (sims with things to try), Study (a study guide) and Practice (review questions). Homework is at the bottom of each class.</p>
 </main>
 </body>
 </html>
