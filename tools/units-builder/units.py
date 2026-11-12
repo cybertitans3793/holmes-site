@@ -1343,3 +1343,81 @@ _tab('P2-05', 'Radioactive Decay', '', 'Decay Chain', 'decay', ['chain'], 'Decay
     'Start at U-238 and choose only α steps. What are A and Z after 3 α? Is that nuclide on the real series?',
     'Reach Pb-206 your own way. How many α and how many β⁻ did you use? Why can’t you get there with fewer α?',
     'Press β⁻ at U-238. Why is Np-238 not on the real series? Turn on “Real chain” to compare.'])
+
+
+# ---------------------------------------------------------------------------
+# 2026-11-12 tab merge (Teaching project: claude/site/handoff-tab-merge-2026-11-12.md).
+# Where several tabs on a unit use the same sim, they become one tab. The sim's own
+# mode buttons (or its own screen tabs, for fluids / green / plates) are the sub-menu,
+# and each old tab's tasks sit under a heading for its button ('## ' in build.py).
+# ---------------------------------------------------------------------------
+import re as _re, glob as _glob, os as _os
+_HERE = _os.path.dirname(_os.path.abspath(__file__))
+_LABELS = {}
+for _f in _glob.glob(_os.path.join(_HERE, 'sims', 'circ', '*.js')):
+    _src = open(_f, encoding='utf-8').read()
+    _m = _re.search(r"modes:\s*\[(.*?)\]\s*,\s*\n", _src, _re.S)
+    if _m:
+        _LABELS[_os.path.basename(_f)[:-3]] = dict(_re.findall(r"id:\s*'([^']+)',\s*label:\s*'((?:[^'\\]|\\.)*)'", _m.group(1)))
+_SCREEN_LABS = {'fluids', 'green', 'plates'}
+_MERGE_NAMES = {('P1-09', 'fluids'): 'Fluids Lab', ('P2-00', 'green'): 'Greenhouse Lab', ('AB-08', 'plates'): 'Plate Tectonics',
+                ('P2-04', 'slits'): 'Interference & Diffraction', ('P2-04', 'sound'): 'Sound', ('P2-04', 'optics'): 'Mirrors & Lenses',
+                ('AB-01', 'abmove'): 'Distance & Speed', ('AB-01', 'abaccel'): 'Acceleration & Free Fall', ('AB-01', 'abgraph'): 'Motion Graphs'}
+
+def _merge_unit(uid):
+    tabs = UNITS[uid]['tabs']
+    groups = {}
+    for t in tabs:
+        groups.setdefault(t['sim'], []).append(t)
+    out = []
+    for t in tabs:
+        g = groups[t['sim']]
+        if len(g) == 1:
+            out.append(t); continue
+        if t is not g[0]:
+            continue                      # folded into the first tab of its sim
+        sim, lab = t['sim'], t['sim'] in _SCREEN_LABS
+        key = SIMS[sim]['file'].split('/')[-1].replace('circ-', '').replace('.html', '')
+        labels = _LABELS.get(key, {})
+        m = dict(t)
+        m['name'] = _MERGE_NAMES.get((uid, sim), t['name'])
+        codes = []
+        for x in g:
+            if x.get('code') and x['code'] != 'IB' and x['code'] not in codes:
+                codes.append(x['code'])
+        m['code'] = ' / '.join(codes) if codes else t.get('code', '')
+        if not lab:
+            modes = []
+            for x in g:
+                for k in x.get('modes') or []:
+                    if k not in modes:
+                        modes.append(k)
+            m['modes'] = modes
+        sections = []
+        for x in g:
+            if lab:
+                head = '<b>' + x['name'] + '</b> screen' + (' (IB)' if x.get('code') == 'IB' else '')
+            else:
+                ls = [labels.get(k, k) for k in (x.get('modes') or [])]
+                ls = ls[:2] if len(ls) <= 2 else ls[:1]
+                head = 'Click ' + ' or '.join('<b>' + l + '</b>' for l in ls) + ' at the top'
+            notes = ['> ' + x['note']] if x.get('note') and x is not g[0] else []
+            sections.append((head, notes, list(x['tasks'])))
+        total = sum(len(s[2]) for s in sections)
+        if total > 10:
+            per = 3 if len(sections) <= 4 else 2
+            sections = [(h, n, ts[:per]) for h, n, ts in sections]
+        tasks = ['> Use the tabs inside the sim to switch screens.'] if lab else []
+        for h, n, ts in sections:
+            tasks += ['## ' + h] + n + ts
+        m['tasks'] = tasks
+        out.append(m)
+    UNITS[uid]['tabs'] = out
+
+for _uid in ('P1-02', 'P1-04', 'P1-05', 'P1-06', 'P1-07', 'P1-08', 'P1-09', 'P1-10', 'P2-00',
+             'P2-03', 'P2-04', 'P2-05', 'AB-01', 'AB-08'):
+    _merge_unit(_uid)
+
+# Cut: PhET tabs that repeat an original sim on the same page.
+for _uid, _name in (('P2-04', 'PhET Waves'), ('P2-04', 'PhET Optics'), ('P2-03', 'PhET Magnetism')):
+    UNITS[_uid]['tabs'] = [t for t in UNITS[_uid]['tabs'] if t['name'] != _name]

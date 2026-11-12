@@ -127,7 +127,9 @@ const SIMS = {{
     const t = UNIT.tabs[i]; if (!t) return; cur = i;
     [...tabsEl.querySelectorAll('.tab')].forEach((b, j) => b.setAttribute('aria-selected', String(j === i)));
     $('simname').textContent = t.name;
-    $('tasks').innerHTML = t.tasks.map(x => '<li>' + x + '</li>').join('');
+    // '## text' = a heading inside the list (merged tabs: one per sim mode); '> text' = a small note line. Numbering restarts after each heading.
+    let n = 0;
+    $('tasks').innerHTML = t.tasks.map(x => x.startsWith('## ') ? (n = 0, '<li class="th">' + x.slice(3) + '</li>') : x.startsWith('> ') ? '<li class="tn">' + x.slice(2) + '</li>' : '<li data-n="' + (++n) + '">' + x + '</li>').join('');
     $('note').hidden = !t.note; $('note').innerHTML = t.note || '';
     const s = SIMS[t.sim];
     frame.style.aspectRatio = s.ar;
