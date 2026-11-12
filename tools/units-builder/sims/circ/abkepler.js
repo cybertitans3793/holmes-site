@@ -32,7 +32,7 @@ const SIM = {
       '<h4>2 · The two shaded slices</h4><p class="st">Each one takes ' + pct + '% of a year, so each one has the <b>same area</b> (' + pct + '% of the whole ellipse).</p>' +
       '<h4>3 · So the speed changes</h4><p class="st">Close to the Sun the slice is short and wide: the planet covers more distance in the same time.</p>' +
       TEX`\frac{\text{distance near the Sun}}{\text{distance far away}} \approx ${mn(d.dP / d.dA)}` + '<p class="st">Fastest ÷ slowest speed:</p>' +
-      TEX`\frac{v_{\text{fast}}}{v_{\text{slow}}} = \frac{1 + e}{1 - e}` + TEX`\frac{v_{\text{fast}}}{v_{\text{slow}}} = \frac{1 + ${M.iv('e')}}{1 - ${M.iv('e')}}` + TEXA`\frac{v_{\text{fast}}}{v_{\text{slow}}} = ${mn(d.ratio)}` +
+      '<p class="st">Equal areas means the speed goes the opposite way from the distance: twice as far away, half as fast.</p>' + TEX`\frac{v_{\text{fast}}}{v_{\text{slow}}} = \frac{\text{farthest distance}}{\text{closest distance}}` + TEXA`\frac{v_{\text{fast}}}{v_{\text{slow}}} = ${mn(d.ratio)}` +
       '<p class="note">' + (v.e < 0.05 ? 'A circle: the planet is always the same distance from the Sun, so its speed never changes.' : 'Planets move fastest when closest to the Sun (perihelion) and slowest when farthest away (aphelion). Gravity speeds the planet up as it falls in, and slows it down as it climbs out.') + '</p>';
   },
   draw(v, d, mode, opt, t){

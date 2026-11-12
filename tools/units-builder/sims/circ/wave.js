@@ -3,11 +3,10 @@ const SIM = {
   title: 'Wave Basics',
   hint: 'v = fλ · T = 1/f',
   modes: [{ id: 'trans', label: 'Transverse' }, { id: 'long', label: 'Longitudinal' }, { id: 'medium', label: 'New medium' }, { id: 'polar', label: 'Polarization' }],
-  opts: [{ id: 'npol', label: 'Filters', modes: ['polar'], choices: [['two', 'Two']] }],
   ivs(mode, opt){
     if (mode === 'polar') return [
       { id: 'I0', sym: 'I<sub>0</sub>', symText: 'I0', label: 'Intensity of unpolarized light', unit: 'W/m²', min: 10, max: 1000, step: 10, val: 400 },
-      { id: 'th', sym: 'θ', symText: 'θ', label: (opt && opt.npol) === 'three' ? 'Angle of the middle filter' : 'Angle of the second filter (analyzer)', unit: '°', min: 0, max: 90, step: 1, val: 30, graph: true }];
+      { id: 'th', sym: 'θ', symText: 'θ', label: 'Angle of the second filter (analyzer)', unit: '°', min: 0, max: 90, step: 1, val: 30, graph: true }];
     if (mode === 'medium') return [
       { id: 'f', sym: 'f', symText: 'f', label: 'Frequency (set by the source)', unit: 'Hz', min: 0.2, max: 2, step: 0.05, val: 1 },
       { id: 'v1', sym: 'v<sub>1</sub>', symText: 'v1', label: 'Speed in medium 1', unit: 'm/s', min: 0.5, max: 3, step: 0.1, val: 2 },
@@ -20,8 +19,8 @@ const SIM = {
   },
   presets: [{ label: 'Double the frequency', mode: 'trans', v: { f: 1 } }, { label: 'Q half a λ from P', mode: 'trans', v: { f: 0.5, v: 1, dx: 1 } }, { label: 'Into a slower medium', mode: 'medium', v: { v1: 2, v2: 1 } }, { label: 'Crossed filters', mode: 'polar', v: { th: 90 } }],
   calc(v, mode, opt){
-    if (mode === 'polar'){ const three = (opt.npol || 'two') === 'three', I1 = v.I0 / 2, c2 = Math.pow(Math.cos(v.th * DEG), 2);
-      const I2 = I1 * c2, I3 = three ? I2 * Math.pow(Math.cos((90 - v.th) * DEG), 2) : NaN; return { three, I1, I2, I3, Iout: three ? I3 : I2 }; }
+    if (mode === 'polar'){ const I1 = v.I0 / 2, c2 = Math.pow(Math.cos(v.th * DEG), 2);
+      const I2 = I1 * c2; return { I1, I2, Iout: I2 }; }
     if (mode === 'medium') return { l1: v.v1 / v.f, l2: v.v2 / v.f, T: 1 / v.f };
     const lam = v.v / v.f, T = 1 / v.f, ph = 2 * PI * v.dx / lam, phm = ((ph % (2 * PI)) + 2 * PI) % (2 * PI);
     return { lam, T, ph, phm, vmax: 2 * PI * v.f * v.A / 100 };
@@ -37,8 +36,7 @@ const SIM = {
       let s = '<h4>1 · First filter: unpolarized → polarized</h4><p class="st">Unpolarized light vibrates in every direction. A filter lets through only one plane, so half the intensity gets through:</p>' +
         TEX`I_1 = \frac{I_0}{2}` + TEX`I_1 = \frac{${M.iv('I0')}}{2}` + TEXA`I_1 = ${M.n(d.I1, 'W/m²')}` +
         '<h4>2 · The second filter at θ to the first</h4><p class="st">' + (v.th === 0 ? 'Lined up (0°): all of the polarized light gets through.' : v.th >= 90 ? 'Crossed (90°): <b>no light</b> gets through. The light’s vibration is completely across the second filter’s axis.' : 'At ' + H.iv('th') + ' only part of the light gets through: the bigger the angle, the dimmer it gets, down to nothing at 90°.') + '</p>';
-      if (d.three) s += '<h4>3 · Last filter at 90° to the first, so (90° − θ) to the middle one</h4>' + TEX`I_3 = I_2\,\cos^2(90^{\circ} - \theta)` + TEX`I_3 = ${M.n(d.I2)}\,\cos^2(90^{\circ} - ${M.iv('th')})` + TEXA`I_3 = ${M.n(d.I3, 'W/m²')}` + '<p class="note">With no middle filter, crossed filters pass nothing. Adding a filter <i>between</i> them lets light through: the middle filter re-polarizes the light at a new angle. Most light gets through at θ = 45°.</p>';
-      else s += '<p class="note">Only <b>transverse</b> waves can be polarized; sound (longitudinal) can’t. Uses: polarized sunglasses block glare (light reflected off water or a road is partly polarized), LCD screens, 3-D movie glasses.</p>';
+      s += '<p class="note">Only <b>transverse</b> waves can be polarized; sound (longitudinal) can’t. Uses: polarized sunglasses block glare (light reflected off water or a road is partly polarized), LCD screens, 3-D movie glasses.</p>';
       return s;
     }
     if (mode === 'medium') return '<h4>1 · Frequency stays the same</h4><p class="st">The source sets f = ' + H.iv('f') + ' on both sides. Each crest that arrives at the boundary makes one crest on the other side.</p>' +
@@ -56,7 +54,7 @@ const SIM = {
   draw(v, d, mode, opt, t){
     if (mode === 'polar'){
       panelTitle('UNPOLARIZED LIGHT THROUGH FILTERS', 10, 18);
-      const y = 150, xs = d.three ? [110, 210, 310] : [140, 290], angs = d.three ? [0, v.th, 90] : [0, v.th], Is = d.three ? [v.I0, d.I1, d.I2, d.I3] : [v.I0, d.I1, d.I2];
+      const y = 150, xs = [140, 290], angs = [0, v.th], Is = [v.I0, d.I1, d.I2];
       const seg = (x1, x2, I, ang) => { const a = Math.min(1, I / v.I0); ctx.fillStyle = 'rgba(255,210,60,' + (0.15 + 0.7 * a) + ')'; ctx.fillRect(x1, y - 22, x2 - x1, 44);
         const mid = (x1 + x2) / 2; ctx.strokeStyle = '#111'; ctx.lineWidth = 2;
         if (ang === null){ [0, 45, 90, 135].forEach(q => { const c = Math.cos(q * DEG) * 18 * Math.sqrt(a + 0.05), s = Math.sin(q * DEG) * 18 * Math.sqrt(a + 0.05); ctx.beginPath(); ctx.moveTo(mid - s, y - c); ctx.lineTo(mid + s, y + c); ctx.stroke(); }); }
@@ -70,10 +68,10 @@ const SIM = {
       text('lines show each filter’s transmission axis', 12, 312, { font: '600 10px "IBM Plex Mono",monospace', col: '#4a4a4a' });
       panelTitle('OUTPUT vs ANGLE', 395, 18);
       const gx = 405, gy = 230, gw = 180, gh = 150; ctx.strokeStyle = '#111'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(gx, gy - gh); ctx.lineTo(gx, gy); ctx.lineTo(gx + gw, gy); ctx.stroke();
-      ctx.strokeStyle = '#1546d6'; ctx.lineWidth = 2; ctx.beginPath(); for (let i = 0; i <= 90; i++){ const c2 = Math.pow(Math.cos(i * DEG), 2), I = d.three ? c2 * (1 - c2) * 4 : c2; i ? ctx.lineTo(gx + gw * i / 90, gy - gh * I) : ctx.moveTo(gx, gy - gh * I); } ctx.stroke();
-      const cur = d.Iout / (d.three ? d.I1 / 4 : d.I1); ctx.fillStyle = '#ff6a2b'; ctx.beginPath(); ctx.arc(gx + gw * v.th / 90, gy - gh * cur, 5, 0, 7); ctx.fill();
+      ctx.strokeStyle = '#1546d6'; ctx.lineWidth = 2; ctx.beginPath(); for (let i = 0; i <= 90; i++){ const c2 = Math.pow(Math.cos(i * DEG), 2), I = c2; i ? ctx.lineTo(gx + gw * i / 90, gy - gh * I) : ctx.moveTo(gx, gy - gh * I); } ctx.stroke();
+      const cur = d.Iout / d.I1; ctx.fillStyle = '#ff6a2b'; ctx.beginPath(); ctx.arc(gx + gw * v.th / 90, gy - gh * cur, 5, 0, 7); ctx.fill();
       text('0°', gx, gy + 14, { align: 'center', font: '500 10px "IBM Plex Mono",monospace' }); text('90°', gx + gw, gy + 14, { align: 'center', font: '500 10px "IBM Plex Mono",monospace' }); text('θ', gx + gw / 2, gy + 14, { align: 'center', font: '600 11px "IBM Plex Mono",monospace' });
-      text(d.three ? 'max = I₀/8 at 45°' : 'max = I₀/2 at 0°', gx + 4, gy - gh - 6, { font: '600 10px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+      text('max = I₀/2 at 0°', gx + 4, gy - gh - 6, { font: '600 10px "IBM Plex Mono",monospace', col: '#4a4a4a' });
       text('I out = ' + fplain(d.Iout) + ' W/m²', 400, 290, { font: '700 13px "Space Grotesk",sans-serif' });
       return;
     }

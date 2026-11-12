@@ -91,6 +91,6 @@ const SIM = {
     text('T_f = ' + fplain(d.Tf) + ' °C', gx + gw, Y(d.Tf) - 5, { align: 'right', font: '700 11px "IBM Plex Mono",monospace', col: '#1e7d45' });
     text('time', gx + gw, gy + 13, { align: 'right', font: '600 9px "IBM Plex Mono",monospace', col: '#4a4a4a' });
     text('energy moved: ' + fplain(d.Q) + ' J', 400, 266, { font: '700 13px "Space Grotesk",sans-serif' });
-    if (mode === 'ice') text(d.all ? 'all the ice melts' : 'ice left over: ' + fplain(v.mi - d.melted) + ' kg', 400, 288, { font: '700 13px "Space Grotesk",sans-serif', col: d.all ? '#1e7d45' : '#c43a00' });
+    if (mode === 'ice'){ const left = v.mi - d.melted, just = !d.all && left < 0.0005; text(d.all ? 'all the ice melts' : just ? 'just barely: ice and water at 0 °C' : 'ice left over: ' + fplain(left) + ' kg', 400, 288, { font: '700 13px "Space Grotesk",sans-serif', col: d.all ? '#1e7d45' : '#c43a00' }); }
   }
 };

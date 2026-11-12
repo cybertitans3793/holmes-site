@@ -57,6 +57,8 @@ html,body{background:#fff!important}
 .ptbtn:not(:disabled):active{background:#ff6a2b!important}
 .ptround{border:2px solid #111!important;background:#fff!important}
 .ptround:not(:disabled):hover{background:#ffe2d3!important}
+.ptround.ptreset{background:#ff6a2b!important}
+.ptround.ptreset:not(:disabled):hover{background:#e0551c!important}
 .ptslider,input[type=range]{accent-color:#111}
 input[type=checkbox],input[type=radio]{accent-color:#111}
 </style></head>
@@ -321,7 +323,7 @@ var FL = (function () {
     if (!atmOn) return 0; var f = ATM + (99490 - ATM) * y / (500 * 0.3048); return f * g / G_EARTH;
   }
   function resetButton(parent, fn, style) {
-    var b = XL.el('button', { cls: 'ptround', title: 'Reset All', style: 'background:radial-gradient(circle at 40% 35%,#ffd9a0,#f08c1a);border-color:#a85a00;' + (style || ''), html: '<svg viewBox="0 0 20 20" width="20" height="20"><path d="M10 3a7 7 0 1 1-6.6 4.7" fill="none" stroke="#fff" stroke-width="2.6"/><path d="M1.5 3.5 L4.4 8.6 L8.4 4.6Z" fill="#fff"/></svg>' }, parent);
+    var b = XL.el('button', { cls: 'ptround ptreset', title: 'Reset All', style: 'background:radial-gradient(circle at 40% 35%,#ffd9a0,#f08c1a);border-color:#a85a00;' + (style || ''), html: '<svg viewBox="0 0 20 20" width="20" height="20"><path d="M10 3a7 7 0 1 1-6.6 4.7" fill="none" stroke="#fff" stroke-width="2.6"/><path d="M1.5 3.5 L4.4 8.6 L8.4 4.6Z" fill="#fff"/></svg>' }, parent);
     b.onclick = fn; return b;
   }
   return { ATM: ATM, G: G_EARTH, UNITS: UNITS, fmt: fmt, fluidRGB: fluidRGB, fluidFill: fluidFill, fluidFillOpaque: fluidFillOpaque, MVT: MVT, sky: sky, ground: ground, grass: grass, cementStroke: cementStroke,
@@ -724,7 +726,7 @@ EXTRA_TABS.push(function (stage) {
     ctx.font = '12px Arial'; ctx.fillStyle = '#7a3db8'; ctx.textAlign = 'left'; ctx.fillText('water surface level', M.x(7.6) - 110, M.y(0) - 6);
     ctx.fillStyle = '#222'; ctx.font = 'bold 13px Arial'; ctx.fillText(broken ? (S.sOut >= surf ? 'Outlet is above the surface: no flow' : 'Siphon broken: water boils / air gets in at the top') : 'Flowing: v = ' + v.toFixed(2) + ' m/s', 20, 30);
     infoBox.innerHTML = '<p class="st">Outlet ' + Math.abs(dh).toFixed(2) + ' m ' + (dh >= 0 ? 'below' : 'above') + ' the surface; hump ' + (S.sTop - surf).toFixed(2) + ' m above it.</p>' +
-      '<p class="st">Bernoulli from surface to outlet:</p>' + ("<math display=\"block\"><mrow><mi>v</mi><mo>&#x0003D;</mo><msqrt><mrow><mn>2</mn><mi>g</mi><mspace width=\"0.167em\" /><mi>&#x00394;</mi><mi>h</mi></mrow></msqrt></mrow></math>") + ("<math class=\"ans\" display=\"block\"><mrow><mi>v</mi><mo>&#x0003D;</mo>" + (MM.n(dh > 0 ? Math.sqrt(2 * G * dh).toFixed(2) : '0', 'm/s')) + "</mrow></math>") +
+      '<p class="st">Bernoulli from surface to outlet:</p>' + ("<math display=\"block\"><mrow><mi>v</mi><mo>&#x0003D;</mo><msqrt><mrow><mn>2</mn><mi>g</mi><mspace width=\"0.167em\" /><mi>&#x00394;</mi><mi>h</mi></mrow></msqrt></mrow></math>") + ("<math class=\"ans\" display=\"block\"><mrow><mi>v</mi><mo>&#x0003D;</mo>" + (MM.n(v.toFixed(2), 'm/s')) + "</mrow></math>") + (broken && dh > 0 ? '<p class="st" style="color:#b3261e">The siphon is broken, so no water flows (v = 0). Bernoulli would give ' + Math.sqrt(2 * G * dh).toFixed(2) + ' m/s only if the water column stayed whole.</p>' : '') +
       '<p class="st">Pressure at the top of the hump:</p>' + ("<math display=\"block\"><mrow><msub><mi>P</mi><mrow><mtext>top</mtext></mrow></msub><mo>&#x0003D;</mo><msub><mi>P</mi><mrow><mtext>atm</mtext></mrow></msub><mo>&#x02212;</mo><mi>&#x003C1;</mi><mi>g</mi><msub><mi>h</mi><mrow><mtext>top</mtext></mrow></msub><mo>&#x02212;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac><mi>&#x003C1;</mi><msup><mi>v</mi><mn>2</mn></msup></mrow></math>") + ("<math class=\"ans\" display=\"block\"><mrow><msub><mi>P</mi><mrow><mtext>top</mtext></mrow></msub><mo>&#x0003D;</mo>" + (MM.n((Math.max(Ptop, 0) / 1000).toFixed(1), 'kPa')) + "</mrow></math>") +
       '<p class="st" style="color:#555">The air pressure on the tank pushes the water up and over. If P_top drops to ~0 (about 10 m up for water), the siphon fails.</p>';
   }
