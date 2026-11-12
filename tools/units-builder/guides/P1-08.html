@@ -117,6 +117,9 @@ body.present .guide{display:none}
       <li>Pointing friction down the ramp on a rolling object. It points up the ramp whether the object rolls down or up, and it's static friction, so it turns no energy into thermal energy.</li>
       <li>Using conservation of linear momentum when something hits a pivoted object. The pivot pushes during the hit; only angular momentum about the pivot is conserved.</li>
       <li>Saying an object moving in a straight line has no angular momentum. About a point off its path it has L = mvr<sub>⊥</sub>, and that stays constant.</li>
+      <li>Thinking zero net force means no spinning (or that zero net torque means no speeding up). Two equal, opposite forces at different points can spin an object without moving its center. Write both ΣF and Στ.</li>
+      <li>Using the height change of the end of a swinging rod for its gravitational energy. Use the height change of its center of mass.</li>
+      <li>Leaving the floor's normal force at the middle of a box that's about to tip. Just before it tips, the whole normal force and friction act at the edge it tips over.</li>
     </ul>
   </div>
 </div>
@@ -360,6 +363,95 @@ body.present .guide{display:none}
     <p class="take">Friction points <b>up</b> the ramp: it's the only force with a torque about the center, so it's what spins the cylinder faster. It's static friction (the contact point doesn't slide), so no energy is lost, and the energy method gives the same answer. A frictionless block would speed up at 5.0 m/s²; the cylinder gets less because part of the work goes into spinning. Rolling <i>up</i> the ramp, friction still points up the ramp: there it's slowing the spin.</p>
     </div>
   </details>
+  <details class="ex">
+    <summary><span class="kind">Rotational energy</span><h4>A rod swings down from horizontal</h4></summary>
+    <div class="exbody">
+    <svg width="150" height="130" viewBox="0 0 150 130" aria-label="Rod pivoted at its left end, held horizontal, swinging down to hang vertically">
+      <line x1="6" y1="6" x2="34" y2="6" stroke="#111" stroke-width="3"/>
+      <rect x="20" y="13" width="100" height="6" fill="#fde1d6" stroke="#111" stroke-width="2"/>
+      <line x1="20" y1="16" x2="20" y2="116" stroke="#111" stroke-width="2" stroke-dasharray="4 3"/>
+      <circle cx="20" cy="16" r="4" fill="#111"/>
+      <circle cx="70" cy="16" r="2.5" fill="#111"/>
+      <text x="62" y="32" font-size="10" font-family="IBM Plex Mono,monospace">cm</text>
+      <text x="84" y="10" font-size="10" font-family="IBM Plex Mono,monospace">1.2 m</text>
+      <path d="M120 24 A100 100 0 0 1 30 114" fill="none" stroke="#ff6a2b" stroke-width="2" stroke-dasharray="5 3"/>
+      <polygon points="32,108 32,120 24,114" fill="#ff6a2b"/>
+      <text x="96" y="96" font-size="11" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">ω ?</text>
+    </svg>
+    <p>A uniform rod 1.2 m long (I = ⅓ML² about one end) is pivoted at one end on a frictionless axle. It's held horizontal and released. Find its angular velocity and the speed of its tip when it hangs straight down. Then find its angular acceleration at the moment it's released.</p>
+    <div class="work">
+      <p class="wt">System: rod + Earth. The pivot doesn't move, so it does no work, and mechanical energy is conserved. The rod's center of mass falls half its length, 0.60 m, and all its kinetic energy is rotation about the pivot:</p>
+<math class="eq" display="block"><mrow><mi>M</mi><mi>g</mi><mo stretchy="false">(</mo><mn>0.60</mn><mo stretchy="false">)</mo><mo>=</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mrow><mo>(</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>3</mn></mfrac></mstyle><mi>M</mi><mo stretchy="false">(</mo><mn>1.2</mn><msup><mo stretchy="false">)</mo><mn>2</mn></msup><mo>)</mo></mrow><msup><mi>ω</mi><mn>2</mn></msup></mrow></math>
+<math class="eq" display="block"><mrow><mo>&#x2192;</mo><mspace width="0.278em"/><mn>6.0</mn><mo>=</mo><mn>0.24</mn><mspace width="0.167em"/><msup><mi>ω</mi><mn>2</mn></msup></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>ω</mi><mo>=</mo><mn>5.0</mn><mspace width="0.167em"/><mtext>rad/s</mtext></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>v</mi><mtext>tip</mtext></msub><mo>=</mo><mi>ω</mi><mi>L</mi><mo>=</mo><mo stretchy="false">(</mo><mn>5.0</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>1.2</mn><mo stretchy="false">)</mo><mo>=</mo><mn>6.0</mn><mspace width="0.167em"/><mtext>m/s</mtext></mrow></math>
+      <p class="wt">At release, gravity acts at the center of mass with lever arm L/2 = 0.60 m (the pivot's force has no torque):</p>
+<math class="eq" display="block"><mrow><mi>α</mi><mo>=</mo><mfrac><mi>τ</mi><mi>I</mi></mfrac><mo>=</mo><mfrac><mrow><mi>M</mi><mi>g</mi><mo stretchy="false">(</mo><mi>L</mi><mo>/</mo><mn>2</mn><mo stretchy="false">)</mo></mrow><mrow><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>3</mn></mfrac></mstyle><mi>M</mi><msup><mi>L</mi><mn>2</mn></msup></mrow></mfrac><mo>=</mo><mfrac><mrow><mn>3</mn><mi>g</mi></mrow><mrow><mn>2</mn><mi>L</mi></mrow></mfrac><mo>=</mo><mfrac><mrow><mn>3</mn><mo stretchy="false">(</mo><mn>10</mn><mo stretchy="false">)</mo></mrow><mrow><mn>2</mn><mo stretchy="false">(</mo><mn>1.2</mn><mo stretchy="false">)</mo></mrow></mfrac></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>α</mi><mo>=</mo><mn>12.5</mn><mspace width="0.167em"/><msup><mtext>rad/s</mtext><mn>2</mn></msup></mrow></math>
+      <p class="wt">So the tip starts with a<sub>t</sub> = αL = 15 m/s², more than g.</p>
+    </div>
+    <p class="take">Gravitational energy uses the height change of the <b>center of mass</b>, not of the tip. The torque isn't constant (its lever arm shrinks as the rod swings), so rotational kinematics can't be used here, but energy can. α is largest at release and zero at the bottom, where gravity points through the pivot; ω is largest at the bottom. Every point beyond ⅔L = 0.80 m starts out falling faster than g: a coin resting on the far end gets left behind.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Tip or slide?</span><h4>Pushing a tall box high or low</h4></summary>
+    <div class="exbody">
+    <svg width="170" height="150" viewBox="0 0 170 150" aria-label="Tall box on the floor pushed from the left at two heights; it would tip about its bottom right corner">
+      <line x1="2" y1="130" x2="168" y2="130" stroke="#111" stroke-width="3"/>
+      <rect x="50" y="10" width="60" height="120" fill="#fde1d6" stroke="#111" stroke-width="2"/>
+      <circle cx="110" cy="130" r="4" fill="#ff6a2b"/>
+      <line x1="8" y1="30" x2="42" y2="30" stroke="#ff6a2b" stroke-width="3"/><polygon points="40,25 40,35 49,30" fill="#ff6a2b"/>
+      <line x1="8" y1="80" x2="42" y2="80" stroke="#ff6a2b" stroke-width="3"/><polygon points="40,75 40,85 49,80" fill="#ff6a2b"/>
+      <text x="10" y="24" font-size="10" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">1.0 m</text>
+      <text x="6" y="74" font-size="10" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">0.50 m</text>
+      <text x="58" y="66" font-size="10" font-family="IBM Plex Mono,monospace">200 N</text>
+      <text x="114" y="60" font-size="10" font-family="IBM Plex Mono,monospace">1.2 m</text>
+      <text x="58" y="144" font-size="10" font-family="IBM Plex Mono,monospace">0.60 m</text>
+    </svg>
+    <p>A uniform box 0.60 m wide and 1.2 m tall weighs 200 N. The coefficient of static friction with the floor is 0.40. You push horizontally on its side, slowly increasing the force. Does it slide or tip first if you push 1.0 m above the floor? What if you push 0.50 m above the floor?</p>
+    <div class="work">
+      <p class="wt">Sliding starts when the push beats the most static friction can give:</p>
+<math class="eq" display="block"><mrow><msub><mi>F</mi><mtext>slide</mtext></msub><mo>=</mo><msub><mi>μ</mi><mi>s</mi></msub><mi>N</mi><mo>=</mo><mo stretchy="false">(</mo><mn>0.40</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>200</mn><mo stretchy="false">)</mo><mo>=</mo><mn>80</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+      <p class="wt">Just as it starts to tip, the box rests only on its front bottom corner, so the floor's normal force and friction both act there. Take torques about that corner so they drop out. The weight acts at the center, 0.30 m back from the corner:</p>
+<math class="eq" display="block"><mrow><msub><mi>F</mi><mtext>tip</mtext></msub><mi>h</mi><mo>=</mo><mo stretchy="false">(</mo><mn>200</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>0.30</mn><mo stretchy="false">)</mo><mspace width="0.278em"/><mo>&#x2192;</mo><mspace width="0.278em"/><msub><mi>F</mi><mtext>tip</mtext></msub><mo>=</mo><mfrac><mn>60</mn><mi>h</mi></mfrac></mrow></math>
+      <p class="wt">Pushing at h = 1.0 m:</p>
+<math class="eq ans" display="block"><mrow><msub><mi>F</mi><mtext>tip</mtext></msub><mo>=</mo><mn>60</mn><mspace width="0.167em"/><mtext>N</mtext><mo>&lt;</mo><mn>80</mn><mspace width="0.167em"/><mtext>N, so it tips</mtext></mrow></math>
+      <p class="wt">Pushing at h = 0.50 m:</p>
+<math class="eq ans" display="block"><mrow><msub><mi>F</mi><mtext>tip</mtext></msub><mo>=</mo><mn>120</mn><mspace width="0.167em"/><mtext>N</mtext><mo>&gt;</mo><mn>80</mn><mspace width="0.167em"/><mtext>N, so it slides</mtext></mrow></math>
+    </div>
+    <p class="take">Work out both thresholds and see which force is reached first. Sliding doesn't care where you push; tipping does, because a higher push has a longer lever arm about the corner. The two are equal at h = 0.30/0.40 = 0.75 m. Turned around, the lowest height at which a box tips instead of sliding tells you μ<sub>s</sub>.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Falling and spinning</span><h4>A yo-yo unwinding from its string</h4></summary>
+    <div class="exbody">
+    <svg width="120" height="130" viewBox="0 0 120 130" aria-label="Yo-yo falling as its string unwinds from a small axle; the string's top end is held fixed">
+      <line x1="20" y1="6" x2="100" y2="6" stroke="#111" stroke-width="3"/>
+      <line x1="66" y1="6" x2="66" y2="74" stroke="#111" stroke-width="2"/>
+      <circle cx="60" cy="74" r="26" fill="#fde1d6" stroke="#111" stroke-width="2"/>
+      <circle cx="60" cy="74" r="6" fill="#fff" stroke="#111" stroke-width="2"/>
+      <text x="70" y="36" font-size="11" font-family="IBM Plex Mono,monospace">T</text>
+      <path d="M32 58 A30 30 0 0 0 36 92" fill="none" stroke="#ff6a2b" stroke-width="2"/><polygon points="31,89 39,94 39,86" fill="#ff6a2b"/>
+      <text x="10" y="80" font-size="11" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">α</text>
+      <text x="44" y="118" font-size="10" font-family="IBM Plex Mono,monospace">a ↓</text>
+    </svg>
+    <p>A 0.10 kg yo-yo (I = 4.0 × 10<sup>−5</sup> kg·m²) falls from rest as its string unwinds from an axle of radius 1.0 cm. The top of the string is held still. Find the yo-yo's acceleration, the tension in the string, and its speed after falling 0.50 m.</p>
+    <div class="work">
+      <p class="wt">The yo-yo both falls and spins, so write both laws for it. Falling (down = +):</p>
+<math class="eq" display="block"><mrow><mi>m</mi><mi>g</mi><mo>&#x2212;</mo><mi>T</mi><mo>=</mo><mi>m</mi><mi>a</mi><mspace width="0.278em"/><mo>&#x2192;</mo><mspace width="0.278em"/><mn>1.0</mn><mo>&#x2212;</mo><mi>T</mi><mo>=</mo><mn>0.10</mn><mi>a</mi></mrow></math>
+      <p class="wt">Spinning about its center: only the string has a torque (weight acts at the center). The string unwinds without slipping, so α = a/r:</p>
+<math class="eq" display="block"><mrow><mi>T</mi><mi>r</mi><mo>=</mo><mi>I</mi><mfrac><mi>a</mi><mi>r</mi></mfrac><mspace width="0.278em"/><mo>&#x2192;</mo><mspace width="0.278em"/><mi>T</mi><mo>=</mo><mfrac><mi>I</mi><msup><mi>r</mi><mn>2</mn></msup></mfrac><mi>a</mi><mo>=</mo><mfrac><mrow><mn>4.0</mn><mo>&#x00D7;</mo><msup><mn>10</mn><mrow><mo>&#x2212;</mo><mn>5</mn></mrow></msup></mrow><mrow><mo stretchy="false">(</mo><mn>0.010</mn><msup><mo stretchy="false">)</mo><mn>2</mn></msup></mrow></mfrac><mi>a</mi><mo>=</mo><mn>0.40</mn><mi>a</mi></mrow></math>
+      <p class="wt">Add the two equations:</p>
+<math class="eq" display="block"><mrow><mn>1.0</mn><mo>=</mo><mn>0.50</mn><mi>a</mi></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>a</mi><mo>=</mo><mn>2.0</mn><mspace width="0.167em"/><msup><mtext>m/s</mtext><mn>2</mn></msup></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>T</mi><mo>=</mo><mo stretchy="false">(</mo><mn>0.40</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>2.0</mn><mo stretchy="false">)</mo><mo>=</mo><mn>0.80</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+      <p class="wt">Speed after 0.50 m:</p>
+<math class="eq ans" display="block"><mrow><mi>v</mi><mo>=</mo><msqrt><mrow><mn>2</mn><mi>a</mi><mi>d</mi></mrow></msqrt><mo>=</mo><msqrt><mrow><mn>2</mn><mo stretchy="false">(</mo><mn>2.0</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>0.50</mn><mo stretchy="false">)</mo></mrow></msqrt><mo>=</mo><mn>1.4</mn><mspace width="0.167em"/><mtext>m/s</mtext></mrow></math>
+      <p class="wt">Energy check: ½mv² = 0.10 J and ½Iω² = ½(4.0 × 10<sup>−5</sup>)(141 rad/s)² = 0.40 J, which add to mgh = (0.10)(10)(0.50) = 0.50 J.</p>
+    </div>
+    <p class="take">There's no fixed axle: the yo-yo's center moves, so it needs ΣF = ma <i>and</i> Στ = Iα. Because the axle is so small, the string needs a lot of tension to spin it, so the tension is close to mg and the yo-yo falls at only g/5. Four-fifths of the energy ends up as spin.</p>
+    </div>
+  </details>
 </div>
 </div>
 <div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
@@ -393,6 +485,16 @@ body.present .guide{display:none}
       <details><summary>Answer</summary><div>Ben. Every link of the chain moves at the same speed, so the two rims share v = rω, not ω. The sprocket's radius is 0.4 times the chainring's, so it turns 2.5 times as fast: 2.5 rev/s. The back wheel is on the sprocket's axle, so it shares the sprocket's ω: 2.5 × 2π = 15.7 rad/s, and v = rω = (0.35)(15.7) ≈ 5.5 m/s. Linked by a chain or belt: same rim speed. On the same axle: same ω.</div></details></li>
     <li>A uniform 4.0 m board weighing 120 N lies on a table with 1.5 m sticking out past the edge. A 50 N cat walks out along the overhanging part. How far past the edge can it go before the board tips? Where does the table push on the board at that moment?
       <details><summary>Answer</summary><div>Just as it starts to tip, the board lifts off everywhere except the table's edge, so the table's whole force (120 + 50 = 170 N) acts at the edge. Take torques about the edge. The board's weight acts at its center, 2.0 − 1.5 = 0.50 m back from the edge: 50x = 120(0.50), so x = 1.2 m, 0.30 m short of the end.</div></details></li>
+    <li>A 2.0 kg bar floats at rest in space. (a) Two 3.0 N forces push on it at its two ends, perpendicular to the bar and in opposite directions. (b) Just one 3.0 N force pushes perpendicular to the bar at one end. In each case, does the center of the bar start to move, and does the bar start to spin?
+      <details><summary>Answer</summary><div>(a) The net force is zero, so the center stays put, but both forces turn the bar the same way, so it spins about its center. (b) The net force is 3.0 N, so the center accelerates at 3.0/2.0 = 1.5 m/s², <i>and</i> the bar spins, because the force has a torque about the center. Net force decides how the center of mass moves; net torque decides how the spin changes. You need to check both.</div></details></li>
+    <li>A grinding wheel (I = 0.50 kg·m²) spins at 30 rad/s. When the motor is switched off, a steady friction torque of 0.25 N·m slows it. How long does it take to stop? How much work does friction do?
+      <details><summary>Answer</summary><div>Angular impulse: τΔt = ΔL, and L = Iω = (0.50)(30) = 15 kg·m²/s, so Δt = 15/0.25 = 60 s. Friction removes all the kinetic energy: W = ½Iω² = ½(0.50)(30)² = 225 J. Check with W = τΔθ: α = 0.25/0.50 = 0.50 rad/s², Δθ = 30²/(2 × 0.50) = 900 rad, and (0.25)(900) = 225 J.</div></details></li>
+    <li>In a lab, hanging masses spin up a platform. Students plot torque (vertical axis) against angular acceleration and get a straight line through (5.0 rad/s², 0.11 N·m) and (15 rad/s², 0.31 N·m). What do the slope and the vertical intercept tell you?
+      <details><summary>Answer</summary><div>Slope = (0.31 − 0.11)/(15 − 5.0) = 0.020 kg·m²: from τ = Iα, that's the platform's rotational inertia. The intercept is 0.11 − (0.020)(5.0) = 0.010 N·m: the torque needed before it speeds up at all, which is the friction torque in the axle. The line really says τ<sub>string</sub> − τ<sub>friction</sub> = Iα.</div></details></li>
+    <li>Three identical solid cylinders start from rest at the same height on three identical ramps. Ramp A has enough friction for rolling without slipping. Ramp B is slick, so its cylinder rolls but also slips. Ramp C is frictionless. Rank their speeds at the bottom, and their total kinetic energies.
+      <details><summary>Answer</summary><div>Speed: C &gt; B &gt; A. On C nothing exerts a torque about the center, so it doesn't spin at all and all its energy is translational. B's kinetic friction is weaker than the static friction on A, so B spins less and more of its energy goes into moving down the ramp. Total kinetic energy: A = C &gt; B. Static friction on A does no dissipative work and C has no friction, so both end with all of mgh. On B the contact point slides, so kinetic friction turns some energy into thermal energy.</div></details></li>
+    <li><b>Who's right?</b> A 0.20 kg puck on a frictionless table moves in a circle of radius 0.60 m at 2.0 m/s, held by a string that passes down through a hole at the center. Someone under the table pulls the string until the radius is 0.30 m. Kai says: “The string always pulls toward the hole, at right angles to the motion, so it does no work. The puck keeps its 2.0 m/s.” Lena says: “The string's pull has no torque about the hole, so mvr stays the same and the puck speeds up to 4.0 m/s. The string does work on it.” Who's right? How much work is done?
+      <details><summary>Answer</summary><div>Lena. The pull points at the hole, so angular momentum about the hole is conserved: (0.20)(2.0)(0.60) = (0.20)v(0.30) gives v = 4.0 m/s. Kai's mistake: while the string is being pulled in, the puck spirals inward, so it moves partly along the string and the pull does positive work. K goes from ½(0.20)(2.0)² = 0.40 J to ½(0.20)(4.0)² = 1.6 J, so the person pulling does 1.2 J of work. If the speed stayed at 2.0 m/s, mvr would halve, which would need a torque.</div></details></li>
   </ol>
 </div>
 </div>
