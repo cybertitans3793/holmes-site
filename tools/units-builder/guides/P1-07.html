@@ -109,6 +109,8 @@ body.present .guide{display:none}
       <li>Saying a braking car's momentum “turned into heat.” Kinetic energy can become thermal energy; momentum can't. Friction hands it to the road and Earth.</li>
       <li>Thinking “inelastic” means the objects stick. It only means kinetic energy was lost; sticking together is the extreme case, perfectly inelastic.</li>
       <li>Giving Δp/Δt as the force asked for. It's the <b>net</b> force; if the question asks for one force (an airbag, the floor), take the others out using the free-body diagram.</li>
+      <li>Counting friction from the floor as an internal force. The floor isn't part of your system, so its friction is an outside force: it can change the system's momentum and move its center of mass even when the objects only push on each other.</li>
+      <li>Thinking equal and opposite forces do equal and opposite <i>work</i>. They act for the same time, so their impulses cancel, but the objects move different distances. In an explosion both forces do positive work, and the kinetic energy goes up.</li>
     </ul>
   </div>
 </div>
@@ -332,6 +334,96 @@ body.present .guide{display:none}
     <p class="take">Each cart speeds up and slows down as the spring stretches and squashes, but the center of mass speeds up smoothly at 0.50 m/s², as if all 4.0 kg were one cart pulled by 2.0 N. Internal forces only pass momentum between the carts; only an external force changes the total.</p>
     </div>
   </details>
+  <details class="ex">
+    <summary><span class="kind">Bounce vs. stick, then a swing</span><h4>Rubber ball or clay ball: which swings the block higher?</h4></summary>
+    <div class="exbody">
+    <svg width="200" height="110" viewBox="0 0 200 110" aria-label="A 0.40 kg ball moving at 10 m/s toward a 1.6 kg block hanging from two strings; a rubber ball bounces back at 2.0 m/s">
+      <line x1="100" y1="6" x2="190" y2="6" stroke="#111" stroke-width="3"/>
+      <line x1="122" y1="6" x2="122" y2="56" stroke="#111" stroke-width="1.5"/><line x1="168" y1="6" x2="168" y2="56" stroke="#111" stroke-width="1.5"/>
+      <rect x="114" y="56" width="62" height="34" fill="#fff" stroke="#111" stroke-width="2"/>
+      <text x="125" y="77" font-size="10" font-family="IBM Plex Mono,monospace">1.6 kg</text>
+      <circle cx="28" cy="73" r="8" fill="#fff" stroke="#111" stroke-width="2"/>
+      <text x="8" y="100" font-size="9" font-family="IBM Plex Mono,monospace">0.40 kg</text>
+      <line x1="40" y1="68" x2="98" y2="68" stroke="#111" stroke-width="2.5"/><polygon points="96,63 106,68 96,73" fill="#111"/>
+      <text x="46" y="60" font-size="9" font-family="IBM Plex Mono,monospace">10 m/s</text>
+      <line x1="74" y1="82" x2="44" y2="82" stroke="#ff6a2b" stroke-width="2.5" stroke-dasharray="4 3"/><polygon points="46,77 36,82 46,87" fill="#ff6a2b"/>
+      <text x="56" y="100" font-size="9" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">2.0 m/s back</text>
+    </svg>
+    <p>A 1.6 kg block hangs at rest from light strings. A 0.40 kg ball moving at 10 m/s hits it head-on. Case 1: the ball is clay and sticks. Case 2: the ball is rubber and bounces straight back at 2.0 m/s. How high does the block swing in each case?</p>
+    <div class="work">
+      <p class="wt">Two stages. During the hit, the system is ball + block and momentum is conserved. Take + toward the block.</p>
+      <p class="wt">Case 1, clay (they move together):</p>
+<math class="eq" display="block"><mrow><mo stretchy="false">(</mo><mn>0.40</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>10</mn><mo stretchy="false">)</mo><mo>=</mo><mo stretchy="false">(</mo><mn>2.0</mn><mo stretchy="false">)</mo><mspace width="0.167em"/><mi>v</mi><mspace width="1em"/><mo>&#x2192;</mo><mspace width="0.278em"/><mi>v</mi><mo>=</mo><mn>2.0</mn><mspace width="0.167em"/><mtext>m/s</mtext></mrow></math>
+      <p class="wt">Case 2, rubber (the ball's velocity after is −2.0 m/s):</p>
+<math class="eq" display="block"><mrow><mo stretchy="false">(</mo><mn>0.40</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>10</mn><mo stretchy="false">)</mo><mo>=</mo><mn>0.40</mn><mo stretchy="false">(</mo><mo>&#x2212;</mo><mn>2.0</mn><mo stretchy="false">)</mo><mo>+</mo><mo stretchy="false">(</mo><mn>1.6</mn><mo stretchy="false">)</mo><mspace width="0.167em"/><msub><mi>v</mi><mtext>block</mtext></msub></mrow></math>
+<math class="eq" display="block"><mrow><mn>4.0</mn><mo>=</mo><mo>&#x2212;</mo><mn>0.80</mn><mo>+</mo><mn>1.6</mn><mspace width="0.167em"/><msub><mi>v</mi><mtext>block</mtext></msub></mrow></math>
+<math class="eq" display="block"><mrow><msub><mi>v</mi><mtext>block</mtext></msub><mo>=</mo><mn>3.0</mn><mspace width="0.167em"/><mtext>m/s</mtext></mrow></math>
+      <p class="wt">After the hit, the swing conserves energy (½mv² = mgh, so h = v²/2g):</p>
+<math class="eq" display="block"><mrow><msub><mi>h</mi><mtext>clay</mtext></msub><mo>=</mo><mfrac><msup><mrow><mo stretchy="false">(</mo><mn>2.0</mn><mo stretchy="false">)</mo></mrow><mn>2</mn></msup><mrow><mn>2</mn><mo stretchy="false">(</mo><mn>10</mn><mo stretchy="false">)</mo></mrow></mfrac><mo>=</mo><mn>0.20</mn><mspace width="0.167em"/><mtext>m</mtext></mrow></math>
+<math class="eq" display="block"><mrow><msub><mi>h</mi><mtext>rubber</mtext></msub><mo>=</mo><mfrac><msup><mrow><mo stretchy="false">(</mo><mn>3.0</mn><mo stretchy="false">)</mo></mrow><mn>2</mn></msup><mrow><mn>2</mn><mo stretchy="false">(</mo><mn>10</mn><mo stretchy="false">)</mo></mrow></mfrac><mo>=</mo><mn>0.45</mn><mspace width="0.167em"/><mtext>m</mtext></mrow></math>
+<math class="eq ans" display="block"><mrow><mtext>clay&#xA0;0.20&#xA0;m;&#xA0;rubber&#xA0;0.45&#xA0;m</mtext></mrow></math>
+    </div>
+    <p class="take">The bouncing ball's momentum changes more (from +4.0 to −0.80 kg·m/s, a change of 4.8 instead of 3.2), and whatever momentum the ball loses, the block gains. So the rubber ball gives the block the bigger impulse and the higher swing, even though that bounce isn't elastic either (20 J before, 8.0 J after).</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Center of mass, outside forces</span><h4>A juggler's three balls</h4></summary>
+    <div class="exbody">
+    <svg width="246" height="140" viewBox="0 0 246 140" aria-label="Velocity of the three balls' center of mass against time: a sawtooth between plus and minus 1.5 m/s, rising only while a ball is in the hand">
+      <rect x="85" y="24" width="34" height="92" fill="#fde1d6"/><rect x="170" y="24" width="34" height="92" fill="#fde1d6"/>
+      <text x="90" y="20" font-size="9" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">hand</text><text x="175" y="20" font-size="9" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">hand</text>
+      <path d="M34 25H210M34 115H210" stroke="#ccc" stroke-width="1" fill="none"/>
+      <line x1="34" y1="70" x2="214" y2="70" stroke="#111" stroke-width="2"/><line x1="34" y1="122" x2="34" y2="18" stroke="#111" stroke-width="2"/>
+      <path d="M34 25L85 115L119 25L170 115L204 25" fill="none" stroke="#111" stroke-width="2.5"/>
+      <text x="30" y="28" font-size="9" font-family="IBM Plex Mono,monospace" text-anchor="end">1.5</text><text x="30" y="73" font-size="9" font-family="IBM Plex Mono,monospace" text-anchor="end">0</text><text x="30" y="118" font-size="9" font-family="IBM Plex Mono,monospace" text-anchor="end">−1.5</text>
+      <text x="85" y="132" font-size="9" font-family="IBM Plex Mono,monospace" text-anchor="middle">0.3</text><text x="119" y="132" font-size="9" font-family="IBM Plex Mono,monospace" text-anchor="middle">0.5</text><text x="170" y="132" font-size="9" font-family="IBM Plex Mono,monospace" text-anchor="middle">0.8</text><text x="204" y="132" font-size="9" font-family="IBM Plex Mono,monospace" text-anchor="middle">1.0</text>
+      <text x="2" y="10" font-size="9" font-family="IBM Plex Mono,monospace">v_cm (m/s)</text><text x="217" y="73" font-size="9" font-family="IBM Plex Mono,monospace">t (s)</text>
+    </svg>
+    <p>A juggler keeps three 0.10 kg balls going, straight up and down. The pattern repeats every 0.50 s: for 0.30 s all three balls are in the air, then for 0.20 s one hand holds one ball (catching it and throwing it back up) while the other two fly. Take the three balls as the system. Find (a) the acceleration of their center of mass while all three are in the air, (b) the hand's average force over a whole cycle, (c) the hand's force while it holds a ball, and (d) the center of mass's acceleration then.</p>
+    <div class="work">
+      <p class="wt">(a) In the air, the only outside force on each ball is its weight:</p>
+<math class="eq ans" display="block"><mrow><msub><mi>a</mi><mtext>cm</mtext></msub><mo>=</mo><mi>g</mi><mo>=</mo><mn>10</mn><mspace width="0.167em"/><msup><mtext>m/s</mtext><mn>2</mn></msup><mtext>&#xA0;down</mtext></mrow></math>
+      <p class="wt">(b) The motion repeats, so the system's momentum is the same at the start and end of each cycle: the total impulse over a cycle is zero. Over the cycle the hand's upward impulse must cancel the total weight's downward impulse:</p>
+<math class="eq" display="block"><mrow><msub><mi>F</mi><mtext>avg</mtext></msub><mo>=</mo><mn>3</mn><mi>m</mi><mi>g</mi><mo>=</mo><mn>3</mn><mo stretchy="false">(</mo><mn>0.10</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>10</mn><mo stretchy="false">)</mo></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>F</mi><mtext>avg</mtext></msub><mo>=</mo><mn>3.0</mn><mspace width="0.167em"/><mtext>N</mtext><mtext>&#xA0;up</mtext></mrow></math>
+      <p class="wt">(c) The hand only pushes for 0.20 s of each 0.50 s, but must deliver the same impulse:</p>
+<math class="eq" display="block"><mrow><msub><mi>F</mi><mtext>hand</mtext></msub><mo stretchy="false">(</mo><mn>0.20</mn><mo stretchy="false">)</mo><mo>=</mo><mo stretchy="false">(</mo><mn>3.0</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>0.50</mn><mo stretchy="false">)</mo></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>F</mi><mtext>hand</mtext></msub><mo>=</mo><mn>7.5</mn><mspace width="0.167em"/><mtext>N</mtext><mtext>&#xA0;up</mtext></mrow></math>
+      <p class="wt">(d) While the hand pushes, the net outside force on the 0.30 kg system is 7.5 N up minus 3.0 N of weight:</p>
+<math class="eq" display="block"><mrow><msub><mi>a</mi><mtext>cm</mtext></msub><mo>=</mo><mfrac><mrow><mn>7.5</mn><mo>&#x2212;</mo><mn>3.0</mn></mrow><mn>0.30</mn></mfrac></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>a</mi><mtext>cm</mtext></msub><mo>=</mo><mn>15</mn><mspace width="0.167em"/><msup><mtext>m/s</mtext><mn>2</mn></msup><mtext>&#xA0;up</mtext></mrow></math>
+      <p class="wt">Check: v<sub>cm</sub> drops (10)(0.30) = 3.0 m/s in the air and rises (15)(0.20) = 3.0 m/s in the hand, so it repeats. That's the sawtooth in the graph.</p>
+    </div>
+    <p class="take">Each ball does its own thing, but the system only cares about outside forces: weight all the time, plus the hand part of the time. A hand that pushes for 40% of the time has to push 1/0.40 = 2.5 times the balls' total weight.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Three stages</span><h4>Spring launch, sticky hit, rough floor</h4></summary>
+    <div class="exbody">
+    <svg width="250" height="76" viewBox="0 0 250 76" aria-label="A spring on a wall pushes a 1.0 kg block toward a 3.0 kg block at rest; past it is a rough strip">
+      <line x1="8" y1="10" x2="8" y2="60" stroke="#111" stroke-width="3"/>
+      <polyline points="8,44 14,44 18,36 24,52 30,36 36,52 40,44 46,44" fill="none" stroke="#111" stroke-width="2"/>
+      <rect x="46" y="32" width="30" height="28" fill="#fff" stroke="#111" stroke-width="2"/><text x="50" y="27" font-size="9" font-family="IBM Plex Mono,monospace">1.0 kg</text>
+      <rect x="112" y="24" width="44" height="36" fill="#fff" stroke="#111" stroke-width="2"/><text x="116" y="19" font-size="9" font-family="IBM Plex Mono,monospace">3.0 kg</text>
+      <line x1="4" y1="60" x2="246" y2="60" stroke="#111" stroke-width="2"/>
+      <rect x="172" y="60" width="72" height="6" fill="#ff6a2b"/>
+      <text x="174" y="74" font-size="9" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">μ = 0.25</text>
+    </svg>
+    <p>A spring (k = 400 N/m) fixed to a wall is squashed 0.10 m by a 1.0 kg block. Released, it launches the block across a frictionless floor into a 3.0 kg block at rest. The blocks stick, then slide onto a rough strip (μ = 0.25). How far do they slide on the strip?</p>
+    <div class="work">
+      <p class="wt">Stage 1, the launch (energy: spring energy becomes the 1.0 kg block's kinetic energy):</p>
+<math class="eq" display="block"><mrow><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mo stretchy="false">(</mo><mn>400</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>0.10</mn><msup><mo stretchy="false">)</mo><mn>2</mn></msup><mo>=</mo><mn>2.0</mn><mspace width="0.167em"/><mtext>J</mtext></mrow></math>
+<math class="eq" display="block"><mrow><mn>2.0</mn><mo>=</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mo stretchy="false">(</mo><mn>1.0</mn><mo stretchy="false">)</mo><msup><mi>v</mi><mn>2</mn></msup><mspace width="1em"/><mo>&#x2192;</mo><mspace width="0.278em"/><mi>v</mi><mo>=</mo><mn>2.0</mn><mspace width="0.167em"/><mtext>m/s</mtext></mrow></math>
+      <p class="wt">Stage 2, the hit (momentum; the blocks stick):</p>
+<math class="eq" display="block"><mrow><mo stretchy="false">(</mo><mn>1.0</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>2.0</mn><mo stretchy="false">)</mo><mo>=</mo><mo stretchy="false">(</mo><mn>4.0</mn><mo stretchy="false">)</mo><mspace width="0.167em"/><msub><mi>v</mi><mi>f</mi></msub><mspace width="1em"/><mo>&#x2192;</mo><mspace width="0.278em"/><msub><mi>v</mi><mi>f</mi></msub><mo>=</mo><mn>0.50</mn><mspace width="0.167em"/><mtext>m/s</mtext></mrow></math>
+      <p class="wt">Stage 3, the strip (friction's work removes the kinetic energy left after the hit):</p>
+<math class="eq" display="block"><mrow><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mo stretchy="false">(</mo><mn>4.0</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>0.50</mn><msup><mo stretchy="false">)</mo><mn>2</mn></msup><mo>=</mo><mi>μ</mi><mo stretchy="false">(</mo><mn>4.0</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>10</mn><mo stretchy="false">)</mo><mspace width="0.167em"/><mi>d</mi></mrow></math>
+<math class="eq" display="block"><mrow><mn>0.50</mn><mo>=</mo><mo stretchy="false">(</mo><mn>0.25</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>40</mn><mo stretchy="false">)</mo><mspace width="0.167em"/><mi>d</mi></mrow></math>
+<math class="eq ans" display="block"><mrow><mi>d</mi><mo>=</mo><mn>0.050</mn><mspace width="0.167em"/><mtext>m</mtext><mo>=</mo><mn>5.0</mn><mspace width="0.167em"/><mtext>cm</mtext></mrow></math>
+    </div>
+    <p class="take">For the two-block system: in stage 1 the spring (pushing off the wall) is an outside force, so the momentum grows; in stage 2 momentum is conserved but 1.5 of the 2.0 J is lost; in stage 3 friction is outside and removes both. Skip stage 2 and set 2.0 J equal to friction's work, and you get 0.20 m, four times too far.</p>
+    </div>
+  </details>
 </div>
 </div>
 <div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
@@ -365,6 +457,14 @@ body.present .guide{display:none}
       <details><summary>Answer</summary><div>Ana. Kinetic energy gained is force × <i>distance</i>: (2.0)(1.0) = 2.0 J for both. Momentum gained is force × <i>time</i>, and the heavy cart takes longer to cover the meter (2.0 s vs. 1.0 s), so it gets 4.0 kg·m/s to the light cart's 2.0. Ben's answer would be right if the force acted for the same <i>time</i>: then the momenta match, and the light cart gets more kinetic energy (K = p²/2m).</div></details></li>
     <li>A cart's momentum–time graph is a straight line from +6.0 kg·m/s to −4.0 kg·m/s over 0.50 s. What is the net force on it? What is the net force at the instant its momentum is zero?
       <details><summary>Answer</summary><div>The slope of p–t is the net force: (−4.0 − 6.0)/0.50 = −20 N, the same all the way through because the line is straight. At p = 0 the force is still −20 N: that's the instant the cart turns around, not a moment with no force.</div></details></li>
+    <li><b>Who's right?</b> A spring launcher on wheels, at rest on a frictionless floor, fires a ball forward. Maya: “The launcher pushes the ball and the ball pushes back just as hard, so their work cancels and the system's kinetic energy doesn't change.” Leo: “Those forces cancel in the momentum, which stays zero, but they don't cancel in the energy: the kinetic energy goes up.”
+      <details><summary>Answer</summary><div>Leo. The two forces are equal and opposite and act for the same time, so their impulses cancel and the total momentum stays zero. But work is force × <i>distance</i>: the ball moves forward while pushed forward, and the launcher moves backward while pushed backward, so both forces do positive work. The kinetic energy comes out of the spring's stored energy, so the mechanical energy of ball + launcher + spring is constant; for ball + launcher alone, it increases.</div></details></li>
+    <li>A toy cannon fires a marble at the same speed every time, and the cannon slides back across a rough floor before stopping. If weights double the cannon's mass, how does its slide distance change?
+      <details><summary>Answer</summary><div>It slides ¼ as far. The marble carries off the same momentum, so the cannon recoils with the same momentum: twice the mass means half the speed. Friction slows it at μg whatever its mass, and stopping distance goes as v², so half the speed gives a quarter of the distance.</div></details></li>
+    <li>Box A (0.60 kg) and box B (0.40 kg) are joined by a stretched spring, held one above the other and released. Their momentum–time graphs are straight lines with slopes −8.0 N for A and −2.0 N for B. What is the acceleration of the two-box system's center of mass, and how hard does the spring pull?
+      <details><summary>Answer</summary><div>Net force on the system = sum of the slopes = −10 N, so a<sub>cm</sub> = 10/1.0 = 10 m/s² down: just g, as you'd expect when weight is the only outside force (the spring's pulls cancel inside the system). Spring: A's weight is 6.0 N, so the spring pulls A down with 8.0 − 6.0 = 2.0 N; it pulls B up with 4.0 − 2.0 = 2.0 N.</div></details></li>
+    <li>A 1.0 kg block and a 2.0 kg block, joined by a stretched spring, are released from rest on a frictionless floor and slide toward each other. Partway in, both cross rough strips (μ = 0.20) at the same time. What does the center of mass do before the strips? On them?
+      <details><summary>Answer</summary><div>Before: it stays put. The spring's forces are internal and the total momentum stays zero. On the strips: friction on each block opposes its motion, 2.0 N on the light block and 4.0 N on the heavy one, in opposite directions. The net outside force is 2.0 N, pointing the way the light block is moving (against the heavy block's motion), so the center of mass starts to move that way at 2.0/3.0 = 0.67 m/s².</div></details></li>
   </ol>
 </div>
 </div>
