@@ -124,6 +124,9 @@ body.present .guide{display:none}
       <li>Saying suction “pulls.” Removing air doesn't pull anything: the higher air pressure outside pushes.</li>
       <li>Using one density for layered liquids. Add ρgh for each layer: P = P₀ + ρ₁gh₁ + ρ₂gh₂.</li>
       <li>Thinking the buoyant force keeps growing as a fully underwater object goes deeper. It grows only while more of the object goes under.</li>
+      <li>Drawing pressure as one arrow, or only on the bottom of an object. The fluid pushes perpendicular on <b>every</b> face, inward, harder on the deeper faces.</li>
+      <li>Forgetting the floating object's own weight when finding how much load it can carry. Max load = ρ<sub>fluid</sub>V<sub>total</sub>g − its own weight.</li>
+      <li>Using one Torricelli speed for a whole draining tank. As the level drops, h shrinks and the water comes out slower.</li>
     </ul>
   </div>
 </div>
@@ -341,6 +344,110 @@ body.present .guide{display:none}
     <p class="take">A bucket and a clock give you the flow rate, and the flow rate plus the opening's area gives the speed. Once the water is out, it's just a projectile. The extra pressure in the hose is what speeds the water up as it squeezes into the nozzle.</p>
     </div>
   </details>
+  <details class="ex">
+    <summary><span class="kind">Floating with a load</span><h4>How many people can the raft carry?</h4></summary>
+    <div class="exbody">
+    <svg width="170" height="92" viewBox="0 0 170 92" aria-label="Rectangular wooden raft floating in water with three people standing on it; raft 2.0 by 1.5 by 0.20 meters">
+      <rect x="4" y="52" width="162" height="36" fill="#fde1d6" stroke="none"/><line x1="4" y1="52" x2="166" y2="52" stroke="#111" stroke-width="1.5"/>
+      <rect x="35" y="40" width="100" height="16" fill="#fff" stroke="#111" stroke-width="2"/>
+      <g stroke="#111" stroke-width="2" fill="#fff"><circle cx="60" cy="13" r="4"/><line x1="60" y1="17" x2="60" y2="40"/><circle cx="85" cy="13" r="4"/><line x1="85" y1="17" x2="85" y2="40"/><circle cx="110" cy="13" r="4"/><line x1="110" y1="17" x2="110" y2="40"/></g>
+      <line x1="30" y1="40" x2="30" y2="56" stroke="#ff6a2b" stroke-width="2"/><text x="2" y="36" font-size="9" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">0.20 m</text>
+      <text x="40" y="76" font-size="9" font-family="IBM Plex Mono,monospace">2.0 m × 1.5 m</text>
+    </svg>
+    <p>A raft is a solid block of wood 2.0 m long, 1.5 m wide and 0.20 m thick, with density 600 kg/m³. How deep does it sit in fresh water when it's empty? What is the most load it can carry before its top goes under, and can it take three 70 kg people?</p>
+    <div class="work">
+      <p class="wt">System: raft (plus its load). Floating means ΣF = 0, so F<sub>b</sub> = total weight.</p>
+<math class="eq" display="block"><mrow><mi>V</mi><mo>=</mo><mo stretchy="false">(</mo><mn>2.0</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>1.5</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>0.20</mn><mo stretchy="false">)</mo><mo>=</mo><mn>0.60</mn><mspace width="0.167em"/><msup><mtext>m</mtext><mn>3</mn></msup></mrow></math>
+<math class="eq" display="block"><mrow><mi>m</mi><mo>=</mo><mi>ρ</mi><mi>V</mi><mo>=</mo><mn>360</mn><mspace width="0.167em"/><mtext>kg</mtext></mrow></math>
+      <p class="wt">Empty, the raft pushes aside its own mass of water, 0.36 m³. Spread over its 3.0 m² bottom:</p>
+<math class="eq" display="block"><mrow><msub><mi>d</mi><mtext>empty</mtext></msub><mo>=</mo><mfrac><mn>0.36</mn><mn>3.0</mn></mfrac></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>d</mi><mtext>empty</mtext></msub><mo>=</mo><mn>0.12</mn><mspace width="0.167em"/><mtext>m</mtext></mrow></math>
+      <p class="wt">The biggest buoyant force, ρ<sub>water</sub>Vg, comes when the whole raft is just under:</p>
+<math class="eq" display="block"><mrow><msub><mi>F</mi><mrow><mi>b</mi><mo>,</mo><mtext>max</mtext></mrow></msub><mo>=</mo><mo stretchy="false">(</mo><mn>1000</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>0.60</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>10</mn><mo stretchy="false">)</mo><mo>=</mo><mn>6000</mn><mspace width="0.167em"/><mtext>N</mtext></mrow></math>
+<math class="eq" display="block"><mrow><msub><mi>F</mi><mrow><mi>b</mi><mo>,</mo><mtext>max</mtext></mrow></msub><mo>=</mo><mi>m</mi><mi>g</mi><mo>+</mo><msub><mi>W</mi><mtext>load</mtext></msub></mrow></math>
+<math class="eq" display="block"><mrow><mo>→</mo><mspace width="0.278em"/><msub><mi>W</mi><mtext>load</mtext></msub><mo>=</mo><mn>6000</mn><mo>−</mo><mn>3600</mn></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>W</mi><mtext>load</mtext></msub><mo>=</mo><mn>2400</mn><mspace width="0.167em"/><mtext>N</mtext><mspace width="0.278em"/><mo stretchy="false">(</mo><mn>240</mn><mspace width="0.167em"/><mtext>kg</mtext><mo stretchy="false">)</mo></mrow></math>
+      <p class="wt">Three people are 210 kg, under 240 kg, so yes. Total mass 570 kg pushes aside 0.57 m³ of water: depth 0.57/3.0 = 0.19 m, leaving just 1 cm of raft above the water. A fourth person (280 kg in all) sinks it.</p>
+    </div>
+    <p class="take">The raft's own weight uses up part of the buoyant force, so subtract it before counting people. A real raft can hold a little more than this: legs or gear hanging in the water push aside water too and add their own buoyant force.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Where buoyancy comes from</span><h4>Fixing the pressure arrows on a block</h4></summary>
+    <div class="exbody">
+    <svg width="150" height="132" viewBox="0 0 150 132" aria-label="Cube underwater with pressure-force arrows on every face, pointing inward; the arrow on the bottom is longer than the one on top, and the side arrows are equal">
+      <rect x="4" y="10" width="142" height="118" fill="#fde1d6" stroke="none"/><line x1="4" y1="10" x2="146" y2="10" stroke="#111" stroke-width="1.5"/>
+      <rect x="55" y="56" width="40" height="40" fill="#fff" stroke="#111" stroke-width="2"/>
+      <line x1="75" y1="34" x2="75" y2="48" stroke="#111" stroke-width="2.5"/><polygon points="70,46 75,54 80,46" fill="#111"/><text x="80" y="38" font-size="9" font-family="IBM Plex Mono,monospace">F<tspan baseline-shift="sub" font-size="7">top</tspan></text>
+      <line x1="75" y1="124" x2="75" y2="106" stroke="#ff6a2b" stroke-width="2.5"/><polygon points="70,106 75,98 80,106" fill="#ff6a2b"/><text x="80" y="122" font-size="9" font-family="IBM Plex Mono,monospace" fill="#ff6a2b">F<tspan baseline-shift="sub" font-size="7">bot</tspan></text>
+      <line x1="30" y1="76" x2="45" y2="76" stroke="#111" stroke-width="2.5"/><polygon points="45,71 53,76 45,81" fill="#111"/>
+      <line x1="120" y1="76" x2="105" y2="76" stroke="#111" stroke-width="2.5"/><polygon points="105,71 97,76 105,81" fill="#111"/>
+      <text x="8" y="24" font-size="9" font-family="IBM Plex Mono,monospace">top 0.30 m deep</text>
+    </svg>
+    <p>A student draws the water's pressure on a submerged cube as a single arrow pushing up on its bottom face. Fix the diagram. Then, for a cube 0.10 m on each side whose top is 0.30 m under the surface of a lake, find the force of the water on its top and on its bottom, and the net force of the water on it.</p>
+    <div class="work">
+      <p class="wt">Fluid pressure pushes perpendicular to <b>every</b> face, inward. The arrows on the two sides are at the same depths, so they're equal and cancel. The bottom is deeper than the top, so its arrow is longer.</p>
+<math class="eq" display="block"><mrow><msub><mi>P</mi><mtext>top</mtext></msub><mo>=</mo><msub><mi>P</mi><mn>0</mn></msub><mo>+</mo><mi>ρ</mi><mi>g</mi><mo stretchy="false">(</mo><mn>0.30</mn><mo stretchy="false">)</mo><mo>=</mo><mn>1.03</mn><mo>×</mo><msup><mn>10</mn><mn>5</mn></msup><mspace width="0.167em"/><mtext>Pa</mtext></mrow></math>
+<math class="eq" display="block"><mrow><msub><mi>P</mi><mtext>bot</mtext></msub><mo>=</mo><msub><mi>P</mi><mn>0</mn></msub><mo>+</mo><mi>ρ</mi><mi>g</mi><mo stretchy="false">(</mo><mn>0.40</mn><mo stretchy="false">)</mo><mo>=</mo><mn>1.04</mn><mo>×</mo><msup><mn>10</mn><mn>5</mn></msup><mspace width="0.167em"/><mtext>Pa</mtext></mrow></math>
+      <p class="wt">Each face has A = (0.10)² = 0.010 m², and F = PA:</p>
+<math class="eq ans" display="block"><mrow><msub><mi>F</mi><mtext>top</mtext></msub><mo>=</mo><mn>1030</mn><mspace width="0.167em"/><mtext>N</mtext><mspace width="0.167em"/><mtext>down</mtext><mo>,</mo><mspace width="1em"/><msub><mi>F</mi><mtext>bot</mtext></msub><mo>=</mo><mn>1040</mn><mspace width="0.167em"/><mtext>N</mtext><mspace width="0.167em"/><mtext>up</mtext></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>F</mi><mtext>net</mtext></msub><mo>=</mo><mn>1040</mn><mo>−</mo><mn>1030</mn><mo>=</mo><mn>10</mn><mspace width="0.167em"/><mtext>N</mtext><mspace width="0.167em"/><mtext>up</mtext></mrow></math>
+      <p class="wt">Check with Archimedes: ρ<sub>water</sub>Vg = (1000)(1.0 × 10⁻³)(10) = 10 N. Same answer.</p>
+    </div>
+    <p class="take">The buoyant force <i>is</i> the net force from the water's pressure: (ρgΔh)A = ρVg. Sink the cube 1 m deeper and both faces get 100 N more, but the difference stays 10 N. That's why the buoyant force doesn't depend on depth.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Continuity + free fall</span><h4>Why a faucet stream gets thinner</h4></summary>
+    <div class="exbody">
+    <svg width="140" height="128" viewBox="0 0 140 128" aria-label="Faucet with a stream of water that narrows as it falls; 1.0 meters per second at the faucet, 2.0 meters per second 0.15 meters lower">
+      <path d="M4 10 L60 10 L60 22 L76 22 L76 10" fill="none" stroke="#111" stroke-width="2"/><line x1="4" y1="4" x2="76" y2="4" stroke="#111" stroke-width="2"/>
+      <path d="M60 24 C 62 70, 64 90, 64 118 L 72 118 C 72 90, 74 70, 76 24 Z" fill="#ff6a2b" stroke="none" opacity=".85"/>
+      <line x1="40" y1="24" x2="40" y2="110" stroke="#111" stroke-dasharray="3 3"/><text x="6" y="70" font-size="9" font-family="IBM Plex Mono,monospace">0.15 m</text>
+      <text x="82" y="34" font-size="9" font-family="IBM Plex Mono,monospace">1.0 m/s</text><text x="82" y="114" font-size="9" font-family="IBM Plex Mono,monospace">2.0 m/s</text>
+    </svg>
+    <p>A faucet fills a 0.50 L glass in 5.0 s, and the stream leaves the faucet's opening (area 1.0 cm²) moving straight down. Find the stream's speed and cross-sectional area 0.15 m below the faucet.</p>
+    <div class="work">
+      <p class="wt">Flow rate, the same at every height (the water can't pile up):</p>
+<math class="eq" display="block"><mrow><mi>Q</mi><mo>=</mo><mfrac><mrow><mn>5.0</mn><mo>×</mo><msup><mn>10</mn><mrow><mo>−</mo><mn>4</mn></mrow></msup></mrow><mn>5.0</mn></mfrac><mo>=</mo><mn>1.0</mn><mo>×</mo><msup><mn>10</mn><mrow><mo>−</mo><mn>4</mn></mrow></msup><mspace width="0.167em"/><msup><mtext>m</mtext><mn>3</mn></msup><mtext>/s</mtext></mrow></math>
+<math class="eq" display="block"><mrow><msub><mi>v</mi><mn>1</mn></msub><mo>=</mo><mfrac><mi>Q</mi><msub><mi>A</mi><mn>1</mn></msub></mfrac><mo>=</mo><mn>1.0</mn><mspace width="0.167em"/><mtext>m/s</mtext></mrow></math>
+      <p class="wt">The stream is open to the air the whole way, so the pressure is P<sub>atm</sub> everywhere and Bernoulli leaves only ½ρv² + ρgy: each bit of water just falls freely.</p>
+<math class="eq" display="block"><mrow><msubsup><mi>v</mi><mn>2</mn><mn>2</mn></msubsup><mo>=</mo><msubsup><mi>v</mi><mn>1</mn><mn>2</mn></msubsup><mo>+</mo><mn>2</mn><mi>g</mi><mi>h</mi><mo>=</mo><msup><mn>1.0</mn><mn>2</mn></msup><mo>+</mo><mn>2</mn><mo stretchy="false">(</mo><mn>10</mn><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>0.15</mn><mo stretchy="false">)</mo><mo>=</mo><mn>4.0</mn></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>v</mi><mn>2</mn></msub><mo>=</mo><mn>2.0</mn><mspace width="0.167em"/><mtext>m/s</mtext></mrow></math>
+      <p class="wt">Continuity:</p>
+<math class="eq" display="block"><mrow><msub><mi>A</mi><mn>2</mn></msub><mo>=</mo><mfrac><mi>Q</mi><msub><mi>v</mi><mn>2</mn></msub></mfrac><mo>=</mo><mfrac><mrow><mn>1.0</mn><mo>×</mo><msup><mn>10</mn><mrow><mo>−</mo><mn>4</mn></mrow></msup></mrow><mn>2.0</mn></mfrac></mrow></math>
+<math class="eq ans" display="block"><mrow><msub><mi>A</mi><mn>2</mn></msub><mo>=</mo><mn>5.0</mn><mo>×</mo><msup><mn>10</mn><mrow><mo>−</mo><mn>5</mn></mrow></msup><mspace width="0.167em"/><msup><mtext>m</mtext><mn>2</mn></msup><mo>=</mo><mn>0.50</mn><mspace width="0.167em"/><msup><mtext>cm</mtext><mn>2</mn></msup></mrow></math>
+    </div>
+    <p class="take">No water is lost on the way down: the stream thins because the water speeds up, and the same volume per second has to fit through a smaller area. Twice the speed means half the area, which is only about 0.71 times the width, since area goes as diameter squared.</p>
+    </div>
+  </details>
+  <details class="ex">
+    <summary><span class="kind">Torricelli from data</span><h4>A draining bottle: v² against h</h4></summary>
+    <div class="exbody">
+    <svg width="200" height="124" viewBox="0 0 200 124" aria-label="Graph of v squared against h: four points close to a straight line through the origin with slope about 19">
+      <line x1="34" y1="6" x2="34" y2="100" stroke="#111" stroke-width="2"/><line x1="34" y1="100" x2="194" y2="100" stroke="#111" stroke-width="2"/>
+      <text x="38" y="12" font-size="9" font-family="IBM Plex Mono,monospace">v² (m²/s²)</text><text x="160" y="94" font-size="9" font-family="IBM Plex Mono,monospace">h (m)</text>
+      <line x1="34" y1="100" x2="184" y2="16" stroke="#ff6a2b" stroke-width="2"/>
+      <g fill="#111"><circle cx="71.5" cy="79" r="3"/><circle cx="109" cy="58" r="3"/><circle cx="146.5" cy="37.5" r="3"/><circle cx="184" cy="16" r="3"/></g>
+      <line x1="30" y1="55" x2="34" y2="55" stroke="#111"/><line x1="30" y1="10" x2="34" y2="10" stroke="#111"/>
+      <text x="20" y="58" font-size="9" font-family="IBM Plex Mono,monospace">2</text><text x="20" y="13" font-size="9" font-family="IBM Plex Mono,monospace">4</text>
+      <text x="30" y="112" font-size="9" font-family="IBM Plex Mono,monospace">0</text><text x="98" y="112" font-size="9" font-family="IBM Plex Mono,monospace">0.10</text><text x="170" y="112" font-size="9" font-family="IBM Plex Mono,monospace">0.20</text>
+    </svg>
+    <p>A bottle with a small hole in its side stands so the hole is 0.45 m above the floor, and the water squirts out level. As the bottle drains, you mark where the stream lands each time the water's surface passes a height h above the hole. Show that the data fit v = √(2gh).</p>
+    <table style="width:auto;margin:0 0 8px">
+      <tr><td>h (m)</td><td>0.20</td><td>0.15</td><td>0.10</td><td>0.05</td></tr>
+      <tr><td>x (m)</td><td>0.58</td><td>0.50</td><td>0.41</td><td>0.29</td></tr>
+    </table>
+    <div class="work">
+      <p class="wt">Each squirt is a level projectile. The fall time is the same every time:</p>
+<math class="eq" display="block"><mrow><mn>0.45</mn><mo>=</mo><mstyle displaystyle="false" scriptlevel="0"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mo stretchy="false">(</mo><mn>10</mn><mo stretchy="false">)</mo><msup><mi>t</mi><mn>2</mn></msup><mspace width="0.278em"/><mo>→</mo><mspace width="0.278em"/><mi>t</mi><mo>=</mo><mn>0.30</mn><mspace width="0.167em"/><mtext>s</mtext><mo>,</mo><mspace width="1em"/><mi>v</mi><mo>=</mo><mfrac><mi>x</mi><mn>0.30</mn></mfrac></mrow></math>
+      <p class="wt">So v = 1.93, 1.67, 1.37, 0.97 m/s and v² = 3.74, 2.78, 1.87, 0.93 m²/s². Torricelli says v² = 2gh, so a graph of v² against h should be a straight line through the origin with slope 2g:</p>
+<math class="eq" display="block"><mrow><mtext>slope</mtext><mo>≈</mo><mfrac><mrow><mn>3.74</mn><mo>−</mo><mn>0.93</mn></mrow><mrow><mn>0.20</mn><mo>−</mo><mn>0.05</mn></mrow></mfrac></mrow></math>
+<math class="eq ans" display="block"><mrow><mtext>slope</mtext><mo>≈</mo><mn>19</mn><mspace width="0.167em"/><msup><mtext>m/s</mtext><mn>2</mn></msup><mspace width="0.278em"/><mo stretchy="false">(</mo><mtext>expected</mtext><mspace width="0.278em"/><mn>2</mn><mi>g</mi><mo>=</mo><mn>20</mn><mo stretchy="false">)</mo></mrow></math>
+    </div>
+    <p class="take">The points fall on a straight line through the origin, about 7% below 2g: the hole's edges and the water's friction take a little energy, so real streams are a bit slower. As the level drops the stream lands closer, and since x ∝ v ∝ √h, the range is halved only when h falls to a quarter.</p>
+    </div>
+  </details>
 </div>
 </div>
 <div class="gpanel" role="tabpanel" id="g-check" aria-labelledby="gt-check" hidden>
@@ -374,6 +481,16 @@ body.present .guide{display:none}
       <details><summary>Answer</summary><div>A = π(0.040)² = 5.0 × 10⁻³ m². With no air under the cup, only the outside air pushes, with F = P<sub>atm</sub>A = (1.0 × 10⁵)(5.0 × 10⁻³) = 5.0 × 10² N, enough for about 50 kg of glass. The cup doesn't pull: the air outside pushes the cup and glass together. A real lifter leaves some air under the cup, so it holds less.</div></details></li>
     <li><b>Who's right?</b> A plastic bottle has a small hole in its side, and water squirts out from 0.20 m below the water's surface. You screw the cap on and the stream stops. Ana says: “It stops because the trapped air is now at the same pressure as the air outside.” Ben says: “It stops because the trapped air is now below air pressure, about 2 kPa below.” Who's right?
       <details><summary>Answer</summary><div>Ben. The water stops when the pressure at the hole equals the outside air pressure. The hole is 0.20 m below the surface, so the trapped air must be lower by ρgh = (1000)(10)(0.20) = 2.0 × 10³ Pa: a gauge pressure of −2.0 kPa. If Ana were right, the hole would be at P<sub>atm</sub> + 2.0 kPa and the water would keep squirting. A few drops leave after you cap it, so the trapped air spreads out and its pressure drops until the flow stops.</div></details></li>
+    <li>An object weighs 5.0 N in air, 3.0 N hanging fully in water, and 3.4 N hanging fully in an unknown liquid. What is the liquid's density?
+      <details><summary>Answer</summary><div>Buoyant force in water: 5.0 − 3.0 = 2.0 N, so V = 2.0/(1000 × 10) = 2.0 × 10⁻⁴ m³. In the liquid: 5.0 − 3.4 = 1.6 N = ρ<sub>liquid</sub>Vg, so ρ<sub>liquid</sub> = 1.6/(2.0 × 10⁻⁴ × 10) = 800 kg/m³. Shortcut: same volume both times, so ρ<sub>liquid</sub>/ρ<sub>water</sub> = 1.6/2.0.</div></details></li>
+    <li>A flat-sided barge sinks 5.0 cm deeper into a river when 6000 kg of cargo is loaded on it. What is the area of the barge at the waterline?
+      <details><summary>Answer</summary><div>The extra buoyant force equals the cargo's weight: ρ<sub>water</sub>(AΔh)g = mg, so A = m/(ρΔh) = 6000/(1000 × 0.050) = 120 m². The barge's own weight doesn't matter: only the change is needed.</div></details></li>
+    <li>A 30 m/s wind blows across a flat roof of area 150 m². The air in the attic below is still. Air's density is 1.2 kg/m³. Estimate the net force of the air on the roof, and its direction.
+      <details><summary>Answer</summary><div>Bernoulli at the same height: the moving air above is at lower pressure by ½ρv² = ½(1.2)(30)² = 540 Pa. Net force = ΔP·A = (540)(150) = 8.1 × 10⁴ N, <b>upward</b>: the still air inside pushes the roof up. That's how storms lift roofs off.</div></details></li>
+    <li>A helium balloon has a volume of 0.010 m³; the rubber and string have a mass of 4.0 g. Air is 1.2 kg/m³ and helium 0.18 kg/m³. What is the net force on the balloon when you let go?
+      <details><summary>Answer</summary><div>Buoyant force from the air: (1.2)(0.010)(10) = 0.12 N up. Weight: helium (0.18)(0.010) = 1.8 g plus 4.0 g = 5.8 g, so 0.058 N down. Net: 0.062 N up, enough to lift about 6 g more. Air is a fluid too: Archimedes works the same way.</div></details></li>
+    <li><b>Who's right?</b> Two identical buckets are filled to the brim with water. A toy boat floats in one; the water it pushed aside spilled over and was wiped away. Maya says: “The bucket with the boat weighs more, because it has the boat in it.” Leo says: “They weigh the same.” Who's right?
+      <details><summary>Answer</summary><div>Leo. A floating boat pushes aside water whose weight equals the buoyant force, which equals the boat's weight. That much water spilled out, so the boat exactly replaced the weight it removed. (If the boat sank, it would push aside only its own volume of water, less than its weight, and that bucket would weigh more.)</div></details></li>
     <li><span class="ib">IB</span> Two spheres of the same material fall slowly through oil at terminal velocity. One has twice the radius of the other. How do their terminal velocities compare?
       <details><summary>Answer</summary><div>Weight minus buoyancy goes as r³ (it's 8 times bigger), but Stokes drag 6πηrv goes only as r. At terminal velocity they balance, so v ∝ r²: the bigger sphere falls 4 times as fast.</div></details></li>
   </ol>
