@@ -5,16 +5,18 @@ function crossGrid(x0, y0, x1, y1){ ctx.strokeStyle = 'rgba(122,63,176,0.3)'; ct
 const SIM = {
   title: 'Charges in Magnetic Fields',
   hint: 'e = 1.60×10⁻¹⁹ C · 1 u = 1.66×10⁻²⁷ kg · ⊗ = B into the page',
-  modes: [{ id: 'circ', label: 'Circular motion' }, { id: 'sel', label: 'Velocity selector' }, { id: 'spec', label: 'Mass spectrometer (IB q/m)' }, { id: 'hall', label: 'Hall effect' }],
-  opts: [{ id: 'pt', label: 'Particle', modes: ['circ', 'sel'], choices: [['p', 'Proton'], ['e', 'Electron'], ['a', 'Alpha']] }, { id: 'car', label: 'Charge carriers', modes: ['hall'], choices: [['e', 'Electrons (metal)'], ['p', 'Positive (holes)']] }],
+  modes: [{ id: 'circ', label: 'Circular motion' }, { id: 'sel', label: 'Velocity selector' }, { id: 'spec', label: 'Mass spectrometer (IB q/m)' }, { id: 'hall', label: 'Hall effect' }, { id: 'balance', label: 'Current balance' }],
+  opts: [{ id: 'idir', label: 'I', modes: ['balance'], choices: [['r', 'Right →'], ['l', '← Left']] }, { id: 'bd', label: 'B', modes: ['balance'], choices: [['in', 'Into ⊗'], ['out', 'Out ⊙']] }, { id: 'pt', label: 'Particle', modes: ['circ', 'sel'], choices: [['p', 'Proton'], ['e', 'Electron'], ['a', 'Alpha']] }, { id: 'car', label: 'Charge carriers', modes: ['hall'], choices: [['e', 'Electrons (metal)'], ['p', 'Positive (holes)']] }],
   ivs(mode){
+    if (mode === 'balance') return [{ id: 'I', sym: 'I', symText: 'I', label: 'Current', unit: 'A', min: 0, max: 5, step: 0.1, val: 2, graph: true }, { id: 'L', sym: 'L', symText: 'L', label: 'Wire length', unit: 'cm', min: 1, max: 10, step: 0.5, val: 5 }, { id: 'B', sym: 'B', symText: 'B', label: 'Field', unit: 'mT', min: 50, max: 500, step: 10, val: 200 }];
     if (mode === 'hall') return [{ id: 'vd', sym: 'v<sub>d</sub>', symText: 'vd', label: 'Drift speed of the carriers', unit: 'm/s', min: 1, max: 50, step: 1, val: 10, graph: true }, { id: 'B', sym: 'B', symText: 'B', label: 'Magnetic field (into page)', unit: 'T', min: 0.05, max: 1, step: 0.05, val: 0.5 }, { id: 'w', sym: 'w', symText: 'w', label: 'Width of the strip', unit: 'cm', min: 0.5, max: 3, step: 0.1, val: 1 }];
     if (mode === 'sel') return [{ id: 'E', sym: 'E', symText: 'E', label: 'Electric field (between plates)', unit: 'kV/m', min: 1, max: 100, step: 1, val: 20 }, { id: 'B', sym: 'B', symText: 'B', label: 'Magnetic field', unit: 'T', min: 0.01, max: 0.5, step: 0.01, val: 0.1 }, { id: 'v', sym: 'v', symText: 'v', label: 'Particle speed', unit: '×10⁵ m/s', min: 0.5, max: 10, step: 0.1, val: 2, graph: true }];
     if (mode === 'spec') return [{ id: 'V', sym: 'V', symText: 'V', label: 'Accelerating voltage', unit: 'V', min: 100, max: 5000, step: 50, val: 1000 }, { id: 'B', sym: 'B', symText: 'B', label: 'Magnetic field', unit: 'T', min: 0.05, max: 1, step: 0.01, val: 0.2 }, { id: 'm2', sym: 'm<sub>2</sub>', symText: 'm2', label: 'Mass of the second ion (first is ¹²C⁺)', unit: 'u', min: 12, max: 40, step: 1, val: 14, graph: true }];
     return [{ id: 'v', sym: 'v', symText: 'v', label: 'Speed', unit: '×10⁶ m/s', min: 0.1, max: 10, step: 0.1, val: 1, graph: true }, { id: 'B', sym: 'B', symText: 'B', label: 'Magnetic field (into page)', unit: 'mT', min: 1, max: 1000, step: 1, val: 100 }];
   },
-  presets: [{ label: 'Double the speed', mode: 'circ', v: { v: 2 } }, { label: 'Just right (v = E/B)', mode: 'sel', v: { E: 20, B: 0.1, v: 2 } }, { label: 'Too fast', mode: 'sel', v: { v: 4 } }],
+  presets: [{ label: 'Double the speed', mode: 'circ', v: { v: 2 } }, { label: 'Just right (v = E/B)', mode: 'sel', v: { E: 20, B: 0.1, v: 2 } }, { label: 'Too fast', mode: 'sel', v: { v: 4 } }, { label: 'Double the current (balance)', mode: 'balance', v: { I: 4 } }, { label: 'Reverse the current', mode: 'balance', opt: { idir: 'l' }, v: {} }],
   calc(v, mode, opt){
+    if (mode === 'balance'){ const up = ((opt.idir || 'r') === 'r' ? 1 : -1) * ((opt.bd || 'in') === 'in' ? 1 : -1), F = v.B * 1e-3 * v.I * v.L * 1e-2, slope = v.B * 1e-3 * v.L * 1e-2; return { up, F, dm: up * F / 10 * 1000, slope, right: (opt.idir || 'r') === 'r', into: (opt.bd || 'in') === 'in' }; }
     if (mode === 'hall'){ const el = (opt.car || 'e') === 'e', VH = v.vd * v.B * v.w / 100; return { el, VH, F: E0 * v.vd * v.B, EH: v.vd * v.B }; }
     if (mode === 'spec'){ const q = E0, m1 = 12 * U, m2 = v.m2 * U, r = m => Math.sqrt(2 * m * v.V / q) / v.B, r1 = r(m1), r2 = r(m2); return { r1, r2, sep: 2 * Math.abs(r2 - r1), v1: Math.sqrt(2 * q * v.V / m1), qm: 2 * v.V / (v.B * v.B * r1 * r1) }; }
     const [nm, z, m] = PART[opt.pt || 'p'], q = Math.abs(z) * E0;
@@ -23,12 +25,21 @@ const SIM = {
     return { nm, z, m, q, vv, B, F, r, T, f: 1 / T, KE: 0.5 * m * vv * vv };
   },
   dvs(mode){
+    if (mode === 'balance') return [{ id: 'F', name: 'Magnetic force on the wire', short: 'F', sym: 'F', unit: 'N', f: d => d.F }, { id: 'dm', name: 'Change in the balance reading (+ = heavier)', short: 'Δm', sym: 'Δm', unit: 'g', f: d => d.dm }];
     if (mode === 'hall') return [{ id: 'VH', name: 'Hall voltage across the strip', short: 'ΔV_H', sym: 'ΔV<sub>H</sub>', unit: 'V', f: d => d.VH }];
     if (mode === 'sel') return [{ id: 'net', name: 'Net force (+ = magnetic wins)', short: 'F_net', sym: 'F<sub>net</sub>', unit: 'N', f: d => d.net }];
     if (mode === 'spec') return [{ id: 'sep', name: 'Distance between the two landing spots', short: 'Δx', sym: 'Δx', unit: 'm', f: d => d.sep }, { id: 'r2', name: 'Radius for ion 2', short: 'r₂', sym: 'r<sub>2</sub>', unit: 'm', f: d => d.r2 }];
     return [{ id: 'r', name: 'Radius of the circle', short: 'r', sym: 'r', unit: 'm', f: d => d.r }, { id: 'T', name: 'Period', short: 'T', sym: 'T', unit: 's', f: d => d.T }, { id: 'F', name: 'Magnetic force', short: 'F', sym: 'F', unit: 'N', f: d => d.F }];
   },
   work(v, d, mode, opt){
+    if (mode === 'balance') return '<h4>1 · Size of the force</h4>' + TEX`F = B I L` + TEX`F = (${M.iv('B', 1e-3)}\,\text{T})(${M.iv('I')})(${M.iv('L', 1e-2)}\,\text{m})` + TEXA`F = ${M.n(d.F, 'N')}` +
+      '<h4>2 · Direction (right-hand rule, F = I L × B)</h4><p class="st">Fingers along the current (' + (d.right ? 'to the right' : 'to the left') + '), curl them toward B (' + (d.into ? 'into' : 'out of') + ' the page). Your thumb points <b>' + (d.up > 0 ? 'up' : 'down') + '</b>.</p>' +
+      '<p class="st">So the force on the wire is <b>' + (d.up > 0 ? 'up' : 'down') + '</b>. Reverse the current <i>or</i> the field and it flips; reverse both and it doesn’t.</p>' +
+      '<h4>3 · What the balance reads</h4><p class="st">By Newton’s third law the wire pushes the magnet the opposite way, ' + (d.up > 0 ? 'down, so the reading goes <b>up</b>' : 'up, so the reading goes <b>down</b>') + '. The balance turns that force into a mass:</p>' +
+      TEX`\Delta m = \frac{F}{g}` + TEX`\Delta m = \frac{${M.n(d.F, 'N')}}{${M.n(10, 'm/s²')}}` + TEXA`\Delta m = ${M.n(d.F / 10, 'kg')}` + TEXA`\Delta m = ${M.n(Math.abs(d.dm), 'g')}` +
+      '<h4>4 · Lab rehearsal</h4><p class="st">Measure Δm for several currents, then graph F = (Δm)g against I. You get a straight line through the origin:</p>' +
+      TEX`\text{slope} = B L` + TEX`\text{slope} = (${M.iv('B', 1e-3)}\,\text{T})(${M.iv('L', 1e-2)}\,\text{m})` + TEXA`\text{slope} = ${M.n(d.slope, 'N/A')}` +
+      '<p class="note">With a measured slope and a ruler for L, you can find B = slope ÷ L.</p>';
     if (mode === 'hall') return '<h4>1 · Current to the right, B into the page</h4><p class="st">' + (d.el ? 'In a metal the carriers are <b>electrons</b>, drifting <b>left</b> (opposite the current).' : 'Here the carriers are <b>positive</b>, drifting <b>right</b> with the current.') + ' Right-hand rule (F = qv × B): either way they are pushed toward the <b>top edge</b>.</p>' +
       '<h4>2 · Charge piles up until it stops more piling</h4><p class="st">The top edge becomes <b>' + (d.el ? 'negative' : 'positive') + '</b>, the bottom edge ' + (d.el ? 'positive' : 'negative') + '. That makes an electric field across the strip. It grows until the forces balance, then carriers go straight:</p>' + TEX`qE = qv_d B` +
       '<h4>3 · Hall voltage</h4>' + TEX`E = v_d B` + TEXA`E = ${M.n(d.EH, 'V/m')}` + TEX`\Delta V_H = E\,w` + TEX`\Delta V_H = v_d B w` + TEX`\Delta V_H = (${M.iv('vd')})(${M.iv('B')})(${M.n(v.w / 100, 'm')})` + TEXA`\Delta V_H = ${M.n(d.VH, 'V')}` +
@@ -55,6 +66,29 @@ const SIM = {
       '<p class="note">B into the page: a positive charge moving right is pushed up, so it circles counterclockwise; an electron circles clockwise. Double v → double r, same T.</p>';
   },
   draw(v, d, mode, opt, t, dt, A){
+    if (mode === 'balance'){
+      panelTitle('CURRENT BALANCE (B ' + (d.into ? 'INTO' : 'OUT OF') + ' THE PAGE)', 10, 18);
+      const half = 10 * v.L, x0 = 200 - half, x1 = 200 + half, yw = 116, up = d.up;
+      ctx.fillStyle = 'rgba(122,63,176,0.08)'; ctx.fillRect(x0, 56, x1 - x0, 120); ctx.strokeStyle = '#7a3fb0'; ctx.lineWidth = 1.2; ctx.strokeRect(x0, 56, x1 - x0, 120);
+      if (d.into) crossGrid(x0, 56, x1, 176); else { ctx.strokeStyle = 'rgba(122,63,176,0.45)'; ctx.fillStyle = 'rgba(122,63,176,0.45)'; for (let x = x0 + 12; x < x1; x += 28) for (let y = 68; y < 176; y += 28){ ctx.beginPath(); ctx.arc(x, y, 5, 0, 7); ctx.stroke(); ctx.beginPath(); ctx.arc(x, y, 1.6, 0, 7); ctx.fill(); } }
+      text(d.into ? 'N pole in front, S behind' : 'S pole in front, N behind', 200, 50, { align: 'center', font: '600 9px "IBM Plex Mono",monospace', col: '#7a3fb0' });
+      ctx.strokeStyle = '#111'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(14, yw); ctx.lineTo(386, yw); ctx.stroke(); ctx.strokeStyle = '#ff6a2b'; ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(x0, yw); ctx.lineTo(x1, yw); ctx.stroke();
+      text('to power supply', 16, yw + 16, { font: '600 9px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+      arrow(d.right ? 40 : 100, yw - 14, d.right ? 100 : 40, yw - 14, '#e8a200', 'I', { w: 3, ly: -10 });
+      ctx.strokeStyle = '#111'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x0, 186); ctx.lineTo(x1, 186); ctx.moveTo(x0, 182); ctx.lineTo(x0, 190); ctx.moveTo(x1, 182); ctx.lineTo(x1, 190); ctx.stroke(); text('L = ' + fplain(v.L) + ' cm', 200, 202, { align: 'center', font: '700 11px "IBM Plex Mono",monospace' });
+      const FL = d.F > 1e-4 ? 8 + 44 * Math.min(1, d.F / 0.25) : 0; if (FL) arrow(200, yw - up * 6, 200, yw - up * (6 + FL), COL.F, 'F on wire', { w: 3.5, lx: 8, ly: 0 });
+      ctx.fillStyle = '#9aa'; ctx.fillRect(120, 210, 160, 30); ctx.strokeStyle = '#111'; ctx.lineWidth = 2; ctx.strokeRect(120, 210, 160, 30); text('magnet', 200, 230, { align: 'center', font: '700 12px "Space Grotesk",sans-serif', col: '#fff' });
+      ctx.fillStyle = '#ddd'; ctx.fillRect(90, 246, 220, 40); ctx.strokeRect(90, 246, 220, 40); ctx.fillStyle = '#1a2a1a'; ctx.fillRect(160, 252, 100, 28); text((150 + d.dm).toFixed(2) + ' g', 210, 272, { align: 'center', font: '700 15px "IBM Plex Mono",monospace', col: '#7cff9a' }); text('balance', 96, 262, { font: '600 9px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+      if (FL) arrow(296, up > 0 ? 212 : 242, 296, up > 0 ? 242 : 212, '#7a3fb0', 'on magnet', { w: 3, lx: 8, ly: 0 });
+      text('magnet’s reading with no current: 150.00 g', 12, 316, { font: '600 10px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+      panelTitle('READINGS', 395, 18); text('F = BIL = ' + fplain(d.F) + ' N', 400, 44, { font: '700 13px "Space Grotesk",sans-serif' }); text('Δm = ' + (d.dm > 0 ? '+' : d.dm < 0 ? '−' : '') + fplain(Math.abs(d.dm)) + ' g', 400, 66, { font: '700 13px "Space Grotesk",sans-serif', col: d.dm >= 0 ? '#c43a00' : '#1546d6' });
+      text('force on wire: ' + (d.up > 0 ? 'UP' : 'DOWN'), 400, 86, { font: '600 11px "IBM Plex Mono",monospace', col: '#4a4a4a' }); text('reading goes ' + (d.up > 0 ? 'UP' : 'DOWN'), 400, 102, { font: '600 11px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+      panelTitle('LAB GRAPH: F vs I', 395, 126); const gx = 420, gw = 160, gb = 290, gh = 140, Fm = Math.max(1e-9, d.slope * 5), X = I => gx + gw * I / 5, Y = F => gb - gh * F / Fm;
+      ctx.strokeStyle = '#111'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(gx, gb - gh - 4); ctx.lineTo(gx, gb); ctx.lineTo(gx + gw, gb); ctx.stroke(); text('F (N)', gx + 4, gb - gh + 6, { font: '600 9px "IBM Plex Mono",monospace', col: '#4a4a4a' }); text('I (A): 0 to 5', gx + gw, gb + 13, { align: 'right', font: '600 9px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+      ctx.strokeStyle = '#1546d6'; ctx.lineWidth = 2.2; ctx.beginPath(); ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(5), Y(d.slope * 5)); ctx.stroke(); ctx.fillStyle = '#ff6a2b'; ctx.strokeStyle = '#111'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(X(v.I), Y(d.F), 4.5, 0, 7); ctx.fill(); ctx.stroke();
+      text('slope = BL = ' + fplain(d.slope) + ' N/A', gx + 10, gb - gh + 24, { font: '700 10px "IBM Plex Mono",monospace', col: '#1546d6' }); text(fplain(Fm) + ' N', gx - 3, gb - gh + 4, { align: 'right', font: '500 8px "IBM Plex Mono",monospace', col: '#4a4a4a' });
+      return;
+    }
     if (mode === 'hall'){
       panelTitle('HALL EFFECT: CURRENT IN A STRIP, B INTO THE PAGE', 10, 18); crossGrid(12, 26, 388, 316);
       const x0 = 40, x1 = 360, yT = 110, yB = 230; ctx.fillStyle = 'rgba(200,170,120,0.55)'; ctx.fillRect(x0, yT, x1 - x0, yB - yT); ctx.strokeStyle = '#111'; ctx.lineWidth = 2; ctx.strokeRect(x0, yT, x1 - x0, yB - yT);
