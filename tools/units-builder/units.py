@@ -8,9 +8,9 @@ SIMS = {
                 'credit': 'Greenhouse tabs are original, with ideas from PhET “Greenhouse Effect” and “Blackbody Spectrum”. ' + PHET},
     'scope':   {'file': 'sims/electroscope.html', 'kind': 'panel', 'ar': '1100 / 650', 'credit': 'Charging &amp; the Electroscope is original.'},
     'hockey':  {'file': 'sims/electric-field-hockey.html', 'kind': 'plain', 'ar': '700 / 680', 'credit': 'Electric Field Hockey is an HTML5 port of the PhET sim. ' + PHET},
-    'fission': {'file': 'sims/nuclear-fission.html', 'kind': 'plain', 'ar': '4 / 3', 'credit': 'Nuclear Fission is an HTML5 port of the PhET sim. ' + PHET},
+    'fission': {'file': 'sims/nuclear-fission-lite.html', 'kind': 'plain', 'ar': '4 / 3', 'credit': 'Nuclear Fission is an original rewrite inspired by the PhET sim Nuclear Fission. ' + PHET},
     'star':    {'file': 'sims/star-life-cycle.html', 'kind': 'panel', 'ar': '1100 / 650', 'credit': 'Star Life Cycle is original.'},
-    'mman':    {'file': 'sims/moving-man.html', 'kind': 'plain', 'ar': '1.27', 'credit': 'The Moving Man is an HTML5 port of the PhET sim. ' + PHET},
+    'mman':    {'file': 'sims/moving-man-lite.html', 'kind': 'plain', 'ar': '1.27', 'credit': 'The Moving Man is an original rewrite inspired by the PhET sim The Moving Man. ' + PHET},
     'cart':    {'file': 'sims/push-cart.html', 'kind': 'plain', 'ar': '960 / 600', 'credit': 'Push the Cart is original.'},
     'lander':  {'file': 'sims/lunar-lander.html', 'kind': 'plain', 'ar': '800 / 650', 'credit': 'Lunar Lander is an HTML5 port of the PhET sim. ' + PHET},
     'maze':    {'file': 'sims/maze-game.html', 'kind': 'plain', 'ar': '720 / 600', 'credit': 'Maze Game is an HTML5 port of the PhET sim. ' + PHET},
@@ -169,7 +169,7 @@ SIMS = {
     'gears':   {'file': 'sims/circ-gears.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Gears is original.'},
     'assist':  {'file': 'sims/circ-assist.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Gravity Assist is original.'},
     'phetM':   {'file': 'sims/phet-momentum.html', 'kind': 'plain', 'ar': '16 / 10', 'credit': 'Collision Lab and Momentum Lab: ' + PHET},
-    'solar':   {'file': 'sims/my-solar-system.html', 'kind': 'plain', 'ar': '4 / 3', 'credit': 'My Solar System is a single-file copy of the open-source sim (old PhET-style constants). ' + PHET},
+    'solar':   {'file': 'sims/my-solar-system-lite.html', 'kind': 'plain', 'ar': '4 / 3', 'credit': 'My Solar System is an original rewrite inspired by the PhET sim My Solar System. ' + PHET},
 }
 
 UNITS = {
