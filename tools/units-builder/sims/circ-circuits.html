@@ -45,6 +45,15 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 #presets .lab{font:700 12px "IBM Plex Mono",monospace}
 #presets button{font:600 12.5px "Space Grotesk",sans-serif;padding:3px 8px;border:2px solid #111;background:#fff;cursor:pointer}
 #presets button:hover{background:#ffe2d3}
+body.cg input[name=gx]{visibility:hidden}
+#app.wrapbar{grid-template-rows:auto 330px 1fr}
+#app.wrapbar #bar{flex-wrap:wrap;row-gap:6px}
+#acts{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 6px}
+#acts button{font:700 14px "Space Grotesk",sans-serif;padding:6px 14px;border:2px solid #111;background:#fff;color:#111;cursor:pointer}
+#acts button.hot{background:#ff6a2b;color:#fff}
+#acts button:disabled{opacity:.35;cursor:default}
+#acts button:focus-visible{outline:3px solid #1546d6;outline-offset:2px}
+#acts .st{font:600 12px "Space Grotesk",sans-serif;color:#4a4a4a;margin-left:4px}
 #gcard{border:2px solid #111;padding:5px 8px 6px;display:flex;flex-direction:column;box-sizing:border-box;min-height:0}
 .ghead{display:flex;align-items:center;gap:6px;font-size:13px;white-space:nowrap}
 .ghead select{font:600 13px "Space Grotesk",sans-serif;border:2px solid #111;padding:1px 4px;max-width:200px}
@@ -123,7 +132,7 @@ const M = {
 const S = { mode: null, opt: {}, v: {}, store: {}, def: {}, ivs: [], gx: null, dv: null, hot: null, t: 0, anim: {} };
 
 function bar(){
-  const b = $('bar'); b.innerHTML = '';
+  const b = $('bar'); b.innerHTML = ''; $('app').classList.remove('wrapbar');
   const group = (label, items, cur, onpick) => {
     const g = document.createElement('div'); g.className = 'seg'; g.setAttribute('role', 'group');
     if (label){ const l = document.createElement('span'); l.className = 'lab'; l.textContent = label; g.appendChild(l); }
@@ -141,6 +150,7 @@ function bar(){
   setBig(document.body.classList.contains('big'), false);
   if (b.scrollWidth > b.clientWidth + 1) tip.remove();
   if (b.scrollWidth > b.clientWidth + 1) b.querySelectorAll('.seg button').forEach(x => { x.style.fontSize = '13px'; x.style.padding = '6px 8px'; });
+  if (b.scrollWidth > b.clientWidth + 1) $('app').classList.add('wrapbar');   // still too wide: let the row wrap onto a second line
 }
 
 function setup(){
@@ -178,14 +188,38 @@ function update(){
   S.ivs.forEach(d => { $('val-' + d.id).innerHTML = d.show ? d.show(S.v[d.id]) : fnum(S.v[d.id]) + (d.unit ? '&nbsp;' + d.unit : ''); });
   S.d = calcWith();
   if (SIM.graphHidden && !SIM.noGraph) $('gcard').style.visibility = SIM.graphHidden(S.v, S.mode, S.opt) ? 'hidden' : '';
+  acts();
   $('work').innerHTML = '<div class="wt"><span>Show the work</span><span class="hint">' + (SIM.hint || 'g = 10 m/s²') + '</span></div>' + (SIM.strip ? SIM.strip(SIM.work(S.v, S.d, S.mode, S.opt)) : SIM.work(S.v, S.d, S.mode, S.opt));
   document.querySelectorAll('input[name=gx]').forEach(r => r.checked = (r.value === S.gx));
   graph();
 }
 
+// optional hook: SIM.actions(mode, opt) -> [{ id, label, hot, disabled, onClick }] and SIM.actionStatus(mode, opt) -> text.
+// Real buttons (Tab/Enter work) in a row above the sliders. Buttons are reused by id so keyboard focus survives updates.
+function acts(){
+  const list = SIM.actions ? (SIM.actions(S.mode, S.opt) || []) : [];
+  let a = $('acts');
+  if (!list.length){ if (a) a.remove(); return; }
+  if (!a || a.parentNode !== $('ctl')){ a = document.createElement('div'); a.id = 'acts'; a.setAttribute('role', 'group'); a.setAttribute('aria-label', 'Lab controls'); $('ctl').prepend(a); }
+  const keep = new Set(), had = a.contains(document.activeElement) ? document.activeElement : null;
+  list.forEach((x, i) => { let bt = a.querySelector('button[data-id="' + x.id + '"]');
+    if (!bt){ bt = document.createElement('button'); bt.type = 'button'; bt.dataset.id = x.id; bt.onclick = () => { const cur = (SIM.actions(S.mode, S.opt) || []).find(y => y.id === x.id); if (cur && !cur.disabled){ cur.onClick(); update(); } }; }
+    bt.textContent = x.label; bt.disabled = !!x.disabled; bt.classList.toggle('hot', !!x.hot);
+    if (a.children[i] !== bt) a.insertBefore(bt, a.children[i] || null); keep.add(bt); });
+  let st = a.querySelector('.st'); if (!st){ st = document.createElement('span'); st.className = 'st'; st.setAttribute('aria-live', 'polite'); }
+  a.appendChild(st); keep.add(st); st.textContent = SIM.actionStatus ? SIM.actionStatus(S.mode, S.opt) : '';
+  [...a.children].forEach(c => { if (!keep.has(c)) c.remove(); });
+  // keyboard users: if the focused button just turned itself off, move focus to the next useful one
+  if (had && (had.disabled || !a.contains(had))){ const nx = a.querySelector('button.hot:not(:disabled)') || a.querySelector('button:not(:disabled)'); if (nx) nx.focus(); }
+}
+
 function graph(){
   if (SIM.noGraph) return;
   const cv = $('gv'), g = cv.getContext('2d'), W = 340, Hh = 150; g.setTransform(2, 0, 0, 2, 0, 0); g.clearRect(0, 0, W, Hh);
+  // optional hook: a sim can draw its own graph (e.g. recorded lab data). Return a header string to take over the panel.
+  const cg = SIM.customGraph ? SIM.customGraph(S.v, S.d, S.mode, S.opt, g, W, Hh) : false, gh = document.querySelector('#gcard .ghead');
+  gh.children[0].innerHTML = cg || 'Graph'; $('dvsel').style.display = cg ? 'none' : ''; $('ivname').parentNode.style.display = cg ? 'none' : ''; document.body.classList.toggle('cg', !!cg);
+  if (cg){ $('dbl').innerHTML = ''; return; }
   const dvs = SIM.dvs(S.mode, S.opt), dv = dvs.find(d => d.id === S.dv), ref = dv.vs ? dvs.find(d => d.id === dv.vs) : null;
   const x = S.def[S.gx]; $('ivname').innerHTML = '<i>' + x.sym + '</i>' + (x.unit && !x.show ? ' (' + x.unit + ')' : '');
   const N = 160, xs = [], ys = [], rs = [];

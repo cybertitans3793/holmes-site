@@ -207,7 +207,7 @@ const SIM = {
 // Students measure h, L and d (to the back edge of the block), compute x_ramp = sqrt(L^2 - h^2) and D = x_ramp + d,
 // and graph h vs D. Energy: mgh = μk·mg·cosθ·L + μk·mg·d = μk·mg·D, so h = μk·D (slope = μk).
 // No best-fit line or regression is shown (the students make their own); the hidden μk can be revealed to check.
-const RL = { trials: [], key: '', btn: [], reveal: false,
+const RL = { trials: [], key: '', reveal: false,
   mu0: Math.round((0.20 + Math.random() * 0.20) * 1000) / 1000 };   // hidden μk, new on every page load
 const RBOARD = 1.0, RBLOCK = 0.08;                                    // board length, block length (m)
 function rlGauss(){ let u = 0, w = 0; while (!u) u = Math.random(); while (!w) w = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * PI * w); }
@@ -278,7 +278,6 @@ const RAMP = {
     return 'Your data: h vs D';
   },
   draw(v, d, mode, opt, t, dt, A){
-    RL.btn = [];
     if (rlKey(v, opt) !== RL.key){ RL.key = rlKey(v, opt); RL.trials = []; RL.last = null; RL.reveal = false; setTimeout(update, 0); }
     const th = v.th * DEG, S = 158, base = 250, J = 100 + S * Math.cos(th) * RBOARD, F = '"Space Grotesk",sans-serif', Mo = '"IBM Plex Mono",monospace';
     const onRamp = u => [J - u * Math.cos(th) * S, base - u * Math.sin(th) * S], onFlat = x => [J + x * S, base];
@@ -294,7 +293,7 @@ const RAMP = {
     ctx.strokeStyle = '#4a4a4a'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(0, base + 7.5); ctx.lineTo(400, base + 7.5); ctx.stroke();
     ctx.beginPath(); ctx.arc(J, base, 26, PI, PI + th); ctx.stroke(); text('θ = ' + v.th + '°', J - 70, base - 6, { font: '600 11px ' + F });
     // motion
-    if (A.reset || !A.st) { A.st = 'ready'; A.t = 0; A.run = null; }
+    if (A.reset || !A.st) { const was = A.st; A.st = 'ready'; A.t = 0; A.run = null; A.recorded = false; if (was && was !== 'ready') setTimeout(update, 0); }
     if (A.st === 'go'){
       A.t += dt; const r = A.run, t1 = r.v0 ? (-r.v0 + Math.sqrt(r.v0 * r.v0 + 2 * r.a1 * r.L)) / r.a1 : Math.sqrt(2 * r.L / r.a1);
       if (A.t < t1){ A.u = r.L - (r.v0 * A.t + 0.5 * r.a1 * A.t * A.t); A.x = null; }
@@ -323,41 +322,41 @@ const RAMP = {
     }
     if (A.st === 'off') text('Too high: it slides off the end of the board. Release lower.', 12, 318, { font: '700 11px ' + F, col: '#c43a00' });
     else text('Measure h, L and d to the back edge of the block (orange dot).', 12, 318, { font: '500 10px ' + F, col: '#6a6a6a' });
-    // right panel: buttons and status
+    // right panel: status (the buttons are real HTML buttons above the sliders, see SIM.actions)
     panelTitle('LAB BENCH', 412, 18);
-    const T = RL.trials, canRec = A.st === 'done' && !A.recorded && T.length < 6;
-    rlBtn(412, 34, 86, 26, 'Release', A.st === 'ready');
-    rlBtn(506, 34, 86, 26, 'Record', canRec, !canRec);
-    text('Trials recorded: ' + T.length + ' / 6', 412, 84, { font: '700 12px ' + F });
-    rlBtn(412, 94, 86, 22, 'Clear table', false, !T.length);
-    rlBtn(506, 94, 86, 22, 'Reset block', false, A.st === 'ready');
-    let y = 140;
-    text(opt.surf === 'set' ? 'μk = ' + v.mu.toFixed(2) + ' (you set it)' : 'Surface: mystery μk', 412, y, { font: '700 12px ' + F }); y += 16;
+    const T = RL.trials;
+    text('Trials recorded: ' + T.length + ' / 6', 412, 44, { font: '700 13px ' + F });
+    const stTxt = { ready: 'Ready: press Release.', go: 'Sliding…', done: A.recorded ? '✓ Recorded.' : 'Stopped: press Record.', off: 'Slid off the end.' }[A.st];
+    text(stTxt, 412, 64, { font: '600 12px ' + F, col: A.st === 'off' ? '#c43a00' : A.recorded || A.st === 'done' ? '#1e7d45' : '#1546d6' });
+    if (A.recorded && T.length < 6){ text('Move the release point', 412, 80, { font: '500 11px ' + F, col: '#4a4a4a' }); text('and go again.', 412, 94, { font: '500 11px ' + F, col: '#4a4a4a' }); }
+    if (T.length >= 6){ text('✓ 6 trials done.', 412, 80, { font: '700 12px ' + F, col: '#1e7d45' }); text('Now make your graph.', 412, 94, { font: '500 11px ' + F, col: '#4a4a4a' }); }
+    text(opt.surf === 'set' ? 'μk = ' + v.mu.toFixed(2) + ' (you set it)' : 'Surface: mystery μk', 412, 130, { font: '700 12px ' + F });
     if (opt.surf !== 'set'){
-      if (RL.reveal) text('Hidden μk = ' + RL.mu0.toFixed(2), 412, y + 4, { font: '700 13px ' + Mo, col: '#c43a00' });
-      else rlBtn(412, y - 8, 120, 22, 'Reveal μk', false, T.length < 6);
-      y += 24; text(RL.reveal ? 'Compare it with your slope.' : 'Find μk from your graph first.', 412, y + 4, { font: '500 10px ' + F, col: '#6a6a6a' }); y += 10;
+      if (RL.reveal) text('Hidden μk = ' + RL.mu0.toFixed(2), 412, 152, { font: '700 14px ' + Mo, col: '#c43a00' });
+      text(RL.reveal ? 'Compare it with your slope.' : T.length < 6 ? 'Reveal μk unlocks after 6 trials.' : 'Find μk from your graph first.', 412, RL.reveal ? 170 : 150, { font: '500 10px ' + F, col: '#6a6a6a' });
     }
-    if (A.st === 'go') text('sliding…', 412, 230, { font: '600 11px ' + F, col: '#1546d6' });
-    if (A.recorded && T.length < 6){ text('✓ Recorded.', 412, 230, { font: '700 11px ' + F, col: '#1e7d45' }); text('Move the release point', 412, 245, { font: '500 10px ' + F, col: '#4a4a4a' }); text('and go again.', 412, 258, { font: '500 10px ' + F, col: '#4a4a4a' }); }
-    if (T.length >= 6){ text('✓ 6 trials done.', 412, 230, { font: '700 11px ' + F, col: '#1e7d45' }); text('Now make your graph.', 412, 245, { font: '500 10px ' + F, col: '#4a4a4a' }); }
   }
 };
-function rlBtn(x, y, w, h, label, hot, dis){ RL.btn.push({ x, y, w, h, label, dis }); ctx.save(); ctx.globalAlpha = dis ? 0.35 : 1; ctx.fillStyle = hot ? '#ff6a2b' : '#fff'; ctx.strokeStyle = '#111'; ctx.lineWidth = 2; ctx.fillRect(x, y, w, h); ctx.strokeRect(x, y, w, h);
-  text(label, x + w / 2, y + h / 2 + 4.5, { align: 'center', font: '700 12px "Space Grotesk",sans-serif', col: hot ? '#fff' : '#111' }); ctx.restore(); }
 const RLACT = {
-  'Release': () => { const A = S.anim; if (A.st === 'go') return; const r = rlRun(S.v, S.opt); A.run = r; A.t = 0; A.st = 'go'; A.recorded = false; RL.last = null; },
-  'Record': () => { const A = S.anim; if (A.st !== 'done' || A.recorded || RL.trials.length >= 6) return; RL.trials.push(A.run); A.recorded = true; update(); },
-  'Clear table': () => { RL.trials = []; RL.reveal = false; S.anim.recorded = false; update(); },
-  'Reset block': () => { S.anim.st = 'ready'; S.anim.recorded = false; RL.last = null; update(); },
-  'Reveal μk': () => { if (RL.trials.length >= 6) RL.reveal = true; }
+  release(){ const A = S.anim; if (A.st === 'go') return; A.run = rlRun(S.v, S.opt); A.t = 0; A.st = 'go'; A.recorded = false; RL.last = null; },
+  record(){ const A = S.anim; if (A.st !== 'done' || A.recorded || RL.trials.length >= 6) return; RL.trials.push(A.run); A.recorded = true; },
+  clear(){ RL.trials = []; RL.reveal = false; S.anim.recorded = false; },
+  reset(){ S.anim.st = 'ready'; S.anim.recorded = false; RL.last = null; },
+  reveal(){ if (RL.trials.length >= 6) RL.reveal = true; }
 };
-(function(){
-  const pos = e => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) / r.width * 600, (e.clientY - r.top) / r.height * 330]; };
-  const hit = e => { if (S.mode !== 'ramplab') return null; const [x, y] = pos(e); return RL.btn.find(b => !b.dis && x >= b.x && x <= b.x + b.w && y >= b.y && y <= b.y + b.h); };
-  cv.addEventListener('pointerdown', e => { const b = hit(e); if (b && RLACT[b.label]){ RLACT[b.label](); e.preventDefault(); } });
-  cv.addEventListener('pointermove', e => { if (S.mode === 'ramplab') cv.style.cursor = hit(e) ? 'pointer' : ''; });
-})();
+SIM.actions = (mode, opt) => {
+  if (mode !== 'ramplab') return [];
+  const A = S.anim, n = RL.trials.length, st = A.st || 'ready';
+  const l = [
+    { id: 'release', label: 'Release', hot: st === 'ready', disabled: st === 'go', onClick: RLACT.release },
+    { id: 'record', label: 'Record', hot: st === 'done' && !A.recorded && n < 6, disabled: !(st === 'done' && !A.recorded && n < 6), onClick: RLACT.record },
+    { id: 'reset', label: 'Reset block', disabled: st === 'ready', onClick: RLACT.reset },
+    { id: 'clear', label: 'Clear table', disabled: !n, onClick: RLACT.clear }];
+  if (opt.surf !== 'set') l.push({ id: 'reveal', label: RL.reveal ? 'μk = ' + RL.mu0.toFixed(2) : 'Reveal μk', disabled: n < 6 || RL.reveal, onClick: RLACT.reveal });
+  return l;
+};
+SIM.actionStatus = mode => { if (mode !== 'ramplab') return ''; const A = S.anim, st = A.st || 'ready';
+  return 'Trials: ' + RL.trials.length + ' / 6 · ' + ({ ready: 'ready', go: 'sliding', done: A.recorded ? 'recorded' : 'stopped, press Record', off: 'slid off the end: release lower' }[st]); };
 // route the ramp-lab mode to RAMP; every other mode is unchanged
 SIM.modes.push({ id: 'ramplab', label: 'Ramp lab: h vs D' });
 SIM.opts[0].modes = ['valley', 'hump', 'loop', 'rough', 'spring'];
