@@ -45,6 +45,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 #presets .lab{font:700 12px "IBM Plex Mono",monospace}
 #presets button{font:600 12.5px "Space Grotesk",sans-serif;padding:3px 8px;border:2px solid #111;background:#fff;cursor:pointer}
 #presets button:hover{background:#ffe2d3}
+body.cg input[name=gx]{visibility:hidden}
 #gcard{border:2px solid #111;padding:5px 8px 6px;display:flex;flex-direction:column;box-sizing:border-box;min-height:0}
 .ghead{display:flex;align-items:center;gap:6px;font-size:13px;white-space:nowrap}
 .ghead select{font:600 13px "Space Grotesk",sans-serif;border:2px solid #111;padding:1px 4px;max-width:200px}
@@ -186,6 +187,10 @@ function update(){
 function graph(){
   if (SIM.noGraph) return;
   const cv = $('gv'), g = cv.getContext('2d'), W = 340, Hh = 150; g.setTransform(2, 0, 0, 2, 0, 0); g.clearRect(0, 0, W, Hh);
+  // optional hook: a sim can draw its own graph (e.g. recorded lab data). Return a header string to take over the panel.
+  const cg = SIM.customGraph ? SIM.customGraph(S.v, S.d, S.mode, S.opt, g, W, Hh) : false, gh = document.querySelector('#gcard .ghead');
+  gh.children[0].innerHTML = cg || 'Graph'; $('dvsel').style.display = cg ? 'none' : ''; $('ivname').parentNode.style.display = cg ? 'none' : ''; document.body.classList.toggle('cg', !!cg);
+  if (cg){ $('dbl').innerHTML = ''; return; }
   const dvs = SIM.dvs(S.mode, S.opt), dv = dvs.find(d => d.id === S.dv), ref = dv.vs ? dvs.find(d => d.id === dv.vs) : null;
   const x = S.def[S.gx]; $('ivname').innerHTML = '<i>' + x.sym + '</i>' + (x.unit && !x.show ? ' (' + x.unit + ')' : '');
   const N = 160, xs = [], ys = [], rs = [];

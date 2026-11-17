@@ -45,6 +45,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 #presets .lab{font:700 12px "IBM Plex Mono",monospace}
 #presets button{font:600 12.5px "Space Grotesk",sans-serif;padding:3px 8px;border:2px solid #111;background:#fff;cursor:pointer}
 #presets button:hover{background:#ffe2d3}
+body.cg input[name=gx]{visibility:hidden}
 #gcard{border:2px solid #111;padding:5px 8px 6px;display:flex;flex-direction:column;box-sizing:border-box;min-height:0}
 .ghead{display:flex;align-items:center;gap:6px;font-size:13px;white-space:nowrap}
 .ghead select{font:600 13px "Space Grotesk",sans-serif;border:2px solid #111;padding:1px 4px;max-width:200px}
@@ -186,6 +187,10 @@ function update(){
 function graph(){
   if (SIM.noGraph) return;
   const cv = $('gv'), g = cv.getContext('2d'), W = 340, Hh = 150; g.setTransform(2, 0, 0, 2, 0, 0); g.clearRect(0, 0, W, Hh);
+  // optional hook: a sim can draw its own graph (e.g. recorded lab data). Return a header string to take over the panel.
+  const cg = SIM.customGraph ? SIM.customGraph(S.v, S.d, S.mode, S.opt, g, W, Hh) : false, gh = document.querySelector('#gcard .ghead');
+  gh.children[0].innerHTML = cg || 'Graph'; $('dvsel').style.display = cg ? 'none' : ''; $('ivname').parentNode.style.display = cg ? 'none' : ''; document.body.classList.toggle('cg', !!cg);
+  if (cg){ $('dbl').innerHTML = ''; return; }
   const dvs = SIM.dvs(S.mode, S.opt), dv = dvs.find(d => d.id === S.dv), ref = dv.vs ? dvs.find(d => d.id === dv.vs) : null;
   const x = S.def[S.gx]; $('ivname').innerHTML = '<i>' + x.sym + '</i>' + (x.unit && !x.show ? ' (' + x.unit + ')' : '');
   const N = 160, xs = [], ys = [], rs = [];
@@ -451,6 +456,171 @@ const SIM = {
     else if (!cart && !window.ABP) text('(friction → E_th)', 445, 314, { font: '500 10px "IBM Plex Mono",monospace', col: '#8a8a8a' });
   }
 };
+
+// ---------------- Ramp lab: Energy and Friction on a Ramp (P1-06) ----------------
+// A block is released from rest on a 1 m ramp board taped to a 1 m level board and slides until it stops.
+// Students measure h, L and d (to the back edge of the block), compute x_ramp = sqrt(L^2 - h^2) and D = x_ramp + d,
+// and graph h vs D. Energy: mgh = μk·mg·cosθ·L + μk·mg·d = μk·mg·D, so h = μk·D (slope = μk).
+// No best-fit line or regression is shown (the students make their own); the hidden μk can be revealed to check.
+const RL = { trials: [], key: '', btn: [], reveal: false,
+  mu0: Math.round((0.20 + Math.random() * 0.20) * 1000) / 1000 };   // hidden μk, new on every page load
+const RBOARD = 1.0, RBLOCK = 0.08;                                    // board length, block length (m)
+function rlGauss(){ let u = 0, w = 0; while (!u) u = Math.random(); while (!w) w = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * PI * w); }
+function rlMu(v, opt){ return opt.surf === 'set' ? v.mu : RL.mu0; }
+// one release: returns the measured values (with a little realistic scatter, plus the chosen error)
+function rlRun(v, opt){
+  const th = v.th * DEG, mu = rlMu(v, opt) * (opt.err === 'uneven' ? 1 + 0.10 * rlGauss() : 1);
+  const v0sq = opt.err === 'push' ? 2 * G10 * 0.03 : 0;               // a small push = 3 cm of extra drop
+  const a1 = Math.max(0.05, G10 * (Math.sin(th) - mu * Math.cos(th)));
+  let v1sq = v0sq + 2 * a1 * v.L; if (opt.err === 'bump') v1sq *= 0.85;   // bump at the joint loses 15% of the KE
+  const d = Math.max(0, v1sq / (2 * mu * G10) + 0.004 * rlGauss());    // ±4 mm measuring scatter
+  const h = v.L * Math.sin(th);
+  return { h, L: v.L, d, xr: Math.sqrt(v.L * v.L - h * h), D: Math.sqrt(v.L * v.L - h * h) + d, a1, v1: Math.sqrt(v1sq), mu, v0: Math.sqrt(v0sq), off: d > RBOARD - RBLOCK };
+}
+function rlKey(v, opt){ return opt.surf + ':' + (opt.surf === 'set' ? v.mu : RL.mu0); }
+const f3 = x => x.toFixed(3);
+const RAMP = {
+  ivs(mode, opt){
+    const l = [
+      { id: 'L', sym: 'L', symText: 'L', label: 'Release point (distance along ramp)', unit: 'm', min: 0.20, max: 0.90, step: 0.01, val: 0.50, graph: true },
+      { id: 'th', sym: 'θ', symText: 'θ', label: 'Ramp angle', unit: '°', min: 25, max: 35, step: 1, val: 30 },
+      { id: 'm', sym: 'm', symText: 'm', label: 'Block mass', unit: 'kg', min: 0.2, max: 0.5, step: 0.05, val: 0.3 }];
+    if (opt.surf === 'set') l.push({ id: 'mu', sym: 'μ<sub>k</sub>', symText: 'μk', label: 'Friction (both boards)', unit: '', min: 0.10, max: 0.40, step: 0.01, val: 0.30, show: x => x.toFixed(2) });
+    return l;
+  },
+  calc(v){ const h = v.L * Math.sin(v.th * DEG); return { h, xr: Math.sqrt(v.L * v.L - h * h) }; },
+  dvs(){ return [{ id: 'h', name: 'Release height', short: 'h', sym: 'h', unit: 'm', f: d => d.h }]; },
+  work(v, d, mode, opt){
+    const T = RL.trials, last = RL.last;
+    let h = '<h4>1 · Data table</h4>';
+    if (!T.length) h += '<p class="st">No trials yet. Press <b>Release</b>, then <b>Record</b>. Do 6 different release points.</p>';
+    else h += '<table style="border-collapse:collapse;font:500 12px \'IBM Plex Mono\',monospace;margin:4px 0 6px;width:100%"><tr style="border-bottom:2px solid #111;text-align:right">' +
+      ['#', 'h (m)', 'L (m)', 'x<sub>ramp</sub> (m)', 'd (m)', 'D (m)'].map(c => '<th style="padding:2px 4px">' + c + '</th>').join('') + '</tr>' +
+      T.map((r, i) => '<tr style="text-align:right;border-bottom:1px solid #ddd"><td style="padding:2px 4px">' + (i + 1) + '</td><td>' + f3(r.h) + '</td><td>' + f3(r.L) + '</td><td>' + f3(r.xr) + '</td><td>' + f3(r.d) + '</td><td><b>' + f3(r.D) + '</b></td></tr>').join('') + '</table>' +
+      (T.length < 6 ? '<p class="st">' + (6 - T.length) + ' more trial' + (T.length === 5 ? '' : 's') + ' to go.</p>' : '<p class="st">All 6 trials done. Graph h (up) vs D (across) by hand, draw your best-fit line, and find its slope.</p>');
+    if (last && !last.off){
+      h += '<h4>2 · This trial’s numbers</h4><p class="st">Measured: h, L and d. Calculated:</p>' +
+        ("<math display=\"block\"><mrow><msub><mi>x</mi><mrow><mtext>ramp</mtext></mrow></msub><mo>&#x0003D;</mo><msqrt><mrow><msup><mi>L</mi><mn>2</mn></msup><mo>&#x02212;</mo><msup><mi>h</mi><mn>2</mn></msup></mrow></msqrt></mrow></math>") + ("<math display=\"block\"><mrow><msub><mi>x</mi><mrow><mtext>ramp</mtext></mrow></msub><mo>&#x0003D;</mo><msqrt><mrow><mo stretchy=\"false\">&#x00028;</mo>" + (M.n(+f3(last.L), 'm')) + "<msup><mo stretchy=\"false\">&#x00029;</mo><mn>2</mn></msup><mo>&#x02212;</mo><mo stretchy=\"false\">&#x00028;</mo>" + (M.n(+f3(last.h), 'm')) + "<msup><mo stretchy=\"false\">&#x00029;</mo><mn>2</mn></msup></mrow></msqrt></mrow></math>") + ("<math display=\"block\"><mrow><msub><mi>x</mi><mrow><mtext>ramp</mtext></mrow></msub><mo>&#x0003D;</mo>" + (M.n(+f3(last.xr), 'm')) + "</mrow></math>") +
+        ("<math display=\"block\"><mrow><mi>D</mi><mo>&#x0003D;</mo><msub><mi>x</mi><mrow><mtext>ramp</mtext></mrow></msub><mo>&#x0002B;</mo><mi>d</mi></mrow></math>") + ("<math display=\"block\"><mrow><mi>D</mi><mo>&#x0003D;</mo>" + (M.n(+f3(last.xr), 'm')) + "<mo>&#x0002B;</mo>" + (M.n(+f3(last.d), 'm')) + "</mrow></math>") + ("<math class=\"ans\" display=\"block\"><mrow><mi>D</mi><mo>&#x0003D;</mo>" + (M.n(+f3(last.D), 'm')) + "</mrow></math>");
+    }
+    h += '<h4>' + (last && !last.off ? 3 : 2) + ' · Why h vs D is a straight line</h4>' +
+      '<p class="st">The block starts and ends at rest, so all of its starting PE is used up by friction:</p>' +
+      ("<math display=\"block\"><mrow><mi>m</mi><mi>g</mi><mi>h</mi><mo>&#x0003D;</mo><msub><mi>W</mi><mrow><mtext>ramp</mtext></mrow></msub><mo>&#x0002B;</mo><msub><mi>W</mi><mrow><mtext>level</mtext></mrow></msub></mrow></math>") +
+      '<p class="st">On the ramp the normal force is mg cos θ:</p>' +
+      ("<math display=\"block\"><mrow><msub><mi>W</mi><mrow><mtext>ramp</mtext></mrow></msub><mo>&#x0003D;</mo><msub><mi>&#x003BC;</mi><mi>k</mi></msub><mspace width=\"0.167em\" /><mi>m</mi><mi>g</mi><mspace width=\"0.167em\"/><mi>cos</mi><mspace width=\"0.167em\"/><mi>&#x003B8;</mi><mo>&#x000B7;</mo><mi>L</mi></mrow></math>") + ("<math display=\"block\"><mrow><mi>L</mi><mspace width=\"0.167em\"/><mi>cos</mi><mspace width=\"0.167em\"/><mi>&#x003B8;</mi><mo>&#x0003D;</mo><msub><mi>x</mi><mrow><mtext>ramp</mtext></mrow></msub></mrow></math>") + ("<math display=\"block\"><mrow><msub><mi>W</mi><mrow><mtext>ramp</mtext></mrow></msub><mo>&#x0003D;</mo><msub><mi>&#x003BC;</mi><mi>k</mi></msub><mspace width=\"0.167em\" /><mi>m</mi><mi>g</mi><mspace width=\"0.167em\" /><msub><mi>x</mi><mrow><mtext>ramp</mtext></mrow></msub></mrow></math>") +
+      '<p class="st">On the level board the normal force is mg:</p>' + ("<math display=\"block\"><mrow><msub><mi>W</mi><mrow><mtext>level</mtext></mrow></msub><mo>&#x0003D;</mo><msub><mi>&#x003BC;</mi><mi>k</mi></msub><mspace width=\"0.167em\" /><mi>m</mi><mi>g</mi><mspace width=\"0.167em\" /><mi>d</mi></mrow></math>") +
+      ("<math display=\"block\"><mrow><mi>m</mi><mi>g</mi><mi>h</mi><mo>&#x0003D;</mo><msub><mi>&#x003BC;</mi><mi>k</mi></msub><mspace width=\"0.167em\" /><mi>m</mi><mi>g</mi><mspace width=\"0.167em\" /><mo stretchy=\"false\">&#x00028;</mo><msub><mi>x</mi><mrow><mtext>ramp</mtext></mrow></msub><mo>&#x0002B;</mo><mi>d</mi><mo stretchy=\"false\">&#x00029;</mo></mrow></math>") + ("<math class=\"ans\" display=\"block\"><mrow><mi>h</mi><mo>&#x0003D;</mo><msub><mi>&#x003BC;</mi><mi>k</mi></msub><mspace width=\"0.167em\" /><mi>D</mi></mrow></math>") +
+      '<p class="st">A direct (linear) relationship through the origin. Mass and ramp angle cancel, so the slope of h vs D is μ<sub>k</sub>.</p>';
+    if (opt.err === 'bump') h += '<div class="bad">Bump at the joint: the block loses extra energy there, so D comes out too short and the slope (μ<sub>k</sub>) too high.</div>';
+    if (opt.err === 'push') h += '<div class="bad">Pushing at release: extra KE at the start, so D comes out too long and the slope (μ<sub>k</sub>) too low.</div>';
+    if (opt.err === 'uneven') h += '<div class="bad">Uneven boards (dust, worn spots): μ<sub>k</sub> changes a little from run to run, so d scatters. A random error.</div>';
+    return h;
+  },
+  graph(g, W, Hh){
+    const T = RL.trials, l = 34, r = W - 10, tp = 10, b = Hh - 26;
+    const Dm = Math.max(1, ...T.map(q => q.D)) * 1.1, hm = Math.max(0.3, ...T.map(q => q.h)) * 1.15;
+    const X = D => l + (r - l) * D / Dm, Y = h => b - (b - tp) * h / hm;
+    g.strokeStyle = '#e4e4e4'; g.lineWidth = 1;
+    const sx = Dm > 1.5 ? 0.5 : 0.2, sy = hm > 0.45 ? 0.1 : 0.05;
+    g.font = '500 9px "IBM Plex Mono",monospace'; g.fillStyle = '#6a6a6a';
+    for (let x = 0; x <= Dm + 1e-9; x += sx){ g.beginPath(); g.moveTo(X(x), tp); g.lineTo(X(x), b); g.stroke(); g.textAlign = 'center'; g.fillText(x.toFixed(1), X(x), b + 11); }
+    for (let y = 0; y <= hm + 1e-9; y += sy){ g.beginPath(); g.moveTo(l, Y(y)); g.lineTo(r, Y(y)); g.stroke(); g.textAlign = 'right'; g.fillText(y.toFixed(2), l - 3, Y(y) + 3); }
+    g.strokeStyle = '#111'; g.lineWidth = 1.5; g.beginPath(); g.moveTo(l, tp); g.lineTo(l, b); g.lineTo(r, b); g.stroke();
+    g.fillStyle = '#111'; g.textAlign = 'center'; g.font = '600 10px "Space Grotesk",sans-serif'; g.fillText('D, total horizontal distance (m)', (l + r) / 2, Hh - 3);
+    g.save(); g.translate(9, (tp + b) / 2); g.rotate(-PI / 2); g.fillText('h (m)', 0, 0); g.restore();
+    T.forEach(q => { g.fillStyle = '#ff6a2b'; g.strokeStyle = '#111'; g.lineWidth = 1; g.beginPath(); g.arc(X(q.D), Y(q.h), 3.5, 0, 7); g.fill(); g.stroke(); });
+    if (!T.length){ g.fillStyle = '#9a9a9a'; g.textAlign = 'center'; g.font = '500 10px "Space Grotesk",sans-serif'; g.fillText('Recorded trials appear here', (l + r) / 2, (tp + b) / 2); }
+    return 'Your data: h vs D';
+  },
+  draw(v, d, mode, opt, t, dt, A){
+    RL.btn = [];
+    if (rlKey(v, opt) !== RL.key){ RL.key = rlKey(v, opt); RL.trials = []; RL.last = null; RL.reveal = false; setTimeout(update, 0); }
+    const th = v.th * DEG, S = 158, base = 250, J = 100 + S * Math.cos(th) * RBOARD, F = '"Space Grotesk",sans-serif', Mo = '"IBM Plex Mono",monospace';
+    const onRamp = u => [J - u * Math.cos(th) * S, base - u * Math.sin(th) * S], onFlat = x => [J + x * S, base];
+    panelTitle('RAMP LAB · ENERGY AND FRICTION', 10, 18);
+    // boards
+    ctx.fillStyle = '#c8a46a'; ctx.strokeStyle = '#111'; ctx.lineWidth = 1.5;
+    const [tx, ty] = onRamp(RBOARD);
+    ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(J, base); ctx.lineTo(J, base + 7); ctx.lineTo(tx, ty + 7 / Math.cos(th)); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillRect(J, base, S * RBOARD, 7); ctx.strokeRect(J, base, S * RBOARD, 7);
+    ctx.fillStyle = '#8a8a8a'; ctx.fillRect(tx - 6, ty + 6, 6, base + 7 - ty - 6);    // prop under the ramp
+    ctx.fillStyle = '#bdbdbd'; ctx.fillRect(J - 7, base - 1, 14, 3);                    // tape over the joint
+    if (opt.err === 'bump'){ ctx.fillStyle = '#c43a00'; ctx.beginPath(); ctx.moveTo(J - 6, base); ctx.quadraticCurveTo(J, base - 7, J + 6, base); ctx.fill(); }
+    ctx.strokeStyle = '#4a4a4a'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(0, base + 7.5); ctx.lineTo(400, base + 7.5); ctx.stroke();
+    ctx.beginPath(); ctx.arc(J, base, 26, PI, PI + th); ctx.stroke(); text('θ = ' + v.th + '°', J - 70, base - 6, { font: '600 11px ' + F });
+    // motion
+    if (A.reset || !A.st) { A.st = 'ready'; A.t = 0; A.run = null; }
+    if (A.st === 'go'){
+      A.t += dt; const r = A.run, t1 = r.v0 ? (-r.v0 + Math.sqrt(r.v0 * r.v0 + 2 * r.a1 * r.L)) / r.a1 : Math.sqrt(2 * r.L / r.a1);
+      if (A.t < t1){ A.u = r.L - (r.v0 * A.t + 0.5 * r.a1 * A.t * A.t); A.x = null; }
+      else { const tt = A.t - t1, dec = r.mu * G10, tstop = r.v1 / dec; A.u = null; A.x = tt >= tstop ? r.d : r.v1 * tt - 0.5 * dec * tt * tt;
+        if (r.off && A.x > RBOARD - RBLOCK){ A.x = RBOARD - RBLOCK; A.st = 'off'; RL.last = r; setTimeout(update, 0); }
+        else if (tt >= tstop){ A.st = 'done'; RL.last = r; setTimeout(update, 0); } }
+    } else if (A.st === 'ready'){ A.u = v.L; A.x = null; }
+    // block: back edge at the measured point
+    ctx.save();
+    if (A.x === null || A.x === undefined){ const [bx, by] = onRamp(A.u); ctx.translate(bx, by); ctx.rotate(th); }
+    else { const [bx, by] = onFlat(A.x); ctx.translate(bx, by); }
+    ctx.fillStyle = '#1546d6'; ctx.strokeStyle = '#111'; ctx.lineWidth = 1.5; ctx.fillRect(0, -10, RBLOCK * S, 10); ctx.strokeRect(0, -10, RBLOCK * S, 10);
+    ctx.fillStyle = '#ff6a2b'; ctx.beginPath(); ctx.arc(0, -10, 2.5, 0, 7); ctx.fill(); ctx.restore();
+    // measurements (shown once the block is released from a set point)
+    const meas = A.st === 'done' || A.st === 'off' ? RL.last : null, hNow = v.L * Math.sin(th);
+    const [rx, ry] = onRamp(v.L);
+    ctx.setLineDash([4, 3]); ctx.strokeStyle = '#7a3fb0'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(rx, ry - 10); ctx.lineTo(rx, base); ctx.stroke(); ctx.setLineDash([]);
+    text('h = ' + f3(hNow) + ' m', rx - 6, (ry + base) / 2, { align: 'right', font: '700 11px ' + Mo, col: '#7a3fb0' });
+    const nx = -Math.sin(th), ny = -Math.cos(th);   // offset the L line above the ramp
+    const o = 22; ctx.strokeStyle = '#1e7d45'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(rx + nx * o, ry + ny * o); ctx.lineTo(J + nx * o, base + ny * o); ctx.stroke();
+    text('L = ' + f3(v.L) + ' m', (rx + J) / 2 + nx * (o + 14) - 18, (ry + base) / 2 + ny * (o + 14), { align: 'center', font: '700 11px ' + Mo, col: '#1e7d45' });
+    if (meas){
+      const [ex] = onFlat(Math.min(meas.d, RBOARD - RBLOCK));
+      ctx.strokeStyle = '#c43a00'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(J, base + 18); ctx.lineTo(ex, base + 18); ctx.moveTo(J, base + 13); ctx.lineTo(J, base + 23); ctx.moveTo(ex, base + 13); ctx.lineTo(ex, base + 23); ctx.stroke();
+      if (!meas.off) text('d = ' + f3(meas.d) + ' m', (J + ex) / 2, base + 34, { align: 'center', font: '700 11px ' + Mo, col: '#c43a00' });
+    }
+    if (A.st === 'off') text('Too high: it slides off the end of the board. Release lower.', 12, 318, { font: '700 11px ' + F, col: '#c43a00' });
+    else text('Measure h, L and d to the back edge of the block (orange dot).', 12, 318, { font: '500 10px ' + F, col: '#6a6a6a' });
+    // right panel: buttons and status
+    panelTitle('LAB BENCH', 412, 18);
+    const T = RL.trials, canRec = A.st === 'done' && !A.recorded && T.length < 6;
+    rlBtn(412, 34, 86, 26, 'Release', A.st === 'ready');
+    rlBtn(506, 34, 86, 26, 'Record', canRec, !canRec);
+    text('Trials recorded: ' + T.length + ' / 6', 412, 84, { font: '700 12px ' + F });
+    rlBtn(412, 94, 86, 22, 'Clear table', false, !T.length);
+    rlBtn(506, 94, 86, 22, 'Reset block', false, A.st === 'ready');
+    let y = 140;
+    text(opt.surf === 'set' ? 'μk = ' + v.mu.toFixed(2) + ' (you set it)' : 'Surface: mystery μk', 412, y, { font: '700 12px ' + F }); y += 16;
+    if (opt.surf !== 'set'){
+      if (RL.reveal) text('Hidden μk = ' + RL.mu0.toFixed(2), 412, y + 4, { font: '700 13px ' + Mo, col: '#c43a00' });
+      else rlBtn(412, y - 8, 120, 22, 'Reveal μk', false, T.length < 6);
+      y += 24; text(RL.reveal ? 'Compare it with your slope.' : 'Find μk from your graph first.', 412, y + 4, { font: '500 10px ' + F, col: '#6a6a6a' }); y += 10;
+    }
+    if (A.st === 'go') text('sliding…', 412, 230, { font: '600 11px ' + F, col: '#1546d6' });
+    if (A.recorded && T.length < 6){ text('✓ Recorded.', 412, 230, { font: '700 11px ' + F, col: '#1e7d45' }); text('Move the release point', 412, 245, { font: '500 10px ' + F, col: '#4a4a4a' }); text('and go again.', 412, 258, { font: '500 10px ' + F, col: '#4a4a4a' }); }
+    if (T.length >= 6){ text('✓ 6 trials done.', 412, 230, { font: '700 11px ' + F, col: '#1e7d45' }); text('Now make your graph.', 412, 245, { font: '500 10px ' + F, col: '#4a4a4a' }); }
+  }
+};
+function rlBtn(x, y, w, h, label, hot, dis){ RL.btn.push({ x, y, w, h, label, dis }); ctx.save(); ctx.globalAlpha = dis ? 0.35 : 1; ctx.fillStyle = hot ? '#ff6a2b' : '#fff'; ctx.strokeStyle = '#111'; ctx.lineWidth = 2; ctx.fillRect(x, y, w, h); ctx.strokeRect(x, y, w, h);
+  text(label, x + w / 2, y + h / 2 + 4.5, { align: 'center', font: '700 12px "Space Grotesk",sans-serif', col: hot ? '#fff' : '#111' }); ctx.restore(); }
+const RLACT = {
+  'Release': () => { const A = S.anim; if (A.st === 'go') return; const r = rlRun(S.v, S.opt); A.run = r; A.t = 0; A.st = 'go'; A.recorded = false; RL.last = null; },
+  'Record': () => { const A = S.anim; if (A.st !== 'done' || A.recorded || RL.trials.length >= 6) return; RL.trials.push(A.run); A.recorded = true; update(); },
+  'Clear table': () => { RL.trials = []; RL.reveal = false; S.anim.recorded = false; update(); },
+  'Reset block': () => { S.anim.st = 'ready'; S.anim.recorded = false; RL.last = null; update(); },
+  'Reveal μk': () => { if (RL.trials.length >= 6) RL.reveal = true; }
+};
+(function(){
+  const pos = e => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) / r.width * 600, (e.clientY - r.top) / r.height * 330]; };
+  const hit = e => { if (S.mode !== 'ramplab') return null; const [x, y] = pos(e); return RL.btn.find(b => !b.dis && x >= b.x && x <= b.x + b.w && y >= b.y && y <= b.y + b.h); };
+  cv.addEventListener('pointerdown', e => { const b = hit(e); if (b && RLACT[b.label]){ RLACT[b.label](); e.preventDefault(); } });
+  cv.addEventListener('pointermove', e => { if (S.mode === 'ramplab') cv.style.cursor = hit(e) ? 'pointer' : ''; });
+})();
+// route the ramp-lab mode to RAMP; every other mode is unchanged
+SIM.modes.push({ id: 'ramplab', label: 'Ramp lab: h vs D' });
+SIM.opts[0].modes = ['valley', 'hump', 'loop', 'rough', 'spring'];
+SIM.opts.push({ id: 'surf', label: 'Surface', modes: ['ramplab'], choices: [['mystery', 'Mystery μk'], ['set', 'Set μk']] },
+              { id: 'err', label: 'Error', modes: ['ramplab'], choices: [['none', 'None'], ['bump', 'Bump at joint'], ['push', 'Push at release'], ['uneven', 'Uneven boards']] });
+{ const IDX = { ivs: 0, calc: 1, dvs: 0, work: 2, draw: 2 };
+  Object.keys(IDX).forEach(k => { const f = SIM[k]; SIM[k] = function(...a){ return a[IDX[k]] === 'ramplab' ? RAMP[k](...a) : f.apply(this, a); }; }); }
+SIM.customGraph = (v, d, mode, opt, g, W, Hh) => mode === 'ramplab' ? RAMP.graph(g, W, Hh) : false;
 
 
 (function (V) {
