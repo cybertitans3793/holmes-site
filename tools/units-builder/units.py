@@ -358,7 +358,11 @@ UNITS = {
         '<b>System switch.</b> Flip between “Cart + Earth” and “Cart only.” Gravity shows up as U<sub>g</sub> in one and as W<sub>g</sub> in the other. Explain why both give the same v<sub>B</sub>.',
         '<b>Loop.</b> With R = 3 m, find the lowest start height that gets the cart around (step 5). Show on paper why it is 2.5R, not 2R.',
         '<b>Rough patch.</b> Graph v<sub>B</sub> vs h<sub>A</sub> with B past the rough patch. How much higher must the cart start to make up for the friction? Explain with ΔE<sub>th</sub> = μ<sub>k</sub>mgd.',
-        '<b>Spring bumper.</b> Double the start height. By what factor does the maximum compression change? Predict with ½kx² = mgh, then check with ×2.']},
+        '<b>Spring bumper.</b> Double the start height. By what factor does the maximum compression change? Predict with ½kx² = mgh, then check with ×2.',
+        '<b>Ramp lab (absent students):</b> Click <b>Ramp lab: h vs D</b>. Release the block from 6 different release points and press <b>Record</b> after each. Copy the data table into your write-up.',
+        'Graph h (up) vs D (across) by hand, draw a best-fit line, and find its slope. What is μ<sub>k</sub>? Then press <b>Reveal μk</b> to check.',
+        'Change the ramp angle or the block mass and release from the same height. Does D change? Use h = μ<sub>k</sub>D to explain why.',
+        'Choose <b>Bump at joint</b>, press <b>Clear table</b> and do 6 trials again. Is your slope higher or lower than before? Why?']},
     {'code': '', 'name': 'Spring Launcher', 'sim': 'launch', 'tasks': [
         'Double the compression. What happens to the stored energy, the launch speed and the ramp height? Check each with the ×2 line.',
         'Use the F–x graph to explain why the stored energy is ½kx², not kx².',
