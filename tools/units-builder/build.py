@@ -255,12 +255,21 @@ RPICK_BTN = '<button type="button" class="rbtn" data-src="{url}" aria-pressed="{
 VIEWS_JS = """<script>
 /* Explore / Study / Practice: one view at a time, Explore on every open. */
 const VIEWS = ['explore', 'study', 'practice'];
+/* Practice frame: the "Loading questions" line stays on top until the questions app has loaded (it can take 10-20 s). */
+function addRframe(r, src) {
+  r.querySelectorAll('.loading').forEach(x => x.remove());
+  const l = document.createElement('div'); l.className = 'loading'; l.textContent = 'Loading questions… this can take 10–20 seconds';
+  const f = document.createElement('iframe'); f.title = 'Practice questions'; f.src = f.dataset.src = src;
+  f.addEventListener('load', () => l.remove());
+  r.appendChild(f); r.appendChild(l);
+  return f;
+}
 function setView(v) {
   if (!document.getElementById('v-' + v)) v = 'explore';
   VIEWS.forEach(n => { const el = document.getElementById('v-' + n); if (el) el.hidden = n !== v; });
   document.querySelectorAll('.vbtn').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === v)));
   const back = document.getElementById('simsback'); if (back) back.hidden = v === 'explore';
-  if (v === 'practice') { const r = document.getElementById('rframe'); if (r && !r.querySelector('iframe')) r.innerHTML = '<iframe title="Practice questions" src="' + r.dataset.src + '" data-src="' + r.dataset.src + '"></iframe>'; }
+  if (v === 'practice') { const r = document.getElementById('rframe'); if (r && !r.querySelector('iframe')) addRframe(r, r.dataset.src); }
   return v;
 }
 /* A link to a view this unit doesn't have (e.g. a guide's "Practice these ideas" on a unit with no review) is hidden. */
@@ -272,7 +281,7 @@ document.addEventListener('click', e => {
     const r = document.getElementById('rframe'); r.dataset.src = rb.dataset.src; document.getElementById('ropen').href = rb.dataset.src;
     let f = [...r.querySelectorAll('iframe')].find(x => x.dataset.src === rb.dataset.src);
     r.querySelectorAll('iframe').forEach(x => { x.hidden = x !== f; });
-    if (!f) { f = document.createElement('iframe'); f.title = 'Practice questions'; f.src = f.dataset.src = rb.dataset.src; r.querySelectorAll('.loading').forEach(x => x.remove()); r.appendChild(f); }
+    if (!f) addRframe(r, rb.dataset.src); else r.querySelectorAll('.loading').forEach(x => x.remove());
     return;
   }
   const a = e.target.closest('[data-view]'); if (!a) return;

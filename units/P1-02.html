@@ -68,6 +68,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
 .review .simbar a{color:var(--ink)}
 .rframe{position:relative;height:900px;background:#fff}
 .rframe iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.rframe .loading{z-index:1;background:#fff;padding:0 16px;text-align:center}
 #v-study>.guide{margin-top:0}
 /* Guides: an equations table never spills out of its card, whatever the window width */
 #v-study .guide .gcard{min-width:0;overflow-x:auto}
@@ -639,12 +640,21 @@ body.present .guide{display:none}
 <script>
 /* Explore / Study / Practice: one view at a time, Explore on every open. */
 const VIEWS = ['explore', 'study', 'practice'];
+/* Practice frame: the "Loading questions" line stays on top until the questions app has loaded (it can take 10-20 s). */
+function addRframe(r, src) {
+  r.querySelectorAll('.loading').forEach(x => x.remove());
+  const l = document.createElement('div'); l.className = 'loading'; l.textContent = 'Loading questions… this can take 10–20 seconds';
+  const f = document.createElement('iframe'); f.title = 'Practice questions'; f.src = f.dataset.src = src;
+  f.addEventListener('load', () => l.remove());
+  r.appendChild(f); r.appendChild(l);
+  return f;
+}
 function setView(v) {
   if (!document.getElementById('v-' + v)) v = 'explore';
   VIEWS.forEach(n => { const el = document.getElementById('v-' + n); if (el) el.hidden = n !== v; });
   document.querySelectorAll('.vbtn').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === v)));
   const back = document.getElementById('simsback'); if (back) back.hidden = v === 'explore';
-  if (v === 'practice') { const r = document.getElementById('rframe'); if (r && !r.querySelector('iframe')) r.innerHTML = '<iframe title="Practice questions" src="' + r.dataset.src + '" data-src="' + r.dataset.src + '"></iframe>'; }
+  if (v === 'practice') { const r = document.getElementById('rframe'); if (r && !r.querySelector('iframe')) addRframe(r, r.dataset.src); }
   return v;
 }
 /* A link to a view this unit doesn't have (e.g. a guide's "Practice these ideas" on a unit with no review) is hidden. */
@@ -656,7 +666,7 @@ document.addEventListener('click', e => {
     const r = document.getElementById('rframe'); r.dataset.src = rb.dataset.src; document.getElementById('ropen').href = rb.dataset.src;
     let f = [...r.querySelectorAll('iframe')].find(x => x.dataset.src === rb.dataset.src);
     r.querySelectorAll('iframe').forEach(x => { x.hidden = x !== f; });
-    if (!f) { f = document.createElement('iframe'); f.title = 'Practice questions'; f.src = f.dataset.src = rb.dataset.src; r.querySelectorAll('.loading').forEach(x => x.remove()); r.appendChild(f); }
+    if (!f) addRframe(r, rb.dataset.src); else r.querySelectorAll('.loading').forEach(x => x.remove());
     return;
   }
   const a = e.target.closest('[data-view]'); if (!a) return;
