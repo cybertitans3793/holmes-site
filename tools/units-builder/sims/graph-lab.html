@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Graph Lab</title>
+<!-- Graph Lab: linearization practice (Name the shape, Equation mode, Mystery constant). Original Holmes Sims. g = 9.8 m/s² (lab value). -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@500;700&display=swap">
+<style>
+:root{--ink:#111;--mut:#4a4a4a;--acc:#ff6a2b;--soft:#ffe2d3;--blue:#1546d6;--ok:#1e7d45;--bad:#c43a00;--okbg:#e5f4ea;--badbg:#fde7df}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;height:100%;overflow:hidden;background:#fff;color:var(--ink);font-family:"Space Grotesk",system-ui,sans-serif}
+#app{position:absolute;left:0;top:0;width:1000px;height:640px;transform-origin:0 0;padding:10px 12px;display:grid;grid-template-rows:36px 576px;gap:8px}
+button,input,select{font-family:inherit;color:var(--ink)}
+button{font:700 14px "Space Grotesk",sans-serif;padding:6px 11px;border:2px solid var(--ink);background:#fff;cursor:pointer;line-height:1.15}
+button:hover:not(:disabled){background:var(--soft)}
+button.pri{background:var(--ink);color:#fff}
+button.pri:hover:not(:disabled){background:#333}
+button.acc{background:var(--acc);color:#111}
+button.acc:hover:not(:disabled){background:#ff8b57}
+button:disabled{opacity:.38;cursor:default}
+button.link{border:0;background:none;padding:0 2px;font:600 13px "Space Grotesk",sans-serif;color:var(--blue);text-decoration:underline}
+button.link:hover{background:none}
+:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+button.pri:focus-visible,button.acc:focus-visible{outline-color:var(--blue)}
+#bar{display:flex;align-items:center;gap:9px;white-space:nowrap;min-width:0}
+.brand{font:700 15px "IBM Plex Mono",monospace;letter-spacing:.03em;margin-right:2px}
+.brand span{color:var(--acc)}
+.seg{display:flex}
+.seg button+button{margin-left:-2px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:#fff}
+select{font:600 13px "Space Grotesk",sans-serif;border:2px solid var(--ink);padding:4px 3px;background:#fff;height:34px;border-radius:0}
+#setsel{width:214px}#eqsel{width:262px}
+#mys[aria-pressed="true"]{background:var(--acc)}
+#score{margin-left:auto;font:700 13px "IBM Plex Mono",monospace}
+#score .hot{color:var(--acc)}
+.view{min-height:0;display:grid;grid-template-columns:592px 1fr;gap:12px;height:576px}
+.view[hidden]{display:none}
+canvas.plot{width:592px;border:2px solid var(--ink);display:block;background:#fff}
+#scv{height:576px}
+.panel{border:2px solid var(--ink);padding:9px 12px 10px;min-height:0;overflow:auto;height:576px}
+h2{font:700 12px "IBM Plex Mono",monospace;letter-spacing:.04em;margin:0 0 6px;text-transform:uppercase}
+h3{font:700 12px "IBM Plex Mono",monospace;letter-spacing:.03em;margin:0 0 5px;text-transform:uppercase}
+.hint{font:500 11.5px "IBM Plex Mono",monospace;color:var(--mut);line-height:1.4}
+p.lead{margin:0 0 8px;font-size:14px;line-height:1.4}
+/* name the shape */
+.ans{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.ans button{display:flex;align-items:center;gap:8px;text-align:left;padding:3px 7px;font-size:13px;min-height:46px}
+.ans button.right:disabled,.ans button.wrong:disabled{opacity:1}
+.ans button small{display:block;font:500 12px "IBM Plex Mono",monospace;color:var(--mut);margin-top:2px}
+.ans svg{flex:none}
+.ans button.right{background:var(--okbg);border-color:var(--ok)}
+.ans button.wrong{background:var(--badbg);border-color:var(--bad)}
+.ans button kbd{margin-left:auto;font:500 10px "IBM Plex Mono",monospace;color:var(--mut);align-self:flex-start}
+.hrow{display:flex;gap:6px;align-items:center;margin:9px 0 2px}
+.hrow .lab{font:700 11px "IBM Plex Mono",monospace;margin-right:2px}
+.tog[aria-pressed="true"]{background:var(--ink);color:#fff}
+.tog{font-size:13px;padding:4px 9px}
+.fb{font-size:13.5px;line-height:1.38;margin-top:7px}
+.fb .ok,.fb .bad,.fb .note{padding:5px 9px;margin-top:5px}
+.fb .ok{background:var(--okbg);border-left:4px solid var(--ok)}
+.fb .bad{background:var(--badbg);border-left:4px solid var(--bad)}
+.fb .note{background:#f3f3f3;border-left:4px solid var(--mut)}
+#snext{margin-top:8px}
+/* equation mode */
+#left{display:grid;grid-template-rows:32px 396px 1fr;gap:6px;min-height:0}
+#gbar{display:flex;align-items:center;gap:8px}
+#gbar .seg button{font-size:13px;padding:4px 9px}
+#gbar #copy{margin-left:auto;font-size:13px;padding:4px 9px}
+#gcv{height:396px}
+#s3.done .map,#s3.done .mrow{display:none}
+#ctl{border:2px solid var(--ink);padding:6px 10px 6px;display:grid;grid-template-columns:repeat(3,1fr);gap:2px 16px;align-content:start;min-height:0;overflow:hidden}
+.sl{display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:6px;min-width:0}
+.sl .nm{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sl .val{font:700 12.5px "IBM Plex Mono",monospace;white-space:nowrap}
+.sl input[type=range]{grid-column:1/-1;width:100%;margin:0;accent-color:#111;height:20px}
+.fixed{font-size:13px;line-height:1.35;padding:2px 0}
+.fixed b{font-family:"IBM Plex Mono",monospace;font-size:12.5px}
+#ctlrow{grid-column:1/-1;display:flex;gap:10px;align-items:center;margin-top:4px;flex-wrap:wrap}
+#ctlrow button{font-size:13px;padding:4px 9px}
+#ctlrow label{font-size:13px;display:flex;gap:5px;align-items:center}
+#ctlrow input[type=checkbox]{accent-color:var(--acc);width:15px;height:15px;margin:0}
+#rp{display:flex;flex-direction:column;gap:7px}
+#eqcard{border-bottom:2px solid var(--ink);padding-bottom:6px}
+#eqcard .t{font-weight:700;font-size:14.5px;display:flex;gap:6px;align-items:baseline;line-height:1.2}
+.ib{font:700 10.5px "IBM Plex Mono",monospace;background:var(--blue);color:#fff;padding:1px 5px}
+#eqmath{margin:5px 0 3px}
+#eqmath math{font-size:19px}
+#eqmeta{font-size:12.5px;line-height:1.4;color:#222}
+#eqmeta .k{color:var(--mut)}
+.step{min-width:0}
+.axrow{display:grid;grid-template-columns:1fr auto 1fr auto;gap:6px;align-items:center}
+.axrow span.vs{font:700 13px "IBM Plex Mono",monospace}
+input.tx{width:100%;min-width:0;font:500 15px "IBM Plex Mono",monospace;padding:5px 6px;border:2px solid var(--ink);background:#fff;height:34px}
+input.tx.good{border-color:var(--ok);background:var(--okbg)}
+input.tx.badx{border-color:var(--bad);background:var(--badbg)}
+.axlab{display:grid;grid-template-columns:1fr auto 1fr auto;gap:6px;font:500 10.5px "IBM Plex Mono",monospace;color:var(--mut);margin-top:2px}
+.axlab span:nth-child(2){visibility:hidden}
+#chips{margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+#chips .lab{font:500 11px "IBM Plex Mono",monospace;color:var(--mut);width:100%}
+#chips button{font:600 13px "IBM Plex Mono",monospace;padding:2px 7px;border-width:2px}
+#stdbtn{margin-top:6px;font-size:13px;padding:4px 9px}
+#s1done{font-size:14px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+#s1done .tick{color:var(--ok);font-weight:700}
+#s2{font:500 13px "IBM Plex Mono",monospace;line-height:1.5}
+#s2 .w{color:var(--bad);font-family:"Space Grotesk",sans-serif;font-size:13px;line-height:1.35;margin-top:3px}
+.map{display:grid;grid-template-columns:auto 1fr;gap:4px 8px;align-items:center}
+.map label{font:700 12px "IBM Plex Mono",monospace;white-space:nowrap}
+.map label i{font-family:"Space Grotesk",sans-serif;font-size:14px}
+.mrow{display:flex;gap:8px;align-items:center;margin-top:6px}
+#mresult{font-size:13.5px;line-height:1.42}
+.mtpl{font-size:13px;margin:0 0 5px}
+.mtpl math{font-size:16px}
+#vin{width:170px}
+textarea#ta{position:absolute;left:12px;right:12px;bottom:12px;height:180px;font:12px "IBM Plex Mono",monospace;border:3px solid var(--ink);z-index:5;display:none;padding:6px}
+#tamsg{position:absolute;left:250px;width:350px;top:86px;z-index:5;display:none;background:var(--acc);border:2px solid var(--ink);padding:5px 8px;font-weight:700;font-size:13px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style></head><body>
+<div id="app">
+  <div id="bar">
+    <div class="brand">GRAPH<span>/</span>LAB</div>
+    <div class="seg" role="group" aria-label="Mode">
+      <button type="button" id="m-shape" aria-pressed="true">Name the shape</button>
+      <button type="button" id="m-eq" aria-pressed="false">Equation</button>
+    </div>
+    <select id="setsel" aria-label="Unit"></select>
+    <select id="eqsel" aria-label="Equation"></select>
+    <button type="button" id="mys" aria-pressed="false" title="Hide the constant: find it from your graph">Mystery</button>
+    <div id="score" aria-live="polite"></div>
+  </div>
+
+  <section class="view" id="shape" aria-label="Name the shape">
+    <canvas class="plot" id="scv" width="1184" height="1152" role="img" aria-label="Graph of measured data"></canvas>
+    <div class="panel">
+      <h2>Name the shape</h2>
+      <p class="lead">Here are some measurements. Which relationship made them? Judge it by eye.</p>
+      <div class="ans" id="ans" role="group" aria-label="Answers"></div>
+      <div class="hrow"><span class="lab">HINTS</span>
+        <button type="button" class="tog" id="h-step" aria-pressed="false">Step bars</button>
+        <button type="button" class="tog" id="h-dbl" aria-pressed="false">Doubling test</button>
+      </div>
+      <div class="hint" id="hinttext">Step bars show how much y changes for each equal step in x.</div>
+      <div class="fb" id="sfb" aria-live="polite"></div>
+      <button type="button" class="pri" id="snext" hidden>Next graph →</button>
+    </div>
+  </section>
+
+  <section class="view" id="eqv" aria-label="Equation mode" hidden>
+    <div id="left">
+      <div id="gbar">
+        <div class="seg" role="group" aria-label="Graph view">
+          <button type="button" id="v-raw" aria-pressed="true">Raw data</button>
+          <button type="button" id="v-lin" aria-pressed="false" disabled>Your straight line</button>
+        </div>
+        <button type="button" id="copy">Copy data table</button>
+      </div>
+      <canvas class="plot" id="gcv" width="1184" height="792" role="img" aria-label="Graph"></canvas>
+      <div id="ctl"></div>
+    </div>
+    <div class="panel" id="rp">
+      <div id="eqcard">
+        <div class="t"><span id="eqtitle"></span><span class="ib" id="ibb" hidden>IB</span></div>
+        <div id="eqmath"></div>
+        <div id="eqmeta"></div>
+      </div>
+      <div class="step" id="s1">
+        <h3>1 · What do you plot to get a straight line?</h3>
+        <div class="axrow">
+          <input class="tx" id="ay" type="text" autocomplete="off" spellcheck="false" aria-label="Vertical axis (y)">
+          <span class="vs">vs</span>
+          <input class="tx" id="ax" type="text" autocomplete="off" spellcheck="false" aria-label="Horizontal axis (x)">
+          <button type="button" class="pri" id="chk">Check</button>
+        </div>
+        <div class="axlab"><span>vertical axis (y)</span><span>vs</span><span>horizontal axis (x)</span><span></span></div>
+        <div id="chips" hidden></div>
+        <button type="button" id="stdbtn" hidden>Show the standard axes</button>
+        <div class="fb" id="fb1" aria-live="polite"></div>
+      </div>
+      <div id="s1done" hidden></div>
+      <div id="s2" hidden aria-live="polite"></div>
+      <div class="step" id="s3" hidden>
+        <h3>2 · Match it to y = m·x + b</h3>
+        <div class="map">
+          <label for="by"><i>y</i> =</label><input class="tx" id="by" type="text" autocomplete="off" spellcheck="false">
+          <label for="bm"><i>m</i> (slope) =</label><input class="tx" id="bm" type="text" autocomplete="off" spellcheck="false" placeholder="in symbols, e.g. 4π²/g">
+          <label for="bx"><i>x</i> =</label><input class="tx" id="bx" type="text" autocomplete="off" spellcheck="false">
+          <label for="bb"><i>b</i> (intercept) =</label><input class="tx" id="bb" type="text" autocomplete="off" spellcheck="false" placeholder="0 if none">
+        </div>
+        <div class="mrow"><button type="button" class="pri" id="mchk">Check</button><span class="hint">Use the symbols from the equation.</span></div>
+        <div class="fb" id="fb3" aria-live="polite"></div>
+      </div>
+      <div class="step" id="s4" hidden>
+        <h3 id="s4h">3 · Mystery</h3>
+        <div class="mrow" style="margin-top:0"><input class="tx" id="vin" type="text" autocomplete="off" spellcheck="false" aria-label="Your value with units"><button type="button" class="acc" id="reveal">Reveal</button><button type="button" id="newm">New mystery</button></div>
+        <div class="fb" id="mresult" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+  <div id="tamsg" role="status"></div>
+  <textarea id="ta" aria-label="Data table (tab-separated)" readonly></textarea>
+</div>
+<script>
+(function(){
+'use strict';
+const $ = id => document.getElementById(id);
+const PI = Math.PI, DEG = PI / 180;
+function fitApp(){ const s = Math.min(innerWidth / 1000, innerHeight / 640); $('app').style.transform = 'scale(' + s + ')'; }
+addEventListener('resize', fitApp); fitApp();
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+function randn(){ let u = 0, v = 0; while (!u) u = Math.random(); while (!v) v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * PI * v); }
+const ri = n => Math.floor(Math.random() * n);
+
+// ================= numbers =================
+const SUPD = { '0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','-':'⁻','−':'⁻','.':'·','/':'ᐟ' };
+const SUBD = { '0':'₀','1':'₁','2':'₂','3':'₃','4':'₄','5':'₅','6':'₆','7':'₇','8':'₈','9':'₉' };
+const supS = s => [...String(s)].map(ch => SUPD[ch] || ch).join('');
+function fmt(v, n){ n = n || 3; if (v === null || v === undefined || !isFinite(v)) return '—'; if (v === 0) return '0';
+  const a = Math.abs(v); let s;
+  if (a >= 1e4 || a < 1e-3){ let e = Math.floor(Math.log10(a)), ms = (v / 10 ** e).toPrecision(n); if (Math.abs(+ms) >= 10){ e++; ms = (v / 10 ** e).toPrecision(n); } s = ms + '×10' + supS(e); }
+  else s = String(+v.toPrecision(n));
+  return s.replace(/^-/, '−'); }
+function numStr(v){ if (Number.isInteger(v)) return String(v); return String(+v.toPrecision(6)); }
+
+// ================= units =================
+// dimensions: kg m s A K mol rad
+const Z = () => [0,0,0,0,0,0,0];
+const dv = (a) => { const z = Z(); a.forEach((p, i) => z[i] = p); return z; };
+const UB = {
+  kg:[dv([1]),1], g:[dv([1]),1e-3], m:[dv([0,1]),1], s:[dv([0,0,1]),1], A:[dv([0,0,0,1]),1], K:[dv([0,0,0,0,1]),1], '°C':[dv([0,0,0,0,1]),1],
+  mol:[dv([0,0,0,0,0,1]),1], rad:[dv([0,0,0,0,0,0,1]),1], '°':[dv([0,0,0,0,0,0,1]),DEG],
+  N:[dv([1,1,-2]),1], J:[dv([1,2,-2]),1], W:[dv([1,2,-3]),1], Pa:[dv([1,-1,-2]),1], C:[dv([0,0,1,1]),1], V:[dv([1,2,-3,-1]),1],
+  'Ω':[dv([1,2,-3,-2]),1], ohm:[dv([1,2,-3,-2]),1], F:[dv([-1,-2,4,2]),1], T:[dv([1,0,-2,-1]),1], Hz:[dv([0,0,-1]),1], eV:[dv([1,2,-2]),1.602e-19], L:[dv([0,3]),1e-3]
+};
+const PFX = { p:1e-12, n:1e-9, 'μ':1e-6, u:1e-6, m:1e-3, c:1e-2, k:1e3, M:1e6, G:1e9 };
+function seg(name){ const u = unitTok(name); if (u) return [u]; for (let L = name.length - 1; L >= 1; L--){ const a = unitTok(name.slice(0, L)); if (a){ const r = seg(name.slice(L)); if (r) return [a].concat(r); } } return null; }
+function unitTok(name){ if (UB[name]) return UB[name]; if (name.length > 1 && PFX[name[0]] && UB[name.slice(1)] && name.slice(1) !== 'kg') { const b = UB[name.slice(1)]; return [b[0], b[1] * PFX[name[0]]]; } return null; }
+const SUPMAP = { '⁰':'0','¹':'1','²':'2','³':'3','⁴':'4','⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9','⁻':'-' };
+function parseUnit(str){
+  let s = String(str || '').replace(/µ/g, 'μ').replace(/[⁻]?[⁰¹²³⁴⁵⁶⁷⁸⁹]+/g, m => '^' + [...m].map(c => SUPMAP[c]).join('')).replace(/[·⋅×*.]/g, '*').replace(/−/g, '-').trim();
+  if (!s) return { d: Z(), f: 1 };
+  const T = []; let i = 0;
+  while (i < s.length){ const c = s[i];
+    if (c === ' '){ i++; continue; }
+    if ('*/()^'.includes(c)){ T.push(c); i++; continue; }
+    let m = /^-?\d+(\.\d+)?/.exec(s.slice(i)); if (m){ T.push(+m[0]); i += m[0].length; continue; }
+    m = /^(°C|°|[A-Za-zΩμ]+)/.exec(s.slice(i)); if (m){ T.push({ n: m[0] }); i += m[0].length; continue; }
+    return null; }
+  let k = 0;
+  function fac(){ const t = T[k]; let r;
+    if (t === '('){ k++; r = prod(); if (T[k] !== ')') throw 0; k++; }
+    else if (typeof t === 'number' && t === 1){ k++; r = { d: Z(), f: 1 }; }
+    else if (t && t.n){ k++; const us = seg(t.n); if (!us) throw 0; let pre = { d: Z(), f: 1 };
+      us.slice(0, -1).forEach(u => { pre = { d: pre.d.map((x, j) => x + u[0][j]), f: pre.f * u[1] }; }); const u = us[us.length - 1]; r = { d: u[0].slice(), f: u[1] };
+      if (T[k] === '^'){ k++; const p = T[k]; if (typeof p !== 'number') throw 0; k++; r = { d: r.d.map(x => x * p), f: r.f ** p }; }
+      return { d: r.d.map((x, j) => x + pre.d[j]), f: r.f * pre.f }; }
+    else throw 0;
+    if (T[k] === '^'){ k++; const p = T[k]; if (typeof p !== 'number') throw 0; k++; r = { d: r.d.map(x => x * p), f: r.f ** p }; }
+    return r; }
+  function prod(){ let r = fac();
+    for (;;){ const t = T[k]; if (t === '*'){ k++; const b = fac(); r = { d: r.d.map((x, j) => x + b.d[j]), f: r.f * b.f }; }
+      else if (t === '/'){ k++; const b = fac(); r = { d: r.d.map((x, j) => x - b.d[j]), f: r.f / b.f }; }
+      else if (t && (t.n || t === '(')){ const b = fac(); r = { d: r.d.map((x, j) => x + b.d[j]), f: r.f * b.f }; }
+      else break; }
+    return r; }
+  try { const r = prod(); if (k !== T.length) return null; return r; } catch (e) { return null; }
+}
+const DN = ['kg','m','s','A','K','mol','rad'];
+const NAMED = ['N','J','W','Pa','C','V','Ω','F','T','Hz'].map(n => [n, UB[n][0]]);
+const cx = d => d.reduce((a, x) => a + Math.abs(x), 0);
+const eqd = (a, b, ignoreRad) => a.every((x, i) => (ignoreRad && i === 6) || Math.abs(x - b[i]) < 1e-9);
+function pw(u, p){ if (Math.abs(p - 1) < 1e-9) return u; if (Math.abs(p - 0.5) < 1e-9) return '√' + u; if (Number.isInteger(+p.toFixed(6))) return u + supS(Math.round(p)); return u + '^' + (+p.toFixed(3)); }
+function niceUnit(d, celsius){
+  const base = cx(d); let best = null;
+  for (const [n, nd] of NAMED) for (const p of [-2,-1,-0.5,0.5,1,2]){ const r = d.map((x, i) => x - p * nd[i]); const c = Math.abs(p) + cx(r); if (c <= base - 2 && (!best || c < best.c)) best = { c, n, p, r }; }
+  const items = [];   // [label, power]
+  if (best) items.push([best.n, best.p]);
+  (best ? best.r : d).forEach((p, i) => { if (Math.abs(p) > 1e-9) items.push([DN[i] === 'K' && celsius ? '°C' : DN[i], p]); });
+  const num = items.filter(t => t[1] > 0).map(t => pw(t[0], t[1])), den = items.filter(t => t[1] < 0).map(t => pw(t[0], -t[1]));
+  if (!num.length && !den.length) return '';
+  const N = num.length ? num.join('·') : '1';
+  return den.length ? N + '/' + (den.length > 1 ? '(' + den.join('·') + ')' : den[0]) : N;
+}
+const prettyU = u => String(u || '').replace(/\^(-?\d+)/g, (m, p) => supS(p)).replace(/\*/g, '·');
+
+// ================= expressions =================
+const GREEK = { 'θ':['theta','th'], 'φ':['phi'], 'λ':['lambda','lam'], 'ρ':['rho'], 'μ':['mu'], 'ε':['epsilon','eps'], 'τ':['tau'], 'ω':['omega'], 'σ':['sigma'], 'β':['beta'], 'κ':['kappa'], 'α':['alpha'], 'Δ':['delta','Delta','d'], 'π':['pi'] };
+const SUBMAP = { '₀':'0','₁':'1','₂':'2','₃':'3','₄':'4','₅':'5','₆':'6','₇':'7','₈':'8','₉':'9','ₒ':'o','ᵢ':'i','ₛ':'s','ₑ':'e','ₖ':'k','ₙ':'n','ₘ':'m','ₚ':'p','ₜ':'t','ₓ':'x','ᵣ':'r','ₐ':'a','ₕ':'h','ₗ':'l' };
+function norm(s){
+  s = String(s).replace(/µ/g, 'μ').replace(/ϵ/g, 'ε').replace(/ϑ/g, 'θ');
+  s = s.replace(/[⁻]?[⁰¹²³⁴⁵⁶⁷⁸⁹]+/g, m => '^(' + [...m].map(c => SUPMAP[c]).join('') + ')');
+  s = s.replace(/[₀₁₂₃₄₅₆₇₈₉ₒᵢₛₑₖₙₘₚₜₓᵣₐₕₗ]/g, c => SUBMAP[c]);
+  s = s.replace(/\*\*/g, '^').replace(/[·×∙⋅•]/g, '*').replace(/[−–—]/g, '-').replace(/÷/g, '/').replace(/√/g, 'sqrt').replace(/½/g, '(1/2)').replace(/¼/g, '(1/4)').replace(/[_'′’]/g, '').replace(/\s+/g, ' ').trim();
+  return s;
+}
+const FUN = ['sqrt','sin','cos','tan','csc','sec','cot'];
+class XErr extends Error {}
+function lex(s, names, keys){
+  const T = []; let i = 0;
+  while (i < s.length){ const c = s[i];
+    if (c === ' '){ i++; continue; }
+    const m = /^(\d+\.?\d*|\.\d+)(e[-+]?\d+)?/i.exec(s.slice(i));
+    if (m){ T.push({ t: 'n', v: parseFloat(m[0]), p: i }); i += m[0].length; continue; }
+    if ('+-*/^()'.includes(c)){ T.push({ t: c, p: i }); i++; continue; }
+    const low = s.slice(i).toLowerCase(), f = FUN.find(fn => low.startsWith(fn)), k = keys.find(a => s.startsWith(a, i));
+    if (f && (!k || f.length >= k.length)){ T.push({ t: 'f', v: f, p: i }); i += f.length; continue; }
+    if (k){ T.push({ t: 's', v: names.get(k), p: i }); i += k.length; continue; }
+    const bad = (s.slice(i).match(/^[^\s\d+\-*/^()]+/) || [c])[0];
+    throw new XErr('“' + bad + '” isn’t one of the quantities here.');
+  }
+  return T;
+}
+function parseX(str, names, keys){
+  const s = norm(str); if (!s) throw new XErr('Type something first.');
+  const T = lex(s, names, keys); let i = 0;
+  const peek = () => T[i];
+  const startsP = t => t && (t.t === 'n' || t.t === 's' || t.t === 'f' || t.t === '(');
+  function expr(){ let a = term(); while (peek() && (peek().t === '+' || peek().t === '-')){ const op = T[i++].t; a = { k: op, a, b: term() }; } return a; }
+  function term(){ let a = unary(); for (;;){ const t = peek(); if (t && (t.t === '*' || t.t === '/')){ i++; a = { k: t.t, a, b: unary() }; } else if (startsP(t)) a = { k: '*', a, b: unary() }; else break; } return a; }
+  function unary(){ const t = peek(); if (t && t.t === '-'){ i++; return { k: 'neg', a: unary() }; } if (t && t.t === '+'){ i++; return unary(); } return power(); }
+  function power(){ const b = primary(); if (peek() && peek().t === '^'){ i++; return { k: '^', a: b, b: unary() }; } return b; }
+  function closeP(){ if (!peek() || peek().t !== ')') throw new XErr('A bracket isn’t closed.'); i++; }
+  function primary(){ const t = T[i]; if (!t) throw new XErr('Something’s missing at the end.');
+    if (t.t === 'n'){ i++; return { k: 'n', v: t.v }; }
+    if (t.t === 's'){ i++; return { k: 's', s: t.v }; }
+    if (t.t === 'f'){ i++; let a; if (peek() && peek().t === '('){ i++; a = expr(); closeP(); } else a = power(); return { k: 'f', f: t.v, a }; }
+    if (t.t === '('){ i++; const e = expr(); closeP(); return e; }
+    throw new XErr('“' + t.t + '” is in an odd place.'); }
+  const r = expr();
+  if (i < T.length) throw new XErr(T[i].t === ')' ? 'There’s an extra “)”.' : 'I can’t read the part starting “' + s.slice(T[i].p) + '”.');
+  return r;
+}
+const FN = { sqrt: Math.sqrt, sin: Math.sin, cos: Math.cos, tan: Math.tan, csc: x => 1 / Math.sin(x), sec: x => 1 / Math.cos(x), cot: x => 1 / Math.tan(x) };
+function ev(n, env){ switch (n.k){
+  case 'n': return n.v; case 's': return env[n.s]; case 'neg': return -ev(n.a, env);
+  case '+': return ev(n.a, env) + ev(n.b, env); case '-': return ev(n.a, env) - ev(n.b, env);
+  case '*': return ev(n.a, env) * ev(n.b, env); case '/': return ev(n.a, env) / ev(n.b, env);
+  case '^': return Math.pow(ev(n.a, env), ev(n.b, env)); case 'f': return FN[n.f](ev(n.a, env)); } }
+function syms(n, set){ set = set || new Set(); if (n.k === 's') set.add(n.s); if (n.a) syms(n.a, set); if (n.b) syms(n.b, set); return set; }
+function dims(n, D){ switch (n.k){
+  case 'n': return { d: Z(), num: true };
+  case 's': return { d: D[n.s].slice(), num: false };
+  case 'neg': return dims(n.a, D);
+  case '+': case '-': { const a = dims(n.a, D), b = dims(n.b, D); if (a.num) return b; if (b.num) return a;
+    if (!eqd(a.d, b.d)) throw new XErr('You can’t add or subtract ' + (niceUnit(a.d) || 'a pure number') + ' and ' + (niceUnit(b.d) || 'a pure number') + '.'); return { d: a.d, num: false }; }
+  case '*': { const a = dims(n.a, D), b = dims(n.b, D); return { d: a.d.map((x, i) => x + b.d[i]), num: a.num && b.num }; }
+  case '/': { const a = dims(n.a, D), b = dims(n.b, D); return { d: a.d.map((x, i) => x - b.d[i]), num: a.num && b.num }; }
+  case '^': { const a = dims(n.a, D), b = dims(n.b, D); if (!b.num) throw new XErr('A power has to be a plain number.'); const p = ev(n.b, {}); return { d: a.d.map(x => x * p), num: a.num }; }
+  case 'f': { const a = dims(n.a, D); if (n.f === 'sqrt') return { d: a.d.map(x => x / 2), num: a.num };
+    if (a.d.some((x, i) => i < 6 && Math.abs(x) > 1e-9)) throw new XErr(n.f + ' needs an angle inside it.'); return { d: Z(), num: a.num }; } } }
+// display: pull a leading minus out of products
+function dnorm(n){ if (!n || typeof n !== 'object') return n; const c = Object.assign({}, n); if (c.a) c.a = dnorm(c.a); if (c.b) c.b = dnorm(c.b);
+  if ((c.k === '*' || c.k === '/') && c.a.k === 'neg') return { k: 'neg', a: { k: c.k, a: c.a.a, b: c.b } };
+  if (c.k === '*' && c.a.k === 'n' && c.a.v < 0) return { k: 'neg', a: { k: '*', a: { k: 'n', v: -c.a.v }, b: c.b } };
+  return c; }
+function symParts(s){ if (s === 'slope' || s === 'icpt' || s === 'π') return [s, '']; const m = /^(Δ?.)(.*)$/.exec(s); return [m[1], m[2]]; }
+const PREC = n => ({ n: 4, s: 4, f: 4, '^': 3, neg: 1.5, '*': 2, '/': 2, '+': 1, '-': 1 }[n.k]);
+const isTrig = n => n.k === 'f' && n.f !== 'sqrt';
+const simple = n => n.k === 's' || n.k === 'n';
+// runs: {t, c:'v'|'n'|'o'|'f', p:-1 sub | 1 sup}
+function runs(n, prec){ prec = prec || 0; let r;
+  switch (n.k){
+    case 'n': r = [{ t: numStr(n.v), c: 'n' }]; break;
+    case 's': { if (n.s === 'slope' || n.s === 'icpt'){ r = [{ t: n.s === 'slope' ? 'slope' : 'intercept', c: 'f' }]; break; }
+      const [b, sub] = symParts(n.s); r = [{ t: b, c: n.s === 'π' ? 'n' : 'v' }]; if (sub) r.push({ t: sub, c: 'n', p: -1 }); break; }
+    case '+': r = runs(n.a, 1).concat([{ t: ' + ', c: 'o' }], runs(n.b, 1.01)); break;
+    case '-': r = runs(n.a, 1).concat([{ t: ' − ', c: 'o' }], runs(n.b, 1.01)); break;
+    case 'neg': r = [{ t: '−', c: 'o' }].concat(runs(n.a, 1.6)); break;
+    case '*': { const A = runs(n.a, 2), B = runs(n.b, 2.01); const lastA = A[A.length - 1], firstB = B[0];
+      const sep = (lastA.c === 'n' && !lastA.p && firstB.c === 'n' && /^[\d.]/.test(firstB.t)) ? '×' : (/^[\d.]/.test(firstB.t) || isTrig(n.a)) ? '·' : '';
+      r = A.concat(sep ? [{ t: sep, c: 'o' }] : [], B); break; }
+    case '/': r = runs(n.a, 2).concat([{ t: '/', c: 'o' }], runs(n.b, 2.01)); break;
+    case '^': { const B = runs(n.a, 3.01), e = n.b; let et;
+      if (e.k === 'n') et = numStr(e.v); else if (e.k === 'neg' && e.a.k === 'n') et = '−' + numStr(e.a.v);
+      else if (e.k === '/' && e.a.k === 'n' && e.b.k === 'n') et = numStr(e.a.v) + '/' + numStr(e.b.v); else et = plain(e);
+      r = B.concat([{ t: et, c: 'n', p: 1 }]); break; }
+    case 'f': { const A = runs(n.a, 0), sm = simple(n.a);
+      r = n.f === 'sqrt' ? [{ t: '√', c: 'o' }].concat(sm ? A : [{ t: '(', c: 'o' }].concat(A, [{ t: ')', c: 'o' }]))
+                         : [{ t: n.f + (sm ? ' ' : ''), c: 'f' }].concat(sm ? A : [{ t: '(', c: 'o' }].concat(A, [{ t: ')', c: 'o' }])); break; }
+  }
+  return PREC(n) < prec ? [{ t: '(', c: 'o' }].concat(r, [{ t: ')', c: 'o' }]) : r;
+}
+function runsHTML(rs){ return rs.map(r => { const t = esc(r.t); if (r.p === -1) return '<sub>' + t + '</sub>'; if (r.p === 1) return '<sup>' + t + '</sup>'; return r.c === 'v' ? '<i>' + t + '</i>' : t; }).join(''); }
+const SUBS = { '0':'₀','1':'₁','2':'₂','3':'₃','4':'₄','5':'₅','6':'₆','7':'₇','8':'₈','9':'₉','o':'ₒ','i':'ᵢ','s':'ₛ','e':'ₑ','k':'ₖ' };
+function runsPlain(rs){ return rs.map(r => { if (r.p === 1) return [...r.t].every(ch => SUPD[ch]) ? supS(r.t) : '^(' + r.t + ')'; if (r.p === -1) return [...r.t].every(ch => SUBS[ch]) ? [...r.t].map(ch => SUBS[ch]).join('') : '_' + r.t; return r.t; }).join(''); }
+function plain(n){ return runsPlain(runs(dnorm(n))); }
+// MathML
+function miSym(s){ if (s === 'slope') return '<mtext>slope</mtext>'; if (s === 'icpt') return '<mtext>intercept</mtext>'; if (s === 'π') return '<mi>π</mi>';
+  const [b, sub] = symParts(s); const bm = b.length > 1 ? '<mrow><mi mathvariant="normal">' + b[0] + '</mi><mi>' + esc(b.slice(1)) + '</mi></mrow>' : '<mi>' + esc(b) + '</mi>';
+  if (!sub) return bm; return '<msub>' + bm + (/^\d+$/.test(sub) ? '<mn>' + sub + '</mn>' : '<mi>' + esc(sub) + '</mi>') + '</msub>'; }
+const par = x => '<mrow><mo>(</mo>' + x + '<mo>)</mo></mrow>';
+function mml(n, prec){ prec = prec || 0; let r, P = PREC(n);
+  switch (n.k){
+    case 'n': r = '<mn>' + numStr(n.v) + '</mn>'; break;
+    case 's': r = miSym(n.s); break;
+    case '+': r = mml(n.a, 1) + '<mo>+</mo>' + mml(n.b, 1.01); break;
+    case '-': r = mml(n.a, 1) + '<mo>−</mo>' + mml(n.b, 1.01); break;
+    case 'neg': r = '<mo>−</mo>' + mml(n.a, 1.6); break;
+    case '*': { const nn = n.a.k === 'n' && (n.b.k === 'n' || (n.b.k === '^' && n.b.a.k === 'n')); r = mml(n.a, 2) + (nn ? '<mo>×</mo>' : isTrig(n.a) ? '<mo>⁢</mo>' : '') + mml(n.b, 2.01); break; }
+    case '/': r = '<mfrac><mrow>' + mml(n.a, 0) + '</mrow><mrow>' + mml(n.b, 0) + '</mrow></mfrac>'; P = 4; break;
+    case '^': { const base = (n.a.k === 's' || n.a.k === 'n') ? mml(n.a) : par(mml(n.a, 0)); r = '<msup>' + base + '<mrow>' + mml(n.b, 0) + '</mrow></msup>'; break; }
+    case 'f': r = n.f === 'sqrt' ? '<msqrt>' + mml(n.a, 0) + '</msqrt>' : '<mi>' + n.f + '</mi><mo>⁡</mo>' + (simple(n.a) ? mml(n.a) : par(mml(n.a, 0))); break;
+  }
+  return P < prec ? par(r) : '<mrow>' + r + '</mrow>';
+}
+const math = inner => '<math display="inline">' + inner + '</math>';
+
+// ================= global constants =================
+const GC = {
+  g:{ v: 9.8, u: 'm/s^2' }, G:{ v: 6.674e-11, u: 'N*m^2/kg^2' }, k:{ v: 8.99e9, u: 'N*m^2/C^2' }, kB:{ v: 1.381e-23, u: 'J/K' }, R:{ v: 8.314, u: 'J/(mol*K)' },
+  e:{ v: 1.602e-19, u: 'C' }, me:{ v: 9.109e-31, u: 'kg' }, h:{ v: 6.626e-34, u: 'J*s' }, c:{ v: 3.00e8, u: 'm/s' },
+  'μ0':{ v: 4 * PI * 1e-7, u: 'T*m/A', show: '4π×10⁻⁷' }, 'ε0':{ v: 8.854e-12, u: 'F/m' }, 'σ':{ v: 5.67e-8, u: 'W/(m^2*K^4)' }
+};
+
+// ================= equations =================
+// Q(id, title, equation, x:[sym,name,unit,lo,hi,aliases], y:[sym,name,unit,aliases], consts:[[sym,name,unit,val,min,max,step,role,exp,aliases]], uses, f(x,c), std:[[Y,X,slope,intercept,find,slopeUnit,intUnit]], opts)
+// roles: t = the unknown (slider), s = a lab setting (slider), k = fixed setting, T = fixed unknown (constant of nature)
+function Q(id, title, eq, x, y, K, uses, f, std, o){
+  return Object.assign({ id, title, eqs: eq,
+    x: { s: x[0], n: x[1], u: x[2], lo: x[3], hi: x[4], al: x[5] || [] }, y: { s: y[0], n: y[1], u: y[2], al: y[3] || [] },
+    K: K.map(k => ({ s: k[0], n: k[1], u: k[2], v: k[3], min: k[4], max: k[5], step: k[6], role: k[7], exp: k[8] || 0, al: k[9] || [] })),
+    uses, f, std: std.map(s => ({ Y: s[0], X: s[1], m: s[2], b: s[3], find: s[4], mu: s[5], bu: s[6] })) }, o || {});
+}
+const sq = Math.sqrt, sin = Math.sin, cos = Math.cos;
+const EQS = [
+// ---- kinematics / P1-00, P1-02
+Q('half','Cart speeding up from rest','x = 1/2*a*t^2',['t','time','s',0.25,2],['x','distance travelled','m',['d']],
+  [['a','acceleration','m/s^2',0.6,0.1,3,0.05,'t']],[],(t,c)=>0.5*c.a*t*t,[['x','t^2','a/2','0','a = 2*slope','m/s²']]),
+Q('kinv','Speeding-up cart: speed vs time','v = v0 + a*t',['t','time','s',0.2,2],['v','speed','m/s'],
+  [['a','acceleration','m/s^2',0.8,0.1,3,0.05,'t'],['v0','speed at t = 0','m/s',0.4,0,2,0.05,'s']],[],(t,c)=>c.v0+c.a*t,[['v','t','a','v0','a = slope','m/s²','m/s']]),
+Q('kinv2','Speed after a distance (photogate)','v^2 = v0^2 + 2*a*Δx',['Δx','distance past the start line','m',0.1,1.2,['x']],['v','speed','m/s'],
+  [['a','acceleration','m/s^2',1.2,0.2,4,0.05,'t'],['v0','speed at the start line','m/s',0.5,0.2,2,0.05,'s']],[],(x,c)=>sq(c.v0*c.v0+2*c.a*x),[['v^2','Δx','2*a','v0^2','a = slope/2','m/s²','m²/s²']]),
+Q('pend','Simple pendulum','T = 2*π*sqrt(L/g)',['L','string length','m',0.2,1.4],['T','period','s'],
+  [['g','g (gravitational field)','m/s^2',9.8,1.6,25,0.1,'t']],[],(L,c)=>2*PI*sq(L/c.g),[['T^2','L','4*π^2/g','0','g = 4*π^2/slope','s²/m'],['T','sqrt(L)','2*π/sqrt(g)','0','g = (2*π/slope)^2','s/√m']]),
+Q('boyle','Boyle’s law: squeezing a gas syringe','P*V = n*R*T',['V','volume','m^3',1e-4,5e-4],['P','pressure','Pa'],
+  [['n','amount of gas','mol',0.01,0.002,0.05,0.001,'t'],['T','temperature','K',293,250,400,1,'s']],['R'],(V,c)=>c.n*c.R*c.T/V,[['P','1/V','n*R*T','0','n = slope/(R*T)','J']]),
+Q('inten','Light intensity vs distance from a bulb','I = P/(4*π*r^2)',['r','distance from the bulb','m',0.5,2.5],['I','intensity','W/m^2'],
+  [['P','power given out as light','W',40,5,100,1,'t']],[],(r,c)=>c.P/(4*PI*r*r),[['I','1/r^2','P/(4*π)','0','P = 4*π*slope','W']],{ ib: 1 }),
+// ---- P1-01
+Q('hang','Spring with hanging masses','m*g = k*x',['m','hanging mass','kg',0.05,0.4],['x','stretch','m'],
+  [['k','spring constant','N/m',25,5,100,1,'t']],['g'],(m,c)=>m*c.g/c.k,[['x','m','g/k','0','k = g/slope','m/kg'],['m*g','x','k','0','k = slope','N/m']]),
+Q('weight','Weighing masses on another planet','W = m*g',['m','mass','kg',0.1,1],['W','weight (spring scale)','N',['Fg']],
+  [['g','g on this planet','N/kg',3.7,1.6,25,0.1,'t']],[],(m,c)=>m*c.g,[['W','m','g','0','g = slope','N/kg']]),
+Q('fric','Static friction: biggest pull before it slips','f = μs*FN',['FN','normal force','N',2,20,['N','Fn']],['f','maximum static friction','N',['fs','Ff']],
+  [['μs','coefficient of static friction','',0.45,0.1,1,0.01,'t']],[],(N,c)=>c.μs*N,[['f','FN','μs','0','μs = slope','']]),
+Q('ropes','Sign hanging from two equal ropes','2*T*sin(θ) = m*g',['θ','rope angle above horizontal','°',15,75],['T','tension in each rope','N'],
+  [['m','mass of the sign','kg',2,0.5,10,0.1,'t']],['g'],(th,c)=>c.m*c.g/(2*sin(th)),[['T','1/sin(θ)','m*g/2','0','m = 2*slope/g','N']]),
+// ---- P1-02, P1-03
+Q('a1m','Same force, different masses','a = F/m',['m','mass','kg',0.25,2],['a','acceleration','m/s^2'],
+  [['F','net force','N',2,0.5,10,0.1,'t']],[],(m,c)=>c.F/m,[['a','1/m','F','0','F = slope','N']]),
+Q('atwood','Atwood machine: acceleration','a = g*(m2 - m1)/(m1 + m2)',['m2','heavier mass','kg',c=>1.1*c.m1,c=>3*c.m1],['a','acceleration','m/s^2'],
+  [['g','g','m/s^2',9.8,1.6,25,0.1,'t'],['m1','lighter mass','kg',0.2,0.1,0.5,0.01,'s']],[],(m2,c)=>c.g*(m2-c.m1)/(c.m1+m2),[['a','(m2 - m1)/(m1 + m2)','g','0','g = slope','m/s²']]),
+Q('cart','Cart pulled by a hanging mass','a = m*g/(M + m)',['M','cart mass','kg',0.25,1.5],['a','acceleration','m/s^2'],
+  [['m','hanging mass','kg',0.2,0.05,0.5,0.01,'t']],['g'],(M,c)=>c.m*c.g/(M+c.m),[['1/a','M','1/(m*g)','1/g','m = 1/(g*slope)','1/N','s²/m']]),
+Q('contact','Push two blocks: contact force between them','Fc = F*m2/(m1 + m2)',['m2','mass of the front block','kg',0.5,4],['Fc','contact force between the blocks','N'],
+  [['m1','mass of the back block','kg',2,0.5,5,0.1,'t'],['F','push on the back block','N',12,2,30,0.5,'s']],[],(m2,c)=>c.F*m2/(c.m1+m2),[['1/Fc','1/m2','m1/F','1/F','m1 = F*slope','kg/N','1/N']]),
+Q('atwT','Atwood machine: string tension','T = 2*m1*m2*g/(m1 + m2)',['m2','second mass','kg',0.1,1],['T','string tension','N'],
+  [['m1','first mass','kg',0.3,0.1,1,0.01,'t']],['g'],(m2,c)=>2*c.m1*m2*c.g/(c.m1+m2),[['1/T','1/m2','1/(2*g)','1/(2*m1*g)','m1 = 1/(2*g*icpt)','s²/m','1/N']]),
+// ---- P1-04
+Q('launch','Launcher fired level off a table','D = v0*sqrt(2*H/g)',['H','table height','m',0.3,2],['D','landing distance','m'],
+  [['v0','launch speed','m/s',3,1,8,0.1,'t']],['g'],(H,c)=>c.v0*sq(2*H/c.g),[['D^2','H','2*v0^2/g','0','v0 = sqrt(g*slope/2)','m'],['D','sqrt(H)','v0*sqrt(2/g)','0','v0 = slope*sqrt(g/2)','√m']]),
+Q('range','Projectile range on level ground','R = v0^2*sin(2*θ)/g',['θ','launch angle','°',10,80],['R','range','m'],
+  [['v0','launch speed','m/s',6,2,15,0.1,'t']],['g'],(th,c)=>c.v0*c.v0*sin(2*th)/c.g,[['R','sin(2*θ)','v0^2/g','0','v0 = sqrt(g*slope)','m']]),
+Q('drop','Ball rolled off a table: time to land','H = 1/2*g*t^2',['H','table height','m',0.2,2],['t','time to land','s'],
+  [['g','g','m/s^2',9.8,1.6,25,0.1,'t']],[],(H,c)=>sq(2*H/c.g),[['t^2','H','2/g','0','g = 2/slope','s²/m'],['t','sqrt(H)','sqrt(2/g)','0','g = 2/slope^2','s/√m']]),
+Q('incl','Block sliding down a rough ramp','a = g*(sin(θ) - μk*cos(θ))',['θ','ramp angle','°',25,60],['a','acceleration','m/s^2'],
+  [['μk','coefficient of kinetic friction','',0.3,0.05,0.45,0.01,'t']],['g'],(th,c)=>c.g*(sin(th)-c.μk*cos(th)),[['a/cos(θ)','tan(θ)','g','-μk*g','μk = -icpt/g','m/s²','m/s²']]),
+// ---- P1-05
+Q('fcv','Spinning mass on a force sensor: force vs speed','F = m*v^2/r',['v','speed','m/s',0.5,4],['F','centripetal (net) force','N'],
+  [['m','mass','kg',0.25,0.05,1,0.01,'t'],['r','radius','m',0.5,0.2,1.5,0.05,'s']],[],(v,c)=>c.m*v*v/c.r,[['F','v^2','m/r','0','m = r*slope','kg/m']]),
+Q('fcr','Same speed, different radius','F = m*v^2/r',['r','radius','m',0.2,1.5],['F','centripetal (net) force','N'],
+  [['m','mass','kg',0.25,0.05,1,0.01,'t'],['v','speed','m/s',2,0.5,5,0.1,'s']],[],(r,c)=>c.m*c.v*c.v/r,[['F','1/r','m*v^2','0','m = slope/v^2','N·m']]),
+Q('whirl','Whirligig: a hanging weight swings a stopper','M*g = m*v^2/r',['M','hanging mass','kg',0.05,0.4],['v','stopper speed','m/s'],
+  [['m','stopper mass','kg',0.05,0.01,0.2,0.005,'t'],['r','radius of the circle','m',0.8,0.3,1.5,0.05,'s']],['g'],(M,c)=>sq(M*c.g*c.r/c.m),[['M*g','v^2','m/r','0','m = r*slope','kg/m'],['v^2','M','g*r/m','0','m = g*r/slope','m²/(s²·kg)']]),
+Q('gfield','Gravitational field strength above a planet','g = G*M/r^2',['r','distance from the planet’s centre','m',6.4e6,2.6e7],['g','gravitational field strength','N/kg'],
+  [['M','planet mass','kg',6,1,20,0.1,'t',24]],['G'],(r,c)=>c.G*c.M/(r*r),[['g','1/r^2','G*M','0','M = slope/G','N·m²/kg']]),
+Q('kepler','Kepler’s third law: moons of a planet','T^2 = 4*π^2*r^3/(G*M)',['r','orbit radius','m',4e8,2e9],['T','orbital period','s'],
+  [['M','planet mass','kg',1.9,0.5,5,0.05,'t',27]],['G'],(r,c)=>2*PI*sq(r*r*r/(c.G*c.M)),[['T^2','r^3','4*π^2/(G*M)','0','M = 4*π^2/(G*slope)','s²/m³']]),
+Q('orbv','Satellite speed vs orbit radius','v^2 = G*M/r',['r','orbit radius','m',6.8e6,4.2e7],['v','orbital speed','m/s'],
+  [['M','planet mass','kg',6,1,20,0.1,'t',24]],['G'],(r,c)=>sq(c.G*c.M/r),[['v^2','1/r','G*M','0','M = slope/G','m³/s²']]),
+// ---- P1-06
+Q('hooke','Hooke’s law: stretching a spring','F = k*x',['x','stretch','m',0.02,0.2],['F','force','N'],
+  [['k','spring constant','N/m',40,5,200,1,'t']],[],(x,c)=>c.k*x,[['F','x','k','0','k = slope','N/m']]),
+Q('splaunch','Spring launcher fired straight up','1/2*k*x^2 = m*g*h',['x','spring compression','m',0.01,0.06],['h','height reached','m'],
+  [['k','spring constant','N/m',200,50,1000,10,'t'],['m','ball mass','kg',0.02,0.005,0.1,0.001,'s']],['g'],(x,c)=>c.k*x*x/(2*c.m*c.g),[['h','x^2','k/(2*m*g)','0','k = 2*m*g*slope','1/m']]),
+Q('v2h','Dropped ball: speed vs drop height','v^2 = 2*g*h',['h','drop height','m',0.1,2],['v','speed at the bottom','m/s'],
+  [['g','g','m/s^2',9.8,1.6,25,0.1,'t']],[],(h,c)=>sq(2*c.g*h),[['v^2','h','2*g','0','g = slope/2','m/s²']]),
+Q('ramp','Ramp lab: how far it slides on the floor','h = μk*D',['h','release height (smooth ramp)','m',0.05,0.4],['D','slide distance on the rough floor','m'],
+  [['μk','coefficient of kinetic friction','',0.25,0.1,0.8,0.01,'t']],[],(h,c)=>h/c.μk,[['h','D','μk','0','μk = slope',''],['D','h','1/μk','0','μk = 1/slope','']]),
+Q('ugrav','Satellite’s gravitational potential energy','U = -G*M*m/r',['r','orbit radius','m',6.8e6,4.2e7],['U','gravitational potential energy','J'],
+  [['M','planet mass','kg',6,1,20,0.1,'t',24],['m','satellite mass','kg',1000,100,5000,100,'s']],['G'],(r,c)=>-c.G*c.M*c.m/r,[['U','1/r','-G*M*m','0','M = -slope/(G*m)','J·m']]),
+// ---- P1-07
+Q('impulse','Same push time, different forces','m*(v - vi) = F*Δt',['F','average force','N',1,10],['v','final velocity','m/s',['vf']],
+  [['m','cart mass','kg',0.5,0.2,3,0.05,'t'],['Δt','push time','s',0.2,0.05,0.5,0.01,'s'],['vi','starting velocity','m/s',0.5,0,2,0.05,'s']],[],(F,c)=>c.vi+F*c.Δt/c.m,[['v','F','Δt/m','vi','m = Δt/slope','s/kg','m/s']]),
+Q('bumper','Stopping a cart with different bumpers','F*Δt = m*v',['Δt','stopping time','s',0.02,0.2,['t']],['F','average force','N'],
+  [['m','cart mass','kg',0.5,0.2,3,0.05,'t'],['v','speed before','m/s',1.5,0.5,4,0.1,'s']],[],(t,c)=>c.m*c.v/t,[['F','1/Δt','m*v','0','m = slope/v','N·s']]),
+Q('inel','Cart sticks to a target cart (perfectly inelastic)','m1*v1 = (m1 + m2)*v',['m2','target cart mass','kg',0.1,1.5],['v','speed after (stuck together)','m/s',['vf']],
+  [['m1','moving cart mass','kg',0.5,0.1,2,0.05,'t'],['v1','moving cart’s speed before','m/s',2,0.5,5,0.1,'s']],[],(m2,c)=>c.m1*c.v1/(c.m1+m2),[['1/v','m2','1/(m1*v1)','1/v1','m1 = 1/(v1*slope)','s/(kg·m)','s/m']]),
+Q('elast','Elastic collision: speed of the target','v2 = 2*m1*v1/(m1 + m2)',['m2','target mass (at rest)','kg',0.1,1.5],['v2','target’s speed after','m/s'],
+  [['m1','moving cart mass','kg',0.5,0.1,2,0.05,'t'],['v1','moving cart’s speed before','m/s',2,0.5,5,0.1,'s']],[],(m2,c)=>2*c.m1*c.v1/(c.m1+m2),[['1/v2','m2','1/(2*m1*v1)','1/(2*v1)','m1 = 1/(2*v1*slope)','s/(kg·m)','s/m']]),
+// ---- P1-08
+Q('spool','Falling mass unwinds a string from a spool','a = m*g/(m + I/r^2)',['m','falling mass','kg',0.02,0.2],['a','acceleration','m/s^2'],
+  [['I','rotational inertia of the spool','kg*m^2',2,0.5,10,0.1,'t',-4],['r','spool radius','m',0.025,0.01,0.05,0.001,'s']],['g'],(m,c)=>m*c.g/(m+c.I/(c.r*c.r)),[['1/a','1/m','I/(r^2*g)','1/g','I = slope*r^2*g','kg·s²/m','s²/m']]),
+Q('roll','Rolling down a ramp: find the shape factor β','a = g*sin(θ)/(1 + β)',['θ','ramp angle','°',5,30],['a','acceleration','m/s^2'],
+  [['β','shape factor β = I/(mr²)','',0.5,0,1.2,0.01,'t']],['g'],(th,c)=>c.g*sin(th)/(1+c.β),[['a','sin(θ)','g/(1 + β)','0','β = g/slope - 1','m/s²']]),
+Q('lever','Holding a sign up: force vs lever arm','τ = r*F',['r','lever arm','m',0.1,0.8],['F','force needed','N'],
+  [['τ','torque needed','N*m',6,1,20,0.5,'t']],[],(r,c)=>c.τ/r,[['F','1/r','τ','0','τ = slope','N·m']]),
+Q('irod','Two masses slid along a spinning rod','I = I0 + 2*m*r^2',['r','distance of each mass from the axis','m',0.05,0.3],['I','rotational inertia','kg*m^2'],
+  [['m','each sliding mass','kg',0.1,0.02,0.5,0.01,'t'],['I0','rod on its own','kg*m^2',4,1,10,0.1,'s',-3]],[],(r,c)=>c.I0+2*c.m*r*r,[['I','r^2','2*m','I0','m = slope/2','kg','kg·m²']]),
+Q('angkin','Wheel spinning up from rest','θ = 1/2*α*t^2',['t','time','s',0.5,4],['θ','angle turned','rad'],
+  [['α','angular acceleration','rad/s^2',1.5,0.2,5,0.1,'t']],[],(t,c)=>0.5*c.α*t*t,[['θ','t^2','α/2','0','α = 2*slope','rad/s²']]),
+// ---- P1-09
+Q('phyd','Pressure vs depth in a liquid','P = P0 + ρ*g*h',['h','depth','m',0.1,2],['P','absolute pressure','Pa'],
+  [['ρ','density of the liquid','kg/m^3',1000,600,2000,10,'t'],['P0','air pressure at the surface','Pa',101.3,90,110,0.1,'s',3]],['g'],(h,c)=>c.P0+c.ρ*c.g*h,[['P','h','ρ*g','P0','ρ = slope/g','Pa/m','Pa']],{ noise: 'range' }),
+Q('buoy','Buoyant force vs volume under the surface','Fb = ρ*g*V',['V','volume under the surface','m^3',1e-5,1e-4],['Fb','buoyant force','N',['B']],
+  [['ρ','density of the liquid','kg/m^3',1000,600,2000,10,'t']],['g'],(V,c)=>c.ρ*c.g*V,[['Fb','V','ρ*g','0','ρ = slope/g','N/m³']]),
+Q('torr','Torricelli: speed of water out of a hole','v^2 = 2*g*h',['h','water depth above the hole','m',0.05,0.6],['v','speed of the jet','m/s'],
+  [['g','g','m/s^2',9.8,1.6,25,0.1,'t']],[],(h,c)=>sq(2*c.g*h),[['v^2','h','2*g','0','g = slope/2','m/s²']]),
+Q('contin','Same flow rate through pipes of different size','Q = A*v',['A','cross-section area','m^2',1e-4,8e-4],['v','flow speed','m/s'],
+  [['Q','volume flow rate','m^3/s',4,1,10,0.1,'t',-4]],[],(A,c)=>c.Q/A,[['v','1/A','Q','0','Q = slope','m³/s']]),
+Q('jet','Leaky tank: how far the jet lands','d = 2*sqrt(h*H)',['h','water depth above the hole','m',0.05,0.5],['d','landing distance from the tank','m'],
+  [['H','height of the hole above the floor','m',0.3,0.1,1,0.01,'t']],[],(h,c)=>2*sq(h*c.H),[['d^2','h','4*H','0','H = slope/4','m']]),
+// ---- P1-10
+Q('sprm','Mass on a spring (the spring’s own mass counts)','T = 2*π*sqrt((m + ms/3)/k)',['m','hanging mass','kg',0.05,0.5],['T','period','s'],
+  [['k','spring constant','N/m',20,5,100,1,'t'],['ms','mass of the spring','kg',0.15,0,0.3,0.01,'s']],[],(m,c)=>2*PI*sq((m+c.ms/3)/c.k),[['T^2','m','4*π^2/k','4*π^2*ms/(3*k)','k = 4*π^2/slope','s²/kg','s²']]),
+Q('spri','Mass on an ideal spring','T = 2*π*sqrt(m/k)',['m','hanging mass','kg',0.05,0.5],['T','period','s'],
+  [['k','spring constant','N/m',20,5,100,1,'t']],[],(m,c)=>2*PI*sq(m/c.k),[['T','sqrt(m)','2*π/sqrt(k)','0','k = (2*π/slope)^2','s/√kg'],['T^2','m','4*π^2/k','0','k = 4*π^2/slope','s²/kg']]),
+Q('sprf','Spring frequency vs mass','f = 1/(2*π)*sqrt(k/m)',['m','hanging mass','kg',0.05,0.5],['f','frequency','Hz'],
+  [['k','spring constant','N/m',20,5,100,1,'t']],[],(m,c)=>sq(c.k/m)/(2*PI),[['f^2','1/m','k/(4*π^2)','0','k = 4*π^2*slope','kg/s²']]),
+// ---- P2-00 (IB)
+Q('emiss','Hot object radiating: power vs temperature','P = e*σ*A*T^4',['T','surface temperature','K',300,900],['P','power radiated','W'],
+  [['e','emissivity','',0.6,0.1,1,0.01,'t'],['A','surface area','m^2',0.01,0.002,0.05,0.001,'s']],['σ'],(T,c)=>c.e*c.σ*c.A*T**4,[['P','T^4','e*σ*A','0','e = slope/(σ*A)','W/K⁴']],{ ib: 1 }),
+Q('wien','Wien’s law: peak wavelength vs temperature','λ = b/T',['T','temperature','K',3000,12000],['λ','peak wavelength','m'],
+  [['b','Wien’s constant','m*K',2.898e-3,0,0,0,'T']],[],(T,c)=>c.b/T,[['λ','1/T','b','0','b = slope','m·K']],{ ib: 1 }),
+// ---- P2-01
+Q('charles','Gas volume vs temperature in °C: find absolute zero','V = n*R*(T + 273.15)/P',['T','temperature','°C',-20,100],['V','volume','m^3'],
+  [['n','amount of gas','mol',0.01,0.002,0.05,0.001,'s'],['P','pressure','Pa',101.3,80,200,0.1,'s',3]],['R'],(T,c)=>c.n*c.R*(T+273.15)/c.P,[['V','T','n*R/P','273.15*n*R/P','T0 = -icpt/slope','m³/°C','m³']],
+  { noise: 'range', celsius: 1, tgt: { s: 'T0', n: 'absolute zero', u: '°C', v: () => -273.15 }, linX: [-300, 110] }),
+Q('gay','Sealed gas: pressure vs absolute temperature','P*V = n*R*T',['T','temperature','K',250,400],['P','pressure','Pa'],
+  [['n','amount of gas','mol',0.04,0.01,0.1,0.001,'t'],['V','volume of the container','m^3',1,0.5,5,0.1,'s',-3]],['R'],(T,c)=>c.n*c.R*T/c.V,[['P','T','n*R/V','0','n = slope*V/R','Pa/K']]),
+Q('vrms','Molecule speed (rms) vs temperature','1/2*m*v^2 = 3/2*kB*T',['T','temperature','K',200,800],['v','rms speed','m/s',['vrms']],
+  [['m','mass of one molecule','kg',4.65,0.5,10,0.05,'t',-26]],['kB'],(T,c)=>sq(3*c.kB*T/c.m),[['v^2','T','3*kB/m','0','m = 3*kB/slope','m²/(s²·K)']]),
+Q('cond','Heat conduction through rods of different length','P = k*A*ΔT/L',['L','rod length','m',0.05,0.4],['P','rate of heat flow Q/Δt','W',['H']],
+  [['k','thermal conductivity','W/(m*K)',200,10,400,5,'t'],['A','cross-section area','m^2',1,0.2,5,0.1,'s',-3],['ΔT','temperature difference','K',50,10,100,1,'s']],[],(L,c)=>c.k*c.A*c.ΔT/L,[['P','1/L','k*A*ΔT','0','k = slope/(A*ΔT)','W·m']]),
+// ---- P2-02
+Q('coul','Coulomb’s law: force vs separation','F = k*q1*q2/r^2',['r','distance between centres','m',0.05,0.3],['F','electric force','N'],
+  [['q2','charge on sphere 2','C',40,5,200,1,'t',-9],['q1','charge on sphere 1','C',50,10,200,1,'s',-9]],['k'],(r,c)=>c.k*c.q1*c.q2/(r*r),[['F','1/r^2','k*q1*q2','0','q2 = slope/(k*q1)','N·m²']]),
+Q('vr','Electric potential around a point charge','V = k*q/r',['r','distance from the charge','m',0.1,0.8],['V','electric potential','V'],
+  [['q','charge','C',2,0.5,20,0.1,'t',-9]],['k'],(r,c)=>c.k*c.q/r,[['V','1/r','k*q','0','q = slope/k','V·m']]),
+Q('er','Electric field around a point charge','E = k*q/r^2',['r','distance from the charge','m',0.05,0.4],['E','electric field strength','N/C'],
+  [['q','charge','C',2,0.5,20,0.1,'t',-9]],['k'],(r,c)=>c.k*c.q/(r*r),[['E','1/r^2','k*q','0','q = slope/k','N·m²/C']]),
+Q('capd','Parallel plates: capacitance vs gap','C = κ*ε0*A/d',['d','plate separation','m',1e-3,6e-3],['C','capacitance','F'],
+  [['κ','dielectric constant','',1,1,8,0.1,'t'],['A','plate area','m^2',0.04,0.01,0.1,0.005,'s']],['ε0'],(d,c)=>c.κ*c.ε0*c.A/d,[['C','1/d','κ*ε0*A','0','κ = slope/(ε0*A)','F·m']]),
+Q('capu','Energy stored in a capacitor vs voltage','U = 1/2*C*V^2',['V','voltage','V',1,12],['U','energy stored','J'],
+  [['C','capacitance','F',470,10,1000,10,'t',-6]],[],(V,c)=>0.5*c.C*V*V,[['U','V^2','C/2','0','C = 2*slope','F']]),
+// ---- P2-03
+Q('rl','Pencil lead: resistance vs length','R = ρ*L/A',['L','length of lead','m',0.02,0.12],['R','resistance','Ω'],
+  [['ρ','resistivity','Ω*m',3,0.5,10,0.1,'t',-5],['A','cross-section area','m^2',3.85,1,10,0.05,'s',-7]],[],(L,c)=>c.ρ*L/c.A,[['R','L','ρ/A','0','ρ = slope*A','Ω/m']]),
+Q('ra','Pencil leads: resistance vs thickness','R = ρ*L/A',['A','cross-section area','m^2',1e-7,8e-7],['R','resistance','Ω'],
+  [['ρ','resistivity','Ω*m',3,0.5,10,0.1,'t',-5],['L','length of lead','m',0.1,0.02,0.2,0.01,'s']],[],(A,c)=>c.ρ*c.L/A,[['R','1/A','ρ*L','0','ρ = slope/L','Ω·m²']]),
+Q('term','Battery: terminal voltage vs current','V = ε - I*r',['I','current','A',0.1,1.2],['V','terminal voltage','V'],
+  [['ε','emf','V',1.5,1.5,12,0.05,'t',0,['emf','E']],['r','internal resistance','Ω',0.5,0.1,1,0.05,'s']],[],(I,c)=>c.ε-I*c.r,[['V','I','-r','ε','ε = icpt','Ω','V']]),
+Q('invi','Battery with internal resistance: current vs load','I = ε/(R + r)',['R','load resistance','Ω',0.5,6],['I','current','A'],
+  [['r','internal resistance','Ω',1,0.2,3,0.05,'t'],['ε','emf','V',1.5,1,12,0.05,'s',0,['emf','E']]],[],(R,c)=>c.ε/(R+c.r),[['1/I','R','1/ε','r/ε','r = icpt/slope','1/V','1/A']]),
+Q('bwire','Magnetic field around a long straight wire','B = μ0*I/(2*π*r)',['r','distance from the wire','m',0.01,0.08],['B','magnetic field','T'],
+  [['I','current in the wire','A',10,1,30,0.5,'t']],['μ0'],(r,c)=>c.μ0*c.I/(2*PI*r),[['B','1/r','μ0*I/(2*π)','0','I = 2*π*slope/μ0','T·m']]),
+Q('compass','Compass in a coil: measuring Earth’s magnetic field','tan(θ) = μ0*N*I/(2*R*BE)',['I','current in the coil','A',0.05,0.8],['θ','compass deflection','°'],
+  [['BE','Earth’s field (horizontal part)','T',2,1,6,0.1,'t',-5],['N','turns on the coil','',10,1,50,1,'s'],['R','coil radius','m',0.1,0.05,0.25,0.01,'s']],['μ0'],(I,c)=>Math.atan(c.μ0*c.N*I/(2*c.R*c.BE)),[['tan(θ)','I','μ0*N/(2*R*BE)','0','BE = μ0*N/(2*R*slope)','1/A']]),
+Q('emf','Rod moving through a magnetic field: emf vs speed','ε = B*L*v',['v','rod speed','m/s',0.5,5],['ε','induced emf','V',['emf','E']],
+  [['B','magnetic field','T',0.5,0.05,2,0.05,'t'],['L','rod length','m',0.2,0.05,1,0.01,'s']],[],(v,c)=>c.B*c.L*v,[['ε','v','B*L','0','B = slope/L','T·m']]),
+Q('rb','Ions (charge +e) in a magnetic field: radius vs field','e*v*B = m*v^2/r',['B','magnetic field','T',0.05,0.4],['r','radius of the circle','m'],
+  [['m','ion mass','kg',1.67,0.5,10,0.01,'t',-27],['v','ion speed','m/s',1,0.2,5,0.1,'s',6]],['e'],(B,c)=>c.m*c.v/(c.e*B),[['r','1/B','m*v/e','0','m = e*slope/v','T·m']]),
+Q('eom','Electron beam (e/m tube): radius vs accelerating voltage','r^2 = 2*me*V/(e*B^2)',['V','accelerating voltage','V',150,500],['r','radius of the beam','m'],
+  [['B','magnetic field','T',1,0.5,3,0.05,'s',-3]],['e','me'],(V,c)=>sq(2*c.me*V/c.e)/c.B,[['r^2','V','2*me/(e*B^2)','0','e/me = 2/(B^2*slope)','m²/V']],
+  { tgt: { s: 'e/me', n: 'charge-to-mass ratio e/m of the electron', u: 'C/kg', v: c => c.e / c.me }, noAxis: ['e','me'] }),
+// ---- P2-04
+Q('strv','Wave speed on a string vs tension','v = sqrt(T/μ)',['T','tension','N',1,10],['v','wave speed','m/s'],
+  [['μ','mass per unit length','kg/m',2,0.5,10,0.1,'t',-3]],[],(T,c)=>sq(T/c.μ),[['v^2','T','1/μ','0','μ = 1/slope','m/kg']]),
+Q('stand','Open pipe: fundamental frequency vs length','f = v/(2*L)',['L','pipe length','m',0.3,1.2],['f','fundamental frequency','Hz'],
+  [['v','speed of sound','m/s',343,200,400,1,'t']],[],(L,c)=>c.v/(2*L),[['f','1/L','v/2','0','v = 2*slope','m/s']]),
+Q('slitl','Double slit: fringe spacing vs screen distance','Δy = λ*L/d',['L','slit-to-screen distance','m',0.5,3],['Δy','fringe spacing','m',['y']],
+  [['λ','wavelength','m',633,400,700,1,'t',-9],['d','slit separation','m',0.25,0.1,1,0.01,'s',-3]],[],(L,c)=>c.λ*L/c.d,[['Δy','L','λ/d','0','λ = slope*d','']]),
+Q('slitd','Double slit: fringe spacing vs slit separation','Δy = λ*L/d',['d','slit separation','m',1e-4,5e-4],['Δy','fringe spacing','m',['y']],
+  [['λ','wavelength','m',633,400,700,1,'t',-9],['L','slit-to-screen distance','m',2,0.5,4,0.1,'s']],[],(d,c)=>c.λ*c.L/d,[['Δy','1/d','λ*L','0','λ = slope/L','m²']]),
+Q('snell','Refraction: Snell’s law','n1*sin(θ1) = n2*sin(θ2)',['θ1','angle of incidence (in air)','°',10,70],['θ2','angle of refraction','°'],
+  [['n2','index of refraction of the block','',1.5,1.1,2.4,0.01,'t'],['n1','index of refraction of air','',1,0,0,0,'k']],[],(t1,c)=>Math.asin(c.n1*sin(t1)/c.n2),[['sin(θ1)','sin(θ2)','n2/n1','0','n2 = n1*slope','']]),
+Q('lens','Thin lens: image distance vs object distance','1/so + 1/si = 1/f',['so','object distance','m',0.15,0.6],['si','image distance','m'],
+  [['f','focal length','m',0.1,0.05,0.12,0.005,'t']],[],(so,c)=>1/(1/c.f-1/so),[['1/si','1/so','-1','1/f','f = 1/icpt','','1/m']]),
+// ---- P2-05
+Q('photo','Photoelectric effect: stopping voltage vs frequency','e*Vs = h*f - φ',['f','light frequency','Hz',8e14,1.5e15],['Vs','stopping voltage','V'],
+  [['φ','work function','eV',2.3,1.8,3,0.05,'t']],['h','e'],(f,c)=>(c.h*f-c.φ)/c.e,[['Vs','f','h/e','-φ/e','φ = -e*icpt','V·s','V']],{ noise: 'range' }),
+Q('dbv','de Broglie wavelength vs speed','λ = h/(m*v)',['v','particle speed','m/s',1e6,5e6],['λ','de Broglie wavelength','m'],
+  [['m','particle mass','kg',9.11,2,20,0.01,'t',-31]],['h'],(v,c)=>c.h/(c.m*v),[['λ','1/v','h/m','0','m = h/slope','m²/s']]),
+Q('dbvolt','Electrons sped up through a voltage: wavelength','λ = h/sqrt(2*me*e*V)',['V','accelerating voltage','V',50,500],['λ','de Broglie wavelength','m'],
+  [],['h','me','e'],(V,c)=>c.h/sq(2*c.me*c.e*V),[['λ','1/sqrt(V)','h/sqrt(2*me*e)','0','h = slope*sqrt(2*me*e)','m·√V']],{ tgt: { s: 'h' }, noAxis: ['h'] }),
+Q('ephot','Photon energy vs wavelength','E = h*c/λ',['λ','wavelength','m',2.5e-7,1e-6],['E','photon energy','J'],
+  [],['h','c'],(l,c)=>c.h*c.c/l,[['E','1/λ','h*c','0','h = slope/c','J·m']],{ tgt: { s: 'h' }, noAxis: ['h'] })
+];
+const EQ = {}; EQS.forEach(e => EQ[e.id] = e);
+const SETS = [
+  ['P1-00','Measurement (IB)',['half','kinv','kinv2','pend','boyle','inten']],
+  ['P1-01','Newton’s First Law',['hang','weight','fric','ropes']],
+  ['P1-02','Newton’s Second Law',['half','kinv','kinv2','a1m','atwood','cart']],
+  ['P1-03','Newton’s Third Law',['contact','atwT','atwood','cart']],
+  ['P1-04','Motion and Forces in 2D',['launch','range','drop','incl']],
+  ['P1-05','Circular Motion and Gravity',['fcv','fcr','whirl','gfield','kepler','orbv']],
+  ['P1-06','Work, Power, and Energy',['hooke','splaunch','v2h','ramp','ugrav']],
+  ['P1-07','Impulse and Momentum',['impulse','bumper','inel','elast']],
+  ['P1-08','Rotation',['spool','roll','lever','irod','angkin']],
+  ['P1-09','Fluids',['phyd','buoy','torr','contin','jet']],
+  ['P1-10','Simple Harmonic Motion',['pend','sprm','spri','sprf']],
+  ['P2-00','Greenhouse Effect (IB)',['emiss','wien','inten']],
+  ['P2-01','Thermodynamics',['boyle','charles','gay','vrms','cond']],
+  ['P2-02','Electrostatics',['coul','vr','er','capd','capu']],
+  ['P2-03','Current Electricity and Magnetism',['rl','ra','term','invi','bwire','compass','emf','rb','eom']],
+  ['P2-04','Waves & Optics',['strv','stand','slitl','slitd','snell','lens','inten']],
+  ['P2-05','Modern Physics',['photo','dbv','dbvolt','ephot']]
+];
+const SETMAP = {}; SETS.forEach(s => SETMAP[s[0]] = s);
+
+// prepare each equation: units, symbol tables, parsers
+function aliasesOf(name){ const out = []; const ch = name[0]; if (GREEK[ch]) GREEK[ch].forEach(w => out.push(w + name.slice(1))); if (ch === 'μ' && name.length > 1) out.push('u' + name.slice(1)); return out; }
+EQS.forEach(e => {
+  const xu = parseUnit(e.x.u), yu = parseUnit(e.y.u); e.x.f = xu.f; e.x.d = xu.d; e.y.f = yu.f; e.y.d = yu.d;
+  e.K.forEach(k => { const u = parseUnit(k.u); k.d = u.d; k.uf = u.f; k.scale = 10 ** k.exp * u.f; });
+  const D = { 'π': Z(), slope: Z(), icpt: Z() }, names = new Map();
+  const add = (s, al, d) => { D[s] = d; names.set(s, s); aliasesOf(s).concat(al || []).forEach(a => { if (!names.has(a)) names.set(a, s); }); };
+  add(e.x.s, e.x.al, e.x.d); add(e.y.s, e.y.al, e.y.d);
+  e.K.forEach(k => add(k.s, k.al, k.d));
+  e.uses.forEach(s => add(s, s === 'μ0' ? ['mu0', 'u0'] : s === 'ε0' ? ['eps0', 'epsilon0'] : s === 'kB' ? ['kb', 'k_B'] : s === 'σ' ? ['sigma'] : [], parseUnit(GC[s].u).d));
+  if (e.tgt && !e.K.find(k => k.s === e.tgt.s) && !GC[e.tgt.s]) e.tgt.d = parseUnit(e.tgt.u).d;
+  names.set('π', 'π'); names.set('pi', 'π');
+  e.D = D; e.names = names; e.keys = [...names.keys()].sort((a, b) => b.length - a.length);
+  const fn = new Map(names); fn.set('slope', 'slope'); fn.set('icpt', 'icpt'); fn.set('intercept', 'icpt'); fn.set('me', 'me'); fn.set('T0', 'T0'); fn.set('e', 'e');
+  e.fnames = fn; e.fkeys = [...fn.keys()].sort((a, b) => b.length - a.length);
+  const tk = e.K.find(k => k.role === 't' || k.role === 'T');
+  e.target = e.tgt ? Object.assign({}, e.tgt) : { s: tk.s, n: tk.n, u: tk.u };
+  if (!e.target.n) e.target.n = e.target.s === 'h' ? 'Planck’s constant' : e.target.s;
+  if (!e.target.u) e.target.u = e.target.s === 'h' ? 'J*s' : '';
+  e.target.d = parseUnit(e.target.u).d; e.target.uf = parseUnit(e.target.u).f;
+  e.fixedTarget = !tk || tk.role === 'T' || !!e.tgt;
+  e.axisOK = new Set([e.x.s, e.y.s, 'π'].concat(e.K.filter(k => k.role === 's' || k.role === 'k').map(k => k.s), e.uses.filter(s => !(e.noAxis || []).includes(s))));
+  e.sysOK = e.std.some(s => s.X === e.x.s && s.b === '0') && !e.celsius;
+});
+const P = (e, str) => parseX(str, e.names, e.keys);
+const PF = (e, str) => parseX(str, e.fnames, e.fkeys);
+
+// ================= data =================
+function envOf(e, cv){ const c = { 'π': PI }; e.uses.forEach(s => c[s] = GC[s].v); e.K.forEach(k => c[k.s] = (cv && k.s in cv ? cv[k.s] : k.v) * k.scale); return c; }
+function xRange(e, c){ const lo = typeof e.x.lo === 'function' ? e.x.lo(c) : e.x.lo, hi = typeof e.x.hi === 'function' ? e.x.hi(c) : e.x.hi; return [lo * e.x.f, hi * e.x.f]; }
+const NPTS = 8;
+function gen(e, c, zs, s, sys, n){
+  n = n || NPTS; const [lo, hi] = xRange(e, c), xs = [], y0 = [];
+  for (let i = 0; i < n; i++){ const x = lo + (hi - lo) * i / (n - 1); xs.push(x); y0.push(e.f(x, c)); }
+  const span = Math.max(...y0) - Math.min(...y0);
+  const ys = y0.map((y, i) => { const z = zs ? zs[i] : 0; return e.noise === 'range' ? y + s * z * span : y * (1 + s * z); });
+  const shift = sys ? Math.min(0.08 * hi, 0.5 * lo) : 0;
+  return { x: xs.map(x => x - shift), xt: xs, y: ys, y0 };
+}
+function linfit(X, Y){ const n = X.length, mx = X.reduce((a, b) => a + b, 0) / n, my = Y.reduce((a, b) => a + b, 0) / n;
+  let sxx = 0, sxy = 0, syy = 0; for (let i = 0; i < n; i++){ sxx += (X[i] - mx) ** 2; sxy += (X[i] - mx) * (Y[i] - my); syy += (Y[i] - my) ** 2; }
+  const m = sxy / sxx, b = my - m * mx; let sse = 0, maxr = 0; for (let i = 0; i < n; i++){ const r = Y[i] - m * X[i] - b; sse += r * r; maxr = Math.max(maxr, Math.abs(r)); }
+  const s2 = n > 2 ? sse / (n - 2) : 0; return { m, b, r2: syy ? 1 - sse / syy : 1, maxr, seb: Math.sqrt(s2 * (1 / n + mx * mx / sxx)), sem: Math.sqrt(s2 / sxx) }; }
+// alternative settings: nudge every slider constant so a typed-in number can't pass for a symbol
+function altCV(e, cv, f1, f2){ const o = Object.assign({}, cv); let i = 0;
+  e.K.forEach(k => { if (k.role !== 't' && k.role !== 's') return; const v = cv[k.s]; let nv = v * (i++ % 2 ? f2 : f1); if (nv > k.max || nv < k.min) nv = v * (i % 2 ? f1 : f2); if (nv > k.max || nv < k.min) nv = v === 0 ? (k.min + k.max) / 2 : v; o[k.s] = nv; }); return o; }
+function envs(e, cv){ const out = [envOf(e, cv)];
+  for (const [a, b] of [[1.13, 0.89], [1.05, 0.95], [0.92, 1.08]]){ const c2 = envOf(e, altCV(e, cv, a, b)); const d = gen(e, c2, null, 0, false, 9); if (d.y.every(isFinite)) { out.push(c2); break; } }
+  return out; }
+function ptEnvs(e, c, d, useNoisy){ return d.x.map((x, i) => Object.assign({}, c, { [e.x.s]: x, [e.y.s]: useNoisy ? d.y[i] : d.y0[i] })); }
+
+// ================= axis checking =================
+function axisErr(e, ast){ const s = syms(ast);
+  for (const v of s){ if (!e.axisOK.has(v)){ const k = e.K.find(q => q.s === v);
+    if (k && (k.role === 't' || k.role === 'T') || (e.noAxis || []).includes(v)) return 'You can’t put ' + plainSym(v) + ' on an axis: it’s the unknown you’ll get from the slope.';
+    return plainSym(v) + ' can’t go on an axis here.'; } }
+  dims(ast, e.D); return null; }
+const plainSym = s => runsPlain(runs({ k: 's', s }));
+function curveWord(V, H){ // describe the shape of a non-straight graph
+  const idx = H.map((h, i) => i).sort((a, b) => H[a] - H[b]), h = idx.map(i => H[i]), v = idx.map(i => V[i]);
+  const n = h.length, inc = v[n - 1] > v[0]; let up = 0, down = 0;
+  for (let i = 1; i < n; i++){ if (v[i] > v[i - 1]) up++; else if (v[i] < v[i - 1]) down++; }
+  if (up && down && Math.min(up, down) > 1) return 'mixed';
+  const mid = Math.floor(n / 2), chord = v[0] + (v[n - 1] - v[0]) * (h[mid] - h[0]) / (h[n - 1] - h[0]);
+  const bulge = v[mid] - chord; return inc ? (bulge < 0 ? 'incConvex' : 'incConcave') : (bulge < 0 ? 'decConvex' : 'decConcave');
+}
+function linTest(e, Vast, Hast, c){
+  const d = gen(e, c, null, 0, false, 9), pe = ptEnvs(e, c, d, false);
+  const V = pe.map(p => ev(Vast, p)), H = pe.map(p => ev(Hast, p));
+  if (!V.concat(H).every(isFinite)) return { ok: false, why: 'undef' };
+  const rv = Math.max(...V) - Math.min(...V), rh = Math.max(...H) - Math.min(...H);
+  const sv = Math.max(...V.map(Math.abs)) || 1, sh = Math.max(...H.map(Math.abs)) || 1;
+  if (rh <= 1e-9 * sh) return { ok: false, why: 'flatH' };
+  if (rv <= 1e-9 * sv) return { ok: false, why: 'flatV' };
+  const f = linfit(H, V); if (f.maxr / rv < 1e-6) return { ok: true, fit: f, V, H };
+  return { ok: false, why: 'curve', shape: curveWord(V, H), r2: f.r2 };
+}
+// returns {ok, msg, which, V(ast), H(ast)}
+function checkAxes(e, vstr, hstr, cv){
+  let A, B;
+  try { A = P(e, vstr); } catch (er){ return { ok: false, which: 'v', msg: 'Vertical axis: ' + er.message }; }
+  try { B = P(e, hstr); } catch (er){ return { ok: false, which: 'h', msg: 'Horizontal axis: ' + er.message }; }
+  let m;
+  try { m = axisErr(e, A); } catch (er){ m = er.message; } if (m) return { ok: false, which: 'v', msg: m };
+  try { m = axisErr(e, B); } catch (er){ m = er.message; } if (m) return { ok: false, which: 'h', msg: m };
+  const sa = syms(A), sb = syms(B), X = e.x.s, Y = e.y.s, xs = plainSym(X), ys = plainSym(Y);
+  if (sa.has(Y) && sb.has(Y)) return { ok: false, msg: 'Put ' + ys + ' on one axis only.' };
+  if (!sa.has(Y) && !sb.has(Y)) return { ok: false, msg: 'One axis has to use ' + ys + ': that’s what you measured.' };
+  const os = sa.has(Y) ? sb : sa; if (!os.has(X)) return { ok: false, msg: 'The other axis has to use ' + xs + '.' };
+  let first = null;
+  for (const c of envs(e, cv)){ const r = linTest(e, A, B, c); if (!r.ok) return Object.assign({ ok: false, A, B }, r); if (!first) first = r; }
+  return { ok: true, A, B, fit: first.fit };
+}
+function whyText(r, e){
+  const vs = r.A ? runsHTML(runs(dnorm(r.A))) : '', hs = r.B ? runsHTML(runs(dnorm(r.B))) : '';
+  const head = 'Your graph of <b>' + vs + '</b> vs <b>' + hs + '</b> ';
+  if (r.why === 'undef') return 'That gives an impossible value for some data points (like dividing by zero). Try something else.';
+  if (r.why === 'flatH') return head + 'has the same x-value for every point. The horizontal axis has to change.';
+  if (r.why === 'flatV') return head + 'is a flat line: the vertical quantity doesn’t change, so its slope can’t tell you anything.';
+  const near = r.r2 > 0.999 ? ' (It’s close to straight, but the physics says it should curve.)' : '';
+  switch (r.shape){
+    case 'incConvex': return head + 'still curves, bending <b>upward</b>. Make the horizontal quantity grow faster (a higher power), or the vertical one grow slower (a root).' + near;
+    case 'incConcave': return head + 'still curves, bending over and <b>flattening</b>. Use a lower power or a root on the horizontal axis, or a higher power on the vertical axis.' + near;
+    case 'decConvex': case 'decConcave': { const inv = a => a && (a.k === '/' || (a.k === '^' && a.b.k === 'neg'));
+      return head + 'still curves, falling as you go right. ' + (inv(r.A) && inv(r.B) ? 'Two 1/… cancel out: try 1/… on just one axis.' : 'When one quantity drops as the other grows, try putting <b>1/…</b> on an axis.') + near; }
+    default: return head + 'goes up and down. Try something else.';
+  }
+}
+
+// ================= state =================
+const S = { mode: 'shape', set: 'P1-00', eq: null, mys: false, cv: {}, scat: 3, zs: [], sys: false, tries: 0, solved: null, view: 'raw', anim: 1, map: null, lastBox: 'ay', hidden: null, revealed: false,
+  sh: null, shStep: false, shDbl: false, streak: 0, best: 0, right: 0, total: 0 };
+const newZ = () => { S.zs = Array.from({ length: NPTS }, () => Math.max(-2.5, Math.min(2.5, randn()))); };
+
+// ================= plotting =================
+function niceStep(range, target){ const raw = range / target, p = 10 ** Math.floor(Math.log10(raw)), f = raw / p; return (f < 1.5 ? 1 : f < 3 ? 2 : f < 7 ? 5 : 10) * p; }
+function axisR(lo, hi, zero){
+  if (zero){ lo = Math.min(lo, 0); hi = Math.max(hi, 0); }
+  if (!(hi > lo)){ const a = Math.abs(lo) || 1; lo -= a * 0.5; hi += a * 0.5; }
+  const pad = (hi - lo) * 0.05; if (!(zero && hi === 0)) hi += pad; if (!(zero && lo === 0)) lo -= pad;
+  const st = niceStep(hi - lo, 6), a = Math.floor(lo / st + 1e-9) * st, b = Math.ceil(hi / st - 1e-9) * st;
+  const big = Math.max(Math.abs(a), Math.abs(b)); let E = Math.floor(Math.log10(big)); if (E > -3 && E < 4) E = 0;
+  return { a, b, st, E };
+}
+function tickLab(v, ax){ const sc = v / 10 ** ax.E, st = ax.st / 10 ** ax.E, dp = Math.max(0, -Math.floor(Math.log10(st) + 1e-9)); let s = (Math.abs(sc) < st / 1e6 ? 0 : sc).toFixed(dp); return s.replace(/^-/, '−'); }
+function setFont(g, w, size, it, mono){ g.font = (it ? 'italic ' : '') + w + ' ' + size + 'px ' + (mono ? '"IBM Plex Mono",monospace' : '"Space Grotesk",sans-serif'); }
+function measRuns(g, rs, size){ let w = 0; rs.forEach(r => { setFont(g, 600, r.p ? size * 0.72 : size, r.c === 'v'); w += g.measureText(r.t).width; }); return w; }
+function drawRuns(g, rs, x, y, size, align, col){
+  const w = measRuns(g, rs, size); if (align === 'center') x -= w / 2; else if (align === 'right') x -= w;
+  g.fillStyle = col || '#111'; g.textAlign = 'left'; g.textBaseline = 'alphabetic';
+  rs.forEach(r => { const fs = r.p ? size * 0.72 : size; setFont(g, 600, fs, r.c === 'v'); g.fillText(r.t, x, y + (r.p === 1 ? -size * 0.4 : r.p === -1 ? size * 0.22 : 0)); x += g.measureText(r.t).width; });
+  return w; }
+const unitRun = (u, E) => { const parts = []; if (E) parts.push('×10' + supS(E)); if (u) parts.push(u); return parts.length ? [{ t: '  (' + parts.join(' ') + ')', c: 'o' }] : []; };
+// frame: draws grid, axes, ticks, labels; returns mapping
+function frame(g, W, H, xa, ya, xl, yl, xu, yu, faded){
+  const L = 74, R = W - 16, T = 14, B = H - 50;
+  const PX = x => L + (R - L) * (x - xa.a) / (xa.b - xa.a), PY = y => B - (B - T) * (y - ya.a) / (ya.b - ya.a);
+  g.save(); if (faded) g.globalAlpha = faded;
+  g.lineWidth = 1; g.strokeStyle = '#e6e6e6';
+  for (let x = xa.a; x <= xa.b + xa.st / 2; x += xa.st){ g.beginPath(); g.moveTo(PX(x), T); g.lineTo(PX(x), B); g.stroke(); }
+  for (let y = ya.a; y <= ya.b + ya.st / 2; y += ya.st){ g.beginPath(); g.moveTo(L, PY(y)); g.lineTo(R, PY(y)); g.stroke(); }
+  g.strokeStyle = '#111'; g.lineWidth = 2; g.beginPath(); g.moveTo(L, T); g.lineTo(L, B); g.lineTo(R, B); g.stroke();
+  g.lineWidth = 1.4; g.strokeStyle = '#777';
+  if (ya.a < 0 && ya.b > 0){ g.beginPath(); g.moveTo(L, PY(0)); g.lineTo(R, PY(0)); g.stroke(); }
+  if (xa.a < 0 && xa.b > 0){ g.beginPath(); g.moveTo(PX(0), T); g.lineTo(PX(0), B); g.stroke(); }
+  g.fillStyle = '#333'; setFont(g, 500, 11.5, false, true);
+  g.textAlign = 'center'; g.textBaseline = 'top';
+  for (let x = xa.a; x <= xa.b + xa.st / 2; x += xa.st){ g.fillText(tickLab(x, xa), PX(x), B + 5); g.fillRect(PX(x) - 0.75, B, 1.5, 4); }
+  g.textAlign = 'right'; g.textBaseline = 'middle';
+  for (let y = ya.a; y <= ya.b + ya.st / 2; y += ya.st){ g.fillText(tickLab(y, ya), L - 7, PY(y)); g.fillRect(L - 4, PY(y) - 0.75, 4, 1.5); }
+  drawRuns(g, xl.concat(unitRun(xu, xa.E)), (L + R) / 2, H - 12, 15, 'center');
+  g.save(); g.translate(17, (T + B) / 2); g.rotate(-PI / 2); drawRuns(g, yl.concat(unitRun(yu, ya.E)), 0, 0, 15, 'center'); g.restore();
+  g.restore();
+  return { L, R, T, B, PX, PY };
+}
+function ctx2(cv){ const g = cv.getContext('2d'); g.setTransform(2, 0, 0, 2, 0, 0); const W = cv.width / 2, H = cv.height / 2; g.clearRect(0, 0, W, H); g.fillStyle = '#fff'; g.fillRect(0, 0, W, H); return { g, W, H }; }
+function dot(g, x, y, col){ g.fillStyle = col || '#1546d6'; g.beginPath(); g.arc(x, y, 5, 0, 7); g.fill(); g.strokeStyle = '#fff'; g.lineWidth = 1.2; g.stroke(); }
+
+// ================= Name the shape =================
+const SH = [
+  { id: 'lin0', lab: 'Straight, through the origin', m: 'y ∝ x', g: x => x },
+  { id: 'lin', lab: 'Straight, with an intercept', m: 'y = mx + b' },
+  { id: 'quad', lab: 'Square', m: 'y ∝ x²', g: x => x * x },
+  { id: 'sqrt', lab: 'Square root', m: 'y ∝ √x', g: x => Math.sqrt(x) },
+  { id: 'inv', lab: 'Inverse', m: 'y ∝ 1/x', g: x => 1 / x },
+  { id: 'inv2', lab: 'Inverse square', m: 'y ∝ 1/x²', g: x => 1 / (x * x) }
+];
+function icon(id){ const f = { lin0: x => x, lin: x => 0.45 + 0.55 * x, quad: x => x * x, sqrt: x => Math.sqrt(x), inv: x => 0.18 / x, inv2: x => 0.035 / (x * x) }[id];
+  let d = ''; for (let i = 0; i <= 24; i++){ const x = 0.04 + 0.96 * i / 24, y = Math.min(1.05, f(x)); d += (i ? 'L' : 'M') + (4 + 32 * x).toFixed(1) + ' ' + (30 - 26 * y).toFixed(1); }
+  return '<svg width="40" height="34" viewBox="0 0 40 34" aria-hidden="true"><path d="M4 2V30H38" fill="none" stroke="#111" stroke-width="2"/><path d="' + d + '" fill="none" stroke="#1546d6" stroke-width="2.6"/></svg>'; }
+// weighted least squares: relative scatter, so weight 1/y² (with a floor so a point at y = 0 doesn't dominate)
+const wts = ys => { const top = Math.max(...ys.map(Math.abs)); return ys.map(y => 1 / Math.max(Math.abs(y), 0.03 * top) ** 2); };
+function wfit1(xs, ys, g){ const w = wts(ys); let num = 0, den = 0; xs.forEach((x, i) => { const gi = g(x); if (!isFinite(gi)) return; num += w[i] * ys[i] * gi; den += w[i] * gi * gi; }); const k = num / den; let sse = 0;
+  xs.forEach((x, i) => { const gi = g(x); sse += isFinite(gi) ? w[i] * (ys[i] - k * gi) ** 2 : 1e9; }); return { k, sse }; }
+function wfit2(xs, ys){ const w = wts(ys); let S0 = 0, Sx = 0, Sy = 0, Sxx = 0, Sxy = 0; xs.forEach((x, i) => { S0 += w[i]; Sx += w[i] * x; Sy += w[i] * ys[i]; Sxx += w[i] * x * x; Sxy += w[i] * x * ys[i]; });
+  const m = (S0 * Sxy - Sx * Sy) / (S0 * Sxx - Sx * Sx), b = (Sy - m * Sx) / S0; let sse = 0; xs.forEach((x, i) => { sse += w[i] * (ys[i] - m * x - b) ** 2; }); return { m, b, sse }; }
+function shapeFits(xs, ys){ const r = {}; SH.forEach(s => { r[s.id] = s.id === 'lin' ? wfit2(xs, ys) : wfit1(xs, ys, s.g); }); return r; }
+// pairs of points where x doubles (prefer 2→4 and 4→8)
+function dblPairs(xs){ const P2 = []; xs.forEach((a, i) => xs.forEach((b, j) => { if (a > 0 && Math.abs(b - 2 * a) < 1e-9 * b) P2.push([i, j]); }));
+  const D = xs.find(x => x > 0) === xs[0] ? xs[0] : xs[1]; const pick = (u, v) => P2.find(([i, j]) => Math.abs(xs[i] - u * D) < 1e-9 * D && Math.abs(xs[j] - v * D) < 1e-9 * D);
+  const a = pick(2, 4), b = pick(4, 8); if (a && b) return [a, b]; return P2.slice(-2); }
+// A round is fair when the true model fits clearly better (6× smaller weighted squared error) than every other candidate.
+function fairShape(xs, ys, type){
+  if (!ys.every(y => y >= 0) || !ys.some(y => y > 0)) return false;
+  const r = shapeFits(xs, ys), t = Math.max(r[type].sse, 1e-12);
+  for (const s of SH){ if (s.id === type || (type === 'lin0' && s.id === 'lin')) continue; if (r[s.id].sse < 6 * t) return false; }
+  if (type === 'lin0' && Math.abs(r.lin.b) > 0.07 * Math.max(...ys)) return false;
+  // and by eye: plain (unweighted) squared distance at least 4× worse for every rival
+  const u = {}; SH.forEach(q => { if (q.id === 'lin'){ const L = linfit(xs, ys); u.lin = ys.reduce((a, y, i) => a + (y - L.m * xs[i] - L.b) ** 2, 0); return; }
+    let nn = 0, dd = 0; xs.forEach((x, i) => { const v = q.g(x); if (isFinite(v)){ nn += ys[i] * v; dd += v * v; } }); const k = nn / dd; u[q.id] = xs.reduce((a, x, i) => { const v = q.g(x); return a + (isFinite(v) ? (ys[i] - k * v) ** 2 : 1e99); }, 0); });
+  const ut = Math.max(u[type], 1e-30);
+  for (const q of SH){ if (q.id === type || (type === 'lin0' && q.id === 'lin')) continue; if (u[q.id] < 4 * ut) return false; }
+  return true;
+}
+function rawShape(type){
+  // rising shapes are measured from x = 0 (where y ∝ √x shows its steep start); falling ones start at the first step
+  const rising = type === 'lin0' || type === 'quad' || type === 'sqrt' || (type === 'lin' && Math.random() < 0.6);
+  const D = [0.1, 0.2, 0.5, 1, 2, 5, 10][ri(7)], xs = Array.from({ length: NPTS }, (_, i) => D * (rising ? i : i + 1)), xN = xs[NPTS - 1], s = 0.03 + 0.02 * Math.random();
+  const top = +(10 ** (0.3 + 2 * Math.random())).toPrecision(2); let f, dec = false;
+  switch (type){
+    case 'lin0': { const k = top / xN; f = x => k * x; break; }
+    case 'quad': { const k = top / (xN * xN); f = x => k * x * x; break; }
+    case 'sqrt': { const k = top / Math.sqrt(xN); f = x => k * Math.sqrt(x); break; }
+    case 'inv': { const k = top * xs[0]; f = x => k / x; break; }
+    case 'inv2': { const k = top * xs[0] * xs[0]; f = x => k / (x * x); break; }
+    case 'lin': if (rising){ const r = 0.3 + 0.9 * Math.random(), k = top / (xN * (1 + r)), b = r * k * xN; f = x => b + k * x; }
+      else { dec = true; const b = top, k = (0.45 + 0.4 * Math.random()) * b / xN; f = x => b - k * x; } break;
+  }
+  return { type, xs, ys: xs.map(x => f(x) * (1 + s * randn())), f, s, D, dec };
+}
+function newShape(){
+  const prev = S.sh ? S.sh.type : null; let type;
+  do { type = SH[ri(SH.length)].id; } while (type === prev && Math.random() < 0.7);
+  let r, n = 0; do { r = rawShape(type); n++; } while (!fairShape(r.xs, r.ys, type) && n < 200);
+  r.answered = null; S.sh = r; renderShape();
+}
+function renderShapeButtons(){
+  $('ans').innerHTML = SH.map((s, i) => '<button type="button" data-id="' + s.id + '">' + icon(s.id) + '<span>' + s.lab + '<small>' + s.m + '</small></span><kbd>' + (i + 1) + '</kbd></button>').join('');
+  [...$('ans').children].forEach(b => b.onclick = () => answerShape(b.dataset.id));
+}
+function ratioTxt(sh){ return dblPairs(sh.xs).map(([i, j]) => ({ i, j, r: sh.ys[j] / sh.ys[i] })); }
+function answerShape(id){
+  const sh = S.sh; if (sh.answered) return; sh.answered = id; const ok = id === sh.type;
+  S.total++; if (ok){ S.right++; S.streak++; S.best = Math.max(S.best, S.streak); } else S.streak = 0;
+  [...$('ans').children].forEach(b => { b.classList.toggle('right', b.dataset.id === sh.type); b.classList.toggle('wrong', b.dataset.id === id && !ok); b.disabled = true; });
+  const rt = ratioTxt(sh), rr = rt.map(q => '×' + q.r.toFixed(2)).join(' and ');
+  const dtxt = 'doubling x (' + rt.map(q => fmt(sh.xs[q.i]) + '→' + fmt(sh.xs[q.j])).join(', ') + ') changed y by <b>' + rr + '</b>';
+  const why = {
+    lin0: 'Equal steps in x give equal steps in y, and the line heads straight for the origin: ' + dtxt + ', about ×2.',
+    lin: sh.dec ? 'Equal steps in x give equal (downward) steps in y, so it falls in a straight line. An inverse curve would flatten out; this doesn’t.'
+                : 'Equal steps in x give equal steps in y, so it’s straight. But it doesn’t head for the origin: ' + dtxt + ', not ×2. That’s an intercept.',
+    quad: 'Equal steps in x give <b>growing</b> steps in y, so it curves up: ' + dtxt + ', about ×4.',
+    sqrt: 'It rises, but the steps in y <b>shrink</b>, so it bends over: ' + dtxt + ', only about ×1.4.',
+    inv: 'It falls and flattens out: ' + dtxt + ', about ×0.5. y halves when x doubles.',
+    inv2: 'It falls steeply, then flattens: ' + dtxt + ', about ×0.25. Doubling x quarters y.'
+  }[sh.type];
+  const contrast = ok ? '' : {
+    lin0: sh.type === 'lin' ? 'A line through the origin would double y when x doubles.' : 'The steps in y aren’t equal, so it isn’t straight.',
+    lin: sh.type === 'lin0' ? 'Look where the line heads: straight for the origin, so there’s no intercept.' : 'The steps in y aren’t equal, so it isn’t straight.',
+    quad: 'For y ∝ x², doubling x would make y four times bigger.', sqrt: 'For y ∝ √x, doubling x would make y about 1.4 times bigger.',
+    inv: 'For y ∝ 1/x, doubling x would halve y.', inv2: 'For y ∝ 1/x², doubling x would make y a quarter.'
+  }[id];
+  const nm = SH.find(s => s.id === sh.type);
+  $('sfb').innerHTML = (ok ? '<div class="ok"><b>Yes: ' + nm.lab.toLowerCase() + ' (' + nm.m + ').</b>' : '<div class="bad"><b>Not quite: it’s ' + nm.lab.toLowerCase() + ' (' + nm.m + ').</b> ' + contrast) +
+    '</div><div class="note">' + why + '</div>' + (ok && S.streak === 5 ? '<div class="ok"><b>Five in a row!</b> Keep going for your best.</div>' : '');
+  $('snext').hidden = false; $('snext').focus(); score(); drawShape();
+}
+function renderShape(){ renderShapeButtons(); $('sfb').innerHTML = ''; $('snext').hidden = true; drawShape(); score(); }
+function score(){ $('score').innerHTML = S.mode === 'shape' ? 'Streak <span class="hot">' + S.streak + '</span> · Best ' + S.best + ' · ' + S.right + '/' + S.total : ''; }
+function drawShape(){
+  const sh = S.sh; if (!sh) return; const { g, W, H } = ctx2($('scv'));
+  const xa = axisR(0, Math.max(...sh.xs), true), ya = axisR(0, Math.max(...sh.ys), true);
+  const F = frame(g, W, H, xa, ya, [{ t: 'x', c: 'v' }], [{ t: 'y', c: 'v' }], '', '');
+  g.save(); g.beginPath(); g.rect(F.L, F.T, F.R - F.L, F.B - F.T); g.clip();
+  if (S.shStep){ for (let i = 0; i < sh.xs.length - 1; i++){ const x0 = F.PX(sh.xs[i]), x1 = F.PX(sh.xs[i + 1]), y0 = F.PY(sh.ys[i]), y1 = F.PY(sh.ys[i + 1]);
+    g.strokeStyle = '#999'; g.lineWidth = 1.5; g.setLineDash([4, 3]); g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y0); g.stroke(); g.setLineDash([]);
+    g.strokeStyle = '#ff6a2b'; g.lineWidth = 6; g.beginPath(); g.moveTo(x1, y0); g.lineTo(x1, y1); g.stroke(); } }
+  if (sh.answered){ const r = shapeFits(sh.xs, sh.ys), fr = r[sh.type], s = SH.find(q => q.id === sh.type);
+    g.strokeStyle = '#1e7d45'; g.lineWidth = 2.5; g.setLineDash([8, 5]); g.beginPath();
+    for (let i = 0; i <= 200; i++){ const x = xa.b * (i + 0.5) / 200; const y = sh.type === 'lin' ? fr.m * x + fr.b : fr.k * s.g(x); const py = Math.max(F.T - 50, Math.min(F.B + 50, F.PY(y))); i ? g.lineTo(F.PX(x), py) : g.moveTo(F.PX(x), py); }
+    g.stroke(); g.setLineDash([]); }
+  g.restore();
+  if (S.shDbl){ dblPairs(sh.xs).forEach(([a, b], j) => { const xa0 = F.PX(sh.xs[a]), xb0 = F.PX(sh.xs[b]), ya0 = F.PY(sh.ys[a]), yb0 = F.PY(sh.ys[b]);
+      g.strokeStyle = j ? '#7a3fb0' : '#c43a00'; g.lineWidth = 1.6; g.setLineDash([5, 4]);
+      [[xa0, ya0], [xb0, yb0]].forEach(([px, py]) => { g.beginPath(); g.moveTo(px, F.B); g.lineTo(px, py); g.lineTo(F.L, py); g.stroke(); });
+      g.setLineDash([]); g.fillStyle = g.strokeStyle; setFont(g, 700, 15, false, true); g.textAlign = 'left'; g.textBaseline = 'bottom';
+      const r = sh.ys[b] / sh.ys[a], txt = 'x×2 → y×' + r.toFixed(2), tw = g.measureText(txt).width, tx = Math.min(xb0 + 10, F.R - tw - 6), ty = Math.max(F.T + 22, yb0 - 10);
+      g.fillStyle = 'rgba(255,255,255,0.92)'; g.fillRect(tx - 4, ty - 19, tw + 8, 22); g.fillStyle = j ? '#7a3fb0' : '#c43a00'; g.fillText(txt, tx, ty); }); }
+  sh.xs.forEach((x, i) => dot(g, F.PX(x), F.PY(sh.ys[i])));
+  $('scv').setAttribute('aria-label', 'Scatter graph of ' + sh.xs.length + ' points: ' + sh.xs.map((x, i) => '(' + fmt(x) + ', ' + fmt(sh.ys[i]) + ')').join(', '));
+}
+
+// ================= Equation mode =================
+function curEq(){ return EQ[S.eq]; }
+function loadEq(id, keepMys){
+  S.eq = id; const e = curEq(); S.cv = {}; e.K.forEach(k => S.cv[k.s] = k.v); newZ(); S.sys = false; resetSolve();
+  if (S.mys) setupMystery(); else S.hidden = null;
+  if (S.mys && S.scat < 3) S.scat = 3;
+  renderEqCard(); renderCtl(); drawEq();
+}
+function resetSolve(){ S.tries = 0; S.solved = null; S.view = 'raw'; S.map = null; S.revealed = false;
+  ['ay','ax','by','bm','bx','bb','vin'].forEach(id => { $(id).value = ''; $(id).classList.remove('good', 'badx'); });
+  $('fb1').innerHTML = ''; $('fb3').innerHTML = ''; $('s3').classList.remove('done'); $('mresult').innerHTML = ''; $('chips').hidden = true; $('stdbtn').hidden = true;
+  $('s1').hidden = false; $('s1done').hidden = true; $('s2').hidden = true; $('s3').hidden = true; $('s4').hidden = true; viewBtns(); }
+function setupMystery(){ const e = curEq(); S.revealed = false;
+  if (!e.fixedTarget){ const k = e.K.find(q => q.role === 't'); const n = Math.round((k.max - k.min) / k.step); let v; do { v = +(k.min + k.step * ri(n + 1)).toFixed(6); } while (Math.abs(v - k.v) < 1e-9 && n > 2); S.cv[k.s] = v; }
+  S.hidden = e.target.s; }
+function tgtInfo(e, c){ // SI value of the unknown and how to show it
+  const k = e.K.find(q => q.s === e.target.s);
+  if (k) return { si: c[k.s], disp: c[k.s] / k.uf, u: prettyU(k.u), d: k.d, uf: k.uf };
+  if (GC[e.target.s]) return { si: GC[e.target.s].v, disp: GC[e.target.s].v, u: prettyU(GC[e.target.s].u), d: parseUnit(GC[e.target.s].u).d, uf: 1 };
+  const v = e.target.v(c); return { si: v, disp: v / e.target.uf, u: prettyU(e.target.u), d: e.target.d, uf: e.target.uf };
+}
+function valStr(k, v){ return fmt(v * 10 ** k.exp) + (k.u ? ' ' + prettyU(k.u) : ''); }
+function renderEqCard(){
+  const e = curEq(); $('eqtitle').textContent = e.title; $('ibb').hidden = !e.ib;
+  const [l, r] = e.eqs.split('='); $('eqmath').innerHTML = math(mml(dnorm(PF(e, l))) + '<mo>=</mo>' + mml(dnorm(PF(e, r))));
+  const sy = s => runsHTML(runs({ k: 's', s }));
+  let h = '<div><span class="k">You measure</span> ' + sy(e.x.s) + ' (' + esc(e.x.n) + ', ' + prettyU(e.x.u) + ') and ' + sy(e.y.s) + ' (' + esc(e.y.n) + ', ' + prettyU(e.y.u) + ').</div>';
+  const known = e.uses.filter(s => !(S.mys && s === e.target.s)).map(s => sy(s) + ' = ' + (GC[s].show || fmt(GC[s].v)) + ' ' + prettyU(GC[s].u));
+  e.K.filter(k => k.role === 'k' || (k.role === 'T' && !S.mys)).forEach(k => known.push(sy(k.s) + ' = ' + valStr(k, S.cv[k.s])));
+  if (known.length) h += '<div><span class="k">Known:</span> ' + known.join(' · ') + '</div>';
+  if (S.mys){ h += '<div><span class="k">Unknown:</span> <b>' + (e.target.s === 'e/me' ? '<i>e</i>/<i>m</i>' : sy(e.target.s)) + ' = ?</b>' + (e.fixedTarget ? ' <span class="k">(a constant of nature: same every time)</span>' : '') + '</div>'; }
+  $('eqmeta').innerHTML = h;
+  $('s4h').innerHTML = '3 · Mystery: find ' + (e.target.s === 'e/me' ? '<i>e</i>/<i>m</i>' : sy(e.target.s)) + ' (with units)';
+  $('vin').placeholder = 'e.g. ' + (e.target.u ? '1.23 ' + prettyU(e.target.u) : '0.42');
+}
+function renderCtl(){
+  const e = curEq(), c = $('ctl'); c.innerHTML = '';
+  e.K.forEach(k => {
+    if (k.role === 'k' || k.role === 'T') return;
+    const w = document.createElement('div'); w.className = 'sl'; const nm = '<b>' + runsHTML(runs({ k: 's', s: k.s })) + '</b> ' + esc(k.n);
+    if (S.mys && k.s === S.hidden){ w.innerHTML = '<span class="nm" title="Hidden: find it from your graph">' + nm + '</span><span class="val">?</span>'; c.appendChild(w); return; }
+    if (S.mys){ w.className = 'fixed'; w.innerHTML = nm + ' = <b>' + valStr(k, S.cv[k.s]) + '</b>'; c.appendChild(w); return; }
+    w.innerHTML = '<span class="nm" title="' + esc(k.n) + '">' + nm + '</span><span class="val" id="val-' + k.s + '"></span><input type="range" min="' + k.min + '" max="' + k.max + '" step="' + k.step + '" value="' + S.cv[k.s] + '" aria-label="' + esc(k.n) + '">';
+    const r = w.querySelector('input'); r.oninput = () => { S.cv[k.s] = +r.value; showVals(); drawEq(); refreshFit(); }; c.appendChild(w);
+  });
+  const w = document.createElement('div'); w.className = 'sl';
+  w.innerHTML = '<span class="nm">Measurement scatter</span><span class="val" id="val-scat"></span><input type="range" id="scat" min="' + (S.mys ? 3 : 0) + '" max="10" step="0.5" value="' + S.scat + '" aria-label="Measurement scatter (percent)">';
+  c.appendChild(w); $('scat').oninput = () => { S.scat = +$('scat').value; showVals(); drawEq(); refreshFit(); };
+  const row = document.createElement('div'); row.id = 'ctlrow';
+  row.innerHTML = '<button type="button" id="newd">New measurements</button>' + (e.sysOK && !S.mys ? '<label><input type="checkbox" id="sysb"' + (S.sys ? ' checked' : '') + '> Zero error: every ' + esc(plainSym(e.x.s)) + ' reading is short by the same amount</label>' : '');
+  c.appendChild(row);
+  $('newd').onclick = () => { newZ(); drawEq(); refreshFit(); };
+  if ($('sysb')) $('sysb').onchange = () => { S.sys = $('sysb').checked; drawEq(); refreshFit(); };
+  showVals();
+}
+function showVals(){ const e = curEq(); e.K.forEach(k => { const el = $('val-' + k.s); if (el) el.textContent = valStr(k, S.cv[k.s]); }); $('val-scat').textContent = '±' + S.scat + '%'; }
+function curData(){ const e = curEq(), c = envOf(e, S.cv); return { e, c, d: gen(e, c, S.zs, S.scat / 100, S.sys) }; }
+function transformed(A, B){ const { e, c, d } = curData(); const pe = ptEnvs(e, c, d, true); return { V: pe.map(p => ev(A, p)), H: pe.map(p => ev(B, p)), d, e, c }; }
+function viewBtns(){ $('v-raw').setAttribute('aria-pressed', String(S.view === 'raw')); $('v-lin').setAttribute('aria-pressed', String(S.view === 'lin')); $('v-lin').disabled = !S.solved; }
+function axUnit(e, ast){ try { return niceUnit(dims(ast, e.D).d, e.celsius); } catch (er){ return ''; } }
+function drawEq(){
+  const e = curEq(); if (!e) return; const { g, W, H } = ctx2($('gcv')); const { c, d } = curData();
+  const rx = d.x.map(x => x / e.x.f), ry = d.y.map(y => y / e.y.f);
+  const rawXA = axisR(Math.min(...rx), Math.max(...rx), true), rawYA = axisR(Math.min(...ry), Math.max(...ry), true);
+  const xl = runs({ k: 's', s: e.x.s }), yl = runs({ k: 's', s: e.y.s });
+  if (S.view === 'raw' || !S.solved){
+    const F = frame(g, W, H, rawXA, rawYA, xl, yl, prettyU(e.x.u), prettyU(e.y.u));
+    rx.forEach((x, i) => dot(g, F.PX(x), F.PY(ry[i])));
+    $('gcv').setAttribute('aria-label', 'Raw data: ' + plainSym(e.y.s) + ' against ' + plainSym(e.x.s) + '. ' + rx.map((x, i) => '(' + fmt(x) + ', ' + fmt(ry[i]) + ')').join(', '));
+    return;
+  }
+  const sv = S.solved, t = transformed(sv.A, sv.B), f = linfit(t.H, t.V);
+  let hlo = Math.min(...t.H), hhi = Math.max(...t.H); if (e.linX){ hlo = Math.min(hlo, e.linX[0]); hhi = Math.max(hhi, e.linX[1]); }
+  const xa = axisR(hlo, hhi, true); const ends = [f.m * xa.a + f.b, f.m * xa.b + f.b];
+  const ya = axisR(Math.min(...t.V, ...ends.filter(v => isFinite(v) && Math.abs(v) < 4 * Math.max(...t.V.map(Math.abs)))), Math.max(...t.V, ...ends.filter(v => isFinite(v) && Math.abs(v) < 4 * Math.max(...t.V.map(Math.abs)))), true);
+  const p = S.anim, ease = p < 1 ? (1 - Math.cos(PI * Math.min(1, p)) ) / 2 : 1;
+  const F = frame(g, W, H, xa, ya, runs(dnorm(sv.B)), runs(dnorm(sv.A)), axUnit(e, sv.B), axUnit(e, sv.A));
+  // raw positions in the same box (for the animation)
+  const RPX = x => F.L + (F.R - F.L) * (x - rawXA.a) / (rawXA.b - rawXA.a), RPY = y => F.B - (F.B - F.T) * (y - rawYA.a) / (rawYA.b - rawYA.a);
+  if (ease >= 1 || p > 0.55){ g.save(); g.beginPath(); g.rect(F.L, F.T, F.R - F.L, F.B - F.T); g.clip(); g.globalAlpha = Math.min(1, (p - 0.55) / 0.45) || (ease >= 1 ? 1 : 0);
+    g.strokeStyle = '#c43a00'; g.lineWidth = 2.5; g.beginPath(); g.moveTo(F.PX(xa.a), F.PY(f.m * xa.a + f.b)); g.lineTo(F.PX(xa.b), F.PY(f.m * xa.b + f.b)); g.stroke(); g.restore(); }
+  t.H.forEach((h, i) => { const x0 = RPX(rx[i]), y0 = RPY(ry[i]), x1 = F.PX(h), y1 = F.PY(t.V[i]); dot(g, x0 + (x1 - x0) * ease, y0 + (y1 - y0) * ease); });
+  if (ease >= 1){ // result box
+    const su = slopeUnit(e, sv), bu = intUnit(e, sv);
+    const lines = ['slope = ' + fmt(f.m) + (su ? ' ' + su : ''), 'intercept = ' + fmt(f.b) + (bu ? ' ' + bu : ''), 'R² = ' + f.r2.toFixed(4)];
+    if (e.celsius) lines.push('x-intercept = ' + fmt(-f.b / f.m) + ' °C');
+    setFont(g, 600, 13, false, true); const bw = Math.max(...lines.map(s => g.measureText(s).width)) + 20, bh = 20 * lines.length + 10;
+    const bx = f.m >= 0 ? F.L + 10 : F.R - bw - 10, by = F.T + 8;
+    g.fillStyle = 'rgba(255,255,255,0.94)'; g.fillRect(bx, by, bw, bh); g.strokeStyle = '#111'; g.lineWidth = 2; g.strokeRect(bx, by, bw, bh);
+    g.fillStyle = '#111'; g.textAlign = 'left'; g.textBaseline = 'alphabetic'; lines.forEach((s, i) => g.fillText(s, bx + 10, by + 22 + 20 * i));
+  }
+  $('gcv').setAttribute('aria-label', 'Your graph: ' + plain(sv.A) + ' against ' + plain(sv.B) + '. Best-fit slope ' + fmt(f.m) + ', intercept ' + fmt(f.b) + ', R squared ' + f.r2.toFixed(4) + '.');
+}
+function sameAxis(e, A, B, cv){ const c = envOf(e, cv), d = gen(e, c, null, 0, false, 9), pe = ptEnvs(e, c, d, false); return pe.every(p => { const a = ev(A, p), b = ev(B, p); return Math.abs(a - b) <= 1e-9 * Math.max(Math.abs(a), Math.abs(b), 1e-300); }); }
+function stdMatch(e, sv){ for (const s of e.std){ const Y = P(e, s.Y), X = P(e, s.X); if (sameAxis(e, sv.A, Y, S.cv) && sameAxis(e, sv.B, X, S.cv)) return { s, flip: false }; if (sameAxis(e, sv.A, X, S.cv) && sameAxis(e, sv.B, Y, S.cv)) return { s, flip: true }; } return null; }
+function slopeUnit(e, sv){ const m = stdMatch(e, sv); if (m && !m.flip && m.s.mu !== undefined) return m.s.mu; try { const a = dims(sv.A, e.D).d, b = dims(sv.B, e.D).d; return niceUnit(a.map((x, i) => x - b[i]), e.celsius); } catch (er){ return ''; } }
+function intUnit(e, sv){ const m = stdMatch(e, sv); if (m && !m.flip && m.s.bu !== undefined) return m.s.bu; return axUnit(e, sv.A); }
+function refreshFit(){
+  if (!S.solved) return; const e = curEq(), sv = S.solved, t = transformed(sv.A, sv.B), f = linfit(t.H, t.V);
+  const su = slopeUnit(e, sv), bu = intUnit(e, sv);
+  // should the line go through the origin? (noiseless intercept ≈ 0)
+  const ideal = linTest(e, sv.A, sv.B, envOf(e, S.cv)); const zeroB = ideal.ok && Math.abs(ideal.fit.b) < 1e-6 * (Math.max(...ideal.V) - Math.min(...ideal.V));
+  const vr = Math.max(...t.V) - Math.min(...t.V); const misses = zeroB && Math.abs(f.b) > Math.max(3 * f.seb, 0.04 * vr);
+  $('s2').innerHTML = 'slope = <b>' + fmt(f.m) + (su ? ' ' + su : '') + '</b><br>intercept = <b>' + fmt(f.b) + (bu ? ' ' + bu : '') + '</b> · R² = ' + f.r2.toFixed(4) +
+    (e.celsius ? '<br>x-intercept = <b>' + fmt(-f.b / f.m) + ' °C</b>' : '') +
+    (misses ? '<div class="w">This line should go through the origin, but it misses it by more than the scatter explains. A straight line that misses the origin points to a <b>systematic error</b>' + (S.sys ? ' (here, the zero error you switched on).' : '.') + '</div>' : '');
+  $('s2').hidden = false;
+}
+// ---- step 1
+function chipsFor(e){ const s = plainSym(e.x.s), y = plainSym(e.y.s), ang = (e.x.u === '°'), angy = e.y.u === '°';
+  const pw = v => [v, v + '²', v + '³', '√' + v, '1/' + v, '1/' + v + '²', '1/√' + v];
+  let L = pw(y).concat(pw(s)); if (ang) L = L.filter(t => t !== s).concat(['sin ' + s, 'tan ' + s, '1/sin ' + s, 'cos ' + s]);
+  if (angy) L = L.filter(t => !t.includes(y)).concat(['sin ' + y, 'tan ' + y]); return L; }
+function renderChips(){ const e = curEq(); $('chips').innerHTML = '<span class="lab">Quick insert (goes in the box you were last in):</span>' + chipsFor(e).map(t => '<button type="button">' + esc(t) + '</button>').join('');
+  [...$('chips').querySelectorAll('button')].forEach(b => b.onclick = () => { const el = $(S.lastBox === 'ax' ? 'ax' : 'ay'); el.value = b.textContent; el.focus(); }); }
+function check1(){
+  const e = curEq(), r = checkAxes(e, $('ay').value, $('ax').value, S.cv);
+  $('ay').classList.toggle('badx', !r.ok && r.which === 'v'); $('ax').classList.toggle('badx', !r.ok && r.which === 'h');
+  if (!r.ok){
+    S.tries++;
+    $('fb1').innerHTML = '<div class="bad">' + (r.why ? whyText(r, e) : esc(r.msg)) + '</div>';
+    if (S.tries >= 1){ $('chips').hidden = false; renderChips(); }
+    if (S.tries >= 2) $('stdbtn').hidden = false;
+    return;
+  }
+  S.solved = { A: r.A, B: r.B, vs: $('ay').value, hs: $('ax').value };
+  const raw = sameAxis(e, r.A, P(e, e.y.s), S.cv) && sameAxis(e, r.B, P(e, e.x.s), S.cv);
+  $('s1').hidden = true; $('s1done').hidden = false;
+  $('s1done').innerHTML = '<span class="tick">✓</span> Straight line: <b>' + runsHTML(runs(dnorm(r.A))) + '</b> vs <b>' + runsHTML(runs(dnorm(r.B))) + '</b>' + (raw ? ' <span class="hint">(the raw data were already straight)</span>' : '') + ' <button type="button" class="link" id="redo">change</button>';
+  $('redo').onclick = () => { S.solved = null; S.view = 'raw'; $('s1').hidden = false; $('s1done').hidden = true; $('s2').hidden = true; $('s3').hidden = true; $('s4').hidden = true; viewBtns(); drawEq(); $('ay').focus(); };
+  $('s3').classList.remove('done'); $('by').value = plain(r.A); $('bx').value = plain(r.B); ['by','bm','bx','bb'].forEach(id => $(id).classList.remove('good', 'badx')); $('fb3').innerHTML = '';
+  $('s3').hidden = false; $('s4').hidden = !S.mys; refreshFit();
+  S.view = 'lin'; viewBtns(); animate(); $('bm').focus();
+}
+let animT = 0;
+function animate(){ cancelAnimationFrame(animT); const t0 = performance.now(), dur = 1300; S.anim = 0;
+  const step = now => { S.anim = Math.min(1, (now - t0) / dur); drawEq(); if (S.anim < 1) animT = requestAnimationFrame(step); }; animT = requestAnimationFrame(step); }
+// ---- step 2: map onto y = m x + b
+function trueLine(e, A, B, cv){ return envs(e, cv).map(c => { const r = linTest(e, A, B, c); return r.ok ? { c, m: r.fit.m, b: r.fit.b, V: r.V } : null; }); }
+function exprErr(e, ast){ const s = syms(ast); for (const v of s){ if (v === e.x.s || v === e.y.s) return 'It can’t contain ' + plainSym(v) + ': that’s on an axis.'; } dims(ast, e.D); return null; }
+function close(a, b, scale){ if (!isFinite(a)) return false; return Math.abs(a - b) <= 0.005 * Math.abs(b) + 1e-6 * scale; }
+function check3(){
+  const e = curEq(), ids = ['by','bm','bx','bb']; ids.forEach(id => $(id).classList.remove('good', 'badx'));
+  const fb = []; const r = checkAxes(e, $('by').value, $('bx').value, S.cv);
+  if (!r.ok){ $(r.which === 'h' ? 'bx' : 'by').classList.add('badx'); if (!r.which){ $('by').classList.add('badx'); $('bx').classList.add('badx'); }
+    $('fb3').innerHTML = '<div class="bad">' + (r.why ? 'Those y and x don’t make a straight line. ' + whyText(r, e) : esc(r.msg)) + '</div>'; return; }
+  $('by').classList.add('good'); $('bx').classList.add('good');
+  const T = trueLine(e, r.A, r.B, S.cv); if (T.some(t => !t)) { $('fb3').innerHTML = '<div class="bad">Hmm, those axes don’t work for every setting. Try the standard form.</div>'; return; }
+  const scale = Math.max(...T[0].V.map(Math.abs)) || 1;
+  const box = (id, key, label) => {
+    let ast; try { ast = PF(e, $(id).value || ''); } catch (er){ fb.push(label + ': ' + er.message); $(id).classList.add('badx'); return false; }
+    let m; try { m = exprErr(e, ast); } catch (er){ m = er.message; } if (m){ fb.push(label + ': ' + m); $(id).classList.add('badx'); return false; }
+    const ok = T.map(t => close(ev(ast, t.c), t[key], scale));
+    if (ok.every(Boolean)){ $(id).classList.add('good'); return true; }
+    $(id).classList.add('badx');
+    if (ok[0]) fb.push(label + ': that matches these numbers, but write it with symbols so it works for any settings.');
+    else { const want = T[0][key]; const got = ev(ast, T[0].c);
+      let hint = ''; if (isFinite(got) && want !== 0){ const q = got / want; if (Math.abs(q - 2) < 0.01) hint = ' Yours is twice too big.'; else if (Math.abs(q - 0.5) < 0.01) hint = ' Yours is half what it should be.'; else if (Math.abs(q + 1) < 0.01) hint = ' Check the sign.'; else if (Math.abs(got * want - 1) < 0.01 * Math.abs(got * want) ) hint = ' Yours is upside down.'; }
+      if (key === 'b' && Math.abs(want) < 1e-6 * scale) hint = ' This line goes through the origin.';
+      fb.push(label + ': not quite.' + hint); }
+    return false; };
+  const okm = box('bm', 'm', 'Slope'), okb = box('bb', 'b', 'Intercept');
+  if (!(okm && okb)){ $('fb3').innerHTML = '<div class="bad">' + fb.join('<br>') + '</div>'; return; }
+  const sv = { A: r.A, B: r.B }, mt = stdMatch(e, sv); let msg = '<b>Yes.</b> ';
+  const fm = ast => math(mml(dnorm(ast)));
+  if (mt){ const fi = mt.s.find.split('='); const lhs = PF(e, fi[0]), rhs = PF(e, fi[1]);
+    msg += mt.flip ? 'You plotted it the other way round, so your slope is 1 ÷ (' + fm(PF(e, mt.s.m)) + '). Flip it back first: use 1/slope where the usual method uses slope, ' + fm(lhs) + ' = ' + fm(rhs) + '.'
+                   : 'slope = ' + fm(PF(e, mt.s.m)) + (mt.s.b !== '0' ? ' and intercept = ' + fm(PF(e, mt.s.b)) : '') + ', so ' + fm(lhs) + ' = ' + fm(rhs) + '.'; }
+  else { const s0 = e.std[0], fi = s0.find.split('='); msg += 'That works. (The usual way: plot ' + fm(P(e, s0.Y)) + ' vs ' + fm(P(e, s0.X)) + ', then ' + fm(PF(e, fi[0])) + ' = ' + fm(PF(e, fi[1])) + '.)'; }
+  S.map = true; $('s3').classList.add('done'); $('fb3').innerHTML = '<div class="ok">' + msg + '</div>';
+  if (S.mys) $('vin').focus();
+}
+// ---- mystery
+function parseVal(str, e){
+  let s = String(str).trim().replace(/µ/g, 'μ').replace(/−/g, '-').replace(/,/g, '');
+  s = s.replace(/\s*[×xX*]\s*10\s*\^?\s*\(?\s*([-+]?\d+)\s*\)?/, 'e$1').replace(/\s*[×xX*]\s*10([⁻]?[⁰¹²³⁴⁵⁶⁷⁸⁹]+)/, (m, p) => 'e' + [...p].map(c => SUPMAP[c]).join(''));
+  const m = /^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?/i.exec(s); if (!m) return { err: 'Start with a number, e.g. 9.7 m/s².' };
+  const v = parseFloat(m[0]); let ustr = s.slice(m[0].length).trim();
+  if (e.target.u === '°C'){ if (/^(°\s*C|C|deg\s*C|degrees?\s*C?|)$/i.test(ustr)) return { si: v, unitless: ustr === '' }; if (/^K$/.test(ustr)) return { si: v - 273.15 }; return { err: 'Give it in °C (or K).' }; }
+  const u = parseUnit(ustr); if (!u) return { err: 'I can’t read the unit “' + ustr + '”.' };
+  return { si: v * u.f, d: u.d, unitless: ustr === '' };
+}
+function reveal(){
+  const e = curEq(), c = envOf(e, S.cv), ti = tgtInfo(e, c), pv = parseVal($('vin').value, e);
+  if (pv.err){ $('mresult').innerHTML = '<div class="bad">' + esc(pv.err) + '</div>'; return; }
+  const needU = cx(ti.d.slice(0, 6)) > 0;
+  if (e.target.u !== '°C' && needU && pv.unitless){ $('mresult').innerHTML = '<div class="bad">Add the units (they come from the slope’s units).</div>'; return; }
+  if (e.target.u !== '°C' && !eqd(pv.d, ti.d, true)){ $('mresult').innerHTML = '<div class="bad">Those units don’t match. ' + esc(e.target.s === 'e/me' ? 'e/m' : plainSym(e.target.s)) + ' is measured in ' + ti.u + '.</div>'; return; }
+  // what the data themselves give (standard axes, these noisy points)
+  const s0 = e.std[0], t = transformed(P(e, s0.Y), P(e, s0.X)), f = linfit(t.H, t.V); const rhs = PF(e, s0.find.split('=')[1]);
+  const fromFit = ev(rhs, Object.assign({}, c, { slope: f.m, icpt: f.b }));
+  const pct = (a, b) => Math.abs(a - b) / Math.abs(b) * 100;
+  const yours = pct(pv.si, ti.si), vsFit = pct(pv.si, fromFit), dataPct = pct(fromFit, ti.si), shown = v => fmt(v / ti.uf, 3) + ' ' + ti.u;
+  // judge the analysis, not the luck of the scatter: within 3% of the truth, or within 2% of what these data give
+  const good = yours <= 3 || vsFit <= 2, cls = good ? 'ok' : vsFit <= 10 ? 'note' : 'bad';
+  $('mresult').innerHTML = '<div class="' + cls + '">True value <b>' + shown(ti.si) + '</b>. Yours ' + shown(pv.si) + ': <b>' + yours.toFixed(1) + '% off</b>. ' +
+    (good ? (yours <= 3 ? 'Within 3%.' : 'Your analysis matches the data; the rest is scatter.') : vsFit <= 10 ? 'Close: recheck your slope reading.' : 'Check the step from slope to answer.') +
+    ' <span style="color:#4a4a4a">(Best fit of these points: ' + shown(fromFit) + ', ' + dataPct.toFixed(1) + '% off.)</span></div>';
+  S.revealed = true; renderCtl(); renderEqCard();
+  const k = e.K.find(q => q.s === S.hidden); if (k){ const el = [...$('ctl').children].find(x => x.querySelector('.val') && x.querySelector('.val').textContent === '?'); if (el) el.querySelector('.val').textContent = valStr(k, S.cv[k.s]); }
+}
+
+// ================= copy table =================
+function tableText(){
+  const e = curEq(), { c, d } = curData(); const hx = plainSym(e.x.s) + ' (' + prettyU(e.x.u) + ')', hy = plainSym(e.y.s) + ' (' + prettyU(e.y.u) + ')';
+  let A = null, B = null; if (S.solved){ A = S.solved.A; B = S.solved.B; } else { try { const a = P(e, $('ay').value), b = P(e, $('ax').value); if (!axisErr(e, a) && !axisErr(e, b)){ A = a; B = b; } } catch (er){} }
+  const head = [hx, hy]; if (A){ const ub = axUnit(e, B), ua = axUnit(e, A); head.push(plain(B) + (ub ? ' (' + ub + ')' : ''), plain(A) + (ua ? ' (' + ua + ')' : '')); }
+  const pe = ptEnvs(e, c, d, true), num = v => isFinite(v) ? String(+v.toPrecision(4)) : '';
+  const rows = d.x.map((x, i) => { const r = [num(x / e.x.f), num(d.y[i] / e.y.f)]; if (A) r.push(num(ev(B, pe[i])), num(ev(A, pe[i]))); return r.join('\t'); });
+  return head.join('\t') + '\n' + rows.join('\n');
+}
+function copyTable(){
+  const txt = tableText(), ta = $('ta'), msg = $('tamsg');
+  const showBox = (m) => { ta.value = txt; ta.style.display = 'block'; msg.style.display = 'block'; msg.textContent = m; ta.focus(); ta.select(); };
+  const done = () => { msg.style.display = 'block'; msg.textContent = 'Copied: paste it into a spreadsheet (Ctrl+V).'; setTimeout(() => { msg.style.display = 'none'; }, 2600); };
+  const fallback = () => { ta.value = txt; ta.style.display = 'block'; ta.select(); let ok = false; try { ok = document.execCommand('copy'); } catch (er){} if (ok){ ta.style.display = 'none'; done(); } else showBox('Copy is blocked here: the table is selected, press Ctrl+C. (Esc closes this box.)'); };
+  try { if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done, fallback); else fallback(); } catch (er){ fallback(); }
+}
+$('ta').addEventListener('keydown', ev2 => { if (ev2.key === 'Escape'){ $('ta').style.display = 'none'; $('tamsg').style.display = 'none'; $('copy').focus(); } });
+$('ta').addEventListener('blur', () => { setTimeout(() => { if (document.activeElement !== $('ta')){ $('ta').style.display = 'none'; $('tamsg').style.display = 'none'; } }, 200); });
+
+// ================= mode & selection =================
+function setMode(m){
+  S.mode = m; $('m-shape').setAttribute('aria-pressed', String(m === 'shape')); $('m-eq').setAttribute('aria-pressed', String(m === 'eq'));
+  $('shape').hidden = m !== 'shape'; $('eqv').hidden = m !== 'eq'; $('setsel').hidden = $('eqsel').hidden = $('mys').hidden = m !== 'eq';
+  if (m === 'shape' && !S.sh) newShape(); if (m === 'eq' && !S.eq) loadEq(SETMAP[S.set][2][0]);
+  score(); if (m === 'eq') drawEq(); else drawShape();
+}
+function fillSets(){ $('setsel').innerHTML = SETS.map(s => '<option value="' + s[0] + '">' + s[0] + ' · ' + esc(s[1]) + '</option>').join(''); $('setsel').value = S.set; }
+function fillEqs(){ const s = SETMAP[S.set]; $('eqsel').innerHTML = s[2].map(id => '<option value="' + id + '">' + esc(EQ[id].title) + (EQ[id].ib ? ' · IB' : '') + '</option>').join(''); }
+function selectSet(id, toEq){ if (!SETMAP[id]) return false; S.set = id; fillSets(); fillEqs(); const first = SETMAP[id][2][0]; $('eqsel').value = first; loadEq(first); if (toEq) setMode('eq'); return true; }
+$('m-shape').onclick = () => setMode('shape'); $('m-eq').onclick = () => setMode('eq');
+$('setsel').onchange = () => selectSet($('setsel').value);
+$('eqsel').onchange = () => loadEq($('eqsel').value);
+$('mys').onclick = () => { S.mys = !S.mys; $('mys').setAttribute('aria-pressed', String(S.mys)); loadEq(S.eq); };
+$('newm').onclick = () => loadEq(S.eq);
+$('reveal').onclick = reveal; $('vin').addEventListener('keydown', ev2 => { if (ev2.key === 'Enter') reveal(); });
+$('chk').onclick = check1; ['ay','ax'].forEach(id => { $(id).addEventListener('keydown', ev2 => { if (ev2.key === 'Enter') check1(); }); $(id).addEventListener('focus', () => S.lastBox = id); });
+$('mchk').onclick = check3; ['by','bm','bx','bb'].forEach(id => $(id).addEventListener('keydown', ev2 => { if (ev2.key === 'Enter') check3(); }));
+$('stdbtn').onclick = () => { const e = curEq(); $('ay').value = plain(P(e, e.std[0].Y)); $('ax').value = plain(P(e, e.std[0].X)); $('chk').focus(); };
+$('v-raw').onclick = () => { S.view = 'raw'; viewBtns(); drawEq(); };
+$('v-lin').onclick = () => { if (!S.solved) return; S.view = 'lin'; viewBtns(); animate(); };
+$('copy').onclick = copyTable;
+$('snext').onclick = () => { newShape(); const b = $('ans').querySelector('button'); if (b) b.focus(); };
+$('h-step').onclick = () => { S.shStep = !S.shStep; $('h-step').setAttribute('aria-pressed', String(S.shStep)); $('hinttext').textContent = 'Step bars: the orange bars show how much y changes for each equal step in x. Equal bars = straight.'; drawShape(); };
+$('h-dbl').onclick = () => { S.shDbl = !S.shDbl; $('h-dbl').setAttribute('aria-pressed', String(S.shDbl)); $('hinttext').textContent = 'Doubling test: when x doubles, what does y get multiplied by? ×2 proportional, ×4 square, ×1.4 root, ×0.5 inverse, ×0.25 inverse square.'; drawShape(); };
+document.addEventListener('keydown', ev2 => {
+  if (S.mode !== 'shape' || ev2.ctrlKey || ev2.metaKey || ev2.altKey) return; const tag = (document.activeElement || {}).tagName; if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
+  const n = +ev2.key; if (n >= 1 && n <= 6 && S.sh && !S.sh.answered){ answerShape(SH[n - 1].id); ev2.preventDefault(); }
+  else if ((ev2.key === 'n' || ev2.key === 'N') && S.sh && S.sh.answered){ $('snext').click(); }
+});
+function applySel(v){ if (typeof v !== 'string') return; if (selectSet(v, true)) return; if (EQ[v]){ const st = SETS.find(s => s[2].includes(v)); if (st){ S.set = st[0]; fillSets(); fillEqs(); } $('eqsel').value = v; loadEq(v); setMode('eq'); return; }
+  if (/shape/i.test(v)) setMode('shape'); else if (/myst/i.test(v)){ if (!S.mys) $('mys').click(); setMode('eq'); } else if (/equation|eq/i.test(v)){ if (S.mys) $('mys').click(); setMode('eq'); } }
+addEventListener('message', m => { const d = m.data; if (!d || typeof d !== 'object') return; try { if (d.set) selectSet(String(d.set), true); if (d.eq) applySel(String(d.eq)); if (d.select) applySel(String(d.select)); } catch (er){} });
+function fromHash(){ const h = (location.hash || '').slice(1); if (!h) return; const q = {}; h.split('&').forEach(p => { const [k, v] = p.split('='); if (k) q[decodeURIComponent(k)] = decodeURIComponent(v || ''); });
+  if (q.set) selectSet(q.set, true); if (q.eq) applySel(q.eq); if (q.mode) applySel(q.mode); }
+
+fillSets(); fillEqs(); S.eq = null;
+newShape(); setMode('shape'); fromHash(); addEventListener('hashchange', fromHash);
+(document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(() => { if (S.mode === 'eq') drawEq(); else drawShape(); });
+// hooks for automated checks
+window.__GL = { EQS, EQ, SETS, P, PF, ev, dims, syms, parseUnit, niceUnit, envOf, gen, linfit, linTest, checkAxes, rawShape, fairShape, shapeFits, tableText, S, plain, envs, trueLine, tgtInfo, parseVal };
+})();
+</script>
+</body></html>
