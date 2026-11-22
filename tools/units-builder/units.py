@@ -159,7 +159,7 @@ SIMS = {
     'scatter': {'file': 'sims/circ-scatter.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'prop':    {'file': 'sims/circ-prop.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'errbars': {'file': 'sims/circ-errbars.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
-    'linear':  {'file': 'sims/circ-linear.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
+    'graphlab': {'file': 'sims/graph-lab.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},   # replaced circ-linear.html ('linear') 2026-11-22
     'springs': {'file': 'sims/circ-springs.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
     'pulleys': {'file': 'sims/circ-pulleys.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': 'Pulleys and Box on a Truck are original.'},
     'truck':   {'file': 'sims/circ-truck.html', 'kind': 'plain', 'ar': '1000 / 640', 'credit': ''},
@@ -195,11 +195,12 @@ UNITS = {
         'Find the uncertainty in the gradient from the max and min lines. Then find k with its uncertainty.',
         'Add a zero error. What happens to the gradient? The intercept? Why do IB lab reports focus on gradients?',
         'Make the error bars smaller. Why do the max and min lines get closer together?']},
-    {'code': '', 'name': 'Linearizing Data', 'sim': 'linear', 'tasks': [
-        '<b>Pendulum.</b> Find what to plot T against to get a straight line through the origin. Use the gradient to find g.',
-        '<b>Falling ball.</b> Which choice works? Find g from the gradient.',
-        '<b>Light intensity</b> and <b>gas pressure</b>: find the right choice for each and explain it from the equation.',
-        'Why is a straight line better than a curve for checking a relationship and finding a constant?']},
+    {'code': '', 'name': 'Graph Lab', 'sim': 'graphlab', 'tasks': [
+        "<b>Name the shape:</b> get 5 in a row. Use the step bars or the doubling test if you're stuck.",
+        '<b>Equation:</b> pick x = ½at². Find what to plot to get a straight line, then match it to y = mx + b and find a from the slope.',
+        '<b>Mystery:</b> find g from pendulum data using the slope, then press Reveal to compare.',
+        '<b>Lab:</b> do one lab from your current unit: decide what to plot, then find the constant with units.',
+        '<span class="ib">IB</span> Turn on <b>error bars</b>. Find the max and min slopes and give your constant ± its uncertainty.']},
     {'code': '', 'name': 'Graph Maker', 'sim': 'graph', 'tasks': [
         'Type your headers as <b>quantity / unit</b>, then your data and uncertainties. Type an uncertainty once and leave the boxes below it blank to use it for the whole column.',
         'Check that the best-fit line passes through every error bar. If it doesn’t, look for a mistake before you blame the error bars.',

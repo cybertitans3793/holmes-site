@@ -73,3 +73,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--f-
 /* holmework mark at the start of the page's top line (branding.md job 4) */
 .hwmark{width:28px;height:28px;flex:none;vertical-align:middle}
 .uhead .mono{display:flex;align-items:center;gap:8px}
+/* IB-only task tag, e.g. <span class="ib">IB</span> in a Try-this list */
+.try .ib{font:700 .72em var(--f-mono, monospace);background:var(--ink);color:#fff;padding:1px 5px;margin-right:4px;vertical-align:1px}
+/* "Graph lab ↗" link at the end of the tab row (AP 1 and AP 2 units): opens P1-00's Graph Lab on this unit's data */
+.tabs .glab{margin-left:auto;text-decoration:none;border-style:dashed}

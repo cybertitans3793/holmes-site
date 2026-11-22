@@ -123,6 +123,8 @@ const SIMS = {{
     b.onclick = () => show(i, true);
     tabsEl.appendChild(b);
   }});
+  if (UNIT.glab) {{ const g = document.createElement('a'); g.className = 'tab glab'; g.href = UNIT.glab; g.target = '_blank'; g.rel = 'noopener';
+    g.title = 'Graph and linearize data from this unit in the P1-00 Graph Lab (opens a new tab)'; g.textContent = 'Graph lab ↗'; tabsEl.appendChild(g); }}
   function show(i, user) {{
     const t = UNIT.tabs[i]; if (!t) return; cur = i;
     [...tabsEl.querySelectorAll('.tab')].forEach((b, j) => b.setAttribute('aria-selected', String(j === i)));
@@ -145,6 +147,7 @@ const SIMS = {{
   function select() {{
     const t = UNIT.tabs[cur];
     if (ifr && ifr.dataset.ready && t.select) ifr.contentWindow.postMessage({{ select: t.select, modes: t.modes || null }}, '*');
+    if (ifr && ifr.dataset.ready && pending) {{ ifr.contentWindow.postMessage(pending, '*'); pending = null; }}
     if (document.body.classList.contains('present')) big(true);
   }}
   // Projector layout: template sims switch to bigger text when sent {{big:true}}; older sims ignore it.
@@ -156,8 +159,22 @@ const SIMS = {{
   }};
   if (!document.fullscreenEnabled) $('fs').hidden = true;
   document.addEventListener('fullscreenchange', () => {{ $('fs').textContent = document.fullscreenElement ? 'Exit full screen' : 'Full screen'; }});
-  const h = location.hash.slice(1); let start = VIEWS.includes(h) ? -1 : UNIT.tabs.findIndex(t => slug(t.name) === h);
-  show(start < 0 ? 0 : start, false);
+  // Opening tab: #<tab-slug> or ?tab=<tab-slug>. Extra keys set / mode / lab / ib (e.g. ?unit=P1-00&tab=graph-lab&set=P2-03, or
+  // #graph-lab&set=P2-03) are sent to that tab's sim once it loads. Inside Apps Script only google.script.url can see the exec URL.
+  let pending = null, started = false;
+  function start(q) {{
+    if (started) return; started = true;
+    const m = {{}}; ['set', 'mode', 'lab'].forEach(k => {{ if (q[k]) m[k] = String(q[k]); }}); if (q.ib) m.ib = q.ib !== '0';
+    let i = q.tab ? UNIT.tabs.findIndex(t => slug(t.name) === q.tab) : -1;
+    if (i >= 0 && Object.keys(m).length) pending = m;
+    show(i < 0 ? 0 : i, false);
+  }}
+  const hq = {{}}; location.hash.slice(1).split('&').forEach((p, k) => {{ const [a, v] = p.split('='); if (!a) return; if (k === 0 && v === undefined) hq.tab = decodeURIComponent(a); else hq[decodeURIComponent(a)] = decodeURIComponent(v || ''); }});
+  if (hq.tab && VIEWS.includes(hq.tab)) delete hq.tab;
+  if (window.google && google.script && google.script.url) {{
+    google.script.url.getLocation(l => {{ const p = Object.assign({{}}, l.parameter || {{}}); delete p.unit; delete p.refresh; start(p.tab ? p : hq); }});
+    setTimeout(() => start(hq), 1500);
+  }} else start(hq);
   window.HOLMES = {{ show, unit: UNIT, view: setView }};
 {present_js}
 }})();
@@ -352,6 +369,8 @@ def build(uid):
         if t['sim'] not in used: used.append(t['sim'])
     css = open(os.path.join(D, 'shell.css'), encoding='utf-8').read()
     unit = {'id': uid, 'tabs': [{k: t.get(k) for k in ('code', 'name', 'sim', 'select', 'modes', 'tasks', 'note', 'gapBefore') if t.get(k) is not None} for t in u['tabs']]}
+    # "Graph lab ↗" at the end of the tab row on AP 1 / AP 2 units: opens P1-00's Graph Lab tab on this unit's data set (decided 2026-11-22)
+    if uid.startswith(('P1-', 'P2-')) and uid != 'P1-00': unit['glab'] = site.graph_lab_url(uid)
     sims_js = ',\n'.join('%s:{ar:%s,html:%s}' % (json.dumps(k), json.dumps(SIMS[k]['ar']), js_str(prep_sim(k))) for k in used)
     credits = ' '.join(SIMS[k]['credit'] for k in used if SIMS[k].get('credit'))
     pr = uid in PRESENT_UNITS

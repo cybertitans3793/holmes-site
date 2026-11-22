@@ -128,7 +128,10 @@ ap = page('Exam skills · AP Physics 1 and 2', 'AP exam skills', ap_tabs).replac
 ib = page('Exam skills · IB Physics SL', 'IB exam skills', ib_tabs).replace('{IAJS}', '')
 # Internal Assessment page (EXAM-IA): content owned by the IA chat in ia/ (see ia/ia_page.py)
 from ia.ia_page import ia_tabs, ia_js
-ia = page('Exam skills · IB Physics SL', 'Internal Assessment', ia_tabs(rq_form=True, plan_form=True)).replace('{IAJS}', ia_js())
+from site_links import graph_lab_url
+# Header link (Site chat, 2026-11-22): P1-00 Graph Lab in Lab mode with IB error bars on (max/min slopes, constant ± uncertainty)
+ia = page('Exam skills · IB Physics SL', 'Internal Assessment', ia_tabs(rq_form=True, plan_form=True)
+          + [dict(label='Graph Lab: error bars', href=graph_lab_url(mode='lab', ib=True))]).replace('{IAJS}', ia_js())
 
 # ---------------- Practice exams (EXAM-PE) ----------------
 PE_CSS = r"""
