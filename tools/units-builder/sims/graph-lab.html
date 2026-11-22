@@ -524,11 +524,11 @@ Q('spri','Mass on an ideal spring','T = 2*π*sqrt(m/k)',['m','hanging mass','kg'
   [['k','spring constant','N/m',20,5,100,1,'t']],[],(m,c)=>2*PI*sq(m/c.k),[['T','sqrt(m)','2*π/sqrt(k)','0','k = (2*π/slope)^2','s/√kg'],['T^2','m','4*π^2/k','0','k = 4*π^2/slope','s²/kg']]),
 Q('sprf','Spring frequency vs mass','f = 1/(2*π)*sqrt(k/m)',['m','hanging mass','kg',0.05,0.5],['f','frequency','Hz'],
   [['k','spring constant','N/m',20,5,100,1,'t']],[],(m,c)=>sq(c.k/m)/(2*PI),[['f^2','1/m','k/(4*π^2)','0','k = 4*π^2*slope','kg/s²']]),
-// ---- P2-00 (IB)
+// ---- P2-00 (IB); blackbody (Wien, Stefan–Boltzmann) is also AP 2 topic 15.4, so no IB badge and also listed in P2-05
 Q('emiss','Hot object radiating: power vs temperature','P = e*σ*A*T^4',['T','surface temperature','K',300,900],['P','power radiated','W'],
-  [['e','emissivity','',0.6,0.1,1,0.01,'t'],['A','surface area','m^2',0.01,0.002,0.05,0.001,'s']],['σ'],(T,c)=>c.e*c.σ*c.A*T**4,[['P','T^4','e*σ*A','0','e = slope/(σ*A)','W/K⁴']],{ ib: 1 }),
+  [['e','emissivity','',0.6,0.1,1,0.01,'t'],['A','surface area','m^2',0.01,0.002,0.05,0.001,'s']],['σ'],(T,c)=>c.e*c.σ*c.A*T**4,[['P','T^4','e*σ*A','0','e = slope/(σ*A)','W/K⁴']]),
 Q('wien','Wien’s law: peak wavelength vs temperature','λ = b/T',['T','temperature','K',3000,12000],['λ','peak wavelength','m'],
-  [['b','Wien’s constant','m*K',2.898e-3,0,0,0,'T']],[],(T,c)=>c.b/T,[['λ','1/T','b','0','b = slope','m·K']],{ ib: 1 }),
+  [['b','Wien’s constant','m*K',2.898e-3,0,0,0,'T']],[],(T,c)=>c.b/T,[['λ','1/T','b','0','b = slope','m·K']]),
 // ---- P2-01
 Q('charles','Gas volume vs temperature in °C: find absolute zero','V = n*R*(T + 273.15)/P',['T','temperature','°C',-20,100],['V','volume','m^3'],
   [['n','amount of gas','mol',0.01,0.002,0.05,0.001,'s'],['P','pressure','Pa',101.3,80,200,0.1,'s',3]],['R'],(T,c)=>c.n*c.R*(T+273.15)/c.P,[['V','T','n*R/P','273.15*n*R/P','T0 = -icpt/slope','m³/°C','m³']],
@@ -611,7 +611,7 @@ const SETS = [
   ['P2-02','Electrostatics',['coul','vr','er','capd','capu']],
   ['P2-03','Current Electricity and Magnetism',['rl','ra','term','invi','bwire','compass','emf','rb','eom']],
   ['P2-04','Waves & Optics',['strv','stand','slitl','slitd','snell','lens','inten']],
-  ['P2-05','Modern Physics',['photo','dbv','dbvolt','ephot']]
+  ['P2-05','Modern Physics',['photo','dbv','dbvolt','ephot','wien','emiss']]
 ];
 const SETMAP = {}; SETS.forEach(s => SETMAP[s[0]] = s);
 
