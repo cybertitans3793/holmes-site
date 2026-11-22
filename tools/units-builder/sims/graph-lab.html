@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Graph Lab</title>
-<!-- Graph Lab: linearization practice (Name the shape, Equation mode, Mystery constant). Original Holmes Sims. g = 9.8 m/s² (lab value). -->
+<!-- Graph Lab: linearization practice (Name the shape, Equation mode, Mystery constant, Lab mode with measured data, IB error bars with max/min slopes). Original Holmes Sims. g = 9.8 m/s² (lab value). -->
+<!-- URL hash / postMessage: set=P1-04, eq=<id>, mode=shape|equation|mystery|lab, lab=<lab id>, ib=1 (opens with IB error bars on) -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@500;700&display=swap">
 <style>
 :root{--ink:#111;--mut:#4a4a4a;--acc:#ff6a2b;--soft:#ffe2d3;--blue:#1546d6;--ok:#1e7d45;--bad:#c43a00;--okbg:#e5f4ea;--badbg:#fde7df}
@@ -28,7 +29,7 @@ button.pri:focus-visible,button.acc:focus-visible{outline-color:var(--blue)}
 .seg button+button{margin-left:-2px}
 .seg button[aria-pressed="true"]{background:var(--ink);color:#fff}
 select{font:600 13px "Space Grotesk",sans-serif;border:2px solid var(--ink);padding:4px 3px;background:#fff;height:34px;border-radius:0}
-#setsel{width:214px}#eqsel{width:262px}
+#setsel{width:214px}#eqsel{width:256px}
 #mys[aria-pressed="true"]{background:var(--acc)}
 #score{margin-left:auto;font:700 13px "IBM Plex Mono",monospace}
 #score .hot{color:var(--acc)}
@@ -39,6 +40,7 @@ canvas.plot{width:592px;border:2px solid var(--ink);display:block;background:#ff
 .panel{border:2px solid var(--ink);padding:9px 12px 10px;min-height:0;overflow:auto;height:576px}
 h2{font:700 12px "IBM Plex Mono",monospace;letter-spacing:.04em;margin:0 0 6px;text-transform:uppercase}
 h3{font:700 12px "IBM Plex Mono",monospace;letter-spacing:.03em;margin:0 0 5px;text-transform:uppercase}
+h3 i,h3 sub{text-transform:none;font-family:"Space Grotesk",sans-serif;font-size:13px}
 .hint{font:500 11.5px "IBM Plex Mono",monospace;color:var(--mut);line-height:1.4}
 p.lead{margin:0 0 8px;font-size:14px;line-height:1.4}
 /* name the shape */
@@ -102,6 +104,7 @@ input.tx.badx{border-color:var(--bad);background:var(--badbg)}
 #s1done .tick{color:var(--ok);font-weight:700}
 #s2{font:500 13px "IBM Plex Mono",monospace;line-height:1.5}
 #s2 .w{color:var(--bad);font-family:"Space Grotesk",sans-serif;font-size:13px;line-height:1.35;margin-top:3px}
+#s2 .ibr+.w,#s2 .ibr~.hint{font-size:12px;line-height:1.3}
 .map{display:grid;grid-template-columns:auto 1fr;gap:4px 8px;align-items:center}
 .map label{font:700 12px "IBM Plex Mono",monospace;white-space:nowrap}
 .map label i{font-family:"Space Grotesk",sans-serif;font-size:14px}
@@ -113,6 +116,32 @@ input.tx.badx{border-color:var(--bad);background:var(--badbg)}
 textarea#ta{position:absolute;left:12px;right:12px;bottom:12px;height:180px;font:12px "IBM Plex Mono",monospace;border:3px solid var(--ink);z-index:5;display:none;padding:6px}
 #tamsg{position:absolute;left:250px;width:350px;top:86px;z-index:5;display:none;background:var(--acc);border:2px solid var(--ink);padding:5px 8px;font-weight:700;font-size:13px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+/* stage 2: IB error bars + Lab mode */
+#ibtog{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
+#ibtog input{accent-color:var(--blue);width:16px;height:16px;margin:0}
+#ibrow{display:flex;align-items:center;gap:12px;font-size:13px;border:2px solid var(--blue);padding:0 8px;white-space:nowrap;overflow:hidden;min-width:0}
+#ibrow label{display:flex;align-items:center;gap:4px}
+#ibrow input{width:76px;height:22px;font:500 13px "IBM Plex Mono",monospace;padding:1px 4px;border:2px solid var(--ink);background:#fff}
+#ibrow input.badx{border-color:var(--bad);background:var(--badbg)}
+#ibrow .hint{margin-left:auto;font-size:10.5px}
+.ibr{font:500 12px "IBM Plex Mono",monospace;line-height:1.45;margin-top:4px;border-left:4px solid var(--blue);padding:3px 8px;background:#eef2fd}
+.ibr .ib{margin-right:3px}
+#labbox{border:2px solid var(--ink);display:grid;grid-template-columns:262px 1fr;gap:12px;padding:7px 10px;min-height:0;overflow:hidden}
+#labstory{display:flex;flex-direction:column;min-height:0}
+#labtext{font-size:13px;line-height:1.36;margin:0}
+#labtext i{font-family:"Space Grotesk",serif}
+#labnew{margin-top:auto;align-self:flex-start;font-size:13px;padding:4px 9px}
+#labtab{min-width:0;display:flex;flex-direction:column}
+#labtable{border-collapse:collapse;width:100%;font:500 12.5px "IBM Plex Mono",monospace}
+#labtable th{font:600 11.5px "Space Grotesk",sans-serif;text-align:right;border-bottom:2px solid var(--ink);padding:1px 6px 2px;line-height:1.18;vertical-align:bottom}
+#labtable td{text-align:right;padding:0 6px;border-bottom:1px solid #e3e3e3;height:18px}
+#labtable th:first-child,#labtable td:first-child{text-align:left;color:var(--mut);width:34px}
+#labtable tr.pm td{color:var(--blue);font-size:11.5px;border-bottom:2px solid var(--ink)}
+#labnote{margin-top:auto;font-size:10.5px}
+#labnone{font-size:14px;line-height:1.45}
+#labnone button{margin:6px 6px 0 0;font-size:13px;padding:4px 9px}
+.mrow label{font:700 13px "IBM Plex Mono",monospace;white-space:nowrap}
+.mrow button{white-space:nowrap;flex:none}
 </style></head><body>
 <div id="app">
   <div id="bar">
@@ -120,6 +149,7 @@ textarea#ta{position:absolute;left:12px;right:12px;bottom:12px;height:180px;font
     <div class="seg" role="group" aria-label="Mode">
       <button type="button" id="m-shape" aria-pressed="true">Name the shape</button>
       <button type="button" id="m-eq" aria-pressed="false">Equation</button>
+      <button type="button" id="m-lab" aria-pressed="false">Lab</button>
     </div>
     <select id="setsel" aria-label="Unit"></select>
     <select id="eqsel" aria-label="Equation"></select>
@@ -150,10 +180,16 @@ textarea#ta{position:absolute;left:12px;right:12px;bottom:12px;height:180px;font
           <button type="button" id="v-raw" aria-pressed="true">Raw data</button>
           <button type="button" id="v-lin" aria-pressed="false" disabled>Your straight line</button>
         </div>
+        <label id="ibtog" title="Quantitative uncertainty is IB only"><input type="checkbox" id="ibchk" aria-label="IB: error bars"><span class="ib">IB</span>error bars</label>
         <button type="button" id="copy">Copy data table</button>
       </div>
+      <div id="ibrow" hidden></div>
       <canvas class="plot" id="gcv" width="1184" height="792" role="img" aria-label="Graph"></canvas>
       <div id="ctl"></div>
+      <div id="labbox" hidden>
+        <div id="labstory"><p id="labtext"></p><button type="button" id="labnew">New data</button></div>
+        <div id="labtab"><table id="labtable"></table><div class="hint" id="labnote"></div></div>
+      </div>
     </div>
     <div class="panel" id="rp">
       <div id="eqcard">
@@ -189,7 +225,8 @@ textarea#ta{position:absolute;left:12px;right:12px;bottom:12px;height:180px;font
       </div>
       <div class="step" id="s4" hidden>
         <h3 id="s4h">3 · Mystery</h3>
-        <div class="mrow" style="margin-top:0"><input class="tx" id="vin" type="text" autocomplete="off" spellcheck="false" aria-label="Your value with units"><button type="button" class="acc" id="reveal">Reveal</button><button type="button" id="newm">New mystery</button></div>
+        <div class="mrow" style="margin-top:0"><label id="vl1" for="vin" hidden></label><input class="tx" id="vin" type="text" autocomplete="off" spellcheck="false" aria-label="Your value with units"><button type="button" class="acc" id="reveal">Reveal</button><button type="button" id="newm">New mystery</button></div>
+        <div class="mrow" id="vrow2" hidden><label id="vl2" for="vin2"></label><input class="tx" id="vin2" type="text" autocomplete="off" spellcheck="false" style="width:170px"></div>
         <div class="fb" id="mresult" aria-live="polite"></div>
       </div>
     </div>
@@ -615,6 +652,91 @@ const SETS = [
 ];
 const SETMAP = {}; SETS.forEach(s => SETMAP[s[0]] = s);
 
+// ================= lab stories (stage 2) =================
+// LB(id, eq, title, story, o): o.vals = settings of the quantity the student varies (table units), o.iv = 'x' | 'y' (which equation variable is varied; 'y' needs o.inv),
+// o.x / o.y = table columns for the equation's x and y: {u: unit shown, f: SI factor, p: ×10^p, d: decimals, st: reading step, unc: default ± (same decimal place), n: name}
+// o.set = fixed settings (slider units), o.rand = {sym: [lo, hi, step]} hidden constant, o.fixed = constant of nature, o.err = why a value might differ,
+// o.sys = {on: 'x'|'y', d: measured − true (SI), p: chance, why} systematic error, o.tg = [{s, n, u, find}] when there are two unknowns
+function LB(id, eq, title, story, o){ return Object.assign({ id, eq, title, story, iv: 'x', set: {}, rand: {}, scat: 0.03 }, o); }
+const LABS = [
+LB('lpend', 'pend', 'Pendulum: measuring g', 'You hang a small metal bob on a string and change the length <i>L</i>, measured with a metre stick from the pivot to the centre of the bob. For each length you time 10 small swings with a stopwatch and divide by 10 to get the period <i>T</i>. The bob and the small release angle stay the same.',
+  { vals: [0.2, 0.4, 0.6, 0.8, 1.0, 1.2], x: { d: 3, unc: 0.001 }, y: { d: 2, unc: 0.01 }, set: { g: 9.8 }, fixed: 1,
+    err: 'Reaction time starting and stopping the stopwatch (timing 10 swings makes it smaller), and swings that are too wide, which make <i>T</i> a little longer.',
+    sys: { on: 'x', d: -0.02, p: 0.35, why: 'every length was measured to the top of the bob, not its centre, so each <i>L</i> is about 2 cm short' } }),
+LB('lhalf', 'half', 'Cart rolling down a ramp from rest', 'A cart is let go from rest at the top of a long, gently sloped track. You mark distances <i>x</i> along the track with a metre stick and use a stopwatch to time how long, <i>t</i>, the cart takes to reach each mark. The track angle and the cart stay the same.',
+  { iv: 'y', inv: (x, c) => Math.sqrt(2 * x / c.a), vals: [0.2, 0.4, 0.6, 0.8, 1.0, 1.2], y: { d: 3, unc: 0.001 }, x: { d: 2, unc: 0.01, n: 'time from release' }, rand: { a: [0.3, 1.2, 0.01] },
+    err: 'Reaction time starting and stopping the stopwatch, and friction that isn’t quite the same all the way down. Photogates would remove the reaction time.' }),
+LB('linten', 'inten', 'Light sensor and a bulb', 'A light sensor faces a small bulb in a dark room. You move the sensor to different distances <i>r</i> from the filament, measured with a metre stick, and record the intensity <i>I</i> it reads. The bulb’s setting stays the same.',
+  { vals: [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1.0], x: { d: 3, unc: 0.001 }, y: { d: 2, unc: 0.01 }, rand: { P: [5, 20, 1] },
+    err: 'Light bouncing off the walls and bench adds to the reading, and the filament isn’t a true point, so the closest readings are the least reliable.' }),
+LB('lboyle', 'boyle', 'Boyle’s law: a sealed syringe', 'A gas pressure sensor is joined to a sealed syringe of air. You push the plunger to set the volume <i>V</i> on the syringe scale and record the pressure <i>P</i>. You wait each time so the air stays at room temperature, <i>T</i> = 293 K.',
+  { vals: [30, 35, 40, 45, 50, 55, 60], x: { u: 'mL', f: 1e-6, d: 1, unc: 0.5 }, y: { u: 'kPa', f: 1e3, d: 1, unc: 0.1 }, set: { T: 293 }, rand: { n: [0.002, 0.004, 0.0001] },
+    err: 'The air inside the sensor’s tube isn’t counted in the syringe reading, and a little air can leak past the plunger at high pressure.' }),
+LB('lhang', 'hang', 'Spring with hanging masses', 'A spring hangs from a clamp stand beside a vertical metre stick. You hang different masses <i>m</i> on it and measure how far it stretches, <i>x</i>, from where its end sat with nothing on it. You wait for the mass to stop bouncing before reading the stick.',
+  { vals: [50, 100, 150, 200, 250, 300], x: { u: 'g', f: 1e-3, d: 0, unc: 1 }, y: { d: 3, unc: 0.001 }, rand: { k: [15, 40, 1] },
+    err: 'Parallax: reading the metre stick from above or below the end of the spring. Stretching the spring too far would also bend the line.',
+    sys: { on: 'x', d: -0.01, p: 0.35, why: 'the 10 g hanger wasn’t added to the masses, so every <i>m</i> is 10 g too small' } }),
+LB('latw', 'atwood', 'Atwood machine: measuring g', 'Two masses hang over a light, low-friction pulley. You keep <i>m</i><sub>1</sub> = 0.200 kg on one side and change the heavier mass <i>m</i><sub>2</sub> on the other. A motion detector under <i>m</i><sub>2</sub> measures its acceleration <i>a</i> after it is let go from rest.',
+  { vals: [0.22, 0.24, 0.26, 0.28, 0.30, 0.32], x: { d: 3, unc: 0.001 }, y: { d: 2, unc: 0.01 }, set: { g: 9.8, m1: 0.2 }, fixed: 1,
+    err: 'Friction in the pulley and the pulley’s own rotational inertia make <i>a</i> smaller than the ideal model, so <i>g</i> tends to come out low.' }),
+LB('llaunch', 'launch', 'Launcher fired off a table', 'A spring launcher fires a ball level from different heights <i>H</i> above the floor (metre stick). Carbon paper on the floor marks where it lands, and you measure the landing distance <i>D</i> from below the launcher with a tape measure. The launcher is on the same setting every shot.',
+  { vals: [0.3, 0.5, 0.7, 0.9, 1.1, 1.3], x: { d: 3, unc: 0.001 }, y: { d: 3, unc: 0.001 }, rand: { v0: [2, 4, 0.1] },
+    err: 'The launch speed changes a little from shot to shot, and measuring <i>D</i> from the wrong spot under the launcher shifts every distance.' }),
+LB('lkep', 'kepler', 'Moons of a newly found planet', 'Astronomers track six moons of a newly found gas giant. From telescope images they measure each moon’s orbit radius <i>r</i> (centre of the planet to the moon), and from the timing of its passes they find its period <i>T</i>. The orbits are nearly circular.',
+  { vals: [6, 9, 11.5, 14, 16.5, 19], x: { p: 8, d: 2, unc: 0.05 }, y: { p: 5, d: 2, unc: 0.01 }, rand: { M: [0.8, 3, 0.01] },
+    err: 'The orbits aren’t perfect circles, and the planet’s centre is hard to pick out on a blurry image, so the radii are a little off.' }),
+LB('lramp', 'ramp', 'Ramp lab: sliding onto carpet', 'A block slides down a smooth, curved ramp from a release height <i>h</i> (metre stick) and then slides across a strip of carpet until it stops. You measure how far, <i>D</i>, it slides on the carpet. Same block and same carpet each time.',
+  { vals: [0.05, 0.1, 0.15, 0.2, 0.25, 0.3], x: { d: 3, unc: 0.001 }, y: { d: 3, unc: 0.001 }, rand: { 'μk': [0.2, 0.6, 0.01] },
+    err: 'The ramp isn’t perfectly smooth, so some energy is lost before the carpet: <i>D</i> comes out short and μ<sub>k</sub> a little high. The block can also bump at the bottom of the ramp.' }),
+LB('lv2h', 'v2h', 'Dropped ball through a photogate', 'You drop a small steel ball from rest through a photogate. You change the drop height <i>h</i> from the ball’s starting point to the gate (metre stick), and the photogate timer gives the ball’s speed <i>v</i> as it passes through.',
+  { vals: [0.2, 0.4, 0.6, 0.8, 1.0, 1.2], x: { d: 3, unc: 0.001 }, y: { d: 2, unc: 0.01 }, set: { g: 9.8 }, fixed: 1,
+    err: 'Air resistance slows the ball a little (so <i>g</i> comes out low), and the timer works out speed from the ball’s width, so a wrong width setting scales every speed.' }),
+LB('linel', 'inel', 'Carts that stick together', 'A cart with a spring plunger is launched at the same speed, <i>v</i><sub>1</sub> = 1.20 m/s, every time and sticks (Velcro) to a target cart at rest. You add bars to change the target’s mass <i>m</i><sub>2</sub>, and a motion sensor measures the speed <i>v</i> of the pair just after they stick.',
+  { vals: [0.25, 0.5, 0.75, 1.0, 1.25, 1.5], x: { d: 3, unc: 0.001 }, y: { d: 3, unc: 0.001 }, set: { v1: 1.2 }, rand: { m1: [0.3, 0.8, 0.01] },
+    err: 'Track friction slows the pair a little before the sensor reads <i>v</i>, and the launch speed isn’t exactly 1.20 m/s every time.' }),
+LB('lspool', 'spool', 'Falling mass and a spool', 'A string wrapped around a spool of radius <i>r</i> = 0.025 m on a low-friction axle is pulled by a falling mass <i>m</i>. You change the hanging mass and use a motion sensor to measure the acceleration <i>a</i> of the falling mass.',
+  { vals: [0.02, 0.04, 0.06, 0.08, 0.1, 0.12], x: { d: 3, unc: 0.001 }, y: { d: 2, unc: 0.01 }, set: { r: 0.025 }, rand: { I: [1, 5, 0.1] },
+    err: 'Friction in the axle makes <i>a</i> smaller, so <i>I</i> comes out too big. The string can also slip or stretch.' }),
+LB('lphyd', 'phyd', 'Pressure probe in a liquid', 'You lower a pressure probe (an open tube joined to a pressure sensor) into a tall cylinder of an unknown liquid. You record the depth <i>h</i> of the tube’s opening below the surface with a ruler taped to the cylinder, and the absolute pressure <i>P</i> the sensor reads.',
+  { vals: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6], x: { d: 3, unc: 0.001 }, y: { u: 'kPa', f: 1e3, d: 2, unc: 0.01 }, set: { P0: 101.3 }, rand: { 'ρ': [700, 1500, 10] },
+    err: 'Parallax when reading the depth through the curved cylinder, and the liquid creeping a little way up into the tube.' }),
+LB('lsprm', 'sprm', 'Mass bouncing on a spring', 'A spring (its own mass <i>m</i><sub>s</sub> = 0.030 kg) hangs from a clamp, and you hang different masses <i>m</i> on it. You pull each mass down a little, let go, and time 10 oscillations with a stopwatch to find the period <i>T</i>.',
+  { vals: [0.05, 0.1, 0.15, 0.2, 0.25, 0.3], x: { d: 3, unc: 0.001 }, y: { d: 3, unc: 0.001 }, set: { ms: 0.03 }, rand: { k: [10, 40, 1] },
+    err: 'Reaction time with the stopwatch, and the mass swinging sideways instead of bouncing straight. (The line missing the origin here is the spring’s own mass, not an error.)' }),
+LB('lcharles', 'charles', 'Charles’s law: finding absolute zero', 'A syringe of air, sealed at the tip, sits in a water bath. You heat the water and record its temperature <i>T</i> with a thermometer and the volume <i>V</i> of the air from the syringe scale. The plunger slides freely, so the pressure stays at room air pressure.',
+  { vals: [0, 20, 40, 60, 80, 100], x: { d: 1, unc: 0.5 }, y: { u: 'mL', f: 1e-6, d: 1, unc: 0.5 }, set: { n: 0.002, P: 101.3 }, fixed: 1,
+    err: 'The air takes time to reach the water’s temperature, and friction on the plunger keeps the pressure from staying exactly the same.' }),
+LB('lcoul', 'coul', 'Coulomb’s law: two charged spheres', 'Two small charged spheres sit on insulating stands; sphere 1 carries <i>q</i><sub>1</sub> = 50 nC. You change the distance <i>r</i> between their centres (ruler) and read the electric force <i>F</i> on sphere 2 from a sensitive force sensor.',
+  { vals: [0.05, 0.07, 0.09, 0.11, 0.13, 0.15], x: { d: 3, unc: 0.001 }, y: { u: 'mN', f: 1e-3, d: 3, unc: 0.001 }, set: { q1: 50 }, rand: { q2: [20, 80, 1] },
+    err: 'Charge leaks off the spheres into damp air as the lab goes on, and nearby objects (your hand, the stands) change the field.' }),
+LB('lrl', 'rl', 'Pencil lead: resistivity', 'You clip an ohmmeter to a 0.7 mm pencil lead (cross-section area <i>A</i> = 3.85×10⁻⁷ m²). You slide one clip along the lead to change the length <i>L</i> between the clips (ruler) and read the resistance <i>R</i>.',
+  { vals: [0.02, 0.04, 0.06, 0.08, 0.1, 0.12], x: { d: 3, unc: 0.001 }, y: { d: 1, unc: 0.1 }, set: { A: 3.85 }, rand: { 'ρ': [2, 6, 0.1] },
+    err: 'The lead may not be the same thickness all the way along, and the clips touch it over a few millimetres, so <i>L</i> isn’t sharp.',
+    sys: { on: 'y', d: 0.4, p: 0.35, why: 'the meter leads and the clips’ contact add about 0.4 Ω to every reading' } }),
+LB('linvi', 'invi', 'Battery with internal resistance', 'An old battery is connected in series with a resistance box and an ammeter. You set the box to different resistances <i>R</i> and record the current <i>I</i>. The battery has an emf <i>ε</i> and an internal resistance <i>r</i> that you can’t measure directly.',
+  { vals: [1, 2, 3, 4, 5, 6], x: { d: 1, unc: 0.1 }, y: { d: 3, unc: 0.001 }, rand: { r: [0.5, 2, 0.1], 'ε': [1.4, 1.6, 0.01] },
+    tg: [{ s: 'ε', n: 'emf', u: 'V', find: 'ε = 1/slope' }, { s: 'r', n: 'internal resistance', u: 'Ω', find: 'r = icpt/slope' }],
+    err: 'The battery runs down a little during the lab, and the ammeter’s own resistance gets counted as part of <i>r</i>.' }),
+LB('lcompass', 'compass', 'Compass in a coil: Earth’s field', 'A compass sits at the centre of a flat coil (<i>N</i> = 5 turns, radius <i>R</i> = 0.100 m), turned so the coil’s field is at right angles to Earth’s field. You change the current <i>I</i> (ammeter) and read how far the needle turns, <i>θ</i>, on the compass scale (marked every 2°).',
+  { vals: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6], x: { d: 2, unc: 0.01 }, y: { d: 0, unc: 1 }, set: { N: 5, R: 0.1 }, rand: { BE: [1.6, 2.6, 0.1] },
+    err: 'Steel in the bench or nearby wires bend the local field, and the needle is hard to read closely (parallax).' }),
+LB('lsnell', 'snell', 'Refraction in a plastic block', 'You shine a narrow ray from a ray box onto a rectangular plastic block on paper. For each angle of incidence <i>θ</i><sub>1</sub> in air, you mark the ray inside the block and measure the angle of refraction <i>θ</i><sub>2</sub> with a protractor. Both angles are measured from the normal.',
+  { vals: [10, 20, 30, 40, 50, 60, 70], x: { d: 1, st: 0.5, unc: 0.5 }, y: { d: 1, st: 0.5, unc: 0.5 }, rand: { n2: [1.4, 1.7, 0.01] },
+    err: 'The ray is a few millimetres wide, so the angle can be off by a degree, and the normal you draw may not be exactly at right angles to the face.' }),
+LB('llens', 'lens', 'Thin lens on an optics bench', 'On an optics bench, a lit arrow shines through a convex lens onto a screen. You set the object distance <i>s</i><sub>o</sub> and slide the screen until the image is sharp, then read the image distance <i>s</i><sub>i</sub> from the bench scale.',
+  { vals: [0.2, 0.25, 0.3, 0.4, 0.5, 0.6], x: { d: 3, unc: 0.001 }, y: { d: 3, unc: 0.001 }, rand: { f: [0.07, 0.12, 0.005] },
+    err: 'The image looks sharp over a range of screen positions, so <i>s</i><sub>i</sub> is hard to pin down, and the distances are read to the lens holder, not the centre of the lens.' }),
+LB('lslit', 'slitl', 'Double slit and a laser', 'A laser shines through a double slit (slit separation <i>d</i> = 0.25 mm) onto a wall. You change the slit-to-wall distance <i>L</i> (tape measure) and find the fringe spacing <i>Δy</i> by measuring across 10 bright fringes with a ruler and dividing by 10.',
+  { vals: [0.8, 1.2, 1.6, 2.0, 2.4, 2.8], x: { d: 3, unc: 0.001 }, y: { u: 'mm', f: 1e-3, d: 2, unc: 0.1 }, set: { d: 0.25 }, rand: { 'λ': [450, 680, 1] },
+    err: 'The edges of the fringes are fuzzy, so it’s hard to measure across them exactly, and the slit separation printed on the slide may be a little off.' }),
+LB('lphoto', 'photo', 'Photoelectric effect: mercury lamp', 'Light from a mercury lamp goes through filters that pick out one line at a time (frequency <i>f</i>, from the lamp’s data sheet) and falls on a phototube. For each line you raise the reverse voltage until the current just stops and record this stopping voltage <i>V</i><sub>s</sub>.',
+  { vals: [5.19, 5.49, 6.88, 7.41, 8.21, 9.58], x: { p: 14, d: 2, unc: 0.01 }, y: { d: 2, unc: 0.01 }, rand: { 'φ': [1.3, 1.9, 0.05] },
+    tg: [{ s: 'h', n: 'Planck’s constant', u: 'J*s', find: 'h = e*slope' }, { s: 'φ', n: 'work function', u: 'eV', find: 'φ = -e*icpt' }],
+    err: 'It’s hard to tell exactly when the current reaches zero, and a little light from other lines leaks through the filters.' })
+];
+const LAB = {}; LABS.forEach(l => LAB[l.id] = l);
+const setLabs = id => { const s = SETMAP[id]; return s ? s[2].map(eq => LABS.filter(l => l.eq === eq)).flat() : []; };
+
 // prepare each equation: units, symbol tables, parsers
 function aliasesOf(name){ const out = []; const ch = name[0]; if (GREEK[ch]) GREEK[ch].forEach(w => out.push(w + name.slice(1))); if (ch === 'μ' && name.length > 1) out.push('u' + name.slice(1)); return out; }
 EQS.forEach(e => {
@@ -668,7 +790,8 @@ function ptEnvs(e, c, d, useNoisy){ return d.x.map((x, i) => Object.assign({}, c
 
 // ================= axis checking =================
 function axisErr(e, ast){ const s = syms(ast);
-  for (const v of s){ if (!e.axisOK.has(v)){ const k = e.K.find(q => q.s === v);
+  for (const v of s){ if (S.hid.has(v) && isLab()) return 'You can’t put ' + plainSym(v) + ' on an axis: it’s an unknown you’ll get from the graph.';
+    if (!e.axisOK.has(v)){ const k = e.K.find(q => q.s === v);
     if (k && (k.role === 't' || k.role === 'T') || (e.noAxis || []).includes(v)) return 'You can’t put ' + plainSym(v) + ' on an axis: it’s the unknown you’ll get from the slope.';
     return plainSym(v) + ' can’t go on an axis here.'; } }
   dims(ast, e.D); return null; }
@@ -726,7 +849,11 @@ function whyText(r, e){
 
 // ================= state =================
 const S = { mode: 'shape', set: 'P1-00', eq: null, mys: false, cv: {}, scat: 3, zs: [], sys: false, tries: 0, solved: null, view: 'raw', anim: 1, map: null, lastBox: 'ay', hidden: null, revealed: false,
-  sh: null, shStep: false, shDbl: false, streak: 0, best: 0, right: 0, total: 0 };
+  sh: null, shStep: false, shDbl: false, streak: 0, best: 0, right: 0, total: 0,
+  labId: null, labD: null, sysOn: false, eqShown: false, lastQ: null, hid: new Set(), ib: false, ibd: { x: '', y: '' } };
+const isLab = () => S.mode === 'lab';
+const hideMode = () => S.mys || isLab();   // the unknown is hidden (Mystery or Lab)
+const curLab = () => LAB[S.labId];
 const newZ = () => { S.zs = Array.from({ length: NPTS }, () => Math.max(-2.5, Math.min(2.5, randn()))); };
 
 // ================= plotting =================
@@ -888,29 +1015,38 @@ function drawShape(){
 }
 
 // ================= Equation mode =================
-function curEq(){ return EQ[S.eq]; }
+function curEq(){ return isLab() ? (curLab() ? EQ[curLab().eq] : null) : EQ[S.eq]; }
 function loadEq(id, keepMys){
-  S.eq = id; const e = curEq(); S.cv = {}; e.K.forEach(k => S.cv[k.s] = k.v); newZ(); S.sys = false; resetSolve();
+  if (isLab()) S.mode = 'eq';   // an equation link while in Lab mode: setMode('eq') follows and fixes the buttons
+  S.eq = id; S.lastQ = 'eq'; const e = curEq(); S.cv = {}; e.K.forEach(k => S.cv[k.s] = k.v); newZ(); S.sys = false; resetSolve();
   if (S.mys) setupMystery(); else S.hidden = null;
+  S.hid = new Set(S.mys ? [S.hidden] : []);
   if (S.mys && S.scat < 3) S.scat = 3;
-  renderEqCard(); renderCtl(); drawEq();
+  S.ibd = defUnc(e);
+  renderEqCard(); renderCtl(); layoutLeft(); renderIbRow(); drawEq();
 }
 function resetSolve(){ S.tries = 0; S.solved = null; S.view = 'raw'; S.map = null; S.revealed = false;
-  ['ay','ax','by','bm','bx','bb','vin'].forEach(id => { $(id).value = ''; $(id).classList.remove('good', 'badx'); });
+  ['ay','ax','by','bm','bx','bb','vin','vin2'].forEach(id => { $(id).value = ''; $(id).classList.remove('good', 'badx'); });
   $('fb1').innerHTML = ''; $('fb3').innerHTML = ''; $('s3').classList.remove('done'); $('mresult').innerHTML = ''; $('chips').hidden = true; $('stdbtn').hidden = true;
   $('s1').hidden = false; $('s1done').hidden = true; $('s2').hidden = true; $('s3').hidden = true; $('s4').hidden = true; viewBtns(); }
 function setupMystery(){ const e = curEq(); S.revealed = false;
   if (!e.fixedTarget){ const k = e.K.find(q => q.role === 't'); const n = Math.round((k.max - k.min) / k.step); let v; do { v = +(k.min + k.step * ri(n + 1)).toFixed(6); } while (Math.abs(v - k.v) < 1e-9 && n > 2); S.cv[k.s] = v; }
   S.hidden = e.target.s; }
-function tgtInfo(e, c){ // SI value of the unknown and how to show it
-  const k = e.K.find(q => q.s === e.target.s);
+function tgtInfo(e, c, tg){ // SI value of the unknown and how to show it
+  tg = tg || e.target; const k = e.K.find(q => q.s === tg.s);
   if (k) return { si: c[k.s], disp: c[k.s] / k.uf, u: prettyU(k.u), d: k.d, uf: k.uf };
-  if (GC[e.target.s]) return { si: GC[e.target.s].v, disp: GC[e.target.s].v, u: prettyU(GC[e.target.s].u), d: parseUnit(GC[e.target.s].u).d, uf: 1 };
-  const v = e.target.v(c); return { si: v, disp: v / e.target.uf, u: prettyU(e.target.u), d: e.target.d, uf: e.target.uf };
+  if (GC[tg.s]) return { si: GC[tg.s].v, disp: GC[tg.s].v, u: prettyU(GC[tg.s].u), d: parseUnit(GC[tg.s].u).d, uf: 1 };
+  const v = tg.v(c); return { si: v, disp: v / tg.uf, u: prettyU(tg.u), d: tg.d, uf: tg.uf };
 }
+// the unknown(s) being found, each with the formula that gets it from the standard graph
+function targets(e){ const st = isLab() ? curLab() : null;
+  if (st && st.tg) return st.tg.map(t => Object.assign({ d: parseUnit(t.u).d, uf: parseUnit(t.u).f }, t));
+  return [Object.assign({}, e.target, { find: e.std[0].find })]; }
+const tgSym = s => s === 'e/me' ? '<i>e</i>/<i>m</i>' : runsHTML(runs({ k: 's', s }));
 function valStr(k, v){ return fmt(v * 10 ** k.exp) + (k.u ? ' ' + prettyU(k.u) : ''); }
 function renderEqCard(){
-  const e = curEq(); $('eqtitle').textContent = e.title; $('ibb').hidden = !e.ib;
+  const e = curEq(); if (isLab()) return renderLabCard(e);
+  $('eqtitle').textContent = e.title; $('ibb').hidden = !e.ib; $('vl1').hidden = true; $('vrow2').hidden = true; $('newm').textContent = 'New mystery';
   const [l, r] = e.eqs.split('='); $('eqmath').innerHTML = math(mml(dnorm(PF(e, l))) + '<mo>=</mo>' + mml(dnorm(PF(e, r))));
   const sy = s => runsHTML(runs({ k: 's', s }));
   let h = '<div><span class="k">You measure</span> ' + sy(e.x.s) + ' (' + esc(e.x.n) + ', ' + prettyU(e.x.u) + ') and ' + sy(e.y.s) + ' (' + esc(e.y.n) + ', ' + prettyU(e.y.u) + ').</div>';
@@ -943,32 +1079,44 @@ function renderCtl(){
   showVals();
 }
 function showVals(){ const e = curEq(); e.K.forEach(k => { const el = $('val-' + k.s); if (el) el.textContent = valStr(k, S.cv[k.s]); }); $('val-scat').textContent = '±' + S.scat + '%'; }
-function curData(){ const e = curEq(), c = envOf(e, S.cv); return { e, c, d: gen(e, c, S.zs, S.scat / 100, S.sys) }; }
+function curData(){ const e = curEq(), c = envOf(e, S.cv); return { e, c, d: isLab() ? S.labD : gen(e, c, S.zs, S.scat / 100, S.sys) }; }
 function transformed(A, B){ const { e, c, d } = curData(); const pe = ptEnvs(e, c, d, true); return { V: pe.map(p => ev(A, p)), H: pe.map(p => ev(B, p)), d, e, c }; }
 function viewBtns(){ $('v-raw').setAttribute('aria-pressed', String(S.view === 'raw')); $('v-lin').setAttribute('aria-pressed', String(S.view === 'lin')); $('v-lin').disabled = !S.solved; }
 function axUnit(e, ast){ try { return niceUnit(dims(ast, e.D).d, e.celsius); } catch (er){ return ''; } }
 function drawEq(){
   const e = curEq(); if (!e) return; const { g, W, H } = ctx2($('gcv')); const { c, d } = curData();
-  const rx = d.x.map(x => x / e.x.f), ry = d.y.map(y => y / e.y.f);
-  const rawXA = axisR(Math.min(...rx), Math.max(...rx), true), rawYA = axisR(Math.min(...ry), Math.max(...ry), true);
+  const sc = colScale(e), rx = d.x.map(x => x / sc.x.F), ry = d.y.map(y => y / sc.y.F), ib = S.ib, u = ib ? ibUnc() : { dx: 0, dy: 0 };
+  const rdx = u.dx / sc.x.F, rdy = u.dy / sc.y.F;
+  const rawXA = axisR(Math.min(...rx) - rdx, Math.max(...rx) + rdx, true), rawYA = axisR(Math.min(...ry) - rdy, Math.max(...ry) + rdy, true);
   const xl = runs({ k: 's', s: e.x.s }), yl = runs({ k: 's', s: e.y.s });
   if (S.view === 'raw' || !S.solved){
-    const F = frame(g, W, H, rawXA, rawYA, xl, yl, prettyU(e.x.u), prettyU(e.y.u));
+    const F = frame(g, W, H, rawXA, rawYA, xl, yl, sc.x.u, sc.y.u);
+    if (ib) rx.forEach((x, i) => ebar(g, F, x, ry[i], rdx, rdy));
     rx.forEach((x, i) => dot(g, F.PX(x), F.PY(ry[i])));
     $('gcv').setAttribute('aria-label', 'Raw data: ' + plainSym(e.y.s) + ' against ' + plainSym(e.x.s) + '. ' + rx.map((x, i) => '(' + fmt(x) + ', ' + fmt(ry[i]) + ')').join(', '));
     return;
   }
-  const sv = S.solved, t = transformed(sv.A, sv.B), f = linfit(t.H, t.V);
-  let hlo = Math.min(...t.H), hhi = Math.max(...t.H); if (e.linX){ hlo = Math.min(hlo, e.linX[0]); hhi = Math.max(hhi, e.linX[1]); }
+  const sv = S.solved, t = transformed(sv.A, sv.B), f = linfit(t.H, t.V), R = ib ? ibCalc(e, sv.A, sv.B) : null;
+  const eh = R ? R.pts.map(q => q.dx) : t.H.map(() => 0), evv = R ? R.pts.map(q => q.dy) : t.V.map(() => 0);
+  let hlo = Math.min(...t.H.map((h, i) => h - eh[i])), hhi = Math.max(...t.H.map((h, i) => h + eh[i])); if (e.linX){ hlo = Math.min(hlo, e.linX[0]); hhi = Math.max(hhi, e.linX[1]); }
   const xa = axisR(hlo, hhi, true); const ends = [f.m * xa.a + f.b, f.m * xa.b + f.b];
-  const ya = axisR(Math.min(...t.V, ...ends.filter(v => isFinite(v) && Math.abs(v) < 4 * Math.max(...t.V.map(Math.abs)))), Math.max(...t.V, ...ends.filter(v => isFinite(v) && Math.abs(v) < 4 * Math.max(...t.V.map(Math.abs)))), true);
+  const vlo = Math.min(...t.V.map((v, i) => v - evv[i])), vhi = Math.max(...t.V.map((v, i) => v + evv[i])), big = 4 * Math.max(...t.V.map(Math.abs));
+  const ya = axisR(Math.min(vlo, ...ends.filter(v => isFinite(v) && Math.abs(v) < big)), Math.max(vhi, ...ends.filter(v => isFinite(v) && Math.abs(v) < big)), true);
   const p = S.anim, ease = p < 1 ? (1 - Math.cos(PI * Math.min(1, p)) ) / 2 : 1;
   const F = frame(g, W, H, xa, ya, runs(dnorm(sv.B)), runs(dnorm(sv.A)), axUnit(e, sv.B), axUnit(e, sv.A));
   // raw positions in the same box (for the animation)
   const RPX = x => F.L + (F.R - F.L) * (x - rawXA.a) / (rawXA.b - rawXA.a), RPY = y => F.B - (F.B - F.T) * (y - rawYA.a) / (rawYA.b - rawYA.a);
+  const seg2 = (m, b, col, dash, w) => { g.strokeStyle = col; g.lineWidth = w; g.setLineDash(dash); g.beginPath(); g.moveTo(F.PX(xa.a), F.PY(m * xa.a + b)); g.lineTo(F.PX(xa.b), F.PY(m * xa.b + b)); g.stroke(); g.setLineDash([]); };
   if (ease >= 1 || p > 0.55){ g.save(); g.beginPath(); g.rect(F.L, F.T, F.R - F.L, F.B - F.T); g.clip(); g.globalAlpha = Math.min(1, (p - 0.55) / 0.45) || (ease >= 1 ? 1 : 0);
-    g.strokeStyle = '#c43a00'; g.lineWidth = 2.5; g.beginPath(); g.moveTo(F.PX(xa.a), F.PY(f.m * xa.a + f.b)); g.lineTo(F.PX(xa.b), F.PY(f.m * xa.b + f.b)); g.stroke(); g.restore(); }
+    if (R){ seg2(R.max.m, R.max.b, '#7a3fb0', [9, 5], 1.8); seg2(R.min.m, R.min.b, '#1e7d45', [3, 4], 2); }
+    seg2(f.m, f.b, '#c43a00', [], 2.5); g.restore(); }
+  if (R && ease >= 1) R.pts.forEach(q => ebar(g, F, q.x, q.y, q.dx, q.dy));
   t.H.forEach((h, i) => { const x0 = RPX(rx[i]), y0 = RPY(ry[i]), x1 = F.PX(h), y1 = F.PY(t.V[i]); dot(g, x0 + (x1 - x0) * ease, y0 + (y1 - y0) * ease); });
+  if (R && ease >= 1){ // legend for the max/min lines, in the empty corner
+    setFont(g, 600, 12, false, true); const lw = 150, lh = 44, lx = f.m >= 0 ? F.R - lw - 8 : F.L + 8, ly = F.B - lh - 8;
+    g.fillStyle = 'rgba(255,255,255,0.94)'; g.fillRect(lx, ly, lw, lh); g.strokeStyle = '#111'; g.lineWidth = 1.5; g.strokeRect(lx, ly, lw, lh);
+    [['max slope', '#7a3fb0', [9, 5]], ['min slope', '#1e7d45', [3, 4]]].forEach(([nm, col, dash], i) => { const yy = ly + 16 + 18 * i; g.strokeStyle = col; g.lineWidth = 2; g.setLineDash(dash); g.beginPath(); g.moveTo(lx + 8, yy - 4); g.lineTo(lx + 40, yy - 4); g.stroke(); g.setLineDash([]); g.fillStyle = '#111'; g.textAlign = 'left'; g.fillText(nm, lx + 48, yy); });
+  }
   if (ease >= 1){ // result box
     const su = slopeUnit(e, sv), bu = intUnit(e, sv);
     const lines = ['slope = ' + fmt(f.m) + (su ? ' ' + su : ''), 'intercept = ' + fmt(f.b) + (bu ? ' ' + bu : ''), 'R² = ' + f.r2.toFixed(4)];
@@ -990,9 +1138,11 @@ function refreshFit(){
   // should the line go through the origin? (noiseless intercept ≈ 0)
   const ideal = linTest(e, sv.A, sv.B, envOf(e, S.cv)); const zeroB = ideal.ok && Math.abs(ideal.fit.b) < 1e-6 * (Math.max(...ideal.V) - Math.min(...ideal.V));
   const vr = Math.max(...t.V) - Math.min(...t.V); const misses = zeroB && Math.abs(f.b) > Math.max(3 * f.seb, 0.04 * vr);
+  S.missO = misses;
   $('s2').innerHTML = 'slope = <b>' + fmt(f.m) + (su ? ' ' + su : '') + '</b><br>intercept = <b>' + fmt(f.b) + (bu ? ' ' + bu : '') + '</b> · R² = ' + f.r2.toFixed(4) +
     (e.celsius ? '<br>x-intercept = <b>' + fmt(-f.b / f.m) + ' °C</b>' : '') +
-    (misses ? '<div class="w">This line should go through the origin, but it misses it by more than the scatter explains. A straight line that misses the origin points to a <b>systematic error</b>' + (S.sys ? ' (here, the zero error you switched on).' : '.') + '</div>' : '');
+    (misses ? '<div class="w">This line should go through the origin, but it misses it by more than the scatter explains. A straight line that misses the origin points to a <b>systematic error</b>' + (S.sys && !isLab() ? ' (here, the zero error you switched on).' : '.') + '</div>' : '') +
+    (S.ib ? ibHTML(e, sv, su, bu, zeroB) : '');
   $('s2').hidden = false;
 }
 // ---- step 1
@@ -1018,7 +1168,9 @@ function check1(){
   $('s1done').innerHTML = '<span class="tick">✓</span> Straight line: <b>' + runsHTML(runs(dnorm(r.A))) + '</b> vs <b>' + runsHTML(runs(dnorm(r.B))) + '</b>' + (raw ? ' <span class="hint">(the raw data were already straight)</span>' : '') + ' <button type="button" class="link" id="redo">change</button>';
   $('redo').onclick = () => { S.solved = null; S.view = 'raw'; $('s1').hidden = false; $('s1done').hidden = true; $('s2').hidden = true; $('s3').hidden = true; $('s4').hidden = true; viewBtns(); drawEq(); $('ay').focus(); };
   $('s3').classList.remove('done'); $('by').value = plain(r.A); $('bx').value = plain(r.B); ['by','bm','bx','bb'].forEach(id => $(id).classList.remove('good', 'badx')); $('fb3').innerHTML = '';
-  $('s3').hidden = false; $('s4').hidden = !S.mys; refreshFit();
+  $('s3').hidden = false; $('s4').hidden = !hideMode();
+  if (isLab() && !S.eqShown){ S.eqShown = true; renderEqCard(); }
+  refreshFit();
   S.view = 'lin'; viewBtns(); animate(); $('bm').focus();
 }
 let animT = 0;
@@ -1057,19 +1209,21 @@ function check3(){
                    : 'slope = ' + fm(PF(e, mt.s.m)) + (mt.s.b !== '0' ? ' and intercept = ' + fm(PF(e, mt.s.b)) : '') + ', so ' + fm(lhs) + ' = ' + fm(rhs) + '.'; }
   else { const s0 = e.std[0], fi = s0.find.split('='); msg += 'That works. (The usual way: plot ' + fm(P(e, s0.Y)) + ' vs ' + fm(P(e, s0.X)) + ', then ' + fm(PF(e, fi[0])) + ' = ' + fm(PF(e, fi[1])) + '.)'; }
   S.map = true; $('s3').classList.add('done'); $('fb3').innerHTML = '<div class="ok">' + msg + '</div>';
-  if (S.mys) $('vin').focus();
+  if (S.ib && !hideMode()) refreshFit();
+  if (hideMode()){ $('vin').focus(); showStep('s3'); }
 }
 // ---- mystery
-function parseVal(str, e){
-  let s = String(str).trim().replace(/µ/g, 'μ').replace(/−/g, '-').replace(/,/g, '');
+function parseVal(str, e, tg){
+  tg = tg || e.target; let s = String(str).trim().replace(/µ/g, 'μ').replace(/−/g, '-').replace(/,/g, '');
   s = s.replace(/\s*[×xX*]\s*10\s*\^?\s*\(?\s*([-+]?\d+)\s*\)?/, 'e$1').replace(/\s*[×xX*]\s*10([⁻]?[⁰¹²³⁴⁵⁶⁷⁸⁹]+)/, (m, p) => 'e' + [...p].map(c => SUPMAP[c]).join(''));
   const m = /^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?/i.exec(s); if (!m) return { err: 'Start with a number, e.g. 9.7 m/s².' };
   const v = parseFloat(m[0]); let ustr = s.slice(m[0].length).trim();
-  if (e.target.u === '°C'){ if (/^(°\s*C|C|deg\s*C|degrees?\s*C?|)$/i.test(ustr)) return { si: v, unitless: ustr === '' }; if (/^K$/.test(ustr)) return { si: v - 273.15 }; return { err: 'Give it in °C (or K).' }; }
+  if (tg.u === '°C'){ if (/^(°\s*C|C|deg\s*C|degrees?\s*C?|)$/i.test(ustr)) return { si: v, unitless: ustr === '' }; if (/^K$/.test(ustr)) return { si: v - 273.15 }; return { err: 'Give it in °C (or K).' }; }
   const u = parseUnit(ustr); if (!u) return { err: 'I can’t read the unit “' + ustr + '”.' };
   return { si: v * u.f, d: u.d, unitless: ustr === '' };
 }
 function reveal(){
+  if (isLab()) return revealLab();
   const e = curEq(), c = envOf(e, S.cv), ti = tgtInfo(e, c), pv = parseVal($('vin').value, e);
   if (pv.err){ $('mresult').innerHTML = '<div class="bad">' + esc(pv.err) + '</div>'; return; }
   const needU = cx(ti.d.slice(0, 6)) > 0;
@@ -1084,22 +1238,215 @@ function reveal(){
   const good = yours <= 3 || vsFit <= 2, cls = good ? 'ok' : vsFit <= 10 ? 'note' : 'bad';
   $('mresult').innerHTML = '<div class="' + cls + '">True value <b>' + shown(ti.si) + '</b>. Yours ' + shown(pv.si) + ': <b>' + yours.toFixed(1) + '% off</b>. ' +
     (good ? (yours <= 3 ? 'Within 3%.' : 'Your analysis matches the data; the rest is scatter.') : vsFit <= 10 ? 'Close: recheck your slope reading.' : 'Check the step from slope to answer.') +
-    ' <span style="color:#4a4a4a">(Best fit of these points: ' + shown(fromFit) + ', ' + dataPct.toFixed(1) + '% off.)</span></div>';
-  S.revealed = true; renderCtl(); renderEqCard();
+    ' <span style="color:#4a4a4a">(Best fit of these points: ' + shown(fromFit) + ', ' + dataPct.toFixed(1) + '% off.)</span></div>' +
+    (S.ib ? ibConstHTML(e, targets(e)[0], ti, c) : '');
+  S.revealed = true; renderCtl(); renderEqCard(); showStep('s4');
   const k = e.K.find(q => q.s === S.hidden); if (k){ const el = [...$('ctl').children].find(x => x.querySelector('.val') && x.querySelector('.val').textContent === '?'); if (el) el.querySelector('.val').textContent = valStr(k, S.cv[k.s]); }
+}
+
+// ================= stage 2: units shown, uncertainties =================
+// how each measured column is shown: F = SI factor of the unit, P = ×10^p, lab = unit label (with ×10^p)
+function colScale(e, st){
+  if (st === undefined) st = isLab() ? curLab() : null;
+  const one = k => { const col = (st && st[k]) || {}, V = e[k], F = col.f || (col.u ? parseUnit(col.u).f : V.f), u = col.u ? prettyU(col.u) : prettyU(V.u), p = col.p || 0;
+    return { F, P: 10 ** p, u, lab: (p ? '×10' + supS(p) + (u ? ' ' : '') : '') + u, d: col.d || 0, st: col.st, unc: col.unc, n: col.n || V.n }; };
+  return { x: one('x'), y: one('y') };
+}
+// default reading uncertainty: the lab's instrument; in Equation mode one unit in the third significant figure
+function defUnc(e){
+  const d = gen(e, envOf(e, S.cv), null, 0, false), q = (arr, f) => { const mx = Math.max(...arr.map(v => Math.abs(v / f))); return mx > 0 && isFinite(mx) ? numStr(+(10 ** (Math.floor(Math.log10(mx)) - 2)).toPrecision(1)) : '0'; };
+  return { x: q(d.x, e.x.f), y: q(d.y, e.y.f) };
+}
+function labUnc(st, e){ const sc = colScale(e, st); return { x: sc.x.unc.toFixed(sc.x.d), y: sc.y.unc.toFixed(sc.y.d) }; }
+function layoutLeft(){
+  const lab = isLab(), ib = S.ib && S.mode !== 'shape', LB = 210, CT = 136, low = lab ? LB : CT;
+  $('ibrow').hidden = !ib; $('ctl').hidden = lab; $('labbox').hidden = !lab;
+  const ch = 576 - 32 - (ib ? 34 : 0) - low - 12, cv = $('gcv');
+  $('left').style.gridTemplateRows = '32px ' + (ib ? '28px ' : '') + ch + 'px ' + low + 'px';
+  if (cv.height !== ch * 2) cv.height = ch * 2; cv.style.height = ch + 'px';
+}
+const numOK = s => { const v = parseFloat(String(s).replace(/,/g, '.').replace(/[−–]/g, '-')); return isFinite(v) && v >= 0 && /^\s*[0-9.,]+\s*$/.test(String(s)) ? v : NaN; };
+function renderIbRow(){
+  const e = curEq(); if (!e){ $('ibrow').innerHTML = ''; return; } const sc = colScale(e), order = isLab() && curLab().iv === 'y' ? ['y', 'x'] : ['x', 'y'];
+  $('ibrow').innerHTML = '<span class="ib">IB</span><span>± in each reading:</span>' + order.map(k => '<label>' + runsHTML(runs({ k: 's', s: e[k].s })) + ' ±<input id="ibd-' + k + '" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="' + esc(S.ibd[k]) + '" aria-label="Uncertainty in ' + esc(e[k].n) + (sc[k].lab ? ' (' + esc(sc[k].lab) + ')' : '') + '">' + esc(sc[k].lab) + '</label>').join('') +
+    '<span class="hint" title="Analogue scale: ± half the smallest division. Digital: ± the last decimal place. A length on a ruler: ± one division (both ends are read). Repeats: ± half the range. Write the ± to the same decimal place as the reading.">instrument only</span>';
+  order.forEach(k => { const el = $('ibd-' + k); el.oninput = () => { S.ibd[k] = el.value; el.classList.toggle('badx', isNaN(numOK(el.value))); if (isLab()) renderLabTable(); drawEq(); refreshFit(); }; el.classList.toggle('badx', isNaN(numOK(el.value))); });
+}
+function ibUnc(){ const e = curEq(), sc = colScale(e), a = numOK(S.ibd.x), b = numOK(S.ibd.y); return { dx: (isNaN(a) ? 0 : a) * sc.x.F * sc.x.P, dy: (isNaN(b) ? 0 : b) * sc.y.F * sc.y.P }; }
+function ebar(g, F, x, y, dx, dy){
+  const px = F.PX(x), py = F.PY(y); g.save(); g.beginPath(); g.rect(F.L - 2, F.T - 2, F.R - F.L + 4, F.B - F.T + 4); g.clip(); g.strokeStyle = '#1546d6'; g.lineWidth = 1.6; g.beginPath();
+  const y1 = F.PY(y - dy), y2 = F.PY(y + dy), x1 = F.PX(x - dx), x2 = F.PX(x + dx);
+  if (Math.abs(y1 - y2) > 1.5){ g.moveTo(px, y1); g.lineTo(px, y2); g.moveTo(px - 5, y1); g.lineTo(px + 5, y1); g.moveTo(px - 5, y2); g.lineTo(px + 5, y2); }
+  if (Math.abs(x1 - x2) > 1.5){ g.moveTo(x1, py); g.lineTo(x2, py); g.moveTo(x1, py - 5); g.lineTo(x1, py + 5); g.moveTo(x2, py - 5); g.lineTo(x2, py + 5); }
+  g.stroke(); g.restore(); }
+// uncertainty carried onto a plotted axis: |∂(axis)/∂(reading)| × Δ(reading), added for each reading (relative uncertainties add for products and quotients)
+function prop(ast, p, s, ds){ if (!ds || !(s in p)) return 0; const v = p[s], h = Math.abs(v) * 1e-6 || 1e-12;
+  const f1 = ev(ast, Object.assign({}, p, { [s]: v + h })), f0 = ev(ast, Object.assign({}, p, { [s]: v - h })), dd = (f1 - f0) / (2 * h); return isFinite(dd) ? Math.abs(dd) * ds : 0; }
+// max/min slope lines (same method as Graph Maker): range of intercepts b for which y = m x + b passes through every error box
+function bRange(m, pts){ let lo = -Infinity, hi = Infinity;
+  for (const p of pts){ const a = m * (p.x - p.dx), c = m * (p.x + p.dx); lo = Math.max(lo, p.y - p.dy - Math.max(a, c)); hi = Math.min(hi, p.y + p.dy - Math.min(a, c)); } return [lo, hi]; }
+const spanY = pts => (Math.max(...pts.map(p => p.y)) - Math.min(...pts.map(p => p.y))) + 2 * Math.max(...pts.map(p => p.dy)) || 1;
+const mmOK = (m, pts) => { const r = bRange(m, pts); return r[0] <= r[1] + 1e-12 * spanY(pts); };
+function hitsAll(l, pts){ const r = bRange(l.m, pts), tol = 1e-9 * spanY(pts); return l.b >= r[0] - tol && l.b <= r[1] + tol; }
+function extremes(pts, best){
+  const xs = pts.map(p => p.x), spanX = Math.max(...xs) - Math.min(...xs) || 1, sy = spanY(pts);
+  const K = 50 * sy / spanX; let seed = null;
+  if (mmOK(best.m, pts)) seed = best.m; else { for (let i = 0; i <= 4000 && seed === null; i++){ const m = best.m + (i % 2 ? 1 : -1) * Math.ceil(i / 2) * K / 2000; if (mmOK(m, pts)) seed = m; } }
+  if (seed === null) return null;
+  const edge = dir => { let a = seed, step = sy / spanX / 100 || 1e-6, b = seed + dir * step, guard = 0;
+    while (mmOK(b, pts) && guard++ < 200){ a = b; step *= 2; b = seed + dir * step; if (Math.abs(b - seed) > 1e6 * (Math.abs(seed) + 1)) return a; }
+    for (let i = 0; i < 80; i++){ const mid = (a + b) / 2; if (mmOK(mid, pts)) a = mid; else b = mid; } return a; };
+  const mMax = edge(1), mMin = edge(-1), r1 = bRange(mMax, pts), r2 = bRange(mMin, pts);
+  return { max: { m: mMax, b: (r1[0] + r1[1]) / 2 }, min: { m: mMin, b: (r2[0] + r2[1]) / 2 } };
+}
+// first try (the usual hand method): the corner of the first bar to the opposite corner of the last bar
+function corners(pts){ const s = [...pts].sort((a, b) => a.x - b.x), p = s[0], q = s[s.length - 1], dX = q.x - p.x || 1;
+  const mMax = ((q.y + q.dy) - (p.y - p.dy)) / dX, mMin = ((q.y - q.dy) - (p.y + p.dy)) / dX;
+  return { max: { m: mMax, b: (p.y - p.dy) - mMax * p.x }, min: { m: mMin, b: (p.y + p.dy) - mMin * p.x } }; }
+function mmLines(pts, best){ const cr = corners(pts);
+  if (hitsAll(cr.max, pts) && hitsAll(cr.min, pts)) return { max: cr.max, min: cr.min, method: 'corner' };
+  const ex = extremes(pts, best); if (ex) return { max: ex.max, min: ex.min, method: 'extreme' };
+  return { max: cr.max, min: cr.min, method: 'miss' }; }
+function ibCalc(e, A, B){
+  const { c, d } = curData(), pe = ptEnvs(e, c, d, true), u = ibUnc(), X = e.x.s, Y = e.y.s;
+  const pts = pe.map(p => ({ x: ev(B, p), y: ev(A, p), dx: prop(B, p, X, u.dx) + prop(B, p, Y, u.dy), dy: prop(A, p, X, u.dx) + prop(A, p, Y, u.dy) }));
+  const f = linfit(pts.map(p => p.x), pts.map(p => p.y)), best = { m: f.m, b: f.b }, L = mmLines(pts, best);
+  const missBest = pts.filter(p => { const a = best.m * (p.x - p.dx) + best.b, q = best.m * (p.x + p.dx) + best.b; return !(Math.max(a, q) >= p.y - p.dy - 1e-12 && Math.min(a, q) <= p.y + p.dy + 1e-12); }).length;
+  return { pts, best, max: L.max, min: L.min, method: L.method, dm: Math.abs(L.max.m - L.min.m) / 2, db: Math.abs(L.max.b - L.min.b) / 2, missBest, u };
+}
+// value ± uncertainty: the uncertainty to 2 significant figures, the value to the same decimal place
+function pmStr(v, d){
+  if (!isFinite(v)) return '—'; if (!(d > 0) || !isFinite(d)) return fmt(v);
+  const e2 = Math.floor(Math.log10(d)) - 1, big = Math.max(Math.abs(v), d); let E = Math.floor(Math.log10(big)); if (E > -3 && E < 4) E = 0;
+  const sc = 10 ** E, dp = Math.max(0, E - e2), m = s => s.replace(/^-/, '−'), vs = m((v / sc).toFixed(dp)), ds = (d / sc).toFixed(dp);
+  return E ? '(' + vs + ' ± ' + ds + ')×10' + supS(E) : vs + ' ± ' + ds;
+}
+const pctS = (d, v) => v ? (100 * d / Math.abs(v)).toFixed(1) + '%' : '—';
+function ibHTML(e, sv, su, bu, zeroB){
+  const R = ibCalc(e, sv.A, sv.B);
+  let h = '<div class="ibr"><span class="ib">IB</span>max slope ' + fmt(R.max.m, 3) + ', min ' + fmt(R.min.m, 3) + '<br>Δslope = (max − min)/2 = ' + fmt(R.dm, 2) +
+    '<br>slope = <b>' + pmStr(R.best.m, R.dm) + (su ? ' ' + su : '') + '</b> (' + pctS(R.dm, R.best.m) + ')' +
+    '<br>intercept = <b>' + pmStr(R.best.b, R.db) + (bu ? ' ' + bu : '') + '</b>' + (zeroB ? (Math.abs(R.best.b) <= R.db ? ' · 0 is inside' : ' · <span style="color:#c43a00">0 is outside</span>') : '');
+  if (!hideMode() && S.map){ const tg = targets(e)[0], k = ibConst(e, tg.find, sv), ti = tgtInfo(e, envOf(e, S.cv), tg); h += '<br>→ ' + tgSym(tg.s) + ' = <b>' + pmStr(k.v / ti.uf, k.dv / ti.uf) + (ti.u ? ' ' + ti.u : '') + '</b>'; }
+  h += '</div>';
+  if (R.method === 'miss') h += '<div class="w">No line passes through every bar: the line misses some error bars, so max/min join the corners of the first and last bars. The scatter is bigger than the instrument uncertainty (repeat readings: ± half the range).</div>';
+  else if (R.method === 'extreme') h += '<div class="hint">Corner-to-corner lines would miss a bar, so these are the steepest and shallowest lines that pass through every bar.</div>';
+  if (R.method !== 'miss' && R.missBest) h += '<div class="hint">The best-fit line misses ' + R.missBest + ' error bar' + (R.missBest > 1 ? 's' : '') + '.</div>';
+  return h;
+}
+// constant ± its uncertainty: evaluate the find formula at the best, max and min lines; ± = half the spread
+function ibConst(e, find, sv){
+  const mt = sv ? stdMatch(e, sv) : null, si = e.std.findIndex(s => s.find === find), ref = si >= 0 ? e.std[si] : e.std[0];
+  const ax = mt && mt.s === ref ? { A: sv.A, B: sv.B, flip: mt.flip } : { A: P(e, ref.Y), B: P(e, ref.X), flip: false, std: !!sv };
+  const r = ibCalc(e, ax.A, ax.B), rhs = PF(e, find.split('=')[1]), c = envOf(e, S.cv);
+  const val = l => ev(rhs, Object.assign({}, c, ax.flip ? { slope: 1 / l.m, icpt: -l.b / l.m } : { slope: l.m, icpt: l.b }));
+  const v = val(r.best), v1 = val(r.max), v2 = val(r.min);
+  return { v, dv: Math.abs(v1 - v2) / 2, v1, v2, std: ax.std, r };
+}
+function ibConstHTML(e, tg, ti, c){
+  const k = ibConst(e, tg.find, S.solved), inside = Math.abs(k.v - ti.si) <= k.dv;
+  return '<div class="note"><span class="ib">IB</span> From the max/min slopes' + (k.std ? ' (on the standard axes)' : '') + ': ' + tgSym(tg.s) + ' = <b>' + pmStr(k.v / ti.uf, k.dv / ti.uf) + (ti.u ? ' ' + ti.u : '') + '</b> (' + pctS(k.dv, k.v) + '). The true value is <b>' + (inside ? 'inside' : 'outside') + '</b> this range.' +
+    (k.r.method === 'miss' ? ' The line misses some error bars, so this range is too small.' : '') + '</div>';
+}
+
+// ================= Lab mode =================
+function labGen(st, e, cv, o){
+  o = Object.assign({ noise: true, round: true, sys: false }, o); const c = envOf(e, cv), sc = colScale(e, st), iv = st.iv, mv = iv === 'x' ? 'y' : 'x', ic = sc[iv], mc = sc[mv];
+  const sy = o.sys && st.sys ? st.sys : null, ivSI = st.vals.map(v => v * ic.P * ic.F);
+  const clean = ivSI.map(v => { if (iv === 'x'){ let y = e.f(v - (sy && sy.on === 'x' ? sy.d : 0), c); if (sy && sy.on === 'y') y += sy.d; return y; }
+    let x = st.inv(v - (sy && sy.on === 'y' ? sy.d : 0), c); if (sy && sy.on === 'x') x += sy.d; return x; });
+  let m0 = clean.slice();
+  if (o.noise){ const span = Math.max(...m0) - Math.min(...m0); m0 = m0.map(v => { const z = Math.max(-2.5, Math.min(2.5, randn())); return e.noise === 'range' ? v + st.scat * z * span : v * (1 + st.scat * z); }); }
+  const step = col => col.st || 10 ** -col.d, mD = m0.map(v => { const dv = v / (mc.P * mc.F); return o.round ? Math.round(dv / step(mc)) * step(mc) : dv; });
+  const mSI = mD.map(v => v * mc.P * mc.F), fx = (v, col) => (Math.abs(v) < 1e-12 ? 0 : v).toFixed(col.d).replace(/^-/, '−');
+  const ivS = st.vals.map(v => fx(v, ic)), mS = mD.map(v => fx(v, mc));
+  return iv === 'x' ? { x: ivSI, xt: ivSI, y: mSI, y0: clean, sx: ivS, sy: mS } : { x: mSI, xt: mSI, y: ivSI, y0: ivSI, sx: mS, sy: ivS };
+}
+function loadLab(id){
+  const st = LAB[id]; if (!st) return; S.labId = id; S.lastQ = 'lab'; const e = EQ[st.eq];
+  S.cv = {}; e.K.forEach(k => S.cv[k.s] = k.v); Object.assign(S.cv, st.set);
+  Object.entries(st.rand).forEach(([s, [lo, hi, step]]) => { const n = Math.round((hi - lo) / step); S.cv[s] = +(lo + step * ri(n + 1)).toFixed(6); });
+  const T = targets(e); S.hid = new Set(T.map(t => t.s)); S.hidden = T[0].s;
+  S.sysOn = !!st.sys && Math.random() < st.sys.p;
+  // fair data: real scatter (≥ 3%), but redraw a set whose best fit lands more than 8% from the truth
+  const c = envOf(e, S.cv), s0 = e.std[0], Ya = P(e, s0.Y), Xa = P(e, s0.X);
+  for (let n = 0; n < 40; n++){ const d = labGen(st, e, S.cv, { sys: S.sysOn }); S.labD = d;
+    const pe = d.x.map((x, i) => Object.assign({}, c, { [e.x.s]: x, [e.y.s]: d.y[i] })), f = linfit(pe.map(q => ev(Xa, q)), pe.map(q => ev(Ya, q)));
+    if (T.every(tg => { const v = ev(PF(e, tg.find.split('=')[1]), Object.assign({}, c, { slope: f.m, icpt: f.b })), t = tgtInfo(e, c, tg).si; return Math.abs(v - t) <= 0.08 * Math.abs(t); })) break; }
+  resetSolve(); S.eqShown = false; S.missO = false; S.ibd = labUnc(st, e);
+  renderEqCard(); renderLabTable(); layoutLeft(); renderIbRow(); drawEq();
+}
+function renderLabCard(e){
+  const st = curLab(), T = targets(e), sy = s => runsHTML(runs({ k: 's', s })), c = envOf(e, S.cv);
+  $('eqtitle').textContent = st.title; $('ibb').hidden = !e.ib; $('newm').textContent = 'New data';
+  if (S.eqShown){ const [l, r] = e.eqs.split('='); $('eqmath').innerHTML = math(mml(dnorm(PF(e, l))) + '<mo>=</mo>' + mml(dnorm(PF(e, r)))); }
+  else { $('eqmath').innerHTML = '<button type="button" class="link" id="showeq">Hint: show the equation</button>'; $('showeq').onclick = () => { S.eqShown = true; renderEqCard(); $('ay').focus(); }; }
+  const known = e.uses.filter(s => !S.hid.has(s)).map(s => sy(s) + ' = ' + (GC[s].show || fmt(GC[s].v)) + ' ' + prettyU(GC[s].u));
+  e.K.filter(k => (k.role === 's' || k.role === 'k') && !S.hid.has(k.s)).forEach(k => known.push(sy(k.s) + ' = ' + valStr(k, S.cv[k.s])));
+  const shown = tg => { const ti = tgtInfo(e, c, tg); return fmt(ti.disp, 3) + (ti.u ? ' ' + ti.u : ''); };
+  let h = known.length ? '<div><span class="k">Known:</span> ' + known.join(' · ') + '</div>' : '';
+  h += '<div><span class="k">Find:</span> <b>' + T.map(tg => tgSym(tg.s) + ' = ' + (S.revealed ? shown(tg) : '?')).join(', ') + '</b> <span class="k">(' + T.map(tg => esc(tg.n.replace(/^\S+ \((.*)\)$/, '$1'))).join(', ') + ')' + (st.fixed ? ', a constant of nature' : '') + '</span></div>';
+  $('eqmeta').innerHTML = h;
+  $('s4h').innerHTML = '3 · Find ' + T.map(tg => tgSym(tg.s)).join(' and ') + ' (with units)';
+  const ph = tg => 'e.g. ' + (tg.u ? '1.23 ' + prettyU(tg.u) : '0.42');
+  $('vin').placeholder = ph(T[0]); $('vl1').hidden = T.length < 2; $('vrow2').hidden = T.length < 2;
+  $('vin').setAttribute('aria-label', 'Your value of ' + T[0].n + ' with units');
+  if (T.length > 1){ $('vl1').innerHTML = tgSym(T[0].s) + ' ='; $('vl2').innerHTML = tgSym(T[1].s) + ' ='; $('vin2').placeholder = ph(T[1]); $('vin2').setAttribute('aria-label', 'Your value of ' + T[1].n + ' with units'); }
+}
+function renderLabTable(){
+  const st = curLab(); if (!st) return; const e = EQ[st.eq], sc = colScale(e, st), d = S.labD, order = st.iv === 'y' ? ['y', 'x'] : ['x', 'y'];
+  const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+  let h = '<caption class="sr">Measured data</caption><tr><th scope="col">Trial</th>' + order.map(k => '<th scope="col">' + esc(cap(sc[k].n)) + ' ' + runsHTML(runs({ k: 's', s: e[k].s })) + (sc[k].lab ? ' <span style="white-space:nowrap">(' + esc(sc[k].lab) + ')</span>' : '') + '</th>').join('') + '</tr>';
+  if (S.ib) h += '<tr class="pm"><td>±</td>' + order.map(k => '<td>± ' + esc(S.ibd[k]) + '</td>').join('') + '</tr>';
+  d.sx.forEach((_, i) => { h += '<tr><td>' + (i + 1) + '</td>' + order.map(k => '<td>' + (k === 'x' ? d.sx[i] : d.sy[i]) + '</td>').join('') + '</tr>'; });
+  $('labtable').innerHTML = h; $('labtext').innerHTML = st.story;
+  const nonSI = ['x', 'y'].some(k => st[k] && st[k].u);
+  $('labnote').textContent = (nonSI ? 'The graph uses SI units.' : '') + (S.ib ? (nonSI ? ' ' : '') + '± = reading uncertainty of the instrument.' : '');
+}
+function revealLab(){
+  const e = curEq(), st = curLab(), c = envOf(e, S.cv), T = targets(e), ins = ['vin', 'vin2'];
+  const s0 = e.std[0], t = transformed(P(e, s0.Y), P(e, s0.X)), f = linfit(t.H, t.V), pct = (a, b) => Math.abs(a - b) / Math.abs(b) * 100;
+  let out = '';
+  for (let i = 0; i < T.length; i++){
+    const tg = T[i], ti = tgtInfo(e, c, tg), pv = parseVal($(ins[i]).value, e, tg), pre = T.length > 1 ? tgSym(tg.s) + ': ' : '';
+    if (pv.err){ $('mresult').innerHTML = '<div class="bad">' + pre + esc(pv.err) + '</div>'; return; }
+    if (tg.u !== '°C' && cx(ti.d.slice(0, 6)) > 0 && pv.unitless){ $('mresult').innerHTML = '<div class="bad">' + pre + 'Add the units (they come from the slope’s units).</div>'; return; }
+    if (tg.u !== '°C' && !eqd(pv.d, ti.d, true)){ $('mresult').innerHTML = '<div class="bad">' + pre + 'Those units don’t match. ' + esc(plainSym(tg.s)) + ' is measured in ' + ti.u + '.</div>'; return; }
+    const fromFit = ev(PF(e, tg.find.split('=')[1]), Object.assign({}, c, { slope: f.m, icpt: f.b }));
+    const yours = pct(pv.si, ti.si), vsFit = pct(pv.si, fromFit), dataPct = pct(fromFit, ti.si), shown = v => fmt(v / ti.uf, 3) + (ti.u ? ' ' + ti.u : '');
+    const good = yours <= 3 || vsFit <= 2, cls = good ? 'ok' : vsFit <= 10 ? 'note' : 'bad';
+    out += '<div class="' + cls + '">' + pre + 'True value <b>' + shown(ti.si) + '</b>' + (st.fixed ? ' (a constant of nature)' : '') + '. Yours ' + shown(pv.si) + ': <b>' + yours.toFixed(1) + '% off</b>. ' +
+      (good ? (yours <= 3 ? 'Within 3%.' : 'Your analysis matches the data; the rest is scatter.') : vsFit <= 10 ? 'Close: recheck your slope reading.' : 'Check the step from the graph to your answer.') +
+      ' <span style="color:#4a4a4a">(The best-fit line of these data gives ' + shown(fromFit) + ', ' + dataPct.toFixed(1) + '% off.)</span></div>' + (S.ib ? ibConstHTML(e, tg, ti, c) : '');
+  }
+  out += '<div class="note"><b>Why might your value differ?</b> ' + st.err + '</div>';
+  if (S.sysOn) out += '<div class="bad"><b>Systematic error in this data set:</b> ' + st.sys.why + '. It shifts the line' + (S.missO ? ' (that’s why it misses the origin)' : '') + ' but not the slope, so the slope still gives a good value.</div>';
+  else if (S.missO) out += '<div class="note">Your line missed the origin, but this data set had no systematic error: that was unlucky scatter.</div>';
+  $('mresult').innerHTML = out; S.revealed = true; renderEqCard(); showStep('s4');
+}
+// bring a step to the top of the right panel when the panel is too short for everything
+function showStep(id){ const r = $('rp'), el = $(id), rb = r.getBoundingClientRect(), k = rb.height / (r.offsetHeight || 1) || 1; r.scrollTop += (el.getBoundingClientRect().top - rb.top) / k - 6; }
+function labNone(){
+  S.labId = null; S.lastQ = null; S.solved = null; const i = SETS.findIndex(s => s[0] === S.set), near = [];
+  for (let k = 1; k < SETS.length && near.length < 2; k++){ [i - k, i + k].forEach(j => { if (SETS[j] && setLabs(SETS[j][0]).length && near.length < 2) near.push(SETS[j]); }); }
+  $('eqtitle').textContent = 'No lab for this unit'; $('ibb').hidden = true; $('eqmath').innerHTML = '';
+  $('eqmeta').innerHTML = '<div id="labnone">This unit’s relationships are mostly straight already, so there’s no linearizing lab here. Try a nearby unit:<br>' + near.map(s => '<button type="button" data-set="' + s[0] + '">' + s[0] + ' · ' + esc(s[1]) + '</button>').join('') + '</div>';
+  [...$('eqmeta').querySelectorAll('button[data-set]')].forEach(b => b.onclick = () => selectSet(b.dataset.set));
+  ['s1', 's1done', 's2', 's3', 's4'].forEach(id => $(id).hidden = true); $('labtable').innerHTML = ''; $('labtext').textContent = ''; $('labnote').textContent = ''; ctx2($('gcv'));
 }
 
 // ================= copy table =================
 function tableText(){
-  const e = curEq(), { c, d } = curData(); const hx = plainSym(e.x.s) + ' (' + prettyU(e.x.u) + ')', hy = plainSym(e.y.s) + ' (' + prettyU(e.y.u) + ')';
+  const e = curEq(), { c, d } = curData(); let hx = plainSym(e.x.s) + ' (' + prettyU(e.x.u) + ')', hy = plainSym(e.y.s) + ' (' + prettyU(e.y.u) + ')';
+  if (isLab()){ const sc = colScale(e); hx = plainSym(e.x.s) + ' (' + sc.x.lab + ')'; hy = plainSym(e.y.s) + ' (' + sc.y.lab + ')'; }
   let A = null, B = null; if (S.solved){ A = S.solved.A; B = S.solved.B; } else { try { const a = P(e, $('ay').value), b = P(e, $('ax').value); if (!axisErr(e, a) && !axisErr(e, b)){ A = a; B = b; } } catch (er){} }
   const head = [hx, hy]; if (A){ const ub = axUnit(e, B), ua = axUnit(e, A); head.push(plain(B) + (ub ? ' (' + ub + ')' : ''), plain(A) + (ua ? ' (' + ua + ')' : '')); }
   const pe = ptEnvs(e, c, d, true), num = v => isFinite(v) ? String(+v.toPrecision(4)) : '';
-  const rows = d.x.map((x, i) => { const r = [num(x / e.x.f), num(d.y[i] / e.y.f)]; if (A) r.push(num(ev(B, pe[i])), num(ev(A, pe[i]))); return r.join('\t'); });
+  const rows = d.x.map((x, i) => { const r = isLab() ? [d.sx[i], d.sy[i]] : [num(x / e.x.f), num(d.y[i] / e.y.f)]; if (A) r.push(num(ev(B, pe[i])), num(ev(A, pe[i]))); return r.join('\t'); });
   return head.join('\t') + '\n' + rows.join('\n');
 }
 function copyTable(){
-  const txt = tableText(), ta = $('ta'), msg = $('tamsg');
+  if (!curEq()) return; const txt = tableText(), ta = $('ta'), msg = $('tamsg');
   const showBox = (m) => { ta.value = txt; ta.style.display = 'block'; msg.style.display = 'block'; msg.textContent = m; ta.focus(); ta.select(); };
   const done = () => { msg.style.display = 'block'; msg.textContent = 'Copied: paste it into a spreadsheet (Ctrl+V).'; setTimeout(() => { msg.style.display = 'none'; }, 2600); };
   const fallback = () => { ta.value = txt; ta.style.display = 'block'; ta.select(); let ok = false; try { ok = document.execCommand('copy'); } catch (er){} if (ok){ ta.style.display = 'none'; done(); } else showBox('Copy is blocked here: the table is selected, press Ctrl+C. (Esc closes this box.)'); };
@@ -1110,20 +1457,32 @@ $('ta').addEventListener('blur', () => { setTimeout(() => { if (document.activeE
 
 // ================= mode & selection =================
 function setMode(m){
-  S.mode = m; $('m-shape').setAttribute('aria-pressed', String(m === 'shape')); $('m-eq').setAttribute('aria-pressed', String(m === 'eq'));
-  $('shape').hidden = m !== 'shape'; $('eqv').hidden = m !== 'eq'; $('setsel').hidden = $('eqsel').hidden = $('mys').hidden = m !== 'eq';
-  if (m === 'shape' && !S.sh) newShape(); if (m === 'eq' && !S.eq) loadEq(SETMAP[S.set][2][0]);
-  score(); if (m === 'eq') drawEq(); else drawShape();
+  const prev = S.mode; S.mode = m; $('m-shape').setAttribute('aria-pressed', String(m === 'shape')); $('m-eq').setAttribute('aria-pressed', String(m === 'eq')); $('m-lab').setAttribute('aria-pressed', String(m === 'lab'));
+  $('shape').hidden = m !== 'shape'; $('eqv').hidden = m === 'shape'; $('setsel').hidden = $('eqsel').hidden = m === 'shape'; $('mys').hidden = m !== 'eq';
+  if (m === 'shape' && !S.sh) newShape();
+  if (m === 'eq'){ fillEqs(); const ids = SETMAP[S.set][2]; if (!S.eq || !ids.includes(S.eq)) S.eq = null; const want = S.eq || ids[0]; $('eqsel').value = want; if (S.lastQ !== 'eq' || !S.eq) loadEq(want); }
+  if (m === 'lab'){ fillEqs(); const L = setLabs(S.set); if (!L.find(l => l.id === S.labId)){ S.labId = null; S.lastQ = null; }
+    if (!L.length) labNone(); else { const want = S.labId || L[0].id; $('eqsel').value = want; if (S.lastQ !== 'lab') loadLab(want); } }
+  if (m !== 'shape'){ layoutLeft(); renderIbRow(); }
+  score(); if (m === 'shape') drawShape(); else if (curEq()) drawEq();
+  void prev;
 }
 function fillSets(){ $('setsel').innerHTML = SETS.map(s => '<option value="' + s[0] + '">' + s[0] + ' · ' + esc(s[1]) + '</option>').join(''); $('setsel').value = S.set; }
-function fillEqs(){ const s = SETMAP[S.set]; $('eqsel').innerHTML = s[2].map(id => '<option value="' + id + '">' + esc(EQ[id].title) + (EQ[id].ib ? ' · IB' : '') + '</option>').join(''); }
-function selectSet(id, toEq){ if (!SETMAP[id]) return false; S.set = id; fillSets(); fillEqs(); const first = SETMAP[id][2][0]; $('eqsel').value = first; loadEq(first); if (toEq) setMode('eq'); return true; }
-$('m-shape').onclick = () => setMode('shape'); $('m-eq').onclick = () => setMode('eq');
+function fillEqs(){ const s = SETMAP[S.set];
+  if (isLab()){ const L = setLabs(S.set); $('eqsel').innerHTML = L.length ? L.map(l => '<option value="' + l.id + '">' + esc(l.title) + (EQ[l.eq].ib ? ' · IB' : '') + '</option>').join('') : '<option value="">No lab for this unit</option>'; $('eqsel').setAttribute('aria-label', 'Lab'); return; }
+  $('eqsel').setAttribute('aria-label', 'Equation');
+  $('eqsel').innerHTML = s[2].map(id => '<option value="' + id + '">' + esc(EQ[id].title) + (EQ[id].ib ? ' · IB' : '') + '</option>').join(''); }
+function selectSet(id, toEq){ if (!SETMAP[id]) return false; S.set = id; fillSets(); fillEqs();
+  if (isLab()){ const L = setLabs(id); if (L.length){ $('eqsel').value = L[0].id; loadLab(L[0].id); } else labNone(); return true; }
+  const first = SETMAP[id][2][0]; $('eqsel').value = first; loadEq(first); if (toEq) setMode('eq'); return true; }
+$('m-shape').onclick = () => setMode('shape'); $('m-eq').onclick = () => setMode('eq'); $('m-lab').onclick = () => setMode('lab');
 $('setsel').onchange = () => selectSet($('setsel').value);
-$('eqsel').onchange = () => loadEq($('eqsel').value);
+$('eqsel').onchange = () => { if (isLab()){ if (LAB[$('eqsel').value]) loadLab($('eqsel').value); } else loadEq($('eqsel').value); };
 $('mys').onclick = () => { S.mys = !S.mys; $('mys').setAttribute('aria-pressed', String(S.mys)); loadEq(S.eq); };
-$('newm').onclick = () => loadEq(S.eq);
-$('reveal').onclick = reveal; $('vin').addEventListener('keydown', ev2 => { if (ev2.key === 'Enter') reveal(); });
+$('newm').onclick = () => { if (isLab()) loadLab(S.labId); else loadEq(S.eq); };
+$('labnew').onclick = () => { loadLab(S.labId); $('labnew').focus(); };
+$('ibchk').onchange = () => { S.ib = $('ibchk').checked; layoutLeft(); renderIbRow(); if (isLab()) renderLabTable(); drawEq(); refreshFit(); };
+$('reveal').onclick = reveal; ['vin','vin2'].forEach(id => $(id).addEventListener('keydown', ev2 => { if (ev2.key === 'Enter') reveal(); }));
 $('chk').onclick = check1; ['ay','ax'].forEach(id => { $(id).addEventListener('keydown', ev2 => { if (ev2.key === 'Enter') check1(); }); $(id).addEventListener('focus', () => S.lastBox = id); });
 $('mchk').onclick = check3; ['by','bm','bx','bb'].forEach(id => $(id).addEventListener('keydown', ev2 => { if (ev2.key === 'Enter') check3(); }));
 $('stdbtn').onclick = () => { const e = curEq(); $('ay').value = plain(P(e, e.std[0].Y)); $('ax').value = plain(P(e, e.std[0].X)); $('chk').focus(); };
@@ -1138,17 +1497,21 @@ document.addEventListener('keydown', ev2 => {
   const n = +ev2.key; if (n >= 1 && n <= 6 && S.sh && !S.sh.answered){ answerShape(SH[n - 1].id); ev2.preventDefault(); }
   else if ((ev2.key === 'n' || ev2.key === 'N') && S.sh && S.sh.answered){ $('snext').click(); }
 });
-function applySel(v){ if (typeof v !== 'string') return; if (selectSet(v, true)) return; if (EQ[v]){ const st = SETS.find(s => s[2].includes(v)); if (st){ S.set = st[0]; fillSets(); fillEqs(); } $('eqsel').value = v; loadEq(v); setMode('eq'); return; }
+function setIB(on){ on = !!on && on !== '0' && on !== 'false'; if (on && S.mode === 'shape') setMode('eq'); if (S.ib === on) return; $('ibchk').checked = on; $('ibchk').onchange(); }
+function openLab(id){ const st = SETS.find(s => s[2].includes(LAB[id].eq) && s[0] === S.set) || SETS.find(s => s[2].includes(LAB[id].eq)); S.set = st[0]; S.labId = id; S.lastQ = null; S.mode = 'lab'; fillSets(); setMode('lab'); }
+function applySel(v){ if (typeof v !== 'string') return; if (LAB[v]){ openLab(v); return; } if (/^lab$/i.test(v)){ setMode('lab'); return; }
+  if (selectSet(v, true)) return; if (EQ[v]){ const st = SETS.find(s => s[2].includes(v)); if (st){ S.set = st[0]; fillSets(); fillEqs(); } $('eqsel').value = v; loadEq(v); setMode('eq'); return; }
   if (/shape/i.test(v)) setMode('shape'); else if (/myst/i.test(v)){ if (!S.mys) $('mys').click(); setMode('eq'); } else if (/equation|eq/i.test(v)){ if (S.mys) $('mys').click(); setMode('eq'); } }
-addEventListener('message', m => { const d = m.data; if (!d || typeof d !== 'object') return; try { if (d.set) selectSet(String(d.set), true); if (d.eq) applySel(String(d.eq)); if (d.select) applySel(String(d.select)); } catch (er){} });
+addEventListener('message', m => { const d = m.data; if (!d || typeof d !== 'object') return; try { if (d.set) selectSet(String(d.set), true); if (d.eq) applySel(String(d.eq)); if (d.select) applySel(String(d.select)); if (d.mode) applySel(String(d.mode)); if (d.lab) applySel(String(d.lab)); if ('ib' in d) setIB(d.ib); } catch (er){} });
 function fromHash(){ const h = (location.hash || '').slice(1); if (!h) return; const q = {}; h.split('&').forEach(p => { const [k, v] = p.split('='); if (k) q[decodeURIComponent(k)] = decodeURIComponent(v || ''); });
-  if (q.set) selectSet(q.set, true); if (q.eq) applySel(q.eq); if (q.mode) applySel(q.mode); }
+  if (q.set) selectSet(q.set, true); if (q.eq) applySel(q.eq); if (q.mode) applySel(q.mode); if (q.lab) applySel(q.lab); if ('ib' in q) setIB(q.ib === '' ? '1' : q.ib); }
 
 fillSets(); fillEqs(); S.eq = null;
 newShape(); setMode('shape'); fromHash(); addEventListener('hashchange', fromHash);
 (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(() => { if (S.mode === 'eq') drawEq(); else drawShape(); });
 // hooks for automated checks
-window.__GL = { EQS, EQ, SETS, P, PF, ev, dims, syms, parseUnit, niceUnit, envOf, gen, linfit, linTest, checkAxes, rawShape, fairShape, shapeFits, tableText, S, plain, envs, trueLine, tgtInfo, parseVal };
+window.__GL = { EQS, EQ, SETS, P, PF, ev, dims, syms, parseUnit, niceUnit, envOf, gen, linfit, linTest, checkAxes, rawShape, fairShape, shapeFits, tableText, S, plain, envs, trueLine, tgtInfo, parseVal,
+  LABS, LAB, setLabs, labGen, loadLab, ibCalc, ibConst, mmLines, bRange, hitsAll, colScale, targets, pmStr, curEq, curData, setMode, stdMatch };
 })();
 </script>
 </body></html>
