@@ -142,6 +142,8 @@ textarea#ta{position:absolute;left:12px;right:12px;bottom:12px;height:180px;font
 #labnone button{margin:6px 6px 0 0;font-size:13px;padding:4px 9px}
 .mrow label{font:700 13px "IBM Plex Mono",monospace;white-space:nowrap}
 .mrow button{white-space:nowrap;flex:none}
+.ok math,.note math,.bad math{font-size:1.12em}
+.ok mfrac,.note mfrac{math-style:normal}
 </style></head><body>
 <div id="app">
   <div id="bar">
@@ -1019,7 +1021,7 @@ function curEq(){ return isLab() ? (curLab() ? EQ[curLab().eq] : null) : EQ[S.eq
 function loadEq(id, keepMys){
   if (isLab()) S.mode = 'eq';   // an equation link while in Lab mode: setMode('eq') follows and fixes the buttons
   S.eq = id; S.lastQ = 'eq'; const e = curEq(); S.cv = {}; e.K.forEach(k => S.cv[k.s] = k.v); newZ(); S.sys = false; resetSolve();
-  if (S.mys) setupMystery(); else S.hidden = null;
+  if (S.mys) setupMystery(); else { S.hidden = null; randTarget(); }   // Equation mode too: the unknown starts at a random value, shown as ? until Reveal
   S.hid = new Set(S.mys ? [S.hidden] : []);
   if (S.mys && S.scat < 3) S.scat = 3;
   S.ibd = defUnc(e);
@@ -1029,9 +1031,9 @@ function resetSolve(){ S.tries = 0; S.solved = null; S.view = 'raw'; S.map = nul
   ['ay','ax','by','bm','bx','bb','vin','vin2'].forEach(id => { $(id).value = ''; $(id).classList.remove('good', 'badx'); });
   $('fb1').innerHTML = ''; $('fb3').innerHTML = ''; $('s3').classList.remove('done'); $('mresult').innerHTML = ''; $('chips').hidden = true; $('stdbtn').hidden = true;
   $('s1').hidden = false; $('s1done').hidden = true; $('s2').hidden = true; $('s3').hidden = true; $('s4').hidden = true; viewBtns(); }
-function setupMystery(){ const e = curEq(); S.revealed = false;
-  if (!e.fixedTarget){ const k = e.K.find(q => q.role === 't'); const n = Math.round((k.max - k.min) / k.step); let v; do { v = +(k.min + k.step * ri(n + 1)).toFixed(6); } while (Math.abs(v - k.v) < 1e-9 && n > 2); S.cv[k.s] = v; }
-  S.hidden = e.target.s; }
+function randTarget(){ const e = curEq();
+  if (!e.fixedTarget){ const k = e.K.find(q => q.role === 't'); const n = Math.round((k.max - k.min) / k.step); let v; do { v = +(k.min + k.step * ri(n + 1)).toFixed(6); } while (Math.abs(v - k.v) < 1e-9 && n > 2); S.cv[k.s] = v; } }
+function setupMystery(){ const e = curEq(); S.revealed = false; randTarget(); S.hidden = e.target.s; }
 function tgtInfo(e, c, tg){ // SI value of the unknown and how to show it
   tg = tg || e.target; const k = e.K.find(q => q.s === tg.s);
   if (k) return { si: c[k.s], disp: c[k.s] / k.uf, u: prettyU(k.u), d: k.d, uf: k.uf };
@@ -1046,16 +1048,16 @@ const tgSym = s => s === 'e/me' ? '<i>e</i>/<i>m</i>' : runsHTML(runs({ k: 's', 
 function valStr(k, v){ return fmt(v * 10 ** k.exp) + (k.u ? ' ' + prettyU(k.u) : ''); }
 function renderEqCard(){
   const e = curEq(); if (isLab()) return renderLabCard(e);
-  $('eqtitle').textContent = e.title; $('ibb').hidden = !e.ib; $('vl1').hidden = true; $('vrow2').hidden = true; $('newm').textContent = 'New mystery';
+  $('eqtitle').textContent = e.title; $('ibb').hidden = !e.ib; $('vl1').hidden = true; $('vrow2').hidden = true; $('newm').textContent = S.mys ? 'New mystery' : 'New data';
   const [l, r] = e.eqs.split('='); $('eqmath').innerHTML = math(mml(dnorm(PF(e, l))) + '<mo>=</mo>' + mml(dnorm(PF(e, r))));
   const sy = s => runsHTML(runs({ k: 's', s }));
   let h = '<div><span class="k">You measure</span> ' + sy(e.x.s) + ' (' + esc(e.x.n) + ', ' + prettyU(e.x.u) + ') and ' + sy(e.y.s) + ' (' + esc(e.y.n) + ', ' + prettyU(e.y.u) + ').</div>';
-  const known = e.uses.filter(s => !(S.mys && s === e.target.s)).map(s => sy(s) + ' = ' + (GC[s].show || fmt(GC[s].v)) + ' ' + prettyU(GC[s].u));
-  e.K.filter(k => k.role === 'k' || (k.role === 'T' && !S.mys)).forEach(k => known.push(sy(k.s) + ' = ' + valStr(k, S.cv[k.s])));
+  const known = e.uses.filter(s => !(s === e.target.s && !S.revealed)).map(s => sy(s) + ' = ' + (GC[s].show || fmt(GC[s].v)) + ' ' + prettyU(GC[s].u));
+  e.K.filter(k => k.role === 'k' || (k.role === 'T' && S.revealed)).forEach(k => known.push(sy(k.s) + ' = ' + valStr(k, S.cv[k.s])));
   if (known.length) h += '<div><span class="k">Known:</span> ' + known.join(' · ') + '</div>';
-  if (S.mys){ h += '<div><span class="k">Unknown:</span> <b>' + (e.target.s === 'e/me' ? '<i>e</i>/<i>m</i>' : sy(e.target.s)) + ' = ?</b>' + (e.fixedTarget ? ' <span class="k">(a constant of nature: same every time)</span>' : '') + '</div>'; }
+  if (!S.revealed || S.mys){ h += '<div><span class="k">Unknown:</span> <b>' + (e.target.s === 'e/me' ? '<i>e</i>/<i>m</i>' : sy(e.target.s)) + ' = ?</b>' + (e.fixedTarget ? ' <span class="k">(a constant of nature: same every time)</span>' : '') + '</div>'; }
   $('eqmeta').innerHTML = h;
-  $('s4h').innerHTML = '3 · Mystery: find ' + (e.target.s === 'e/me' ? '<i>e</i>/<i>m</i>' : sy(e.target.s)) + ' (with units)';
+  $('s4h').innerHTML = '3 · ' + (S.mys ? 'Mystery: find ' : 'Find ') + (e.target.s === 'e/me' ? '<i>e</i>/<i>m</i>' : sy(e.target.s)) + ' (with units)';
   $('vin').placeholder = 'e.g. ' + (e.target.u ? '1.23 ' + prettyU(e.target.u) : '0.42');
 }
 function renderCtl(){
@@ -1066,7 +1068,7 @@ function renderCtl(){
     if (S.mys && k.s === S.hidden){ w.innerHTML = '<span class="nm" title="Hidden: find it from your graph">' + nm + '</span><span class="val">?</span>'; c.appendChild(w); return; }
     if (S.mys){ w.className = 'fixed'; w.innerHTML = nm + ' = <b>' + valStr(k, S.cv[k.s]) + '</b>'; c.appendChild(w); return; }
     w.innerHTML = '<span class="nm" title="' + esc(k.n) + '">' + nm + '</span><span class="val" id="val-' + k.s + '"></span><input type="range" min="' + k.min + '" max="' + k.max + '" step="' + k.step + '" value="' + S.cv[k.s] + '" aria-label="' + esc(k.n) + '">';
-    const r = w.querySelector('input'); r.oninput = () => { S.cv[k.s] = +r.value; showVals(); drawEq(); refreshFit(); }; c.appendChild(w);
+    const r = w.querySelector('input'); r.oninput = () => { S.cv[k.s] = +r.value; if (k.s === e.target.s && S.revealed){ S.revealed = false; $('mresult').innerHTML = ''; $('vin').value = ''; renderEqCard(); } showVals(); drawEq(); refreshFit(); }; c.appendChild(w);
   });
   const w = document.createElement('div'); w.className = 'sl';
   w.innerHTML = '<span class="nm">Measurement scatter</span><span class="val" id="val-scat"></span><input type="range" id="scat" min="' + (S.mys ? 3 : 0) + '" max="10" step="0.5" value="' + S.scat + '" aria-label="Measurement scatter (percent)">';
@@ -1078,7 +1080,7 @@ function renderCtl(){
   if ($('sysb')) $('sysb').onchange = () => { S.sys = $('sysb').checked; drawEq(); refreshFit(); };
   showVals();
 }
-function showVals(){ const e = curEq(); e.K.forEach(k => { const el = $('val-' + k.s); if (el) el.textContent = valStr(k, S.cv[k.s]); }); $('val-scat').textContent = '±' + S.scat + '%'; }
+function showVals(){ const e = curEq(); e.K.forEach(k => { const el = $('val-' + k.s); if (el) el.textContent = (k.s === e.target.s && !S.revealed && !isLab()) ? '?' : valStr(k, S.cv[k.s]); }); $('val-scat').textContent = '±' + S.scat + '%'; }
 function curData(){ const e = curEq(), c = envOf(e, S.cv); return { e, c, d: isLab() ? S.labD : gen(e, c, S.zs, S.scat / 100, S.sys) }; }
 function transformed(A, B){ const { e, c, d } = curData(); const pe = ptEnvs(e, c, d, true); return { V: pe.map(p => ev(A, p)), H: pe.map(p => ev(B, p)), d, e, c }; }
 function viewBtns(){ $('v-raw').setAttribute('aria-pressed', String(S.view === 'raw')); $('v-lin').setAttribute('aria-pressed', String(S.view === 'lin')); $('v-lin').disabled = !S.solved; }
@@ -1168,7 +1170,7 @@ function check1(){
   $('s1done').innerHTML = '<span class="tick">✓</span> Straight line: <b>' + runsHTML(runs(dnorm(r.A))) + '</b> vs <b>' + runsHTML(runs(dnorm(r.B))) + '</b>' + (raw ? ' <span class="hint">(the raw data were already straight)</span>' : '') + ' <button type="button" class="link" id="redo">change</button>';
   $('redo').onclick = () => { S.solved = null; S.view = 'raw'; $('s1').hidden = false; $('s1done').hidden = true; $('s2').hidden = true; $('s3').hidden = true; $('s4').hidden = true; viewBtns(); drawEq(); $('ay').focus(); };
   $('s3').classList.remove('done'); $('by').value = plain(r.A); $('bx').value = plain(r.B); ['by','bm','bx','bb'].forEach(id => $(id).classList.remove('good', 'badx')); $('fb3').innerHTML = '';
-  $('s3').hidden = false; $('s4').hidden = !hideMode();
+  $('s3').hidden = false; $('s4').hidden = false;
   if (isLab() && !S.eqShown){ S.eqShown = true; renderEqCard(); }
   refreshFit();
   S.view = 'lin'; viewBtns(); animate(); $('bm').focus();
@@ -1205,14 +1207,20 @@ function check3(){
   const sv = { A: r.A, B: r.B }, mt = stdMatch(e, sv); let msg = '<b>Yes.</b> ';
   const fm = ast => math(mml(dnorm(ast)));
   if (mt){ const fi = mt.s.find.split('='); const lhs = PF(e, fi[0]), rhs = PF(e, fi[1]);
-    msg += mt.flip ? 'You plotted it the other way round, so your slope is 1 ÷ (' + fm(PF(e, mt.s.m)) + '). Flip it back first: use 1/slope where the usual method uses slope, ' + fm(lhs) + ' = ' + fm(rhs) + '.'
-                   : 'slope = ' + fm(PF(e, mt.s.m)) + (mt.s.b !== '0' ? ' and intercept = ' + fm(PF(e, mt.s.b)) : '') + ', so ' + fm(lhs) + ' = ' + fm(rhs) + '.'; }
-  else { const s0 = e.std[0], fi = s0.find.split('='); msg += 'That works. (The usual way: plot ' + fm(P(e, s0.Y)) + ' vs ' + fm(P(e, s0.X)) + ', then ' + fm(PF(e, fi[0])) + ' = ' + fm(PF(e, fi[1])) + '.)'; }
+    msg += mt.flip ? 'You plotted it the other way round, so your slope = 1 ÷ (' + fm(PF(e, mt.s.m)) + ').'
+                   : 'slope = ' + fm(PF(e, mt.s.m)) + (mt.s.b !== '0' ? ' and intercept = ' + fm(PF(e, mt.s.b)) : '') + '.';
+    void lhs; void rhs; }
+  else { const s0 = e.std[0]; msg += 'That works. (The usual way: plot ' + fm(P(e, s0.Y)) + ' vs ' + fm(P(e, s0.X)) + '.)'; }
+  msg += ' Now solve that for ' + targets(e).map(t => tgSym(t.s)).join(' and ') + ' and use your slope' + (targets(e).some(t => /icpt/.test(t.find || '')) ? ' and intercept' : '') + ' (step 3).';
   S.map = true; $('s3').classList.add('done'); $('fb3').innerHTML = '<div class="ok">' + msg + '</div>';
   if (S.ib && !hideMode()) refreshFit();
-  if (hideMode()){ $('vin').focus(); showStep('s3'); }
+  $('vin').focus(); showStep('s3');
 }
 // ---- mystery
+// after Reveal: the algebra from the graph to the unknown (standard axes)
+function solveHTML(e, T){ const s0 = e.std[0], fm = ast => math(mml(dnorm(ast)));
+  return '<div class="note"><b>How to solve it:</b> on ' + fm(P(e, s0.Y)) + ' vs ' + fm(P(e, s0.X)) + ', slope = ' + fm(PF(e, s0.m)) + (s0.b !== '0' ? ' and intercept = ' + fm(PF(e, s0.b)) : '') + ', so ' +
+    T.map(t => { const fi = (t.find || s0.find).split('='); return fm(PF(e, fi[0])) + ' = ' + fm(PF(e, fi[1])); }).join(' and ') + '.</div>'; }
 function parseVal(str, e, tg){
   tg = tg || e.target; let s = String(str).trim().replace(/µ/g, 'μ').replace(/−/g, '-').replace(/,/g, '');
   s = s.replace(/\s*[×xX*]\s*10\s*\^?\s*\(?\s*([-+]?\d+)\s*\)?/, 'e$1').replace(/\s*[×xX*]\s*10([⁻]?[⁰¹²³⁴⁵⁶⁷⁸⁹]+)/, (m, p) => 'e' + [...p].map(c => SUPMAP[c]).join(''));
@@ -1239,8 +1247,8 @@ function reveal(){
   $('mresult').innerHTML = '<div class="' + cls + '">True value <b>' + shown(ti.si) + '</b>. Yours ' + shown(pv.si) + ': <b>' + yours.toFixed(1) + '% off</b>. ' +
     (good ? (yours <= 3 ? 'Within 3%.' : 'Your analysis matches the data; the rest is scatter.') : vsFit <= 10 ? 'Close: recheck your slope reading.' : 'Check the step from slope to answer.') +
     ' <span style="color:#4a4a4a">(Best fit of these points: ' + shown(fromFit) + ', ' + dataPct.toFixed(1) + '% off.)</span></div>' +
-    (S.ib ? ibConstHTML(e, targets(e)[0], ti, c) : '');
-  S.revealed = true; renderCtl(); renderEqCard(); showStep('s4');
+    (S.ib ? ibConstHTML(e, targets(e)[0], ti, c) : '') + solveHTML(e, targets(e));
+  S.revealed = true; renderCtl(); renderEqCard(); showVals(); showStep('s4');
   const k = e.K.find(q => q.s === S.hidden); if (k){ const el = [...$('ctl').children].find(x => x.querySelector('.val') && x.querySelector('.val').textContent === '?'); if (el) el.querySelector('.val').textContent = valStr(k, S.cv[k.s]); }
 }
 
@@ -1291,7 +1299,12 @@ function hitsAll(l, pts){ const r = bRange(l.m, pts), tol = 1e-9 * spanY(pts); r
 function extremes(pts, best){
   const xs = pts.map(p => p.x), spanX = Math.max(...xs) - Math.min(...xs) || 1, sy = spanY(pts);
   const K = 50 * sy / spanX; let seed = null;
-  if (mmOK(best.m, pts)) seed = best.m; else { for (let i = 0; i <= 4000 && seed === null; i++){ const m = best.m + (i % 2 ? 1 : -1) * Math.ceil(i / 2) * K / 2000; if (mmOK(m, pts)) seed = m; } }
+  if (mmOK(best.m, pts)) seed = best.m;
+  else { // the room left for the intercept, hi(m) − lo(m), is concave in m, so a ternary search finds its peak exactly (a fixed-step scan can step over a narrow window)
+    const room = m => { const r = bRange(m, pts); return r[1] - r[0]; };
+    let lo = best.m - K, hi = best.m + K;
+    for (let i = 0; i < 200; i++){ const m1 = lo + (hi - lo) / 3, m2 = hi - (hi - lo) / 3; if (room(m1) < room(m2)) lo = m1; else hi = m2; }
+    const m = (lo + hi) / 2; if (mmOK(m, pts)) seed = m; }
   if (seed === null) return null;
   const edge = dir => { let a = seed, step = sy / spanX / 100 || 1e-6, b = seed + dir * step, guard = 0;
     while (mmOK(b, pts) && guard++ < 200){ a = b; step *= 2; b = seed + dir * step; if (Math.abs(b - seed) > 1e6 * (Math.abs(seed) + 1)) return a; }
@@ -1422,7 +1435,7 @@ function revealLab(){
   out += '<div class="note"><b>Why might your value differ?</b> ' + st.err + '</div>';
   if (S.sysOn) out += '<div class="bad"><b>Systematic error in this data set:</b> ' + st.sys.why + '. It shifts the line' + (S.missO ? ' (that’s why it misses the origin)' : '') + ' but not the slope, so the slope still gives a good value.</div>';
   else if (S.missO) out += '<div class="note">Your line missed the origin, but this data set had no systematic error: that was unlucky scatter.</div>';
-  $('mresult').innerHTML = out; S.revealed = true; renderEqCard(); showStep('s4');
+  $('mresult').innerHTML = out + solveHTML(e, T); S.revealed = true; renderEqCard(); showStep('s4');
 }
 // bring a step to the top of the right panel when the panel is too short for everything
 function showStep(id){ const r = $('rp'), el = $(id), rb = r.getBoundingClientRect(), k = rb.height / (r.offsetHeight || 1) || 1; r.scrollTop += (el.getBoundingClientRect().top - rb.top) / k - 6; }
