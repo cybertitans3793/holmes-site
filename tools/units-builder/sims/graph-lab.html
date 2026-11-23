@@ -144,6 +144,11 @@ textarea#ta{position:absolute;left:12px;right:12px;bottom:12px;height:180px;font
 .mrow button{white-space:nowrap;flex:none}
 .ok math,.note math,.bad math{font-size:1.12em}
 .ok mfrac,.note mfrac{math-style:normal}
+#sympal{display:flex;flex-wrap:wrap;gap:4px;margin:5px 0 2px;align-items:center}
+#sympal .k{font:600 11px var(--f-mono,'IBM Plex Mono',monospace);color:#6a6a6a;margin-right:2px}
+#sympal button{font:600 13px 'IBM Plex Mono',monospace;padding:1px 7px;min-width:28px;border:1.5px solid #111;background:#fff;color:#111;cursor:pointer;line-height:1.5}
+#sympal button:hover{background:#ffe2d3}
+#sympal button:focus-visible{outline:3px solid #ff6a2b;outline-offset:1px}
 </style></head><body>
 <div id="app">
   <div id="bar">
@@ -272,8 +277,14 @@ const PFX = { p:1e-12, n:1e-9, 'μ':1e-6, u:1e-6, m:1e-3, c:1e-2, k:1e3, M:1e6, 
 function seg(name){ const u = unitTok(name); if (u) return [u]; for (let L = name.length - 1; L >= 1; L--){ const a = unitTok(name.slice(0, L)); if (a){ const r = seg(name.slice(L)); if (r) return [a].concat(r); } } return null; }
 function unitTok(name){ if (UB[name]) return UB[name]; if (name.length > 1 && PFX[name[0]] && UB[name.slice(1)] && name.slice(1) !== 'kg') { const b = UB[name.slice(1)]; return [b[0], b[1] * PFX[name[0]]]; } return null; }
 const SUPMAP = { '⁰':'0','¹':'1','²':'2','³':'3','⁴':'4','⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9','⁻':'-' };
+const UWORDS = [[/micro ?teslas?/gi,'μT'],[/electron ?volts?/gi,'eV'],[/kilo ?pascals?/gi,'kPa'],[/kilo ?grams?|kilos?\b/gi,'kg'],[/newtons?/gi,'N'],[/joules?/gi,'J'],[/watts?/gi,'W'],[/volts?/gi,'V'],
+  [/amperes?|amps?\b/gi,'A'],[/coulombs?/gi,'C'],[/teslas?/gi,'T'],[/kelvins?/gi,'K'],[/pascals?/gi,'Pa'],[/ohms?/gi,'Ω'],[/metres?|meters?/gi,'m'],[/seconds?|secs?\b/gi,'s'],[/grams?/gi,'g'],
+  [/hertz/gi,'Hz'],[/farads?/gi,'F'],[/deg(?:rees?)? ?C\b|celsius/gi,'°C'],[/deg(?:rees?)?\b/gi,'°'],[/litres?|liters?/gi,'L'],[/moles?\b/gi,'mol']];
 function parseUnit(str){
-  let s = String(str || '').replace(/µ/g, 'μ').replace(/[⁻]?[⁰¹²³⁴⁵⁶⁷⁸⁹]+/g, m => '^' + [...m].map(c => SUPMAP[c]).join('')).replace(/[·⋅×*.]/g, '*').replace(/−/g, '-').trim();
+  let s0 = String(str || ''); UWORDS.forEach(([re, to]) => { s0 = s0.replace(re, to); });
+  s0 = s0.replace(/ms(?=\^?\s*[-−⁻]\s*\d)/g, 'm s');                       // "ms^-2" / "ms-2" means m·s⁻², not milliseconds
+  s0 = s0.replace(/([A-Za-zΩμ°])(-?\d+)(?![\d.]*\s*[A-Za-z]?\d)/g, '$1^$2'); // "m/s2", "kg/m3", "s-2" → exponents
+  let s = s0.replace(/µ/g, 'μ').replace(/[⁻]?[⁰¹²³⁴⁵⁶⁷⁸⁹]+/g, m => '^' + [...m].map(c => SUPMAP[c]).join('')).replace(/[·⋅×*.]/g, '*').replace(/−/g, '-').trim();
   if (!s) return { d: Z(), f: 1 };
   const T = []; let i = 0;
   while (i < s.length){ const c = s[i];
@@ -326,7 +337,7 @@ function norm(s){
   s = String(s).replace(/µ/g, 'μ').replace(/ϵ/g, 'ε').replace(/ϑ/g, 'θ');
   s = s.replace(/[⁻]?[⁰¹²³⁴⁵⁶⁷⁸⁹]+/g, m => '^(' + [...m].map(c => SUPMAP[c]).join('') + ')');
   s = s.replace(/[₀₁₂₃₄₅₆₇₈₉ₒᵢₛₑₖₙₘₚₜₓᵣₐₕₗ]/g, c => SUBMAP[c]);
-  s = s.replace(/\*\*/g, '^').replace(/[·×∙⋅•]/g, '*').replace(/[−–—]/g, '-').replace(/÷/g, '/').replace(/√/g, 'sqrt').replace(/½/g, '(1/2)').replace(/¼/g, '(1/4)').replace(/[_'′’]/g, '').replace(/\s+/g, ' ').trim();
+  s = s.replace(/\*\*/g, '^').replace(/[·×∙⋅•]/g, '*').replace(/[−–—]/g, '-').replace(/÷/g, '/').replace(/√/g, 'sqrt').replace(/½/g, '(1/2)').replace(/¼/g, '(1/4)').replace(/[_'′’]/g, '').replace(/[\[{]/g, '(').replace(/[\]}]/g, ')').replace(/\s+/g, ' ').trim();
   return s;
 }
 const FUN = ['sqrt','sin','cos','tan','csc','sec','cot'];
@@ -341,6 +352,9 @@ function lex(s, names, keys){
     const low = s.slice(i).toLowerCase(), f = FUN.find(fn => low.startsWith(fn)), k = keys.find(a => s.startsWith(a, i));
     if (f && (!k || f.length >= k.length)){ T.push({ t: 'f', v: f, p: i }); i += f.length; continue; }
     if (k){ T.push({ t: 's', v: names.get(k), p: i }); i += k.length; continue; }
+    { const lw = s.slice(i).toLowerCase(), cand = keys.filter(a => lw.startsWith(a.toLowerCase()));
+      if (cand.length){ const L = Math.max(...cand.map(a => a.length)), top = [...new Set(cand.filter(a => a.length === L).map(a => names.get(a)))];
+        if (top.length === 1){ T.push({ t: 's', v: top[0], p: i }); i += L; continue; } } }   // wrong case but only one quantity it could mean (fb → Fb); m vs M stays strict
     const bad = (s.slice(i).match(/^[^\s\d+\-*/^()]+/) || [c])[0];
     throw new XErr('“' + bad + '” isn’t one of the quantities here. You can use: ' + typeHint(names) + '.');
   }
@@ -743,6 +757,8 @@ const setLabs = id => { const s = SETMAP[id]; return s ? s[2].map(eq => LABS.fil
 const SUBU = { '0':'₀','1':'₁','2':'₂','3':'₃','i':'ᵢ','f':'f','e':'ₑ','s':'ₛ' };
 function aliasesOf(name){ const out = []; const ch = name[0], rest = name.slice(1);
   if (GREEK[ch]) GREEK[ch].forEach(w => out.push(w + rest)); if (ch === 'μ' && name.length > 1) out.push('u' + rest);
+  if (/o$/.test(name) && name.length > 1) out.push(name.slice(0, -1) + '0');   // s_o typed as s0
+  if (ch === 'λ') out.push('lamda' + rest); if (ch === 'μ') out.push('u' + rest);
   if (ch === 'Δ' && rest){ out.push('delta ' + rest, 'Δ ' + rest, 'change in ' + rest, rest); }   // Δt: also dt, delta t, and plain t (only if t isn't its own quantity here)
   if (/^[A-Za-zα-ω]\w+$/.test(name) && rest.length <= 2 && !GREEK[ch]){ out.push(ch + '_' + rest); if ([...rest].every(c => SUBU[c])) out.push(ch + [...rest].map(c => SUBU[c]).join('')); }   // v_i, vᵢ, m₁
   return out; }
@@ -1532,6 +1548,22 @@ fillSets(); fillEqs(); S.eq = null;
 newShape(); setMode('shape'); fromHash(); addEventListener('hashchange', fromHash);
 (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(() => { if (S.mode === 'eq') drawEq(); else drawShape(); });
 // hooks for automated checks
+
+// ---- symbol buttons: the hard-to-type quantities for this equation (Δt, θ₁, μ₀ …) plus π, ², √. They insert at the cursor of the box you're in.
+const PAL = (() => { const box = document.createElement('div'); box.id = 'sympal'; box.setAttribute('role', 'group'); box.setAttribute('aria-label', 'Insert a symbol'); box.hidden = true; return box; })();
+let palFor = null;
+const prettySym = n => { if (n[0] === 'Δ' || n.length === 1) return n; const ch = n[0], rest = n.slice(1); return ch + '<sub>' + rest + '</sub>'; };
+const hardSym = n => /[^\x00-\x7F]/.test(n) || n.length > 1;   // Greek, Δ, or has a subscript
+function buildPal(forUnits){ const e = curEq(); PAL.innerHTML = '';
+  const items = forUnits ? [['Ω','Ω'],['μ','μ'],['°','°'],['²','^2'],['³','^3'],['⁻¹','^-1'],['·','*']]
+    : (e ? (e.names.show || []).filter(hardSym).map(n => [prettySym(n), n]) : []).concat([['π','π'],['²','^2'],['√','sqrt('],['(','('],[')',')']]);
+  const k = document.createElement('span'); k.className = 'k'; k.textContent = forUnits ? 'units:' : 'insert:'; PAL.appendChild(k);
+  items.forEach(([lab, ins]) => { const b = document.createElement('button'); b.type = 'button'; b.innerHTML = lab; b.title = 'insert ' + ins; b.setAttribute('aria-label', 'insert ' + ins);
+    b.addEventListener('mousedown', ev => ev.preventDefault());   // keep the cursor in the box
+    b.onclick = () => { const el = palFor; if (!el) return; const a = el.selectionStart ?? el.value.length, z = el.selectionEnd ?? a; el.value = el.value.slice(0, a) + ins + el.value.slice(z); el.focus(); el.setSelectionRange(a + ins.length, a + ins.length); el.dispatchEvent(new Event('input', { bubbles: true })); };
+    PAL.appendChild(b); }); }
+['ay','ax','by','bm','bx','bb','vin','vin2'].forEach(id => { const el = $(id); if (!el) return;
+  el.addEventListener('focus', () => { palFor = el; buildPal(id === 'vin' || id === 'vin2'); const row = el.closest('.mrow') || el.parentNode; if (PAL.previousElementSibling !== row) row.after(PAL); PAL.hidden = false; }); });
 window.__GL = { EQS, EQ, SETS, P, PF, ev, dims, syms, parseUnit, niceUnit, envOf, gen, linfit, linTest, checkAxes, rawShape, fairShape, shapeFits, tableText, S, plain, envs, trueLine, tgtInfo, parseVal,
   LABS, LAB, setLabs, labGen, loadLab, ibCalc, ibConst, mmLines, bRange, hitsAll, colScale, targets, pmStr, curEq, curData, setMode, stdMatch };
 })();
