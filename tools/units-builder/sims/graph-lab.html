@@ -488,7 +488,7 @@ Q('inten','Light intensity vs distance from a bulb','I = P/(4*π*r^2)',['r','dis
   [['P','power given out as light','W',40,5,100,1,'t']],[],(r,c)=>c.P/(4*PI*r*r),[['I','1/r^2','P/(4*π)','0','P = 4*π*slope','W']],{ ib: 1 }),
 // ---- P1-01
 Q('hang','Spring with hanging masses','m*g = k*x',['m','hanging mass','kg',0.05,0.4],['x','stretch','m'],
-  [['k','spring constant','N/m',25,5,100,1,'t']],['g'],(m,c)=>m*c.g/c.k,[['x','m','g/k','0','k = g/slope','m/kg'],['m*g','x','k','0','k = slope','N/m']]),
+  [['k','spring constant','N/m',25,5,100,1,'t']],['g'],(m,c)=>m*c.g/c.k,[['x','m','g/k','0','k = g/slope','m/kg']]),
 Q('weight','Weighing masses on another planet','W = m*g',['m','mass','kg',0.1,1],['W','weight (spring scale)','N',['Fg']],
   [['g','g on this planet','N/kg',3.7,1.6,25,0.1,'t']],[],(m,c)=>m*c.g,[['W','m','g','0','g = slope','N/kg']]),
 Q('fric','Static friction: biggest pull before it slips','f = μs*FN',['FN','normal force','N',2,20,['N','Fn']],['f','maximum static friction','N',['fs','Ff']],
@@ -521,7 +521,7 @@ Q('fcv','Spinning mass on a force sensor: force vs speed','F = m*v^2/r',['v','sp
 Q('fcr','Same speed, different radius','F = m*v^2/r',['r','radius','m',0.2,1.5],['F','centripetal (net) force','N'],
   [['m','mass','kg',0.25,0.05,1,0.01,'t'],['v','speed','m/s',2,0.5,5,0.1,'s']],[],(r,c)=>c.m*c.v*c.v/r,[['F','1/r','m*v^2','0','m = slope/v^2','N·m']]),
 Q('whirl','Whirligig: a hanging weight swings a stopper','M*g = m*v^2/r',['M','hanging mass','kg',0.05,0.4],['v','stopper speed','m/s'],
-  [['m','stopper mass','kg',0.05,0.01,0.2,0.005,'t'],['r','radius of the circle','m',0.8,0.3,1.5,0.05,'s']],['g'],(M,c)=>sq(M*c.g*c.r/c.m),[['M*g','v^2','m/r','0','m = r*slope','kg/m'],['v^2','M','g*r/m','0','m = g*r/slope','m²/(s²·kg)']]),
+  [['m','stopper mass','kg',0.05,0.01,0.2,0.005,'t'],['r','radius of the circle','m',0.8,0.3,1.5,0.05,'s']],['g'],(M,c)=>sq(M*c.g*c.r/c.m),[['v^2','M','g*r/m','0','m = g*r/slope','m²/(s²·kg)']]),
 Q('gfield','Gravitational field strength above a planet','g = G*M/r^2',['r','distance from the planet’s centre','m',6.4e6,2.6e7],['g','gravitational field strength','N/kg'],
   [['M','planet mass','kg',6,1,20,0.1,'t',24]],['G'],(r,c)=>c.G*c.M/(r*r),[['g','1/r^2','G*M','0','M = slope/G','N·m²/kg']]),
 Q('kepler','Kepler’s third law: moons of a planet','T^2 = 4*π^2*r^3/(G*M)',['r','orbit radius','m',4e8,2e9],['T','orbital period','s'],
@@ -536,7 +536,7 @@ Q('splaunch','Spring launcher fired straight up','1/2*k*x^2 = m*g*h',['x','sprin
 Q('v2h','Dropped ball: speed vs drop height','v^2 = 2*g*h',['h','drop height','m',0.1,2],['v','speed at the bottom','m/s'],
   [['g','g','m/s^2',9.8,1.6,25,0.1,'t']],[],(h,c)=>sq(2*c.g*h),[['v^2','h','2*g','0','g = slope/2','m/s²']]),
 Q('ramp','Ramp lab: how far it slides on the floor','h = μk*D',['h','release height (smooth ramp)','m',0.05,0.4],['D','slide distance on the rough floor','m'],
-  [['μk','coefficient of kinetic friction','',0.25,0.1,0.8,0.01,'t']],[],(h,c)=>h/c.μk,[['h','D','μk','0','μk = slope',''],['D','h','1/μk','0','μk = 1/slope','']]),
+  [['μk','coefficient of kinetic friction','',0.25,0.1,0.8,0.01,'t']],[],(h,c)=>h/c.μk,[['D','h','1/μk','0','μk = 1/slope','']]),
 Q('ugrav','Satellite’s gravitational potential energy','U = -G*M*m/r',['r','orbit radius','m',6.8e6,4.2e7],['U','gravitational potential energy','J'],
   [['M','planet mass','kg',6,1,20,0.1,'t',24],['m','satellite mass','kg',1000,100,5000,100,'s']],['G'],(r,c)=>-c.G*c.M*c.m/r,[['U','1/r','-G*M*m','0','M = -slope/(G*m)','J·m']]),
 // ---- P1-07
@@ -633,7 +633,7 @@ Q('slitl','Double slit: fringe spacing vs screen distance','Δy = λ*L/d',['L','
 Q('slitd','Double slit: fringe spacing vs slit separation','Δy = λ*L/d',['d','slit separation','m',1e-4,5e-4],['Δy','fringe spacing','m',['y']],
   [['λ','wavelength','m',633,400,700,1,'t',-9],['L','slit-to-screen distance','m',2,0.5,4,0.1,'s']],[],(d,c)=>c.λ*c.L/d,[['Δy','1/d','λ*L','0','λ = slope/L','m²']]),
 Q('snell','Refraction: Snell’s law','n1*sin(θ1) = n2*sin(θ2)',['θ1','angle of incidence (in air)','°',10,70],['θ2','angle of refraction','°'],
-  [['n2','index of refraction of the block','',1.5,1.1,2.4,0.01,'t'],['n1','index of refraction of air','',1,0,0,0,'k']],[],(t1,c)=>Math.asin(c.n1*sin(t1)/c.n2),[['sin(θ1)','sin(θ2)','n2/n1','0','n2 = n1*slope','']]),
+  [['n2','index of refraction of the block','',1.5,1.1,2.4,0.01,'t'],['n1','index of refraction of air','',1,0,0,0,'k']],[],(t1,c)=>Math.asin(c.n1*sin(t1)/c.n2),[['sin(θ2)','sin(θ1)','n1/n2','0','n2 = n1/slope','']]),
 Q('lens','Thin lens: image distance vs object distance','1/so + 1/si = 1/f',['so','object distance','m',0.15,0.6],['si','image distance','m'],
   [['f','focal length','m',0.1,0.05,0.12,0.005,'t']],[],(so,c)=>1/(1/c.f-1/so),[['1/si','1/so','-1','1/f','f = 1/icpt','','1/m']]),
 // ---- P2-05
@@ -853,7 +853,8 @@ function checkAxes(e, vstr, hstr, cv){
   const sa = syms(A), sb = syms(B), X = e.x.s, Y = e.y.s, xs = plainSym(X), ys = plainSym(Y);
   if (sa.has(Y) && sb.has(Y)) return { ok: false, msg: 'Put ' + ys + ' on one axis only.' };
   if (!sa.has(Y) && !sb.has(Y)) return { ok: false, msg: 'One axis has to use ' + ys + ': that’s what you measured.' };
-  const os = sa.has(Y) ? sb : sa; if (!os.has(X)) return { ok: false, msg: 'The other axis has to use ' + xs + '.' };
+  if (!sa.has(Y) || sb.has(Y) || !sb.has(X)) return { ok: false, which: sa.has(Y) ? 'h' : null,
+    msg: 'Put what you measured (' + ys + ', the dependent variable) on the vertical axis and what you changed (' + xs + ', the independent variable) on the horizontal axis.' };
   let first = null;
   for (const c of envs(e, cv)){ const r = linTest(e, A, B, c); if (!r.ok) return Object.assign({ ok: false, A, B }, r); if (!first) first = r; }
   return { ok: true, A, B, fit: first.fit };
