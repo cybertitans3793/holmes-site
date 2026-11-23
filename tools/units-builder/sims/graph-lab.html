@@ -342,7 +342,7 @@ function lex(s, names, keys){
     if (f && (!k || f.length >= k.length)){ T.push({ t: 'f', v: f, p: i }); i += f.length; continue; }
     if (k){ T.push({ t: 's', v: names.get(k), p: i }); i += k.length; continue; }
     const bad = (s.slice(i).match(/^[^\s\d+\-*/^()]+/) || [c])[0];
-    throw new XErr('“' + bad + '” isn’t one of the quantities here.');
+    throw new XErr('“' + bad + '” isn’t one of the quantities here. You can use: ' + typeHint(names) + '.');
   }
   return T;
 }
@@ -740,7 +740,15 @@ const LAB = {}; LABS.forEach(l => LAB[l.id] = l);
 const setLabs = id => { const s = SETMAP[id]; return s ? s[2].map(eq => LABS.filter(l => l.eq === eq)).flat() : []; };
 
 // prepare each equation: units, symbol tables, parsers
-function aliasesOf(name){ const out = []; const ch = name[0]; if (GREEK[ch]) GREEK[ch].forEach(w => out.push(w + name.slice(1))); if (ch === 'μ' && name.length > 1) out.push('u' + name.slice(1)); return out; }
+const SUBU = { '0':'₀','1':'₁','2':'₂','3':'₃','i':'ᵢ','f':'f','e':'ₑ','s':'ₛ' };
+function aliasesOf(name){ const out = []; const ch = name[0], rest = name.slice(1);
+  if (GREEK[ch]) GREEK[ch].forEach(w => out.push(w + rest)); if (ch === 'μ' && name.length > 1) out.push('u' + rest);
+  if (ch === 'Δ' && rest){ out.push('delta ' + rest, 'Δ ' + rest, 'change in ' + rest, rest); }   // Δt: also dt, delta t, and plain t (only if t isn't its own quantity here)
+  if (/^[A-Za-zα-ω]\w+$/.test(name) && rest.length <= 2 && !GREEK[ch]){ out.push(ch + '_' + rest); if ([...rest].every(c => SUBU[c])) out.push(ch + [...rest].map(c => SUBU[c]).join('')); }   // v_i, vᵢ, m₁
+  return out; }
+// how to type each quantity (shown when a symbol isn't recognised)
+function typeHint(names){ const canon = names.show || [...new Set(names.values())].filter(x => x !== 'π');
+  return canon.map(c => { const g = GREEK[c[0]]; return g ? c + ' (type ' + (c[0] === 'Δ' ? 'd' + c.slice(1) + ' or delta ' + c.slice(1) : g[0] + c.slice(1)) + ')' : c; }).join(', '); }
 EQS.forEach(e => {
   const xu = parseUnit(e.x.u), yu = parseUnit(e.y.u); e.x.f = xu.f; e.x.d = xu.d; e.y.f = yu.f; e.y.d = yu.d;
   e.K.forEach(k => { const u = parseUnit(k.u); k.d = u.d; k.uf = u.f; k.scale = 10 ** k.exp * u.f; });
@@ -753,6 +761,7 @@ EQS.forEach(e => {
   names.set('π', 'π'); names.set('pi', 'π');
   e.D = D; e.names = names; e.keys = [...names.keys()].sort((a, b) => b.length - a.length);
   const fn = new Map(names); fn.set('slope', 'slope'); fn.set('icpt', 'icpt'); fn.set('intercept', 'icpt'); fn.set('me', 'me'); fn.set('T0', 'T0'); fn.set('e', 'e');
+  names.show = fn.show = [...new Set(names.values())].filter(x => x !== 'π');   // what the error message lists
   e.fnames = fn; e.fkeys = [...fn.keys()].sort((a, b) => b.length - a.length);
   const tk = e.K.find(k => k.role === 't' || k.role === 'T');
   e.target = e.tgt ? Object.assign({}, e.tgt) : { s: tk.s, n: tk.n, u: tk.u };
