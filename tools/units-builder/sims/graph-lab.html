@@ -225,7 +225,7 @@ textarea#ta{position:absolute;left:12px;right:12px;bottom:12px;height:180px;font
           <label for="by"><i>y</i> =</label><input class="tx" id="by" type="text" autocomplete="off" spellcheck="false">
           <label for="bm"><i>m</i> (slope) =</label><input class="tx" id="bm" type="text" autocomplete="off" spellcheck="false" placeholder="in symbols, e.g. 4π²/g">
           <label for="bx"><i>x</i> =</label><input class="tx" id="bx" type="text" autocomplete="off" spellcheck="false">
-          <label for="bb"><i>b</i> (intercept) =</label><input class="tx" id="bb" type="text" autocomplete="off" spellcheck="false" placeholder="0 if none">
+          <label for="bb" id="bbl"><i>b</i> (intercept) =</label><input class="tx" id="bb" type="text" autocomplete="off" spellcheck="false" placeholder="0 if none">
         </div>
         <div class="mrow"><button type="button" class="pri" id="mchk">Check</button><span class="hint">Use the symbols from the equation.</span></div>
         <div class="fb" id="fb3" aria-live="polite"></div>
@@ -505,7 +505,7 @@ Q('cart','Cart pulled by a hanging mass','a = m*g/(M + m)',['M','cart mass','kg'
 Q('contact','Push two blocks: contact force between them','Fc = F*m2/(m1 + m2)',['m2','mass of the front block','kg',0.5,4],['Fc','contact force between the blocks','N'],
   [['m1','mass of the back block','kg',2,0.5,5,0.1,'t'],['F','push on the back block','N',12,2,30,0.5,'s']],[],(m2,c)=>c.F*m2/(c.m1+m2),[['1/Fc','1/m2','m1/F','1/F','m1 = F*slope','kg/N','1/N']]),
 Q('atwT','Atwood machine: string tension','T = 2*m1*m2*g/(m1 + m2)',['m2','second mass','kg',0.1,1],['T','string tension','N'],
-  [['m1','first mass','kg',0.3,0.1,1,0.01,'t']],['g'],(m2,c)=>2*c.m1*m2*c.g/(c.m1+m2),[['1/T','1/m2','1/(2*g)','1/(2*m1*g)','m1 = 1/(2*g*icpt)','s²/m','1/N']]),
+  [['m1','first mass','kg',0.3,0.1,1,0.01,'t']],['g'],(m2,c)=>2*c.m1*m2*c.g/(c.m1+m2),[['1/T','1/m2','1/(2*g)','1/(2*m1*g)','m1 = 1/(2*g*icpt)','s²/m','1/N']],{ noB: 1 }),
 // ---- P1-04
 Q('launch','Launcher fired level off a table','D = v0*sqrt(2*H/g)',['H','table height','m',0.3,2],['D','landing distance','m'],
   [['v0','launch speed','m/s',3,1,8,0.1,'t']],['g'],(H,c)=>c.v0*sq(2*H/c.g),[['D^2','H','2*v0^2/g','0','v0 = sqrt(g*slope/2)','m'],['D','sqrt(H)','v0*sqrt(2/g)','0','v0 = slope*sqrt(g/2)','√m']]),
@@ -572,7 +572,7 @@ Q('jet','Leaky tank: how far the jet lands','d = 2*sqrt(h*H)',['h','water depth 
   [['H','height of the hole above the floor','m',0.3,0.1,1,0.01,'t']],[],(h,c)=>2*sq(h*c.H),[['d^2','h','4*H','0','H = slope/4','m']]),
 // ---- P1-10
 Q('sprm','Mass on a spring (the spring’s own mass counts)','T = 2*π*sqrt((m + ms/3)/k)',['m','hanging mass','kg',0.05,0.5],['T','period','s'],
-  [['k','spring constant','N/m',20,5,100,1,'t'],['ms','mass of the spring','kg',0.15,0,0.3,0.01,'s']],[],(m,c)=>2*PI*sq((m+c.ms/3)/c.k),[['T^2','m','4*π^2/k','4*π^2*ms/(3*k)','k = 4*π^2/slope','s²/kg','s²']]),
+  [['k','spring constant','N/m',20,5,100,1,'t'],['ms','mass of the spring','kg',0.15,0,0.3,0.01,'s']],[],(m,c)=>2*PI*sq((m+c.ms/3)/c.k),[['T^2','m','4*π^2/k','4*π^2*ms/(3*k)','k = 4*π^2/slope','s²/kg','s²']],{ noB: 1 }),
 Q('spri','Mass on an ideal spring','T = 2*π*sqrt(m/k)',['m','hanging mass','kg',0.05,0.5],['T','period','s'],
   [['k','spring constant','N/m',20,5,100,1,'t']],[],(m,c)=>2*PI*sq(m/c.k),[['T','sqrt(m)','2*π/sqrt(k)','0','k = (2*π/slope)^2','s/√kg'],['T^2','m','4*π^2/k','0','k = 4*π^2/slope','s²/kg']]),
 Q('sprf','Spring frequency vs mass','f = 1/(2*π)*sqrt(k/m)',['m','hanging mass','kg',0.05,0.5],['f','frequency','Hz'],
@@ -585,7 +585,7 @@ Q('wien','Wien’s law: peak wavelength vs temperature','λ = b/T',['T','tempera
 // ---- P2-01
 Q('charles','Gas volume vs temperature in °C: find absolute zero','V = n*R*(T + 273.15)/P',['T','temperature','°C',-20,100],['V','volume','m^3'],
   [['n','amount of gas','mol',0.01,0.002,0.05,0.001,'s'],['P','pressure','Pa',101.3,80,200,0.1,'s',3]],['R'],(T,c)=>c.n*c.R*(T+273.15)/c.P,[['V','T','n*R/P','273.15*n*R/P','T0 = -icpt/slope','m³/°C','m³']],
-  { noise: 'range', celsius: 1, tgt: { s: 'T0', n: 'absolute zero', u: '°C', v: () => -273.15 }, linX: [-300, 110] }),
+  { noise: 'range', celsius: 1, tgt: { s: 'T0', n: 'absolute zero', u: '°C', v: () => -273.15 }, linX: [-300, 110], noB: 1 }),
 Q('gay','Sealed gas: pressure vs absolute temperature','P*V = n*R*T',['T','temperature','K',250,400],['P','pressure','Pa'],
   [['n','amount of gas','mol',0.04,0.01,0.1,0.001,'t'],['V','volume of the container','m^3',1,0.5,5,0.1,'s',-3]],['R'],(T,c)=>c.n*c.R*T/c.V,[['P','T','n*R/V','0','n = slope*V/R','Pa/K']]),
 Q('vrms','Molecule speed (rms) vs temperature','1/2*m*v^2 = 3/2*kB*T',['T','temperature','K',200,800],['v','rms speed','m/s',['vrms']],
@@ -1195,7 +1195,7 @@ function check1(){
   $('s1').hidden = true; $('s1done').hidden = false;
   $('s1done').innerHTML = '<span class="tick">✓</span> Straight line: <b>' + runsHTML(runs(dnorm(r.A))) + '</b> vs <b>' + runsHTML(runs(dnorm(r.B))) + '</b>' + (raw ? ' <span class="hint">(the raw data were already straight)</span>' : '') + ' <button type="button" class="link" id="redo">change</button>';
   $('redo').onclick = () => { S.solved = null; S.view = 'raw'; $('s1').hidden = false; $('s1done').hidden = true; $('s2').hidden = true; $('s3').hidden = true; $('s4').hidden = true; viewBtns(); drawEq(); $('ay').focus(); };
-  $('s3').classList.remove('done'); $('by').value = plain(r.A); $('bx').value = plain(r.B); ['by','bm','bx','bb'].forEach(id => $(id).classList.remove('good', 'badx')); $('fb3').innerHTML = '';
+  $('s3').classList.remove('done'); { const nb = !!curEq().noB; $('bb').hidden = $('bbl').hidden = nb; $('bb').value = nb ? '' : $('bb').value; } $('by').value = plain(r.A); $('bx').value = plain(r.B); ['by','bm','bx','bb'].forEach(id => $(id).classList.remove('good', 'badx')); $('fb3').innerHTML = '';
   $('s3').hidden = false; $('s4').hidden = false;
   if (isLab() && !S.eqShown){ S.eqShown = true; renderEqCard(); }
   refreshFit();
@@ -1231,7 +1231,7 @@ function check3(){
                            : ' Rearrange the equation into ' + yv + ' = (…)·' + xv + ' + (…). The slope is everything multiplying ' + xv + '. Check: with the slider values put in, it should come out close to the graph’s slope.'; }
       fb.push(label + ': not quite.' + hint); }
     return false; };
-  const okm = box('bm', 'm', 'Slope'), okb = box('bb', 'b', 'Intercept');
+  const okm = box('bm', 'm', 'Slope'), okb = e.noB ? true : box('bb', 'b', 'Intercept');   // hard intercepts (Atwood tension, spring mass, Charles) aren't asked for
   if (!(okm && okb)){ $('fb3').innerHTML = '<div class="bad">' + fb.join('<br>') + '</div>'; return; }
   const sv = { A: r.A, B: r.B }, mt = stdMatch(e, sv); let msg = '<b>Yes.</b> ';
   const fm = ast => math(mml(dnorm(ast)));
