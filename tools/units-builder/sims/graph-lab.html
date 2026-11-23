@@ -1225,6 +1225,9 @@ function check3(){
     else { const want = T[0][key]; const got = ev(ast, T[0].c);
       let hint = ''; if (isFinite(got) && want !== 0){ const q = got / want; if (Math.abs(q - 2) < 0.01) hint = ' Yours is twice too big.'; else if (Math.abs(q - 0.5) < 0.01) hint = ' Yours is half what it should be.'; else if (Math.abs(q + 1) < 0.01) hint = ' Check the sign.'; else if (Math.abs(got * want - 1) < 0.01 * Math.abs(got * want) ) hint = ' Yours is upside down.'; }
       if (key === 'b' && Math.abs(want) < 1e-6 * scale) hint = ' This line goes through the origin.';
+      if (!hint){ const yv = esc($('by').value.trim()), xv = esc($('bx').value.trim());   // no simple pattern: say how to find it
+        hint = key === 'b' ? ' Rearrange the equation into ' + yv + ' = (…)·' + xv + ' + (…). The intercept is the whole term without ' + xv + ', with its factors and its sign. Check: with the slider values put in, it should come out close to the graph’s intercept.'
+                           : ' Rearrange the equation into ' + yv + ' = (…)·' + xv + ' + (…). The slope is everything multiplying ' + xv + '. Check: with the slider values put in, it should come out close to the graph’s slope.'; }
       fb.push(label + ': not quite.' + hint); }
     return false; };
   const okm = box('bm', 'm', 'Slope'), okb = box('bb', 'b', 'Intercept');
