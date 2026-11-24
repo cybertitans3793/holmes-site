@@ -73,7 +73,17 @@ p.lead{margin:0 0 8px;font-size:14px;line-height:1.4}
 .sl{display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:6px;min-width:0}
 .sl .nm{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sl .val{font:700 12.5px "IBM Plex Mono",monospace;white-space:nowrap}
-.sl input[type=range]{grid-column:1/-1;width:100%;margin:0;accent-color:#111;height:20px}
+.sl input[type=range]{grid-column:1/-1;width:100%;margin:0;height:20px}
+.sl input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer;--p:50%}
+.sl input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:linear-gradient(#111,#111) 0 0/var(--p) 100% no-repeat,#d4d4d4}
+.sl input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;margin-top:-6px;border-radius:50%;background:#111;border:2px solid #fff;box-shadow:0 0 0 1.5px #111}
+.sl input[type=range]::-moz-range-track{height:6px;border-radius:3px;background:#d4d4d4}
+.sl input[type=range]::-moz-range-progress{height:6px;border-radius:3px;background:#111}
+.sl input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:#111;border:2px solid #fff;box-shadow:0 0 0 1.5px #111}
+.sl input[type=range]:focus-visible{outline:none}
+.sl input[type=range]:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 3px #ff6a2b}
+.sl input[type=range]:focus-visible::-moz-range-thumb{box-shadow:0 0 0 3px #ff6a2b}
+.sl input[type=range]:disabled{cursor:default;opacity:.45}
 .fixed{font-size:13px;line-height:1.35;padding:2px 0}
 .fixed b{font-family:"IBM Plex Mono",monospace;font-size:12.5px}
 #ctlrow{grid-column:1/-1;display:flex;gap:10px;align-items:center;margin-top:4px;flex-wrap:wrap}
@@ -1568,6 +1578,10 @@ function buildPal(forUnits){ const e = curEq(); PAL.innerHTML = '';
     PAL.appendChild(b); }); }
 ['ay','ax','by','bm','bx','bb','vin','vin2'].forEach(id => { const el = $(id); if (!el) return;
   el.addEventListener('focus', () => { palFor = el; buildPal(id === 'vin' || id === 'vin2'); const row = el.closest('.mrow') || el.parentNode; if (PAL.previousElementSibling !== row) row.after(PAL); PAL.hidden = false; }); });
+// sliders are drawn in CSS (track + knob), not the browser's own control, which some browsers drop inside a scaled frame; --p is the filled part
+function slFill(){ document.querySelectorAll('input[type=range]').forEach(r => { const a = +r.min || 0, b = +r.max || 100; r.style.setProperty('--p', ((+r.value - a) / ((b - a) || 1) * 100) + '%'); }); }
+document.addEventListener('input', e => { if (e.target.type === 'range') slFill(); }, true);
+setInterval(slFill, 400); slFill();
 window.__GL = { EQS, EQ, SETS, P, PF, ev, dims, syms, parseUnit, niceUnit, envOf, gen, linfit, linTest, checkAxes, rawShape, fairShape, shapeFits, tableText, S, plain, envs, trueLine, tgtInfo, parseVal,
   LABS, LAB, setLabs, labGen, loadLab, ibCalc, ibConst, mmLines, bRange, hitsAll, colScale, targets, pmStr, curEq, curData, setMode, stdMatch };
 })();

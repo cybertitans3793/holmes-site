@@ -39,7 +39,17 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .iv{display:grid;grid-template-columns:auto 1fr auto;align-items:center;column-gap:6px}
 .iv .nm{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .iv .val{font:700 13px "IBM Plex Mono",monospace;white-space:nowrap}
-.iv input[type=range]{grid-column:1/-1;width:100%;margin:0;accent-color:#111;height:22px}
+.iv input[type=range]{grid-column:1/-1;width:100%;margin:0;height:22px}
+.iv input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer;--p:50%}
+.iv input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:linear-gradient(#111,#111) 0 0/var(--p) 100% no-repeat,#d4d4d4}
+.iv input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;margin-top:-6px;border-radius:50%;background:#111;border:2px solid #fff;box-shadow:0 0 0 1.5px #111}
+.iv input[type=range]::-moz-range-track{height:6px;border-radius:3px;background:#d4d4d4}
+.iv input[type=range]::-moz-range-progress{height:6px;border-radius:3px;background:#111}
+.iv input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:#111;border:2px solid #fff;box-shadow:0 0 0 1.5px #111}
+.iv input[type=range]:focus-visible{outline:none}
+.iv input[type=range]:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 3px #ff6a2b}
+.iv input[type=range]:focus-visible::-moz-range-thumb{box-shadow:0 0 0 3px #ff6a2b}
+.iv input[type=range]:disabled{cursor:default;opacity:.45}
 .iv input[type=radio]{accent-color:#ff6a2b;margin:0}
 #presets{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:2px}
 #presets .lab{font:700 12px "IBM Plex Mono",monospace}
@@ -184,6 +194,9 @@ function setup(){
 
 function calcWith(over){ const v = Object.assign({}, S.v, over || {}); return SIM.calc(v, S.mode, S.opt); }
 
+// sliders are drawn in CSS (track + knob), not the browser's own control, which some browsers drop inside a scaled frame; --p is the filled part
+function slFill(){ document.querySelectorAll('input[type=range]').forEach(r => { const a = +r.min || 0, b = +r.max || 100; r.style.setProperty('--p', ((+r.value - a) / ((b - a) || 1) * 100) + '%'); }); }
+document.addEventListener('input', e => { if (e.target.type === 'range') slFill(); }, true);
 function update(){
   S.ivs.forEach(d => { $('val-' + d.id).innerHTML = d.show ? d.show(S.v[d.id]) : fnum(S.v[d.id]) + (d.unit ? '&nbsp;' + d.unit : ''); });
   S.d = calcWith();
@@ -192,6 +205,7 @@ function update(){
   $('work').innerHTML = '<div class="wt"><span>Show the work</span><span class="hint">' + (SIM.hint || 'g = 10 m/s²') + '</span></div>' + (SIM.strip ? SIM.strip(SIM.work(S.v, S.d, S.mode, S.opt)) : SIM.work(S.v, S.d, S.mode, S.opt));
   document.querySelectorAll('input[name=gx]').forEach(r => r.checked = (r.value === S.gx));
   graph();
+  slFill();
 }
 
 // optional hook: SIM.actions(mode, opt) -> [{ id, label, hot, disabled, onClick }] and SIM.actionStatus(mode, opt) -> text.
